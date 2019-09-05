@@ -96,7 +96,7 @@
               Accounts
               <div class="count">
                 <!--<img width="15" height="15" [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" alt="">-->
-                <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async)?.total_count}} accounts</div>
+                <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(countAccounts$ | async)}} accounts</div>
               </div>
             </div>
 
@@ -148,12 +148,11 @@
               </app-gradient-button>
               <div class="go-accounts" (click)="openTable = !openTable">
                 <img
-                        draggable="false"
-                        width="16"
-                        height="16"
-                        [src]="(openTable ? './assets/Chevron Down (Jade).svg' : './assets/Chevron Right (Blue-Gray).svg')"
-                        alt="Chevron"
-                >
+                  draggable="false"
+                  width="16"
+                  height="16"
+                  [src]="(openTable ? './assets/Chevron Down (Jade).svg' : './assets/Chevron Right (Blue-Gray).svg')"
+                  alt="Chevron">
               </div>
             </div>
           </div>

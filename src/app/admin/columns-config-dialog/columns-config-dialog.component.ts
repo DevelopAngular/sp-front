@@ -4,6 +4,8 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {StorageService} from '../../services/storage.service';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-columns-config-dialog',
   templateUrl: './columns-config-dialog.component.html',
@@ -17,39 +19,38 @@ export class ColumnsConfigDialogComponent implements OnInit {
   header: string;
   options: any[];
   formGroup: FormGroup;
+  roleHeaders;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
     _matDialogRef: MatDialogRef<ColumnsConfigDialogComponent>,
     private storage: StorageService
   ) {
-
-    console.log('DATA ........... => ', this.data);
+    this.roleHeaders = data['tableHeaders'];
     this._matDialogRef = _matDialogRef;
-    const roleColumns = this.data['role'] + '_columns'
+    const roleColumns = this.data['role'] + '_columns';
 
     const controls = {};
 
-    const tableHeaders = this.data['form'];
+    let tableHeaders = this.data['form'];
 
     for (const key in tableHeaders) {
       controls[key] = new FormControl(tableHeaders[key].value);
       controls[key].valueChanges.subscribe((val) => {
         tableHeaders[key].value = val;
-        console.log(val);
+        const header = this.roleHeaders[tableHeaders[key].label];
         this.storage.setItem(roleColumns, JSON.stringify(tableHeaders));
         setTimeout(() => {
-          TABLE_RELOADING_TRIGGER.next(tableHeaders);
+          TABLE_RELOADING_TRIGGER.next({header, tableHeaders: this.roleHeaders});
         }, 100);
       });
     }
-    console.log('Controls obj =>', controls);
     this.formGroup = new FormGroup(controls);
     this.options = Object.keys(tableHeaders);
 
   }
 
   ngOnInit() {
-    console.log('Headers data ===>', this.formGroup.value);
     this.triggerElementRef = this.data['trigger'];
     this.updatePosition();
 

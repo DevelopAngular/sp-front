@@ -1,9 +1,9 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {map, mapTo, switchMap, tap} from 'rxjs/operators';
+import {filter, map, mapTo, mergeAll, share, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -18,11 +18,11 @@ import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
-import {encode} from 'punycode';
 import {environment} from '../../../environments/environment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
+import * as _ from 'lodash';
 
 declare const history: History;
 
@@ -32,9 +32,11 @@ declare const history: History;
   styleUrls: ['./accounts.component.scss'],
   animations: [bumpIn]
 })
-export class AccountsComponent implements OnInit {
+export class AccountsComponent implements OnInit, OnDestroy {
 
   splash: boolean;
+
+  countAccounts$: Observable<number> = this.userService.countAccounts$.all;
 
   public accounts$ =
     new BehaviorSubject<any>({
@@ -54,7 +56,11 @@ export class AccountsComponent implements OnInit {
   userList;
   selectedUsers = [];
 
+  destroy$ = new Subject();
+
   gSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
+
+  querySubscriber$ = new Subject();
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -87,30 +93,39 @@ export class AccountsComponent implements OnInit {
 
   ngOnInit() {
 
-   this.adminService.getGSuiteOrgs().subscribe(res => this.gSuiteOrgs = res);
-    this.http.globalReload$.pipe(
-      switchMap(() => this.adminService.getAdminAccounts()),
-      switchMap((u_list: any) => {
-        if (u_list.total_count !== undefined) {
-          u_list.total = u_list.total_count;
-        } else {
-          u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
-        }
-        console.log(u_list);
-        this.accounts$.next(u_list);
-        return this.gsProgress.onboardProgress$;
-      })
-    )
-    .subscribe((op: any) => {
-      console.log(op);
-      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-
+    this.querySubscriber$.pipe(
+      mergeAll(),
+      filter((res: any[]) => !!res.length),
+      takeUntil(this.destroy$)
+    ).subscribe(users => {
+      this.dataTableHeadersToDisplay = [];
+      this.userList = this.buildUserListData(users);
+      this.pending$.next(false);
     });
 
-    // this.splash = op.setup_accounts && (!op.setup_accounts.start || !op.setup_accounts.end);
+   this.adminService.getGSuiteOrgs().pipe(takeUntil(this.destroy$)).subscribe(res => this.gSuiteOrgs = res);
+
+    this.http.globalReload$.pipe(
+      takeUntil(this.destroy$),
+      tap(() => this.querySubscriber$.next(this.getUserList())),
+      switchMap(() => {
+        return this.adminService.getCountAccountsRequest()
+            .pipe(filter(list => !_.isNull(list.profile_count) && !_.isNull(list.student_count)));
+        }
+      ),
+      switchMap((u_list: any) => {
+        this.buildCountData(u_list);
+        return this.gsProgress.onboardProgress$;
+      }),
+    )
+    .subscribe((op: any) => {
+      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+    });
 
 
-    this.userService.userData.subscribe((user) => {
+    this.userService.userData.pipe(
+      takeUntil(this.destroy$))
+      .subscribe((user) => {
       this.user = user;
     });
 
@@ -146,21 +161,25 @@ export class AccountsComponent implements OnInit {
     } else {
       this.dataTableHeaders = {
         'Name': {
+          index: 0,
           value: true,
           label: 'Name',
           disabled: true
         },
         'Email/Username': {
+          index: 1,
           value: true,
           label: 'Email/Username',
           disabled: true
         },
         'Account Type': {
+          index: 2,
           value: true,
           label: 'Account Type',
           disabled: false
         },
         'Group(s)': {
+          index: 3,
           value: true,
           label: 'Group(s)',
           disabled: false
@@ -168,12 +187,23 @@ export class AccountsComponent implements OnInit {
       };
     }
 
-    this.getUserList();
-
     TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
-      this.dataTableHeaders = updatedHeaders;
-      this.getUserList();
+      this.querySubscriber$.next(this.userService.accounts.allAccounts);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  buildCountData(u_list) {
+    if (u_list.total_count !== undefined) {
+      u_list.total = u_list.total_count;
+    } else {
+      u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+    }
+    this.accounts$.next(u_list);
   }
 
   addUser() {
@@ -184,6 +214,10 @@ export class AccountsComponent implements OnInit {
       data: {
         role: '_all',
       }
+    });
+
+    DR.afterClosed().subscribe(res => {
+      this.querySubscriber$.next(this.getUserList());
     });
   }
 
@@ -212,7 +246,7 @@ export class AccountsComponent implements OnInit {
     }
 
     findRelevantAccounts(search) {
-      this.getUserList(search);
+      this.querySubscriber$.next(this.getUserList(search));
     }
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
@@ -225,15 +259,6 @@ export class AccountsComponent implements OnInit {
       let header: string;
       let options: any[];
 
-      const consentMenuObserver = (res) => {
-        console.log(res);
-        if (res) {
-          this.http.setSchool(this.http.getSchool());
-          this.selectedUsers = [];
-          this.getUserList();
-        }
-      }
-
       switch (option) {
         case 'delete_from_profile':
           header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
@@ -242,7 +267,7 @@ export class AccountsComponent implements OnInit {
       }
       UNANIMATED_CONTAINER.next(true);
 
-      const DR = this.matDialog.open(ConsentMenuComponent,{
+      const DR = this.matDialog.open(ConsentMenuComponent, {
         data: {
           role: '_all',
           selectedUsers: this.selectedUsers,
@@ -257,31 +282,29 @@ export class AccountsComponent implements OnInit {
       DR.afterClosed()
         .pipe(
           switchMap((action): Observable<any> => {
-            console.log(action);
             eventTarget.style.opacity = '1';
             switch (action) {
               case 'delete_from_profile':
-                return zip(...this.selectedUsers.map((user) => this.userService.deleteUser(user['id']))).pipe(mapTo(true));
+                return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], ''))).pipe(mapTo(true));
               default:
                 return of(false);
             }
           }),
           tap(() => UNANIMATED_CONTAINER.next(false))
         )
-        .subscribe(consentMenuObserver);
+        .subscribe(() => {
+          this.selectedUsers = [];
+        });
     }
 
     private getUserList(search = '') {
       this.userList = [];
       this.pending$.next(true);
-      this.userService
-        .getUsersList('', search)
-        .subscribe(users => {
-        this.dataTableHeadersToDisplay = [];
-          this.userList = this.buildUserListData(users);
-        this.pending$.next(false);
-      });
+      return this.userService.getAccountsRoles('', search)
+        .pipe(
+          filter(res => !!res.length));
     }
+
     private wrapToHtml(data, htmlTag, dataSet?) {
       const wrapper =  wrapToHtml.bind(this);
       return wrapper(data, htmlTag, dataSet || null);
@@ -349,7 +372,8 @@ export class AccountsComponent implements OnInit {
           data: {
               'trigger': evt.currentTarget,
               'form': this.dataTableHeaders,
-              'role': '_all'
+              'role': '_all',
+              'tableHeaders': this.dataTableHeaders
           }
       });
     dialogRef.afterClosed().subscribe(() => {

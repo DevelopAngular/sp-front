@@ -43,6 +43,7 @@ export class RoundInputComponent implements OnInit {
   @Input() html5type: string = 'text'; // text, password, number etc.
   @Input() hasTogglePicker: boolean;
   @Input() boxShadow: boolean = true;
+  @Input() height: string = '40px';
   @Input() width: string;
   @Input() minWidth: string = '300px';
   @Input() fieldIcon: string = './assets/Search Normal (Search-Gray).svg';

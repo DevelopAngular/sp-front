@@ -34,6 +34,7 @@ import * as moment from 'moment';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {HallPass} from '../models/HallPass';
+import {HallPassesService} from '../services/hall-passes.service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -187,7 +188,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   currentPasses$ = new Subject();
 
-  currentPassesDates: Observable<moment.Moment[]>;
+  currentPassesDates: moment.Moment[];
 
   constructor(
       private _zone: NgZone,
@@ -195,7 +196,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private liveDataService: LiveDataService,
       private timeService: TimeService,
       private locationService: LocationsService,
-
+      private passesService: HallPassesService,
       public darkTheme: DarkThemeSwitch,
       public dataService: DataService,
       public dialog: MatDialog,
@@ -319,16 +320,12 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.currentPassesDates = this.currentPasses$.pipe(
-      bufferCount(3),
-      map(([active, from, to]: [HallPass[], HallPass[], HallPass[]]) => {
-        return [
-          ...active.map(pass => moment(pass.start_time)),
-          ...from.map(pass => moment(pass.start_time)),
-          ...to.map(pass => moment(pass.start_time))
-        ];
-      })
-    );
+    this.passesService.getAggregatedPasses()
+      .subscribe((res: any) => {
+       this.currentPassesDates = res.map(pass => {
+         return moment(pass.pass_date);
+       });
+    });
 
     this.hasPasses = combineLatest(
       this.activePasses.length$,

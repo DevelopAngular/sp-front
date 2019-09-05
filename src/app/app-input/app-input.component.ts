@@ -18,8 +18,8 @@ export class AppInputComponent implements OnInit {
     @Input() input_label: string;
     @Input() placeholder: string = '';
     @Input() maxLength: number = 100;
-    @Input() width: string;
-    @Input() height: string = '22px';
+    @Input() width: string = '0px';
+    @Input() height: string = '40px';
     @Input() padding: string = '8px';
     @Input() rightIcon: string;
     @Input() tooltipText: string;

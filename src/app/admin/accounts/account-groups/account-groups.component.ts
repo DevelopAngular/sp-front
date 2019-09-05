@@ -55,8 +55,7 @@ export class AccountGroupsComponent implements OnInit {
         })
       )
      .subscribe((gSuiteStatus) => {
-
-       console.log(gSuiteStatus);
+       // console.log(gSuiteStatus);
 
        if (gSuiteStatus.selectors) {
 
