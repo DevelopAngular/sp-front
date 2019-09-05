@@ -79,6 +79,7 @@ import {CountAccountsEffects} from './ngrx/accounts/nested-states/count-accounts
 import {LocationsEffects} from './ngrx/locations/effects';
 import {DashboardEffects} from './ngrx/dashboard/effects/dashboard.effects';
 import {PassStatsEffects} from './ngrx/pass-stats/effects';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -204,7 +205,8 @@ const appRoutes: Routes = [
       LocationsEffects,
       DashboardEffects,
       PassStatsEffects
-    ])
+    ]),
+    StoreDevtoolsModule.instrument({})
   ],
   providers: [
     DataService,
