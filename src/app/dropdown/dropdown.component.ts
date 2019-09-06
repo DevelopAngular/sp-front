@@ -40,7 +40,7 @@ export class DropdownComponent implements OnInit {
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
     this.heading = data['heading'];
-    this.locations = data['locations'].concat(data['locations'], data['locations'], data['locations']);
+    this.locations = data['locations'];
     this.schools = data['schools'];
     this.teachers = data['teachers'];
     this.selectedLocation = data['selectedLocation'];
