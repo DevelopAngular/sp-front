@@ -35,6 +35,7 @@ import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {HallPass} from '../models/HallPass';
 import {HallPassesService} from '../services/hall-passes.service';
+import {Moment} from 'moment';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -188,7 +189,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   currentPasses$ = new Subject();
 
-  currentPassesDates: moment.Moment[];
+  currentPassesDates: WeakMap<Moment, number> = new Map();
+  // currentPassesDates: {[key: number]: Moment};
 
   constructor(
       private _zone: NgZone,
@@ -322,10 +324,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
     this.passesService.getAggregatedPasses()
       .subscribe((res: any) => {
-       this.currentPassesDates = res.map(pass => {
-         return moment(pass.pass_date);
-       });
-    });
+         res.forEach((pass, i) => {
+           this.currentPassesDates.set(pass, i);
+         });
+      });
 
     this.hasPasses = combineLatest(
       this.activePasses.length$,

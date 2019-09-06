@@ -16,7 +16,7 @@ export class CalendarComponent implements OnInit {
   previousSelectedDate: moment.Moment;
   default: Date;
   elementPosition;
-  passDates: moment.Moment[];
+  passDates: WeakMap<Moment, number>;
 
   @HostListener('window:resize', ['$event.target'])
     onResize() {
