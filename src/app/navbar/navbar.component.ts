@@ -533,4 +533,15 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
   }
+
+  get isKioskMode() {
+    return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get flexDirection() {
+    let direction = 'row';
+    if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
+    if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
+    return direction;
+  }
 }
