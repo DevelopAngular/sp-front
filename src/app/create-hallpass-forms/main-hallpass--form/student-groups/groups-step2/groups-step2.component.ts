@@ -43,8 +43,7 @@ export class GroupsStep2Component implements OnInit {
           return fromEvent(FR, 'load');
         }),
         map(( res: any) => {
-          debugger
-          console.log('Result', res);
+          // console.log('Result', res);
           const raw = XLSX.read(res.target.result, {type: 'binary'});
           const sn = raw.SheetNames[0];
           const stringCollection = raw.Sheets[sn];
@@ -55,9 +54,9 @@ export class GroupsStep2Component implements OnInit {
         }),
         switchMap((_emails: string[]): Observable<any> => {
 
-          console.log(_emails);
+          // console.log(_emails);
 
-          return this.userService.getUsersList('_profile_student')
+          return this.userService.getAccountsRoles('_profile_student')
             .pipe(
               map((students: User[]) => {
                 // console.log(students);
@@ -105,8 +104,8 @@ export class GroupsStep2Component implements OnInit {
   nextStep() {
     const dto = this.form.value;
           dto.users = dto.users.map(user => user.id);
-    console.log(dto);
-    this.userService.createStudentGroup(dto)
+    // console.log(dto);
+    this.userService.createStudentGroupRequest(dto)
       .subscribe((group) => {
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);

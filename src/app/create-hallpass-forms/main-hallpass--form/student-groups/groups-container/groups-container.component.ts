@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {User} from '../../../../models/User';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
-import {BehaviorSubject, of} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
-import {delay, filter, map, switchMap} from 'rxjs/operators';
+import {delay, filter, map, switchMap, takeUntil} from 'rxjs/operators';
 
 export enum States {
   SelectStudents = 1,
@@ -20,7 +20,7 @@ export enum States {
   styleUrls: ['./groups-container.component.scss']
 })
 
-export class GroupsContainerComponent implements OnInit {
+export class GroupsContainerComponent implements OnInit, OnDestroy {
 
   @Input() FORM_STATE: Navigation;
 
@@ -33,6 +33,8 @@ export class GroupsContainerComponent implements OnInit {
   groups: StudentList[];
   selectedStudents: User[] = [];
   groupDTO: FormGroup;
+
+  destoy$ = new Subject();
 
 
   constructor(
@@ -52,12 +54,19 @@ export class GroupsContainerComponent implements OnInit {
 
       this.currentState = this.FORM_STATE.state || 1;
     }
+
+    // this.userService.getStudentGroupsRequest().pipe(
+    //   takeUntil(this.destoy$)
+    // ).subscribe(res => {
+    //   this.groups = res;
+    // });
+
     this.updateData$.pipe(
       switchMap((evt) => {
-        return this.userService.getStudentGroups().pipe(
+        return this.userService.getStudentGroupsRequest().pipe(
           map((groups: StudentList[]) => {
-          this.groups = groups;
-          return evt;
+            this.groups = groups;
+            return evt;
           })
         );
       }),
@@ -73,6 +82,11 @@ export class GroupsContainerComponent implements OnInit {
         this.selectedStudents = evt.data.selectedStudents;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destoy$.next();
+    this.destoy$.complete();
   }
 
   onStateChange(evt) {
