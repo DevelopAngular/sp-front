@@ -152,7 +152,7 @@ export class DarkThemeSwitch {
           return reverse ? '#FFFFFF' : '#7F879D';
           break;
         case 'high':
-          return reverse ? '#FFFFFF' : '#7F879D';
+          return reverse ? '#F4F4F4' : '#7F879D';
           break;
         case 'extra':
           return reverse ? '#7F879D' : '#F4F4F4';

@@ -1,3 +1,5 @@
+@import "../../design-system";
+
 :host {
   position: relative;
   display: block;
@@ -34,26 +36,30 @@
     border-radius: 10px;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.102836);
     height: 100%;
-    overflow-y: auto;
+    overflow-y: hidden;
+    position: relative;
 }
 
 .consent-header{
-    color: #134482;
-    font-size: 15px;
-  //padding-top: 20px;
-    margin: 17px auto;
-    text-align: center;
+  @extend .ds-flex-center-center;
+  //position: sticky;
+  //top: 0;
+  height: 50px;
+  background-color: #fff;
+  color: #134482;
+  font-size: 15px;
+  text-align: center;
+  border-bottom: 1px solid #B5B7BA;
 }
 
 .options-wrapper{
-    //padding-top: 20px;
     width: 100%;
+    height: calc(100% - 50px);
     overflow: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-  //padding: 0 20px;
-  box-sizing: border-box
+    box-sizing: border-box
 }
 .assistant-greeting {
   position: absolute;
