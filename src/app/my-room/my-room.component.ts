@@ -189,7 +189,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   currentPasses$ = new Subject();
 
-  currentPassesDates: WeakMap<Moment, number> = new Map();
+  currentPassesDates: Map<string, number> = new Map();
   // currentPassesDates: {[key: number]: Moment};
 
   constructor(
@@ -325,7 +325,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     this.passesService.getAggregatedPasses()
       .subscribe((res: any) => {
          res.forEach((pass, i) => {
-           this.currentPassesDates.set(pass, i);
+           this.currentPassesDates.set(new Date(pass.pass_date).toDateString(), i);
          });
       });
 
