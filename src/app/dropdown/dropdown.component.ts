@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ElementRef, Inject } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ElementRef, Inject, HostListener, ViewChild, OnChanges} from '@angular/core';
 import { Location } from '../models/Location';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { School } from '../models/School';
@@ -13,6 +13,11 @@ import {RepresentedUser} from '../navbar/navbar.component';
   styleUrls: ['./dropdown.component.scss']
 })
 export class DropdownComponent implements OnInit {
+  options: HTMLElement;
+  @ViewChild('optionsWrapper') set content(content: ElementRef<HTMLElement>) {
+    this.options = content.nativeElement;
+    this.options.scrollTop = this.scrollPosition;
+  }
 
   user: User;
   heading: string = '';
@@ -24,6 +29,7 @@ export class DropdownComponent implements OnInit {
   selectedTeacher: RepresentedUser;
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
+  scrollPosition: number;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -34,13 +40,14 @@ export class DropdownComponent implements OnInit {
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
     this.heading = data['heading'];
-    this.locations = data['locations'];
+    this.locations = data['locations'].concat(data['locations'], data['locations'], data['locations']);
     this.schools = data['schools'];
     this.teachers = data['teachers'];
     this.selectedLocation = data['selectedLocation'];
     this.selectedSchool = data['selectedSchool'];
     this.selectedTeacher = data['selectedTeacher'];
     this.user = data['user'];
+    this.scrollPosition = data['scrollPosition'];
 
   }
 
@@ -56,6 +63,17 @@ export class DropdownComponent implements OnInit {
     this._matDialogRef.backdropClick().subscribe(() => {
       this._matDialogRef.close(this.selectedTeacher);
     });
+  }
+
+  closeDropdown(location) {
+    // this.scrollPosition = this.scrollableArea()
+    this.scrollPosition = this.options.scrollTop;
+
+    const dataAfterClosing = {
+      selectedRoom: location,
+      scrollPosition: this.scrollPosition
+    }
+    this._matDialogRef.close(dataAfterClosing);
   }
 
   partOfProfile(school) {
