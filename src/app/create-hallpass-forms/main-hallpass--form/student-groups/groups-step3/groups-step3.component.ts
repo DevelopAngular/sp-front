@@ -57,13 +57,13 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
         }),
         map(( res: any) => {
 
-          console.log('Result', res);
+          // console.log('Result', res);
           const raw = XLSX.read(res.target.result, {type: 'binary'});
           const sn = raw.SheetNames[0];
           const stringCollection = raw.Sheets[sn];
           const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
           const headers = data[0];
-          console.log(data);
+          // console.log(data);
 
           return data.slice(1).map(item => item[0]);
         }),
@@ -134,7 +134,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
           if (dto.users.length) {
             this.userService.updateStudentGroup(this.editGroup.id, dto)
               .subscribe((group: StudentList) => {
-                console.log(group);
+                // console.log(group);
                 for ( const control in this.form.controls) {
                   this.form.controls[control].setValue(null);
                 }
@@ -146,9 +146,9 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   }
 
   removeGroup() {
-    this.userService.deleteStudentGroup(this.editGroup.id)
+    this.userService.deleteStudentGroupRequest(this.editGroup.id)
       .subscribe((group: StudentList) => {
-        console.log('Deleted users ====>', group);
+        // console.log('Deleted users ====>', group);
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);
         }

@@ -4,6 +4,7 @@ import { accountsReducer } from '../accounts/reducers';
 import { locationsReducer } from '../locations/reducers';
 import { dashboardDataReducer } from '../dashboard/reducers';
 import { passStatsReducer } from '../pass-stats/reducers';
+import { studentGroupsReducer } from '../student-groups/reducers';
 
 
 export interface AppState {
@@ -13,6 +14,7 @@ export interface AppState {
   readonly locations;
   readonly dashboard;
   readonly passStats;
+  readonly studentGroups;
 }
 
 export const reducers = {
@@ -21,5 +23,6 @@ export const reducers = {
   accounts: accountsReducer,
   locations: locationsReducer,
   dashboard: dashboardDataReducer,
-  passStats: passStatsReducer
+  passStats: passStatsReducer,
+  studentGroups: studentGroupsReducer
 };
