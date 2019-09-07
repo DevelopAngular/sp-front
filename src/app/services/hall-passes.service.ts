@@ -14,14 +14,20 @@ import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.st
 })
 export class HallPassesService {
 
-  pinnables$: Observable<Pinnable[]> = this.store.select(getPinnableCollection);
-  loadedPinnables$: Observable<boolean> = this.store.select(getIsLoadedPinnables);
-  isLoadingPinnables$: Observable<boolean> = this.store.select(getIsLoadingPinnables);
+  pinnables$: Observable<Pinnable[]>;
+  loadedPinnables$: Observable<boolean>;
+  isLoadingPinnables$: Observable<boolean>;
 
-  currentPinnable$: Observable<Pinnable> = this.store.select(getCurrentPinnable);
-  passStats$ = this.store.select(getPassStatsResult);
+  currentPinnable$: Observable<Pinnable>;
+  passStats$;
 
-  constructor(private http: HttpService, private store: Store<AppState>) {}
+  constructor(private http: HttpService, private store: Store<AppState>) {
+    this.pinnables$ = this.store.select(getPinnableCollection);
+    this.loadedPinnables$ = this.store.select(getIsLoadedPinnables);
+    this.isLoadingPinnables$ = this.store.select(getIsLoadingPinnables);
+    this.currentPinnable$ = this.store.select(getCurrentPinnable);
+    this.passStats$ = this.store.select(getPassStatsResult);
+  }
 
     getActivePasses() {
         return this.http.get('v1/hall_passes?active=true');

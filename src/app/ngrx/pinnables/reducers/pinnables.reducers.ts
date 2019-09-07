@@ -1,19 +1,24 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import { pinnablesInitialState } from '../states';
+import {IPinnablesState} from '../states';
 import * as pinnablesActions from '../actions';
 import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 import {Pinnable} from '../../../models/Pinnable';
 
 export const adapter: EntityAdapter<Pinnable> = createEntityAdapter<Pinnable>();
 
+export const pinnablesInitialState: IPinnablesState = adapter.getInitialState({
+  loading: false,
+  loaded: false,
+  currentPinnableId: null
+});
+
 const reducer = createReducer(
   pinnablesInitialState,
   on(pinnablesActions.getPinnables,
-      state => ({...state, loading: true, loaded: false, currentPinnableId: null})),
+      state => ({...state, loading: true, loaded: false })),
 
   on(pinnablesActions.getSuccessPinnable, (state, { pinnables }) => {
-
-    return adapter.addAll(pinnables, {...state, loading: false, loaded: true, currentPinnableId: null});
+    return adapter.addAll(pinnables, {...state, loading: false, loaded: true });
   }),
   on(pinnablesActions.postPinnablesSuccess, (state, { pinnable }) => {
     return adapter.addOne(pinnable, {...state, loading: false, loaded: true, currentPinnableId: pinnable.id});
@@ -22,7 +27,6 @@ const reducer = createReducer(
     return adapter.upsertOne(pinnable, {...state, loading: false, loaded: true, currentPinnableId: pinnable.id});
   }),
   on(pinnablesActions.removeSuccessPinnable, (state, { pinnable }) => {
-
     return adapter.removeOne(pinnable.id, {...state, loading: false, loaded: true, currentPinnableId: pinnable.id});
 
   })
