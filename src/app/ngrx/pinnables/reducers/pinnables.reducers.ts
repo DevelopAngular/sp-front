@@ -28,8 +28,8 @@ const reducer = createReducer(
   }),
   on(pinnablesActions.removeSuccessPinnable, (state, { pinnable }) => {
     return adapter.removeOne(pinnable.id, {...state, loading: false, loaded: true, currentPinnableId: pinnable.id});
-
-  })
+  }),
+  on(pinnablesActions.getPinnablesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false}))
 );
 
 export function pinnablesReducer(state: any | undefined, action: Action) {

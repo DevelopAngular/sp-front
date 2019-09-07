@@ -43,7 +43,12 @@ import {
 import {LocationsService} from './locations.service';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
-import {getStudentGroupsCollection} from '../ngrx/student-groups/states/groups-getters.state';
+import {
+  getCurrentStudentGroup,
+  getLoadedGroups,
+  getLoadingGroups,
+  getStudentGroupsCollection
+} from '../ngrx/student-groups/states/groups-getters.state';
 
 @Injectable()
 export class UserService {
@@ -92,6 +97,9 @@ export class UserService {
   };
 
   studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
+  currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
+  isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
+  isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
 
   constructor(
     private http: HttpService,
@@ -319,7 +327,7 @@ export class UserService {
 
   createStudentGroupRequest(group) {
     this.store.dispatch(postStudentGroup({group}));
-    return of(null);
+    return this.currentStudentGroup$;
   }
 
   createStudentGroup(data) {
@@ -328,6 +336,7 @@ export class UserService {
 
   updateStudentGroupRequest(id, group) {
     this.store.dispatch(updateStudentGroup({id, group}));
+    return this.currentStudentGroup$;
   }
 
   updateStudentGroup(id, body) {
@@ -336,7 +345,7 @@ export class UserService {
 
   deleteStudentGroupRequest(id) {
     this.store.dispatch(removeStudentGroup({id}));
-    return of(null);
+    return this.currentStudentGroup$;
   }
 
   deleteStudentGroup(id) {

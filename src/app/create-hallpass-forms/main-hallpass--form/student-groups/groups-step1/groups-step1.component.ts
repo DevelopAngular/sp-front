@@ -28,6 +28,9 @@ export class GroupsStep1Component implements OnInit {
   isEmptyGroups$: Observable<boolean>;
   isEmptyGroups: boolean = false;
 
+  isLoadingGroups$: Observable<boolean> = this.userService.isLoadingStudentGroups$;
+  isLoadedGroups$: Observable<boolean> = this.userService.isLoadedStudentGroups$;
+
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
 
@@ -131,7 +134,7 @@ export class GroupsStep1Component implements OnInit {
     this.selectedGroup = null;
     this.formState.data.selectedStudents = evt;
     this.formState.state = 1;
-    this.userService.getStudentGroups()
+    this.userService.getStudentGroupsRequest()
         .subscribe((groups: StudentList[]) => {
             this.groups = groups;
         });

@@ -132,9 +132,8 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
           dto.users = dto.users.map(user => user.id);
 
           if (dto.users.length) {
-            this.userService.updateStudentGroup(this.editGroup.id, dto)
+            this.userService.updateStudentGroupRequest(this.editGroup.id, dto)
               .subscribe((group: StudentList) => {
-                // console.log(group);
                 for ( const control in this.form.controls) {
                   this.form.controls[control].setValue(null);
                 }
