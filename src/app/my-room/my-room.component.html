@@ -70,6 +70,7 @@
             [style.z-index]="0"
             [showTime]="false"
             [showYear]="false"
+            [dotsDates]="currentPassesDates"
             (onSelectDate)="onDate($event)"
           ></app-calendar-picker>
         </mat-card>
@@ -77,11 +78,10 @@
 
       <div class="kiosk-mode-button"
            *ngIf="showKioskModeButton"
-           [style.box-shadow]="shadow"
+           [style.background-color]="darkTheme.getBackground('high', true)"
            (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
            (mousedown)="onPress(true)" (mouseup)="onPress(false)"
            [@pressState]="buttonState"
-           [style.background-color]="darkTheme.getBackground('high', true)"
            (click)="setRoomToKioskMode()"
       >
         <div class="ds-flex-center-center" [style.color]="darkTheme.getColor()">
@@ -89,7 +89,7 @@
           <span>Enter Kiosk Mode</span>
         </div>
         <div class="kiosk-chevron">
-          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right'})" alt="Chevron Right.svg">
+          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right', lightFill: 'Navy', darkFill: 'White'})" alt="Chevron Right.svg">
         </div>
       </div>
 

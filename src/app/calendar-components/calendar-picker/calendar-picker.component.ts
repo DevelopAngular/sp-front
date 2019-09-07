@@ -79,6 +79,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.selectedDates &&
+            changes.dotsDates &&
             changes.selectedDates.currentValue &&
             changes.selectedDates.currentValue.length  > 1) {
             this.sortedDates = _.sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m);
