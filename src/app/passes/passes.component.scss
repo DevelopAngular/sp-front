@@ -71,10 +71,6 @@
       padding-bottom: 78px;
     }
   }
-
-  div.passes-wrapper {
-    height: calc(100% - 78px);
-  }
 }
 
 .passes-wrapper {
@@ -83,7 +79,7 @@
   margin-left: auto;
   margin-right: auto;
   padding-top: 50px;
-  height: 100%;
+  height: calc(100% - 78px);
   overflow: auto;
 }
 
