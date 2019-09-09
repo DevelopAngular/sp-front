@@ -279,6 +279,18 @@ export class OverlayContainerComponent implements OnInit {
               switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
           );
       }
+    this.dialogRef.backdropClick()
+      .pipe(
+        switchMap(() => {
+          return this.roomValidButtons;
+        }),
+        filter((rvb: ValidButtons): boolean => {
+          return Object.values(rvb).every(v => !v);
+        })
+      )
+      .subscribe(() => {
+      this.dialogRef.close();
+    });
   }
 
   buildForm() {
