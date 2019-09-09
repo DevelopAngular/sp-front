@@ -57,7 +57,7 @@ export class LocationsService {
     }
 
     updateLocation(id, data) {
-      console.log(data);
+      // console.log(data);
       return this.http.patch(`v1/locations/${id}`, data);
     }
 

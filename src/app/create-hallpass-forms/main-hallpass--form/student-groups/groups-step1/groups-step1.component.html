@@ -31,7 +31,7 @@
                   <span>No student groups</span>
               </div>
             </div>
-            <div *ngIf="groups?.length" class="list-of-groups">
+            <div *ngIf="groups?.length && isLoadedGroups$ | async" class="list-of-groups">
               <mat-list>
                 <div *ngFor="let group of groups">
                   <mat-list-item #_item
