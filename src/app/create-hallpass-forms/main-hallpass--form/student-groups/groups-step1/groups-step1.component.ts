@@ -8,6 +8,7 @@ import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operat
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../../../services/locations.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-groups-step1',
@@ -35,7 +36,7 @@ export class GroupsStep1Component implements OnInit {
   // public selectedStudents: User[] = [];
 
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private locationService: LocationsService,
     public sanitizer: DomSanitizer
 
@@ -102,11 +103,10 @@ export class GroupsStep1Component implements OnInit {
   }
 
   selectGroup(group, evt: Event) {
-
     if (!group) {
       this.selectedGroup = null;
     } else if ( !this.selectedGroup || (this.selectedGroup && (this.selectedGroup.id !== group.id)) ) {
-      this.selectedGroup = group;
+      this.selectedGroup = _.cloneDeep(group);
       this.selectedStudents = this.selectedGroup.users;
     } else {
       this.selectedGroup = null;
@@ -134,10 +134,6 @@ export class GroupsStep1Component implements OnInit {
     this.selectedGroup = null;
     this.formState.data.selectedStudents = evt;
     this.formState.state = 1;
-    this.userService.getStudentGroupsRequest()
-        .subscribe((groups: StudentList[]) => {
-            this.groups = groups;
-        });
   }
 
   back() {
