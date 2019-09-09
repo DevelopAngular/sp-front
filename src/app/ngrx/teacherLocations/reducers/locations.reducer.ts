@@ -1,10 +1,15 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import {locsInitialState} from '../state';
+import {LocationsState} from '../state';
 import * as locsActions from '../actions';
 import {Location} from '../../../models/Location';
 import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 
 export const adapter: EntityAdapter<Location> = createEntityAdapter<Location>();
+
+export const locsInitialState: LocationsState = adapter.getInitialState({
+  loading: false,
+  loaded: false
+});
 
 
 const reducer = createReducer(
@@ -15,6 +20,6 @@ const reducer = createReducer(
   })
 );
 
-export function locationsReducer(state: any | undefined, action: Action) {
+export function teacherLocationsReducer(state: any | undefined, action: Action) {
   return reducer(state, action);
 }

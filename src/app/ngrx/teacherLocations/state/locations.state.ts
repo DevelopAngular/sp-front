@@ -6,9 +6,3 @@ export interface LocationsState extends EntityState<Location> {
   loaded: boolean;
 }
 
-export const locsInitialState: LocationsState = {
-  entities: {},
-  ids: [],
-  loading: false,
-  loaded: false
-}

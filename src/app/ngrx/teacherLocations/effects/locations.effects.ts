@@ -14,7 +14,7 @@ export class LocationsEffects {
       .pipe(
         ofType(locsActions.getLocsWithTeachers),
         concatMap((action: any) => {
-          return this.locationService.getLocationsWithManyTeachers(action.teachers)
+          return this.locationService.getLocationsWithTeacher(action.teacher)
             .pipe(
               map((locations: Location[]) => {
                 return locsActions.getLocsWithTeachersSuccess({locs: locations});
