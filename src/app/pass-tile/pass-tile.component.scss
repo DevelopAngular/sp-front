@@ -3,6 +3,10 @@
     cursor: default;
     width: 100%;
   }
+
+  div.names-overlay {
+    width: 100%;
+  }
 }
 
 @media all and (max-width: 425px) and (min-width: 360px) {
@@ -13,10 +17,6 @@
   div.tile-wrapper {
     width: 157px;
     height: 95px;
-  }
-
-  div.names-overlay {
-    width: 100%;
   }
 }
 

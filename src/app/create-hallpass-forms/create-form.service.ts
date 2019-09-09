@@ -25,7 +25,7 @@ export class CreateFormService {
   }
 
   getPinnable(filter?: boolean) {
-    return this.hallPassService.getPinnables()
+    return this.hallPassService.pinnables$
       .pipe(
         map((pins) => {
           if (filter) {
@@ -34,9 +34,7 @@ export class CreateFormService {
             return pins;
           }
         })
-      )
-      .toPromise()
-      .then(json => json.map(raw => Pinnable.fromJSON(raw)));
+      );
   }
 
   seen() {

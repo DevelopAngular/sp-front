@@ -57,12 +57,14 @@
   div.hall-monitor-wrapper {
     max-width: 100%;
     overflow: auto;
+    min-height: calc(100vh - 78px);
   }
 
   div.hall-monitor-bottom {
     padding-top: 25px;
     width: 68%;
     margin: auto;
+    padding-bottom: 68px;
   }
 
   img.back-button-bottom {
@@ -91,7 +93,7 @@
       }
 
       div.hall-monitor-bottom {
-        min-height: 100vh;
+        //min-height: 100vh;
       }
     }
   }

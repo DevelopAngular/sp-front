@@ -111,7 +111,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     if (this.screenService.isDeviceMid && !this.screenService.isDeviceSmallExtra) {
       this.grid_template_columns = '157px';
     }
-    return this.sanitizer.bypassSecurityTrustStyle(`repeat(auto-fill, minmax(${this.grid_template_columns}, .3fr))`);
+    return this.sanitizer.bypassSecurityTrustStyle(`repeat(auto-fill, ${this.grid_template_columns})`);
   }
 
   get gridGap() {

@@ -305,7 +305,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       }),
       switchMap(([cu, eu]) => {
         return combineLatest(
-          this.locationService.getLocationsWithTeacher(this.user.isAssistant() ? this.effectiveUser.user : this.user ),
+          this.locationService.getLocationsWithTeacherRequest(this.user.isAssistant() ? this.effectiveUser.user : this.user ),
           this.locationService.myRoomSelectedLocation$
         );
       }),
