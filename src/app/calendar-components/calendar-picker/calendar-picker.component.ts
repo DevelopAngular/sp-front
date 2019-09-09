@@ -291,7 +291,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
                     disabled: this.min ? this.isBeforeMinDate(d) : false,
                     selected: this.isSelected(d),
                     mDate: d,
-                    isDot: this.dotsDates.has(d.toDate().toDateString()),
+                    isDot: this.dotsDates ? this.dotsDates.has(d.toDate().toDateString()) : false
                 };
             });
     }
