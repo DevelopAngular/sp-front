@@ -77,9 +77,10 @@ import {AssistantsEffects} from './ngrx/accounts/nested-states/assistants/effect
 import {StudentsEffects} from './ngrx/accounts/nested-states/students/effects';
 import {CountAccountsEffects} from './ngrx/accounts/nested-states/count-accounts/effects';
 import {LocationsEffects} from './ngrx/locations/effects';
-import {DashboardEffects} from './ngrx/dashboard/effects/dashboard.effects';
 import {PassStatsEffects} from './ngrx/pass-stats/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {DashboardEffects} from './ngrx/dashboard/effects';
+import {StudentGroupsEffects} from './ngrx/student-groups/effects';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -204,7 +205,8 @@ const appRoutes: Routes = [
       CountAccountsEffects,
       LocationsEffects,
       DashboardEffects,
-      PassStatsEffects
+      PassStatsEffects,
+      StudentGroupsEffects
     ]),
     StoreDevtoolsModule.instrument({})
   ],

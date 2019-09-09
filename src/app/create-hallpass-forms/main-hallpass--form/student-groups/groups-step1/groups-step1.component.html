@@ -20,10 +20,10 @@
         </div>
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
           <div  class="goups-container">
-            <div *ngIf="!groups" class="loading-theme_blue-gray spinner ds-flex-center-center">
+            <div *ngIf="isLoadingGroups$ | async" class="loading-theme_blue-gray spinner ds-flex-center-center">
               <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
             </div>
-            <div class="content-left_placeholder" *ngIf="groups && !groups.length">
+            <div class="content-left_placeholder" *ngIf="groups && !groups.length && !(isLoadingGroups$ | async)">
               <div class="no-groups-dummy-image">
                   <img  [src]="'./assets/emptyStates/undraw_group_selfie_ijc6.svg'" alt="undraw_group_selfie_ijc6.svg">
               </div>
@@ -138,7 +138,8 @@
       [fontSize]="'14px'"
       [cursor]="'pointer'"
       (buttonClick)="nextStep()"
-    >Next ({{selectedStudents.length}})</app-gradient-button>
+    >Next ({{selectedStudents.length}})
+    </app-gradient-button>
   </div>
 </div>
 

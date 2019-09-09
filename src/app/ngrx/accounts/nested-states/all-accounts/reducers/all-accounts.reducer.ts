@@ -2,9 +2,14 @@ import { Action, createReducer, on } from '@ngrx/store';
 import * as allAccountsActions from '../actions';
 import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 import { User } from '../../../../../models/User';
-import { allAccountsInitialState } from '../states';
+import {AllAccountsState} from '../states';
 
 export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
+
+export const allAccountsInitialState: AllAccountsState = adapter.getInitialState({
+  loading: false,
+  loaded: false
+});
 
 const reducer = createReducer(
     allAccountsInitialState,

@@ -35,6 +35,8 @@ import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {HallPass} from '../models/HallPass';
 import {HallPassesService} from '../services/hall-passes.service';
+import {Moment} from 'moment';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -188,7 +190,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   currentPasses$ = new Subject();
 
-  currentPassesDates: moment.Moment[];
+  currentPassesDates: Map<string, number> = new Map();
+  holdScrollPosition: number = 0;
+  // currentPassesDates: {[key: number]: Moment};
 
   constructor(
       private _zone: NgZone,
@@ -322,10 +326,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
     this.passesService.getAggregatedPasses()
       .subscribe((res: any) => {
-       this.currentPassesDates = res.map(pass => {
-         return moment(pass.pass_date);
-       });
-    });
+         res.forEach((pass, i) => {
+           this.currentPassesDates.set(new Date(pass.pass_date).toDateString(), i);
+         });
+      });
 
     this.hasPasses = combineLatest(
       this.activePasses.length$,
@@ -416,6 +420,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   displayOptionsPopover(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
       // const target = new ElementRef(evt.currentTarget);
+      UNANIMATED_CONTAINER.next(true);
       const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
@@ -423,7 +428,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           'heading': 'CHANGE ROOM',
           'locations': this.choices,
           'selectedLocation': this.selectedLocation,
-          'trigger': target
+          'trigger': target,
+          'scrollPosition': this.holdScrollPosition
         }
       });
 
@@ -435,10 +441,17 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         this.optionsOpen = false;
       });
 
-      optionDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
-        this.selectedLocation = data === 'all_rooms' ? null : data;
-        this.selectedLocation$.next(data !== 'all_rooms' ? [data] : this.roomOptions);
-      });
+      optionDialog.afterClosed()
+        .pipe(
+          tap(() => UNANIMATED_CONTAINER.next(false)),
+          filter(res => !!res)
+        )
+        .subscribe(data => {
+          console.log(data);
+          this.holdScrollPosition = data.scrollPosition;
+          this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
+          this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
+        });
     }
   }
 

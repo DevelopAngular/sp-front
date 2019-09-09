@@ -1,10 +1,16 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import {reportsInitialState} from '../states';
+import {IGetReportsRequest} from '../states';
 import * as reportsActions from '../actions';
 import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 import {Report} from '../../../models/Report';
 
 export const adapter: EntityAdapter<Report> = createEntityAdapter<Report>();
+
+export const reportsInitialState: IGetReportsRequest = adapter.getInitialState({
+  loading: false,
+  loaded: false,
+  reportsFound: []
+});
 
 const reducer = createReducer(
   reportsInitialState,

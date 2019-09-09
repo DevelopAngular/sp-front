@@ -41,6 +41,14 @@ import {
   getStudentsAccountsCollection
 } from '../ngrx/accounts/nested-states/students/states';
 import {LocationsService} from './locations.service';
+import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
+import {StudentList} from '../models/StudentList';
+import {
+  getCurrentStudentGroup,
+  getLoadedGroups,
+  getLoadingGroups,
+  getStudentGroupsCollection
+} from '../ngrx/student-groups/states/groups-getters.state';
 
 @Injectable()
 export class UserService {
@@ -87,6 +95,11 @@ export class UserService {
     student: this.store.select(getLoadingStudents),
     assistant: this.store.select(getLoadingAssistants)
   };
+
+  studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
+  currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
+  isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
+  isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
 
   constructor(
     private http: HttpService,
@@ -302,16 +315,37 @@ export class UserService {
   deleteRepresentedUser(id: number, repr_user: User) {
     return this.http.delete(`v1/users/${id}/represented_users/${repr_user.id}`);
   }
+
+  getStudentGroupsRequest() {
+    this.store.dispatch(getStudentGroups());
+    return this.studentGroups$;
+  }
+
   getStudentGroups() {
       return this.http.get('v1/student_lists');
+  }
+
+  createStudentGroupRequest(group) {
+    this.store.dispatch(postStudentGroup({group}));
+    return this.currentStudentGroup$;
   }
 
   createStudentGroup(data) {
       return this.http.post('v1/student_lists', data);
   }
 
+  updateStudentGroupRequest(id, group) {
+    this.store.dispatch(updateStudentGroup({id, group}));
+    return this.currentStudentGroup$;
+  }
+
   updateStudentGroup(id, body) {
       return this.http.patch(`v1/student_lists/${id}`, body);
+  }
+
+  deleteStudentGroupRequest(id) {
+    this.store.dispatch(removeStudentGroup({id}));
+    return this.currentStudentGroup$;
   }
 
   deleteStudentGroup(id) {

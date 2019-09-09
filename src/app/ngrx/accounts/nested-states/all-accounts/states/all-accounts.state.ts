@@ -6,10 +6,4 @@ export interface AllAccountsState extends EntityState<User> {
   loaded: boolean;
 }
 
-export const allAccountsInitialState: AllAccountsState = {
-  entities: {},
-  ids: [],
-  loading: false,
-  loaded: false
-};
 

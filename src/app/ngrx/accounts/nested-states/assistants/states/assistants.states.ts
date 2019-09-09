@@ -6,9 +6,3 @@ export interface AssistantsStates extends EntityState<User> {
   loaded: boolean;
 }
 
-export const assistantsInitialState: AssistantsStates = {
-  entities: {},
-  ids: [],
-  loading: false,
-  loaded: false
-};

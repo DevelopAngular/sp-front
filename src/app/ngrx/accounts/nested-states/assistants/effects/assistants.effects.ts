@@ -39,7 +39,7 @@ export class AssistantsEffects {
                   };
                 });
               }),
-              map((users: User[]) => {
+              map((users) => {
                 return assistantsActions.getAssistantsSuccess({assistants: users});
               }),
               catchError(error => of(assistantsActions.getAssistantsFailure({errorMessage: error.message})))

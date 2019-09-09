@@ -1,10 +1,15 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import {assistantsInitialState} from '../states';
+import {AssistantsStates} from '../states';
 import * as assistantsActions from '../actions';
 import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 import {User} from '../../../../../models/User';
 
 export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
+
+export const assistantsInitialState: AssistantsStates = adapter.getInitialState({
+  loading: false,
+  loaded: false
+});
 
 const reducer = createReducer(
   assistantsInitialState,

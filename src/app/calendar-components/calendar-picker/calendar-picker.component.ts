@@ -3,12 +3,14 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import {bumpIn} from '../../animations';
 import {BehaviorSubject, Subject} from 'rxjs';
+import {Moment} from 'moment';
 
 export interface CalendarDate {
     mDate: moment.Moment;
     disabled?: boolean;
     selected?: boolean;
     today?: boolean;
+    isDot?: boolean;
 }
 
 @Component({
@@ -28,7 +30,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     @Input() showYear: boolean = true;
     @Input() range: boolean;
     @Input() rangeWeeks: boolean;
-    @Input() dotsDates: moment.Moment[];
+    @Input() dotsDates: Map<string, number>;
+    // @Input() dotsDates: moment.Moment[];
 
     @Input() hoveredDates: moment.Moment[] = [];
 
@@ -76,19 +79,12 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.selectedDates &&
+            changes.dotsDates &&
             changes.selectedDates.currentValue &&
             changes.selectedDates.currentValue.length  > 1) {
             this.sortedDates = _.sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m);
             this.generateCalendar();
         }
-    }
-
-    isDots(date: moment.Moment) {
-      if (this.dotsDates) {
-        return _.findIndex(this.dotsDates, (selectedDate) => {
-          return moment(date).isSame(selectedDate, 'day');
-        }) > -1;
-      }
     }
 
     onPress(press: boolean): void {
@@ -286,14 +282,16 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         const firstOfMonth = moment(currentMoment).startOf('month').day();
         const firstDayOfGrid = moment(currentMoment).startOf('month').subtract(firstOfMonth, 'days');
         const start = firstDayOfGrid.date();
+
         return _.range(start, start + 42)
             .map((date: number): CalendarDate => {
                 const d = moment(firstDayOfGrid).date(date);
-                return {
+              return {
                     today: this.isToday(d),
                     disabled: this.min ? this.isBeforeMinDate(d) : false,
                     selected: this.isSelected(d),
                     mDate: d,
+                    isDot: this.dotsDates.has(d.toDate().toDateString()),
                 };
             });
     }
