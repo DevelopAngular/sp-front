@@ -517,25 +517,31 @@ export class OverlayContainerComponent implements OnInit {
 
         forkJoin(deleteRequest$).subscribe();
       }
-      const locationsToDb$ = this.folderData.roomsInFolder.map(location => {
-        let id;
-        let data;
-        if (_.isString(location.id)) {
-          location.category = this.folderData.folderName;
-          location.teachers = location.teachers.map(t => t.id);
-          return this.locationService.createLocation(location).pipe(switchMap((loc: Location) => {
-            return this.locationService.updateLocation(loc.id, location);
-          }));
-        } else {
-          id = location.id;
-          data = location;
-          data.category = this.folderData.folderName;
-          if (data.teachers) {
-            data.teachers = data.teachers.map(teacher => +teacher.id);
+      let locationsToDb$;
+      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit);
+      if (touchedRooms.length) {
+        locationsToDb$ = touchedRooms.map(location => {
+          let id;
+          let data;
+          if (_.isString(location.id)) {
+            location.category = this.folderData.folderName;
+            location.teachers = location.teachers.map(t => t.id);
+            return this.locationService.createLocation(location).pipe(switchMap((loc: Location) => {
+              return this.locationService.updateLocation(loc.id, location);
+            }));
+          } else {
+            id = location.id;
+            data = location;
+            data.category = this.folderData.folderName;
+            if (data.teachers) {
+              data.teachers = data.teachers.map(teacher => +teacher.id);
+            }
+            return this.locationService.updateLocation(id, data);
           }
-          return this.locationService.updateLocation(id, data);
-        }
-      });
+        });
+      } else {
+        locationsToDb$ = of(null);
+      }
 
       forkJoin(locationsToDb$).pipe(switchMap(locations => {
         const newFolder = {
@@ -640,21 +646,34 @@ export class OverlayContainerComponent implements OnInit {
 
   newRoomInFolder(room: RoomData) {
       this.oldFolderData = _.cloneDeep(this.folderData);
-      this.folderData.roomsInFolder.push({...this.normalizeRoomData(room), ...this.normalizeAdvOptData(room)});
+      this.folderData.roomsInFolder.push({
+        ...this.normalizeRoomData(room),
+        ...this.normalizeAdvOptData(room),
+        isEdit: true
+      });
       this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
 
   editRoomFolder(room: RoomData) {
     this.oldFolderData = _.cloneDeep(this.folderData);
     this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
-    this.folderData.roomsInFolder.push({...this.normalizeRoomData(room), ...this.normalizeAdvOptData(room)});
+    this.folderData.roomsInFolder.push({
+      ...this.normalizeRoomData(room),
+      ...this.normalizeAdvOptData(room),
+      isEdit: true
+    });
     this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
 
   addToFolder(rooms: any[]) {
     this.oldFolderData = _.cloneDeep(this.folderData);
     this.pinnableToDeleteIds = rooms.map(pin => +pin.id);
-    const locationsToAdd = rooms.map(room => room.location);
+    const locationsToAdd = rooms.map(room => {
+      return {
+        ...room.location,
+        isEdit: true
+      };
+    });
     this.folderData.roomsInFolder = [...locationsToAdd, ...this.folderData.roomsInFolder];
     this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
@@ -702,7 +721,11 @@ export class OverlayContainerComponent implements OnInit {
       if (roomData.timeLimit) {
         room.max_allowed_time = roomData.timeLimit;
       }
-      return {...room, ...this.normalizeAdvOptData(roomData)};
+      return {
+        ...room,
+        ...this.normalizeAdvOptData(roomData),
+        isEdit: true
+      };
     });
   }
 
