@@ -108,7 +108,6 @@ export class LocationTableComponent implements OnInit {
     if (!this.locationService.focused.value) {
       this.locationService.focused.next(true);
     }
-
     if (this.staticChoices && this.staticChoices.length) {
       this.choices = this.staticChoices;
         if (!this.choices.length) {
@@ -139,7 +138,7 @@ export class LocationTableComponent implements OnInit {
         } else if (this.forKioskMode) {
             this.locationService.searchLocationsWithConfig(url)
                 .toPromise().then(res => {
-                    this.choices = res.results.filter(loc => !loc.restricted);
+                    this.choices = res.results.filter(loc => loc);
             });
         } else {
             this.locationService.searchLocationsWithConfig(url)
