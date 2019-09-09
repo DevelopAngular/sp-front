@@ -13,6 +13,7 @@ import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
 import {DeviceDetection} from '../../device-detection.helper';
+import {HallPassesService} from '../../services/hall-passes.service';
 
 
 export enum Role { Teacher = 1, Student = 2 }
@@ -88,6 +89,7 @@ export class MainHallPassFormComponent implements OnInit {
     private dataService: DataService,
     private locationsService: LocationsService,
     private screenService: ScreenService,
+    private passesService: HallPassesService
   ) {}
 
   ngOnInit() {
@@ -176,13 +178,13 @@ export class MainHallPassFormComponent implements OnInit {
       });
 
       combineLatest(
-          this.formService.getPinnable(),
-          this.locationsService.getLocationsWithTeacher(this.user))
+          this.passesService.getPinnablesRequest(),
+          this.locationsService.getLocationsWithTeacherRequest(this.user))
           .pipe(filter(() => this.isStaff),
               map(([pinnables, locations]) => {
                   const filterPinnables = pinnables.filter(pin => {
                       return locations.find(loc => {
-                          return (loc.category ? loc.category : loc.title) === pin.title;
+                          return (loc.category ? loc.category : loc.title) === pin.category;
                       });
                   });
                   return filterPinnables.map(fpin => {
@@ -207,8 +209,7 @@ export class MainHallPassFormComponent implements OnInit {
       this.dialogRef.close(evt);
       return;
     } else {
-      console.log('STEP EVENT ===>', evt);
-
+      // console.log('STEP EVENT ===>', evt);
       this.FORM_STATE = evt;
     }
     this.setFormSize();
