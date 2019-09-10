@@ -58,6 +58,7 @@
     <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices; else noLocsDummy">
       <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
       <div class="choices" (scroll)="onScroll($event)">
+<!--        <div>test/{{choices.length}}</div>-->
         <app-location-cell
                 *ngFor="let choice of choices"
                 class="choice"

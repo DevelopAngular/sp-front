@@ -23,6 +23,7 @@ import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
+import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
 
 declare const window;
 
@@ -757,7 +758,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
   syncNow() {
     this.adminService.syncNow().subscribe();
-      this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
+    this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
   }
 
   private addUserLocations(users) {
@@ -857,6 +858,29 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
         return record;
     });
+
+  }
+
+  syncOrgUnits(evt: OrgUnit[]) {
+
+    const syncBody = {};
+          syncBody['is_enabled'] = true;
+
+    evt.forEach((item: OrgUnit) => {
+      syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
+    });
+    console.log(syncBody);
+
+    this.adminService.updateGSuiteOrgs(syncBody)
+      .pipe(
+        switchMap(() => {
+          return this.adminService.updateOnboardProgress('setup_accounts:end');
+        })
+      )
+      .subscribe((res) => {
+        console.log(res);
+      });
+
 
   }
 }
