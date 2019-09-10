@@ -387,7 +387,8 @@ body {
       html {
         height: 100vh;
         max-height: 100vh;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
       }
 
       body {
