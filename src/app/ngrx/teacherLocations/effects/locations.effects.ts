@@ -7,7 +7,7 @@ import {Location} from '../../../models/Location';
 import {of} from 'rxjs';
 
 @Injectable()
-export class LocationsEffects {
+export class TeacherLocationsEffects {
 
   getLocationsWithTeachers$ = createEffect(() => {
     return this.actions$

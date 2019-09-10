@@ -40,13 +40,13 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.locationService.searchLocationsWithConfig('v1/locations?limit=1000&starred=false')
+    this.locationService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false')
         .pipe(takeUntil(this.destroy$))
         .subscribe(res => {
-          this.allRooms = res.results;
+          this.allRooms = res;
         });
 
-    this.locationService.getLocationsWithFilder()
+    this.locationService.getLocationsWithFolder()
         .pipe(takeUntil(this.destroy$))
         .subscribe((res: any) => {
            this.categories = res.categories;
