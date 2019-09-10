@@ -78,7 +78,7 @@
 
       <div class="kiosk-mode-button"
            *ngIf="showKioskModeButton"
-           [style.background-color]="darkTheme.getBackground('high', true)"
+           [style.background-color]="(darkTheme.isEnabled$ | async) ? '#134482' : '#F4F4F4'"
            (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
            (mousedown)="onPress(true)" (mouseup)="onPress(false)"
            [@pressState]="buttonState"

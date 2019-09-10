@@ -87,8 +87,8 @@
   }
   ::ng-deep .mat-row {
     .mat-cell {
-      cursor:pointer;
       color: #767676;
+      cursor:pointer;
     }
     &:hover {
       background-color: #0991C3;
@@ -114,6 +114,7 @@
   ::ng-deep .mat-row {
     .mat-cell {
       color: #767676;
+      cursor: pointer;
     }
     &:hover {
       background-color: #ECF1FF;
