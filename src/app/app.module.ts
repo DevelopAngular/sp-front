@@ -80,7 +80,9 @@ import {PassStatsEffects} from './ngrx/pass-stats/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {DashboardEffects} from './ngrx/dashboard/effects';
 import {StudentGroupsEffects} from './ngrx/student-groups/effects';
-import {LocationsEffects} from './ngrx/teacherLocations/effects';
+import {TeacherLocationsEffects} from './ngrx/teacherLocations/effects';
+import {LocationsEffects} from './ngrx/locations/effects';
+import {FavoriteLocationsEffects} from './ngrx/favorite-locations/effects';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -203,10 +205,12 @@ const appRoutes: Routes = [
       AssistantsEffects,
       StudentsEffects,
       CountAccountsEffects,
-      LocationsEffects,
+      TeacherLocationsEffects,
       DashboardEffects,
       PassStatsEffects,
-      StudentGroupsEffects
+      StudentGroupsEffects,
+      LocationsEffects,
+      FavoriteLocationsEffects
     ]),
     StoreDevtoolsModule.instrument({})
   ],

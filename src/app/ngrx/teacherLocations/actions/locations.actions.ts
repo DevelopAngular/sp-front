@@ -8,3 +8,4 @@ export const getLocsWithTeachers = createAction(`[${LOCATIONS}] Get Locs With Te
 export const getLocsWithTeachersSuccess = createAction(`[${LOCATIONS}] Get Locs With Teachers Success`, props<{locs: Location[]}>());
 export const getLocsWithTeachersFailure = createAction(`[${LOCATIONS}] Get Locs With Teachers Failure`, props<{errorMessage: string}>());
 
+

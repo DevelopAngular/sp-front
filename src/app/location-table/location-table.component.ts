@@ -65,38 +65,38 @@ export class LocationTableComponent implements OnInit {
 
   isFocused: boolean;
 
-  @HostListener('scroll', ['$event'])
-  onScroll(event) {
-    let tracker = event.target;
-
-    let limit = tracker.scrollHeight - tracker.clientHeight;
-    if (event.target.scrollTop < limit) {
-      this.leftShadow = true;
-    }
-    if (event.target.scrollTop === limit) {
-      this.leftShadow = false;
-    }
-    if (event.target.scrollTop === limit && this.nextChoices) {
-        this.locationService.searchLocationsWithConfig(this.nextChoices)
-      .pipe(finalize(() => this.leftShadow = true))
-        .toPromise().then(p => {
-          p.results.map(element => this.choices.push(element));
-          this.nextChoices = p.next;
-        });
-    }
-  }
-
-  @HostListener('scroll', ['$event'])
-  leftScroll(event) {
-      const tracker = event.target;
-      const limit = tracker.scrollHeight - tracker.clientHeight;
-      if (event.target.scrollTop < limit) {
-          this.rightShadow = true;
-      }
-      if (event.target.scrollTop === limit) {
-          this.rightShadow = false;
-      }
-  }
+  // @HostListener('scroll', ['$event'])
+  // onScroll(event) {
+  //   let tracker = event.target;
+  //
+  //   let limit = tracker.scrollHeight - tracker.clientHeight;
+  //   if (event.target.scrollTop < limit) {
+  //     this.leftShadow = true;
+  //   }
+  //   if (event.target.scrollTop === limit) {
+  //     this.leftShadow = false;
+  //   }
+  //   if (event.target.scrollTop === limit && this.nextChoices) {
+  //       this.locationService.searchLocationsWithConfig(this.nextChoices)
+  //     .pipe(finalize(() => this.leftShadow = true))
+  //       .toPromise().then(p => {
+  //         p.results.map(element => this.choices.push(element));
+  //         this.nextChoices = p.next;
+  //       });
+  //   }
+  // }
+  //
+  // @HostListener('scroll', ['$event'])
+  // leftScroll(event) {
+  //     const tracker = event.target;
+  //     const limit = tracker.scrollHeight - tracker.clientHeight;
+  //     if (event.target.scrollTop < limit) {
+  //         this.rightShadow = true;
+  //     }
+  //     if (event.target.scrollTop === limit) {
+  //         this.rightShadow = false;
+  //     }
+  // }
 
   constructor(
       private http: HttpService,
@@ -111,12 +111,8 @@ export class LocationTableComponent implements OnInit {
 
     if (this.staticChoices && this.staticChoices.length) {
       this.choices = this.staticChoices;
-        if (!this.choices.length) {
-          this.noChoices = true;
-        } else {
-          this.noChoices = false;
-        }
-        this.mainContentVisibility = true;
+      this.noChoices = !this.choices.length;
+      this.mainContentVisibility = true;
     } else {
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
@@ -127,39 +123,29 @@ export class LocationTableComponent implements OnInit {
         if (this.mergedAllRooms) {
             this.mergeLocations(url, this.withMergedStars)
                 .subscribe(res => {
-                    this.choices = res
-                  if (!this.choices.length) {
-                    this.noChoices = true;
-                  } else {
-                    this.noChoices = false;
-                  }
-                  this.mainContentVisibility = true;
+                    this.choices = res;
+                    this.noChoices = !this.choices.length;
+                    this.mainContentVisibility = true;
 
                 });
         } else if (this.forKioskMode) {
-            this.locationService.searchLocationsWithConfig(url)
-                .toPromise().then(res => {
-                    this.choices = res.results.filter(loc => !loc.restricted);
-            });
+            this.locationService.getLocationsWithConfigRequest(url)
+                .subscribe(res => {
+                    this.choices = res.filter(loc => !loc.restricted);
+                });
         } else {
-            this.locationService.searchLocationsWithConfig(url)
-                .toPromise().then(p => {
-                  this.choices = p.results;
-                  // this.choices = p.results.concat(p.results,p.results,p.results,p.results);
-                  this.nextChoices = p.next;
-              if (!this.choices.length) {
-                this.noChoices = true;
-              } else {
-                this.noChoices = false;
-              }
-              this.mainContentVisibility = true;
+            this.locationService.getLocationsWithConfigRequest(url)
+                .subscribe(p => {
+                  this.choices = p;
+                  this.noChoices = !this.choices.length;
+                  this.mainContentVisibility = true;
             });
         }
 
         this.isFocused = this.locationService.focused.value;
     }
-    if (this.type==='location'){
-      this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
+    if (this.type === 'location') {
+      this.locationService.getFavoriteLocationsRequest().subscribe((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
         if (this.isFavoriteForm) {
             this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
@@ -175,7 +161,6 @@ export class LocationTableComponent implements OnInit {
   }
 
   updateOrderLocation(locations) {
-    return;
     const body = {'locations': locations.map(loc => loc.id)};
     this.locationService.updateFavoriteLocations(body).subscribe((res: number[]) => {
       this.onUpdate.emit(res);
@@ -184,11 +169,7 @@ export class LocationTableComponent implements OnInit {
 
 
   onSearch(search: string) {
-    // this.noChoices = false;
     this.search = search.toLowerCase();
-    // if(this.staticChoices){
-    //   this.choices = this.staticChoices.filter(element => {return (element.display_name.toLowerCase().includes(search) || element.first_name.toLowerCase().includes(search) || element.last_name.toLowerCase().includes(search))})
-    // } else{
       if (search !== '') {
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
@@ -198,94 +179,81 @@ export class LocationTableComponent implements OnInit {
             +'&search=' +search
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
 
-        this.locationService.searchLocationsWithConfig(url)
+        this.locationService.searchLocationsRequest(url)
           .pipe(
             map((locs: any) => {
               if (this.forKioskMode) {
-                return {results: locs.results.filter(loc => !loc.restricted)};
+                return locs.filter(loc => !loc.restricted);
               } else {
                 return locs;
               }
             })
           )
-          .toPromise()
-          .then(p => {
+          .subscribe(p => {
             this.hideFavorites = true;
               const filtFevLoc = _.filter(this.starredChoices, (item => {
                   return item.title.toLowerCase().includes(this.search);
               }));
-            // this.staticChoices = null;
+
             this.choices = this.searchExceptFavourites && !this.forKioskMode
-                            ? [...this.filterResults(p.results)]
-                            : [...filtFevLoc, ...this.filterResults(p.results)];
-          })
-          .then(() => {
-            if (!this.choices.length) {
-              this.noChoices = true;
-            } else {
-              this.noChoices = false;
-            }
+                            ? [...this.filterResults(p)]
+                            : [...filtFevLoc, ...this.filterResults(p)];
+            this.noChoices = !this.choices.length;
           });
       } else {
         if (this.staticChoices && this.staticChoices.length) {
           this.choices = this.staticChoices;
         } else {
-          const url = 'v1/'
-              +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
-                  +(!!this.category ? ('?category=' +this.category +'&') : '?')
-              ))
-              +'limit=1000'
-              +(this.type==='location'?'&starred=false':'');
-          if (this.mergedAllRooms) {
-            this.mergeLocations(url, this.withMergedStars)
-                .pipe(
-                  map((locs: any) => {
-                    if (this.forKioskMode) {
-                      return {results: locs.results.filter(loc => !loc.restricted)};
-                    } else {
-                      return locs;
-                    }
-                  })
-                )
-                .subscribe(res => {
-                  this.choices = res;
-                  this.hideFavorites = false;
-                  if (!this.choices.length) {
-                    this.noChoices = true;
-                  } else {
-                    this.noChoices = false;
-                  }
-                });
-          } else {
-              this.locationService.searchLocationsWithConfig(url)
-                .pipe(
-                  map((locs: any) => {
-                    if (this.forKioskMode) {
-                      return {results: locs.results.filter(loc => !loc.restricted)};
-                    } else {
-                      return locs;
-                    }
-                  })
-                )
-                .toPromise()
-                .then(p => {
-                    if (this.staticChoices) {
-                        this.choices = this.filterResults(this.staticChoices);
-                    } else {
-                        this.hideFavorites = false;
-                        this.choices = _.uniqBy([...p.results, ...this.starredChoices], 'id');
-                    }
-                    this.nextChoices = p.next;
-                    this.search = '';
-                })
-                .then(() => {
-                  if (!this.choices.length) {
-                    this.noChoices = true;
-                  } else {
-                    this.noChoices = false;
-                  }
-                });
-          }
+          this.locationService.locations$.subscribe(res => {
+            this.choices = res;
+            this.hideFavorites = false;
+            this.noChoices = !this.choices.length;
+          });
+          // const url = 'v1/'
+          //     +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
+          //         +(!!this.category ? ('?category=' +this.category +'&') : '?')
+          //     ))
+          //     +'limit=1000'
+          //     +(this.type==='location'?'&starred=false':'');
+          // if (this.mergedAllRooms) {
+          //   this.mergeLocations(url, this.withMergedStars)
+          //       .pipe(
+          //         map((locs: any) => {
+          //           if (this.forKioskMode) {
+          //             return locs.filter(loc => !loc.restricted);
+          //           } else {
+          //             return locs;
+          //           }
+          //         })
+          //       )
+          //       .subscribe(res => {
+          //         this.choices = res;
+          //         this.hideFavorites = false;
+          //         this.noChoices = !this.choices.length;
+          //
+          //       });
+          // } else {
+          //     this.locationService.getLocationsWithConfigRequest(url)
+          //       .pipe(
+          //         map((locs: any) => {
+          //           if (this.forKioskMode) {
+          //             return locs.filter(loc => !loc.restricted);
+          //           } else {
+          //             return locs;
+          //           }
+          //         })
+          //       )
+          //       .subscribe(p => {
+          //           if (this.staticChoices) {
+          //               this.choices = this.filterResults(this.staticChoices);
+          //           } else {
+          //               this.hideFavorites = false;
+          //               this.choices = _.uniqBy([...p, ...this.starredChoices], 'id');
+          //           }
+          //           this.noChoices = !this.choices.length;
+          //           this.search = '';
+          //       });
+          // }
         }
       }
     // }
@@ -294,17 +262,17 @@ export class LocationTableComponent implements OnInit {
 
   mergeLocations(url, withStars: boolean) {
     return combineLatest(
-        this.locationService.searchLocationsWithConfig(url),
-        this.locationService.getFavoriteLocations()
+        this.locationService.getLocationsWithConfigRequest(url),
+        this.locationService.getFavoriteLocationsRequest()
     )
         .pipe(
             map(([rooms, favorites]: [any, any[]]) => {
               if (withStars) {
-                return _.sortBy([...rooms.results, ...favorites], (item) => {
+                return _.sortBy([...rooms, ...favorites], (item) => {
                     return item.title.toLowerCase();
                 });
               } else {
-                return [...rooms.results];
+                return [...rooms];
               }
             }));
   }
@@ -347,9 +315,7 @@ export class LocationTableComponent implements OnInit {
 
   removeLoc(loc: any, array: any[]){
     var index = array.findIndex((element) => element.id === loc.id);
-    console.log(index)
     if (index > -1) {
-      console.log(index)
       array.splice(index, 1);
     }
   }
