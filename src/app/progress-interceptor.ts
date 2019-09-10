@@ -33,7 +33,7 @@ export class ProgressInterceptor implements HttpInterceptor {
                           console.log(error);
                           this.http.errorToast$.next({
                             header: 'Server Error.',
-                            message: 'Operation could not be completed. We’re working on a solution.'
+                            message: `Please try refreshing the page. If the issue keeps occurring, contact us below. Error status code:${error.status}`
                           });
                         }
                         return throwError(error);
