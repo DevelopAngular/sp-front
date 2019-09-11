@@ -612,7 +612,6 @@ export class OverlayContainerComponent implements OnInit {
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
-                // return this.hallPassService.updatePinnable(this.pinnable.id, pinnable);
             })).subscribe(response => this.dialogRef.close());
     }
 

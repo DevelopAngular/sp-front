@@ -10,9 +10,17 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../ngrx/app-state/app-state';
 import { getTeacherLocationsCollection } from '../ngrx/teacherLocations/state/locations-getters.state';
 import { getLocsWithTeachers } from '../ngrx/teacherLocations/actions';
-import {getFoundLocations, getLocationsCollection} from '../ngrx/locations/states/locations-getters.state';
+import {
+  getFoundLocations,
+  getLoadedLocations,
+  getLoadingLocations,
+  getLocationsCollection
+} from '../ngrx/locations/states/locations-getters.state';
 import {getLocations, searchLocations} from '../ngrx/locations/actions';
-import {getFavoriteLocationsCollection} from '../ngrx/favorite-locations/states/favorite-locations-getters.state';
+import {
+  getFavoriteLocationsCollection, getLoadedFavoriteLocations,
+  getLoadingFavoriteLocations
+} from '../ngrx/favorite-locations/states/favorite-locations-getters.state';
 import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
 
 @Injectable({
@@ -21,10 +29,14 @@ import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
 export class LocationsService {
 
   locations$: Observable<Location[]> = this.store.select(getLocationsCollection);
+  loadingLocations$: Observable<boolean> = this.store.select(getLoadingLocations);
+  loadedLocations$: Observable<boolean> = this.store.select(getLoadedLocations);
 
   foundLocations$: Observable<Location[]> = this.store.select(getFoundLocations);
 
   favoriteLocations$: Observable<Location[]> = this.store.select(getFavoriteLocationsCollection);
+  loadingFavoriteLocations$: Observable<boolean> = this.store.select(getLoadingFavoriteLocations);
+  loadedFavoriteLocations$: Observable<boolean> = this.store.select(getLoadedFavoriteLocations);
 
   teacherLocations$: Observable<Location[]> = this.store.select(getTeacherLocationsCollection);
 
@@ -70,7 +82,6 @@ export class LocationsService {
     }
 
     updateLocation(id, data) {
-      // console.log(data);
       return this.http.patch(`v1/locations/${id}`, data);
     }
 

@@ -3,7 +3,7 @@ import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import {finalize, map} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
-import {combineLatest} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 import * as _ from 'lodash';
 
 
@@ -49,9 +49,6 @@ export class LocationTableComponent implements OnInit {
   @Output() onStar: EventEmitter<string> = new EventEmitter();
   @Output() onUpdate: EventEmitter<number[]> = new EventEmitter<number[]>();
 
-  leftShadow: boolean = true;
-  rightShadow: boolean = true;
-
   choices: any[] = [];
   noChoices:boolean = false;
   mainContentVisibility: boolean = false;
@@ -62,6 +59,9 @@ export class LocationTableComponent implements OnInit {
   hideFavorites: boolean;
 
   selectedLocId: any[] = [];
+
+  showSpinner$: Observable<boolean>;
+  loaded$: Observable<boolean>;
 
   isFocused: boolean;
 
@@ -105,6 +105,17 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.showSpinner$ = combineLatest(
+      this.locationService.loadingLocations$,
+      this.locationService.loadingFavoriteLocations$,
+      (loc, fav) => loc && fav
+    );
+    this.loaded$ = combineLatest(
+      this.locationService.loadedLocations$,
+      this.locationService.loadedFavoriteLocations$,
+      (loc, fav) => loc && fav
+    );
+
     if (!this.locationService.focused.value) {
       this.locationService.focused.next(true);
     }
@@ -120,7 +131,7 @@ export class LocationTableComponent implements OnInit {
             ))
             +'limit=1000'
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
-        if (this.mergedAllRooms) {
+        if (this.mergedAllRooms)  {
             this.mergeLocations(url, this.withMergedStars)
                 .subscribe(res => {
                     this.choices = res;
@@ -272,7 +283,7 @@ export class LocationTableComponent implements OnInit {
                     return item.title.toLowerCase();
                 });
               } else {
-                return [...rooms];
+                return rooms;
               }
             }));
   }
@@ -298,9 +309,9 @@ export class LocationTableComponent implements OnInit {
     if (!this.isEdit) {
       return this.choiceSelected(event);
     }
-    if(event.starred){
+    if (event.starred) {
       this.addLoc(event, this.starredChoices);
-    } else{
+    } else {
       this.removeLoc(event, this.starredChoices);
     }
     this.onSearch('');
@@ -308,13 +319,14 @@ export class LocationTableComponent implements OnInit {
     this.search = '';
   }
 
-  addLoc(loc: any, array: any[]){
-    if(!array.includes(loc))
-      array.push(loc)
+  addLoc(loc: any, array: any[]) {
+    if (!array.includes(loc)) {
+      array.push(loc);
+    }
   }
 
-  removeLoc(loc: any, array: any[]){
-    var index = array.findIndex((element) => element.id === loc.id);
+  removeLoc(loc: any, array: any[]) {
+    const index = array.findIndex((element) => element.id === loc.id);
     if (index > -1) {
       array.splice(index, 1);
     }
