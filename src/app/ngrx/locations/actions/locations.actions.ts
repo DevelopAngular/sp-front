@@ -10,3 +10,18 @@ export const getLocationsFailure = createAction(`[${COMPONENT}] Get Locations Fa
 export const searchLocations = createAction(`[${COMPONENT}] Search Locations`, props<{url: string}>());
 export const searchLocationsSuccess = createAction(`[${COMPONENT}] Search Locations Success`, props<{foundLocations: Location[]}>());
 export const searchLocationsFailure = createAction(`[${COMPONENT}] Search Locations Failure`, props<{errorMessage: string}>());
+
+export const postLocation = createAction(`[${COMPONENT}] Post Location`, props<{data: any}>());
+export const postLocationSuccess = createAction(`[${COMPONENT}] Post Location Success`, props<{location: Location}>());
+export const postLocationFailure = createAction(`[${COMPONENT}] Post Location Failure`, props<{errorMessage: string}>());
+
+export const updateLocation = createAction(`[${COMPONENT}] Update Location`, props<{id: string | number, data: any}>());
+export const updateLocationSuccess = createAction(`[${COMPONENT}] Update Location Success`, props<{location: Location}>());
+export const updateLocationFailure = createAction(`[${COMPONENT}] Update Location Failure`, props<{errorMessage: string}>());
+
+export const removeLocation = createAction(`[${COMPONENT}] Remove Location`, props<{id: string | number}>());
+export const removeLocationSuccess = createAction(`[${COMPONENT}] Remove Location Success`, props<{id: string | number}>());
+export const removeLocationFailure = createAction(`[${COMPONENT}] Remove Location Failure`, props<{errorMessage: string}>());
+
+
+

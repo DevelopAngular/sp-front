@@ -4,7 +4,7 @@ import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 import { Location } from '../../../models/Location';
 import * as locationsActions from '../actions';
 
-export const locsAdapter: EntityAdapter<Location> = createEntityAdapter<Location>()
+export const locsAdapter: EntityAdapter<Location> = createEntityAdapter<Location>();
 export const locationsInitialState: LocationsState = locsAdapter.getInitialState({
   loading: false,
   loaded: false,
@@ -27,6 +27,15 @@ const reducer = createReducer(
       loaded: true,
       foundLocations
     };
+  }),
+  on(locationsActions.postLocationSuccess, (state, {location}) => {
+    return locsAdapter.addOne(location, {...state, loading: false, loaded: true, currentLocationId: location.id});
+  }),
+  on(locationsActions.updateLocationSuccess, (state, {location}) => {
+    return locsAdapter.upsertOne(location, {...state, loading: false, loaded: true, currentLocationId: location.id});
+  }),
+  on(locationsActions.removeLocationSuccess, (state, {id}) => {
+    return locsAdapter.removeOne(+id, {...state, loading: false, loaded: true});
   })
 );
 

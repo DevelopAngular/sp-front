@@ -4,19 +4,20 @@ import { constructUrl } from '../live-data/helpers';
 import { Paged } from '../models';
 import { HttpService } from './http-service';
 import { User } from '../models/User';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import {BehaviorSubject, from, Observable, of} from 'rxjs';
 import { Location } from '../models/Location';
 import { Store } from '@ngrx/store';
 import { AppState } from '../ngrx/app-state/app-state';
 import { getTeacherLocationsCollection } from '../ngrx/teacherLocations/state/locations-getters.state';
 import { getLocsWithTeachers } from '../ngrx/teacherLocations/actions';
 import {
+  getCurrentLocation,
   getFoundLocations,
   getLoadedLocations,
   getLoadingLocations,
   getLocationsCollection
 } from '../ngrx/locations/states/locations-getters.state';
-import {getLocations, searchLocations} from '../ngrx/locations/actions';
+import {getLocations, postLocation, updateLocation, searchLocations, removeLocation} from '../ngrx/locations/actions';
 import {
   getFavoriteLocationsCollection, getLoadedFavoriteLocations,
   getLoadingFavoriteLocations
@@ -29,6 +30,7 @@ import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
 export class LocationsService {
 
   locations$: Observable<Location[]> = this.store.select(getLocationsCollection);
+  currentLocation$: Observable<Location> = this.store.select(getCurrentLocation);
   loadingLocations$: Observable<boolean> = this.store.select(getLoadingLocations);
   loadedLocations$: Observable<boolean> = this.store.select(getLoadedLocations);
 
@@ -77,12 +79,27 @@ export class LocationsService {
         return this.http.get(`v1/locations/${id}`);
     }
 
+    createLocationRequest(data) {
+      this.store.dispatch(postLocation({data}));
+      return this.currentLocation$;
+    }
+
     createLocation(data) {
         return this.http.post('v1/locations', data);
     }
 
+    updateLocationRequest(id, data) {
+      this.store.dispatch(updateLocation({id, data}));
+      return this.currentLocation$;
+    }
+
     updateLocation(id, data) {
       return this.http.patch(`v1/locations/${id}`, data);
+    }
+
+    deleteLocationRequest(id) {
+      this.store.dispatch(removeLocation({id}));
+      return of(true);
     }
 
     deleteLocation(id) {

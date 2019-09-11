@@ -243,11 +243,11 @@ export class FolderComponent implements OnInit {
   deleteRoom() {
     const pinnable = this.overlayService.pageState.getValue().data.pinnable;
     const deletions = [
-        this.hallPassService.deletePinnableRequest(pinnable).pipe(mapTo(null))
+        this.hallPassService.deletePinnableRequest(pinnable.id).pipe(mapTo(null))
     ];
 
     if (pinnable.location) {
-        deletions.push(this.locationService.deleteLocation(pinnable.location.id));
+        deletions.push(this.locationService.deleteLocationRequest(pinnable.location.id));
     }
 
     zip(...deletions).subscribe(res => {

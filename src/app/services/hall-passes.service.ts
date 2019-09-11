@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import { Pinnable } from '../models/Pinnable';
 import { HttpService } from './http-service';
 import {Store} from '@ngrx/store';
@@ -93,9 +93,9 @@ export class HallPassesService {
         return this.http.patch(`v1/pinnables/${id}`, data);
     }
 
-    deletePinnableRequest(pinnable) {
-      this.store.dispatch(removePinnable({pinnable}));
-      return this.currentPinnable$;
+    deletePinnableRequest(id) {
+      this.store.dispatch(removePinnable({id}));
+      return of(true);
     }
 
     deletePinnable(id) {

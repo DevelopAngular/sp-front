@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip } from 'rxjs';
-import { delay, map, startWith, switchMap, filter } from 'rxjs/operators';
+import {delay, map, startWith, switchMap, filter, take, debounceTime, distinctUntilChanged, concatMap} from 'rxjs/operators';
 
 import { NextStep } from '../../animations';
 import { Pinnable } from '../../models/Pinnable';
@@ -267,6 +267,8 @@ export class OverlayContainerComponent implements OnInit {
               this.form.get('folderName').valueChanges.pipe(startWith(this.form.get('folderName').value))
           )
               .pipe(
+                  debounceTime(300),
+                  distinctUntilChanged(),
                   filter(value => value),
                   switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
               );
@@ -367,15 +369,16 @@ export class OverlayContainerComponent implements OnInit {
 
   uniqueRoomNameValidator(control: AbstractControl) {
       if (control.dirty) {
-          return this.locationService.checkLocationName(control.value)
-              .pipe(map((res: any) => {
-                  if (this.currentPage === Pages.NewRoom || Pages.NewRoomInFolder) {
-                      return res.title_used ? { room_name: true } : null;
-                  }
-                  return res.title_used &&
-                  (this.currentPage === Pages.EditRoomInFolder ?
-                      this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title : this.pinnable.location.title) !== this.roomData.roomName ? { room_name: true } : null;
-              }));
+         return this.locationService.checkLocationName(control.value)
+            .pipe(
+              map((res: any) => {
+              if (this.currentPage === Pages.NewRoom || Pages.NewRoomInFolder) {
+                return res.title_used ? { room_name: true } : null;
+              }
+              return res.title_used &&
+              (this.currentPage === Pages.EditRoomInFolder ?
+                this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title : this.pinnable.location.title) !== this.roomData.roomName ? { room_name: true } : null;
+            }));
       } else {
           return of(null);
       }
@@ -495,11 +498,15 @@ export class OverlayContainerComponent implements OnInit {
                 travel_types: this.roomData.travelType,
                 max_allowed_time: +this.roomData.timeLimit
         };
-       this.locationService.createLocation(location)
-           .pipe(switchMap((locationToUpdate: Location) => {
+       this.locationService.createLocationRequest(location)
+           .pipe(
+             filter(res => !!res),
+             switchMap((locationToUpdate: Location) => {
                const data = this.normalizeAdvOptData();
-               return this.locationService.updateLocation(locationToUpdate.id, data);
+               return this.locationService.updateLocationRequest(locationToUpdate.id, data)
+                 .pipe(filter(res => !!res));
                }),
+               take(1),
                switchMap((loc: Location) => {
                const pinnable = {
                    title: this.roomData.roomName,
@@ -508,7 +515,6 @@ export class OverlayContainerComponent implements OnInit {
                    location: loc.id,
                };
                return this.hallPassService.postPinnableRequest(pinnable);
-               // return this.hallPassService.createPinnable(pinnable);
            })).subscribe(response => this.dialogRef.close());
     }
 
@@ -525,7 +531,7 @@ export class OverlayContainerComponent implements OnInit {
       }
       if (this.folderData.roomsToDelete.length) {
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
-          return this.locationService.deleteLocation(room.id);
+          return this.locationService.deleteLocationRequest(room.id).pipe(filter(res => !!res));
         });
 
         forkJoin(deleteRequest$).subscribe();
@@ -539,8 +545,11 @@ export class OverlayContainerComponent implements OnInit {
           if (_.isString(location.id)) {
             location.category = this.folderData.folderName;
             location.teachers = location.teachers.map(t => t.id);
-            return this.locationService.createLocation(location).pipe(switchMap((loc: Location) => {
-              return this.locationService.updateLocation(loc.id, location);
+            return this.locationService.createLocation(location).pipe(
+              filter(res => !!res),
+              concatMap((loc: Location) => {
+                return this.locationService.updateLocationRequest(loc.id, location)
+                  .pipe(filter(res => !!res));
             }));
           } else {
             id = location.id;
@@ -549,14 +558,17 @@ export class OverlayContainerComponent implements OnInit {
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
-            return this.locationService.updateLocation(id, data);
+            return this.locationService.updateLocationRequest(id, data).pipe(
+              filter(res => !!res)
+            );
           }
         });
       } else {
-        locationsToDb$ = of(null);
+        locationsToDb$ = [of(null)];
       }
 
-      forkJoin(locationsToDb$).pipe(switchMap(locations => {
+      zip(...locationsToDb$).pipe(
+        switchMap(locations => {
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
@@ -578,10 +590,13 @@ export class OverlayContainerComponent implements OnInit {
             })
           );
       }),
+        take(1),
         switchMap(() => {
           if (this.pinnableToDeleteIds.length) {
-            const deleteRequests = this.pinnableToDeleteIds.map(id => this.hallPassService.deletePinnable(id));
-            return zip(...deleteRequests);
+            const deleteRequests = this.pinnableToDeleteIds.map(id => {
+              return this.hallPassService.deletePinnableRequest(id);
+            });
+            return forkJoin(deleteRequests);
           } else {
             return of(null);
           }
@@ -603,8 +618,10 @@ export class OverlayContainerComponent implements OnInit {
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
 
-        this.locationService.updateLocation(this.pinnable.location.id, mergedData)
-            .pipe(switchMap((loc: Location) => {
+        this.locationService.updateLocationRequest(this.pinnable.location.id, mergedData)
+            .pipe(
+              filter(res => !!res),
+              switchMap((loc: Location) => {
                 const pinnable = {
                     title: this.roomData.roomName,
                     color_profile: this.color_profile.id,
@@ -617,10 +634,11 @@ export class OverlayContainerComponent implements OnInit {
 
     if (this.currentPage === Pages.BulkEditRooms) {
       const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
-        return this.locationService.updateLocation(room.id, room);
+        return this.locationService.updateLocationRequest(room.id, room).pipe(
+          filter(res => !!res));
       });
 
-      forkJoin(patchRequests$).subscribe(res => {
+      zip(...patchRequests$).subscribe(res => {
         this.dialogRef.close();
       });
     }

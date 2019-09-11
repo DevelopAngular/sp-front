@@ -21,3 +21,18 @@ export const getLoadedLocations = createSelector(
   getLocationsState,
   (state: LocationsState) => state.loaded
 );
+
+export const getLocationsEntities = locsAdapter.getSelectors(getLocationsState).selectEntities;
+
+export const getCurrentLocationId = createSelector(
+  getLocationsState,
+  (state: LocationsState) => state.currentLocationId
+);
+
+export const getCurrentLocation = createSelector(
+  getLocationsEntities,
+  getCurrentLocationId,
+  (entities, id) => {
+    return entities[id];
+  }
+);
