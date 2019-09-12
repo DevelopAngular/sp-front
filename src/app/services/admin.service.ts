@@ -13,6 +13,9 @@ import {getCountAccountsResult} from '../ngrx/accounts/nested-states/count-accou
 import {getCountAccounts} from '../ngrx/accounts/nested-states/count-accounts/actions';
 import {getDashboardData} from '../ngrx/dashboard/actions';
 import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters.state';
+import {ColorProfile} from '../models/ColorProfile';
+import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
+import {getColorProfiles} from '../ngrx/color-profiles/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +27,10 @@ export class AdminService {
     loading$: this.store.select(getIsLoadingReports),
     foundReports: this.store.select(getFoundReports)
   };
+
+  colorProfiles$: Observable<ColorProfile[]> = this.store.select(getColorProfilesCollection);
+  loadingColorProfiles$: Observable<boolean> = this.store.select(getLoadingColors);
+  loadedColorProfiles$: Observable<boolean> = this.store.select(getLoadedColors);
 
   countAccounts$ = this.store.select(getCountAccountsResult);
   dashboardData$ = this.store.select(getDashboardDataResult);
@@ -107,6 +114,11 @@ export class AdminService {
   }
 
   //// Color Profile
+  getColorsRequest() {
+    this.store.dispatch(getColorProfiles());
+    return this.colorProfiles$;
+  }
+
   getColors() {
     return this.http.get('v1/color_profiles');
   }

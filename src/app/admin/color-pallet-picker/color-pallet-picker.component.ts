@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { HttpService } from '../../services/http-service';
-import {finalize, map, shareReplay} from 'rxjs/operators';
+import {finalize, map, share, shareReplay, switchMap} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
+import {Observable} from 'rxjs';
 
 @Component({
     selector: 'app-color-pallet-picker',
@@ -18,20 +19,26 @@ export class ColorPalletPickerComponent implements OnInit {
 
   selectedId: number;
   colors$;
-  showSpinner: boolean;
+  loading$: Observable<boolean>;
+  loaded$: Observable<boolean>;
 
-  constructor(private apiService: AdminService) { }
+  constructor(private adminService: AdminService) { }
 
   ngOnInit() {
-      this.showSpinner = true;
-      this.colors$ = this.apiService.getColors().pipe(
-          map((colors: any[]) => {
-            // console.log(colors);
-            return colors.filter(color => color.id !== 1 && color.id !== 6);
+      this.loading$ = this.adminService.loadingColorProfiles$;
+      this.loaded$ = this.adminService.loadedColorProfiles$;
+      this.colors$ = this.loaded$.pipe(
+          share(),
+          switchMap(loaded => {
+            if (loaded) {
+              return this.adminService.colorProfiles$;
+            } else {
+              return this.adminService.getColorsRequest();
+            }
           }),
-      finalize(() => {
-        this.showSpinner = false;
-      })
+          map((colors: any[]) => {
+            return colors.filter(color => color.id !== 1 && color.id !== 6);
+          })
       );
       if (this.selectedColorProfile) {
           this.selectedId = this.selectedColorProfile.id;
