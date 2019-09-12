@@ -10,10 +10,11 @@ export const bumpIn = trigger('pressState', [
   transition('up => down', animate('100ms ease-out')),
   transition('down => up', animate('100ms ease-in'))
 ]);
-
+// .from-wrapper-to-date, .from-wrapper, .from-header,
+// .to-wrapper-to-date, .to-wrapper, .to-header,
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-      query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
+      query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.5s 0s ease', keyframes([
         style({
           opacity: 0,
           transform: 'scale(1.2)'
@@ -25,17 +26,17 @@ export const NextStep = trigger('NextStep', [                                   
       ])), {optional: true}),
       query(`
       .from-wrapper-to-date,
-      .to-wrapper-to-datee,
+      .to-wrapper-to-date, .to-wrapper, .to-header_animation-backk,
       .from-header,
       .to-header,
-      .category-header_animation-back
-      .category-header,
-      .rest-tar-header,
-      .rest-mes-header,
+      .category-wrapper,
+      .rest-tar-headerr, .rest-tar-wrapper, .rest-mes-wrapper,
+      .rest-mes-headerr, .rest-mes-header_animation-backk,
       .date-picker,
+      .date-content,
       .student-groups,
       .locations
-      `, animate('0.4s 0s ease', keyframes([
+      `, animate('0.5s 0s ease', keyframes([
           style({
             background: 'transparent',
           }),
@@ -44,24 +45,26 @@ export const NextStep = trigger('NextStep', [                                   
           }),
         ])), {optional: true}
       ),
-      query(`.back-button-white`, animate('0.4s 0s ease', keyframes([
+      query(`.back-button-white`, animate('0.5s 0s ease', keyframes([
           style({
-            opacity: 0,
+            opacity: 0.5,
           }),
 
           style({
-            opacity: 0,
+            opacity: 0.5,
           }),
         ])), {optional: true}
       ),
       query(`
       .divider,
-      .category-header_animation-back,
+      .category-header,
+      .rest-tar-header,
+      .rest-mes-header,
       .date-picker,
       .student-groups,
       .target-footer,
       .from-footer
-      `, animate('0.4s 0s ease', keyframes([
+      `, animate('0.5s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
@@ -100,7 +103,7 @@ export const NextStep = trigger('NextStep', [                                   
       .restriction-settings,
       .existing-rooms,
       .import-rooms-content
-      `, animate('0.4s 0s ease', keyframes([
+      `, animate('0.5s 0s ease', keyframes([
           style({
             opacity: 0,
             transform: 'translateX({{from}}px)',
@@ -115,12 +118,13 @@ export const NextStep = trigger('NextStep', [                                   
   ),
   transition(':leave', group([                                                              // :LEAVE PSEUDOSTATE
     query(`
-      .from-wrapper-to-date,
-      .to-wrapper-to-date,
+      .from-wrapper-to-date, .from-wrapper, .from-header,
+      .to-wrapper-to-date, .to-wrapper, .to-header_animation-back, .category-wrapper, .rest-tar-wrapper,
+      .rest-mes-wrapper, .rest-mes-header_animation-back,
       .date-picker,
       .student-groups,
       .locations
-      `, animate('0.4s 0s ease', keyframes([
+      `, animate('0.5s 0s ease', keyframes([
         style({
           background: 'transparent',
           boxShadow: 'none',
@@ -131,7 +135,7 @@ export const NextStep = trigger('NextStep', [                                   
         }),
       ])), {optional: true}
     ),
-    query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
+    query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.5s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'scale(1)'
@@ -149,7 +153,7 @@ export const NextStep = trigger('NextStep', [                                   
       .rest-tar-header,
       .rest-mes-header
       `,
-      animate('0.4s 0s ease', keyframes([
+      animate('0.5s 0s ease', keyframes([
           style({
             'z-index': 9,
             boxShadow: 'none',
@@ -161,7 +165,7 @@ export const NextStep = trigger('NextStep', [                                   
           }),
         ])), {optional: true}
       ),
-    query(`.back-button-grey`, animate('0.4s 0s ease', keyframes([
+    query(`.back-button-grey`, animate('0.5s 0s ease', keyframes([
         style({
           opacity: 0,
         }),
@@ -174,13 +178,15 @@ export const NextStep = trigger('NextStep', [                                   
       query(`
       .divider,
       .category-header_animation-back,
+      .rest-tar-header_animation-back,
+      .rest-mes-header_animation-back,
       .date-picker,
       .student-groups,
       .locations,
       .target-footer,
       .from-footer
       `,
-      animate('0.4s 0s ease', keyframes([
+      animate('0.5s 0s ease', keyframes([
           style({
             opacity: 1,
           }),
@@ -192,7 +198,7 @@ export const NextStep = trigger('NextStep', [                                   
       query(`
       .room-name-container
       `,
-      animate('1.4s 0s ease', keyframes([
+      animate('0.5s 0s ease', keyframes([
             style({
               position: 'relative',
               height: '0px',
@@ -210,8 +216,8 @@ export const NextStep = trigger('NextStep', [                                   
       .divider-header,
       .from-header-text,
       .to-header-text,
-      .rest-tar-header_animation-back,
-      .rest-mes-header_animation-back,
+      .rest-tar-header_animation-backk,
+      .rest-mes-header_animation-backk,
       .category-header-text,
       .rest-tar-header-text,
       .rest-mes-header-text,
@@ -232,7 +238,7 @@ export const NextStep = trigger('NextStep', [                                   
       .page-4,
       .slide
       `,
-      animate('0.4s 0s ease', keyframes([
+      animate('0.5s 0s ease', keyframes([
             style({
               opacity: 1,
               transform: 'translateX(0px)',

@@ -121,14 +121,17 @@
     position: relative;
     z-index: 1;
     flex: 1 1 auto;
+    width: 100%;
     .rest-mes-content {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      margin-top: 25px;
+      box-sizing: border-box;
+      //padding: 0 15px;
 
       .message-box{
+        margin-top: 25px;
         border: 1px solid transparent;
         padding: 10px;
         position: relative;
@@ -153,7 +156,7 @@
       }
 
       .buttons {
-
+        margin-right: 35px;
       }
     }
   }

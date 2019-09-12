@@ -42,6 +42,15 @@ export class FromWhereComponent implements OnInit {
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
   shadow: boolean;
+  frameMotion$: BehaviorSubject<any>;
+
+  headerTransition = {
+    'from-header': true,
+    'from-header_animation-back': false
+  };
+
+
+
   @HostListener('scroll', ['$event'])
   tableScroll(event) {
     const tracker = event.target;
@@ -53,12 +62,31 @@ export class FromWhereComponent implements OnInit {
       this.shadow = false;
     }
   }
+
+
   constructor(
     private formService: CreateFormService,
     public screenService: ScreenService
   ) { }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
+    this.frameMotion$.subscribe((v: any) => {
+      switch (v.direction) {
+        case 'back':
+          this.headerTransition['from-header'] = false;
+          this.headerTransition['from-header_animation-back'] = true;
+          break;
+        case 'forward':
+          this.headerTransition['from-header'] = true;
+          this.headerTransition['from-header_animation-back'] = false;
+          break;
+        default:
+          this.headerTransition['from-header'] = true;
+          this.headerTransition['from-header_animation-back'] = false;
+      }
+    });
   }
 
   locationChosen(location) {
@@ -94,6 +122,9 @@ export class FromWhereComponent implements OnInit {
       } else {
         this.formState.step = 0;
       }
+      this.formState.previousState = 1;
+
+
       this.backButton.emit(this.formState);
     }, 100);
   }

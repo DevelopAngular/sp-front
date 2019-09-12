@@ -9,7 +9,7 @@ import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA} from '@angular/material';
-import {fromEvent, Observable} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
@@ -52,6 +52,13 @@ export class ToWhereComponent implements OnInit {
 
   public gridRestrictions: ToWhereGridRestriction = new ToWhereGridRestrictionLg();
 
+  frameMotion$: BehaviorSubject<any>;
+
+  headerTransition = {
+    'to-header': true,
+    'to-header_animation-back': false
+  };
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
@@ -62,32 +69,51 @@ export class ToWhereComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
     if (this.formState.data.teacherRooms && !this.dialogData['kioskMode']) {
       this.teacherRooms = this.formState.data.teacherRooms;
     }
     this.gridRestrictions = this.getViewRestriction();
+    this.frameMotion$.subscribe((v: any) => {
+      switch (v.direction) {
+        case 'back':
+          this.headerTransition['to-header'] = false;
+          this.headerTransition['to-header_animation-back'] = true;
+          break;
+        case 'forward':
+          this.headerTransition['to-header'] = true;
+          this.headerTransition['to-header_animation-back'] = false;
+          break;
+        default:
+          this.headerTransition['to-header'] = true;
+          this.headerTransition['to-header_animation-back'] = false;
+      }
+    });
   }
 
   pinnableSelected(pinnable) {
     this.formService.setFrameMotionDirection('forward');
+    this.formService.scalableBoxController.next(true);
     setTimeout(() => {
+      this.formState.previousState = 2;
       this.selectedPinnable.emit(pinnable);
     }, 100);
   }
 
   back() {
     this.formService.setFrameMotionDirection('back');
+    this.formService.scalableBoxController.next(false);
     setTimeout(() => {
       if (!!this.date &&
         !!this.studentText &&
         (this.formState.previousStep === 2 || this.formState.previousStep === 4)
       ) {
-        this.formState.previousState = this.formState.state;
+        // this.formState.previousState = this.formState.state;
         this.formState.step = 1;
         this.formState.previousStep = 3;
       } else {
-        this.formState.previousState = this.formState.state;
+        // this.formState.previousState = this.formState.state;
         if (this.formState.formMode.formFactor === 3 && this.formState.data.date.declinable) {
             this.formState.step = 1;
         } else {
@@ -99,7 +125,8 @@ export class ToWhereComponent implements OnInit {
           }
         }
       }
-      this.formState.previousState = this.formState.state;
+      // this.formState.previousState = this.formState.state;
+      this.formState.previousState = 2;
 
       //
       this.backButton.emit(this.formState);

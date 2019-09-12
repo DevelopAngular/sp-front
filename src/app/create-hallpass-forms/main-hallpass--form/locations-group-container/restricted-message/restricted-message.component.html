@@ -10,16 +10,6 @@
       </div>
     </div>
 
-    <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
-      <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
-        <div class="teacher" *ngFor="let teacher of filteredTeachers; let i = index">
-        <span class="" style="color: #7F879D; font-size: 16px; font-weight: normal; margin-right: 3px">
-          {{ teacher.display_name + (filteredTeachers.length > 1 && i !== filteredTeachers.length - 1 ? ', ' : '') + ' ' }}
-        </span>
-        </div>
-      </div>
-    </div>
-
     <!--<div class="selected-teacher-header" *ngIf="formState.forInput && !formState.forLater && showTeachersHeader">-->
     <!--<div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;-->
     <!--<div class="teacher" *ngFor="let teacher of toLocation.request_teachers">-->
@@ -32,22 +22,31 @@
 
     <div class="content-wrapper">
       <div class="rest-mes-content">
-        <div data-grammarly-issue-container [style.width]="'100%'">
-      <textarea
-        #messageBox
-        class="message-box"
-        pInputTextarea
-        [maxlength]="160"
-        autoResize="autoResize"
-        [placeholder]="'Attach a message'"
-        [formControl]="message"
-        [style.width]="messageBoxViewRestriction.textAreaWidth"
-        [style.height]="'88px'"
-        [style.min-height]="'88px'"
-        [style.max-height]="date ? '190px' : '207px'"
-        autofocus
-      >
-    </textarea>
+        <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
+          <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
+            <div class="teacher" *ngFor="let teacher of filteredTeachers; let i = index">
+        <span class="" style="color: #7F879D; font-size: 16px; font-weight: normal; margin-right: 3px">
+          {{ teacher.display_name + (filteredTeachers.length > 1 && i !== filteredTeachers.length - 1 ? ', ' : '') + ' ' }}
+        </span>
+            </div>
+          </div>
+        </div>
+        <div data-grammarly-issue-container [style.width]="'100%'" [style.padding]="'0px 25px'" [style.width.%]="85">
+          <textarea
+            #messageBox
+            class="message-box"
+            pInputTextarea
+            [maxlength]="160"
+            autoResize="autoResize"
+            [placeholder]="'Attach a message'"
+            [formControl]="message"
+            [style.width]="messageBoxViewRestriction.textAreaWidth"
+            [style.height]="'88px'"
+            [style.min-height]="'88px'"
+            [style.max-height]="date ? '190px' : '207px'"
+            autofocus
+          >
+          </textarea>
         </div>
         <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">
           <app-gradient-button size="editable"
