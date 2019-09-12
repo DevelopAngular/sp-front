@@ -344,6 +344,7 @@ export class RequestCardComponent implements OnInit {
           if (this.isSeen) {
             this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
             this.formState.previousStep = 4;
+            this.createFormService.setFrameMotionDirection('back');
             this.cardEvent.emit(this.formState);
           } else {
             this.dialogRef.close();

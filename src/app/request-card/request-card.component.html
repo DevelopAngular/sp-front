@@ -13,7 +13,7 @@
         </div>
 
         <div [ngClass]="iconClass">
-          <app-icon-button [srcString]="'./assets/' +((!forStaff && !forInput && !invalidDate)?'Delete':(forStaff || invalidDate ? 'Dots' : 'Chevron Left')) +' (Transparent).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="cancelRequest($event)"></app-icon-button>
+          <app-icon-button [srcString]="'./assets/' +((!forStaff && !forInput && !invalidDate) ? 'Delete' : (!forInput && (forStaff || invalidDate) ? 'Dots' : 'Chevron Left')) +' (Transparent).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="cancelRequest($event)"></app-icon-button>
         </div>
 
 

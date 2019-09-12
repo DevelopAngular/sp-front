@@ -1,6 +1,7 @@
-<div class="locations-group-wrapper">
+<div class="locations-group-wrapper" [ngStyle]="{'background-color': FORM_STATE.previousStep === 1 ? 'transparent' : '#FFFFFF' }">
 <!--  <pre>  {{FORM_STATE.state}} {{FORM_STATE.previousState}} {{ FORM_STATE.state > FORM_STATE.previousState}}</pre>-->
   <!--<pre>{{frameMotion$| async | json}}</pre>-->
+<!--  <pre>{{FORM_STATE.previousStep}} - {{FORM_STATE.previousState}}</pre>-->
   <div *ngIf="FORM_STATE.state === 1" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
 
     <app-from-where

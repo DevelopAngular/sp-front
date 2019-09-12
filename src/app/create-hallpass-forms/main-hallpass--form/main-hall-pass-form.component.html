@@ -5,7 +5,7 @@
   <!--{{FORM_STATE.forLater}}-->
 
   <div [ngClass]="isIOSTablet ? 'ios-pretty-replace-box' : 'pretty-replace-box'"
-       [style.backgroundColor]="FORM_STATE.step < 4 && FORM_STATE.previousStep < 4 ? 'rgba(255, 255, 255, .95)' : 'transparent'"
+       [style.backgroundColor]="FORM_STATE.step < 4 && FORM_STATE.previousStep < 4 ? 'rgba(255, 255, 255, 1)' : 'transparent'"
        [style.overflow]="FORM_STATE.step === 2 || FORM_STATE.previousStep === 2 ? 'hidden' : 'visible'">
     <div [ngClass]="isIOSTablet ? 'ios-fixed-card-wrapper' : 'fixed-card-wrapper'" style="" [style.width]="formSize.width" [style.height]="formSize.height">
 
@@ -27,7 +27,7 @@
          [style.width]="formSize.width"
          [style.height]="formSize.height"
          [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
-      <div class="locations" [ngClass]="{'locations-scaled': FORM_STATE.previousStep > 2}">
+      <div class="locations" [ngClass]="{'locations-scaled': isScaled}">
         <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
       </div>
     </div>

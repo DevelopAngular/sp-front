@@ -320,6 +320,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
             this.formState.step = 3;
               this.formState.previousStep = 4;
+              this.createFormService.setFrameMotionDirection('back');
               this.cardEvent.emit(this.formState);
           } else {
             this.dialogRef.close();

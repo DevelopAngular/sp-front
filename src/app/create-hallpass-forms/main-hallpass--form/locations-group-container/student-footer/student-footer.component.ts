@@ -89,6 +89,7 @@ export class StudentFooterComponent implements OnInit {
   }
 
   private changeAnimationDirection() {
+    this.formService.scalableBoxController.next(false);
     this.formService.setFrameMotionDirection('back');
     this.changeAnimationDirectionEvent.emit(true);
   }

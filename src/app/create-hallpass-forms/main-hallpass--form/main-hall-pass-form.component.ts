@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
@@ -80,6 +80,10 @@ export class MainHallPassFormComponent implements OnInit {
   isDeviceMid: boolean;
   isDeviceLarge: boolean;
 
+
+  scaledClass: boolean = false;
+
+
   constructor(
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -89,13 +93,21 @@ export class MainHallPassFormComponent implements OnInit {
     private dataService: DataService,
     private locationsService: LocationsService,
     private screenService: ScreenService,
-    private passesService: HallPassesService
+    private passesService: HallPassesService,
+    private cd: ChangeDetectorRef
   ) {}
+
+  get isScaled() {
+
+    return  this.scaledClass;
+      // && (this.FORM_STATE.formMode.role === Role.Teacher && this.FORM_STATE.previousState > 1);
+  }
 
   ngOnInit() {
     this.isDeviceMid = this.screenService.isDeviceMid;
     this.isDeviceLarge = this.screenService.isDeviceLarge;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -170,6 +182,12 @@ export class MainHallPassFormComponent implements OnInit {
         };
         break;
     }
+    this.formService.scalableBoxController
+      .asObservable()
+      .subscribe((v: boolean) => {
+        this.scaledClass = v;
+        this.cd.detectChanges();
+      })
     this.setFormSize();
     this.checkDeviceScreen();
       this.dataService.currentUser.subscribe((user: User) => {

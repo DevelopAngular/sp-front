@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
+import {CreateFormService} from '../../../create-form.service';
 
 @Component({
   selector: 'app-teacher-footer',
@@ -26,7 +27,9 @@ export class TeacherFooterComponent implements OnInit {
 
   showFullFooter: boolean = false;
 
-  constructor() { }
+  constructor(
+    private formService: CreateFormService
+  ) { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
@@ -53,6 +56,7 @@ export class TeacherFooterComponent implements OnInit {
 
   goToFromWhere(evt: Event) {
     evt.stopPropagation();
+    this.formService.scalableBoxController.next(false);
      if (this.state === 'from' || this.date || this.formState.kioskMode) {
         return false;
      }
@@ -64,7 +68,8 @@ export class TeacherFooterComponent implements OnInit {
 
   goToToWhere(evt: Event) {
     evt.stopPropagation();
-     if (this.state === 'to' || this.state === 'from' || this.formState.kioskMode) {
+    this.formService.scalableBoxController.next(false);
+    if (this.state === 'to' || this.state === 'from' || this.formState.kioskMode) {
        return false;
      }
      this.formState.previousState = this.formState.state;
@@ -74,6 +79,7 @@ export class TeacherFooterComponent implements OnInit {
 
   goToStudents(evt: Event) {
     evt.stopPropagation();
+    this.formService.scalableBoxController.next(false);
     if (this.formState.kioskMode) {
       return false;
     }
@@ -85,6 +91,7 @@ export class TeacherFooterComponent implements OnInit {
   }
 
   goToDate() {
+    this.formService.scalableBoxController.next(false);
     this.formState.previousState = this.formState.state;
     this.formState.step = 1;
     this.formState.state = 1;

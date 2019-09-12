@@ -129,6 +129,21 @@ export class RestrictedTargetComponent implements OnInit {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
+    this.frameMotion$.subscribe((v: any) => {
+      switch (v.direction) {
+        case 'back':
+          this.headerTransition['rest-tar-header'] = false;
+          this.headerTransition['rest-tar-header_animation-back'] = true;
+          break;
+        case 'forward':
+          this.headerTransition['rest-tar-header'] = true;
+          this.headerTransition['rest-tar-header_animation-back'] = false;
+          break;
+        default:
+          this.headerTransition['rest-tar-header'] = true;
+          this.headerTransition['rest-tar-header_animation-back'] = false;
+      }
+    });
   }
 
   textColor(item) {

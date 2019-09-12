@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import { HallPassesService } from '../services/hall-passes.service';
 import {map} from 'rxjs/operators';
 
@@ -9,9 +9,11 @@ import {map} from 'rxjs/operators';
 })
 export class CreateFormService {
 
-  isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private transition: any;
   private frameMotionDirection$: BehaviorSubject<any>;
+
+  public scalableBoxController = new ReplaySubject<boolean>(1);
+  public isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(private hallPassService: HallPassesService) {
     this.transition = {
