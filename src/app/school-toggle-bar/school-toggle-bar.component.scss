@@ -3,7 +3,10 @@
   width: 100%;
   .school-toggle-bar-wrapper {
     background-color: #fff;
-    position: relative;
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
     z-index: 111;
     height: 50px;
     box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, .1);

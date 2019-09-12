@@ -28,11 +28,20 @@
       </div>
       <div class="buffer-time-control">
         <div class="control-text" style="width: 210px">
-          <span class="ds-cell-text-2">Pass Buffer Time (min)</span> <br>
+          <span class="ds-cell-text-2">Pass Buffer Time <span *ngIf="!hideMin">(min)</span></span> <br>
           <span class="ds-cell-description-text">How long an expiring pass will count up until it automatically ends and moves to the Expired Pass section.</span>
         </div>
         <div class="control-input">
-          <app-input [width]="'58px'" [isErrorIcon]="false" [textAlign]="'right'" [formGroup]="schoolForm" [input_value]="schoolForm.get('pass_buffer_time').value" [controlName]="schoolForm.get('pass_buffer_time')"></app-input>
+          <app-input
+            [width]="'58px'"
+            [isErrorIcon]="false"
+            [textAlign]="'right'"
+            [formGroup]="schoolForm"
+            [input_value]="schoolForm.get('pass_buffer_time').value"
+            [controlName]="schoolForm.get('pass_buffer_time')"
+            (focusEvent)="hideMin = true"
+            (blurEvent)="hideMin = false"
+          ></app-input>
         </div>
       </div>
     </div>

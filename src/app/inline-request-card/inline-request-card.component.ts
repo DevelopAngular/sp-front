@@ -8,6 +8,7 @@ import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {tap} from 'rxjs/operators';
 import * as _ from 'lodash';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -127,5 +128,9 @@ export class InlineRequestCardComponent implements OnInit {
 
   genOption(display, color, action){
     return {display: display, color: color, action: action}
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

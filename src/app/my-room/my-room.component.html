@@ -1,11 +1,10 @@
-<div *ngIf="userLoaded" style="height: 100%">
-  <div class="my-room-options-mobile-wrapper"  [style.background-color]="darkTheme.getBackground('default', false)">
-    <div class="my-room-options-mobile">
+<ng-container *ngIf="userLoaded">
+  <div [ngClass]="isIOSTablet ? 'ios-my-room-options-mobile-wrapper' : 'my-room-options-mobile-wrapper'"  [style.background-color]="darkTheme.getBackground('default', false)">
+    <div [ngClass]="isIOSTablet ? 'ios-my-room-options-mobile' : 'my-room-options-mobile' ">
       <div class="option-wrapper">
-<!--        <img class="search-icon" (click)="toggleSearchBar()" [src]="getIcon('./assets/Search Eye (Navy).svg') | resolveAsset">-->
         <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"></app-icon-button>
       </div>
-      <div  *ngIf="isSearchBarClicked" class="search-wrapper">
+      <div  *ngIf="isSearchBarClicked" [ngClass]="isIOSTablet ? 'ios-search-wrapper' : 'search-wrapper' ">
         <app-round-input
           [minWidth]="'100%'"
           [width]="'100%'"
@@ -30,9 +29,9 @@
       </div>
     </div>
   </div>
-  <div *ngIf="UI" class="my-room-wrapper" #scrollableArea>
-    <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
-      <div class="my-room-header" [@headerTrigger]="headerState">
+  <div *ngIf="UI" [ngClass]="isIOSTablet ? 'ios-my-room-wrapper' : 'my-room-wrapper'" #scrollableArea>
+    <div [ngClass]="isIOSTablet ? 'ios-my-room-left' : 'my-room-left'" *ngIf="!(kioskMode.currentRoom$ | async)">
+      <div [ngClass]="isIOSTablet ? 'ios-my-room-header' : 'my-room-header'" [@headerTrigger]="headerState">
         <div class="selected-teacher"
              [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'" #target (click)="showOptions(target)"
              [style.color]="myRoomHeaderColor"
@@ -42,7 +41,7 @@
         </div>
         <div [style.margin-left]="'auto'"
              [style.margin-right]="'10px'">
-          <div class="search">
+          <div [ngClass]=" isIOSTablet ?  'ios-search' : 'search'">
             <app-round-input
               [minWidth]="'215px'"
               [width]="'215px'"
@@ -55,22 +54,23 @@
             ></app-round-input>
           </div>
         </div>
-        <div class="calendar-wrapper">
+        <div [ngClass]=" isIOSTablet ? 'ios-calendar-wrapper' : 'calendar-wrapper'">
           <app-icon-button [size]="25" [srcString]="'Calendar'" (clickEvent)="chooseDate($event)"></app-icon-button>
         </div>
         <!--<div class="calendar-wrapper" (click)="chooseDate($event)" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">-->
           <!--<img class="calendar-icon" [src]="getIcon('./assets/Calendar (Navy).svg') | resolveAsset">-->
         <!--</div>-->
         <!--<div class="date-display" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>-->
-        <div class="date-display-mobile" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
+        <div [ngClass]=" isIOSTablet ? 'ios-date-display-mobile' : 'date-display-mobile'" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
       </div>
 
-      <div [@calendarSlide] = "calendarSlideState('topBottom')" *ngIf="!this.screenService.isIpadWidth && !this.screenService.isDesktopWidth" class="calendar-card-wrapper">
-        <mat-card class="calendar-card">
+      <div [@calendarSlide] = "calendarSlideState('topBottom')" *ngIf="is670pxBreakPoint" class="calendar-card-wrapper">
+        <mat-card [ngClass]=" isIOSTablet ? 'ios-calendar-card' : 'calendar-card'">
           <app-calendar-picker
             [style.z-index]="0"
             [showTime]="false"
             [showYear]="false"
+            [dotsDates]="currentPassesDates"
             (onSelectDate)="onDate($event)"
           ></app-calendar-picker>
         </mat-card>
@@ -78,11 +78,10 @@
 
       <div class="kiosk-mode-button"
            *ngIf="showKioskModeButton"
-           [style.box-shadow]="shadow"
+           [style.background-color]="(darkTheme.isEnabled$ | async) ? '#134482' : '#F4F4F4'"
            (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
            (mousedown)="onPress(true)" (mouseup)="onPress(false)"
            [@pressState]="buttonState"
-           [style.background-color]="darkTheme.getBackground('high', true)"
            (click)="setRoomToKioskMode()"
       >
         <div class="ds-flex-center-center" [style.color]="darkTheme.getColor()">
@@ -90,12 +89,12 @@
           <span>Enter Kiosk Mode</span>
         </div>
         <div class="kiosk-chevron">
-          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right'})" alt="Chevron Right.svg">
+          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right', lightFill: 'Navy', darkFill: 'White'})" alt="Chevron Right.svg">
         </div>
       </div>
 
       <div class="my-room-body" [@collectionsTrigger] = 'collectionsSlideState'>
-        <div class="my-room-body-collections">
+        <div [style.maxWidth]="collectionWidth" [ngClass]="isIOSTablet ? 'ios-my-room-body-collections' : 'my-room-body-collections'">
           <app-pass-collection
             [smoothlyUpdating]="true"
             [isActive]="true"
@@ -103,7 +102,9 @@
             [passProvider]="activePasses"
             [title]="'Active Passes'"
             [icon]="'./assets/Walking (Navy).svg'"
-            [columns]="4">
+            [columns]="4"
+            (currentPassesEmit)="currentPasses$.next($event)"
+          >
           </app-pass-collection>
           <app-pass-collection
             [smoothlyUpdating]="true"
@@ -111,7 +112,9 @@
             [passProvider]="originPasses"
             [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
             [icon]="'./assets/SP Arrow Reverse (Navy).svg'"
-            [columns]="4">
+            [columns]="4"
+            (currentPassesEmit)="currentPasses$.next($event)"
+          >
           </app-pass-collection>
           <app-pass-collection
             [smoothlyUpdating]="true"
@@ -119,7 +122,9 @@
             [passProvider]="destinationPasses"
             [title]="'Passes to ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
             [icon]="'./assets/SP Arrow (Navy).svg'"
-            [columns]="4">
+            [columns]="4"
+            (currentPassesEmit)="currentPasses$.next($event)"
+          >
           </app-pass-collection>
 
           <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
@@ -135,7 +140,7 @@
             </div>
           </div>
         </div>
-        <div [@calendarSlide] = "calendarSlideState('leftRight')" *ngIf="this.screenService.isIpadWidth" class="calendar-card-wrapper-right">
+        <div [@calendarSlide] = "calendarSlideState('leftRight')" *ngIf="this.screenService.isIpadWidth && !is670pxBreakPoint" class="calendar-card-wrapper-right">
           <mat-card class="calendar-card">
             <app-calendar-picker
               [showTime]="false"
@@ -150,4 +155,4 @@
       <app-restriction-dummy></app-restriction-dummy>
     </div>
   </div>
-</div>
+</ng-container>

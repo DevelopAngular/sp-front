@@ -1,5 +1,11 @@
 @import '../../sp-colors';
 
+mat-sidenav-container,
+mat-sidenav-content {
+  overflow: hidden !important;
+  height: 100%;
+}
+
 @media all and (max-width: 425px) {
   mat-sidenav-container,
   mat-sidenav-content {
@@ -7,7 +13,7 @@
   }
 }
 
-@media all and (min-width: 1024px) {
+@media all and (min-width: 940px) {
   mat-sidenav-container,
   mat-sidenav-content {
     z-index: unset;

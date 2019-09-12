@@ -110,6 +110,7 @@ export class SPSearchComponent implements OnInit {
   @Input() showOptions: boolean = true;
   @Input() selectedOptions: Array<User | School | GSuiteSelector> = [];
   @Input() selectedOrgUnits: any[] = [];
+  @Input() height: string = '40px';
   @Input() width: string = '280px';
   @Input() list: boolean = true;
   @Input() listMaxHeight: string = '210px';
@@ -207,7 +208,7 @@ export class SPSearchComponent implements OnInit {
       this.query
         .subscribe(
           (v1: any[]) => {
-            console.log(v1);
+            // console.log(v1);
 
             this.schools.next(v1);
             this.pending$.next(false);
@@ -229,7 +230,7 @@ export class SPSearchComponent implements OnInit {
         })
       )
       .subscribe((res: GSuiteSelector[]) => {
-        console.log(res);
+        // console.log(res);
         this.orgunitsCollection = <GSuiteSelector[]>this.removeDuplicateStudents(res);
         this.showDummy = !this.removeDuplicateStudents(res).length;
         this.orgunits.next(this.removeDuplicateStudents(res));

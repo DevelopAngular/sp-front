@@ -1,6 +1,10 @@
 <div style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
   <div class="" [ngClass]="{'to-header': formState.previousState === states.from || formState.previousStep <= formState.step, 'to-header-back': formState.previousState === states.category || formState.previousStep === 4 }" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'" #header>
-    <img *ngIf="!screenService.isDeviceLargeExtra" class="back-button back-button-grey" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+
+    <div *ngIf="!screenService.isDeviceLargeExtra"  class="back-button back-button-grey">
+      <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
+    </div>
+
     <div class="to-header-text">
       <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="text ds-dialog-title">To where?</div>
@@ -9,7 +13,7 @@
 
   <div class="to-content" #rc>
     <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
-      <div class="rooms-title ds-dialog-subtitle">My Rooms</div>
+      <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
       <div class="rooms">
         <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let room of teacherRooms">
@@ -27,7 +31,7 @@
       </div>
     </div>
     <div class="all-rooms">
-      <div class="rooms-title ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
+      <div  [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
       <div class="pin-collection">
         <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">

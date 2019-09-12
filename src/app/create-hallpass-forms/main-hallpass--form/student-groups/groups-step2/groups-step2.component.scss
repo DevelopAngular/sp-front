@@ -1,4 +1,38 @@
 :host {
+  .ios {
+    &-step-1-container div.content-left {
+      border: none;
+      order: 1;
+    }
+
+    &-step-1-container div.content {
+      flex: 0 1 auto;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    &-step-1-container div.content-left_wrapper {
+      padding: 0;
+      overflow: visible;
+      width: 100%;
+      margin: auto;
+    }
+
+    &-step-1-container div.content-right {
+      overflow: visible;
+      padding: 0;
+      flex: 0;
+    }
+
+    &-step-1-container div.content-left_groups {
+      margin: 0;
+    }
+
+    &-step-1-container div.incomplete {
+      display: none;
+    }
+  }
 
   @media all and (max-width: 475px) {
     .step-1-container div.content-left {
@@ -35,6 +69,7 @@
     }
   }
 
+  .ios-step-1-container,
   .step-1-container {
     $primary-color: #3D396B;
     $secondary-color: #999999;
@@ -48,6 +83,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
     .header {
       box-sizing: border-box;
       padding: 0 20px;
@@ -60,11 +96,13 @@
       color: $primary-color;
       position: relative;
       z-index: 10;
+
       &_title {
         display: flex;
         flex-direction: column;
         align-items: center;
       }
+
       &_back-button {
         width: 28px;
         height: 28px;
@@ -76,31 +114,37 @@
         font-weight: bold;
         color: $secondary-color;
         cursor: pointer;
+
         &-icon {
           width: 28px;
           height: 28px;
         }
       }
+
       &_icon {
         width: 21px;
         height: 21px;
       }
+
       &_text {
         padding-left: 12px;
         font-size: 18px;
         font-weight: bold;
       }
+
       &_save {
         //width: 110px;
         position: absolute;
         right: 30px;
       }
     }
+
     .content {
       width: 100%;
       height: 330px;
       flex: 1 1 auto;
       display: flex;
+
       &-left {
         //border-right: 2px solid rgba(0, 0, 0, .1);
         &_wrapper {
@@ -116,33 +160,40 @@
           max-width: 250px;
           width: 250px;
         }
+
         &_groups {
           padding-top: 15px;
         }
+
         &_upload {
           padding-top: 45px;
           display: flex;
           align-items: center;
           justify-content: center;
         }
+
         &_uploaded {
           font-size: 14px;
           color: $secondary-color;
           text-align: center;
         }
+
         &_create-group {
           //padding-bottom: 30px;
           .create-button {
             display: flex;
             flex-direction: column;
+
             &_title {
             }
+
             &_subtitle {
               color: $secondary-color;
               font-size: 11px;
             }
           }
         }
+
         &_placeholder {
           color: $secondary-color;
           font-size: .8em;
@@ -150,6 +201,7 @@
           padding: 0 10px;
         }
       }
+
       &-right {
         height: 100%;
         overflow: auto;
@@ -168,6 +220,7 @@
             width: 90%;
           }
         }
+
         &_next {
           display: flex;
           justify-content: flex-end;

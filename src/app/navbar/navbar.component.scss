@@ -1,7 +1,48 @@
 @import "../../sp-colors";
+/*Styles for IOS tabled*/
+.ios {
+    &-name,
+    &-heading.grow {
+      display: none;
+    }
 
-/* Ipad breakpoint */
-@media all and (max-width: 1024px) {
+  &-teacherNav-mobile {
+    @extend .teacherNav-mobile;
+    display: flex;
+    &-wrapper {
+      @extend  .teacherNav-mobile-wrapper;
+      width: 450px !important;
+      position: relative;
+    }
+  }
+
+  &-user-info {
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &-divider {
+    display: none;
+  }
+
+  &-nav-buttons-width {
+    width: inherit;
+  }
+
+  &-selected-tab-pointer {
+    top: -13px;
+    border-radius: 0 0 4px 4px;
+    width: 58px;
+    height: 6px;
+    transition: all 0.4s ease;
+    position: absolute;
+    background-color: $jade;
+  }
+}
+
+@media all and (max-width: 940px) {
   .name,
   .heading.grow {
     display: none;
@@ -11,7 +52,6 @@
     padding: 0;
     display: flex;
     justify-content: space-between;
-    flex-direction: row-reverse;
     width: 100%;
   }
 
@@ -64,6 +104,13 @@
   div.inbox-wrapper-sm {
     display: flex;
     position: relative;
+  }
+}
+
+@media all and ( max-width: 320px) {
+  ::ng-deep .consent-dialog-container {
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
 
@@ -183,7 +230,8 @@
   }
 }
 
-.user-info .name {
+.user-info .name,
+.assistant-name {
   margin: auto 0 auto auto;
   padding-right: 15px;
   white-space: nowrap;
@@ -319,3 +367,4 @@
   border-radius: 4px 4px 0 0;
   background-color: $jade;
 }
+

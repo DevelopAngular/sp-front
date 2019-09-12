@@ -9,7 +9,8 @@ import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA} from '@angular/material';
-import {fromEvent} from 'rxjs';
+import {fromEvent, Observable} from 'rxjs';
+import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
   selector: 'app-to-where',
@@ -37,7 +38,7 @@ export class ToWhereComponent implements OnInit {
   }
   @Input() location;
   @Input() formState: Navigation;
-  @Input() pinnables: Promise<Pinnable[]>;
+  @Input() pinnables: Observable<Pinnable[]>;
   @Input() isStaff: boolean;
   @Input() date;
   @Input() studentText;
@@ -66,11 +67,6 @@ export class ToWhereComponent implements OnInit {
       this.teacherRooms = this.formState.data.teacherRooms;
     }
     this.gridRestrictions = this.getViewRestriction();
-    // if (!this.dialogData['kioskMode']) {
-    //   debugger;
-    //     this.teacherRooms = this.formState.data.teacherRooms;
-    // }
-      console.log('STAte ==>>>', this.formState);
   }
 
   pinnableSelected(pinnable) {
@@ -130,5 +126,9 @@ export class ToWhereComponent implements OnInit {
 
   get displayFooters() {
     return this.screenService.isDeviceLargeExtra;
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

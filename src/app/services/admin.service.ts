@@ -2,28 +2,52 @@ import { Injectable } from '@angular/core';
 
 import { HttpService } from './http-service';
 import { School } from '../models/School';
-import { Observable } from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {GSuiteOrgs} from '../models/GSuiteOrgs';
-import {switchMap} from 'rxjs/operators';
-
+import {share, switchMap, take} from 'rxjs/operators';
+import {AppState} from '../ngrx/app-state/app-state';
+import {Store} from '@ngrx/store';
+import {getFoundReports, getIsLoadedReports, getIsLoadingReports, getReportsCollection} from '../ngrx/reports/states/reports-getters.state';
+import {getReports, searchReports} from '../ngrx/reports/actions';
+import {getCountAccountsResult} from '../ngrx/accounts/nested-states/count-accounts/state/count-accouns-getters.state';
+import {getCountAccounts} from '../ngrx/accounts/nested-states/count-accounts/actions';
+import {getDashboardData} from '../ngrx/dashboard/actions';
+import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
+  reports = {
+    reports$: this.store.select(getReportsCollection),
+    loaded$: this.store.select(getIsLoadedReports),
+    loading$: this.store.select(getIsLoadingReports),
+    foundReports: this.store.select(getFoundReports)
+  };
 
-  constructor(private http: HttpService) {
+  countAccounts$ = this.store.select(getCountAccountsResult);
+  dashboardData$ = this.store.select(getDashboardDataResult);
 
-  }
+  constructor(private http: HttpService,  private store: Store<AppState>) {}
 
   /// Reports
 
-  getReports(limit = 10) {
+  getReportsRequest(limit) {
     return this.http.get(`v1/event_reports?limit=${limit}`);
+  }
+
+  getReportsData(limit = 10) {
+    this.store.dispatch(getReports({ limit }));
+    return this.reports.reports$;
   }
 
   sendReport(data) {
     return this.http.post('v1/event_reports/bulk_create', data);
+  }
+
+  searchReportsRequest(before, after) {
+    this.store.dispatch(searchReports({before, after}));
+    return this.reports.foundReports;
   }
 
   searchReports(before, after) {
@@ -36,8 +60,18 @@ export class AdminService {
     return this.http.post(`v1/schools/${schoolId}/syncing/authorize`);
   }
 
+  getCountAccountsRequest() {
+    this.store.dispatch(getCountAccounts());
+    return this.countAccounts$;
+  }
+
   getAdminAccounts() {
     return this.http.get('v1/admin/accounts');
+  }
+
+  getDashboardDataRequest() {
+    this.store.dispatch(getDashboardData());
+    return this.dashboardData$;
   }
 
   getDashboardData() {

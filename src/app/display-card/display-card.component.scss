@@ -11,10 +11,14 @@
 @media all and (max-width: 425px) {
   div.display-card-wrapper{
     width: 100%;
-    padding: 0;
     border-radius: 0;
     box-shadow: none;
     background-color: transparent !important;
+    //min-height: 100vh;
+    //padding: 0 0 50px;
+    &.inbox {
+      height: 100%;
+    }
   }
 
   div.display-card-divider{
@@ -34,7 +38,7 @@
 
 .display-card-wrapper{
     width: 351px;
-    padding: 25px 22px;
+    padding: 25px 15px;
     box-sizing: border-box;
     border-radius: 12px;
     display: flex;
@@ -44,7 +48,7 @@
     background-color: #fff;
 
     &.inbox {
-        height: calc(100vh - 190px);;
+        height: calc(100vh - 190px);
         overflow: auto;
     }
 

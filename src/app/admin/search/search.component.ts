@@ -144,7 +144,7 @@ export class SearchComponent implements OnInit {
         // console.log('qp', qp);
         const {profileId, profileName, role } = qp;
         this.router.navigate( ['admin/search']);
-        console.log(profileId);
+        // console.log(profileId);
         switch (role) {
           case '_profile_student':
 
@@ -152,7 +152,7 @@ export class SearchComponent implements OnInit {
               tap((profile: User) => {
                 this.initialSearchStudentString = profile.display_name;
                 this.selectedStudents.push(profile);
-              this.search();
+                this.search();
             }));
           case '_profile_teacher':
 

@@ -24,6 +24,7 @@ import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontS
 import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
 import {ScrollPositionService} from '../scroll-position.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -159,6 +160,16 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
+
+    if (this.screenService.isDeviceLargeExtra) {
+      this.hallMonitorCollection.hasSort = false;
+      this.isIpadSearchBar = false;
+    }
+
+    if (this.screenService.isDesktopWidth) {
+      this.hallMonitorCollection.hasSort = true;
+    }
+
     combineLatest(
       this.dataService.currentUser,
       this.userService.effectiveUser,
@@ -217,7 +228,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   openReportForm() {
 
     const dialogRef = this.dialog.open(ReportFormComponent, {
-      panelClass: ['form-dialog-container', 'report-dialog'],
+      panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
       backdropClass: 'custom-backdrop',
     });
 
@@ -290,14 +301,21 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   checkDeviceWidth() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
-    if (this.screenService.isDeviceMid) {
+
+    if (this.screenService.isDeviceLargeExtra) {
+      this.hallMonitorCollection.hasSort = false;
       this.isIpadSearchBar = false;
     }
+
+    if (this.screenService.isDesktopWidth) {
+      this.hallMonitorCollection.hasSort = true;
+    }
+
   }
 
   toggleSearchBar() {
     this.isSearchClicked = !this.isSearchClicked;
-    if (this.screenService.isIpadWidth) {
+    if (this.screenService.isDeviceLargeExtra) {
       this.isIpadSearchBar = !this.isIpadSearchBar;
     }
   }
@@ -308,4 +326,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.isIpadSearchBar = false;
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 }

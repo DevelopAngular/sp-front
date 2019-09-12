@@ -1,4 +1,15 @@
-@media all and (max-width: 1024px) {
+.ios {
+  &-button-next {
+    margin-right: 0;
+    align-self: center;
+  }
+
+  &-back-button {
+    display: none;
+  }
+}
+
+@media all and (max-width: 940px) {
   div.student-select .student-select_button-next {
     margin-right: 0;
     align-self: center;
@@ -9,7 +20,7 @@
   }
 }
 
-@media all  and (max-width: 425px) {
+@media all and (max-width: 425px) {
   div.message-entry {
     width: initial;
   }
@@ -19,8 +30,8 @@
   }
 }
 
-@media all  and (max-width: 375px) {
-  div.message-entry .message-box{
+@media all and (max-width: 375px) {
+  div.message-entry .message-box {
     height: 100%;
   }
 
@@ -29,8 +40,8 @@
   }
 }
 
-@media all  and (max-width: 320px) {
-  div.report-form-wrapper{
+@media all and (max-width: 320px) {
+  div.report-form-wrapper {
     width: 300px;
     margin: 0 auto;
   }
@@ -41,25 +52,26 @@
   height: 100%;
 }
 
-.report-form-wrapper{
-    width: inherit;
-    height: inherit;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+.report-form-wrapper {
+  width: inherit;
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .divider {
-    background-color: #E32C66;
-    width: 100%;
-    height: 70px;
-    min-height: 64px;
-    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-    position: relative;
-    z-index: 1;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+  background-color: #E32C66;
+  width: 100%;
+  height: 70px;
+  min-height: 64px;
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
+
 .back-button {
   width: 28px;
   display: flex;
@@ -76,10 +88,11 @@
   color: #999999;
   cursor: pointer;
 }
-.divider-icon{
-    margin-right: 12px;
-    width: 21px;
-    height: 21px;
+
+.divider-icon {
+  margin-right: 12px;
+  width: 21px;
+  height: 21px;
 }
 
 .divider-text-students, .divider-text-message {
@@ -88,13 +101,13 @@
   bottom: 0;
   left: 0;
   right: 0;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.08;
-    letter-spacing: 0.3px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.08;
+  letter-spacing: 0.3px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -102,40 +115,46 @@
 
 }
 
-.student-select{
-    margin: 20px 0px 25px 0px;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0px  25px 0px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    flex: 1 1 auto;
+.student-select {
+  margin: 20px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0px 25px 0px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  flex: 1 1 auto;
+
   .student-select_button-next {
     align-self: flex-end;
     margin-right: 25px;
   }
+
   .report-content {
     //width: 100%;
     //display: flex;
     //position: absolute;
   }
+
   .student-list {
     width: 215px;
     margin-top: 35px;
+
     &_header {
       margin: 30px 0 5px 0;
       text-align: center;
     }
+
     &_scrollable {
       max-height: 190px;
       overflow: auto;
     }
+
     &_item {
       border-top: 1px solid #D8D8D8;
       display: flex;
@@ -145,6 +164,7 @@
       color: #555558;
       font-size: 14px;
       cursor: pointer;
+
       img {
         cursor: pointer;
       }
@@ -152,32 +172,32 @@
   }
 }
 
-textarea{
-    resize: none;
-    border: 0px;
-    box-sizing: border-box;
-    padding: 10px 10px 0 10px;
-    outline: none;
+textarea {
+  resize: none;
+  border: 0px;
+  box-sizing: border-box;
+  padding: 10px 10px 0 10px;
+  outline: none;
 }
 
 
+.message-entry {
+  width: 350px;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  padding: 25px 0px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 
-.message-entry{
-    width: 350px;
-    overflow: visible;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1 1 auto;
-    justify-content: space-between;
-    padding: 25px 0px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-  .message-box{
+  .message-box {
     width: 100%;
     height: 100px;
     //margin: 15px auto;

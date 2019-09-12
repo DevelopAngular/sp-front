@@ -279,6 +279,18 @@ export class OverlayContainerComponent implements OnInit {
               switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
           );
       }
+    this.dialogRef.backdropClick()
+      .pipe(
+        switchMap(() => {
+          return this.roomValidButtons;
+        }),
+        filter((rvb: ValidButtons): boolean => {
+          return Object.values(rvb).every(v => !v);
+        })
+      )
+      .subscribe(() => {
+      this.dialogRef.close();
+    });
   }
 
   buildForm() {
@@ -495,7 +507,8 @@ export class OverlayContainerComponent implements OnInit {
                    icon: this.selectedIcon.inactive_icon,
                    location: loc.id,
                };
-               return this.hallPassService.createPinnable(pinnable);
+               return this.hallPassService.postPinnableRequest(pinnable);
+               // return this.hallPassService.createPinnable(pinnable);
            })).subscribe(response => this.dialogRef.close());
     }
 
@@ -507,7 +520,7 @@ export class OverlayContainerComponent implements OnInit {
           icon: this.selectedIcon.inactive_icon,
           category: this.folderData.folderName
         };
-        this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
+        this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
           .subscribe(res => this.dialogRef.close());
       }
       if (this.folderData.roomsToDelete.length) {
@@ -552,11 +565,11 @@ export class OverlayContainerComponent implements OnInit {
         };
         return this.currentPage === Pages.EditFolder
           ?
-          this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
+          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
           :
           zip(
             this.hallPassService.getArrangedPinnables(),
-            this.hallPassService.createPinnable(newFolder)
+            this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res))
           ).pipe(
             switchMap((result: any[]) => {
               const arrengedSequence = result[0].map(item => item.id);
@@ -598,7 +611,8 @@ export class OverlayContainerComponent implements OnInit {
                     icon: this.selectedIcon.inactive_icon,
                     location: loc.id,
                 };
-                return this.hallPassService.updatePinnable(this.pinnable.id, pinnable);
+                return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
+                // return this.hallPassService.updatePinnable(this.pinnable.id, pinnable);
             })).subscribe(response => this.dialogRef.close());
     }
 

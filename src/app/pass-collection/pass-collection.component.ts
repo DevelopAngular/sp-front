@@ -56,13 +56,14 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() columnViewIcon: boolean = true;
   @Input() smoothlyUpdating: boolean = false;
   @Input() grid_template_columns: string = '143px';
-  @Input() grid_gap: string = '15px';
+  @Input() grid_gap: string = '10px';
   @Input() isAdminPage: boolean;
 
   @Input() passProvider: PassLikeProvider;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
+  @Output() currentPassesEmit = new EventEmitter();
 
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
@@ -110,7 +111,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     if (this.screenService.isDeviceMid && !this.screenService.isDeviceSmallExtra) {
       this.grid_template_columns = '157px';
     }
-    return this.sanitizer.bypassSecurityTrustStyle(`repeat(auto-fill, minmax(${this.grid_template_columns}, .3fr))`);
+    return this.sanitizer.bypassSecurityTrustStyle(`repeat(auto-fill, ${this.grid_template_columns})`);
   }
 
   get gridGap() {
@@ -135,6 +136,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           )
           .subscribe((passes: any) => {
             this.currentPasses = passes;
+            this.currentPassesEmit.emit(passes);
           });
       }
         if (this.isActive) {

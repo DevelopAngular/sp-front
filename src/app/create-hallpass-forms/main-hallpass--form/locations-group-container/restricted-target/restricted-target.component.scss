@@ -1,6 +1,6 @@
 @import '../../../../../sp-colors';
 
-@media all and (max-width: 1024px) {
+@media all and (max-width: 940px) {
   div.rest-tar-wrapper {
     overflow: initial;
   }
@@ -14,6 +14,9 @@
   }
 }
 
+.ios-back-btn-top {
+  display: none;
+}
 
 .rest-tar-wrapper {
   height: 500px;

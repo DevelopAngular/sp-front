@@ -6,9 +6,8 @@ import {Router} from '@angular/router';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
-import {empty, forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
+import {fromEvent, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
-import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {HttpService} from '../../services/http-service';
 
 import * as _ from 'lodash';
@@ -142,11 +141,8 @@ export class ProfileCardDialogComponent implements OnInit {
                       `${this.data.orgUnit.title}s Group Syncing`
                       : '';
 
-    if (this.data.role === '_profile_teacher') {
-        this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)
-          .subscribe((locations: Location[]) => {
-            this.teacherAssignedTo = locations;
-          });
+    if (this.data.role === '_profile_teacher') {console.log(this.profile);
+       this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo;
     }
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
@@ -173,20 +169,20 @@ export class ProfileCardDialogComponent implements OnInit {
   }
 
   goToSearch() {
-    this.dialogRef.close();
-    this.router.navigate(['admin/search'], {
-      queryParams: {
-        profileId: this.profile.id,
-        profileName: this.profile['Name'],
-        role: this.data.role
-      }
-    });
+    window.open(`admin/search?profileId=${this.profile.id}&profileName=${this.profile['Name']}&role=${this.data.role}`, '_blank');
+    // this.router.navigate(['admin/search'], {
+    //   queryParams: {
+    //     profileId: this.profile.id,
+    //     profileName: this.profile['Name'],
+    //     role: this.data.role
+    //   }
+    // });
   }
   goToPassConfig(location?: Location) {
     if (location) {
       window.open(`admin/passconfig?locationId=${location.id}`);
     } else {
-      this.router.navigate(['admin/passconfig']);
+      window.open('admin/passconfig');
     }
 
   }

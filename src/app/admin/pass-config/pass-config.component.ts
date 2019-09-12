@@ -80,12 +80,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     private pendingSubject = new ReplaySubject<boolean>(1);
     public pending$ = this.pendingSubject.asObservable();
 
-    settingsForm: FormGroup;
     selectedPinnables: Pinnable[] = [];
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
-    pinnables: Pinnable[];
-    schools$;
+    pinnables: Pinnable[] = [];
 
     arrangedOrderForUpdating: number[];
 
@@ -97,6 +95,11 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     private onboardUpdate$ = new Subject();
 
+    public loading$: Observable<boolean>;
+    public loaded$: Observable<boolean>;
+
+    destroy$ = new Subject();
+
 
     showRooms: boolean;
     onboardLoaded: boolean;
@@ -104,7 +107,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   constructor(
       private dialog: MatDialog,
       private httpService: HttpService,
-      private hallPassService: HallPassesService,
+      public hallPassService: HallPassesService,
       private elRef: ElementRef,
       private activatedRoute: ActivatedRoute,
       private locationsService: LocationsService,
@@ -116,11 +119,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
   ) { }
 
-  get schoolName() {
-    const school = this.httpService.getSchool();
-    return school != null ? school.name : '';
-  }
-
   get headerButtonText() {
     return (this.selectedPinnables.length < 1 || !this.bulkSelect ? 'Add' : 'Bulk Edit Rooms');
   }
@@ -130,9 +128,21 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    combineLatest(this.adminService.getOnboardProgress(), this.hallPassService.getPinnables())
+    this.loading$ = this.hallPassService.isLoadingPinnables$;
+    this.loaded$ = this.hallPassService.loadedPinnables$;
+    this.httpService.globalReload$.subscribe(() => {
+      this.hallPassService.getPinnablesRequest();
+      this.pinnables$ = this.hallPassService.pinnables$;
+      this.pinnables$.pipe(filter((res: any[]) => !!res.length)).subscribe(res => {
+        this.pinnables = res;
+      });
+    combineLatest(this.adminService.getOnboardProgress(), this.pinnables$)
+      .pipe(
+        filter(() => navigator.onLine),
+        takeUntil(this.destroy$)
+      )
     .subscribe(([onboard, pinnables]) => {
-        console.log('Onboard ==>>>>', pinnables);
+        // console.log('Onboard ==>>>>', pinnables);
       if (onboard && (onboard as any[]).length && !pinnables.length) {
         const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
         this.showRooms = !!end.done;
@@ -150,26 +160,20 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       this.onboardLoaded = true;
     });
 
-    this.onboardUpdate$.pipe(switchMap((action) => {
+    this.onboardUpdate$.pipe(
+      filter(() => navigator.onLine),
+      takeUntil(this.destroy$),
+      switchMap((action) => {
         return this.adminService.updateOnboardProgress(action);
     })).subscribe();
 
-    this.pinnables$ = this.hallPassService.getPinnables();
-    this.pinnables$.subscribe(res => this.pinnables = res);
-
-    this.httpService.globalReload$.subscribe(() => {
-      this.pinnables$ = this.hallPassService.getPinnables();
-      this.pinnables$.subscribe(res => this.pinnables = res);
-
       const forceSelectPinnable: Subscription = this.activatedRoute.queryParams.pipe(
         filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
+        takeUntil(this.destroy$),
         switchMap((qp: any): any => {
           const {locationId} = qp;
           this.router.navigate( ['admin/passconfig']);
-
-          // { action: 'room/folder_edit', selection: pinnable }
           return this.locationsService.getLocation(locationId);
-          // this.selectPinnable({ action: 'room/folder_edit', selection: pinnable })
         }),
         switchMap((location: Location) => {
           return zip(this.pinnables$, of(location));
@@ -196,40 +200,43 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     of(null)
       .pipe(
+        takeUntil(this.destroy$),
         switchMap(() => {
           if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
             return this.updatePinnablesOrder();
           }
-          return this.hallPassService.getPinnables();
+          return this.hallPassService.getPinnablesRequest();
         })
       )
       .subscribe(res => {
         this.dialog.closeAll();
       });
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  onPinnnableBlur(evt) {
-    console.log(evt.target.className)
-    if (evt.target && (evt.target.className === 'selected-counter global-opacity-icons')) {
-      console.log(evt.target);
-      this.pinnableCollectionBlurEvent$.next(false);
-    } else {
-      this.pinnableCollectionBlurEvent$.next(true);
-    }
-  }
+  // onPinnnableBlur(evt) {
+  //   console.log(evt.target.className)
+  //   if (evt.target && (evt.target.className === 'selected-counter global-opacity-icons')) {
+  //     console.log(evt.target);
+  //     this.pinnableCollectionBlurEvent$.next(false);
+  //   } else {
+  //     this.pinnableCollectionBlurEvent$.next(true);
+  //   }
+  // }
 
   setNewArrangedOrder(newOrder) {
     this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
-    // console.log(this.arrangedOrderForUpdating);
   }
 
   private updatePinnablesOrder() {
     return this.hallPassService
       .createArrangedPinnable({order: this.arrangedOrderForUpdating.join(',')})
       .pipe(
+        takeUntil(this.destroy$),
         tap(() => this.arrangedOrderForUpdating = null),
         switchMap((): Observable<Pinnable[]> => {
-          return this.hallPassService.getPinnables();
+          return this.hallPassService.getPinnablesRequest();
         })
       );
   }
@@ -401,14 +408,14 @@ export class PassConfigComponent implements OnInit, OnDestroy {
        switchMap(() => {
          this.pendingSubject.next(true);
          if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
-           return this.updatePinnablesOrder();
+           return of(null);
          }
-         return this.hallPassService.getPinnables();
+         return of(null);
        })
      )
      .subscribe(res => {
-       console.log(res.map(i => i.id));
-       this.pinnables = res;
+       // console.log(res.map(i => i.id));
+       // this.pinnables = res;
        this.selectedPinnables = [];
        this.bulkSelect = false;
        this.pendingSubject.next(false);
@@ -416,7 +423,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   onboard({createPack, pinnables}) {
-    console.log(createPack, pinnables);
+    // console.log(createPack, pinnables);
     if (createPack) {
       const requests$ = pinnables.map(pin => {
         const location =  {
@@ -427,7 +434,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           travel_types: pin.travel_types,
           max_allowed_time: pin.max_allowed_time
         };
-        return this.locationsService.createLocation(location)
+        return this.locationsService.createLocation(location).pipe(filter(() => navigator.onLine))
           .pipe(switchMap((loc: Location) => {
             const pinnable = {
               title: pin.title,
@@ -441,6 +448,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
       forkJoin(requests$)
         .pipe(
+          filter(() => navigator.onLine),
+          takeUntil(this.destroy$),
           switchMap((res) => {
             return this.adminService.updateOnboardProgress('setup_rooms:end').pipe(mapTo(res));
           })
@@ -450,7 +459,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           this.showRooms = true;
         });
       } else {
-        this.adminService.updateOnboardProgress('setup_rooms:end')
+        this.adminService.updateOnboardProgress('setup_rooms:end').pipe(filter(() => navigator.onLine))
           .subscribe(() => {
 
             this.showRooms = true;

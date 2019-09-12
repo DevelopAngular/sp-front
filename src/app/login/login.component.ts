@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {DomSanitizer, Meta, SafeUrl, Title} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
@@ -49,12 +49,20 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private storage: StorageService,
     private router: Router,
     private sanitizer: DomSanitizer,
+    private titleService: Title,
+    private metaService: Meta,
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
   }
 
   ngOnInit() {
+    this.titleService.setTitle('SmartPass Sign-in');
+    this.metaService.addTag({
+      name: 'description',
+      content: 'Digital hall pass system and school safety solution. Sign-in with your school account. Don\'t have an account? Sign your school up for a free 60 day trial.'
+    });
+
     if (this.isIOSMobile || this.isAndroid) {
       window.waitForAppLoaded();
     }
@@ -77,6 +85,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       // } else {
         this.router.navigate([loadView]);
       // }
+      this.titleService.setTitle('SmartPass');
     });
 
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');

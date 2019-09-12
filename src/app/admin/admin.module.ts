@@ -33,7 +33,7 @@ import { MySchoolComponent } from './my-school/my-school.component';
 import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.component';
 import { SchoolButtonComponent } from './my-school/school-button/school-button.component';
 import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-card-button.component';
-
+import { IosComponentComponent } from './ios-component/ios-component.component';
 
 @NgModule({
   imports: [
@@ -71,6 +71,8 @@ import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-car
     RoomsSetUpComponent,
     SchoolButtonComponent,
     AdminCardButtonComponent,
+    IosComponentComponent,
+
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,

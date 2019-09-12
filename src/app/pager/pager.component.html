@@ -21,11 +21,17 @@
     </div>
   </div>
   <div class="paginator-container">
-    <div class="paginator-button paginator-button__left" [style.top]="arrowPosition" (click)="leftPaginator()"><img *ngIf="hideLeftButton.value" class="button-image" [src]="'./assets/Chevron Left (White).svg' | resolveAsset"></div>
+    <div class="paginator-button paginator-button__left" [style.top]="arrowPosition" (click)="leftPaginator()" *ngIf="hideLeftButton.value">
+      <app-icon-button [hasShadow]="false" [onDarkShade]="true" (clickEvent)="leftPaginator()" [srcString]="'Chevron Left'" [size]="25"></app-icon-button>
+    </div>
     <div *ngIf="pages > 1" class="paginator-wrapper">
         <div *ngFor="let $page of $pages" class="pager-page-selector" (click)="DotPagination($page)" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
     </div>
-    <div class="paginator-button paginator-button__right" [style.top]="arrowPosition" (click)="RightPaginator()"><img class="button-image" *ngIf="hideRightButton.value" [src]="'./assets/Chevron Right (White).svg' | resolveAsset"></div>
+<!--    <div class="paginator-button paginator-button__right" [style.top]="arrowPosition" (click)="RightPaginator()"><img class="button-image" *ngIf="hideRightButton.value" [src]="'./assets/Chevron Right (White).svg' | resolveAsset"></div>-->
+    <div class="paginator-button paginator-button__right" [style.top]="arrowPosition" *ngIf="hideRightButton.value">
+      <app-icon-button [hasShadow]="false" [onDarkShade]="true" (clickEvent)="RightPaginator()" [srcString]="'Chevron Right'" [size]="25"></app-icon-button>
+    </div>
+
   </div>
 </div>
 

@@ -1,9 +1,4 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-
-
-
-
-
 import {interval, race, Observable, ReplaySubject, of} from 'rxjs';
 import { SentryErrorHandler } from '../error-handler';
 import { HttpService } from './http-service';
@@ -11,11 +6,49 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {AdminService} from './admin.service';
-import {map, switchMap, take, tap} from 'rxjs/operators';
+import {last, map, share, skip, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getAccounts, postAccounts, removeAccount} from '../ngrx/accounts/actions/accounts.actions';
+import {
+  getAllAccountsCollection, getCountAllAccounts,
+  getLoadedAllAccounts, getLoadingAllAccounts
+} from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
+import {
+  getAdminsCollections, getCountAdmins,
+  getLoadedAdminsAccounts,
+  getLoadingAdminsAccounts
+} from '../ngrx/accounts/nested-states/admins/states/admins.getters.state';
+import {
+  getCountTeachers,
+  getLoadedTeachers,
+  getLoadingTeachers,
+  getTeacherAccountsCollection
+} from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
+import {
+  getAssistantsAccountsCollection,
+  getCountAssistants,
+  getLoadedAssistants,
+  getLoadingAssistants
+} from '../ngrx/accounts/nested-states/assistants/states';
+import {
+  getCountStudents,
+  getLoadedStudents,
+  getLoadingStudents,
+  getStudentsAccountsCollection
+} from '../ngrx/accounts/nested-states/students/states';
+import {LocationsService} from './locations.service';
+import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
+import {StudentList} from '../models/StudentList';
+import {
+  getCurrentStudentGroup,
+  getLoadedGroups,
+  getLoadingGroups,
+  getStudentGroupsCollection
+} from '../ngrx/student-groups/states/groups-getters.state';
 
 @Injectable()
 export class UserService {
@@ -28,10 +61,52 @@ export class UserService {
   public effectiveUser: ReplaySubject<RepresentedUser> = new ReplaySubject<RepresentedUser>(1);
   public representedUsers: ReplaySubject<RepresentedUser[]> = new ReplaySubject<RepresentedUser[]>(1);
 
-  constructor(private http: HttpService,
-              private pollingService: PollingService,
-              private _logging: Logger,
-              private errorHandler: ErrorHandler
+  /**
+   * Users from store
+   */
+  accounts = {
+    allAccounts: this.store.select(getAllAccountsCollection),
+    adminAccounts: this.store.select(getAdminsCollections),
+    teacherAccounts: this.store.select(getTeacherAccountsCollection),
+    assistantAccounts: this.store.select(getAssistantsAccountsCollection),
+    studentAccounts: this.store.select(getStudentsAccountsCollection)
+  };
+
+  countAccounts$ = {
+    all: this.store.select(getCountAllAccounts),
+    admin: this.store.select(getCountAdmins),
+    student: this.store.select(getCountStudents),
+    teacher: this.store.select(getCountTeachers),
+    assistant: this.store.select(getCountAssistants)
+  };
+
+  isLoadedAccounts$ = {
+    all: this.store.select(getLoadedAllAccounts),
+    admin: this.store.select(getLoadedAdminsAccounts),
+    teacher: this.store.select(getLoadedTeachers),
+    student: this.store.select(getLoadedStudents),
+    assistant: this.store.select(getLoadedAssistants)
+  };
+
+  isLoadingAccounts$ = {
+    all: this.store.select(getLoadingAllAccounts),
+    admin: this.store.select(getLoadingAdminsAccounts),
+    teacher: this.store.select(getLoadingTeachers),
+    student: this.store.select(getLoadingStudents),
+    assistant: this.store.select(getLoadingAssistants)
+  };
+
+  studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
+  currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
+  isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
+  isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
+
+  constructor(
+    private http: HttpService,
+    private pollingService: PollingService,
+    private _logging: Logger,
+    private errorHandler: ErrorHandler,
+    private store: Store<AppState>,
   ) {
 
     // this.userData.subscribe(
@@ -77,6 +152,34 @@ export class UserService {
     }
 
     this.pollingService.listen().subscribe(this._logging.debug);
+  }
+
+  getLoadingAccounts(role) {
+    if (role === '' || role === '_all') {
+      return {loading: this.isLoadingAccounts$.all, loaded: this.isLoadedAccounts$.all};
+    } else if (role === '_profile_admin') {
+      return {loading: this.isLoadingAccounts$.admin, loaded: this.isLoadedAccounts$.admin};
+    } else if (role === '_profile_teacher') {
+      return {loading: this.isLoadingAccounts$.teacher, loaded: this.isLoadedAccounts$.teacher};
+    } else if (role === '_profile_student') {
+      return {loading: this.isLoadingAccounts$.student, loaded: this.isLoadedAccounts$.student};
+    } else if (role === '_profile_assistant') {
+      return {loading: this.isLoadingAccounts$.assistant, loaded: this.isLoadedAccounts$.assistant};
+    }
+  }
+
+  getAccountsRole(role) {
+    if (role === '' || role === '_all') {
+      return this.accounts.allAccounts;
+    } else if (role === '_profile_admin') {
+      return this.accounts.adminAccounts;
+    } else if (role === '_profile_teacher') {
+      return this.accounts.teacherAccounts;
+    } else if (role === '_profile_student') {
+      return this.accounts.studentAccounts;
+    } else if (role === '_profile_assistant') {
+      return this.accounts.assistantAccounts;
+    }
   }
 
   getUser() {
@@ -152,6 +255,11 @@ export class UserService {
       return this.http.patch(`v1/users/${id}/active`, {active: activity});
   }
 
+  addAccountRequest(school_id, user, userType, roles: string[]) {
+    this.store.dispatch(postAccounts({school_id, user, userType, roles}));
+    return this.accounts.adminAccounts;
+  }
+
   addAccountToSchool(id, user, userType: string, roles: Array<string>) {
     if (userType === 'gsuite') {
       return this.http.post(`v1/schools/${id}/add_user`, {
@@ -186,6 +294,11 @@ export class UserService {
     return this.http.patch(`v1/users/${id}/roles`, data);
   }
 
+  deleteUserRequest(id, role) {
+    this.store.dispatch(removeAccount({id, role}));
+    return of(null);
+  }
+
   deleteUser(id) {
       return this.http.delete(`v1/users/${id}`);
   }
@@ -202,16 +315,37 @@ export class UserService {
   deleteRepresentedUser(id: number, repr_user: User) {
     return this.http.delete(`v1/users/${id}/represented_users/${repr_user.id}`);
   }
+
+  getStudentGroupsRequest() {
+    this.store.dispatch(getStudentGroups());
+    return this.studentGroups$;
+  }
+
   getStudentGroups() {
       return this.http.get('v1/student_lists');
+  }
+
+  createStudentGroupRequest(group) {
+    this.store.dispatch(postStudentGroup({group}));
+    return this.currentStudentGroup$;
   }
 
   createStudentGroup(data) {
       return this.http.post('v1/student_lists', data);
   }
 
+  updateStudentGroupRequest(id, group) {
+    this.store.dispatch(updateStudentGroup({id, group}));
+    return this.currentStudentGroup$;
+  }
+
   updateStudentGroup(id, body) {
       return this.http.patch(`v1/student_lists/${id}`, body);
+  }
+
+  deleteStudentGroupRequest(id) {
+    this.store.dispatch(removeStudentGroup({id}));
+    return this.currentStudentGroup$;
   }
 
   deleteStudentGroup(id) {
@@ -223,6 +357,11 @@ export class UserService {
       this.userData,
       interval(max).pipe(map(() => null))
     ).pipe(take(1));
+  }
+
+  getAccountsRoles(role: string = '', search: string = '', limit: number = 0) {
+    this.store.dispatch(getAccounts({role, search, limit}));
+    return this.getAccountsRole(role);
   }
 
   getUsersList(role: string = '', search: string = '', limit: number = 0) {

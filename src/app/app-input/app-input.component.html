@@ -23,14 +23,15 @@
         </div>
       </div>
     </div>
-    <div class="input-container" [style.width]="containerWidth">
+    <div class="input-container">
       <input
              [attr.disabled]="disabled ? '' : null"
              [style.background-color]="isFocus && inp.focused ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
              tabindex="1"
-             [style.width]="width"
+             [style.width]="containerWidth"
              [style.height]="height"
              [style.text-align]="textAlign"
+             [style.box-sizing]="'border-box'"
              [style.padding]="padding + (textAlign ? ' 16px ' : ' 0px ') + padding + ' 16px'"
              [maxlength]="maxLength"
              [formControl]="controlName"
@@ -45,7 +46,7 @@
              [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
              spellcheck="false" #inp />
       <!--<img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>-->
-      <div class="tooltip-container tooltip-container__inline "
+      <div class="tooltip-container tooltip-container__inline"
            *ngIf='controlName.invalid
             &&
             controlName.touched
@@ -56,7 +57,6 @@
             controlName.errors.folder_name ? 'Folder name already used' :
             controlName.errors.room_name ? 'Room name already used' : null
           "
-          [style.top]="errorIconTop + 'px'"
           matTooltipClass="tooltip"
           class="success-icon"
           [src]="'./assets/Report (Red).svg' | resolveAsset">
@@ -65,7 +65,7 @@
         </div>
       </div>
       <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
-           class="success-icon" [style.top]="errorIconTop + 'px'" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
+           class="success-icon" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
       <div class="disabled"></div>
     </div>
   </div>

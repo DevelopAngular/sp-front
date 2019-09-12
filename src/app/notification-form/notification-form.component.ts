@@ -11,6 +11,7 @@ import { LocationsService } from '../services/locations.service';
 import { LoadingService } from '../services/loading.service';
 import { UserService } from '../services/user.service';
 import { NotificationService } from '../services/notification-service';
+import {DeviceDetection} from '../device-detection.helper';
 
 
 @Component({
@@ -85,4 +86,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
 
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 }

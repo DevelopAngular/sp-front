@@ -9,7 +9,7 @@ import {
   Output,
   ViewChild,
   AfterContentInit,
-  AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy
+  AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy, Renderer2
 } from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
@@ -43,6 +43,7 @@ import {NavButtonComponent} from '../nav-button/nav-button.component';
 import {Schedule} from 'primeng/primeng';
 import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {DeviceDetection} from '../device-detection.helper';
 
 declare const window;
 
@@ -116,6 +117,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   isAdminRoute: boolean;
 
+  isAssistant: boolean;
+
   @HostListener('window:resize')
     checkDeviceWidth() {
         this.underlinePosition();
@@ -123,7 +126,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
         if (this.islargeDeviceWidth) {
             this.inboxVisibility = false;
-
         }
 
         if (this.screenService.isDesktopWidth) {
@@ -155,6 +157,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       public screenService: ScreenService,
       private sideNavService: SideNavService,
       private cdr: ChangeDetectorRef,
+      private rendered: Renderer2
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -182,6 +185,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.underlinePosition();
     this.hideButtons = this.router.url.includes('kioskMode');
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
@@ -212,6 +216,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.isTeacher();
+          this.isAssistant = user.isAssistant();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
         });
       });
@@ -293,10 +298,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   underlinePosition() {
+    this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer);
     if (this.screenService.isDesktopWidth) {
       setTimeout( () => {
         this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer);
-      });
+      }, 0);
     }
 
     if (this.screenService.isDeviceLargeExtra) {
@@ -305,7 +311,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef) {
-    if (this.isStaff && buttonsContainer && this.tabRefs) {
+    if (this.isStaff && buttonsContainer && this.tabRefs ||
+      this.isAssistant && buttonsContainer && this.tabRefs) {
       setTimeout(() => {
         const tabRefsArray = refsArray.toArray();
         const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
@@ -487,7 +494,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.inboxVisibility = !this.inboxVisibility;
     this.storage.setItem('showInbox', this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);
-    if(this.tab!=='passes'){
+    if(this.tab !== 'passes'){
       this.updateTab('passes');
     }
 
@@ -505,5 +512,36 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyer$.next();
     this.destroyer$.complete();
+  }
+
+  shrinkTab(tab) {
+      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');
+  }
+
+  expandTab(tab) {
+    const isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isSafari && iOS) {
+      setTimeout( () => {
+        this.rendered.setStyle(tab, 'webkitTransform', 'unset');
+      }, 200);
+    } else {
+      this.rendered.setStyle(tab, 'webkitTransform', 'unset');
+    }
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
+  get isKioskMode() {
+    return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get flexDirection() {
+    let direction = 'row';
+    if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
+    if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
+    return direction;
   }
 }

@@ -18,8 +18,8 @@ export class AppInputComponent implements OnInit {
     @Input() input_label: string;
     @Input() placeholder: string = '';
     @Input() maxLength: number = 100;
-    @Input() width: string;
-    @Input() height: string = '22px';
+    @Input() width: string = '0px';
+    @Input() height: string = '40px';
     @Input() padding: string = '8px';
     @Input() rightIcon: string;
     @Input() tooltipText: string;
@@ -36,6 +36,7 @@ export class AppInputComponent implements OnInit {
     @Output() over = new EventEmitter();
     @Output() leave = new EventEmitter();
     @Output() blurEvent = new EventEmitter();
+    @Output() focusEvent = new EventEmitter();
 
     @ViewChild('inp') input;
 
@@ -83,6 +84,7 @@ export class AppInputComponent implements OnInit {
 
       if (this.isFocus) {
         el.focus();
+        this.focusEvent.emit();
       } else {
         el.blur();
       }

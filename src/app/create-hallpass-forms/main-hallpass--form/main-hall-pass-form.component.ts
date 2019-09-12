@@ -12,6 +12,8 @@ import * as _ from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
+import {DeviceDetection} from '../../device-detection.helper';
+import {HallPassesService} from '../../services/hall-passes.service';
 
 
 export enum Role { Teacher = 1, Student = 2 }
@@ -87,6 +89,7 @@ export class MainHallPassFormComponent implements OnInit {
     private dataService: DataService,
     private locationsService: LocationsService,
     private screenService: ScreenService,
+    private passesService: HallPassesService
   ) {}
 
   ngOnInit() {
@@ -175,13 +178,13 @@ export class MainHallPassFormComponent implements OnInit {
       });
 
       combineLatest(
-          this.formService.getPinnable(),
-          this.locationsService.getLocationsWithTeacher(this.user))
+          this.passesService.getPinnablesRequest(),
+          this.locationsService.getLocationsWithTeacherRequest(this.user))
           .pipe(filter(() => this.isStaff),
               map(([pinnables, locations]) => {
                   const filterPinnables = pinnables.filter(pin => {
                       return locations.find(loc => {
-                          return (loc.category ? loc.category : loc.title) === pin.title;
+                          return (loc.category ? loc.category : loc.title) === pin.category;
                       });
                   });
                   return filterPinnables.map(fpin => {
@@ -206,8 +209,7 @@ export class MainHallPassFormComponent implements OnInit {
       this.dialogRef.close(evt);
       return;
     } else {
-      console.log('STEP EVENT ===>', evt);
-
+      // console.log('STEP EVENT ===>', evt);
       this.FORM_STATE = evt;
     }
     this.setFormSize();
@@ -229,8 +231,8 @@ export class MainHallPassFormComponent implements OnInit {
             this.formSize.width =  `425px`;
             this.formSize.height =  `500px`;
           } else {
-            this.formSize.width =  this.isDeviceLarge ?  `335px` : `700px`;
-            this.formSize.height = this.isDeviceLarge ?  `500px` : `400px`;
+            this.formSize.width =  this.extraLargeDevice ?  `335px` : `700px`;
+            this.formSize.height = this.extraLargeDevice ?  `500px` : `400px`;
           }
           break;
         case 3:
@@ -250,7 +252,16 @@ export class MainHallPassFormComponent implements OnInit {
   @HostListener('window:resize')
   checkDeviceScreen() {
     this.isDeviceMid = this.screenService.isDeviceMid;
-    this.isDeviceLarge = this.screenService.isDeviceLargeExtra;
+    this.isDeviceLarge = this.extraLargeDevice;
     this.setFormSize();
   }
+
+  get extraLargeDevice() {
+    return this.screenService.isDeviceLargeExtra;
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
 }

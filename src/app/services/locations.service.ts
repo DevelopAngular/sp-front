@@ -1,26 +1,36 @@
 import { Injectable } from '@angular/core';
 import { fromArray } from 'rxjs/internal/observable/fromArray';
-import { Observable } from 'rxjs/Observable';
-import { bufferCount, flatMap, reduce } from 'rxjs/operators';
+import {bufferCount, flatMap, reduce, tap} from 'rxjs/operators';
 import { constructUrl } from '../live-data/helpers';
 import { Paged } from '../models';
 import { HttpService } from './http-service';
 import { User } from '../models/User';
-import {BehaviorSubject, from} from 'rxjs';
+import {BehaviorSubject, from, Observable, of} from 'rxjs';
 import { Location } from '../models/Location';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getLocationsCollection} from '../ngrx/teacherLocations/state/locations-getters.state';
+import {getLocsWithTeachers} from '../ngrx/teacherLocations/actions';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocationsService {
 
+  teacherLocations$: Observable<Location[]> = this.store.select(getLocationsCollection);
+
   myRoomSelectedLocation$: BehaviorSubject<Location> = new BehaviorSubject(null);
 
   focused: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService, private store: Store<AppState>) { }
 
     getLocationsWithCategory(category: string) {
         return this.http.get(`v1/locations?category=${category}&`);
+    }
+
+    getLocationsWithTeacherRequest(teacher: User): Observable<Location[]> {
+      this.store.dispatch(getLocsWithTeachers({teacher}));
+      return this.teacherLocations$;
     }
 
     getLocationsWithTeacher(teacher: User) {
@@ -29,7 +39,6 @@ export class LocationsService {
 
     getLocationsWithManyTeachers(teachers: User[]): Observable<Location[]> {
         const teacherIds = teachers.map(t => t.id);
-
         return from(teacherIds).pipe(
           bufferCount(20),
           flatMap(ids => {
@@ -52,7 +61,7 @@ export class LocationsService {
     }
 
     updateLocation(id, data) {
-      console.log(data);
+      // console.log(data);
       return this.http.patch(`v1/locations/${id}`, data);
     }
 

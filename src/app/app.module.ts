@@ -1,4 +1,4 @@
-﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
@@ -58,6 +58,29 @@ import { AccountsSetupComponent } from './accounts-setup/accounts-setup.componen
 import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
+import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
+
+const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
+  direction: 'horizontal',
+  slidesPerView: 'auto'
+};
+import { StoreModule } from '@ngrx/store';
+import { reducers } from './ngrx/app-state/app-state';
+import {EffectsModule} from '@ngrx/effects';
+import {AccountsEffects} from './ngrx/accounts/effects/accounts.effects';
+import {AllAccountsEffects} from './ngrx/accounts/nested-states/all-accounts/effects';
+import {AdminsEffects} from './ngrx/accounts/nested-states/admins/effects';
+import {ReportsEffects} from './ngrx/reports/effects';
+import {PinnablesEffects} from './ngrx/pinnables/effects';
+import {TeachersEffects} from './ngrx/accounts/nested-states/teachers/effects';
+import {AssistantsEffects} from './ngrx/accounts/nested-states/assistants/effects';
+import {StudentsEffects} from './ngrx/accounts/nested-states/students/effects';
+import {CountAccountsEffects} from './ngrx/accounts/nested-states/count-accounts/effects';
+import {PassStatsEffects} from './ngrx/pass-stats/effects';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {DashboardEffects} from './ngrx/dashboard/effects';
+import {StudentGroupsEffects} from './ngrx/student-groups/effects';
+import {LocationsEffects} from './ngrx/teacherLocations/effects';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -124,7 +147,7 @@ const appRoutes: Routes = [
     IntroRouteComponent,
     IntroDialogComponent,
     SchoolSignUpComponent,
-    AccountsSetupComponent
+    AccountsSetupComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,
@@ -154,6 +177,7 @@ const appRoutes: Routes = [
     MatCardModule,
     MatDialogModule,
     MatSlideToggleModule,
+    SwiperModule,
 
     RouterModule.forRoot(
       appRoutes,
@@ -167,7 +191,24 @@ const appRoutes: Routes = [
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
       libraries: ['places']
-    })
+    }),
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([
+      ReportsEffects,
+      PinnablesEffects,
+      AccountsEffects,
+      AllAccountsEffects,
+      AdminsEffects,
+      TeachersEffects,
+      AssistantsEffects,
+      StudentsEffects,
+      CountAccountsEffects,
+      LocationsEffects,
+      DashboardEffects,
+      PassStatsEffects,
+      StudentGroupsEffects
+    ]),
+    StoreDevtoolsModule.instrument({})
   ],
   providers: [
     DataService,
@@ -184,6 +225,7 @@ const appRoutes: Routes = [
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
     {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
     {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
+    {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
     provideErrorHandler()
   ],
   exports: [

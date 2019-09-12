@@ -1,6 +1,7 @@
 @media all and  (max-width: 425px) {
   div.collection-grid-wrapper {
     display: grid;
+    justify-content: center;
     grid-template-columns: repeat(auto-fill,minmax(152px, .3fr));
   }
 
@@ -24,7 +25,7 @@
   }
 }
 
-@media all and  (max-width: 1024px) {
+@media all and  (max-width: 940px) {
   div.collection-wrapper {
     width: 100%;
   }

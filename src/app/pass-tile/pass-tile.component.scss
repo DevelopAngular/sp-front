@@ -1,6 +1,11 @@
-@media all and (max-width: 1024px) {
+@media all and (max-width: 940px) {
   div.tile-wrapper {
     cursor: default;
+    width: 100%;
+  }
+
+  div.names-overlay {
+    width: 100%;
   }
 }
 
@@ -9,15 +14,10 @@
     cursor: default;
   }
 
-  div.tile-wrapper{
+  div.tile-wrapper {
     width: 157px;
     height: 95px;
   }
-
-  div.names-overlay{
-    width: 100%;
-  }
-
 }
 
 .tile-wrapper{

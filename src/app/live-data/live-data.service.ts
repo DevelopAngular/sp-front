@@ -34,6 +34,8 @@ import {
 } from './polling-event-handlers';
 import { State } from './state';
 
+import * as moment from 'moment';
+
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   /**
@@ -117,13 +119,7 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
  * @param date
  */
 function getDateLimits(date: Date) {
-  const start = new Date(+date);
-
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date((+date) + 24 * 60 * 60 * 1000);
-
-  return {start, end};
+  return { start: moment(date).startOf('day').toDate(), end: moment(date).endOf('day').toDate() };
 }
 
 /**
