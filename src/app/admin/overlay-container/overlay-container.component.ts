@@ -373,13 +373,14 @@ export class OverlayContainerComponent implements OnInit {
       if (control.dirty) {
          return this.locationService.checkLocationName(control.value)
             .pipe(
-              map((res: any) => {
+              switchMap((res: any) => {
               if (this.currentPage === Pages.NewRoom || Pages.NewRoomInFolder) {
-                return res.title_used ? { room_name: true } : null;
+                return of(res.title_used ? { room_name: true } : null);
               }
-              return res.title_used &&
+              return of(res.title_used &&
               (this.currentPage === Pages.EditRoomInFolder ?
-                this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title : this.pinnable.location.title) !== this.roomData.roomName ? { room_name: true } : null;
+                this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title :
+                this.pinnable.location.title) !== this.roomData.roomName ? { room_name: true } : null);
             }));
       } else {
           return of(null);

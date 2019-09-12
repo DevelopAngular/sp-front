@@ -7,7 +7,7 @@ import { studentGroupsReducer } from '../student-groups/reducers';
 import { teacherLocationsReducer } from '../teacherLocations/reducers';
 import { locationsReducer } from '../locations/reducers';
 import { favoriteLocationsReducer } from '../favorite-locations/reducers';
-import {colorsReducer} from '../color-profiles/reducers';
+import { colorsReducer } from '../color-profiles/reducers';
 
 
 export interface AppState {
