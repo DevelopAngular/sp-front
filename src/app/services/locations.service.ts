@@ -11,15 +11,23 @@ import { AppState } from '../ngrx/app-state/app-state';
 import { getTeacherLocationsCollection } from '../ngrx/teacherLocations/state/locations-getters.state';
 import { getLocsWithTeachers } from '../ngrx/teacherLocations/actions';
 import {
-  getCurrentLocation,
+  getCreatedLocation,
   getFoundLocations,
   getLoadedLocations,
   getLoadingLocations,
-  getLocationsCollection
+  getLocationsCollection,
+  getUpdatedLocation
 } from '../ngrx/locations/states/locations-getters.state';
-import {getLocations, postLocation, updateLocation, searchLocations, removeLocation} from '../ngrx/locations/actions';
 import {
-  getFavoriteLocationsCollection, getLoadedFavoriteLocations,
+  getLocations,
+  postLocation,
+  updateLocation,
+  searchLocations,
+  removeLocation
+} from '../ngrx/locations/actions';
+import {
+  getFavoriteLocationsCollection,
+  getLoadedFavoriteLocations,
   getLoadingFavoriteLocations
 } from '../ngrx/favorite-locations/states/favorite-locations-getters.state';
 import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
@@ -30,7 +38,8 @@ import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
 export class LocationsService {
 
   locations$: Observable<Location[]> = this.store.select(getLocationsCollection);
-  currentLocation$: Observable<Location> = this.store.select(getCurrentLocation);
+  createdLocation$: Observable<Location> = this.store.select(getCreatedLocation);
+  updatedLocation$: Observable<Location> = this.store.select(getUpdatedLocation);
   loadingLocations$: Observable<boolean> = this.store.select(getLoadingLocations);
   loadedLocations$: Observable<boolean> = this.store.select(getLoadedLocations);
 
@@ -81,7 +90,7 @@ export class LocationsService {
 
     createLocationRequest(data) {
       this.store.dispatch(postLocation({data}));
-      return this.currentLocation$;
+      return this.createdLocation$;
     }
 
     createLocation(data) {
@@ -90,7 +99,7 @@ export class LocationsService {
 
     updateLocationRequest(id, data) {
       this.store.dispatch(updateLocation({id, data}));
-      return this.currentLocation$;
+      return this.updatedLocation$;
     }
 
     updateLocation(id, data) {

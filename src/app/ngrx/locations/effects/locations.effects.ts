@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { LocationsService } from '../../../services/locations.service';
-import { catchError, concatMap, map } from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
 import * as locationsActions from '../actions';
 import { of } from 'rxjs';
 import {Location} from '../../../models/Location';
@@ -49,6 +49,9 @@ export class LocationsEffects {
         concatMap((action: any) => {
           return this.locService.createLocation(action.data)
             .pipe(
+              switchMap((location: Location) => {
+                return this.locService.updateLocation(location.id, action.data);
+              }),
               map((location: Location) => {
                 return locationsActions.postLocationSuccess({location});
               }),

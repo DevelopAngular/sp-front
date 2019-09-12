@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip } from 'rxjs';
-import {delay, map, startWith, switchMap, filter, take, debounceTime, distinctUntilChanged, concatMap} from 'rxjs/operators';
+import {delay, map, startWith, switchMap, filter, take, debounceTime, distinctUntilChanged, concatMap, tap} from 'rxjs/operators';
 
 import { NextStep } from '../../animations';
 import { Pinnable } from '../../models/Pinnable';
@@ -75,6 +75,8 @@ export class OverlayContainerComponent implements OnInit {
 
   color_profile;
   selectedIcon;
+
+  pinnablesCollectionIds$: Observable<number[] | string[]>;
 
   icons$: Observable<any>;
   roomNameBlur$: Subject<string> = new Subject();
@@ -206,7 +208,7 @@ export class OverlayContainerComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-
+    this.pinnablesCollectionIds$ = this.hallPassService.pinnablesCollectionIds$;
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
        this.currentPage = res.currentPage;
     });
@@ -496,18 +498,14 @@ export class OverlayContainerComponent implements OnInit {
                 scheduling_restricted: this.roomData.scheduling_restricted,
                 teachers: this.roomData.selectedTeachers.map(teacher => teacher.id),
                 travel_types: this.roomData.travelType,
-                max_allowed_time: +this.roomData.timeLimit
+                max_allowed_time: +this.roomData.timeLimit,
+                ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)
            .pipe(
              filter(res => !!res),
-             switchMap((locationToUpdate: Location) => {
-               const data = this.normalizeAdvOptData();
-               return this.locationService.updateLocationRequest(locationToUpdate.id, data)
-                 .pipe(filter(res => !!res));
-               }),
-               take(1),
-               switchMap((loc: Location) => {
+             take(1),
+             switchMap((loc: Location) => {
                const pinnable = {
                    title: this.roomData.roomName,
                    color_profile: this.color_profile.id,
@@ -545,12 +543,8 @@ export class OverlayContainerComponent implements OnInit {
           if (_.isString(location.id)) {
             location.category = this.folderData.folderName;
             location.teachers = location.teachers.map(t => t.id);
-            return this.locationService.createLocation(location).pipe(
-              filter(res => !!res),
-              concatMap((loc: Location) => {
-                return this.locationService.updateLocationRequest(loc.id, location)
-                  .pipe(filter(res => !!res));
-            }));
+            return this.locationService.createLocationRequest(location)
+              .pipe(filter(res => !!res));
           } else {
             id = location.id;
             data = location;
@@ -568,6 +562,7 @@ export class OverlayContainerComponent implements OnInit {
       }
 
       zip(...locationsToDb$).pipe(
+        take(1),
         switchMap(locations => {
         const newFolder = {
           title: this.folderData.folderName,
@@ -581,8 +576,9 @@ export class OverlayContainerComponent implements OnInit {
           :
           zip(
             this.hallPassService.getArrangedPinnables(),
-            this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res))
+            this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
           ).pipe(
+            take(1),
             switchMap((result: any[]) => {
               const arrengedSequence = result[0].map(item => item.id);
               arrengedSequence.push(result[1].id);
@@ -591,7 +587,7 @@ export class OverlayContainerComponent implements OnInit {
           );
       }),
         take(1),
-        switchMap(() => {
+        switchMap((res) => {
           if (this.pinnableToDeleteIds.length) {
             const deleteRequests = this.pinnableToDeleteIds.map(id => {
               return this.hallPassService.deletePinnableRequest(id);

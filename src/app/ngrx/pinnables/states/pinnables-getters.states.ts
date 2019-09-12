@@ -6,6 +6,7 @@ import {IPinnablesState} from './pinnables.states';
 export const getPinnablesState = (state: AppState) => state.pinnables;
 
 export const getPinnableEntities = adapter.getSelectors(getPinnablesState).selectEntities;
+export const getPinnablesIds = adapter.getSelectors(getPinnablesState).selectIds;
 
 // export const getPinnabledIds = adapter.getSelectors(getPinnablesState).selectIds;
 

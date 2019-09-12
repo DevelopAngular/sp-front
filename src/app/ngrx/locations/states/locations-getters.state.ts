@@ -24,14 +24,27 @@ export const getLoadedLocations = createSelector(
 
 export const getLocationsEntities = locsAdapter.getSelectors(getLocationsState).selectEntities;
 
-export const getCurrentLocationId = createSelector(
+export const getCreatedLocationId = createSelector(
   getLocationsState,
-  (state: LocationsState) => state.currentLocationId
+  (state: LocationsState) => state.createdLocationId
 );
 
-export const getCurrentLocation = createSelector(
+export const getUpdatedLocationId = createSelector(
+  getLocationsState,
+  (state: LocationsState) => state.updatedLocationId
+);
+
+export const getCreatedLocation = createSelector(
   getLocationsEntities,
-  getCurrentLocationId,
+  getCreatedLocationId,
+  (entities, id) => {
+    return entities[id];
+  }
+);
+
+export const getUpdatedLocation = createSelector(
+  getLocationsEntities,
+  getCreatedLocationId,
   (entities, id) => {
     return entities[id];
   }
