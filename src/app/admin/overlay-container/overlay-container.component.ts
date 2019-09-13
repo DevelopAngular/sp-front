@@ -122,8 +122,6 @@ export class OverlayContainerComponent implements OnInit {
       private formService: CreateFormService,
       public sanitizer: DomSanitizer,
       public overlayService: OverlayDataService,
-
-
   ) {}
 
   getHeaderData() {

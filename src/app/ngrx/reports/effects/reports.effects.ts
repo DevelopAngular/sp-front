@@ -5,6 +5,7 @@ import {of} from 'rxjs';
 import * as reportsActions from '../actions';
 import {catchError, concatMap, map} from 'rxjs/operators';
 import {AdminService} from '../../../services/admin.service';
+import {Report} from '../../../models/Report';
 
 @Injectable()
 export class ReportsEffects {
@@ -37,5 +38,24 @@ export class ReportsEffects {
       );
   });
 
-  constructor(private actions$: Actions, private adminService: AdminService) {}
+  postReport$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(reportsActions.postReport),
+        concatMap((action: any) => {
+          return this.adminService.sendReport(action.data)
+            .pipe(
+              map((reports: Report[]) => {
+                return reportsActions.postReportSuccess({reports});
+              }),
+              catchError(error => of(reportsActions.postReportFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  constructor(
+    private actions$: Actions,
+    private adminService: AdminService
+  ) {}
 }

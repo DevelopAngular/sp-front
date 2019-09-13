@@ -222,8 +222,8 @@ export class ImportRoomsComponent implements OnInit {
         }),
       )
       .subscribe((rooms) => {
-        console.log(rooms);
-        console.log(this.unknownEmails);
+        // console.log(rooms);
+        // console.log(this.unknownEmails);
         setTimeout(() => {
           this.uploadingProgress.inProgress = false;
           this.uploadingProgress.completed = true;
