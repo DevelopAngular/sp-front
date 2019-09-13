@@ -4,7 +4,16 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip } from 'rxjs';
-import {delay, map, startWith, switchMap, filter, take, debounceTime, distinctUntilChanged, concatMap, tap} from 'rxjs/operators';
+import {
+  delay,
+  map,
+  startWith,
+  switchMap,
+  filter,
+  take,
+  debounceTime,
+  distinctUntilChanged
+} from 'rxjs/operators';
 
 import { NextStep } from '../../animations';
 import { Pinnable } from '../../models/Pinnable';
@@ -18,6 +27,7 @@ import { CreateFormService } from '../../create-hallpass-forms/create-form.servi
 import { FolderData, OverlayDataService, Pages, RoomData } from './overlay-data.service';
 
 import * as _ from 'lodash';
+import {ColorProfile} from '../../models/ColorProfile';
 
 @Component({
   selector: 'app-overlay-container',
@@ -73,7 +83,7 @@ export class OverlayContainerComponent implements OnInit {
   overlayType: string;
   gradientColor: string;
 
-  color_profile;
+  color_profile: ColorProfile;
   selectedIcon;
 
   pinnablesCollectionIds$: Observable<number[] | string[]>;
@@ -112,8 +122,6 @@ export class OverlayContainerComponent implements OnInit {
       private formService: CreateFormService,
       public sanitizer: DomSanitizer,
       public overlayService: OverlayDataService,
-
-
   ) {}
 
   getHeaderData() {
@@ -379,6 +387,7 @@ export class OverlayContainerComponent implements OnInit {
               }
               return of(res.title_used &&
               (this.currentPage === Pages.EditRoomInFolder ?
+
                 this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title :
                 this.pinnable.location.title) !== this.roomData.roomName ? { room_name: true } : null);
             }));

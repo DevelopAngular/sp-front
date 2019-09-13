@@ -1,18 +1,18 @@
 
 import {
-    catchError,
-    tap,
-    first,
-    delay,
-    distinctUntilChanged,
-    filter,
-    flatMap,
-    map,
-    skip,
-    switchMap,
-    merge,
-    take,
-    withLatestFrom
+  catchError,
+  tap,
+  first,
+  delay,
+  distinctUntilChanged,
+  filter,
+  flatMap,
+  map,
+  skip,
+  switchMap,
+  merge,
+  take,
+  withLatestFrom, mapTo
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -164,7 +164,6 @@ export class HttpService {
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
     this.schools$.subscribe(schools => {
-      // console.log('Schools:', schools);
 
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
@@ -202,7 +201,7 @@ export class HttpService {
                   config.append('token', auth.refresh_token);
                   // config.append('username', user.username);
                   // config.append('password', user.password);
-                  console.log(new Date(auth.expires));
+                  // console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
                   map((data: any) => {
@@ -280,9 +279,12 @@ export class HttpService {
     }
 
     return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
+      switchMap(servers => {
+        return this.pwaStorage.setItem('servers', servers)
+          .pipe(mapTo(servers));
+      }),
       map((servers: LoginServer[]) => {
         if (servers.length > 0) {
-          this.pwaStorage.setItem('servers', servers).subscribe(() => {});
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
@@ -291,9 +293,6 @@ export class HttpService {
   }
 
   private loginManual(username: string, password: string): Observable<AuthContext> {
-
-    // console.log('loginManual()');
-// debugger
     const c = new FormData();
     c.append('email', username);
     c.append('platform_type', 'web');
@@ -342,8 +341,10 @@ export class HttpService {
       }
 
       return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+        switchMap(data => {
+          return this.pwaStorage.setItem('authData', data).pipe(mapTo(data));
+        }),
         map((data: any) => {
-          this.pwaStorage.setItem('authData', data).subscribe( () => {});
           this.storage.setItem('refresh_token', data.refresh_token);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
@@ -459,7 +460,7 @@ export class HttpService {
         // const google_token = localStorage.getItem(SESSION_STORAGE_KEY); // TODO something more robust
         return this.fetchServerAuth().pipe(
           switchMap((ctx: AuthContext) => {
-            console.log('auth:', ctx);
+            // console.log('auth:', ctx);
             this.accessTokenSubject.next(ctx);
             return predicate(ctx);
           }));
@@ -479,6 +480,10 @@ export class HttpService {
       this.storage.removeItem('last_school_id');
     }
     this.currentSchoolSubject.next(school);
+  }
+
+  getSchools(): Observable<School[]> {
+    return this.get('v1/schools');
   }
 
   getSchool() {
