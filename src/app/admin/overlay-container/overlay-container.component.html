@@ -25,6 +25,8 @@
       <app-gradient-button *ngIf="showPublishButton"
                            [minHeight]="'40px'"
                            [style.width]="'120px'"
+                           [gradient]="'#FFFFFF, #FFFFFF'"
+                           [textColor]="color_profile.solid_color"
                            [cursor]="'pointer'"
                            [fontSize]="'14px'"
                            (buttonClick)="onPublish()"
