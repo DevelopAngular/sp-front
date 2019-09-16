@@ -116,7 +116,10 @@ export class UserService {
 
     this.http.globalReload$
         .pipe(
-          switchMap(() => this.getUser()), map(raw => User.fromJSON(raw)),
+          switchMap(() => {
+            return this.getUser();
+          }),
+          map(raw => User.fromJSON(raw)),
           switchMap((user: User) => {
             if (user.isAssistant()) {
               return this.getUserRepresented().pipe(map((users: RepresentedUser[]) => {

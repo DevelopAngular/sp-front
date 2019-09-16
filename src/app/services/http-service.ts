@@ -4,15 +4,11 @@ import {
   tap,
   first,
   delay,
-  distinctUntilChanged,
   filter,
   flatMap,
   map,
-  skip,
   switchMap,
-  merge,
-  take,
-  withLatestFrom, mapTo
+  mapTo
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -22,8 +18,10 @@ import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
 import { LocalStorage } from '@ngx-pwa/local-storage';
-
-import * as moment from 'moment';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getLoadedSchools, getSchoolsCollection} from '../ngrx/schools/states';
+import { getSchools } from '../ngrx/schools/actions';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -138,6 +136,9 @@ export class HttpService {
       return this.get<School[]>('v1/schools', undefined, null);
     }),
   );
+  public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
+  public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
+
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
   public kioskTokenSubject$ = new BehaviorSubject<any>(null);
@@ -155,9 +156,9 @@ export class HttpService {
       private http: HttpClient,
       private loginService: GoogleLoginService,
       private storage: StorageService,
-      private pwaStorage: LocalStorage
+      private pwaStorage: LocalStorage,
+      private store: Store<AppState>
   ) {
-
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
     // First, if there is a current school loaded, try to use that one.
@@ -232,7 +233,7 @@ export class HttpService {
         return { auth: newToken, server: this.accessTokenSubject.value.server};
 
       })).subscribe(res => {
-        console.log(res);
+        // console.log(res);
         this.accessTokenSubject.next(res as AuthContext);
       });
 
@@ -480,6 +481,11 @@ export class HttpService {
       this.storage.removeItem('last_school_id');
     }
     this.currentSchoolSubject.next(school);
+  }
+
+  getSchoolsRequest() {
+    this.store.dispatch(getSchools());
+    return this.schools$;
   }
 
   getSchools(): Observable<School[]> {
