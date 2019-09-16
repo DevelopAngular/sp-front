@@ -145,7 +145,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.subscriber$),
     )
     .subscribe(t => {
-      console.log('Auth response ===>', t, window.location.pathname);
+      // console.log('Auth response ===>', t, window.location.pathname);
       // debugger
       this._zone.run(() => {
         this.showUISubject.next(true);

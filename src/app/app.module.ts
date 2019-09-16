@@ -64,9 +64,11 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
 };
+
 import { StoreModule } from '@ngrx/store';
-import { reducers } from './ngrx/app-state/app-state';
 import {EffectsModule} from '@ngrx/effects';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import { reducers } from './ngrx/app-state/app-state';
 import {AccountsEffects} from './ngrx/accounts/effects/accounts.effects';
 import {AllAccountsEffects} from './ngrx/accounts/nested-states/all-accounts/effects';
 import {AdminsEffects} from './ngrx/accounts/nested-states/admins/effects';
@@ -77,13 +79,13 @@ import {AssistantsEffects} from './ngrx/accounts/nested-states/assistants/effect
 import {StudentsEffects} from './ngrx/accounts/nested-states/students/effects';
 import {CountAccountsEffects} from './ngrx/accounts/nested-states/count-accounts/effects';
 import {PassStatsEffects} from './ngrx/pass-stats/effects';
-import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {DashboardEffects} from './ngrx/dashboard/effects';
 import {StudentGroupsEffects} from './ngrx/student-groups/effects';
 import {TeacherLocationsEffects} from './ngrx/teacherLocations/effects';
 import {LocationsEffects} from './ngrx/locations/effects';
 import {FavoriteLocationsEffects} from './ngrx/favorite-locations/effects';
 import {ColorsEffects} from './ngrx/color-profiles/effects';
+import {SchoolsEffects} from './ngrx/schools/effects';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -212,7 +214,8 @@ const appRoutes: Routes = [
       StudentGroupsEffects,
       LocationsEffects,
       FavoriteLocationsEffects,
-      ColorsEffects
+      ColorsEffects,
+      SchoolsEffects
     ]),
     StoreDevtoolsModule.instrument({})
   ],

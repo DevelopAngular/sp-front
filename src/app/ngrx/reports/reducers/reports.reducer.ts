@@ -9,12 +9,17 @@ export const adapter: EntityAdapter<Report> = createEntityAdapter<Report>();
 export const reportsInitialState: IGetReportsRequest = adapter.getInitialState({
   loading: false,
   loaded: false,
-  reportsFound: []
+  reportsFound: [],
+  addedReports: []
 });
 
 const reducer = createReducer(
   reportsInitialState,
-  on(reportsActions.getReports, reportsActions.searchReports, state => ({ ...state, loading: true, loaded: false })),
+  on(
+    reportsActions.getReports,
+    reportsActions.searchReports,
+    reportsActions.postReport,
+      state => ({ ...state, loading: true, loaded: false })),
   on(reportsActions.getReportsSuccess, (state, { reports }) => {
     return adapter.addAll(reports, {...state, loading: false, loaded: true});
   }),
@@ -25,6 +30,9 @@ const reducer = createReducer(
       loaded: true,
       reportsFound: reports
     };
+  }),
+  on(reportsActions.postReportSuccess, (state, {reports}) => {
+    return adapter.addMany(reports, {...state, loading: false, loaded: true, addedReports: reports});
   })
 );
 
