@@ -200,9 +200,9 @@ export class MainHallPassFormComponent implements OnInit {
           this.locationsService.getLocationsWithTeacherRequest(this.user))
           .pipe(filter(() => this.isStaff),
               map(([pinnables, locations]) => {
-                  const filterPinnables = pinnables.filter(pin => {
+                  const filterPinnables = _.cloneDeep(pinnables).filter(pin => {
                       return locations.find(loc => {
-                          return (loc.category ? loc.category : loc.title) === pin.category;
+                          return (loc.category ? loc.category : loc.title) === pin.title;
                       });
                   });
                   return filterPinnables.map(fpin => {
