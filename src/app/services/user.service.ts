@@ -6,7 +6,7 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {last, map, share, skip, switchMap, take, tap} from 'rxjs/operators';
+import {filter, last, map, share, skip, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -40,7 +40,6 @@ import {
   getLoadingStudents,
   getStudentsAccountsCollection
 } from '../ngrx/accounts/nested-states/students/states';
-import {LocationsService} from './locations.service';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
 import {
@@ -49,6 +48,8 @@ import {
   getLoadingGroups,
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
+import {getLoadedUser, getUserData} from '../ngrx/user/states/user-getters.state';
+import {getUser} from '../ngrx/user/actions';
 
 @Injectable()
 export class UserService {
@@ -96,6 +97,9 @@ export class UserService {
     assistant: this.store.select(getLoadingAssistants)
   };
 
+  user$: Observable<User> = this.store.select(getUserData);
+  loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
+
   studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
@@ -109,15 +113,10 @@ export class UserService {
     private store: Store<AppState>,
   ) {
 
-    // this.userData.subscribe(
-    //   u => console.log('next user:', u),
-    //   e => console.log('user error:', e),
-    //   () => console.log('userData complete'));
-
     this.http.globalReload$
         .pipe(
           switchMap(() => {
-            return this.getUser();
+            return this.getUser().pipe(filter(user => !!user));
           }),
           map(raw => User.fromJSON(raw)),
           switchMap((user: User) => {
@@ -183,6 +182,11 @@ export class UserService {
     } else if (role === '_profile_assistant') {
       return this.accounts.assistantAccounts;
     }
+  }
+
+  getUserRequest() {
+    this.store.dispatch(getUser());
+    return this.user$;
   }
 
   getUser() {

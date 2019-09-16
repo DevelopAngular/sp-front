@@ -9,6 +9,7 @@ import { locationsReducer } from '../locations/reducers';
 import { favoriteLocationsReducer } from '../favorite-locations/reducers';
 import { colorsReducer } from '../color-profiles/reducers';
 import { schoolsReducer } from '../schools/reducers';
+import { userReducer } from '../user/reducers/user.reducer';
 
 
 export interface AppState {
@@ -23,6 +24,7 @@ export interface AppState {
   readonly studentGroups;
   readonly colorProfiles;
   readonly schools;
+  readonly user;
 }
 
 export const reducers = {
@@ -36,5 +38,6 @@ export const reducers = {
   passStats: passStatsReducer,
   studentGroups: studentGroupsReducer,
   colorProfiles: colorsReducer,
-  schools: schoolsReducer
+  schools: schoolsReducer,
+  user: userReducer
 };

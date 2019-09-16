@@ -86,6 +86,7 @@ import {LocationsEffects} from './ngrx/locations/effects';
 import {FavoriteLocationsEffects} from './ngrx/favorite-locations/effects';
 import {ColorsEffects} from './ngrx/color-profiles/effects';
 import {SchoolsEffects} from './ngrx/schools/effects';
+import {UserEffects} from './ngrx/user/effects';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -215,7 +216,8 @@ const appRoutes: Routes = [
       LocationsEffects,
       FavoriteLocationsEffects,
       ColorsEffects,
-      SchoolsEffects
+      SchoolsEffects,
+      UserEffects
     ]),
     StoreDevtoolsModule.instrument({})
   ],

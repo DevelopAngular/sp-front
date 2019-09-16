@@ -2,7 +2,7 @@ import { ErrorHandler, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { UserService } from '../services/user.service';
-import {combineLatest, map, tap} from 'rxjs/operators';
+import {combineLatest, filter, map, tap} from 'rxjs/operators';
 import { User } from '../models/User';
 import {StorageService} from '../services/storage.service';
 import { DeviceDetection } from '../device-detection.helper';
