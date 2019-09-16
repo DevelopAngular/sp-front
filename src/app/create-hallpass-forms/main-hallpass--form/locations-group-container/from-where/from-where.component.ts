@@ -26,6 +26,7 @@ export class FromWhereComponent implements OnInit {
         }
 
         this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
+        console.log(this.header.nativeElement.dataset);
       });
     }
   }

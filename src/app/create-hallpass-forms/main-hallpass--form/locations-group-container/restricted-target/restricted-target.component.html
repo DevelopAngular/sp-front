@@ -1,15 +1,23 @@
 <div class="rest-tar-wrapper">
-  <div [ngClass]="headerTransition" [style.background-image]="headerGradient" #headeer>
+  <div
+    [attr.data-motion-opacity]="(frameMotion$ | async).direction"
+    [ngClass]="headerTransition"
+    [style.background-image]="headerGradient" #headeer>
+<!--    {{(frameMotion$ | async).direction}}-->
     <div class="back-button-wrapper" (click)="back()">
       <img [ngClass]="isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'" class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
     </div>
-    <div class="rest-tar-header-text">
+    <div class="rest-tar-header-text"
+       [attr.data-motion-translate]="(frameMotion$ | async).direction"
+    >
       <img class="search-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
       <div class="text ds-dialog-title-white">Send Pass Request To?</div>
     </div>
   </div>
 
-  <div class="rest-tar-content" (scroll)="tableScroll($event)" #rc>
+  <div class="rest-tar-content"
+       [attr.data-motion-translate]="(frameMotion$ | async).direction"
+       (scroll)="tableScroll($event)" #rc>
     <div class="search-wrapper">
         <app-sp-search
           [focused]="true"

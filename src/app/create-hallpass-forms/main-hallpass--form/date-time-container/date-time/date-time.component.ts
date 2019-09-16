@@ -6,6 +6,7 @@ import { CreateFormService } from '../../../create-form.service';
 import { ColorProfile } from '../../../../models/ColorProfile';
 import * as moment from 'moment';
 import {DeviceDetection} from '../../../../device-detection.helper';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-date-time',
@@ -31,6 +32,14 @@ export class DateTimeComponent implements OnInit {
   declinable: FormControl = new FormControl(true);
 
   colorProfile: ColorProfile;
+
+  frameMotion$: BehaviorSubject<any>;
+
+  headerTransition = {
+    'from-header': true,
+    'from-header_animation-back': false
+  };
+
 
   constructor(private timeService: TimeService, private formService: CreateFormService) {
   }
@@ -61,7 +70,24 @@ export class DateTimeComponent implements OnInit {
         this.requestTime = moment(this.formState.data.date.date);
         this.declinable.setValue(this.formState.data.date.declinable);
       }
+      this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     }
+    this.frameMotion$.subscribe((v: any) => {
+      switch (v.direction) {
+        case 'back':
+          this.headerTransition['from-header'] = false;
+          this.headerTransition['from-header_animation-back'] = true;
+          break;
+        case 'forward':
+          this.headerTransition['from-header'] = true;
+          this.headerTransition['from-header_animation-back'] = false;
+          break;
+        default:
+          this.headerTransition['from-header'] = true;
+          this.headerTransition['from-header_animation-back'] = false;
+      }
+    });
 
   }
 
@@ -71,6 +97,9 @@ export class DateTimeComponent implements OnInit {
   }
 
   next() {
+
+    this.formService.setFrameMotionDirection('forward');
+
     this.formState.data.date = {
       date: this.requestTime.toDate(),
       declinable: this.form.get('declinable').value

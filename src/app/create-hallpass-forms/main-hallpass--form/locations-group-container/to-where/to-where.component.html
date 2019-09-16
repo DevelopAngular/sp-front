@@ -1,17 +1,22 @@
 <div style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
-  <div class="" [ngClass]="headerTransition" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'" #header>
+  <div class=""
+       [attr.data-motion-opacity]="(frameMotion$ | async).direction"
+
+       [ngClass]="headerTransition" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFF00, #FFFF00)'" #header>
 
     <div *ngIf="!screenService.isDeviceLargeExtra"  class="back-button back-button-grey">
       <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
     </div>
 
-    <div class="to-header-text">
+    <div class="to-header-text"
+         [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="text ds-dialog-title">To where?</div>
     </div>
   </div>
 
-  <div class="to-content" #rc>
+  <div class="to-content"
+       [attr.data-motion-translate]="(frameMotion$ | async).direction" #rc>
     <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
       <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
       <div class="rooms">
