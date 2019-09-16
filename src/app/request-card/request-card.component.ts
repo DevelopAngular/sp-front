@@ -120,7 +120,7 @@ export class RequestCardComponent implements OnInit {
     .subscribe(user => {
       this._zone.run(() => {
         this.user = user;
-        this.forStaff = user.roles.includes('_profile_teacher');
+        // this.forStaff = user.roles.includes('_profile_teacher');
       });
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
