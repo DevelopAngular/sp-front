@@ -12,8 +12,13 @@ declare const window;
 })
 export class SignOutComponent implements AfterContentInit {
 
-  constructor(private http: HttpService, private loginService: GoogleLoginService, private router: Router, private userService: UserService) {
+  constructor(
+    private http: HttpService,
+    private loginService: GoogleLoginService,
+    private userService: UserService
+  ) {
     this.http.setSchool(null);
+    this.userService.clearUser();
   }
 
   ngAfterContentInit() {

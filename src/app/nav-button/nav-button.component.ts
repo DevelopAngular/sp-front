@@ -5,10 +5,7 @@ import {
   Output,
   EventEmitter,
   AfterViewInit,
-  ViewChild,
-  ElementRef,
-  AfterContentInit,
-  AfterViewChecked, OnChanges
+  OnChanges
 } from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 

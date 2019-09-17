@@ -157,7 +157,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
 
-    this.http.schools$.pipe(
+    this.http.schoolsCollection$.pipe(
       map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
       withLatestFrom(this.http.currentSchool$),
       takeUntil(this.subscriber$))

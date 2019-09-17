@@ -27,7 +27,7 @@ export class SchoolsResolver implements Resolve<School[]> {
           }),
       switchMap(isLoaded => {
         if (isLoaded) {
-          return this.http.schools$;
+          return this.http.schoolsCollection$;
         } else {
           return this.http.getSchoolsRequest();
         }

@@ -133,7 +133,7 @@ export class HttpService {
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
     switchMap(() => {
-      return this.get<School[]>('v1/schools', undefined, null);
+      return this.getSchools();
     }),
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
@@ -485,7 +485,7 @@ export class HttpService {
 
   getSchoolsRequest() {
     this.store.dispatch(getSchools());
-    return this.schools$;
+    return this.schoolsCollection$;
   }
 
   getSchools(): Observable<School[]> {

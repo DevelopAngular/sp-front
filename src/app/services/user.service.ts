@@ -49,7 +49,7 @@ import {
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
 import {getLoadedUser, getUserData} from '../ngrx/user/states/user-getters.state';
-import {getUser} from '../ngrx/user/actions';
+import {clearUser, getUser} from '../ngrx/user/actions';
 
 @Injectable()
 export class UserService {
@@ -116,7 +116,7 @@ export class UserService {
     this.http.globalReload$
         .pipe(
           switchMap(() => {
-            return this.getUser().pipe(filter(user => !!user));
+            return this.getUserRequest().pipe(filter(res => !!res));
           }),
           map(raw => User.fromJSON(raw)),
           switchMap((user: User) => {
@@ -187,6 +187,10 @@ export class UserService {
   getUserRequest() {
     this.store.dispatch(getUser());
     return this.user$;
+  }
+
+  clearUser() {
+    this.store.dispatch(clearUser());
   }
 
   getUser() {

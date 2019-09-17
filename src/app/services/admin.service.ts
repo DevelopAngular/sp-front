@@ -22,6 +22,8 @@ import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters
 import {ColorProfile} from '../models/ColorProfile';
 import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
 import {getColorProfiles} from '../ngrx/color-profiles/actions';
+import {getLoadedProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
+import {getOnboardProcess} from '../ngrx/onboard-process/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +40,9 @@ export class AdminService {
   colorProfiles$: Observable<ColorProfile[]> = this.store.select(getColorProfilesCollection);
   loadingColorProfiles$: Observable<boolean> = this.store.select(getLoadingColors);
   loadedColorProfiles$: Observable<boolean> = this.store.select(getLoadedColors);
+
+  onboardProcessData$ = this.store.select(getProcessData);
+  loadedOnboardProcess$: Observable<boolean> = this.store.select(getLoadedProcess);
 
   countAccounts$ = this.store.select(getCountAccountsResult);
   dashboardData$ = this.store.select(getDashboardDataResult);
@@ -94,6 +99,11 @@ export class AdminService {
 
   getDashboardData() {
     return this.http.get('v1/admin/dashboard');
+  }
+
+  getOnboardProcessRequest() {
+    this.store.dispatch(getOnboardProcess());
+    return this.onboardProcessData$;
   }
 
   getOnboardProgress() {

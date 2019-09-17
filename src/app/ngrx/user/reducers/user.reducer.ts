@@ -18,7 +18,8 @@ const reducer = createReducer(
       loading: false,
       loaded: true
     };
-  })
+  }),
+  on(userActions.clearUser, state => ({...state, user: null, loaded: true, loading: false}))
 );
 
 export function userReducer(state: any | undefined, action: Action) {

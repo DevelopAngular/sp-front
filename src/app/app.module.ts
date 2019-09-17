@@ -87,11 +87,28 @@ import {FavoriteLocationsEffects} from './ngrx/favorite-locations/effects';
 import {ColorsEffects} from './ngrx/color-profiles/effects';
 import {SchoolsEffects} from './ngrx/schools/effects';
 import {UserEffects} from './ngrx/user/effects';
+import {SchoolsResolver} from './core/resolvers/schools-resolver';
+import {ProcessEffects} from './ngrx/onboard-process/effects';
 
 const appRoutes: Routes = [
-  {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
-  {path: 'school_signup', component: SchoolSignUpComponent, data: {hideScroll: true, hubspot: true, authFree: true}, pathMatch: 'full'},
-  {path: 'accounts_setup', component: AccountsSetupComponent, data: {hideScroll: true, hubspot: true, authFree: true}, pathMatch: 'full'},
+  {
+    path: 'main/intro',
+    canActivate: [AuthenticatedGuard],
+    component: IntroRouteComponent,
+    data: { hideSchoolToggleBar: true}
+  },
+  {
+    path: 'school_signup',
+    component: SchoolSignUpComponent,
+    data: {hideScroll: true, hubspot: true, authFree: true},
+    pathMatch: 'full'
+  },
+  {
+    path: 'accounts_setup',
+    component: AccountsSetupComponent,
+    data: {hideScroll: true, hubspot: true, authFree: true},
+    pathMatch: 'full'
+  },
   {
     path: '',
     component: LoginComponent,
@@ -101,7 +118,7 @@ const appRoutes: Routes = [
     path: 'main',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
     loadChildren: 'app/main/main.module#MainModule',
-    resolve: {currentUser: CurrentUserResolver},
+    resolve: {currentUser: CurrentUserResolver, schools: SchoolsResolver},
     data: {
       hubspot: false,
       authFree: false
@@ -111,7 +128,7 @@ const appRoutes: Routes = [
     path: 'admin',
     canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
     loadChildren: 'app/admin/admin.module#AdminModule',
-    resolve: {currentUser: CurrentUserResolver},
+    resolve: {currentUser: CurrentUserResolver, schools: SchoolsResolver},
     data: {
       hideScroll: true,
       hubspot: true,
@@ -217,7 +234,8 @@ const appRoutes: Routes = [
       FavoriteLocationsEffects,
       ColorsEffects,
       SchoolsEffects,
-      UserEffects
+      UserEffects,
+      ProcessEffects
     ]),
     StoreDevtoolsModule.instrument({})
   ],

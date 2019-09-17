@@ -288,7 +288,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.sideNavService.fadeClick.subscribe(click =>  this.fadeClick = click);
 
-    this.http.schools$.subscribe(schools => {
+    this.http.schoolsCollection$.subscribe(schools => {
         this.schools = schools;
     });
   }

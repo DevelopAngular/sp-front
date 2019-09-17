@@ -16,7 +16,6 @@ export class SchoolsEffects {
         return this.http.getSchools()
           .pipe(
             map((schools: School[]) => {
-              debugger;
               return schoolsActions.getSchoolsSuccess({schools});
             }),
             catchError(error => of(schoolsActions.getSchoolsFailure({errorMessage: error.message})))

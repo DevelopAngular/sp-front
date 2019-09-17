@@ -10,6 +10,7 @@ import { favoriteLocationsReducer } from '../favorite-locations/reducers';
 import { colorsReducer } from '../color-profiles/reducers';
 import { schoolsReducer } from '../schools/reducers';
 import { userReducer } from '../user/reducers/user.reducer';
+import { onboardProcessReducer } from '../onboard-process/reducers/process.reducer';
 
 
 export interface AppState {
@@ -25,6 +26,7 @@ export interface AppState {
   readonly colorProfiles;
   readonly schools;
   readonly user;
+  readonly onboardProcess;
 }
 
 export const reducers = {
@@ -39,5 +41,6 @@ export const reducers = {
   studentGroups: studentGroupsReducer,
   colorProfiles: colorsReducer,
   schools: schoolsReducer,
-  user: userReducer
+  user: userReducer,
+  onboardProcess: onboardProcessReducer
 };
