@@ -5,7 +5,6 @@ import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
 import * as locationsActions from '../actions';
 import { of } from 'rxjs';
 import {Location} from '../../../models/Location';
-import {temporaryAllocator} from '@angular/compiler/src/render3/view/util';
 
 @Injectable()
 export class LocationsEffects {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {map, switchMap} from 'rxjs/operators';
+import {filter, map, switchMap, take} from 'rxjs/operators';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {BehaviorSubject} from 'rxjs';
@@ -74,10 +74,11 @@ export class GettingStartedProgressService {
     this.httpService.globalReload$
       .pipe(
         switchMap(() => {
-          return this.adminService.getOnboardProgress();
+          return this.adminService.getOnboardProcessRequest();
         })
       )
       .pipe(
+        filter((res: any[]) => !!res.length),
         map((data: Array<OnboardItem>) => {
           this.onboardProgress.progress = 0;
           this.onboardProgress.offset = 130;
