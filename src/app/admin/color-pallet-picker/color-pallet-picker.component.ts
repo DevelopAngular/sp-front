@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { HttpService } from '../../services/http-service';
-import {finalize, map, share, shareReplay, switchMap} from 'rxjs/operators';
+import {delay, finalize, map, share, shareReplay, switchMap} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {Observable} from 'rxjs';
 
@@ -25,8 +25,8 @@ export class ColorPalletPickerComponent implements OnInit {
   constructor(private adminService: AdminService) { }
 
   ngOnInit() {
-      this.loading$ = this.adminService.loadingColorProfiles$;
-      this.loaded$ = this.adminService.loadedColorProfiles$;
+      this.loading$ = this.adminService.loadingColorProfiles$.pipe(delay(10));
+      this.loaded$ = this.adminService.loadedColorProfiles$.pipe(delay(10));
       this.colors$ = this.loaded$.pipe(
           share(),
           switchMap(loaded => {

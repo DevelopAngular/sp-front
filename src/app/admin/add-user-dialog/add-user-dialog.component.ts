@@ -293,10 +293,11 @@ export class AddUserDialogComponent implements OnInit {
         })
       )
       .subscribe((res) => {
-        // console.log(res);
         this.pendingSubject.next(false);
         this.dialogRef.close(true);
-        this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
+        if (this.selectedRoles.length) {
+          this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
+        }
       });
   }
 

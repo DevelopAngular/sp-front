@@ -99,7 +99,6 @@ export class GettingStartedProgressService {
           if (this.onboardProgress.progress === 100) {
             this.onboardProgress.offset = 0;
           }
-          console.log(this.onboardProgress);
           return this.onboardProgress;
         })
       )
@@ -109,7 +108,8 @@ export class GettingStartedProgressService {
   }
 
   updateProgress(ticket: keyof ProgressInterface ) {
-    this.adminService.updateOnboardProgress(ticket).subscribe(() => this.httpService.setSchool(this.httpService.getSchool()));
+    this.adminService.updateOnboardProgress(ticket)
+      .subscribe(() => this.httpService.setSchool(this.httpService.getSchool()));
   }
 
 }

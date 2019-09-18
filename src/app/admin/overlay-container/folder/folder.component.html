@@ -10,7 +10,7 @@
               [formGroup]="form"
               [isFocus]="currentPage === 3"
               [controlName]="form.get('folderName')"
-              (blurEvent)="overlayService.roomNameBlur$.next($event)"
+              (blurEvent)="overlayService.folderNameBlur$.next($event)"
       >
       </app-input>
     </div>

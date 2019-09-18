@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {Router} from '@angular/router';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {map, mapTo, switchMap, tap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {fromEvent, Observable, of, Subject, zip} from 'rxjs';
@@ -234,7 +234,6 @@ export class ProfileCardDialogComponent implements OnInit {
   }
 
   promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-
     if (!eventTarget.classList.contains('button')) {
       (eventTarget as any) = eventTarget.closest('.button');
     }
@@ -244,32 +243,22 @@ export class ProfileCardDialogComponent implements OnInit {
       of(option)
         .pipe(
           switchMap((action): Observable<any> => {
-            console.log(action);
             eventTarget.style.opacity = '1';
 
             switch (action) {
               case 'delete_from_profile':
-                let role: any = this.data.role.split('_');
-                role = role[role.length - 1];
-                return this.userService.deleteUserFromProfile(this.profile.id, role).pipe(map(() => true));
-                break;
+                return this.userService.deleteUserRequest(this.profile.id, this.data.role).pipe(mapTo(true));
               case 'disable_sign_in':
-                return this.userService.setUserActivity(this.profile.id, false).pipe(map(() => true));
-                break;
+                return this.userService.setUserActivityRequest(this.profile._originalUserProfile, false, this.data.role).pipe(mapTo(null));
               case 'enable_sign_in':
-                return this.userService.setUserActivity(this.profile.id, true).pipe(map(() => true));
-                break;
+                return this.userService.setUserActivity(this.profile.id, true).pipe(mapTo(null));
               default:
                 return of( null);
-                break;
             }
-            this.consentMenuOpened = false;
           }),
         )
         .subscribe((res) => {
-          console.log(res);
           if (res != null) {
-            this.http.setSchool(this.http.getSchool());
             this.dialogRef.close(res);
           }
         });

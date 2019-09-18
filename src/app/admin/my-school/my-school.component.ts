@@ -3,7 +3,7 @@ import {HttpService} from '../../services/http-service';
 import {Observable, of} from 'rxjs';
 import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
-import {mapTo, switchMap} from 'rxjs/operators';
+import {filter, mapTo, switchMap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 declare const window;
@@ -35,7 +35,9 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.currentSchool$ = this.http.currentSchool$;
-      this.adminService.getOnboardProgress().pipe(switchMap((res: any[]) => {
+      this.adminService.getOnboardProcessRequest().pipe(
+        filter((res: any[]) => !!res.length),
+        switchMap((res: any[]) => {
         const start = res.find(setting => setting.name === 'launch_day_prep:start');
         if (!start.done) {
           return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(res));
@@ -50,9 +52,7 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
             } else {
               return of(null);
             }
-        })).subscribe(() => {
-
-      });
+        })).subscribe();
   }
   ngAfterViewInit(): void {
     // window.appLoaded();

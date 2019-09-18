@@ -89,8 +89,6 @@ export class OverlayContainerComponent implements OnInit {
   pinnablesCollectionIds$: Observable<number[] | string[]>;
 
   icons$: Observable<any>;
-  roomNameBlur$: Subject<string> = new Subject();
-  folderNameBlur$: Subject<string> = new Subject();
 
   titleIcon: string;
   isDirtyColor: boolean;
@@ -273,22 +271,26 @@ export class OverlayContainerComponent implements OnInit {
 
       if (this.currentPage === Pages.EditFolder || this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditRoomInFolder) {
           this.icons$ = merge(
-              this.form.get('roomName').valueChanges.pipe(startWith(this.form.get('roomName').value)),
-              this.form.get('folderName').valueChanges.pipe(startWith(this.form.get('folderName').value))
+              this.form.get('roomName').valueChanges,
+              this.form.get('folderName').valueChanges
           )
               .pipe(
                   debounceTime(300),
                   distinctUntilChanged(),
-                  filter(value => value),
-                  switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
+                  filter(search => search),
+                  switchMap((search) => {
+                    return this.http.searchIcons(search.toLowerCase());
+                  })
               );
       } else {
           this.icons$ = merge(
-              this.roomNameBlur$,
-              this.folderNameBlur$
+              this.overlayService.roomNameBlur$,
+              this.overlayService.folderNameBlur$
           ).pipe(
               filter(value => !!value),
-              switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
+              switchMap((value: string) => {
+                return this.http.searchIcons(value.toLowerCase());
+              })
           );
       }
     this.dialogRef.backdropClick()

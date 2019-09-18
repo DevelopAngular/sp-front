@@ -12,7 +12,7 @@ import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getAccounts, postAccounts, removeAccount} from '../ngrx/accounts/actions/accounts.actions';
+import {getAccounts, postAccounts, removeAccount, updateAccountActivity} from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection, getCountAllAccounts,
   getLoadedAllAccounts, getLoadingAllAccounts
@@ -260,6 +260,11 @@ export class UserService {
             })
           );
       }
+  }
+
+  setUserActivityRequest(profile, active: boolean, role: string) {
+    this.store.dispatch(updateAccountActivity({profile, active, role}));
+    return of(null);
   }
 
   setUserActivity(id, activity: boolean) {

@@ -21,6 +21,9 @@ const reducer = createReducer(
   }),
   on(teachersActions.removeTeacherSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});
+  }),
+  on(teachersActions.updateTeacherActivitySuccess, (state, {profile}) => {
+    return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   })
 );
 

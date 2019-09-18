@@ -2,8 +2,8 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog } from '@angular/material';
 import { FormGroup } from '@angular/forms';
 
-import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
-import {delay, filter, finalize, mapTo, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, iif, interval, Observable, of, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
+import {delay, filter, finalize, map, mapTo, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
@@ -130,70 +130,71 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loading$ = this.hallPassService.isLoadingPinnables$;
     this.loaded$ = this.hallPassService.loadedPinnables$;
-    this.httpService.globalReload$.subscribe(() => {
-      this.hallPassService.getPinnablesRequest();
-      this.pinnables$ = this.hallPassService.pinnables$;
-      this.pinnables$.pipe(filter((res: any[]) => !!res.length)).subscribe(res => {
-        this.pinnables = res;
-      });
-    combineLatest(this.adminService.getOnboardProgress(), this.pinnables$)
+    this.httpService.globalReload$
       .pipe(
-        filter(() => navigator.onLine),
-        takeUntil(this.destroy$)
-      )
-    .subscribe(([onboard, pinnables]) => {
-        // console.log('Onboard ==>>>>', pinnables);
-      if (onboard && (onboard as any[]).length && !pinnables.length) {
-        const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
-        this.showRooms = !!end.done;
-      } else {
-          const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
-          const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
-          if (!start.done) {
-              this.onboardUpdate$.next('setup_rooms:start');
-          }
-          if (!end.done) {
-              this.onboardUpdate$.next('setup_rooms:end');
-          }
-          this.showRooms = true;
-      }
-      this.onboardLoaded = true;
-    });
-
-    this.onboardUpdate$.pipe(
-      filter(() => navigator.onLine),
-      takeUntil(this.destroy$),
-      switchMap((action) => {
-        return this.adminService.updateOnboardProgress(action);
-    })).subscribe();
-
-      const forceSelectPinnable: Subscription = this.activatedRoute.queryParams.pipe(
-        filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
         takeUntil(this.destroy$),
-        switchMap((qp: any): any => {
-          const {locationId} = qp;
-          this.router.navigate( ['admin/passconfig']);
-          return this.locationsService.getLocation(locationId);
+        switchMap(() => {
+          this.pinnables$ = this.hallPassService.getPinnablesRequest();
+          return this.pinnables$.pipe(filter((res: any[]) => !!res.length));
         }),
-        switchMap((location: Location) => {
-          return zip(this.pinnables$, of(location));
-        })
-      ).subscribe(([pinnables, location]) => {
-        this.forceSelectedLocation = location;
-        this.pinnable = pinnables.find((pnbl: Pinnable) => {
-            if (pnbl.type === 'location') {
-                return pnbl.location.id === location.id;
-            } else {
-                return pnbl.category === location.category;
-            }
-        });
+        switchMap((res) => {
+          this.pinnables = res;
+          return combineLatest(
+            this.adminService.getOnboardProcessRequest().pipe(filter((r: any[]) => !!r.length)),
+            this.pinnables$
+          ).pipe(
+              filter(() => navigator.onLine)
+            );
+        }),
+        map(([onboard, pinnables]) => {
+          if (onboard && (onboard as any[]).length && !pinnables.length) {
+            const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
+            this.showRooms = !!end.done;
+          } else {
+              const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
+              const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
+              if (!start.done) {
+                  this.onboardUpdate$.next('setup_rooms:start');
+              }
+              if (!end.done) {
+                  this.onboardUpdate$.next('setup_rooms:end');
+              }
+              this.showRooms = true;
+          }
+          this.onboardLoaded = true;
+          return pinnables;
+        }),
+      switchMap((pinnables) => {
+        return this.onboardUpdate$.pipe(
+          filter(() => navigator.onLine),
+          switchMap((action) => {
+            return this.adminService.updateOnboardProgress(action);
+          }));
+      })).subscribe();
 
-        this.selectPinnable({ action: 'room/folder_edit', selection: this.pinnable });
-
-        forceSelectPinnable.unsubscribe();
+    this.activatedRoute.queryParams.pipe(
+      filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
+      takeUntil(this.destroy$),
+      switchMap((qp: any): any => {
+        const {locationId} = qp;
+        this.router.navigate( ['admin/passconfig']);
+        return this.locationsService.getLocation(locationId);
+      }),
+      switchMap((location: Location) => {
+        return zip(this.pinnables$, of(location));
+      })
+    ).subscribe(([pinnables, location]) => {
+      this.forceSelectedLocation = location;
+      this.pinnable = pinnables.find((pnbl: Pinnable) => {
+        if (pnbl.type === 'location') {
+          return pnbl.location.id === location.id;
+        } else {
+          return pnbl.category === location.category;
+        }
       });
-    });
 
+      this.selectPinnable({ action: 'room/folder_edit', selection: this.pinnable });
+    });
   }
 
   ngOnDestroy() {

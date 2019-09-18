@@ -151,47 +151,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  // @HostListener('scroll', ['$event'])
-  // onScroll(event) {
-  //   const target = event.target;
-  //   const limit = target.scrollHeight - target.clientHeight;
-  //   if (event.target.scrollTop === limit && this.isLoadUsers) {
-  //     this.limitCounter += 20;
-  //       this.userService
-  //         .getUsersList(this.role, '', this.limitCounter)
-  //         .pipe(
-  //           takeUntil(this.destroy$),
-  //           map(res => res.results),
-  //           switchMap((userList: User[]) => {
-  //             if (this.role === '_profile_teacher' && userList.length) {
-  //               return this.addUserLocations(userList);
-  //             } else if (this.role === '_profile_assistant' && userList.length) {
-  //               return zip(
-  //                 ...userList.map((user: User) => {
-  //                   return this.userService.getRepresentedUsers(user.id)
-  //                     .pipe(
-  //                       switchMap((ru: RepresentedUser[]) => {
-  //                         (user as any).canActingOnBehalfOf = ru;
-  //                         return of(user);
-  //                       })
-  //                     );
-  //                 }));
-  //             } else {
-  //               return of(userList);
-  //             }
-  //           })
-  //         )
-  //         .subscribe(userList => {
-  //           this.dataTableHeadersToDisplay = [];
-  //           this.userList = this.buildUserListData(userList);
-  //           this.selectedUsers = [];
-  //           if (this.dataTable) {
-  //             this.dataTable.clearSelection();
-  //           }
-  //         });
-  //   }
-  // }
-
   constructor(
     public router: Router,
     private route: ActivatedRoute,
@@ -658,8 +617,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
-    // console.log(evt);
-
     if (this.role === '_profile_admin') {
       if ((evt.id === +this.user.id)) {
         this.profilePermissions['access_user_config'].disabled = true;
@@ -715,8 +672,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
         }
         this.selectedUsers = [];
-        this.querySubscriber$.next(this.getUserList());
       }
+      debugger;
+      this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
     });
   }
 
@@ -745,7 +703,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private buildUserListData(userList) {
     this.isLoadUsers = this.limitCounter === userList.length;
     return userList.map((raw, index) => {
-
       const permissionsRef: any = this.profilePermissions;
         const partOf = [];
         if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});

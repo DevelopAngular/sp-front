@@ -66,6 +66,29 @@ export class AccountsEffects {
       );
   });
 
+  updateAccountActivity$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.updateAccountActivity),
+        map((action: any) => {
+          if (action.role === '_profile_teacher') {
+            return roleActions.updateTeacherActivity({profile: action.profile, active: action.active});
+          }
+          // else if (action.role === '_profile_admin') {
+          //   return roleActions.removeAdminAccount({id: action.id});
+          // } else if (action.role === '_profile_teacher') {
+          //   return roleActions.removeTeacher({id: action.id});
+          // } else if (action.role === '_profile_student') {
+          //   return roleActions.removeStudent({id: action.id});
+          // } else if (action.role === '_profile_assistant') {
+          //   return roleActions.removeAssistant({id: action.id});
+          // }
+
+          return action;
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

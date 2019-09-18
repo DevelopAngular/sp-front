@@ -53,6 +53,26 @@ export class TeachersEffects {
       );
   });
 
+  updateTeacherActivity$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.updateTeacherActivity),
+        concatMap((action: any) => {
+          return this.userService.setUserActivity(action.profile.id, action.active)
+            .pipe(
+              map(user => {
+                const profile = {
+                  ...action.profile
+                };
+                profile.active = action.active;
+                return teachersActions.updateTeacherActivitySuccess({profile});
+              }),
+              catchError(error => of(teachersActions.updateTeacherActivityFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService,
