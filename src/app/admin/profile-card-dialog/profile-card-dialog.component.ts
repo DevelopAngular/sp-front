@@ -247,18 +247,19 @@ export class ProfileCardDialogComponent implements OnInit {
 
             switch (action) {
               case 'delete_from_profile':
-                return this.userService.deleteUserRequest(this.profile.id, this.data.role).pipe(mapTo(true));
+                return this.userService.deleteUserRequest(this.profile.id, this.data.role).pipe(mapTo('close'));
               case 'disable_sign_in':
-                return this.userService.setUserActivityRequest(this.profile._originalUserProfile, false, this.data.role).pipe(mapTo(null));
+                return this.userService.setUserActivityRequest(this.profile._originalUserProfile, false, this.data.role).pipe(mapTo(false));
               case 'enable_sign_in':
-                return this.userService.setUserActivity(this.profile.id, true).pipe(mapTo(null));
+                return this.userService.setUserActivity(this.profile.id, true).pipe(mapTo(true));
               default:
-                return of( null);
+                return of( 'close');
             }
           }),
         )
         .subscribe((res) => {
-          if (res != null) {
+          this.profile._originalUserProfile.active = res;
+          if (res === 'close') {
             this.dialogRef.close(res);
           }
         });

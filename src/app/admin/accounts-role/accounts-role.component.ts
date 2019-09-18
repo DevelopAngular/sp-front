@@ -673,7 +673,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
         this.selectedUsers = [];
       }
-      debugger;
       this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
     });
   }
