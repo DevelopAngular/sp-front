@@ -186,7 +186,7 @@ export class MainHallPassFormComponent implements OnInit {
       .asObservable()
       .subscribe((v: boolean) => {
         this.scaledClass = v;
-        this.cd.detectChanges();
+        // this.cd.detectChanges();
       })
     this.setFormSize();
     this.checkDeviceScreen();

@@ -75,6 +75,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   header: string;
   options: any = [];
   cancelEditClick: boolean;
+  frameMotion$: BehaviorSubject<any>;
+
 
   constructor(
       public dialogRef: MatDialogRef<PassCardComponent>,
@@ -84,7 +86,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
-      private createFormService: CreateFormService,
+      private formService: CreateFormService,
       private timeService: TimeService,
       public screenService: ScreenService
   ) {}
@@ -150,6 +152,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
+
     if (this.data['pass']) {
       this.isModal = true;
       this.pass = this.data['pass'];
@@ -192,7 +198,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         return x;
       })).subscribe();
     }
-    this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
+    this.formService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   ngOnDestroy() {
@@ -320,7 +326,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
             this.formState.step = 3;
               this.formState.previousStep = 4;
-              this.createFormService.setFrameMotionDirection('back');
+              this.formService.setFrameMotionDirection('back');
               this.cardEvent.emit(this.formState);
           } else {
             this.dialogRef.close();

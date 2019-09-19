@@ -1,12 +1,18 @@
 <div class="date-wrapper">
-    <div class="divider" [style.background]="gradient">
-        <img [ngClass]="isPortableDevice ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
-        <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
+    <div class="divider"
+         >
+      <div class="header-background"
+           [attr.data-motion-opacity]="(frameMotion$ | async).direction"
+           [style.background]="gradient"></div>
+      <img [ngClass]="isPortableDevice ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
+        <div class="divider-header"
+             [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}"
+             [attr.data-motion-translate]="(frameMotion$ | async).direction">
             <img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset">
             <div class="divider-text ds-dialog-title-white">{{ (formState?.forInput ? 'Select': 'Change') }} Date & Time</div>
         </div>
     </div>
-    <div [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">
+    <div [ngClass]="{'date-content':!mock, 'date-content-mock': mock}" [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <div class="decline-content" *ngIf="isStaff">
           <div class="toggle-text">
             <div class="toggle-title">Declinable</div>

@@ -28,7 +28,9 @@
           </app-input>
       </div>
 
-      <div class="teacher-search" *ngIf="currentPage !== 9 && currentPage !== 10">
+      <div class="teacher-search"
+           [attr.data-motion-translate]="true"
+           *ngIf="currentPage !== 9 && currentPage !== 10">
 
         <div class="teacher-title">
           <span [ngStyle]="{'color': !data?.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
@@ -61,7 +63,7 @@
         </div>
       </div>
 
-      <div class="travel-settings">
+      <div class="travel-settings" [attr.data-motion-translate]="true">
         <div class="travel-picker">
           <div class="toggle-label">
             <span [ngStyle]="{'color': !data?.travelType.length ? '#7F879D' : ' #1F195E'}">Travel Type</span>
@@ -102,7 +104,7 @@
         </div>
       </div>
 
-      <div class="restriction-settings">
+      <div class="restriction-settings" [attr.data-motion-translate]="true">
         <div class="restriction-picker-1">
           <div class="toggle-label">
             <span [ngStyle]="{'color': !restricted ? '#7F879D' : ' #1F195E'}">Restriction For Now</span>

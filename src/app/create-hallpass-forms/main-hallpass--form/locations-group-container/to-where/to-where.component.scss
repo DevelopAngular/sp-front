@@ -45,7 +45,7 @@
   justify-content: space-between;
   align-items: center;
   position: relative;
-  background-color: #ffffff;
+  //background-color: #ffffff;
   border-radius: 14px;
 
   .to-header, .to-header_animation-back {
@@ -56,11 +56,19 @@
     z-index: 10;
     align-items: center;
     position: relative;
-    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+    //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
-    overflow: hidden;
-
+    //overflow: hidden;
+    .header-background {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: -1;
+      box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+    }
     .back-button {
       width: 28px;
       height: 28px;

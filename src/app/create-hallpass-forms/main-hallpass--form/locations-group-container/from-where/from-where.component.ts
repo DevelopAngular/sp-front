@@ -26,6 +26,7 @@ export class FromWhereComponent implements OnInit {
         }
 
         this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
+        console.log(this.header.nativeElement.dataset);
       });
     }
   }
@@ -124,7 +125,7 @@ export class FromWhereComponent implements OnInit {
       }
       this.formState.previousState = 1;
 
-
+      console.log(this.formState);
       this.backButton.emit(this.formState);
     }, 100);
   }
