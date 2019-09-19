@@ -39,15 +39,25 @@ export class AdminsEffects {
       );
   });
 
-  // postAdmin$ = createEffect(() => {
-  //   return this.actions$
-  //     .pipe(
-  //       ofType(adminsActions.postAdmin),
-  //       map((action: any) => {
-  //         return adminsActions.postAdminSuccess({admin: action.admin});
-  //       })
-  //     );
-  // });
+  updateAdminActivity$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(adminsActions.updateAdminActivity),
+        concatMap((action: any) => {
+          return this.userService.setUserActivity(action.profile.id, action.active)
+            .pipe(
+              map(user => {
+                const profile = {
+                  ...action.profile
+                };
+                profile.active = action.active;
+                return adminsActions.updateAdminActivitySuccess({profile});
+              }),
+              catchError(error => of(adminsActions.updateAdminActivityFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
 
   constructor(private actions$: Actions, private userService: UserService) {}
 }

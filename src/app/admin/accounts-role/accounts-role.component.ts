@@ -636,7 +636,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       gSuiteSettings: gSuite,
       role: this.role,
       permissions: this.profilePermissions
-    }
+    };
 
     if (this.selectedUsers.length && !bulk || this.role === '_all' && !gSuite)  {
       return false;

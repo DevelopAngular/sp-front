@@ -9,6 +9,12 @@ export const getAssistantsSuccess = createAction(`[${ASSISTANTS}] Get Assistants
 export const getAssistantsFailure = createAction(`[${ASSISTANTS}] Get Assistants Failure`, props<{errorMessage: string}>());
 
 export const removeAssistant = createAction(`[${ASSISTANTS}] Remove Assistant`, props<{id: string | number}>());
-export const removeAssistantSuccess = createAction(`[${ASSISTANTS}] Remove Assistant Success`, props<{id: string | number}>())
+export const removeAssistantSuccess = createAction(`[${ASSISTANTS}] Remove Assistant Success`, props<{id: string | number}>());
 export const removeAssistantFailure = createAction(`[${ASSISTANTS}] Remove Assistant Failure`, props<{errorMessage: string}>());
+
+export const updateAssistantActivity = createAction(`[${ASSISTANTS}] Update Assistant Activity`, props<{profile: User, active: boolean}>());
+export const updateAssistantActivitySuccess = createAction(`[${ASSISTANTS}] Update Assistant Activity Success`, props<{profile: User}>());
+export const updateAssistantActivityFailure =
+  createAction(`[${ASSISTANTS}] Update Assistant Activity Failure`, props<{errorMessage: string}>());
+
 

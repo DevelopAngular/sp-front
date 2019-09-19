@@ -63,6 +63,11 @@ export class ProfileCardDialogComponent implements OnInit {
   public orgUnitSelectorInitialState: GSuiteSelector;
   public orgUnitSelectorEditState: boolean;
   public checkSelectorForUpdating$:  Subject<GSuiteSelector[]> = new Subject();
+  public signInStatus: {
+    touched: boolean,
+    value: boolean,
+    initialValue: boolean
+  };
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -96,6 +101,11 @@ export class ProfileCardDialogComponent implements OnInit {
     if (this.data.profile) {
 
       this.profile = this.data.profile;
+      this.signInStatus = {
+        touched: false,
+        value: false,
+        initialValue: this.profile._originalUserProfile.active
+      };
 
       if (this.data.role === '_profile_assistant') {
         this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
@@ -249,9 +259,13 @@ export class ProfileCardDialogComponent implements OnInit {
               case 'delete_from_profile':
                 return this.userService.deleteUserRequest(this.profile.id, this.data.role).pipe(mapTo('close'));
               case 'disable_sign_in':
-                return this.userService.setUserActivityRequest(this.profile._originalUserProfile, false, this.data.role).pipe(mapTo(false));
+                this.signInStatus.touched = true;
+                this.signInStatus.value = false;
+                return of(false);
               case 'enable_sign_in':
-                return this.userService.setUserActivity(this.profile.id, true).pipe(mapTo(true));
+                this.signInStatus.touched = true;
+                this.signInStatus.value = true;
+                return of(true);
               default:
                 return of( 'close');
             }
@@ -271,8 +285,12 @@ export class ProfileCardDialogComponent implements OnInit {
       this.updateProfile().subscribe(() => {
         this.dialogRef.close(true);
       });
+    } else if (this.signInStatus.touched && this.signInStatus.value !== this.signInStatus.initialValue) {
+      this.userService.setUserActivityRequest(this.profile._originalUserProfile, this.signInStatus.value, this.data.role)
+        .subscribe(() => {
+          this.dialogRef.close(false);
+        });
     } else {
-
       this.dialogRef.close(false);
     }
   }

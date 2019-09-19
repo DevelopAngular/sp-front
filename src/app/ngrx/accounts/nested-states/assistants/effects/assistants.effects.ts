@@ -64,6 +64,25 @@ export class AssistantsEffects {
       );
   });
 
+  updateAssistantActivity$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.updateAssistantActivity),
+        concatMap((action: any) => {
+          return this.userService.setUserActivity(action.profile.id, action.active)
+            .pipe(
+              map(user => {
+                const profile = {
+                  ...action.profile
+                };
+                profile.active = action.active;
+                return assistantsActions.updateAssistantActivitySuccess({profile});
+              })
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService
