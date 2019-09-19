@@ -47,6 +47,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+  scale: boolean;
 
   teacherRooms$: Observable<Pinnable[]>;
 
@@ -58,6 +59,10 @@ export class LocationsGroupContainerComponent implements OnInit {
     private screenService: ScreenService,
 
   ) { }
+
+  get scalability() {
+    return this.scale;
+  }
 
   get showDate() {
     if ( this.FORM_STATE.data.date ) {
@@ -124,6 +129,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.formService.scalableBoxController.asObservable().subscribe(v => this.scale = v);
     this.FORM_STATE.quickNavigator = false;
 
     this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
