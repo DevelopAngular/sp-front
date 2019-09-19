@@ -44,7 +44,7 @@ export const getCreatedLocation = createSelector(
 
 export const getUpdatedLocation = createSelector(
   getLocationsEntities,
-  getCreatedLocationId,
+  getUpdatedLocationId,
   (entities, id) => {
     return entities[id];
   }

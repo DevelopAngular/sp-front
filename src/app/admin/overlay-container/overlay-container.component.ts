@@ -12,7 +12,7 @@ import {
   filter,
   take,
   debounceTime,
-  distinctUntilChanged
+  distinctUntilChanged, takeLast, concatMap
 } from 'rxjs/operators';
 
 import { NextStep } from '../../animations';
@@ -381,17 +381,20 @@ export class OverlayContainerComponent implements OnInit {
 
   uniqueRoomNameValidator(control: AbstractControl) {
       if (control.dirty) {
-         return this.locationService.checkLocationName(control.value)
-            .pipe(
-              switchMap((res: any) => {
-              if (this.currentPage === Pages.NewRoom || Pages.NewRoomInFolder) {
-                return of(res.title_used ? { room_name: true } : null);
+        return this.locationService.checkLocationName(control.value)
+          .pipe(
+            map((res: any) => {
+              if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
+                return res.title_used ? { room_name: true } : null;
+              } else {
+                let currentRoomName: string;
+                if (this.currentPage === Pages.EditRoomInFolder) {
+                  currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
+                } else {
+                  currentRoomName = this.pinnable.location.title;
+                }
+                return res.title_used && (currentRoomName !== this.roomData.roomName) ? { room_name: true } : null;
               }
-              return of(res.title_used &&
-              (this.currentPage === Pages.EditRoomInFolder ?
-
-                this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title :
-                this.pinnable.location.title) !== this.roomData.roomName ? { room_name: true } : null);
             }));
       } else {
           return of(null);
@@ -674,8 +677,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   roomResult({data, buttonState}) {
-      this.roomData = data;
-      this.roomValidButtons.next(buttonState);
+    this.roomData = data;
+    this.roomValidButtons.next(buttonState);
   }
 
   folderResult({data, buttonState}) {
