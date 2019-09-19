@@ -60,15 +60,14 @@ export class LocationsGroupContainerComponent implements OnInit {
   ) { }
 
   get showDate() {
-      if ( this.FORM_STATE.data.date ) {
-
-        if (!this.FORM_STATE.data.date.date ) {
-          return false;
-        } else {
-          return Util.formatDateTime(new Date(this.FORM_STATE.data.date.date));
-        }
-
+    if ( this.FORM_STATE.data.date ) {
+      if (!this.FORM_STATE.data.date.date ) {
+        return false;
+      } else {
+        return Util.formatDateTime(new Date(this.FORM_STATE.data.date.date));
       }
+
+    }
   }
 
   get studentText() {
@@ -295,5 +294,9 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
+  }
+
+  get pwaBackBtnVisibility() {
+    return this.screenService.isDeviceLargeExtra;
   }
 }

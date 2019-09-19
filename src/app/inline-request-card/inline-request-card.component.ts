@@ -9,6 +9,8 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {tap} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {DeviceDetection} from '../device-detection.helper';
+import {BehaviorSubject} from 'rxjs';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -24,11 +26,13 @@ export class InlineRequestCardComponent implements OnInit {
   selectedDuration: number;
   selectedTravelType: string;
   cancelOpen: boolean = false;
+  frameMotion$: BehaviorSubject<any>;
 
   constructor(
       private requestService: RequestsService,
       public dialog: MatDialog,
       private dataService: DataService,
+      private formService: CreateFormService
   ) { }
 
   get hasDivider() {
@@ -61,6 +65,8 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
   }
 
   formatDateTime(){

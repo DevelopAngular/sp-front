@@ -1,9 +1,8 @@
 <div class="rest-tar-wrapper">
   <div
-    [attr.data-motion-opacity]="(frameMotion$ | async).direction"
-    [ngClass]="headerTransition"
-    [style.background-image]="headerGradient" #headeer>
+    [ngClass]="headerTransition" #headeer>
 <!--    {{(frameMotion$ | async).direction}}-->
+    <div class="header-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction" [style.background-image]="headerGradient"></div>
     <div class="back-button-wrapper" (click)="back()">
       <img [ngClass]="isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'" class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
     </div>

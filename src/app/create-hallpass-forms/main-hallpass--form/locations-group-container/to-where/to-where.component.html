@@ -1,9 +1,8 @@
-<div style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
-  <div class=""
-       [attr.data-motion-opacity]="(frameMotion$ | async).direction"
-
-       [ngClass]="headerTransition" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFF00, #FFFF00)'" #header>
-
+<div [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
+  <div [ngClass]="headerTransition" #header>
+    <div class="header-background"
+         [attr.data-motion-opacity]="(frameMotion$ | async).direction"
+         [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'"></div>
     <div *ngIf="!screenService.isDeviceLargeExtra"  class="back-button back-button-grey">
       <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
     </div>

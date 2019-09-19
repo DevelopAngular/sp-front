@@ -1,8 +1,7 @@
 <div class="category-wrapper">
-  <div
-    [attr.data-motion-opacity]="(frameMotion$ | async).direction"
-    [ngClass]="headerTransition"
-    [style.background-image]="headerGradient" #header>
+  <div [ngClass]="headerTransition" #header>
+    <div class="header-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction" [style.background-image]="headerGradient"></div>
+
     <div [ngClass]="isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'"  class="back-button back-button-white">
       <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="true" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
     </div>

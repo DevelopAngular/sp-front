@@ -5,9 +5,9 @@
   <!--{{FORM_STATE.forLater}}-->
 
   <div [ngClass]="isIOSTablet ? 'ios-pretty-replace-box' : 'pretty-replace-box'"
-       [style.backgroundColor]="FORM_STATE.step < 4 && FORM_STATE.previousStep < 4 ? 'rgba(255, 255, 255, 1)' : 'transparent'"
+       [style.backgroundColor]="FORM_STATE.step < 4 && !isScaled ? 'rgba(255, 255, 255, 1)' : 'transparent'"
        [style.overflow]="FORM_STATE.step === 2 || FORM_STATE.previousStep === 2 ? 'hidden' : 'visible'">
-    <div [ngClass]="isIOSTablet ? 'ios-fixed-card-wrapper' : 'fixed-card-wrapper'" style="" [style.width]="formSize.width" [style.height]="formSize.height">
+<!--    <div [ngClass]="isIOSTablet ? 'ios-fixed-card-wrapper' : 'fixed-card-wrapper'" style="" [style.width]="formSize.width" [style.height]="formSize.height">-->
 
       <div  [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
         <div [ngClass]="{'date-picker': FORM_STATE.formMode.role === 1 || FORM_STATE.data.request }" class="">
@@ -16,23 +16,30 @@
       </div>
 
       <div [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 2"  [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
-        <div [ngClass]="{'student-groups': FORM_STATE.previousStep < 4}" class="">
+        <div [ngClass]="{'student-groups': FORM_STATE.previousStep < 4}" [attr.data-motion-opacity]="(frameMotion$ | async).direction">
           <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
         </div>
       </div>
 
-    </div>
+<!--    </div>-->
 
     <div style="transition: width .5s ease, height .5s ease;" [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" *ngIf="FORM_STATE.step === 3"
          [style.width]="formSize.width"
          [style.height]="formSize.height"
          [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
-      <div class="locations" [ngClass]="{'locations-scaled': isScaled}">
+      <div class="locations" [attr.data-motion-scale]="isScaled">
         <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
       </div>
     </div>
   </div>
-  <div [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" class="form-factor" style="z-index: 15" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 4" [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
+  <div
+    style="z-index: 15"
+    [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
+    [style.width]="formSize.width"
+    [style.height]="formSize.height" *ngIf="FORM_STATE.step === 4"
+    [attr.data-motion-scale]="true"
+    [@NextStep]="{ value: '', params: frameMotion$ | async}"
+    (@NextStep.start)="setFormSize()">
     <app-form-factor-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
   </div>
 

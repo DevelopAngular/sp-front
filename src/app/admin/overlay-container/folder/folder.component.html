@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="content">
-    <div class="folder-name" style="width: 289px">
+    <div class="folder-name" style="width: 289px" [attr.data-motion-translate]="true">
       <app-input
               [width]="'275px'"
               [maxLength]="17"
@@ -15,7 +15,7 @@
       </app-input>
     </div>
     <div *ngIf="folderRoomsLoaded" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <div class="rooms-wrapper rooms-in-folder">
+    <div class="rooms-wrapper rooms-in-folder" [attr.data-motion-translate]="true">
       <div class="sticky" *ngIf="roomsImFolder.length">
         <div class="rooms-in-folder-title">
           <div class="all-rooms-checkbox">

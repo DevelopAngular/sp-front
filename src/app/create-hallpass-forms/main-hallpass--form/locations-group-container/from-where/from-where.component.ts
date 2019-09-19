@@ -125,7 +125,7 @@ export class FromWhereComponent implements OnInit {
       }
       this.formState.previousState = 1;
 
-
+      console.log(this.formState);
       this.backButton.emit(this.formState);
     }, 100);
   }

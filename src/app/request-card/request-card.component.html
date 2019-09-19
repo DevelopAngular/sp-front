@@ -51,13 +51,13 @@
       <div class="student-view" *ngIf="!forStaff">
         <div class="center-block">
           <app-pager *ngIf="!forInput"  [arrowPosition]="'-93px'">
-            <div class="page-1">
+            <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
               <ng-template #noInput>
                 <app-travel-view [pass]="request" [shrink]="true"></app-travel-view>
               </ng-template>
             </div>
-            <div class="page-2">
+            <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <div class="page-2-wrapper">
                 <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')">
                   <span [style.font-weight]="'bold'">{{ (forStaff?'Message from ' +studentName +':':'Your message:') }}</span><br>
@@ -74,14 +74,14 @@
               </div>
             </div>
 
-            <div class="page-5">
+            <div class="page-5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
               <ng-template #noInput>
                 <app-travel-view [pass]="request" [shrink]="true"></app-travel-view>
               </ng-template>
             </div>
 
-            <div class="page-6">
+            <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <div class="page-2-wrapper">
                 <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')">
                   <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
@@ -139,13 +139,13 @@
       <div class="teacher-view" *ngIf="forStaff">
         <div class="pager" style="height: 210px">
           <app-pager *ngIf="!forInput" [arrowPosition]="'-93px'">
-            <div class="page-1">
+            <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
               <ng-template #noInput>
                 <app-travel-view [height]="'164px'" [pass]="request" [shrink]="true"></app-travel-view>
               </ng-template>
             </div>
-            <div class="page-2">
+            <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <div class="page-2-wrapper">
                 <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''"  class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{ (forStaff?'Message from ' +studentName +':':'Your message:') }}</span><br>
@@ -162,14 +162,14 @@
               </div>
             </div>
 
-            <div class="page-5">
+            <div class="page-5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
               <ng-template #noInput>
                 <app-travel-view [height]="'164px'" [pass]="request" [shrink]="true"></app-travel-view>
               </ng-template>
             </div>
 
-            <div class="page-6">
+            <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <div class="page-2-wrapper">
                 <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''"  class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
@@ -217,17 +217,17 @@
           <ng-template #staffNotPending>
             <div>
               <app-pager [page]="2">
-                <div class="page-1 teacher-details">
+                <div class="page-1 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                   <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{ studentName }}<br><br>{{ formatDateTime(request.created) }}</span>
                 </div>
-                <div class="page-2 teacher-details">
+                <div class="page-2 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                   <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{ teacherName }}<br><br>{{ formatDateTime(request.last_updated) }}</span>
                 </div>
 
-                <div class="page-5 teacher-details">
+                <div class="page-5 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                   <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{studentName}}<br><br>{{formatDateTime(request.created)}}</span>
                 </div>
-                <div class="page-6 teacher-details">
+                <div class="page-6 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                   <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{teacherName}}<br><br>{{formatDateTime(request.last_updated)}}</span>
                 </div>
               </app-pager>

@@ -4,16 +4,16 @@
     <img [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back()">
 
     <div *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-      <div class="divider-text-students ds-dialog-title-white"> <img class="divider-icon" [src]="'./assets/Search Eye (White).svg' | resolveAsset">Select Student(s)</div>
+      <div class="divider-text-students ds-dialog-title-white" [attr.data-motion-translate]="true"> <img class="divider-icon" [src]="'./assets/Search Eye (White).svg' | resolveAsset">Select Student(s)</div>
     </div>
     <div *ngIf="!showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-      <div class="divider-text-message ds-dialog-title-white"> <img class="divider-icon" [src]="'./assets/Message (White).svg' | resolveAsset">Message </div>
+      <div class="divider-text-message ds-dialog-title-white" [attr.data-motion-translate]="true"> <img class="divider-icon" [src]="'./assets/Message (White).svg' | resolveAsset">Message </div>
     </div>
   </div>
   <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white">
 
     <div style="display: flex; flex-direction: column; flex: 1 1 auto" *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-      <div class="student-select">
+      <div class="student-select" [attr.data-motion-translate]="true">
         <div class="report-content">
 
           <app-sp-search
@@ -41,7 +41,7 @@
 
     <div style="display: flex; flex-direction: column; flex: 1 1 auto;" *ngIf="!showOptions"  [@NextStep]="{ value: '', params: frameMotion$ | async}">
 
-      <div class="message-entry">
+      <div class="message-entry" [attr.data-motion-translate]="true">
         <div data-grammarly-issue-container class="message-wrapper">
           <textarea class="message-box" #messageBox placeholder="Attach a message" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>

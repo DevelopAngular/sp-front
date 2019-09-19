@@ -57,7 +57,7 @@
       </div>
 
       <div class="block" [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 8">
-        <div class="existing-rooms">
+        <div class="existing-rooms" [attr.data-motion-translate]="true">
           <app-add-existing-room
                   [data]="pinnables$ | async"
                   [roomName]="folderData.folderName"
