@@ -7,6 +7,7 @@ import { ColorProfile } from '../../../../models/ColorProfile';
 import * as moment from 'moment';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {BehaviorSubject} from 'rxjs';
+import {StorageService} from '../../../../services/storage.service';
 
 @Component({
   selector: 'app-date-time',
@@ -27,7 +28,9 @@ export class DateTimeComponent implements OnInit {
   requestTime: moment.Moment = moment(this.timeService.nowDate()).add(5, 'minutes');
 
   form: FormGroup = new FormGroup({
-    declinable: new FormControl(true)
+    declinable: new FormControl(
+      this.storage.getItem('declinable') ? JSON.parse(this.storage.getItem('declinable')) : true
+    )
   });
   declinable: FormControl = new FormControl(true);
 
@@ -41,7 +44,11 @@ export class DateTimeComponent implements OnInit {
   };
 
 
-  constructor(private timeService: TimeService, private formService: CreateFormService) {
+  constructor(
+    private timeService: TimeService,
+    private formService: CreateFormService,
+    private storage: StorageService
+  ) {
   }
 
   get gradient() {
@@ -88,12 +95,13 @@ export class DateTimeComponent implements OnInit {
           this.headerTransition['from-header_animation-back'] = false;
       }
     });
-
+    this.form.get('declinable').valueChanges
+      .subscribe(value => this.storage.setItem('declinable', value));
   }
 
   calendarResult(date: moment.Moment[]) {
     this.requestTime = moment(date[0]);
-    console.log((this.requestTime as any)._d);
+    // console.log((this.requestTime as any)._d);
   }
 
   next() {
@@ -106,6 +114,9 @@ export class DateTimeComponent implements OnInit {
     };
     setTimeout(() => {
       this.result.emit(this.formState);
+      if (!this.storage.getItem('declinable') && this.isStaff) {
+        this.storage.setItem('declinable', this.form.get('declinable').value);
+      }
     }, 100);
   }
 
@@ -120,7 +131,7 @@ export class DateTimeComponent implements OnInit {
       } else {
         this.formState.step = 0;
       }
-      console.log('AaA ===>>>', event);
+      // console.log('AaA ===>>>', event);
       this.backButton.emit(this.formState);
     }, 100);
   }
