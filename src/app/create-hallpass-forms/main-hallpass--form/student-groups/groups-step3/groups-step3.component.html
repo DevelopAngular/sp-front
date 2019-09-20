@@ -1,6 +1,6 @@
 <div class="step-1-container">
   <div class="header">
-    <div class="header_back-button back-btn-top" (click)="back(editGroup)">
+    <div class="header_back-button back-btn-top" (click)="back(editGroupInitial)">
       <img  *ngIf="!form.get('title').dirty && !form.get('users').dirty"
             class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
       <span *ngIf="form.get('title').dirty || form.get('users').dirty">Cancel</span>
