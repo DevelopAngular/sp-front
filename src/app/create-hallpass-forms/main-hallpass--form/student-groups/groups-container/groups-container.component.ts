@@ -74,10 +74,10 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
     )
     .subscribe((evt: any) => {
       if (evt.fromState === 3 && evt.data.selectedGroup) {
-        this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
-        this.FORM_STATE.data.selectedStudents = evt.data.selectedGroup.users;
-        this.groupDTO.get('users').setValue(evt.data.selectedGroup.users);
-        this.selectedGroup = evt.data.selectedGroup;
+        this.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
+        this.FORM_STATE.data.selectedGroup = this.selectedGroup;
+        this.FORM_STATE.data.selectedStudents = this.selectedGroup.users;
+        this.groupDTO.get('users').setValue(this.selectedGroup.users);
       } else {
         this.selectedStudents = evt.data.selectedStudents;
       }
@@ -115,10 +115,10 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
   }
 
   groupNextStep(evt) {
-
     switch (evt.state) {
       case 3:
         this.selectedGroup = evt.data.selectedGroup;
+        // this.selectedStudents = evt.data.selectedStudents;
         break;
       case 2:
         this.selectedStudents = evt.data.selectedStudents;

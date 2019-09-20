@@ -22,7 +22,7 @@
   <!--<br>-->
   <div class="state-transition-none"  *ngIf="currentState === states.EditGroup">
     <app-groups-step3
-      [editGroup]="selectedGroup"
+      [groupToEdit]="selectedGroup"
       [form]="groupDTO"
       (stateChangeEvent)="groupNextStep($event)">
     </app-groups-step3>

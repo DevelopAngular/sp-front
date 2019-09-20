@@ -204,7 +204,7 @@
               [isCheckbox]="dataTableEditState"
               [textColor]="'#7E879D'"
               [marginTopStickyHeader]="'147px'"
-              [disallowHover]="!(dataTableEditState | async)"
+              [disallowHover]="!(dataTableEditState | async) || true"
               [displayedColumns]="dataTableHeadersToDisplay"
               (selectedCell)="findProfileByRole($event)"
               (selectedUsers)="setSelected($event)"

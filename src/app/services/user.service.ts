@@ -147,7 +147,7 @@ export class UserService {
           id: `${user.id}`,
           email: user.primary_email,
           is_student: user.isStudent(),
-          is_teacher: user.isStudent(),
+          is_teacher: user.isTeacher(),
           is_admin: user.isAdmin(),
         });
       });
@@ -352,7 +352,7 @@ export class UserService {
 
   updateStudentGroupRequest(id, group) {
     this.store.dispatch(updateStudentGroup({id, group}));
-    return this.currentStudentGroup$;
+    return this.currentStudentGroup$.pipe(filter(sg => !!sg));
   }
 
   updateStudentGroup(id, body) {

@@ -19,7 +19,25 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   @ViewChild('studentEmails') studentEmailsFile;
 
   @Input() form: FormGroup;
-  @Input() editGroup: StudentList;
+  editGroupInitial: StudentList;
+  editGroup: StudentList;
+  @Input() set groupToEdit(groupToEdit: StudentList) {
+    if (groupToEdit) {
+      this.editGroupInitial = groupToEdit;
+      this.editGroup = _.cloneDeep(groupToEdit);
+      console.log(this.editGroup);
+      this.form.get('title').setValue(this.editGroup.title);
+      this.form.get('users').setValue(this.editGroup.users);
+      this.form.valueChanges
+        .pipe(
+          skip(1)
+        )
+        .subscribe((val: any) => {
+          this.allowToSave = true;
+        });
+
+    }
+  }
 
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
@@ -36,17 +54,6 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.editGroup);
-    this.form.get('title').setValue(this.editGroup.title);
-    this.form.get('users').setValue(this.editGroup.users);
-    this.form.valueChanges
-      .pipe(
-        skip(1)
-      )
-      .subscribe((val: any) => {
-        this.allowToSave = true;
-      });
-
     fromEvent(this.studentEmailsFile.nativeElement , 'change')
       .pipe(
         switchMap((evt: Event) => {
