@@ -44,6 +44,7 @@ import {Schedule} from 'primeng/primeng';
 import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
+import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 
 declare const window;
 
@@ -68,6 +69,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('tabPointer') tabPointer: ElementRef;
   @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
+  @ViewChild('navbar') navbar: ElementRef;
 
   @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
   @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
@@ -157,7 +159,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       public screenService: ScreenService,
       private sideNavService: SideNavService,
       private cdr: ChangeDetectorRef,
-      private rendered: Renderer2
+      private rendered: Renderer2,
+      private navbarElementsService: NavbarElementsRefsService,
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -294,7 +297,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-      this.underlinePosition();
+    this.underlinePosition();
+    this.navbarElementsService.navbarRef$.next(this.navbar);
   }
 
   underlinePosition() {

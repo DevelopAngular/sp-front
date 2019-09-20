@@ -67,7 +67,7 @@ import {ImportRoomsComponent} from '../overlay-container/import-rooms/import-roo
       EditRoomInFolderComponent,
       BulkEditRoomsComponent,
       BulkEditRoomsInFolderComponent,
-      ImportRoomsComponent
+      ImportRoomsComponent,
   ],
   exports: [
       MatChipsModule,

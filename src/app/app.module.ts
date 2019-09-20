@@ -89,6 +89,7 @@ import {SchoolsEffects} from './ngrx/schools/effects';
 import {UserEffects} from './ngrx/user/effects';
 import {SchoolsResolver} from './core/resolvers/schools-resolver';
 import {ProcessEffects} from './ngrx/onboard-process/effects';
+import { NavbarElementSenderDirective } from './core/directives/navbar-element-sender.directive';
 
 const appRoutes: Routes = [
   {
