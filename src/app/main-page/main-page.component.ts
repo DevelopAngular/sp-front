@@ -85,7 +85,7 @@ export class MainPageComponent implements OnInit, AfterViewInit {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
-        this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
+        this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.isAssistant();
       });
 
     this.inboxHasItems = combineLatest(
@@ -140,6 +140,7 @@ export class MainPageComponent implements OnInit, AfterViewInit {
   fadeClick() {
     this.sideNavService.toggleLeft$.next(false);
     this.sideNavService.toggleRight$.next(false);
+
     this.sideNavService.sideNavAction$.next('');
     this.sideNavService.fadeClick$.next(true);
   }

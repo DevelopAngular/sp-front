@@ -196,7 +196,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = this.router.url.includes('kioskMode');
-        console.log('Hide ===>>', value.url);
+        // console.log('Hide ===>>', value.url);
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit[urlSplit.length - 1];
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
