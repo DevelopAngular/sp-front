@@ -24,10 +24,11 @@ export class NotSeenIntroGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-    // console.log('canActivate intro:', localStorage.getItem('smartpass_intro') !== 'seen');
-    return this.userService.getUserRequest()
+    return this.userService.user$
       .pipe(
-        map(raw => User.fromJSON(raw)),
+        map(raw => {
+          return User.fromJSON(raw);
+        }),
         combineLatest(this.userService.getIntros()),
         map(([user, intros]: [any, any]) => {
           if (!user) {
