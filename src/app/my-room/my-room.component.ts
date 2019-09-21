@@ -218,7 +218,12 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     console.log(this.kioskMode);
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
-    const selectedLocationArray$ = this.selectedLocation$.pipe(map(location => location));
+    const selectedLocationArray$ = this.selectedLocation$
+      .pipe(
+        map((location) => {
+         return location && location.length ? location.map(l => Location.fromJSON(l)) : [];
+        })
+      )
 
     // Construct the providers we need.
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
