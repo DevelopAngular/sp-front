@@ -392,9 +392,10 @@ export class LiveDataService {
       }
       if (filter.type === 'location') {
         if (Array.isArray(filter.value)) {
-          const locationIds = filter.value.map(l => l.id);
+          const locationIds = filter.value.map(l => +l.id);
           queryFilter.location = locationIds;
-          filters.push((pass: HallPass) => (locationIds.indexOf(pass.origin.id) >= 0) || (locationIds.indexOf(pass.destination.id) >= 0));
+          console.log(queryFilter);
+          filters.push((pass: HallPass): boolean => (locationIds.indexOf(+pass.origin.id) >= 0) || (locationIds.indexOf(+pass.destination.id) >= 0));
         } else {
           const locationId = filter.value.id;
           queryFilter.location = locationId;
