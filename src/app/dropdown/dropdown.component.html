@@ -6,7 +6,7 @@
 <!--  <div class="option-divider" *ngIf="heading"></div>-->
 
   <div class="options-wrapper" *ngIf="locations" #optionsWrapper>
-    <div class="option">
+    <div class="option" (click)="closeDropdown('all_rooms')">
 
       <div class="option-data"
            #_option
@@ -17,8 +17,7 @@
            (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
            (mouseup)="_option.style.background = 'transparent'"
            (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
-           (mouseleave)="_option.style.background = 'transparent'"
-           (click)="_matDialogRef.close('all_rooms')">
+           (mouseleave)="_option.style.background = 'transparent'">
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">All Rooms</span>
         </div>
