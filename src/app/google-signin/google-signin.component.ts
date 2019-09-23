@@ -70,7 +70,7 @@ export class GoogleSigninComponent implements OnInit {
       this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
-      // window.waitForAppLoaded();
+      window.waitForAppLoaded(true);
       of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
       .pipe(
         tap((res) => { console.log(res); }),

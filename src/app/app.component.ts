@@ -84,7 +84,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private http: HttpService,
     private httpNative: HttpClient,
     private adminService: AdminService,
-    private userService: UserService,
+    // private userService: UserService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,

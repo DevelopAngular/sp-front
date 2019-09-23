@@ -279,7 +279,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollPosition: ScrollPositionService,
     private userService: UserService
   ) {
-
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
     this.testInvitations = new BasicPassLikeProvider(testInvitations);

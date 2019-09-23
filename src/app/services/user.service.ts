@@ -112,7 +112,6 @@ export class UserService {
     private errorHandler: ErrorHandler,
     private store: Store<AppState>,
   ) {
-
     this.http.globalReload$
         .pipe(
           switchMap(() => {

@@ -26,6 +26,7 @@ export class NotSeenIntroGuard implements CanActivate {
 
     return this.userService.user$
       .pipe(
+        filter(raw => !!raw),
         map(raw => {
           return User.fromJSON(raw);
         }),
