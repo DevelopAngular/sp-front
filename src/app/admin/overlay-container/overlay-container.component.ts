@@ -7,12 +7,11 @@ import { BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip } from '
 import {
   delay,
   map,
-  startWith,
   switchMap,
   filter,
   take,
   debounceTime,
-  distinctUntilChanged, takeLast, concatMap
+  distinctUntilChanged, tap,
 } from 'rxjs/operators';
 
 import { NextStep } from '../../animations';
@@ -103,6 +102,7 @@ export class OverlayContainerComponent implements OnInit {
   form: FormGroup;
 
   showPublishSpinner: boolean;
+  iconTextResult$: Subject<string> = new Subject<string>();
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -205,7 +205,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showIncompleteButton() {
-      return this.roomValidButtons.getValue().incomplete && !this.disabledRightBlock;
+      return (this.roomValidButtons.getValue().incomplete ||
+        !this.selectedIcon || !this.color_profile) && this.showCancelButton;
   }
 
   get showCancelButton() {
@@ -289,7 +290,14 @@ export class OverlayContainerComponent implements OnInit {
           ).pipe(
               filter(value => !!value),
               switchMap((value: string) => {
-                return this.http.searchIcons(value.toLowerCase());
+                return this.http.searchIcons(value.toLowerCase())
+                  .pipe(
+                    tap((res: any[]) => {
+                      if (!res) {
+                        this.iconTextResult$.next('No results');
+                      }
+                    })
+                  );
               })
           );
       }
@@ -312,10 +320,12 @@ export class OverlayContainerComponent implements OnInit {
         file: new FormControl(),
         roomName: new FormControl('',
             [Validators.required, Validators.maxLength(15)],
-            this.uniqueRoomNameValidator.bind(this)),
+            this.uniqueRoomNameValidator.bind(this)
+        ),
         folderName: new FormControl('',
             [Validators.required, Validators.maxLength(17)],
-            this.uniqueFolderNameValidator.bind(this)),
+            this.uniqueFolderNameValidator.bind(this)
+        ),
         roomNumber: new FormControl('',
             [Validators.required, Validators.maxLength(5)]),
         timeLimit: new FormControl('', [

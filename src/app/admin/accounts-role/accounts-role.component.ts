@@ -232,8 +232,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }),
       map((params) => {
         this.role = params.role;
-        this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
-        this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
+        if (this.role !== 'g_suite') {
+          this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
+          this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
+        }
         return params;
       }),
       tap(() => this.router.navigate(['admin/accounts', this.role])),

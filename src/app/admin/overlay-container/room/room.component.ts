@@ -146,7 +146,6 @@ export class RoomComponent implements OnInit {
       this.initialData = _.cloneDeep(this.data);
 
       merge(this.form.valueChanges, this.change$).pipe(
-        distinctUntilChanged(),
         debounceTime(450)
       ).subscribe(() => {
           this.checkValidRoomOptions();
