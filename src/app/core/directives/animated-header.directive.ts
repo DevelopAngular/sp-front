@@ -34,6 +34,7 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
   }
 
   ngAfterViewInit(): void {
+    console.log(this.animatedHeader);
     zip(
       this.navbarElementsService.navbarElement.pipe(filter(res => !!res)),
       this.navbarElementsService.schoolToggle.pipe(filter(res => !!res))
@@ -82,6 +83,7 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
 
   @HostListener('window:scroll')
   animateHeader() {
+    console.log(this.animatedHeader.nativeElement);
     if (document.documentElement.offsetHeight > document.documentElement.scrollHeight || document.body.offsetHeight > document.body.scrollHeight) {
       return;
     }
