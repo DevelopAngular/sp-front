@@ -74,6 +74,7 @@ export class ActivePassProvider implements PassLikeProvider {
 
     const passes$ = this.user$.pipe(
       switchMap(user => {
+        console.log(user);
         return this.liveDataService.watchActiveHallPasses(mergedReplay,
             user.roles.includes('hallpass_student')
               ? {type: 'student', value: user}
@@ -286,7 +287,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     const excludedPasses = this.currentPass$.pipe(map(p => p !== null ? [p] : []));
 
     const dbUser$ = combineLatest(
-      this.userService.effectiveUser,
+      this.userService.effectiveUser.asObservable(),
       this.dataService.currentUser
     ).pipe(
       map(([effectUser, currentUser]) => {
@@ -297,9 +298,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }));
 
-    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, this.dataService.currentUser));
-    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses, this.timeService));
-    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, this.dataService.currentUser));
+    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, dbUser$));
+    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, dbUser$, excludedPasses, this.timeService));
+    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, dbUser$));
 
     this.dataService.currentUser
       .pipe(
@@ -423,6 +424,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
       panelClass: 'main-form-dialog-container',
       backdropClass: 'custom-backdrop',
+      maxWidth: '100vw',
       data: {
         'forLater': forLater,
         'forStaff': this.isStaff,

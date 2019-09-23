@@ -12,7 +12,19 @@ export const bumpIn = trigger('pressState', [
 ]);
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-      query(`[data-motion-scale=true]`, animate('0.7s 0s ease', keyframes([
+    // query(`[data-motion-compress]`, animate('3.45s 0s ease', keyframes([
+    //   style({
+    //     opacity: 0.3,
+    //     transform: 'scaleY(1.3) scaleX(0.6)',
+    //   }),
+    //   style({
+    //     opacity: 1,
+    //     transform: 'scaleY(1.0) scaleX(1.0)',
+    //
+    //   }),
+    //
+    // ])), {optional: true}),
+    query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
         style({
           opacity: 0,
           transform: 'scale(1.2)',
@@ -22,7 +34,7 @@ export const NextStep = trigger('NextStep', [                                   
           transform: 'scale(1)',
         })
       ])), {optional: true}),
-      query(`.back-button-white`, animate('0.7s 0s ease', keyframes([
+      query(`.back-button-white`, animate('0.45s 0s ease', keyframes([
           style({
             opacity: 0.5,
           }),
@@ -41,13 +53,13 @@ export const NextStep = trigger('NextStep', [                                   
               boxShadow: 'none',
             })
         ),
-        animate('0.25s ease-in',
+        animate('0.20s ease-in',
           style({
             opacity: 0.25,
             boxShadow: 'none',
           }),
         ),
-        animate('0.25s ease-out',
+        animate('0.20s ease-out',
           style({
             opacity: 1,
             boxShadow: 'none',
@@ -64,12 +76,12 @@ export const NextStep = trigger('NextStep', [                                   
               transform: 'translateX({{from}}px)',
             })
           ),
-          animate('0.25s ease-in', style({
+          animate('0.20s ease-in', style({
               opacity: 0.25,
               transform: 'translateX({{halfFrom}}px)',
             })
           ),
-          animate('0.25s ease-out', style({
+          animate('0.20s ease-out', style({
               opacity: 1,
               transform: 'translateX(0px)',
             })
@@ -79,7 +91,18 @@ export const NextStep = trigger('NextStep', [                                   
     ]), { params: { from: 100, halfFrom: 50}}
   ),
   transition(':leave', group([                                                              // :LEAVE PSEUDOSTATE
-    query(`[data-motion-scale=true]`, animate('0.7s 0s ease', keyframes([
+    // query(`[data-motion-compress]`, animate('3.45s 0s ease', keyframes([
+    //   style({
+    //     opacity: 1,
+    //     transform: 'scaleY(1.0) scaleX(1.0)',
+    //
+    //   }),
+    //   style({
+    //     opacity: 0.3,
+    //     transform: 'scaleY(1.3) scaleX(0.6)',
+    //   })
+    // ])), {optional: true}),                                                              // :LEAVE PSEUDOSTATE
+    query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'scale(1)',
@@ -100,13 +123,13 @@ export const NextStep = trigger('NextStep', [                                   
               boxShadow: 'none',
             })
           ),
-          animate('0.25s ease-in',
+          animate('0.20s ease-in',
             style({
               opacity: 0.25,
               boxShadow: 'none',
             }),
           ),
-          animate('0.25s ease-out',
+          animate('0.20s ease-out',
             style({
               opacity: 0,
               boxShadow: 'none',
@@ -124,12 +147,12 @@ export const NextStep = trigger('NextStep', [                                   
               transform: 'translateX(0px)',
             })
           ),
-          animate('0.25s ease-in', style({
+          animate('0.20s ease-in', style({
               opacity: 0.25,
               transform: 'translateX({{halfTo}}px)',
             })
           ),
-          animate('0.25s ease-out', style({
+          animate('0.20s ease-out', style({
               opacity: 0,
               transform: 'translateX({{to}}px)',
             })

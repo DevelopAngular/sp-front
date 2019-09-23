@@ -31,7 +31,7 @@ export class CreateFormService {
       .pipe(
         map((pins) => {
           if (filter) {
-            debugger;
+            // debugger;
             return pins.filter((p: Pinnable) => (p.type === 'location' && !p.location.restricted) || p.type === 'category');
           } else {
             return pins;

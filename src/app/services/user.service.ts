@@ -120,14 +120,20 @@ export class UserService {
           map(raw => User.fromJSON(raw)),
           switchMap((user: User) => {
             if (user.isAssistant()) {
-              return this.getUserRepresented().pipe(map((users: RepresentedUser[]) => {
-                if (users && users.length) {
-                  this.representedUsers.next(users);
-                  this.effectiveUser.next(users[0]);
-                  this.http.effectiveUserId.next(+users[0].user.id);
-                }
-                return user;
-              }));
+              return this.getUserRepresented()
+                .pipe(
+                  map((users: RepresentedUser[]) => {
+                    const normalizedRU = users.map((raw) => {
+                      raw.user = User.fromJSON(raw.user);
+                      return raw;
+                    })
+                    if (users && users.length) {
+                      this.representedUsers.next(normalizedRU);
+                      this.effectiveUser.next(normalizedRU[0]);
+                      this.http.effectiveUserId.next(+normalizedRU[0].user.id);
+                    }
+                    return user;
+                  }));
             } else {
                 this.representedUsers.next(null);
                 this.effectiveUser.next(null);

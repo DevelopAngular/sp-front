@@ -9,14 +9,19 @@
        [style.overflow]="FORM_STATE.step === 2 || FORM_STATE.previousStep === 2 ? 'hidden' : 'visible'">
 <!--    <div [ngClass]="isIOSTablet ? 'ios-fixed-card-wrapper' : 'fixed-card-wrapper'" style="" [style.width]="formSize.width" [style.height]="formSize.height">-->
 
-      <div  [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
-        <div [ngClass]="{'date-picker': FORM_STATE.formMode.role === 1 || FORM_STATE.data.request }" class="">
+      <div  [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize();    this.setContainerSize('end');
+" (@NextStep.done)="setContainerSize('start')">
+        <div [ngClass]="{'date-picker': FORM_STATE.formMode.role === 1 || FORM_STATE.data.request }"
+             [attr.data-motion-compress]="true">
           <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
         </div>
       </div>
 
-      <div [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 2"  [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
-        <div [ngClass]="{'student-groups': FORM_STATE.previousStep < 4}" [attr.data-motion-opacity]="(frameMotion$ | async).direction">
+      <div [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 2"  [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize();    this.setContainerSize('end');
+" (@NextStep.done)="setContainerSize('start')">
+        <div [ngClass]="{'student-groups': FORM_STATE.previousStep < 4}"
+             [attr.data-motion-compress]="(frameMotion$ | async).direction"
+             [attr.data-motion-opacity]="(frameMotion$ | async).direction">
           <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
         </div>
       </div>
@@ -26,7 +31,8 @@
     <div style="transition: width .5s ease, height .5s ease;" [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'" *ngIf="FORM_STATE.step === 3"
          [style.width]="formSize.width"
          [style.height]="formSize.height"
-         [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
+         [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize();    this.setContainerSize('end');
+" (@NextStep.done)="setContainerSize('start')">
       <div class="locations" [attr.data-motion-scale]="isScaled">
         <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
       </div>
@@ -39,7 +45,8 @@
     [style.height]="formSize.height" *ngIf="FORM_STATE.step === 4"
     [attr.data-motion-scale]="true"
     [@NextStep]="{ value: '', params: frameMotion$ | async}"
-    (@NextStep.start)="setFormSize()">
+    (@NextStep.start)="setFormSize();    this.setContainerSize('end');
+" (@NextStep.done)="setContainerSize('start')">
     <app-form-factor-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
   </div>
 

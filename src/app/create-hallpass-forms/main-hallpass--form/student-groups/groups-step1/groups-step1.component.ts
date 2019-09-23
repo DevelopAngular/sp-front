@@ -3,12 +3,13 @@ import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
-import {Observable, of, timer} from 'rxjs';
+import {BehaviorSubject, Observable, of, timer} from 'rxjs';
 import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../../../services/locations.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import * as _ from 'lodash';
+import {CreateFormService} from '../../../create-form.service';
 
 @Component({
   selector: 'app-groups-step1',
@@ -34,15 +35,19 @@ export class GroupsStep1Component implements OnInit {
 
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
+  frameMotion$: BehaviorSubject<any>;
+
 
   constructor(
     public userService: UserService,
     private locationService: LocationsService,
-    public sanitizer: DomSanitizer
-
+    public sanitizer: DomSanitizer,
+    private formService: CreateFormService
   ) { }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     of(!this.groups || (this.groups && !this.groups.length)).subscribe((v) => {
       this.isEmptyGroups = v;
     });
@@ -72,26 +77,29 @@ export class GroupsStep1Component implements OnInit {
   }
 
   nextStep() {
-    // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
-    if (this.formState.forLater) {
-        this.formState.step = 1;
-        this.formState.fromState = 1;
-    } else {
-        this.formState.step = 3;
-        this.formState.state = 1;
-        this.formState.fromState = 1;
-    }
+    this.formService.setFrameMotionDirection('forward');
+    setTimeout(() => {
+      // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
+      if (this.formState.forLater) {
+          this.formState.step = 1;
+          this.formState.fromState = 1;
+      } else {
+          this.formState.step = 3;
+          this.formState.state = 1;
+          this.formState.fromState = 1;
+      }
 
-    if ( this.selectedGroup) {
-      this.formState.data.selectedGroup = this.selectedGroup;
-      this.formState.data.selectedStudents = this.selectedGroup.users;
+      if ( this.selectedGroup) {
+        this.formState.data.selectedGroup = this.selectedGroup;
+        this.formState.data.selectedStudents = this.selectedGroup.users;
 
-    } else {
-      this.formState.data.selectedGroup = null;
-      this.formState.data.selectedStudents = this.selectedStudents;
-    }
+      } else {
+        this.formState.data.selectedGroup = null;
+        this.formState.data.selectedStudents = this.selectedStudents;
+      }
 
-    this.stateChangeEvent.emit(this.formState);
+      this.stateChangeEvent.emit(this.formState);
+    }, 100);
   }
 
   createGroup() {

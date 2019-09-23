@@ -1,18 +1,20 @@
 <div [ngClass]=" isIOSTablet ? 'ios-step-1-container' : 'step-1-container'">
   <div class="header">
-
+    <div class="header-background"
+         [attr.data-motion-opacity]="(frameMotion$ | async).direction"
+         [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'"></div>
     <div class="header_back-button ">
       <div [ngClass]=" isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'"  class="header_back-button-icon">
         <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
       </div>
     </div>
 
-    <div class="header_title">
+    <div class="header_title"  [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <img class="header_icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="header_text ds-dialog-title">Select students(s)</div>
     </div>
   </div>
-  <div class="content">
+  <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="content-left">
       <div class="content-left_wrapper">
         <div class="student-group-name-wrapper">
