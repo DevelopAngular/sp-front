@@ -185,7 +185,7 @@
   display: flex;
   justify-content: center;
   //height: 100vh;
-  height: calc(100% - 78px);
+  min-height: calc(100vh - 78px);
   overflow: auto;
 }
 
@@ -218,6 +218,7 @@
   //flex-direction: column;
   width: 100%;
   max-width: 533px;
+  min-height: calc(100% - 78px);
   //margin: 0 auto;
   //height: 10000px;
 }
