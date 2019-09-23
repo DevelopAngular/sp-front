@@ -70,6 +70,8 @@ export class MainHallPassFormComponent implements OnInit {
 
   public FORM_STATE: Navigation;
   public formSize = {
+    containerHeight: '0px',
+    containerWidth: '0px',
     height: '0px',
     width: '0px'
   };
@@ -189,6 +191,7 @@ export class MainHallPassFormComponent implements OnInit {
         // this.cd.detectChanges();
       })
     this.setFormSize();
+    this.setContainerSize('end');
     this.checkDeviceScreen();
       this.dataService.currentUser.subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAdmin();
@@ -230,7 +233,21 @@ export class MainHallPassFormComponent implements OnInit {
       // console.log('STEP EVENT ===>', evt);
       this.FORM_STATE = evt;
     }
-    this.setFormSize();
+    // this.setFormSize();
+  }
+
+  setContainerSize(startOrEnd: 'start' | 'end') {
+    return
+    switch (startOrEnd) {
+      case 'start':
+        this.formSize.containerWidth = this.formSize.width;
+        this.formSize.containerHeight =  this.formSize.height;
+        break;
+      case 'end':
+        this.formSize.containerWidth =  `100vw`;
+        this.formSize.containerHeight =  `100vh`;
+        break;
+    }
   }
 
   setFormSize() {
@@ -240,31 +257,31 @@ export class MainHallPassFormComponent implements OnInit {
           }
 
     switch (this.FORM_STATE.step) {
-        case 1:
+      case 1:
+        this.formSize.width =  `425px`;
+        this.formSize.height =  `500px`;
+        break;
+      case 2:
+        if (this.dialogData['kioskModeRoom']) {
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
-          break;
-        case 2:
-          if (this.dialogData['kioskModeRoom']) {
-            this.formSize.width =  `425px`;
-            this.formSize.height =  `500px`;
-          } else {
-            this.formSize.width =  this.extraLargeDevice ?  `335px` : `700px`;
-            this.formSize.height = this.extraLargeDevice ?  `500px` : `400px`;
-          }
-          break;
-        case 3:
-          this.formSize.width =  `425px`;
-          this.formSize.height =  `500px`;
-          break;
-        case 4:
-          if (form) {
-            form.style.boxShadow = 'none';
-          }
-          this.formSize.width =  `425px`;
-          this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
-          break;
-      }
+        } else {
+          this.formSize.width =  this.extraLargeDevice ?  `335px` : `700px`;
+          this.formSize.height = this.extraLargeDevice ?  `500px` : `400px`;
+        }
+        break;
+      case 3:
+        this.formSize.width =  `425px`;
+        this.formSize.height =  `500px`;
+        break;
+      case 4:
+        if (form) {
+          form.style.boxShadow = 'none';
+        }
+        this.formSize.width =  `425px`;
+        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
+        break;
+    }
   }
 
   @HostListener('window:resize')
