@@ -48,11 +48,11 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
       });
 
     if (!this.navbarElementsService.schoolToggle$.value) {
-      this.navbarElementsService.navbarElement.pipe(takeUntil(this.subscriber$),
-        filter(res => !!res)).subscribe( (navbar) => {
+      this.navbarElementsService.navbarElement.pipe(takeUntil(this.subscriber$)).subscribe( (navbar) => {
         this.initializeAnimatedHedaer(navbar);
       });
     }
+
   }
 
   ngOnDestroy() {
@@ -65,13 +65,13 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
   }
 
   getHalfHeaderPos() {
-    console.log(this.navbarRef.nativeElement.offsetHeight);
-    console.log(this.navbarRef);
     return  (this.navbarRef.nativeElement.offsetHeight - this.animatedHeader.nativeElement.getBoundingClientRect().height) / 2;
   }
 
   initializeAnimatedHedaer(navbar: ElementRef<HTMLElement>, toggle: ElementRef<HTMLElement> = null ) {
-    this.navbarRef = navbar;
+    if (navbar) {
+      this.navbarRef = navbar;
+    }
     if (toggle) {
       this.toggleSchoolBarRef = toggle;
     }
@@ -83,7 +83,6 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
 
   @HostListener('window:scroll')
   animateHeader() {
-    console.log(this.animatedHeader.nativeElement);
     if (document.documentElement.offsetHeight > document.documentElement.scrollHeight || document.body.offsetHeight > document.body.scrollHeight) {
       return;
     }

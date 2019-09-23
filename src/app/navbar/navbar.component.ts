@@ -45,6 +45,7 @@ import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
+import {AnimationService} from '../services/animation.service';
 
 declare const window;
 
@@ -161,6 +162,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private cdr: ChangeDetectorRef,
       private rendered: Renderer2,
       private navbarElementsService: NavbarElementsRefsService,
+      private animationService: AnimationService,
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -299,6 +301,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   ngAfterViewInit(): void {
     this.underlinePosition();
     this.navbarElementsService.navbarRef$.next(this.navbar);
+    this.animationService.animationDone.subscribe(animationDone => {
+      if (animationDone) {
+        this.navbarElementsService.navbarRef$.next(this.navbar);
+      }
+    });
   }
 
   underlinePosition() {

@@ -1,7 +1,7 @@
 <div class="host" [style.background]="darkTheme.getColor({dark: '#0F171E', white : '#FFFFFF'})" [style.position]="isStaff || screenService.isDeviceLargeExtra ? 'fixed' : 'static'" [style.top]="schools.length > 1 ? '50px' : 0">
   <!--<div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>-->
   <!--<ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>-->
-  <div [ngClass]="{shadow: isStaff}" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar" appNavbarElementSender>
+  <div #navbar [ngClass]="{shadow: isStaff}" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar" appNavbarElementSender>
     <div [ngClass]="isIOSTablet ? 'ios-heading': 'heading'" class="grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
