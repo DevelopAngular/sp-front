@@ -179,7 +179,7 @@
 
 
     min-height: 400px;
-    background-color: #fff;
+    //background-color: #fff;
     //border: 1px solid #777;
     box-shadow: 0 0 7px 0px rgba(0, 0, 0, .3);
     border-radius: 14px;
@@ -191,9 +191,9 @@
     .header {
       box-sizing: border-box;
       padding: 0 20px;
-      background-color: #fff;
+      //background-color: #fff;
       height: 70px;
-      box-shadow: 0 0 6px 0px rgba(0, 0, 0, .3);
+      //box-shadow: 0 0 6px 0px rgba(0, 0, 0, .3);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -202,7 +202,15 @@
       z-index: 10;
       border-top-left-radius: 15px;
       border-top-right-radius: 15px;
-
+      .header-background {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+      }
       &_title {
         display: flex;
         align-items: center;
