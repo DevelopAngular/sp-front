@@ -27,6 +27,10 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.schools = this.schools.sort( (school, schoolToCompare) => {
+        return school.name.localeCompare(schoolToCompare.name);
+    });
+
     this.http.currentSchool$.pipe(takeUntil(this.subscriber$), filter(res => !!res)).subscribe(school => {
       this.currentSchool = school;
     });

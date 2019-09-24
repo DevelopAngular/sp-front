@@ -11,3 +11,5 @@ export const getLoadedSchools = createSelector(
   getSchoolsState,
   (state: SchoolsState) => state.loaded
 );
+
+export const getSchoolsLength = schoolAdapter.getSelectors(getSchoolsState).selectTotal;
