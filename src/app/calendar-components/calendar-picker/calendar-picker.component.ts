@@ -231,8 +231,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             const setHour = moment(date).set('hour', this.currentDate.hour());
             const fullDate = moment(setHour).set('minute', this.currentDate.minutes());
             this.selectedDates = [fullDate];
-            console.log(this.selectedDates[0].format('DD hh:mm A'));
-            console.log(this.currentDate.format('DD hh:mm A'));
+            // console.log(this.selectedDates[0].format('DD hh:mm A'));
+            // console.log(this.currentDate.format('DD hh:mm A'));
 
 
             this.generateCalendar();
