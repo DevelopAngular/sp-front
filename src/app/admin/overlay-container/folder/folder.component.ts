@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import {BehaviorSubject, merge, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, merge, Subject, zip} from 'rxjs';
 
 import { Location } from '../../../models/Location';
 import { Pinnable } from '../../../models/Pinnable';
@@ -16,7 +16,8 @@ import { OptionState, ValidButtons } from '../advanced-options/advanced-options.
 
 import * as _ from 'lodash';
 import {NextStep} from '../../../animations';
-import {mapTo} from 'rxjs/operators';
+import {filter, mapTo, takeUntil} from 'rxjs/operators';
+import {ScrollPositionService} from '../../../scroll-position.service';
 
 @Component({
   selector: 'app-folder',
@@ -24,11 +25,53 @@ import {mapTo} from 'rxjs/operators';
   styleUrls: ['./folder.component.scss'],
   animations: [NextStep]
 })
-export class FolderComponent implements OnInit {
+export class FolderComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
 
   @Output() folderDataResult: EventEmitter<{data: FolderData, buttonState: ValidButtons}> = new EventEmitter<{data: FolderData, buttonState: ValidButtons}>();
+
+  private scrollableAreaName: string;
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.folderNameTitle);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
+    }
+  }
 
   currentPage: number;
 
@@ -79,13 +122,23 @@ export class FolderComponent implements OnInit {
       private locationService: LocationsService,
       private sanitizer: DomSanitizer,
       private formService: CreateFormService,
-  ) { }
+      private scrollPosition: ScrollPositionService,
+  ) {}
+
+  get folderNameTitle() {
+    if (this.overlayService.pageState.getValue().data.pinnable) {
+      return `Folder ${this.overlayService.pageState.getValue().data.pinnable.title}`;
+    } else {
+      return `Folder`;
+    }
+  }
 
   get sortSelectedRooms() {
       return _.sortBy(this.roomsImFolder, (res) => res.title.toLowerCase());
   }
 
   ngOnInit() {
+    this.scrollableAreaName = `Folder ${this.folderNameTitle}`;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
     const data = this.overlayService.pageState.getValue().data;
@@ -146,6 +199,10 @@ export class FolderComponent implements OnInit {
               buttonState: this.folderValidButtons
             });
         });
+  }
+
+  ngOnDestroy(): void {
+    this.scrollPosition.saveComponentScroll(this.folderNameTitle, this.scrollableArea.scrollTop);
   }
 
   changeFolderData() {

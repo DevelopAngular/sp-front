@@ -3,7 +3,7 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip } from 'rxjs';
+import {BehaviorSubject, forkJoin, merge, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
 import {
   delay,
   map,
@@ -37,13 +37,6 @@ import {ColorProfile} from '../../models/ColorProfile';
 })
 export class OverlayContainerComponent implements OnInit {
 
-  @ViewChild('leftContent') set content(content: ElementRef) {
-    this.roomList.domElement = content;
-    if (this.roomList.domElement) {
-      this.roomList.ready.next(this.roomList.domElement);
-    }
-  }
-
   currentPage: number;
   roomData: RoomData;
   folderData: FolderData;
@@ -65,16 +58,6 @@ export class OverlayContainerComponent implements OnInit {
       incomplete: false,
       cancel: false
   });
-
-  public roomList: {
-    domElement: ElementRef,
-    ready: Subject<ElementRef>,
-    topScroll: number
-  } = {
-    domElement: null,
-    ready: new Subject<ElementRef>(),
-    topScroll: 0
-  };
 
   selectedRooms = [];
   pinnable: Pinnable;
@@ -214,24 +197,12 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.frameMotion$ = this.formService.getFrameMotionDirection();
+    // this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.pinnablesCollectionIds$ = this.hallPassService.pinnablesCollectionIds$;
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
        this.currentPage = res.currentPage;
     });
 
-      this.roomList.ready.asObservable()
-        .pipe(
-          filter(el => !!el),
-          delay(50)
-        )
-        .subscribe((el: ElementRef) => {
-        if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewFolder && this.roomList.topScroll) {
-          el.nativeElement.scrollTop = this.roomList.topScroll;
-        } else {
-          el.nativeElement.scrollTop = 0;
-        }
-      });
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
@@ -560,7 +531,8 @@ export class OverlayContainerComponent implements OnInit {
         forkJoin(deleteRequest$).subscribe();
       }
       let locationsToDb$;
-      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit);
+      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || room.category !== this.folderData.folderName);
+
       if (touchedRooms.length) {
         locationsToDb$ = touchedRooms.map(location => {
           let id;
@@ -577,6 +549,7 @@ export class OverlayContainerComponent implements OnInit {
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
+
             return this.locationService.updateLocationRequest(id, data).pipe(
               filter(res => !!res)
             );
@@ -703,7 +676,7 @@ export class OverlayContainerComponent implements OnInit {
         ...this.normalizeAdvOptData(room),
         isEdit: true
       });
-      this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
+      this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData, pinnable: this.pinnable});
   }
 
   editRoomFolder(room: RoomData) {
@@ -714,7 +687,7 @@ export class OverlayContainerComponent implements OnInit {
       ...this.normalizeAdvOptData(room),
       isEdit: true
     });
-    this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
+    this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData, pinnable: this.pinnable});
   }
 
   addToFolder(rooms: any[]) {
@@ -803,11 +776,6 @@ export class OverlayContainerComponent implements OnInit {
     this.overlayService.changePage(Pages.EditRoomInFolder, this.currentPage, {
       selectedRoomsInFolder: [_room]
     });
-
-    if (!this.dialogData['forceSelectedLocation']) {
-      this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
-      console.log(this.roomList.topScroll);
-    }
 
     this.formService.setFrameMotionDirection('forward');
   }

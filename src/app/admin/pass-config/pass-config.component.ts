@@ -59,7 +59,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             takeUntil(scrollObserver)
           )
           .subscribe((v) => {
-            console.log(scrollOffset);
+            // console.log(scrollOffset);
             if (v) {
               this.scrollableArea.scrollTo({top: scrollOffset});
               scrollObserver.next();

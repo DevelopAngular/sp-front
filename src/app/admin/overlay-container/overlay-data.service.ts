@@ -53,7 +53,7 @@ export interface FolderData {
     selectedRoomsInFolder: any[];
     roomsInFolderLoaded: boolean;
     selectedRoomToEdit: any;
-    roomsToDelete: any[]
+    roomsToDelete: any[];
 }
 
 @Injectable({
