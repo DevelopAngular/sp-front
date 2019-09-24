@@ -1,4 +1,4 @@
-<div class="admin-wrapper" *ngIf="hostVisibility">
+<div class="admin-wrapper" *ngIf="hostVisibility" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 50px)' : '100vh'" >
   <app-nav (restrictAccess)="hideOutlet($event)"></app-nav>
   <ng-container *ngIf="showDummySwitcher$ | async">
     <app-restriction-dummy (reloadPage)="onReloadPage($event)"></app-restriction-dummy>

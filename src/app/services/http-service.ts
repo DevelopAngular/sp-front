@@ -20,7 +20,7 @@ import {StorageService} from './storage.service';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getLoadedSchools, getSchoolsCollection} from '../ngrx/schools/states';
+import {getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
 import { getSchools } from '../ngrx/schools/actions';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
@@ -138,6 +138,7 @@ export class HttpService {
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
   public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
+  public schoolsLength$: Observable<number> = this.store.select(getSchoolsLength);
 
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();

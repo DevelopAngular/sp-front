@@ -5,6 +5,7 @@ import { UserService } from '../../services/user.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {delay, filter, map, skip, switchMap, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
+import {HttpService} from '../../services/http-service';
 declare const window;
 @Component({
   selector: 'app-admin-page',
@@ -17,12 +18,13 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
   private adminPageReload$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   public  hostVisibility: boolean = true;
   public showDummySwitcher$: Observable<boolean>;
-
+  public schoolsLength$: Observable<number>;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private httpService: HttpService,
   ) {
     this.showDummySwitcher$ = combineLatest(
       this.userService.userData,
@@ -34,6 +36,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.schoolsLength$ = this.httpService.schoolsLength$;
+
+
+    this.httpService.schoolsLength$.subscribe(value => {
+      console.log(value);
+    });
 
     this.showDummySwitcher$.subscribe((v) => {
       if (v) {
