@@ -27,7 +27,7 @@
     display: flex;
     flex-direction: column;
     color: white;
-    overflow: visible;
+    overflow: hidden;
     font-style: normal;
     font-stretch: normal;
     /* line-height: 1.08;
@@ -40,10 +40,22 @@
     position: relative;
 }
 
-.tile-title{
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 3px;
+.tile-title-container {
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  flex: 1 1 auto;
+  height: 30px;
+}
+
+.tile-title {
+  width: 100%;
+  font-weight: bold;
+  font-size: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  position: absolute;
 }
 
 .tile-type {
