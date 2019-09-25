@@ -26,6 +26,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 
   public hourHovered: boolean;
   public minHovered: boolean;
+  private isUpdateTime: boolean;
 
   upInterval;
   downInterval;
@@ -69,21 +70,32 @@ export class TimePickerComponent implements OnInit, OnDestroy {
     });
     merge(this.timeForm.valueChanges, this.changeEmit$).pipe(takeUntil(this.destroy$))
         .subscribe(value => {
-            if (this._currentDate.format('A') === 'PM' && this._currentDate.hour() !== 12) {
-                this._currentDate = this._currentDate.set('hour', +value.hour + 12);
+          if (!this.isUpdateTime) {
+            const currentDay = moment(this._currentDate);
+            if (this._currentDate.format('A') === 'PM') {
+              this._currentDate = this._currentDate.set('hour', +value.hour + 12);
+              this.normalizeDateDay(currentDay, this._currentDate);
+
             } else {
               this._currentDate = this._currentDate.set('hour', value.hour);
-              if (this.invalidTime && this._currentDate.hour() !== 12) {
+              if (this.invalidTime) {
                 this._currentDate = this._currentDate.set('hour', +value.hour + 12);
                 console.log('Current Time ==>>', this._currentDate.format('DD hh:mm A'));
               }
             }
             this._currentDate = this._currentDate.set('minute', value.minute);
             if (this.invalidTime) {
-                console.log('Invalid Time ==>>', this._currentDate.format('DD hh:mm A'));
-                this._currentDate = moment().add(5, 'minutes');
+              console.log('Invalid Time ==>>', this._currentDate.format('DD hh:mm A'));
+              this._currentDate = moment().add(5, 'minutes');
             }
+          }
         });
+  }
+
+  normalizeDateDay(currentDate: moment.Moment, newDate: moment.Moment) {
+    if (newDate.isAfter(currentDate, 'day')) {
+      this._currentDate.set('date', currentDate.date());
+    }
   }
 
   buildFrom() {
@@ -94,9 +106,11 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   }
 
   updateDate() {
-      this.timeForm.get('hour').setValue(this._currentDate.format('hh'));
-      this.timeForm.get('minute').setValue(this._currentDate.format('mm'));
-      this.timeResult.emit(this._currentDate);
+    this.isUpdateTime = true;
+    this.timeForm.get('hour').setValue(this._currentDate.format('hh'));
+    this.timeForm.get('minute').setValue(this._currentDate.format('mm'));
+    this.timeResult.emit(this._currentDate);
+    this.isUpdateTime = false;
   }
 
   change() {
