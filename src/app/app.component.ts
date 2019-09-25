@@ -24,6 +24,7 @@ import {OverlayContainer} from '@angular/cdk/overlay';
 import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
 import {Meta} from '@angular/platform-browser';
 import {NotificationService} from './services/notification-service';
+import {GoogleAnalyticsService} from './services/google-analytics.service';
 
 declare const window;
 
@@ -95,13 +96,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private kms: KioskModeService,
     private meta: Meta,
     private notifService: NotificationService,
+    private googleAnalytics: GoogleAnalyticsService
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
-    // console.log('Initial location path ===>', );
-
+    this.googleAnalytics.init();
     const fcm_sw = localStorage.getItem('fcm_sw_registered');
     if (fcm_sw === 'true') {
       this.notifService.initNotifications(true);
