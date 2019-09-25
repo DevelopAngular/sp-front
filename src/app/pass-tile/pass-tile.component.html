@@ -9,7 +9,19 @@
       (touchstart)="onTap(true)"
       (touchend)="onTap(false)"
       >
-    <div class="tile-title" [style.margin-top]="forStaff?'12px':'0px'" >{{ pass.destination.title }}</div>
+
+  <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
+    <div class="tile-title-container" #title>
+      <div *ngIf="pass.destination.title.length > 14; else old" class="tile-title" [style.margin-top]="forStaff?'8px':'0px'"  (mouseover)="onHover($event, title);"
+           (mouseleave)="onLeave($event)" > {{ pass.destination.title }}
+      </div>
+      <ng-template #old>
+        <div class="tile-title" [style.margin-top]="forStaff?'8px':'0px'" > {{ pass.destination.title }}</div>
+      </ng-template>
+    </div>
+  </div>
+
+
     <div class="tile-content">{{ tileContent }}</div>
   <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">
   <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs';
+import {interval, Subject} from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { TimeService } from '../services/time.service';
@@ -7,7 +7,7 @@ import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisi
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
-import {filter} from 'rxjs/operators';
+import {filter, takeUntil} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 
 @Component({
@@ -35,6 +35,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   hovered: boolean;
   timers: number[] = [];
+  hoverDestroyer$: Subject<any>;
 
   //
   // mockData = {
@@ -152,6 +153,37 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   onClick(event) {
     this.tileSelected.emit(event);
+  }
+
+  onHover(evt: Event, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = (evt.target as HTMLElement);
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        }
+      });
+  }
+
+  onLeave({target: target}) {
+    target.style.marginLeft = '0px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `100%`;
+
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
   }
 
 }
