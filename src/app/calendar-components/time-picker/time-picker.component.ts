@@ -74,7 +74,6 @@ export class TimePickerComponent implements OnInit, OnDestroy {
             const currentDay = moment(this._currentDate);
             if (this._currentDate.format('A') === 'PM') {
               this._currentDate = this._currentDate.set('hour', +value.hour + 12);
-              this.normalizeDateDay(currentDay, this._currentDate);
 
             } else {
               this._currentDate = this._currentDate.set('hour', value.hour);
@@ -88,6 +87,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
               console.log('Invalid Time ==>>', this._currentDate.format('DD hh:mm A'));
               this._currentDate = moment().add(5, 'minutes');
             }
+            this.normalizeDateDay(currentDay, this._currentDate);
           }
         });
   }
