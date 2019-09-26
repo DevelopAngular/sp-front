@@ -10,19 +10,20 @@
       (touchend)="onTap(false)"
       >
 
-  <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
-    <div class="tile-title-container" #title>
-      <div *ngIf="pass.destination.title.length > 14; else old" class="tile-title" [style.margin-top]="forStaff?'8px':'0px'"  (mouseover)="onHover($event, title);"
-           (mouseleave)="onLeave($event)" > {{ pass.destination.title }}
+  <div [style.margin-top]="forStaff ? '0' : '-6px'">
+    <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
+      <div class="tile-title-container" #title [style.height]="forStaff ? '30px' : '20px'">
+        <div *ngIf="pass.destination.title.length > 14; else shortTitle" class="tile-title" [style.margin-top]="forStaff ? '8px' : '0px'"  (mouseover)="onHover($event, title);"
+             (mouseleave)="onLeave($event)" > {{ pass.destination.title }}
+        </div>
+        <ng-template #shortTitle>
+          <div class="tile-title" [style.margin-top]="forStaff ? '8px' : '0px'" > {{ pass.destination.title }}</div>
+        </ng-template>
       </div>
-      <ng-template #old>
-        <div class="tile-title" [style.margin-top]="forStaff?'8px':'0px'" > {{ pass.destination.title }}</div>
-      </ng-template>
     </div>
+    <div class="tile-content">{{ tileContent }}</div>
   </div>
 
-
-    <div class="tile-content">{{ tileContent }}</div>
   <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">
   <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">
   <div *ngIf="isBadgeVisible" class="badge">1</div>
