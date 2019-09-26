@@ -62,7 +62,7 @@
           <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
         </div>
         <div class="page-2 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
+          <span class="bold">{{ (activePage==2?((activePassTime$ | async) +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
         </div>
         <div class="page-3 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
           <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
