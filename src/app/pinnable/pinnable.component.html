@@ -45,13 +45,16 @@
   <div class="pinnable-card"
        [style.background]="'radial-gradient(circle at 73% 71%,' + mock.gradient + ')'"
        [style.height]="height">
-    <img *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="mock.content | resolveAsset" alt="ICON">
-    <div class="title-bar">
-      <div class="title">
-        {{mock.header}}
+    <div style="width: inherit">
+      <img *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="mock.content | resolveAsset" alt="ICON">
+      <div class="title-bar">
+        <div class="title">
+          {{mock.header}}
+        </div>
+        <img draggable="false" *ngIf="mock.arrow === true" class="category-icon" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" alt="ARROW">
       </div>
-      <img draggable="false" *ngIf="mock.arrow === true" class="category-icon" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" alt="ARROW">
     </div>
+
     <div *ngIf="mock.restricted" class="overlay-container">
       <div class="overlay"></div>
       <img draggable="false" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">

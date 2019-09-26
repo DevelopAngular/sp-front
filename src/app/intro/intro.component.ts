@@ -68,7 +68,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    console.log('intro.onInit()');
+    // console.log('intro.onInit()');
 
     fromEvent(document, 'keydown').subscribe((evt: KeyboardEvent) => {
 
@@ -104,7 +104,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
-        console.log('intro.subscribe()' , user);
+        // console.log('intro.subscribe()' , user);
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.isTeacher() || user.isAssistant() || user.isAdmin();
@@ -350,11 +350,17 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
   }
 
+  clickDots(pageNumber) {
+    if (this.usedAsEntryComponent) {
+      this.slideIndex = pageNumber;
+    }
+  }
+
   allowNotifications() {
     this.notifService.initNotifications(true)
       .then((hasPerm) => {
         localStorage.setItem('fcm_sw_registered', hasPerm.toString());
-        console.log(`Has permission to show notifications: ${hasPerm}`);
+        // console.log(`Has permission to show notifications: ${hasPerm}`);
           this.allowLaterClicked = true;
           this.slide('forward');
       });

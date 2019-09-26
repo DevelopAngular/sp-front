@@ -2,7 +2,6 @@
 
   <div *ngIf="!usedAsEntryComponent" class="navbar" [ngClass]="{shadow: isStaff}">
     <div class="logo ds-flex-center-center">
-      <!--<img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">-->
       <app-smartpass-logo></app-smartpass-logo>
     </div>
     <div *ngIf="isStaff" class="navbar-tabs">
@@ -14,15 +13,6 @@
       <div class="user-name">
         <span>{{user.display_name}}</span>
       </div>
-      <!--<div *ngIf="!isStaff" style="position: relative; width: 50px;height: 50px;">-->
-        <!--<div class="inbox-modifiers"-->
-        <!--&gt;-->
-          <!--<img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">-->
-          <!--<img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
-          <!--<div class="inbox-number">2</div>-->
-          <!--<img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">-->
-        <!--</div>-->
-      <!--</div>-->
       <div class="options-wrapper">
         <app-icon-button  [srcString]="'Settings'" [size]="20"></app-icon-button>
       </div>
@@ -33,7 +23,6 @@
     <div *ngIf="slideIndex!==1" class="button-left"
          [@pressState]="getButtonState('left')" (mousedown)="onPress(true, 'left')" (mouseup)="onPress(false, 'left')">
       <app-icon-button [switchColor]="false" [srcString]="'Chevron Left'" (clickEvent)="slide('back')"></app-icon-button>
-      <!--<img class="button-icon" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset">-->
     </div>
     <div class="box">
       <div class="next-step-animation-trigger" *ngIf="slideIndex === 5" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
@@ -42,7 +31,6 @@
 
           <div class="logo ds-flex-center-center">
             <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
-            <!--<app-smartpass-logo [introLogo]="true" [scale]="1.25"></app-smartpass-logo>-->
           </div>
           <div class="end">
             <span>You're all set!</span>
@@ -124,7 +112,7 @@
                 <span>Create hall passes for now or for the future</span>
               </div>
               <div class="display-card">
-                <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
+                <app-display-card [intro]="true" [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
                   <div class="pass-buttons">
                     <app-create-pass-button [title]="'Now'"></app-create-pass-button>
                     <app-create-pass-button [title]="'Future'"></app-create-pass-button>
@@ -248,7 +236,7 @@
               <div class="title">
                 <span>Create hall passes for now or for the future</span>
               </div>
-              <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
+              <app-display-card [intro]="true" [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
                 <div class="pass-buttons">
                   <app-create-pass-button [title]="'Now'"></app-create-pass-button>
                   <app-create-pass-button [title]="'Future'"></app-create-pass-button>
@@ -298,11 +286,32 @@
       </div>
 
       <div class="slide-paginator">
-        <div class="slide-paginator_item" [style.background-color]="slideIndex === 1 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
-        <div class="slide-paginator_item" [style.background-color]="slideIndex === 2 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
-        <div class="slide-paginator_item" [style.background-color]="slideIndex === 3 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
-        <div class="slide-paginator_item" [style.background-color]="slideIndex === 4 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"  *ngIf="!alreadySeen && !isSafari"></div>
-        <div class="slide-paginator_item" [style.background-color]="slideIndex === 5 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
+        <div class="slide-paginator_item"
+             [style.cursor]="usedAsEntryComponent ? 'pointer' : 'default'"
+             [style.background-color]="slideIndex === 1 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+             (click)="clickDots(1)"
+        ></div>
+        <div class="slide-paginator_item"
+             [style.cursor]="usedAsEntryComponent ? 'pointer' : 'default'"
+             [style.background-color]="slideIndex === 2 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+             (click)="clickDots(2)"
+        ></div>
+        <div class="slide-paginator_item"
+             [style.cursor]="usedAsEntryComponent ? 'pointer' : 'default'"
+             [style.background-color]="slideIndex === 3 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+             (click)="clickDots(3)"
+        ></div>
+        <div class="slide-paginator_item"
+             [style.cursor]="usedAsEntryComponent ? 'pointer' : 'default'"
+             [style.background-color]="slideIndex === 4 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+             (click)="clickDots(4)"
+             *ngIf="!alreadySeen && !isSafari"
+        ></div>
+        <div class="slide-paginator_item"
+             [style.cursor]="usedAsEntryComponent ? 'pointer' : 'default'"
+             [style.background-color]="slideIndex === 5 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+             (click)="clickDots(5)"
+        ></div>
       </div>
 
     </div>

@@ -4,7 +4,7 @@
       <div class="display-card-header justify-content" [style.min-height]="(inbox ? '35px' : '')"  [style.margin-bottom]="headerBottomSpace">
         <div class="flexCls">
           <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
-          <div *ngIf="(!!icon && inbox) || mock" class="inbox-wrapper">
+          <div *ngIf="(!!icon && inbox)" class="inbox-wrapper">
             <img class="inbox-icon" [src]="getIcon('./assets/Inbox (Navy).svg') | resolveAsset">
           </div>
           <div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
