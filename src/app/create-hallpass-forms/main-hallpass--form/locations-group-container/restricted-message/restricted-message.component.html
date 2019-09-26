@@ -24,6 +24,8 @@
     <!--</div>-->
     <!--</div>-->
 
+    <div class="content-background"
+         [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
     <div class="content-wrapper">
       <div class="rest-mes-content"
            [attr.data-motion-translate]="(frameMotion$ | async).direction"

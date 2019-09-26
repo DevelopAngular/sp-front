@@ -223,7 +223,7 @@ export class InvitationCardComponent implements OnInit {
         if (this.isSeen) {
             this.formState.step = 3;
             this.formState.previousStep = 4;
-            this.createFormService.setFrameMotionDirection('back');
+            this.createFormService.setFrameMotionDirection('disable');
             this.cardEvent.emit(this.formState);
         } else {
           this.dialogRef.close();
