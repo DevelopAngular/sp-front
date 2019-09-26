@@ -292,7 +292,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.cancelEditClick = !this.cancelEditClick;
     }
 
-    if(!this.cancelOpen){
+    if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
       this.options = [];
       this.header = '';
@@ -303,7 +303,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.options.push(this.genOption('Report Student', '#E32C66', 'report'));
         }
         this.options.push(this.genOption('End Pass', '#E32C66', 'end'));
-        // header = 'What would you like to do with this pass?';
+
         this.header = '';
       } else{
         if (this.forInput) {
