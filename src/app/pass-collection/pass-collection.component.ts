@@ -68,6 +68,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
 
+  activePassTime$;
+
   timers: number[] = [];
 
   timerEvent: Subject<void> = new BehaviorSubject(null);
@@ -174,7 +176,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     return this.emptyMessage;
   }
 
-  showPass(pass: PassLike) {
+  showPass(pass) {
     this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }
@@ -198,7 +200,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         forMonitor: this.forMonitor,
         forStaff: this.forStaff && !this.kioskMode.currentRoom$.value,
         kioskMode: !!this.kioskMode.currentRoom$.value,
-        hideReport: this.isAdminPage
+        hideReport: this.isAdminPage,
+        activePassTime$: this.activePassTime$
       };
       data.isActive = !data.fromPast && !data.forFuture;
     } else {

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
-import {interval, Subject} from 'rxjs';
+import {interval, BehaviorSubject, Subject} from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { TimeService } from '../services/time.service';
@@ -37,24 +37,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   timers: number[] = [];
   hoverDestroyer$: Subject<any>;
 
-  //
-  // mockData = {
-  //   headers: [
-  //     'Counselor',
-  //     'Gardner',
-  //     'Bathroom'
-  //   ],
-  //   gradients: [
-  //     '#E38314,#EAB219',
-  //     '#F52B4F,#F37426',
-  //     '#5C4AE3,#336DE4'
-  //   ],
-  //   dates: [
-  //     'Tomorrow, 9:03 AM',
-  //     'Sept 29, 11:35 AM',
-  //     'Today, 8:35 AM'
-  //   ]
-  // };
+  activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';
@@ -97,19 +80,14 @@ export class PassTileComponent implements OnInit, OnDestroy {
     }
   }
 
-  constructor(private sanitizer: DomSanitizer, private timeService: TimeService, private screenService: ScreenService) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private timeService: TimeService,
+    private screenService: ScreenService
+  ) {
   }
 
   ngOnInit() {
-      // if (this.mock) {
-      // this.pass = null;
-      // this.fromPast = false;
-      // this.forFuture = true;
-      // this.isActive = false;
-      // this.forStaff = false;
-      // this.timerEvent = new Subject<any>();
-    // }
-
     this.valid = this.isActive;
     if (this.timerEvent) {
       this.timerEvent.pipe(filter(() => !!this.pass['expiration_time'])).subscribe(() => {
@@ -119,6 +97,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
         const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
         const secs: number = Math.abs(Math.floor(diff) % 60);
         this.valid = end > now;
+        this.activePassTime$.next(mins + ':' + (secs < 10 ? '0' + secs : secs));
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
       });
     }
@@ -126,7 +105,6 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.timers.forEach(id => {
-      console.log('Clearing interval');
       clearInterval(id);
     });
     this.timers = [];
@@ -144,7 +122,6 @@ export class PassTileComponent implements OnInit, OnDestroy {
   onPress(press: boolean, event) {
     if (this.screenService.isDeviceLargeExtra) event.preventDefault();
     this.buttonDown = press;
-    // console.log("[Button State]: ", "The button is " +this.buttonState);
   }
 
   onTap(state: boolean) {
@@ -152,7 +129,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   onClick(event) {
-    this.tileSelected.emit(event);
+    this.tileSelected.emit(this.activePassTime$);
   }
 
   onHover(evt: Event, container: HTMLElement) {

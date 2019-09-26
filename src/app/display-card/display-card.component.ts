@@ -8,7 +8,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
   styleUrls: ['./display-card.component.scss']
 })
 export class DisplayCardComponent implements OnInit {
-  @Input() mock: number = null;
+  @Input() intro: number = null;
   @Input() backgroundColor: string;
   @Input() headerBottomSpace: string = '15px';
   @Input() hasDivider: boolean = true;
@@ -35,14 +35,14 @@ export class DisplayCardComponent implements OnInit {
   getIcon(icon) {
     return this.darkTheme.getIcon({
       iconName: icon,
-      darkFill: 'White',
+      darkFill: !this.intro ? 'White' : 'Navy',
       lightFill: 'Navy',
       setting: null
     });
   }
 
   get titleColor () {
-    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
+    return !this.intro ? this.darkTheme.getColor() : '#1E194F';
   }
 
   ngOnInit() {

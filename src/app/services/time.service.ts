@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, defer, interval, Observable } from 'rxjs';
+import {BehaviorSubject, defer, interval, Observable, Subject} from 'rxjs';
 import {distinctUntilChanged, map, publishReplay, refCount, repeat, scan, switchMap, take} from 'rxjs/operators';
 import { PollingEvent, PollingService } from './polling-service';
 
@@ -51,6 +51,8 @@ export class TimeService {
   // An estimate the client's time drift from server time. This number is calculated as server time - client time
   // so that it can be added to the client's current time.
   private static latestDriftEstimate$ = new BehaviorSubject(0);
+
+  public activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   private heartbeat$: Observable<PollingEvent>;
   private timeResponse$: Observable<PollingEvent>;
