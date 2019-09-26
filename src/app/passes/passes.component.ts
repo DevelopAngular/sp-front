@@ -205,7 +205,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(scrollObserver)
           )
           .subscribe((v) => {
-            console.log(scrollOffset);
             if (v) {
               this.scrollableArea.scrollTo({top: scrollOffset});
               scrollObserver.next();
@@ -354,7 +353,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
         this._zone.run(() => {
-          console.log(user);
           this.user = user;
           this.isStaff =
             user.roles.includes('_profile_teacher') ||
@@ -434,7 +432,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onReportFromPassCard(evt) {
-    console.log(evt);
     if (evt) {
       this.dialog.open(ReportSuccessToastComponent, {
         backdropClass: 'invisible-backdrop',

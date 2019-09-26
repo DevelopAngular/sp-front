@@ -1,13 +1,13 @@
-import {ChangeDetectorRef, Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
 import {NextStep} from '../../animations';
-import {BehaviorSubject, combineLatest} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
@@ -57,8 +57,6 @@ export interface Navigation {
   kioskMode?: boolean;
 }
 
-
-
 @Component({
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
@@ -66,7 +64,7 @@ export interface Navigation {
   animations: [NextStep]
 
 })
-export class MainHallPassFormComponent implements OnInit {
+export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
   public FORM_STATE: Navigation;
   public formSize = {
@@ -85,8 +83,17 @@ export class MainHallPassFormComponent implements OnInit {
 
   scaledClass: boolean = false;
 
+  private destroy$ = new Subject();
 
-  constructor(
+  @HostListener('window:resize')
+  checkDeviceScreen() {
+    this.isDeviceMid = this.screenService.isDeviceMid;
+    this.isDeviceLarge = this.extraLargeDevice;
+    this.setFormSize();
+  }
+
+
+    constructor(
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<MainHallPassFormComponent>,
@@ -186,14 +193,16 @@ export class MainHallPassFormComponent implements OnInit {
     }
     this.formService.scalableBoxController
       .asObservable()
+      .pipe(takeUntil(this.destroy$))
       .subscribe((v: boolean) => {
         this.scaledClass = v;
-        // this.cd.detectChanges();
-      })
+      });
     this.setFormSize();
     this.setContainerSize('end');
     this.checkDeviceScreen();
-      this.dataService.currentUser.subscribe((user: User) => {
+      this.dataService.currentUser
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAdmin();
           this.user = user;
       });
@@ -201,7 +210,9 @@ export class MainHallPassFormComponent implements OnInit {
       combineLatest(
           this.passesService.getPinnablesRequest(),
           this.locationsService.getLocationsWithTeacherRequest(this.user))
-          .pipe(filter(() => this.isStaff),
+          .pipe(
+            filter(([pin, locs]: [Pinnable[], Location[]]) => this.isStaff && !!pin.length && !!locs.length),
+              takeUntil(this.destroy$),
               map(([pinnables, locations]) => {
                   const filterPinnables = _.cloneDeep(pinnables).filter(pin => {
                       return locations.find(loc => {
@@ -222,6 +233,11 @@ export class MainHallPassFormComponent implements OnInit {
           this.FORM_STATE.data.teacherRooms = rooms;
       });
 
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onNextStep(evt) {
@@ -282,13 +298,6 @@ export class MainHallPassFormComponent implements OnInit {
         this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
         break;
     }
-  }
-
-  @HostListener('window:resize')
-  checkDeviceScreen() {
-    this.isDeviceMid = this.screenService.isDeviceMid;
-    this.isDeviceLarge = this.extraLargeDevice;
-    this.setFormSize();
   }
 
   get extraLargeDevice() {

@@ -8,10 +8,6 @@ import { PassConfigComponent } from './pass-config/pass-config.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
 import {MySchoolComponent} from './my-school/my-school.component';
-import {ReportsResolver} from '../core/resolvers/reports-resolver';
-import {PinnablesResolver} from '../core/resolvers/pinnables-resolver';
-import {AllAccountsResolver} from '../core/resolvers/all-accounts-resolver';
-import {AccountRoleResolver} from '../core/resolvers/account-role-resolver';
 import {IosComponentComponent} from './ios-component/ios-component.component';
 
 const routes: Routes = [
@@ -24,7 +20,7 @@ const routes: Routes = [
       {path: 'search', component: SearchComponent},
       {path: 'accounts', component: AccountsComponent },
       {path: 'accounts/:role', component: AccountsRoleComponent },
-      {path: 'passconfig', component: PassConfigComponent, resolve: { pinnables: PinnablesResolver }},
+      {path: 'passconfig', component: PassConfigComponent},
       {path: 'myschool', component: MySchoolComponent},
       {path: 'ios', component: IosComponentComponent},
       {path: '**', redirectTo: '', pathMatch: 'full'},
