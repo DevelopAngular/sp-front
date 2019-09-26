@@ -6,6 +6,8 @@ import {BehaviorSubject, of, Subject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
 import {delay, filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {CreateFormService} from '../../../create-form.service';
+import {ScreenService} from '../../../../services/screen.service';
 
 export enum States {
   SelectStudents = 1,
@@ -38,7 +40,9 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
 
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private formService: CreateFormService,
+    private screenService: ScreenService
   ) {
 
     this.states = States;
@@ -50,6 +54,10 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    if (!this.screenService.isDeviceLargeExtra) {
+      this.formService.compressableBoxController.next(true);
+    }
+
     if (this.FORM_STATE) {
 
       this.currentState = this.FORM_STATE.state || 1;
@@ -90,28 +98,33 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
   }
 
   onStateChange(evt) {
-    if ( evt === 'exit' ) {
-      this.nextStepEvent.emit({ action: 'exit', data: null });
-      return;
+    if (!this.screenService.isDeviceLargeExtra) {
+      this.formService.compressableBoxController.next(true);
     }
+    setTimeout(() => {
+      if ( evt === 'exit' ) {
+        this.nextStepEvent.emit({ action: 'exit', data: null });
+        return;
+      }
 
-    if (this.FORM_STATE.quickNavigator) {
-        this.FORM_STATE.step = this.FORM_STATE.previousStep;
-        this.FORM_STATE.state = this.FORM_STATE.previousState;
+      if (this.FORM_STATE.quickNavigator) {
+          this.FORM_STATE.step = this.FORM_STATE.previousStep;
+          this.FORM_STATE.state = this.FORM_STATE.previousState;
+          this.FORM_STATE.previousStep = 2;
+          return this.nextStepEvent.emit(this.FORM_STATE);
+      }
+
+      if ( evt.step === 3 || evt.step === 1 ) {
+        // this.FORM_STATE.step = evt.step;
+        this.FORM_STATE.step = this.FORM_STATE.previousStep && this.FORM_STATE.previousStep > 3 ? this.FORM_STATE.previousStep : evt.step ;
         this.FORM_STATE.previousStep = 2;
-        return this.nextStepEvent.emit(this.FORM_STATE);
-    }
-
-    if ( evt.step === 3 || evt.step === 1 ) {
-      // this.FORM_STATE.step = evt.step;
-      this.FORM_STATE.step = this.FORM_STATE.previousStep && this.FORM_STATE.previousStep > 3 ? this.FORM_STATE.previousStep : evt.step ;
-      this.FORM_STATE.previousStep = 2;
-      this.FORM_STATE.state = this.FORM_STATE.formMode.formFactor === 3 ? 2 : 1;
-      this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
-      this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
-      this.nextStepEvent.emit(this.FORM_STATE);
-      return;
-    }
+        this.FORM_STATE.state = this.FORM_STATE.formMode.formFactor === 3 ? 2 : 1;
+        this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
+        this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
+        this.nextStepEvent.emit(this.FORM_STATE);
+        return;
+      }
+    }, 100);
   }
 
   groupNextStep(evt) {

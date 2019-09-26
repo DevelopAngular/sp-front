@@ -75,8 +75,15 @@ export class DateTimeContainerComponent implements OnInit {
   }
 
   back(event) {
+    // if (this.screenService.isDeviceLargeExtra ) {
+    //   this.formService.setFrameMotionDirection('back');
+    // } else {
+    //   this.formService.setFrameMotionDirection('disable');
+    // }
+    // setTimeout(() => {
       this.FORM_STATE = event;
       this.nextStepEvent.emit(event);
+    // }, 100);
   }
 
   stepBackMobile() {

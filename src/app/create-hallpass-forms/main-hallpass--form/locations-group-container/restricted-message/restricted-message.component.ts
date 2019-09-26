@@ -173,7 +173,7 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   sendRequest() {
-    this.formService.setFrameMotionDirection('forward');
+    this.formService.setFrameMotionDirection('disable');
     setTimeout(() => {
       this.resultMessage.emit(this.message.value);
     }, 100);

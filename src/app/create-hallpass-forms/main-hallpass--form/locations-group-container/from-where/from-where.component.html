@@ -5,37 +5,38 @@
          [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'"></div>
     <div *ngIf="!screenService.isDeviceLargeExtra"  class="back-button back-button-grey">
       <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
-      </div>
+    </div>
     <div class="from-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="text ds-dialog-title">From where?</div>
     </div>
   </div>
-  <div class="from-content"
-       [attr.data-motion-translate]="(frameMotion$ | async).direction"
-       (scroll)="tableScroll($event)" #rc>
-    <div class="location-tables">
-      <app-location-table
-         class="locations"
-         [forStaff]="true"
-         [height]="'107px'"
-         [heightLeftTable]="'153px'"
-         [rightHeaderText]="true"
-         [inputWidth]="'240px'"
-         [forLater]="true"
-         [showStars]="true"
-         [noRightStar]="true"
-         [showFavorites]="true"
-         [type]="'location'"
-         [placeholder]="'Search rooms'"
-         [dummyString]="'No rooms found'"
-         (onSelect)="locationChosen($event)"
-         [mergedAllRooms]="true"
-      >
-      </app-location-table>
+  <div class="content-background"
+       [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+  <div class="from-content" (scroll)="tableScroll($event)" #rc>
+    <div [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <div class="location-tables">
+        <app-location-table
+          class="locations"
+          [forStaff]="true"
+          [height]="'107px'"
+          [heightLeftTable]="'153px'"
+          [rightHeaderText]="true"
+          [inputWidth]="'240px'"
+          [forLater]="true"
+          [showStars]="true"
+          [noRightStar]="true"
+          [showFavorites]="true"
+          [type]="'location'"
+          [placeholder]="'Search rooms'"
+          [dummyString]="'No rooms found'"
+          (onSelect)="locationChosen($event)"
+          [mergedAllRooms]="true"
+        >
+        </app-location-table>
+      </div>
     </div>
   </div>
-  <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
   <ng-container *ngIf="!displayFooters">
     <app-student-footer [date]="date" [formState]="formState" [state]="'from'" *ngIf="!isStaff"></app-student-footer>
     <app-teacher-footer *ngIf="isStaff" [formState]="formState" [date]="date" [studentText]="studentText" [state]="'from'"></app-teacher-footer>

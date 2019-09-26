@@ -7,13 +7,15 @@ import { StudentList } from '../../models/StudentList';
 import {NextStep} from '../../animations';
 import {BehaviorSubject, combineLatest} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
 import {DeviceDetection} from '../../device-detection.helper';
 import {HallPassesService} from '../../services/hall-passes.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms.component';
+import {ValidButtons} from '../../admin/overlay-container/advanced-options/advanced-options.component';
 
 
 export enum Role { Teacher = 1, Student = 2 }
@@ -89,7 +91,7 @@ export class MainHallPassFormComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
-    public dialogRef: MatDialogRef<MainHallPassFormComponent>,
+    public dialogRef: MatDialogRef<CreateHallpassFormsComponent>,
     private formService: CreateFormService,
     private elementRef: ElementRef,
     private dataService: DataService,
@@ -99,10 +101,11 @@ export class MainHallPassFormComponent implements OnInit {
     private cd: ChangeDetectorRef
   ) {}
 
+  get isCompressed() {
+    return  this.formService.compressableBoxController.asObservable();
+  }
   get isScaled() {
-
-    return  this.scaledClass;
-      // && (this.FORM_STATE.formMode.role === Role.Teacher && this.FORM_STATE.previousState > 1);
+    return  this.formService.scalableBoxController.asObservable();
   }
 
   ngOnInit() {
@@ -222,13 +225,22 @@ export class MainHallPassFormComponent implements OnInit {
           this.FORM_STATE.data.teacherRooms = rooms;
       });
 
+    this.dialogRef
+      .backdropClick()
+      .subscribe(() => {
+        this.formService.setFrameMotionDirection('disable');
+        this.formService.compressableBoxController.next(false);
+        this.formService.scalableBoxController.next(false);
+        this.dialogRef.close();
+      });
   }
 
   onNextStep(evt) {
-
     if (evt.step === 0 || evt.action === 'exit') {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.compressableBoxController.next(false);
+      this.formService.scalableBoxController.next(false);
       this.dialogRef.close(evt);
-      return;
     } else {
       // console.log('STEP EVENT ===>', evt);
       this.FORM_STATE = evt;
@@ -237,7 +249,7 @@ export class MainHallPassFormComponent implements OnInit {
   }
 
   setContainerSize(startOrEnd: 'start' | 'end') {
-    return
+    // return
     switch (startOrEnd) {
       case 'start':
         this.formSize.containerWidth = this.formSize.width;
@@ -251,10 +263,11 @@ export class MainHallPassFormComponent implements OnInit {
   }
 
   setFormSize() {
-    const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
-          if (form && this.FORM_STATE.step !== 4) {
-            form.style.boxShadow = '0 2px 26px 0px rgba(0, 0, 0, 0.15)';
-          }
+    // const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
+    //       form.style.boxShadow = 'none';
+    //       if (form && this.FORM_STATE.step !== 4) {
+    //         form.style.boxShadow = '0 2px 26px 0px rgba(0, 0, 0, 0.15)';
+    //       }
 
     switch (this.FORM_STATE.step) {
       case 1:
@@ -275,10 +288,10 @@ export class MainHallPassFormComponent implements OnInit {
         this.formSize.height =  `500px`;
         break;
       case 4:
-        if (form) {
-          form.style.boxShadow = 'none';
-        }
-        this.formSize.width =  `425px`;
+        // if (form) {
+        //   // form.style.boxShadow = 'none';
+        // }
+        this.formSize.width =  `335px`;
         this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
         break;
     }
