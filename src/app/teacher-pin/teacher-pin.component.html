@@ -1,0 +1,69 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="back-button">
+      <app-icon-button
+        [srcString]="'Back Button'"
+        [size]="28"
+        [onDarkShade]="false"
+        [blueWhite]="true"
+        [hasShadow]="false"
+      ></app-icon-button>
+    </div>
+    <div class="title">
+      <img [src]="'./assets/Lock (White).svg' | resolveAsset" [width]="23" height="23" alt="Lock">
+      <span style="margin-left: 12px">My Pin</span>
+    </div>
+  </div>
+  <div class="content">
+    <div class="top-block">
+      <div class="pin">
+        <div class="label">Pin</div>
+        <app-input [width]="'65px'" [input_value]="'1234'" [controlName]="form.get('pin')" [formGroup]="form"></app-input>
+      </div>
+      <div class="info">
+        This pin can be used to approve or deny Pass Requests from a student’s device.
+        Pins cannot be used to access any account information.
+      </div>
+      <div class="instruction">
+        Pins must be 4 digits and can be changed at any time.
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="bottom-block">
+      <div class="text">Example</div>
+      <div class="pinnable-wrapper">
+        <div class="pinnable-example">
+          <div class="pin-header">
+            <div class="title">
+              <img width="23" height="23" [src]="'https://png.icons8.com/ios-glyphs/library/FFFFFF/50' | resolveAsset">
+              <span style="margin-left: 12px">Library</span>
+            </div>
+            <app-icon-button
+              [srcString]="'Back Button'"
+              [size]="20"
+              [onDarkShade]="false"
+              [blueWhite]="true"
+              [hasShadow]="false"
+            ></app-icon-button>
+          </div>
+          <mat-divider></mat-divider>
+
+          <div class="pin-content">
+            <div class="pin-code">
+              <div class="pin-info">
+                Enter Teacher Pin
+              </div>
+              <div class="circles">
+                <div class="circle" *ngFor="let cir of [1, 1, 1, 1]">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

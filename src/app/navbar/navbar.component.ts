@@ -44,6 +44,7 @@ import {Schedule} from 'primeng/primeng';
 import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
+import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
 
 declare const window;
 
@@ -332,15 +333,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  getColor(setting?, hover?: boolean, hoveredColor?: string) {
-
-    return this.darkTheme.getColor({
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
-    });
-  }
-
   selectTab(event: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = event.getBoundingClientRect();
@@ -424,6 +416,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       if (action === 'signout') {
         // window.waitForAppLoaded();
         this.router.navigate(['sign-out']);
+      } else if (action === 'myPin') {
+        const teachPinDialog = this.dialog.open(TeacherPinComponent, {
+          panelClass: 'form-dialog-container',
+          backdropClass: 'custom-backdrop',
+        });
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
               panelClass: 'form-dialog-container',
@@ -440,7 +437,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         if (NotificationService.hasSupport && NotificationService.canRequestPermission) {
             this.notifService.initNotifications(true)
               .then((hasPerm) => {
-                console.log(`Has permission to show notifications: ${hasPerm}`);
+                // console.log(`Has permission to show notifications: ${hasPerm}`);
                 notifRef = this.dialog.open(NotificationFormComponent, {
                   panelClass: 'form-dialog-container',
                   backdropClass: 'custom-backdrop',
@@ -488,7 +485,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   updateTab(route: string) {
     this.tab = route;
-    console.log('[updateTab()]: ', this.tab);
+    // console.log('[updateTab()]: ', this.tab);
     this.router.navigateByUrl('/main/' + this.tab);
   }
 

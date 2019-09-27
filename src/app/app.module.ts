@@ -89,6 +89,7 @@ import {SchoolsEffects} from './ngrx/schools/effects';
 import {UserEffects} from './ngrx/user/effects';
 import {SchoolsResolver} from './core/resolvers/schools-resolver';
 import {ProcessEffects} from './ngrx/onboard-process/effects';
+import { TeacherPinComponent } from './teacher-pin/teacher-pin.component';
 
 const appRoutes: Routes = [
   {
@@ -170,7 +171,7 @@ const appRoutes: Routes = [
     IntroRouteComponent,
     IntroDialogComponent,
     SchoolSignUpComponent,
-    AccountsSetupComponent,
+    AccountsSetupComponent
   ],
   entryComponents: [
     ConsentMenuComponent,

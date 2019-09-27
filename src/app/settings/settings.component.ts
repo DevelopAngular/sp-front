@@ -13,6 +13,7 @@ import {LocalStorage} from '@ngx-pwa/local-storage';
 import {combineLatest} from 'rxjs';
 
 export interface Setting {
+  id: number;
   hidden: boolean;
   gradient: string;
   icon: string;
@@ -41,6 +42,7 @@ export class SettingsComponent implements OnInit {
   hoveredSignout: boolean;
   hovered: boolean;
   hoveredColor: string;
+  hoverId: number;
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
   @Input() dataSideNav: any = null;
@@ -58,20 +60,7 @@ export class SettingsComponent implements OnInit {
       private router: Router,
       private pwaStorage: LocalStorage,
 
-  ) {
-    debugger;
-    this.initializeSettings();
-  }
-
-  get _themeBackground() {
-    return this.hoveredTheme
-              ?
-              this.pressedTheme
-                ?
-                'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
-                  : 'rgb(228, 235, 255)'
-                    : 'transparent';
-  }
+  ) {}
 
   ngOnInit() {
     if (this.data) {
@@ -79,14 +68,14 @@ export class SettingsComponent implements OnInit {
       this.isSwitch = this.data['isSwitch'] && !this.kioskMode.currentRoom$.value;
     }
 
-    this.sideNavService.sideNavData.subscribe( sideNavData => {
+    this.sideNavService.sideNavData$.subscribe( sideNavData => {
       if (sideNavData) {
         this.targetElementRef = sideNavData['trigger'];
         this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
       }
     });
 
-    this.sideNavService.toggle.subscribe(() => {
+    this.sideNavService.toggle$.subscribe(() => {
       this.settings = [];
       this.initializeSettings();
     });
@@ -97,31 +86,33 @@ export class SettingsComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.roles.includes('edit_all_hallpass');
+          this.isStaff = user.isTeacher();
+          this.initializeSettings();
         });
       });
   }
 
-  getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
+  getIcon(iconName: string, setting: any,  hover?: boolean, hoverId?: number) {
     return this.darkTheme.getIcon({
       iconName: iconName,
       setting: setting,
       hover: hover,
-      hoveredColor: hoveredColor
+      hoverId: hoverId
     });
   }
 
-  getColor(setting?, hover?: boolean, hoveredColor?: string) {
+  getColor(setting?, hover?: boolean, hoverId?: number) {
     return this.darkTheme.getColor({
       setting: setting,
       hover: hover,
-      hoveredColor: hoveredColor
+      hoverId: hoverId
     });
   }
 
-  onHover(color) {
+  onHover({color, id}) {
     this.hovered = true;
     this.hoveredColor = color;
+    this.hoverId = id;
   }
 
   handleAction(setting) {
@@ -174,7 +165,18 @@ export class SettingsComponent implements OnInit {
   }
 
   initializeSettings() {
+    if (this.isStaff) {
+      this.settings.push({
+        id: 1,
+        'hidden': !!this.kioskMode.currentRoom$.value,
+        'gradient': '#03CF31, #00B476',
+        'icon': 'Lock',
+        'action': 'myPin',
+        'title': 'My Pin'
+      });
+    }
     this.settings.push({
+      id: 2,
       'hidden': !!this.kioskMode.currentRoom$.value,
       'gradient': '#E7A700, #EFCE00',
       'icon': 'Star',
@@ -182,6 +184,7 @@ export class SettingsComponent implements OnInit {
       'title': 'Favorites'
     });
     this.settings.push({
+      id: 3,
       'hidden': !!this.kioskMode.currentRoom$.value,
       'gradient': '#DA2370, #FB434A',
       'icon': 'Notifications',
@@ -189,6 +192,7 @@ export class SettingsComponent implements OnInit {
       'title': 'Notifications'
     });
     this.settings.push({
+      id: 4,
       'hidden': false,
       'gradient': '#022F68, #2F66AB',
       'icon': 'Moon',
@@ -205,6 +209,7 @@ export class SettingsComponent implements OnInit {
       'title': (this.darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode')
     });
     this.settings.push({
+      id: 5,
       'hidden': !!this.kioskMode.currentRoom$.value,
       'gradient': '#03CF31, #00B476',
       'icon': 'Info',
@@ -212,6 +217,7 @@ export class SettingsComponent implements OnInit {
       'title': 'View Intro'
     });
     this.settings.push({
+      id: 6,
       'hidden': false,
       'gradient': '#0B9FC1, #00C0C7',
       'icon': 'Team',
@@ -219,6 +225,7 @@ export class SettingsComponent implements OnInit {
       'title': 'About'
     });
     this.settings.push({
+      id: 7,
       'hidden': false,
       'gradient': '#5E4FED, #7D57FF',
       'icon': 'Feedback',
@@ -226,6 +233,7 @@ export class SettingsComponent implements OnInit {
       'title': 'Feedback'
     });
     this.settings.push({
+      id: 8,
       'hidden': false,
       'gradient': '#F52B4F, #F37426',
       'icon': 'Support',

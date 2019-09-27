@@ -1,0 +1,130 @@
+@import '../../sp-colors';
+
+.wrapper {
+  width: 425px;
+  height: 500px;
+  background-color: white;
+
+  .header {
+    height: 70px;
+    background-color: $jade;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .back-button {
+      position: absolute;
+      left: 20px;
+    }
+
+    .title {
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .content {
+    height: 430px;
+
+    .top-block {
+      padding: 20px 30px;
+
+      .pin {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 16px;
+        color: $navy;
+      }
+      .info {
+        font-size: 14px;
+        color: $blue-gray;
+        width: 295px;
+        margin-top: 5px;
+      }
+      .instruction {
+        font-size: 14px;
+        color: $blue-gray;
+        width: 295px;
+        margin-top: 20px;
+      }
+    }
+
+    .bottom-block {
+      padding: 0 30px;
+
+      .text {
+        margin: 10px 0;
+        color: $navy;
+      }
+
+      .pinnable-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        .pinnable-example {
+          width: 235px;
+          height: 170px;
+          border-radius: 14px 14px 0 0;
+          background-image: radial-gradient(circle at 73% 71%, rgb(19, 191, 158), rgb(0, 217, 155));
+          .pin-header {
+            padding: 15px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title {
+              font-size: 16px;
+              display: flex;
+              align-items: center;
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  mat-divider {
+    background-color: white;
+    width: 291px;
+    opacity: 0.4;
+  }
+
+  .pin-content {
+    width: 100%;
+    height: calc(100% - 51px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .pin-code {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .pin-info {
+        color: white;
+        font-size: 14px;
+      }
+
+      .circles {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 21px;
+        width: 90px;
+
+        .circle {
+          border: 1px solid white;
+          border-radius: 50%;
+          width: 11px;
+          height: 11px;
+        }
+      }
+    }
+  }
+}

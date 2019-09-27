@@ -24,12 +24,14 @@ export class SettingsComponent implements OnInit {
     hoveredSignout: boolean;
     hovered: boolean;
     hoveredColor: string;
+    hoverId: number;
     version = 'Version 1.5';
     currentRelease = RELEASE_NAME;
 
 
     public settings = [
         {
+            id: 1,
             'gradient': '#1893E9, #05B5DE',
             'icon': 'Team',
             'hover_icon': './assets/Team (White).svg',
@@ -37,6 +39,7 @@ export class SettingsComponent implements OnInit {
             'title': 'About'
         },
         {
+            id: 2,
             'gradient': '#5E4FED, #7D57FF',
             'icon': 'Feedback',
             'hover_icon': './assets/Feedback (White).svg',
@@ -44,6 +47,7 @@ export class SettingsComponent implements OnInit {
             'title': 'Feedback'
         },
         {
+            id: 3,
             'gradient': '#F52B4F, #F37426',
             'icon': 'Support',
             'hover_icon': './assets/Support (White).svg',
@@ -80,21 +84,21 @@ export class SettingsComponent implements OnInit {
 
 
 
-    getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
+    getIcon(iconName: string, setting: any,  hover?: boolean, hoverId?: number) {
 
       return this.darkTheme.getIcon({
         iconName: iconName,
         setting: setting,
         hover: hover,
-        hoveredColor: hoveredColor
+        hoverId: hoverId
       });
     }
 
-    getColor(setting?, hover?: boolean, hoveredColor?: string) {
+    getColor(setting?, hover?: boolean, hoverId?: number) {
       return this.darkTheme.getColor({
         setting: setting,
         hover: hover,
-        hoveredColor: hoveredColor
+        hoverId: hoverId
       });
     }
 
@@ -120,9 +124,10 @@ export class SettingsComponent implements OnInit {
       }
     }
 
-    onHover(color) {
+    onHover({color, id}) {
         this.hovered = true;
         this.hoveredColor = color;
+        this.hoverId = id;
     }
 
     signOut() {
