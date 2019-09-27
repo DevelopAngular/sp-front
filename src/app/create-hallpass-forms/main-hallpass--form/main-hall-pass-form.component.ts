@@ -15,8 +15,6 @@ import {ScreenService} from '../../services/screen.service';
 import {DeviceDetection} from '../../device-detection.helper';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms.component';
-import {ValidButtons} from '../../admin/overlay-container/advanced-options/advanced-options.component';
-
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -64,7 +62,6 @@ export interface Navigation {
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
   animations: [NextStep]
-
 })
 export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
@@ -82,9 +79,6 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
   isDeviceMid: boolean;
   isDeviceLarge: boolean;
 
-
-  scaledClass: boolean = false;
-
   private destroy$ = new Subject();
 
   @HostListener('window:resize')
@@ -93,7 +87,6 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.isDeviceLarge = this.extraLargeDevice;
     this.setFormSize();
   }
-
 
   constructor(
     public dialog: MatDialog,
@@ -194,12 +187,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         };
         break;
     }
-    this.formService.scalableBoxController
-      .asObservable()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((v: boolean) => {
-        this.scaledClass = v;
-      });
+
     this.setFormSize();
     this.setContainerSize('end');
     this.checkDeviceScreen();
@@ -270,10 +258,12 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       case 'start':
         this.formSize.containerWidth = this.formSize.width;
         this.formSize.containerHeight =  this.formSize.height;
+        // this.cd.detectChanges();
         break;
       case 'end':
         this.formSize.containerWidth =  `100vw`;
         this.formSize.containerHeight =  `100vh`;
+        // this.cd.detectChanges();
         break;
     }
   }

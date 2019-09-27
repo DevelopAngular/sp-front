@@ -56,6 +56,7 @@
         margin: auto 0;
         height: 30px;
         background-color: #FFFFFF;
+        //background-color: rgba(110,99,00, .99);
         border-top: 1px solid gray;
         border-bottom: 1px solid gray;
         display: flex;
@@ -63,7 +64,7 @@
         justify-content: center;
         -webkit-transform-style: preserve-3d;
         transform-style: preserve-3d;
-        transform: translateZ(115px);
+        transform: translateZ(120px);
         overflow: hidden;
         //display: none;
         .unit-clip {
@@ -133,7 +134,7 @@
               margin: auto;
               max-height: 35px ;
               height: 35px;
-              max-width: 100px;
+              //max-width: 100px;
               display: flex;
               align-items: center;
               justify-content: center;

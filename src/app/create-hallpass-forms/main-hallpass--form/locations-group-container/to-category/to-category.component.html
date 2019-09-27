@@ -15,28 +15,26 @@
   </div>
 
   <div class="content-background"
-       [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-  <div class="category-content" [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)" #rc>
-      <div [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <app-location-table
-          class="center"
-          (onSelect)="locationChosen($event)"
-          [forStaff]="isStaff"
-          [forLater]="formState.forLater"
-          [hasLocks]="true"
-          [inputWidth]="'240px'"
-          [category]="pinnable.category"
-          [forKioskMode]="!!dialogData.kioskModeRoom"
-          [invalidLocation]="(fromLocation ? +fromLocation.id : '')"
-          [type]="'location'"
-          [placeholder]="'Search ' + pinnable.category"
-          [dummyString]="'No rooms found'"
-        >
-        </app-location-table>
-      </div>
+     [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+  <div class="category-content"
+     [attr.data-motion-translate]="(frameMotion$ | async).direction"
+     [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)" #rc>
+      <app-location-table
+        class="center"
+        (onSelect)="locationChosen($event)"
+        [forStaff]="isStaff"
+        [forLater]="formState.forLater"
+        [hasLocks]="true"
+        [inputWidth]="'240px'"
+        [category]="pinnable.category"
+        [forKioskMode]="!!dialogData.kioskModeRoom"
+        [invalidLocation]="(fromLocation ? +fromLocation.id : '')"
+        [type]="'location'"
+        [placeholder]="'Search ' + pinnable.category"
+        [dummyString]="'No rooms found'"
+      >
+      </app-location-table>
     </div>
-    <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
     <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'category'" [date]="date"></app-student-footer>
     <app-teacher-footer [fromLocation]="fromLocation" [formState]="formState" *ngIf="isStaff" [state]="'category'" [date]="date" [studentText]="studentText"></app-teacher-footer>
-
 </div>

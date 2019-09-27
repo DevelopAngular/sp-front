@@ -154,14 +154,14 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IosCalendarComponent
 
   ],
-    entryComponents: [
-      PassCardComponent,
-      DropdownComponent,
-      CalendarComponent,
-      CalendarComponent,
-      ReportSuccessToastComponent,
-      ProfileCardDialogComponent,
-    ],
+  entryComponents: [
+    PassCardComponent,
+    DropdownComponent,
+    CalendarComponent,
+    CalendarComponent,
+    ReportSuccessToastComponent,
+    ProfileCardDialogComponent,
+  ],
   exports: [
     ReactiveFormsModule,
     ScrollingModule,

@@ -8,33 +8,33 @@
     </div>
     <div class="from-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
-      <div class="text ds-dialog-title">From where?</div>
+      <div class="text ds-dialog-title">From where?/{{this.screenService.isDeviceLargeExtra}}</div>
     </div>
   </div>
   <div class="content-background"
        [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-  <div class="from-content" (scroll)="tableScroll($event)" #rc>
-    <div [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <div class="location-tables">
-        <app-location-table
-          class="locations"
-          [forStaff]="true"
-          [height]="'107px'"
-          [heightLeftTable]="'153px'"
-          [rightHeaderText]="true"
-          [inputWidth]="'240px'"
-          [forLater]="true"
-          [showStars]="true"
-          [noRightStar]="true"
-          [showFavorites]="true"
-          [type]="'location'"
-          [placeholder]="'Search rooms'"
-          [dummyString]="'No rooms found'"
-          (onSelect)="locationChosen($event)"
-          [mergedAllRooms]="true"
-        >
-        </app-location-table>
-      </div>
+  <div class="from-content"
+       [attr.data-motion-translate]="(frameMotion$ | async).direction"
+       (scroll)="tableScroll($event)" #rc>
+    <div class="location-tables">
+      <app-location-table
+        class="locations"
+        [forStaff]="true"
+        [height]="'107px'"
+        [heightLeftTable]="'153px'"
+        [rightHeaderText]="true"
+        [inputWidth]="'240px'"
+        [forLater]="true"
+        [showStars]="true"
+        [noRightStar]="true"
+        [showFavorites]="true"
+        [type]="'location'"
+        [placeholder]="'Search rooms'"
+        [dummyString]="'No rooms found'"
+        (onSelect)="locationChosen($event)"
+        [mergedAllRooms]="true"
+      >
+      </app-location-table>
     </div>
   </div>
   <ng-container *ngIf="!displayFooters">
