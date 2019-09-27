@@ -13,7 +13,7 @@
 @media all and (max-width: 425px) {
   div.inbox-content {
     width: 100%;
-    height: calc(100vh - 78px);
+    min-height: calc(100vh - 78px);
   }
 
   div.current-pass,

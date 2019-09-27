@@ -48,7 +48,6 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   ngAfterViewInit(): void {
-    console.log(this.schoolToggle);
     this.navbarElementsService.schoolToggle$.next(this.schoolToggle);
   }
 

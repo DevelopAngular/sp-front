@@ -40,10 +40,7 @@ import {NavbarDataService} from '../main/navbar-data.service';
 import {PassesAnimations} from './passes.animations';
 import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
-import {init} from '@sentry/browser';
 import {UserService} from '../services/user.service';
-import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
-import {AnimationService} from '../services/animation.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -286,9 +283,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
     private scrollPosition: ScrollPositionService,
-    private userService: UserService,
-    private animationService: AnimationService,
-  ) {
+    private userService: UserService) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -458,7 +453,4 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  animationDone() {
-    this.animationService.animationDone$.next(true);
-  }
 }
