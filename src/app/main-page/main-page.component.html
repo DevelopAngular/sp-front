@@ -1,8 +1,12 @@
 <mat-sidenav-container (backdropClick)="fadeClick()">
 
-  <mat-sidenav class="settings-side-nav" mode="over" [opened]="(toggleLeft | async)">
-    <app-settings [dataSideNav]="data"></app-settings>
-  </mat-sidenav>
+
+    <mat-sidenav class="settings-side-nav" mode="over" [opened]="(toggleLeft | async)">
+      <ng-container *ngIf="screenService.isDeviceLargeExtra && (toggleLeft | async)">
+        <app-settings [dataSideNav]="data"></app-settings>
+      </ng-container>
+    </mat-sidenav>
+
 
   <mat-sidenav class="requests-side-nav" position="end" mode="push" [opened]="(toggleRight | async)">
     <mat-card class="request-card"  [style.background-color]="darkTheme.getBackground('high', true)">
