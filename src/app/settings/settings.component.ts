@@ -59,7 +59,6 @@ export class SettingsComponent implements OnInit {
       private pwaStorage: LocalStorage,
 
   ) {
-    debugger;
     this.initializeSettings();
   }
 
