@@ -81,6 +81,7 @@ export class GroupsStep1Component implements OnInit {
   nextStep() {
     if (this.screenService.isDeviceLargeExtra) {
       this.formService.setFrameMotionDirection('forward');
+      this.formService.compressableBoxController.next(false);
     } else {
       this.formService.setFrameMotionDirection('disable');
     }

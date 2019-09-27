@@ -13,43 +13,41 @@
   </div>
   <div class="content-background"
        [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-  <div class="to-content" #rc>
-    <div [attr.data-motion-translate]="(frameMotion$ | async).direction" style="width: 100%; height: 100%; display: flex;flex-direction: column; align-items: center; flex: 1 1 auto;">
-      <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
-        <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
-        <div class="rooms">
-          <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
-            <mat-grid-tile *ngFor="let room of teacherRooms">
-              <app-pinnable
-                [width]="gridRestrictions.pileWidth"
-                [height]="gridRestrictions.pileHeight"
-                [valid]="(room.location && location ? room.location.id != location.id : true)"
-                [forStaff]="isStaff"
-                [forLater]="!!date"
-                [pinnable]="room"
-                (onSelectEvent)="pinnableSelected($event)"
-              ></app-pinnable>
-            </mat-grid-tile>
-          </mat-grid-list>
-        </div>
+  <div class="to-content" [attr.data-motion-translate]="(frameMotion$ | async).direction" #rc>
+    <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
+      <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
+      <div class="rooms">
+        <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
+          <mat-grid-tile *ngFor="let room of teacherRooms">
+            <app-pinnable
+              [width]="gridRestrictions.pileWidth"
+              [height]="gridRestrictions.pileHeight"
+              [valid]="(room.location && location ? room.location.id != location.id : true)"
+              [forStaff]="isStaff"
+              [forLater]="!!date"
+              [pinnable]="room"
+              (onSelectEvent)="pinnableSelected($event)"
+            ></app-pinnable>
+          </mat-grid-tile>
+        </mat-grid-list>
       </div>
-      <div class="all-rooms">
-        <div  [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
-        <div class="pin-collection">
-          <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
-            <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-              <app-pinnable
-                [width]="gridRestrictions.pileWidth"
-                [height]="gridRestrictions.pileHeight"
-                [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)"
-                [forStaff]="isStaff && !dialogData.kioskModeRoom"
-                [forLater]="!!date"
-                [pinnable]="pinnable"
-                (onSelectEvent)="pinnableSelected($event)"
-              ></app-pinnable>
-            </mat-grid-tile>
-          </mat-grid-list>
-        </div>
+    </div>
+    <div class="all-rooms">
+      <div  [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
+      <div class="pin-collection">
+        <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
+          <mat-grid-tile *ngFor="let pinnable of pinnables | async">
+            <app-pinnable
+              [width]="gridRestrictions.pileWidth"
+              [height]="gridRestrictions.pileHeight"
+              [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)"
+              [forStaff]="isStaff && !dialogData.kioskModeRoom"
+              [forLater]="!!date"
+              [pinnable]="pinnable"
+              (onSelectEvent)="pinnableSelected($event)"
+            ></app-pinnable>
+          </mat-grid-tile>
+        </mat-grid-list>
       </div>
     </div>
   </div>

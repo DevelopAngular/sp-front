@@ -53,23 +53,7 @@ div.ios-fixed-card {
 
 .ios-form,
 .form {
-  //transition: width 3.45s ease, height 3.45s ease;
-  //background-color: #0FF00f;
   position: relative;
-  //overflow: hidden;
-  border-radius: 14px;
-}
-.white-background {
-  transition: width 1.45s ease, height 1.45s ease;
-  //background-color: #fff;
-  //position: relative;
-  //position: absolute;
-  //top: 0;
-  //left: 0;
-  //right: 0;
-  //bottom: 0;
-  //margin: auto;
-  //overflow: hidden;
   border-radius: 14px;
 }
 
@@ -89,19 +73,14 @@ div.ios-fixed-card {
   right: 0;
   bottom: 0;
   margin: auto;
-  //box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
-  //overflow: hidden;
-
 }
 
 .ios-fixed-card-wrapper,
 .fixed-card-wrapper {
-  //transition: width .45s ease, height .45s ease;
   position: relative
 }
 
 .locations, .student-groups, .calendar {
   border-radius: 14px;
-  //overflow: hidden;
   box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
 }

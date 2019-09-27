@@ -3,17 +3,17 @@
 <!--      {{getSelected().format('dddd DD hh:mm a')}}-->
 <!--    </div>-->
   <div class="container">
-    <div class="wheel" style="width: 45%;">
-      <app-ios-calendar-wheel [wheelData]="'date'" [leftShift]="25" [align]="'flex-end'" (selectedUnit)="setDate($event.data)"></app-ios-calendar-wheel>
-    </div>
-    <div class="wheel" style="width: 10%;">
-      <app-ios-calendar-wheel [wheelData]="'hour'" [leftShift]="0" (selectedUnit)="setHour($event.data)"></app-ios-calendar-wheel>
+    <div class="wheel" style="width: 40%;">
+      <app-ios-calendar-wheel [wheelData]="'date'" [leftShift]="0" [align]="'flex-end'" (selectedUnit)="setDate($event.data)"></app-ios-calendar-wheel>
     </div>
     <div class="wheel" style="width: 15%;">
-      <app-ios-calendar-wheel [wheelData]="'minute'" [leftShift]="-12" (selectedUnit)="setMinute($event.data)"></app-ios-calendar-wheel>
+      <app-ios-calendar-wheel [wheelData]="'hour'" [leftShift]="0"  (selectedUnit)="setHour($event.data)"></app-ios-calendar-wheel>
     </div>
-    <div class="wheel" style="width: 20%;">
-      <app-ios-calendar-wheel [wheelData]="'half'" [leftShift]="-30" (selectedUnit)="setHalf($event.data)"></app-ios-calendar-wheel>
+    <div class="wheel" style="width: 15%;">
+      <app-ios-calendar-wheel [wheelData]="'minute'" [leftShift]="0" [align]="'flex-start'" (selectedUnit)="setMinute($event.data)"></app-ios-calendar-wheel>
+    </div>
+    <div class="wheel" style="width: 15%;">
+      <app-ios-calendar-wheel [wheelData]="'half'" [leftShift]="-15" [align]="'flex-start'" (selectedUnit)="setHalf($event.data)"></app-ios-calendar-wheel>
     </div>
   </div>
 </div>

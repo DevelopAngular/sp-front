@@ -104,12 +104,7 @@ export class FromWhereComponent implements OnInit {
 
   back() {
 
-    const disable = [
-      (this.formState.formMode.role === 1 || !this.formState.forLater),
-      (this.formState.formMode.role === 2 || this.formState.forLater)
-    ];
-    // this.formService.setFrameMotionDirection('back');
-    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 || !this.formState.forLater) {
+    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater) {
       this.formService.setFrameMotionDirection('disable');
       this.formService.compressableBoxController.next(true);
     } else {
