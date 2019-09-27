@@ -21,7 +21,7 @@
           <div class="ds-dialog-subtitle student-group-name">Student Groups</div>
         </div>
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
-          <div  class="goups-container">
+          <div  class="goups-container" [style.overflow]="groups.length > 0 ? 'auto' : 'hidden'">
             <div *ngIf="isLoadingGroups$ | async" class="loading-theme_blue-gray spinner ds-flex-center-center">
               <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
             </div>
