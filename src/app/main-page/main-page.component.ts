@@ -29,7 +29,7 @@ export class MainPageComponent implements OnInit, AfterViewInit {
     public userService: UserService,
     public darkTheme: DarkThemeSwitch,
     private createFormService: CreateFormService,
-    private screenService: ScreenService,
+    public screenService: ScreenService,
     private sideNavService: SideNavService,
     private dataService: DataService,
     private loadingService: LoadingService,
