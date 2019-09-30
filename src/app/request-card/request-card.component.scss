@@ -200,6 +200,47 @@ mat-divider {
         opacity: 0.4;
     }
 
+  .teacher-pin-view {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .teacher-pin {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .pin-title {
+          color: white;
+          font-size: 20px;
+        }
+
+        .circles {
+          display: flex;
+          margin-top: 22px;
+          .circle {
+            width: 15px;
+            height: 15px;
+            border: 1px solid white;
+            border-radius: 50%;
+            margin: 11px;
+          }
+        }
+      }
+
+      .pin-info {
+        color: white;
+        margin-top: 165px;
+      }
+    }
+  }
+
 }
 
 
@@ -327,6 +368,22 @@ mat-divider {
     color: white;
     font-weight: bold;
     padding-bottom: 5px;
+}
+
+.description-container {
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  height: 30px;
+  width: 75%;
+
+  .description-title {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: absolute;
+  }
 }
 
 .resend-button-content-subtitle{

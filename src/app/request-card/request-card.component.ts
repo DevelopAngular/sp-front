@@ -9,14 +9,14 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import {filter, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep} from '../animations';
-import {BehaviorSubject, of} from 'rxjs';
+import {BehaviorSubject, interval, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -64,6 +64,9 @@ export class RequestCardComponent implements OnInit {
   header: string;
   cancelEditClick: boolean;
 
+  hoverDestroyer$: Subject<any>;
+
+  activeTeacherPin: boolean;
 
   constructor(
       public dialogRef: MatDialogRef<RequestCardComponent>,
@@ -189,7 +192,7 @@ export class RequestCardComponent implements OnInit {
       }
   }
 
-  formatDateTime(date: Date, timeOnly?: boolean){
+  formatDateTime(date: Date, timeOnly?: boolean) {
     return Util.formatDateTime(date, timeOnly);
   }
   // log(arg) {
@@ -527,6 +530,37 @@ export class RequestCardComponent implements OnInit {
   receiveOption(action) {
     this.chooseAction(action);
     this.dialogRef.close();
+  }
+
+  onHover(evt: HTMLElement, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = evt;
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        }
+      });
+  }
+
+  onLeave(target: HTMLElement) {
+    target.style.marginLeft = '0px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `100%`;
+
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
   }
 
   get isIOSTablet() {
