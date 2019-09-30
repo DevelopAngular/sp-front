@@ -1,7 +1,5 @@
 <div class="rest-tar-wrapper">
-  <div
-    [ngClass]="headerTransition" #headeer>
-<!--    {{(frameMotion$ | async).direction}}-->
+  <div [ngClass]="headerTransition">
     <div class="header-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction" [style.background-image]="headerGradient"></div>
     <div class="back-button-wrapper" (click)="back()">
       <img [ngClass]="isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'" class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
@@ -13,11 +11,11 @@
       <div class="text ds-dialog-title-white">Send Pass Request To?</div>
     </div>
   </div>
-
-  <div class="rest-tar-content"
-       [attr.data-motion-translate]="(frameMotion$ | async).direction"
-       (scroll)="tableScroll($event)" #rc>
-    <div class="search-wrapper">
+  <div class="content-background"
+       [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+  <div class="rest-tar-content" (scroll)="tableScroll($event)" #rc>
+    <div [attr.data-motion-translate]="(frameMotion$ | async).direction" style="width: 100%; height: 100%; display: flex;justify-content: center; flex: 1 1 auto;">
+      <div class="search-wrapper">
         <app-sp-search
           [focused]="true"
           [width]="'100%'"
@@ -29,28 +27,27 @@
           [emitSingleProfile]="true"
           (onUpdate)="updateTarget($event)"
         ></app-sp-search>
-    </div>
-    <div class="quick-select" [style.margin-top]="'70px'" *ngIf="filteredTeachers.length">
-      <div class="quick-select_header">
-        <span>Quick Select</span>
       </div>
-      <div class="quick-select_scrollable">
-
-        <div *ngFor="let teacher of filteredTeachers; let i = index" #cell class="quick-select_item"
-             (mouseenter)="cell.hovered = true;"
-             (mouseleave)="cell.hovered = false;"
-             (mousedown)="cell.pressed = true"
-             (mouseup)="cell.pressed = false"
-             (click)="updateTarget(teacher)"
-             [style.background-color]="getBackground(cell)"
-             [style.color]="textColor(cell)">
+      <div class="quick-select" [style.margin-top]="'70px'" *ngIf="filteredTeachers.length">
+        <div class="quick-select_header">
+          <span>Quick Select</span>
+        </div>
+        <div class="quick-select_scrollable">
+          <div *ngFor="let teacher of filteredTeachers; let i = index" #cell class="quick-select_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false;"
+               (mousedown)="cell.pressed = true"
+               (mouseup)="cell.pressed = false"
+               (click)="updateTarget(teacher)"
+               [style.background-color]="getBackground(cell)"
+               [style.color]="textColor(cell)">
               <span>
                 {{teacher.display_name}}
               </span>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
   <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)" ></app-student-footer>
 </div>

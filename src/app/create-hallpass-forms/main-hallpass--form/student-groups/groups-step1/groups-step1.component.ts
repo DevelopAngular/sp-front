@@ -10,6 +10,7 @@ import {LocationsService} from '../../../../services/locations.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import * as _ from 'lodash';
 import {CreateFormService} from '../../../create-form.service';
+import {ScreenService} from '../../../../services/screen.service';
 
 @Component({
   selector: 'app-groups-step1',
@@ -42,7 +43,8 @@ export class GroupsStep1Component implements OnInit {
     public userService: UserService,
     private locationService: LocationsService,
     public sanitizer: DomSanitizer,
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private screenService: ScreenService
   ) { }
 
   ngOnInit() {
@@ -77,7 +79,12 @@ export class GroupsStep1Component implements OnInit {
   }
 
   nextStep() {
-    this.formService.setFrameMotionDirection('forward');
+    if (this.screenService.isDeviceLargeExtra) {
+      this.formService.setFrameMotionDirection('forward');
+      this.formService.compressableBoxController.next(false);
+    } else {
+      this.formService.setFrameMotionDirection('disable');
+    }
     setTimeout(() => {
       // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
       if (this.formState.forLater) {
@@ -103,11 +110,16 @@ export class GroupsStep1Component implements OnInit {
   }
 
   createGroup() {
-    this.formState.state = 2;
-    this.formState.step = 2;
-    this.formState.fromState = 1;
-    this.formState.data.selectedStudents = this.selectedStudents;
-    this.createGroupEmit.emit(this.formState);
+
+    this.formService.setFrameMotionDirection('disable');
+
+    setTimeout(() => {
+      this.formState.state = 2;
+      this.formState.step = 2;
+      this.formState.fromState = 1;
+      this.formState.data.selectedStudents = this.selectedStudents;
+      this.createGroupEmit.emit(this.formState);
+    }, 100);
   }
 
   selectGroup(group, evt: Event) {

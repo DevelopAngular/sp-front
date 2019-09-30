@@ -110,12 +110,29 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 .date-content, .date-content-mock {
   height: 430px;
   background-color: #FBFEFF;
   width: 100%;
+  position: relative;
+  z-index: 1;
+  .content-background {
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -2;
+  }
 }
 
 .teacher {
@@ -169,6 +186,8 @@
   border-top-right-radius: 14px;
   //overflow: hidden;
   .header-background {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
     position: absolute;
     top: 0;
     bottom: 0;

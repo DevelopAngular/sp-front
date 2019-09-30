@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
+import {ScreenService} from '../../../../services/screen.service';
 
 @Component({
   selector: 'app-teacher-footer',
@@ -29,7 +30,8 @@ export class TeacherFooterComponent implements OnInit {
   showFullFooter: boolean = false;
   frameMotion$: BehaviorSubject<any>;
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private screenService: ScreenService
   ) { }
 
   get fromLocationText() {
@@ -81,15 +83,25 @@ export class TeacherFooterComponent implements OnInit {
 
   goToStudents(evt: Event) {
     evt.stopPropagation();
-    this.formService.scalableBoxController.next(false);
-    if (this.formState.kioskMode) {
-      return false;
+    if (!this.screenService.isDeviceLargeExtra) {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.compressableBoxController.next(true);
     }
-    this.formState.previousState = this.formState.state;
-    this.formState.step = 2;
-    this.formState.previousStep = 3;
-    this.formState.quickNavigator = true;
-    this.changeLocation.emit(this.formState);
+    this.formService.scalableBoxController.next(false);
+
+    setTimeout(() => {
+      if (this.formState.kioskMode) {
+        return false;
+      }
+      this.formState.previousState = this.formState.state;
+      this.formState.step = 2;
+      this.formState.state = 1;
+      this.formState.previousStep = 3;
+      this.formState.previousState = 2;
+      this.formState.quickNavigator = true;
+      this.changeLocation.emit(this.formState);
+    }, 100);
+
   }
 
   goToDate() {

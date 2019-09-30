@@ -103,9 +103,13 @@ export class ToCategoryComponent implements OnInit {
   }
 
   locationChosen(location) {
-    this.formService.setFrameMotionDirection('forward');
-    // this.headerTransition['category-header'] = true;
-    // this.headerTransition['category-header_animation-back'] = false;
+    // this.formService.setFrameMotionDirection('forward');
+    if (this.formState.formMode.role === 1) {
+      this.formService.setFrameMotionDirection('disable');
+    } else {
+      this.formService.setFrameMotionDirection('forward');
+    }
+
     setTimeout(() => {
       this.locFromCategory.emit(location);
     }, 100);
@@ -115,10 +119,6 @@ export class ToCategoryComponent implements OnInit {
   back() {
 
     this.formService.setFrameMotionDirection('back');
-    // this.headerTransition['category-header'] = false;
-    // this.headerTransition['category-header_animation-back'] = true;
-
-    // console.log('BACK BACK BACK ____>');
 
     setTimeout(() => {
       this.formState.previousState = this.formState.state;

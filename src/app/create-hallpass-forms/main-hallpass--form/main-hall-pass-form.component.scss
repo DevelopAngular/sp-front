@@ -51,26 +51,17 @@ div.ios-fixed-card {
   overflow: visible !important;
 }
 
-.pointer {
-  position: absolute;
-  left: 50%;
-  width: 50px;
-  height: 50px;
-  transform: translate(-50%, -22px) rotate(45deg);
-  background-color: white;
-}
-
 .ios-form,
 .form {
-  transition: width .45s ease, height .45s ease;
   position: relative;
+  border-radius: 14px;
 }
 
 .ios-pretty-replace-box,
 .pretty-replace-box {
   position: relative;
   overflow: hidden;
-  border-radius: 15px;
+  border-radius: 14px;
   height: 100%;
 }
 
@@ -82,13 +73,14 @@ div.ios-fixed-card {
   right: 0;
   bottom: 0;
   margin: auto;
-
 }
 
 .ios-fixed-card-wrapper,
 .fixed-card-wrapper {
-  transition: width .45s ease, height .45s ease;
   position: relative
 }
 
-
+.locations, .student-groups, .calendar {
+  border-radius: 14px;
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+}

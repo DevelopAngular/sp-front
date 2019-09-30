@@ -12,18 +12,28 @@ export const bumpIn = trigger('pressState', [
 ]);
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-    // query(`[data-motion-compress]`, animate('3.45s 0s ease', keyframes([
-    //   style({
-    //     opacity: 0.3,
-    //     transform: 'scaleY(1.3) scaleX(0.6)',
-    //   }),
-    //   style({
-    //     opacity: 1,
-    //     transform: 'scaleY(1.0) scaleX(1.0)',
-    //
-    //   }),
-    //
-    // ])), {optional: true}),
+    query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.24) scaleX(0.6)',
+      }),
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.0) scaleX(1.0)',
+
+      }),
+    ])), {optional: true}),
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('.45s 0s ease', keyframes([
+      style({
+        opacity: 0,
+        transform: 'scaleY(0.8) scaleX(1.65)',
+      }),
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.0) scaleX(1.0)',
+
+      }),
+    ])), {optional: true}),
     query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
         style({
           opacity: 0,
@@ -34,41 +44,31 @@ export const NextStep = trigger('NextStep', [                                   
           transform: 'scale(1)',
         })
       ])), {optional: true}),
-      query(`.back-button-white`, animate('0.45s 0s ease', keyframes([
-          style({
-            opacity: 0.5,
-          }),
-
-          style({
-            opacity: 0.5,
-          }),
-        ])), {optional: true}
-      ),
       query(`
       [data-motion-opacity='forward']
       `, [
         animate('0.0s',
             style({
               opacity: 0,
-              boxShadow: 'none',
+              // boxShadow: 'none',
             })
         ),
         animate('0.20s ease-in',
           style({
             opacity: 0.25,
-            boxShadow: 'none',
+            // boxShadow: 'none',
           }),
         ),
         animate('0.20s ease-out',
           style({
             opacity: 1,
-            boxShadow: 'none',
+            // boxShadow: 'none',
           })
         ),
       ], {optional: true}
       ),
       query(`
-      [data-motion-translate]
+      [data-motion-translate='forward'], [data-motion-translate='back']
       `,
         [
           animate('0.0s', style({
@@ -91,17 +91,27 @@ export const NextStep = trigger('NextStep', [                                   
     ]), { params: { from: 100, halfFrom: 50}}
   ),
   transition(':leave', group([                                                              // :LEAVE PSEUDOSTATE
-    // query(`[data-motion-compress]`, animate('3.45s 0s ease', keyframes([
-    //   style({
-    //     opacity: 1,
-    //     transform: 'scaleY(1.0) scaleX(1.0)',
-    //
-    //   }),
-    //   style({
-    //     opacity: 0.3,
-    //     transform: 'scaleY(1.3) scaleX(0.6)',
-    //   })
-    // ])), {optional: true}),                                                              // :LEAVE PSEUDOSTATE
+    query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.0) scaleX(1.0)',
+
+      }),
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.24) scaleX(0.6)',
+      })
+    ])), {optional: true}),
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('.45s 0s ease', keyframes([
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.0) scaleX(1.0)',
+      }),
+      style({
+        opacity: 0,
+        transform: 'scaleY(0.8) scaleX(1.65)',
+      }),
+    ])), {optional: true}),
     query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
       style({
         opacity: 1,
@@ -120,26 +130,26 @@ export const NextStep = trigger('NextStep', [                                   
           animate('0.0s',
             style({
               opacity: 1,
-              boxShadow: 'none',
+              // boxShadow: 'none',
             })
           ),
           animate('0.20s ease-in',
             style({
               opacity: 0.25,
-              boxShadow: 'none',
+              // boxShadow: 'none',
             }),
           ),
           animate('0.20s ease-out',
             style({
               opacity: 0,
-              boxShadow: 'none',
+              // boxShadow: 'none',
             })
           ),
 
         ], {optional: true}
       ),
       query(`
-        [data-motion-translate]
+        [data-motion-translate='forward'], [data-motion-translate='back']
         `,
         [
           animate('0.0s', style({

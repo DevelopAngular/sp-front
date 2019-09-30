@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {School} from '../models/School';
@@ -7,13 +7,17 @@ import {StorageService} from '../services/storage.service';
 import {filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {NavbarDataService} from '../main/navbar-data.service';
+import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 
 @Component({
   selector: 'app-school-toggle-bar',
   templateUrl: './school-toggle-bar.component.html',
   styleUrls: ['./school-toggle-bar.component.scss']
 })
-export class SchoolToggleBarComponent implements OnInit, OnDestroy {
+export class SchoolToggleBarComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  @ViewChild('schoolToggle') schoolToggle: ElementRef;
 
   @Input() schools: School[];
 
@@ -24,6 +28,8 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private http: HttpService,
+    private navbarService: NavbarDataService,
+    private navbarElementsService: NavbarElementsRefsService,
   ) { }
 
   ngOnInit() {
@@ -39,6 +45,10 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriber$.next(null);
     this.subscriber$.complete();
+  }
+
+  ngAfterViewInit(): void {
+    this.navbarElementsService.schoolToggle$.next(this.schoolToggle);
   }
 
   showOptions(target: HTMLElement) {

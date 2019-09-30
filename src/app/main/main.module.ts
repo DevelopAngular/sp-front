@@ -55,6 +55,7 @@ import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/s
 import {ScreenService} from '../services/screen.service';
 import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
+import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
 
 @NgModule({
   imports: [
@@ -114,6 +115,7 @@ import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
     NotificationFormComponent,
     KioskModeComponent,
     TeacherPinComponent
+    AnimatedHeaderDirective,
   ],
   entryComponents: [
     CreateHallpassFormsComponent,

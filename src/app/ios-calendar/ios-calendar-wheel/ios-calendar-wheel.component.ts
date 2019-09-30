@@ -23,77 +23,6 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
 
   @Output() selectedUnit: EventEmitter<any> = new EventEmitter();
 
-  // @ViewChild('swipeArea') set swipeAreaRef(swipeAreaRef: ElementRef) {
-  //   if (swipeAreaRef) {
-  //     this.swipeArea = swipeAreaRef.nativeElement;
-  //     fromEvent(this.swipeArea, 'touchmove')
-  //       .pipe(
-  //         mergeMap((event: MouseEvent) => {
-  //           return {
-  //             event: event,
-  //             currentDate: this.iosDate.dateSubject
-  //           } as any;
-  //         }),
-  //         filter(({event, currentDate} ) => {
-  //
-  //           console.log(event);
-  //           event.preventDefault();
-  //           event.stopPropagation();
-  //
-  //           if (this.focused) {
-  //
-  //             this.counter = 0;
-  //             this.counterX++;
-  //
-  //             this.endTransition = 'none';
-  //
-  //             const scrollTop = this.focusPosition - event.pageY;
-  //
-  //             switch (this.wheelData) {
-  //               case 'date':
-  //                 currentDate.date(Math.round(this.rotate.rotateAngle + (scrollTop / 2)));
-  //                 break;
-  //               case 'hour':
-  //                 currentDate.hour(Math.round(this.rotate.rotateAngle + (scrollTop / 2)));
-  //
-  //                 break;
-  //               case 'minute':
-  //                 currentDate.minute(Math.round(this.rotate.rotateAngle + (scrollTop / 2)));
-  //                 break;
-  //               case 'half':
-  //             }
-  //
-  //             this.counterX =  Math.abs(scrollTop);
-  //
-  //             if (event.pageY >= this.focusPosition) {
-  //               this.dir = true;
-  //             } else {
-  //               this.dir = false;
-  //             }
-  //
-  //             return moment(this.iosDate.dateSubject.value).isBefore(moment(this.iosDate.minDate.value));
-  //
-  //           }
-  //
-  //
-  //         })
-  //       )
-  //       .subscribe(({event, currentDate}) => {
-  //
-  //         const scrollTop = this.focusPosition - event.pageY;;
-  //
-  //         this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle + (scrollTop / 2)}deg)`));
-  //
-  //         const intRotateAngle = this.rotate.rotateAngle / this.dataItemAngle;
-  //         const sliceOffset = this.dir ? Math.floor(intRotateAngle) : Math.ceil(intRotateAngle);
-  //         this.dataSetSubject.next(this.connect(sliceOffset, sliceOffset + this.wheelSectorAmount));
-  //
-  //         this.scrollFactor = scrollTop;
-  //
-  //       });
-  //   }
-  // }
-  swipeArea: HTMLElement;
   daysRotateSubject = new ReplaySubject(1);
   daysRotate$ = this.daysRotateSubject.asObservable();
 
@@ -363,9 +292,10 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
       this.swipeInProgress = true;
 
       if (this.wheelData !== 'half') {
-
+        this.runScroll();
+        return;
         const intervalCounter = Math.abs(this.scrollFactor) > 30 && this.counterX > 0 ? Math.floor(this.counterX / 70) : 1;
-        // alert(intervalCounter);
+        // alert(intervalCounter);;
         interval(10)
           .pipe(
             takeUntil(this.postOutDestroyer)
@@ -606,7 +536,8 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
 
           const sliceOffset = this.dir ? Math.floor(intRotateAngle) : Math.ceil(intRotateAngle);
 
-          this.rotate.rotateAngle = this.dir ? Math.floor(intRotateAngle) * this.dataItemAngle : Math.ceil(intRotateAngle) * this.dataItemAngle;
+          // this.rotate.rotateAngle = this.dir ? Math.floor(intRotateAngle) * this.dataItemAngle : Math.ceil(intRotateAngle) * this.dataItemAngle;
+          this.rotate.rotateAngle = Math.round(intRotateAngle) * this.dataItemAngle;
 
           this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle}deg)`));
 

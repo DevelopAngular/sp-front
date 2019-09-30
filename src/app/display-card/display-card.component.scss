@@ -36,6 +36,12 @@
   }
 }
 
+.display-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
 .display-card-wrapper{
     width: 351px;
     padding: 25px 15px;

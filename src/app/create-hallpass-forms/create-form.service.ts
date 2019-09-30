@@ -13,6 +13,7 @@ export class CreateFormService {
   private frameMotionDirection$: BehaviorSubject<any>;
 
   public scalableBoxController = new ReplaySubject<boolean>(1);
+  public compressableBoxController = new ReplaySubject<boolean>(1);
   public isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(private hallPassService: HallPassesService) {
@@ -21,7 +22,7 @@ export class CreateFormService {
       halfTo: -50,
       from: 100,
       halfFrom: 50,
-      direction: 'forward'
+      direction: 'disable'
     };
     this.frameMotionDirection$ = new BehaviorSubject(this.transition);
   }
@@ -53,8 +54,8 @@ export class CreateFormService {
 
     switch (direction) {
       case 'disable':
-        this.transition.to = -100;
-        this.transition.halfTo = -50;
+        this.transition.to = 0;
+        this.transition.halfTo = 0;
         this.transition.from = 0;
         this.transition.halfFrom = 0;
         this.frameMotionDirection$.next(this.transition);

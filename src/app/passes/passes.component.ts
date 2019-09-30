@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
   BehaviorSubject,
@@ -40,7 +40,6 @@ import {NavbarDataService} from '../main/navbar-data.service';
 import {PassesAnimations} from './passes.animations';
 import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
-import {init} from '@sentry/browser';
 import {UserService} from '../services/user.service';
 
 export class FuturePassProvider implements PassLikeProvider {
@@ -162,7 +161,6 @@ export class InboxInvitationProvider implements PassLikeProvider {
   }
 }
 
-
 @Component({
   selector: 'app-passes',
   templateUrl: './passes.component.html',
@@ -171,12 +169,20 @@ export class InboxInvitationProvider implements PassLikeProvider {
     PassesAnimations.OpenOrCloseRequests,
     PassesAnimations.PassesSlideTopBottom,
     PassesAnimations.RequestCardSlideInOut,
+    PassesAnimations.HeaderSlideInOut,
+    PassesAnimations.HeaderSlideTopBottom,
+    PassesAnimations.PreventInitialChildAnimation,
   ],
 })
+
 export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private scrollableAreaName = 'Passes';
   private scrollableArea: HTMLElement;
+
+  @ViewChild('animatedHeader') animatedHeader: ElementRef<HTMLElement>;
+
+  @ViewChild('passesWrapper') passesWrapper: ElementRef<HTMLElement>;
 
   @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
     if (scrollable) {
@@ -277,8 +283,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
     private scrollPosition: ScrollPositionService,
-    private userService: UserService
-  ) {
+    private userService: UserService) {
+
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
     this.testInvitations = new BasicPassLikeProvider(testInvitations);
@@ -343,9 +349,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.userService.effectiveUser.subscribe(res => {
-    //   debugger;
-    // });
     this.navbarService.inboxClick.subscribe(inboxClick => {
       this.isInboxClicked = inboxClick;
     });
@@ -407,9 +410,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cursor = 'default';
     }
   }
+
   ngAfterViewInit(): void {
-  //   console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
-  //   this.scrollableArea.scrollTo({top: this.scrollPosition.getComponentScroll(this.scrollableAreaName), behavior: 'smooth'});
+
   }
 
   ngOnDestroy(): void {
@@ -449,4 +452,5 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cursor = 'default';
     }
   }
+
 }

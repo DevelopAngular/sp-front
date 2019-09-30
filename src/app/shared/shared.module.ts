@@ -68,6 +68,7 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {ScrollHolderDirective} from '../scroll-holder.directive';
 import {IosCalendarWheelComponent} from '../ios-calendar/ios-calendar-wheel/ios-calendar-wheel.component';
 import {IosCalendarComponent} from '../ios-calendar/ios-calendar.component';
+import {NavbarElementSenderDirective} from '../core/directives/navbar-element-sender.directive';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -151,17 +152,18 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SpDialogBoxComponent,
     ScrollHolderDirective,
     IosCalendarWheelComponent,
-    IosCalendarComponent
+    IosCalendarComponent,
+    NavbarElementSenderDirective,
 
   ],
-    entryComponents: [
-      PassCardComponent,
-      DropdownComponent,
-      CalendarComponent,
-      CalendarComponent,
-      ReportSuccessToastComponent,
-      ProfileCardDialogComponent,
-    ],
+  entryComponents: [
+    PassCardComponent,
+    DropdownComponent,
+    CalendarComponent,
+    CalendarComponent,
+    ReportSuccessToastComponent,
+    ProfileCardDialogComponent,
+  ],
   exports: [
     ReactiveFormsModule,
     ScrollingModule,

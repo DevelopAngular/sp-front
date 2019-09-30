@@ -13,6 +13,7 @@
 @media all and (max-width: 425px) {
   div.inbox-content {
     width: 100%;
+    min-height: calc(100vh - 78px);
   }
 
   div.current-pass,
@@ -32,9 +33,15 @@
 
   .requests-title,
   h1.passes-heading {
-    display: block;
+    display: flex;
+    align-items: center;
+    height: 39px;
     color: #1F195E;
-    margin-top: -15px;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+    margin: 0;
+    z-index: 10;
   }
 
   .passes {
@@ -48,9 +55,10 @@
 }
 
 @media all and (max-width: 768px) {
-  div.main-page-left{
+  div.main-page-left {
     margin-right: 0;
     width: 100%;
+    margin-top: 15px;
   }
 
   div.main-page-right {
@@ -88,6 +96,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
 .current-pass{
@@ -179,3 +188,5 @@
     padding-top: 30px;
   }
 }
+
+

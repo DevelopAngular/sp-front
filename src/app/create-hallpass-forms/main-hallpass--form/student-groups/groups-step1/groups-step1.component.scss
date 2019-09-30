@@ -181,7 +181,7 @@
     min-height: 400px;
     //background-color: #fff;
     //border: 1px solid #777;
-    box-shadow: 0 0 7px 0px rgba(0, 0, 0, .3);
+    //box-shadow: 0 0 7px 0px rgba(0, 0, 0, .3);
     border-radius: 14px;
     overflow: hidden;
     display: flex;
@@ -200,9 +200,11 @@
       color: $primary-color;
       position: relative;
       z-index: 10;
-      border-top-left-radius: 15px;
-      border-top-right-radius: 15px;
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
       .header-background {
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
         position: absolute;
         top: 0;
         bottom: 0;

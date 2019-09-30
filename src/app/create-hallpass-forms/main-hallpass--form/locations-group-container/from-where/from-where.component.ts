@@ -24,9 +24,7 @@ export class FromWhereComponent implements OnInit {
         } else {
           blur = 20;
         }
-
         this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
-        console.log(this.header.nativeElement.dataset);
       });
     }
   }
@@ -93,6 +91,7 @@ export class FromWhereComponent implements OnInit {
   locationChosen(location) {
 
     this.formService.setFrameMotionDirection('forward');
+    this.formService.compressableBoxController.next(false);
 
     setTimeout(() => {
       this.formState.previousState = 1;
@@ -105,8 +104,13 @@ export class FromWhereComponent implements OnInit {
 
   back() {
 
-    this.formService.setFrameMotionDirection('back');
-
+    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater) {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.compressableBoxController.next(true);
+    } else {
+      this.formService.compressableBoxController.next(false);
+      this.formService.setFrameMotionDirection('back');
+    }
 
     setTimeout(() => {
       if (this.formState.forLater || this.formState.missedRequest) {
