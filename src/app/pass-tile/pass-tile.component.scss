@@ -41,21 +41,24 @@
 }
 
 .tile-title-container {
-  position: relative;
-  overflow: hidden;
-  z-index: 2;
-  flex: 1 1 auto;
-  height: 30px;
+  min-width: 100px;
 }
 
 .tile-title {
   width: 100%;
   font-weight: bold;
   font-size: 16px;
+  position: absolute;
+}
+
+.tile-subtitle {
+  font-size: 13.5px;
+}
+
+.tile-title-truncated {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  position: absolute;
 }
 
 .tile-title-demo {
@@ -67,7 +70,11 @@
 }
 
 .tile-content{
-    font-size: 13.5px;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  flex: 1 1 auto;
+  height: 30px;
 }
 
 .badge{
