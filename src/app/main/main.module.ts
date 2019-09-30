@@ -114,7 +114,7 @@ import {AnimatedHeaderDirective} from '../core/directives/animated-header.direct
     CreateHallpassFormsComponent,
     NotificationFormComponent,
     KioskModeComponent,
-    TeacherPinComponent
+    TeacherPinComponent,
     AnimatedHeaderDirective,
   ],
   entryComponents: [
