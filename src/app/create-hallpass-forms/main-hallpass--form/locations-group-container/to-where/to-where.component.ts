@@ -93,8 +93,14 @@ export class ToWhereComponent implements OnInit {
   }
 
   pinnableSelected(pinnable) {
-    this.formService.setFrameMotionDirection('forward');
+    if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
+      this.formService.setFrameMotionDirection('disable');
+    } else {
+      this.formService.setFrameMotionDirection('forward');
+    }
+
     this.formService.scalableBoxController.next(true);
+
     setTimeout(() => {
       this.formState.previousState = 2;
       this.selectedPinnable.emit(pinnable);
@@ -102,8 +108,16 @@ export class ToWhereComponent implements OnInit {
   }
 
   back() {
-    this.formService.setFrameMotionDirection('back');
+
     this.formService.scalableBoxController.next(false);
+
+    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater) {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.compressableBoxController.next(true);
+    } else {
+      this.formService.compressableBoxController.next(false);
+      this.formService.setFrameMotionDirection('back');
+    }
     setTimeout(() => {
       if (!!this.date &&
         !!this.studentText &&

@@ -91,8 +91,8 @@ div {
   border-radius: 14px;
   background-color: transparent;
   overflow: visible;
-  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
-  //box-shadow: none;
+  //box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: none;
   margin: 0;
   padding: 0;
   scrollbar-face-color: #D6D6D6;
@@ -219,7 +219,7 @@ div {
   padding: 0;
   overflow: visible;
   box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
-  border-radius: 15px;
+  border-radius: 14px;
 }
 
 input:focus{

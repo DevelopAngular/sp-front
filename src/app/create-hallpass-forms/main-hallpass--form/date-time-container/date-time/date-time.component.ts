@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {BehaviorSubject} from 'rxjs';
 import {StorageService} from '../../../../services/storage.service';
+import {ScreenService} from '../../../../services/screen.service';
 
 @Component({
   selector: 'app-date-time',
@@ -45,6 +46,7 @@ export class DateTimeComponent implements OnInit {
 
 
   constructor(
+    public screenService: ScreenService,
     private timeService: TimeService,
     private formService: CreateFormService,
     private storage: StorageService
@@ -105,9 +107,8 @@ export class DateTimeComponent implements OnInit {
   }
 
   next() {
-
+    this.formService.compressableBoxController.next(false);
     this.formService.setFrameMotionDirection('forward');
-
     this.formState.data.date = {
       date: this.requestTime.toDate(),
       declinable: this.form.get('declinable').value
@@ -121,9 +122,14 @@ export class DateTimeComponent implements OnInit {
   }
 
   back() {
-
-    this.formService.setFrameMotionDirection('back');
-
+    // this.formService.setFrameMotionDirection('back');
+    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1) {
+      this.formService.compressableBoxController.next(true);
+      this.formService.setFrameMotionDirection('disable');
+    } else {
+      this.formService.compressableBoxController.next(false);
+      this.formService.setFrameMotionDirection('back');
+    }
     setTimeout(() => {
       if (this.isStaff) {
         this.formState.state = 1;

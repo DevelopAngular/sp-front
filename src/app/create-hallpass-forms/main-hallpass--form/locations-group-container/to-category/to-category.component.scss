@@ -19,6 +19,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  z-index: 1;
   //background-color: #ffffff;
   border-radius: 14px;
   overflow: hidden;
@@ -37,6 +38,8 @@
     border-top-right-radius: 14px;
     //overflow: hidden;
     .header-background {
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
       position: absolute;
       top: 0;
       bottom: 0;
@@ -82,11 +85,23 @@
   .category-content {
     overflow: auto;
     position: relative;
+    z-index: 1;
     width: 100%;
     flex: 1 1 auto;
     padding-bottom: 25px;
-  }
 
+  }
+  .content-background {
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -2;
+  }
   .category-footer {
     width: 100%;
     display: flex;

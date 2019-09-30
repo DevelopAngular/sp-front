@@ -1,6 +1,5 @@
 <div class="date-wrapper">
-    <div class="divider"
-         >
+    <div class="divider">
       <div class="header-background"
            [attr.data-motion-opacity]="(frameMotion$ | async).direction"
            [style.background]="gradient"></div>
@@ -12,8 +11,11 @@
             <div class="divider-text ds-dialog-title-white">{{ (formState?.forInput ? 'Select': 'Change') }} Date & Time</div>
         </div>
     </div>
-    <div [ngClass]="{'date-content':!mock, 'date-content-mock': mock}" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <div class="decline-content" *ngIf="isStaff">
+    <div [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">
+      <div class="content-background"
+           [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+      <div [attr.data-motion-translate]="(frameMotion$ | async).direction">
+        <div class="decline-content" *ngIf="isStaff">
           <div class="toggle-text">
             <div class="toggle-title">Declinable</div>
             <div class="info-text-1">
@@ -25,26 +27,26 @@
           <div class="toggle">
             <app-toggle-input [form]="form" [delimiter]="false" [controlName]="'declinable'" [controlSize]="'small'"></app-toggle-input>
           </div>
-      </div>
-      <mat-divider *ngIf="isStaff"></mat-divider>
-      <div *ngIf="isPortableDevice" class="info-text-1 info-text-1_small-screen">
-        <div style="height: 60px;" *ngIf="!isStaff"></div>
-        <div style="height: 60px;" *ngIf="isStaff">
-          <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span>
-          <span *ngIf="!form.get('declinable').value">You must also select from where the student will be traveling.</span>
-          <span *ngIf="form.get('declinable').value">You do not need to know the location from where the student will be traveling.</span>
         </div>
-      </div>
-      <div class="teacher" *ngIf="isStaff">
+        <mat-divider *ngIf="isStaff"></mat-divider>
+        <div *ngIf="isPortableDevice" class="info-text-1 info-text-1_small-screen">
+          <div style="height: 60px;" *ngIf="!isStaff"></div>
+          <div style="height: 60px;" *ngIf="isStaff">
+            <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span>
+            <span *ngIf="!form.get('declinable').value">You must also select from where the student will be traveling.</span>
+            <span *ngIf="form.get('declinable').value">You do not need to know the location from where the student will be traveling.</span>
+          </div>
+        </div>
+        <div class="teacher" *ngIf="isStaff">
           <div *ngIf="!isPortableDevice" class="time-picker">
             <div class="time-picker-scaled">
               <app-calendar-picker
-                      [width]="240"
-                      [min]="startTime"
-                      [selectedDates]="[requestTime]"
-                      [selectedColor]="selectedColor"
-                      [showYear]="false"
-                      (onSelectDate)="calendarResult($event)">
+                [width]="240"
+                [min]="startTime"
+                [selectedDates]="[requestTime]"
+                [selectedColor]="selectedColor"
+                [showYear]="false"
+                (onSelectDate)="calendarResult($event)">
               </app-calendar-picker>
             </div>
           </div>
@@ -52,45 +54,46 @@
             <app-ios-calendar (selectedEvent)="calendarResult($event)"></app-ios-calendar>
           </div>
           <div [ngClass]="isPortableDevice ? 'ios-next-btn' : 'next-btn'">
-              <app-gradient-button
-                      [gradient]="'#03CF31, #00B476'"
-                      [cursor]="'pointer'"
-                      [hoverColor]="'#00B476'"
-                      [minWidth]="'101px'"
-                      [minHeight]="'40px'"
-                      [fontSize]="'14px'"
-                      (buttonClick)="next()"
-                      [style.margin]="'15px auto'"
-              >Next</app-gradient-button>
+            <app-gradient-button
+              [gradient]="'#03CF31, #00B476'"
+              [cursor]="'pointer'"
+              [hoverColor]="'#00B476'"
+              [minWidth]="'101px'"
+              [minHeight]="'40px'"
+              [fontSize]="'14px'"
+              (buttonClick)="next()"
+              [style.margin]="'15px auto'"
+            >Next</app-gradient-button>
           </div>
-      </div>
-      <div class="student" *ngIf="!isStaff">
-        <div [ngClass]="isPortableDevice ? 'ios-time-picker' : 'time-picker'">
-          <app-calendar-picker
-                  [width]="240"
-                  [min]="startTime"
-                  [selectedColor]="selectedColor"
-                  [selectedDates]="[requestTime]"
-                  [showYear]="false"
-                  (onSelectDate)="calendarResult($event)">
-          </app-calendar-picker>
         </div>
-        <div  *ngIf="isPortableDevice">
-          <app-ios-calendar (selectedEvent)="calendarResult($event)"></app-ios-calendar>
-        </div>
-              <!--<app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
+        <div class="student" *ngIf="!isStaff">
+          <div [ngClass]="isPortableDevice ? 'ios-time-picker' : 'time-picker'">
+            <app-calendar-picker
+              [width]="240"
+              [min]="startTime"
+              [selectedColor]="selectedColor"
+              [selectedDates]="[requestTime]"
+              [showYear]="false"
+              (onSelectDate)="calendarResult($event)">
+            </app-calendar-picker>
+          </div>
+          <div  *ngIf="isPortableDevice">
+            <app-ios-calendar (selectedEvent)="calendarResult($event)"></app-ios-calendar>
+          </div>
+          <!--<app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
           <div class="next-button">
-              <app-gradient-button
-                      [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31, #00B476'"
-                      [cursor]="'pointer'"
-                      [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
-                      [minWidth]="'101px'"
-                      [minHeight]="'40px'"
-                      [fontSize]="'14px'"
-                      (buttonClick)="next()"
-                      [style.margin]="'15px auto'"
-              >{{ (formState.resendRequest ? 'Resend Request' : 'Next') }}</app-gradient-button>
+            <app-gradient-button
+              [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31, #00B476'"
+              [cursor]="'pointer'"
+              [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
+              [minWidth]="'101px'"
+              [minHeight]="'40px'"
+              [fontSize]="'14px'"
+              (buttonClick)="next()"
+              [style.margin]="'15px auto'"
+            >{{ (formState.resendRequest ? 'Resend Request' : 'Next') }}</app-gradient-button>
           </div>
+        </div>
       </div>
     </div>
 </div>
