@@ -41,6 +41,7 @@ import {PassesAnimations} from './passes.animations';
 import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {UserService} from '../services/user.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -453,4 +454,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  get isAndroid() {
+    return DeviceDetection.isAndroid();
+  }
 }
