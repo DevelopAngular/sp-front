@@ -1,7 +1,7 @@
 <div class="host">
-<!--    <div class="selected">-->
-<!--      {{getSelected().format('dddd DD hh:mm a')}}-->
-<!--    </div>-->
+    <div class="selected">
+      {{getSelected().format('dddd DD hh:mm a')}}
+    </div>
   <div class="container">
     <div class="wheel" style="width: 40%;">
       <app-ios-calendar-wheel [wheelData]="'date'" [leftShift]="0" [align]="'flex-end'" (selectedUnit)="setDate($event.data)"></app-ios-calendar-wheel>
