@@ -2,7 +2,7 @@ import { ErrorHandler, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { UserService } from '../services/user.service';
-import {combineLatest, map, tap} from 'rxjs/operators';
+import {combineLatest, filter, map, tap} from 'rxjs/operators';
 import { User } from '../models/User';
 import {StorageService} from '../services/storage.service';
 import { DeviceDetection } from '../device-detection.helper';
@@ -24,10 +24,12 @@ export class NotSeenIntroGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-    // console.log('canActivate intro:', localStorage.getItem('smartpass_intro') !== 'seen');
-    return this.userService.getUser()
+    return this.userService.user$
       .pipe(
-        map(raw => User.fromJSON(raw)),
+        filter(raw => !!raw),
+        map(raw => {
+          return User.fromJSON(raw);
+        }),
         combineLatest(this.userService.getIntros()),
         map(([user, intros]: [any, any]) => {
           if (!user) {

@@ -6,6 +6,7 @@ import {FromWhereComponent} from '../locations-group-container/from-where/from-w
 import {DateTimeComponent} from './date-time/date-time.component';
 import {DeviceDetection} from '../../../device-detection.helper';
 import {UserService} from '../../../services/user.service';
+import {ScreenService} from '../../../services/screen.service';
 
 @Component({
   selector: 'app-date-time-container',
@@ -23,6 +24,7 @@ export class DateTimeContainerComponent implements OnInit {
   constructor(
     private formService: CreateFormService,
     private userService: UserService,
+    private screenService: ScreenService,
   ) { }
 
   ngOnInit() {
@@ -73,12 +75,23 @@ export class DateTimeContainerComponent implements OnInit {
   }
 
   back(event) {
-      this.dateTimeComponent.back();
-      // this.FORM_STATE = event;
-      // this.nextStepEvent.emit(event);
+    // if (this.screenService.isDeviceLargeExtra ) {
+    //   this.formService.setFrameMotionDirection('back');
+    // } else {
+    //   this.formService.setFrameMotionDirection('disable');
+    // }
+    // setTimeout(() => {
+      this.FORM_STATE = event;
+      this.nextStepEvent.emit(event);
+    // }, 100);
+  }
+
+  stepBackMobile() {
+    this.dateTimeComponent.back();
   }
 
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
   }
+
 }

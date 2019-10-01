@@ -51,8 +51,8 @@ export class ToCategoryComponent implements OnInit {
   frameMotion$: BehaviorSubject<any>;
 
   headerTransition = {
-    'category-header': false,
-    'category-header_animation-back': true
+    'category-header': true,
+    'category-header_animation-back': false
   };
 
   shadow: boolean = true;
@@ -85,12 +85,31 @@ export class ToCategoryComponent implements OnInit {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
+    this.frameMotion$.subscribe((v: any) => {
+      switch (v.direction) {
+        case 'back':
+          this.headerTransition['category-header'] = false;
+          this.headerTransition['category-header_animation-back'] = true;
+          break;
+        case 'forward':
+          this.headerTransition['category-header'] = true;
+          this.headerTransition['category-header_animation-back'] = false;
+          break;
+        default:
+          this.headerTransition['category-header'] = true;
+          this.headerTransition['category-header_animation-back'] = false;
+      }
+    });
   }
 
   locationChosen(location) {
-    this.formService.setFrameMotionDirection('forward');
-    this.headerTransition['category-header'] = true;
-    this.headerTransition['category-header_animation-back'] = false;
+    // this.formService.setFrameMotionDirection('forward');
+    if (this.formState.formMode.role === 1) {
+      this.formService.setFrameMotionDirection('disable');
+    } else {
+      this.formService.setFrameMotionDirection('forward');
+    }
+
     setTimeout(() => {
       this.locFromCategory.emit(location);
     }, 100);
@@ -100,10 +119,6 @@ export class ToCategoryComponent implements OnInit {
   back() {
 
     this.formService.setFrameMotionDirection('back');
-    this.headerTransition['category-header'] = false;
-    this.headerTransition['category-header_animation-back'] = true;
-
-    // console.log('BACK BACK BACK ____>');
 
     setTimeout(() => {
       this.formState.previousState = this.formState.state;

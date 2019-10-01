@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 
 import { merge, Subject, zip } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import {debounceTime, delay, distinctUntilChanged} from 'rxjs/operators';
 
 import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
@@ -145,7 +145,9 @@ export class RoomComponent implements OnInit {
 
       this.initialData = _.cloneDeep(this.data);
 
-      merge(this.form.valueChanges, this.change$).pipe(delay(350)).subscribe(() => {
+      merge(this.form.valueChanges, this.change$).pipe(
+        debounceTime(450)
+      ).subscribe(() => {
           this.checkValidRoomOptions();
       });
   }
@@ -257,11 +259,11 @@ export class RoomComponent implements OnInit {
   deleteRoom() {
     const pinnable = this.overlayService.pageState.getValue().data.pinnable;
     if (this.currentPage === Pages.EditRoom) {
-      this.hallPassService.deletePinnable(pinnable.id).subscribe(res => {
+      this.hallPassService.deletePinnableRequest(pinnable.id).subscribe(res => {
         this.dialogRef.close();
       });
     } else if (this.currentPage === Pages.EditRoomInFolder) {
-      this.locationService.deleteLocation(this.data.id).subscribe(res => {
+      this.locationService.deleteLocationRequest(this.data.id).subscribe(res => {
         this.back.emit();
       });
     }

@@ -1,7 +1,4 @@
 import { Injectable } from '@angular/core';
-
-
-
 import { BehaviorSubject ,  Observable , ReplaySubject, Subject} from 'rxjs';
 import {map, shareReplay, switchMap} from 'rxjs/operators';
 import { HttpService } from './http-service';
@@ -59,21 +56,6 @@ export class DataService {
 
   updateInbox(state: boolean) {
     this.inboxSource.next(state);
-  }
-
-  updateHMSearch(hmSearch: string) {
-  }
-
-  updateHMSort(hmSort: string) {
-  }
-
-  updateMRRoom(mrRoom: Location) {
-  }
-
-  updateMRSearch(mrSearch: string) {
-  }
-
-  updateMRDate(mrDate: Date) {
   }
 
   constructor(

@@ -75,7 +75,7 @@
             (click)="switchMonth(day.mDate)"
           >
             <div class="date-text">{{ day.mDate.date() }}</div>
-            <div class="pass-dot" *ngIf="isDots(day.mDate)">.</div>
+            <div class="pass-dot" *ngIf="day.isDot">.</div>
           </div>
 
           <div class="week-date"
@@ -96,7 +96,7 @@
                     rangeHovered: isRangeHovered(day.mDate) && !isSelected(day.mDate)
                }">
                 <div class="date-text">{{ day.mDate.date() }}</div>
-                <div class="pass-dot" *ngIf="isDots(day.mDate)">.</div>
+                <div class="pass-dot" *ngIf="day.isDot">.</div>
           </div>
 
         </ng-container>

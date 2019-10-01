@@ -3,6 +3,7 @@ import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { BehaviorSubject } from 'rxjs';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
+import {HallPassesService} from '../../services/hall-passes.service';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -38,8 +39,8 @@ export class PinnableCollectionComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    public darkTheme: DarkThemeSwitch
-
+    public darkTheme: DarkThemeSwitch,
+    public passesService: HallPassesService
   ) {}
 
   ngOnInit() {

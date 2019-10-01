@@ -3,11 +3,14 @@ import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
-import {Observable, of, timer} from 'rxjs';
+import {BehaviorSubject, Observable, of, timer} from 'rxjs';
 import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../../../services/locations.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
+import * as _ from 'lodash';
+import {CreateFormService} from '../../../create-form.service';
+import {ScreenService} from '../../../../services/screen.service';
 
 @Component({
   selector: 'app-groups-step1',
@@ -28,17 +31,25 @@ export class GroupsStep1Component implements OnInit {
   isEmptyGroups$: Observable<boolean>;
   isEmptyGroups: boolean = false;
 
+  isLoadingGroups$: Observable<boolean> = this.userService.isLoadingStudentGroups$;
+  isLoadedGroups$: Observable<boolean> = this.userService.isLoadedStudentGroups$;
+
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
+  frameMotion$: BehaviorSubject<any>;
+
 
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private locationService: LocationsService,
-    public sanitizer: DomSanitizer
-
+    public sanitizer: DomSanitizer,
+    private formService: CreateFormService,
+    private screenService: ScreenService
   ) { }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     of(!this.groups || (this.groups && !this.groups.length)).subscribe((v) => {
       this.isEmptyGroups = v;
     });
@@ -68,42 +79,54 @@ export class GroupsStep1Component implements OnInit {
   }
 
   nextStep() {
-    // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
-    if (this.formState.forLater) {
-        this.formState.step = 1;
-        this.formState.fromState = 1;
+    if (this.screenService.isDeviceLargeExtra) {
+      this.formService.setFrameMotionDirection('forward');
+      this.formService.compressableBoxController.next(false);
     } else {
-        this.formState.step = 3;
-        this.formState.state = 1;
-        this.formState.fromState = 1;
+      this.formService.setFrameMotionDirection('disable');
     }
+    setTimeout(() => {
+      // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
+      if (this.formState.forLater) {
+          this.formState.step = 1;
+          this.formState.fromState = 1;
+      } else {
+          this.formState.step = 3;
+          this.formState.state = 1;
+          this.formState.fromState = 1;
+      }
 
-    if ( this.selectedGroup) {
-      this.formState.data.selectedGroup = this.selectedGroup;
-      this.formState.data.selectedStudents = this.selectedGroup.users;
+      if ( this.selectedGroup) {
+        this.formState.data.selectedGroup = this.selectedGroup;
+        this.formState.data.selectedStudents = this.selectedGroup.users;
 
-    } else {
-      this.formState.data.selectedGroup = null;
-      this.formState.data.selectedStudents = this.selectedStudents;
-    }
+      } else {
+        this.formState.data.selectedGroup = null;
+        this.formState.data.selectedStudents = this.selectedStudents;
+      }
 
-    this.stateChangeEvent.emit(this.formState);
+      this.stateChangeEvent.emit(this.formState);
+    }, 100);
   }
 
   createGroup() {
-    this.formState.state = 2;
-    this.formState.step = 2;
-    this.formState.fromState = 1;
-    this.formState.data.selectedStudents = this.selectedStudents;
-    this.createGroupEmit.emit(this.formState);
+
+    this.formService.setFrameMotionDirection('disable');
+
+    setTimeout(() => {
+      this.formState.state = 2;
+      this.formState.step = 2;
+      this.formState.fromState = 1;
+      this.formState.data.selectedStudents = this.selectedStudents;
+      this.createGroupEmit.emit(this.formState);
+    }, 100);
   }
 
   selectGroup(group, evt: Event) {
-
     if (!group) {
       this.selectedGroup = null;
     } else if ( !this.selectedGroup || (this.selectedGroup && (this.selectedGroup.id !== group.id)) ) {
-      this.selectedGroup = group;
+      this.selectedGroup = _.cloneDeep(group);
       this.selectedStudents = this.selectedGroup.users;
     } else {
       this.selectedGroup = null;
@@ -131,10 +154,6 @@ export class GroupsStep1Component implements OnInit {
     this.selectedGroup = null;
     this.formState.data.selectedStudents = evt;
     this.formState.state = 1;
-    this.userService.getStudentGroups()
-        .subscribe((groups: StudentList[]) => {
-            this.groups = groups;
-        });
   }
 
   back() {

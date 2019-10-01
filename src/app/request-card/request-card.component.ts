@@ -120,7 +120,7 @@ export class RequestCardComponent implements OnInit {
     .subscribe(user => {
       this._zone.run(() => {
         this.user = user;
-        this.forStaff = user.roles.includes('_profile_teacher');
+        // this.forStaff = user.roles.includes('_profile_teacher');
       });
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
@@ -344,6 +344,7 @@ export class RequestCardComponent implements OnInit {
           if (this.isSeen) {
             this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
             this.formState.previousStep = 4;
+            this.createFormService.setFrameMotionDirection('disable');
             this.cardEvent.emit(this.formState);
           } else {
             this.dialogRef.close();

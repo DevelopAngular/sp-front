@@ -1,18 +1,48 @@
 import { Injectable } from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import { Pinnable } from '../models/Pinnable';
 import { HttpService } from './http-service';
-import {constructUrl} from '../live-data/helpers';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {
+  getCurrentPinnable,
+  getIsLoadedPinnables,
+  getIsLoadingPinnables,
+  getPinnableCollection,
+  getPinnablesIds
+} from '../ngrx/pinnables/states';
+import {getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
+import {getPassStats} from '../ngrx/pass-stats/actions';
+import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HallPassesService {
 
-  constructor(private http: HttpService) { }
+  pinnables$: Observable<Pinnable[]>;
+  loadedPinnables$: Observable<boolean>;
+  isLoadingPinnables$: Observable<boolean>;
+  pinnablesCollectionIds$: Observable<number[] | string[]>;
+
+  currentPinnable$: Observable<Pinnable>;
+  passStats$;
+
+  constructor(private http: HttpService, private store: Store<AppState>) {
+    this.pinnables$ = this.store.select(getPinnableCollection);
+    this.loadedPinnables$ = this.store.select(getIsLoadedPinnables);
+    this.isLoadingPinnables$ = this.store.select(getIsLoadingPinnables);
+    this.currentPinnable$ = this.store.select(getCurrentPinnable);
+    this.passStats$ = this.store.select(getPassStatsResult);
+    this.pinnablesCollectionIds$ = this.store.select(getPinnablesIds);
+  }
 
     getActivePasses() {
         return this.http.get('v1/hall_passes?active=true');
+    }
+
+    getAggregatedPasses() {
+      return this.http.get('v1/hall_passes/aggregated');
     }
 
     getActivePassesKioskMode(locId) {
@@ -35,6 +65,11 @@ export class HallPassesService {
         return this.http.post(`v1/hall_passes/${id}/ended`);
     }
 
+    getPassStatsRequest() {
+      this.store.dispatch(getPassStats());
+      return this.passStats$;
+    }
+
     getPassStats() {
         return this.http.get('v1/hall_passes/stats');
     }
@@ -43,12 +78,32 @@ export class HallPassesService {
         return this.http.get('v1/pinnables/arranged');
     }
 
+    getPinnablesRequest() {
+      this.store.dispatch(getPinnables());
+      return this.pinnables$;
+    }
+
+    postPinnableRequest(data) {
+      this.store.dispatch(postPinnables({data}));
+      return this.currentPinnable$;
+    }
+
     createPinnable(data) {
         return this.http.post('v1/pinnables', data);
     }
 
+    updatePinnableRequest(id, pinnable) {
+      this.store.dispatch(updatePinnable({id, pinnable}));
+      return this.currentPinnable$;
+    }
+
     updatePinnable(id, data) {
         return this.http.patch(`v1/pinnables/${id}`, data);
+    }
+
+    deletePinnableRequest(id) {
+      this.store.dispatch(removePinnable({id}));
+      return of(true);
     }
 
     deletePinnable(id) {
@@ -71,3 +126,4 @@ export class HallPassesService {
       return this.http.get(url);
     }
 }
+

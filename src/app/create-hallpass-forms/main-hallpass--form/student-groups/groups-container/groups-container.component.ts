@@ -1,11 +1,13 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {User} from '../../../../models/User';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
-import {BehaviorSubject, of} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
-import {delay, filter, map, switchMap} from 'rxjs/operators';
+import {delay, filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {CreateFormService} from '../../../create-form.service';
+import {ScreenService} from '../../../../services/screen.service';
 
 export enum States {
   SelectStudents = 1,
@@ -20,7 +22,7 @@ export enum States {
   styleUrls: ['./groups-container.component.scss']
 })
 
-export class GroupsContainerComponent implements OnInit {
+export class GroupsContainerComponent implements OnInit, OnDestroy {
 
   @Input() FORM_STATE: Navigation;
 
@@ -34,9 +36,13 @@ export class GroupsContainerComponent implements OnInit {
   selectedStudents: User[] = [];
   groupDTO: FormGroup;
 
+  destoy$ = new Subject();
+
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private formService: CreateFormService,
+    private screenService: ScreenService
   ) {
 
     this.states = States;
@@ -48,16 +54,27 @@ export class GroupsContainerComponent implements OnInit {
 
 
   ngOnInit() {
+    if (!this.screenService.isDeviceLargeExtra) {
+      this.formService.compressableBoxController.next(true);
+    }
+
     if (this.FORM_STATE) {
 
       this.currentState = this.FORM_STATE.state || 1;
     }
+
+    // this.userService.getStudentGroupsRequest().pipe(
+    //   takeUntil(this.destoy$)
+    // ).subscribe(res => {
+    //   this.groups = res;
+    // });
+
     this.updateData$.pipe(
       switchMap((evt) => {
-        return this.userService.getStudentGroups().pipe(
+        return this.userService.getStudentGroupsRequest().pipe(
           map((groups: StudentList[]) => {
-          this.groups = groups;
-          return evt;
+            this.groups = groups;
+            return evt;
           })
         );
       }),
@@ -65,46 +82,56 @@ export class GroupsContainerComponent implements OnInit {
     )
     .subscribe((evt: any) => {
       if (evt.fromState === 3 && evt.data.selectedGroup) {
-        this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
-        this.FORM_STATE.data.selectedStudents = evt.data.selectedGroup.users;
-        this.groupDTO.get('users').setValue(evt.data.selectedGroup.users);
-        this.selectedGroup = evt.data.selectedGroup;
+        this.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
+        this.FORM_STATE.data.selectedGroup = this.selectedGroup;
+        this.FORM_STATE.data.selectedStudents = this.selectedGroup.users;
+        this.groupDTO.get('users').setValue(this.selectedGroup.users);
       } else {
         this.selectedStudents = evt.data.selectedStudents;
       }
     });
   }
 
+  ngOnDestroy(): void {
+    this.destoy$.next();
+    this.destoy$.complete();
+  }
+
   onStateChange(evt) {
-    if ( evt === 'exit' ) {
-      this.nextStepEvent.emit({ action: 'exit', data: null });
-      return;
+    if (!this.screenService.isDeviceLargeExtra) {
+      this.formService.compressableBoxController.next(true);
     }
+    setTimeout(() => {
+      if ( evt === 'exit' ) {
+        this.nextStepEvent.emit({ action: 'exit', data: null });
+        return;
+      }
 
-    if (this.FORM_STATE.quickNavigator) {
-        this.FORM_STATE.step = this.FORM_STATE.previousStep;
-        this.FORM_STATE.state = this.FORM_STATE.previousState;
+      if (this.FORM_STATE.quickNavigator) {
+          this.FORM_STATE.step = this.FORM_STATE.previousStep;
+          this.FORM_STATE.state = this.FORM_STATE.previousState;
+          this.FORM_STATE.previousStep = 2;
+          return this.nextStepEvent.emit(this.FORM_STATE);
+      }
+
+      if ( evt.step === 3 || evt.step === 1 ) {
+        // this.FORM_STATE.step = evt.step;
+        this.FORM_STATE.step = this.FORM_STATE.previousStep && this.FORM_STATE.previousStep > 3 ? this.FORM_STATE.previousStep : evt.step ;
         this.FORM_STATE.previousStep = 2;
-        return this.nextStepEvent.emit(this.FORM_STATE);
-    }
-
-    if ( evt.step === 3 || evt.step === 1 ) {
-      // this.FORM_STATE.step = evt.step;
-      this.FORM_STATE.step = this.FORM_STATE.previousStep && this.FORM_STATE.previousStep > 3 ? this.FORM_STATE.previousStep : evt.step ;
-      this.FORM_STATE.previousStep = 2;
-      this.FORM_STATE.state = this.FORM_STATE.formMode.formFactor === 3 ? 2 : 1;
-      this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
-      this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
-      this.nextStepEvent.emit(this.FORM_STATE);
-      return;
-    }
+        this.FORM_STATE.state = this.FORM_STATE.formMode.formFactor === 3 ? 2 : 1;
+        this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
+        this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
+        this.nextStepEvent.emit(this.FORM_STATE);
+        return;
+      }
+    }, 100);
   }
 
   groupNextStep(evt) {
-
     switch (evt.state) {
       case 3:
         this.selectedGroup = evt.data.selectedGroup;
+        // this.selectedStudents = evt.data.selectedStudents;
         break;
       case 2:
         this.selectedStudents = evt.data.selectedStudents;

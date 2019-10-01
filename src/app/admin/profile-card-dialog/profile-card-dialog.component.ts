@@ -3,12 +3,11 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {Router} from '@angular/router';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {map, mapTo, switchMap, tap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
-import {empty, forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
+import {fromEvent, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
-import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {HttpService} from '../../services/http-service';
 
 import * as _ from 'lodash';
@@ -64,6 +63,11 @@ export class ProfileCardDialogComponent implements OnInit {
   public orgUnitSelectorInitialState: GSuiteSelector;
   public orgUnitSelectorEditState: boolean;
   public checkSelectorForUpdating$:  Subject<GSuiteSelector[]> = new Subject();
+  public signInStatus: {
+    touched: boolean,
+    value: boolean,
+    initialValue: boolean
+  };
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -97,6 +101,11 @@ export class ProfileCardDialogComponent implements OnInit {
     if (this.data.profile) {
 
       this.profile = this.data.profile;
+      this.signInStatus = {
+        touched: false,
+        value: false,
+        initialValue: this.profile._originalUserProfile.active
+      };
 
       if (this.data.role === '_profile_assistant') {
         this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
@@ -142,11 +151,8 @@ export class ProfileCardDialogComponent implements OnInit {
                       `${this.data.orgUnit.title}s Group Syncing`
                       : '';
 
-    if (this.data.role === '_profile_teacher') {
-        this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)
-          .subscribe((locations: Location[]) => {
-            this.teacherAssignedTo = locations;
-          });
+    if (this.data.role === '_profile_teacher') {console.log(this.profile);
+       this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo;
     }
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
@@ -238,7 +244,6 @@ export class ProfileCardDialogComponent implements OnInit {
   }
 
   promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-
     if (!eventTarget.classList.contains('button')) {
       (eventTarget as any) = eventTarget.closest('.button');
     }
@@ -248,32 +253,27 @@ export class ProfileCardDialogComponent implements OnInit {
       of(option)
         .pipe(
           switchMap((action): Observable<any> => {
-            console.log(action);
             eventTarget.style.opacity = '1';
 
             switch (action) {
               case 'delete_from_profile':
-                let role: any = this.data.role.split('_');
-                role = role[role.length - 1];
-                return this.userService.deleteUserFromProfile(this.profile.id, role).pipe(map(() => true));
-                break;
+                return this.userService.deleteUserRequest(this.profile.id, this.data.role).pipe(mapTo('close'));
               case 'disable_sign_in':
-                return this.userService.setUserActivity(this.profile.id, false).pipe(map(() => true));
-                break;
+                this.signInStatus.touched = true;
+                this.signInStatus.value = false;
+                return of(false);
               case 'enable_sign_in':
-                return this.userService.setUserActivity(this.profile.id, true).pipe(map(() => true));
-                break;
+                this.signInStatus.touched = true;
+                this.signInStatus.value = true;
+                return of(true);
               default:
-                return of( null);
-                break;
+                return of( 'close');
             }
-            this.consentMenuOpened = false;
           }),
         )
         .subscribe((res) => {
-          console.log(res);
-          if (res != null) {
-            this.http.setSchool(this.http.getSchool());
+          this.profile._originalUserProfile.active = res;
+          if (res === 'close') {
             this.dialogRef.close(res);
           }
         });
@@ -285,8 +285,12 @@ export class ProfileCardDialogComponent implements OnInit {
       this.updateProfile().subscribe(() => {
         this.dialogRef.close(true);
       });
+    } else if (this.signInStatus.touched && this.signInStatus.value !== this.signInStatus.initialValue) {
+      this.userService.setUserActivityRequest(this.profile._originalUserProfile, this.signInStatus.value, this.data.role)
+        .subscribe(() => {
+          this.dialogRef.close(false);
+        });
     } else {
-
       this.dialogRef.close(false);
     }
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import { HallPassesService } from '../services/hall-passes.service';
 import {map} from 'rxjs/operators';
 
@@ -9,9 +9,12 @@ import {map} from 'rxjs/operators';
 })
 export class CreateFormService {
 
-  isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private transition: any;
   private frameMotionDirection$: BehaviorSubject<any>;
+
+  public scalableBoxController = new ReplaySubject<boolean>(1);
+  public compressableBoxController = new ReplaySubject<boolean>(1);
+  public isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(private hallPassService: HallPassesService) {
     this.transition = {
@@ -19,24 +22,23 @@ export class CreateFormService {
       halfTo: -50,
       from: 100,
       halfFrom: 50,
-      direction: 'forward'
+      direction: 'disable'
     };
     this.frameMotionDirection$ = new BehaviorSubject(this.transition);
   }
 
   getPinnable(filter?: boolean) {
-    return this.hallPassService.getPinnables()
+    return this.hallPassService.pinnables$
       .pipe(
         map((pins) => {
           if (filter) {
+            // debugger;
             return pins.filter((p: Pinnable) => (p.type === 'location' && !p.location.restricted) || p.type === 'category');
           } else {
             return pins;
           }
         })
-      )
-      .toPromise()
-      .then(json => json.map(raw => Pinnable.fromJSON(raw)));
+      );
   }
 
   seen() {
@@ -52,8 +54,8 @@ export class CreateFormService {
 
     switch (direction) {
       case 'disable':
-        this.transition.to = -100;
-        this.transition.halfTo = -50;
+        this.transition.to = 0;
+        this.transition.halfTo = 0;
         this.transition.from = 0;
         this.transition.halfFrom = 0;
         this.frameMotionDirection$.next(this.transition);

@@ -5,7 +5,6 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { User } from '../../models/User';
 import { Pinnable } from '../../models/Pinnable';
 import { OptionState } from './advanced-options/advanced-options.component';
-import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
 
 export interface PageState {
     currentPage: number;
@@ -54,7 +53,7 @@ export interface FolderData {
     selectedRoomsInFolder: any[];
     roomsInFolderLoaded: boolean;
     selectedRoomToEdit: any;
-    roomsToDelete: any[]
+    roomsToDelete: any[];
 }
 
 @Injectable({
@@ -65,6 +64,7 @@ export class OverlayDataService {
   pageState: BehaviorSubject<PageState> = new BehaviorSubject<PageState>(null);
 
   roomNameBlur$: Subject<any> = new Subject();
+  folderNameBlur$: Subject<any> = new Subject<any>();
 
   dropEvent$ = new Subject();
   dragEvent$ = new Subject();
@@ -77,7 +77,7 @@ export class OverlayDataService {
       scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
   };
 
-  constructor(private formService: CreateFormService,) {
+  constructor() {
   }
 
   changePage(next, previous, data) {

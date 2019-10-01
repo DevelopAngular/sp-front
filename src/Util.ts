@@ -24,7 +24,7 @@ export class Util{
         let formattedDate:string = "";
         let now: Date = TimeService.getNowDate();
 
-        if(s.getFullYear() === now.getFullYear()){
+      if(s.getFullYear() === now.getFullYear()){
           if(s.getMonth() === now.getMonth()){
             if(s.getDate() === now.getDate()){
               formattedDate = "Today"
@@ -45,6 +45,11 @@ export class Util{
         } else{
           return this.month[s.getMonth()] +" " +s.getDate() +", " +s.getFullYear();
         }
+
+        if (formattedDate === 'Wednesday') {
+          formattedDate = 'Wed.';
+        }
+
         return formattedDate +", " +formattedTime;
     }
 

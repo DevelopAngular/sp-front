@@ -85,6 +85,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       // } else {
         this.router.navigate([loadView]);
       // }
+      this.titleService.setTitle('SmartPass');
     });
 
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');

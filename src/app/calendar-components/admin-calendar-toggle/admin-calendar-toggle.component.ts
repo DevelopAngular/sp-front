@@ -57,7 +57,7 @@ export class AdminCalendarToggleComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.selectedOptions);
+    // console.log(this.selectedOptions);
     if (this.selectedOptions) {
       setTimeout(() => {
           this.toggleResult = this.selectedOptions.toggleResult;
@@ -164,7 +164,6 @@ export class AdminCalendarToggleComponent implements OnInit {
       } else {
           this.settingsRes.emit({toggleResult: this.toggleResult});
           this.adminCalendarRes.emit({start: moment(this.selectedDay).startOf('day'), end: moment(this.selectedDay)});
-            // this.adminCalendarRes.emit(moment(this.selectedDay));
       }
     } else if (this.toggleResult === 'Weeks') {
         this.settingsRes.emit({toggleResult: this.toggleResult});

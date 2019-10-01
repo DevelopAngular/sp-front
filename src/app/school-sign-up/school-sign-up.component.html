@@ -1,11 +1,12 @@
 <div class="host">
-<!--  <app-ios-calendar (selectedEvent)="test($event)"></app-ios-calendar>-->
-<!--  <app-date-time style="border: 1px solid green; border-radius: 14px" [isStaff]="true" [mock]="true"></app-date-time>-->
+<!--  <div style="width: 100vw;height: 100vh;display: flex;align-items: center;justify-content: center;">-->
+<!--    <app-ios-calendar (selectedEvent)="test($event)"></app-ios-calendar>-->
+<!--  </div>-->
   <div class="school-signin" *ngIf="true">
     <div [style.margin-right]="'80px'">
       <img [src]="'./assets/School-sign-in.svg'" alt="School-sign-in.svg">
     </div>
-    <div [style.width]="'550px'" [style.min-width]="'550px'" [style.height]="'550px'" [style.padding-right]="'100px'">
+    <div [style.width]="'550px'" [style.height]="'550px'" [style.padding-right]="'100px'">
       <div>
         <div *ngIf="!school" class="school-signin_big-title">
           Sign up your school <br>
@@ -29,7 +30,7 @@
               </span>
             </div>
             <app-sp-search
-              [height]="'40px'"
+              [style.transform]="'scale(1.1)'"
               [searchTarget]="'schools'"
               [selectedOptions]="[]"
               [chipsMode]="false"
@@ -47,66 +48,42 @@
           <div class="school-input_step-number">
             2
           </div>
-          <div class="ds-w-100 ds-ml-15 school-input_field" [style.justify-content]="school ? 'center' : 'initial'">
+          <div class="ds-w-100 ds-ml-15 school-input_field">
             <div>
               <span class="school-input_title">
-                Create your account
+                Sign up with Google
               </span>
             </div>
-            <div *ngIf="!school" class="ds-mt-15" style="white-space: nowrap">
+            <div class="ds-mt-15" style="white-space: nowrap">
               This just creates your individual administrator account. We’ll add <br>
               the rest of your school’s accounts through G Suite Sync later.
             </div>
           </div>
         </div>
         <div *ngIf="school" class="ds-flex-center-center ds-flex-column">
-          <div class="create-account-form">
-            <app-input
-              class="ds-mt-10"
-              [width]="'183px'"
-              [height]="'35px'"
-              [formGroup]="schoolForm"
-              [controlName]="schoolForm.get('firstName')"
-              [input_value]="schoolForm.get('firstName').value"
-              [input_label]="'First name'"
-            ></app-input>
-            <app-input
-              class="ds-mt-10"
-              [width]="'183px'"
-              [height]="'35px'"
-              [formGroup]="schoolForm"
-              [controlName]="schoolForm.get('lastName')"
-              [input_value]="schoolForm.get('lastName').value"
-              [input_label]="'Last name'"
-            ></app-input>
-            <app-input
-              class="ds-mt-15"
-              [width]="'183px'"
-              [height]="'35px'"
-              [formGroup]="schoolForm"
-              [controlName]="schoolForm.get('schoolEmail')"
-              [input_value]="schoolForm.get('schoolEmail').value"
-              [input_label]="'School email'"
-            ></app-input>
-            <app-input
-              class="ds-mt-15"
-              [width]="'183px'"
-              [height]="'35px'"
-              [formGroup]="schoolForm"
-              [controlName]="schoolForm.get('password')"
-              [input_value]="schoolForm.get('password').value"
-              [input_label]="'Password'"
-            ></app-input>
-            <div class="ds-w-100 ds-flex-center-center ds-mt-5">
+          <div class="login-button" [style.margin]="'50px auto 100px auto'">
+            <div style="border-radius: 6px; box-shadow: 0 0 5px 2px rgba(0, 0, 0, .05)">
               <app-gradient-button
-                [size]="'small'"
-                [gradient]="'#FFFFFF, #00B476'"
-                [fontWeight]="'normal'"
-                [rightIcon]="'./assets/Chevron Right (White).svg'"
+                [size]="'xl'"
+                [gradient]="'#FFFFFF, #FFFFFF'"
+                [withShadow]="true"
+                [cursor]="'pointer'"
+                [hoverColor]="'#F1F1F1'"
+                [minWidth]="'300px'"
+                [minHeight]="'100px'"
+                [fontSize]="'22px'"
+                (buttonClick)="createSchool()"
+                [leftIcon]="(pending$ | async) ? null : './assets/google/google_logo.svg'"
+                [textColor]="'#666666'"
+                [leftImageWidth]="'40px'"
+                [leftImageHeight]="'40px'"
               >
-                <span style="font-weight: normal;">
-                  Sign up
-                </span>
+                <div *ngIf="!(pending$ | async)">
+                  <span>Sign in with Google</span>
+                </div>
+                <div style="width: 240px; display: flex; justify-content: center" *ngIf="(pending$ | async)" class="loading-theme_white">
+                  <mat-spinner [diameter]="35"></mat-spinner>
+                </div>
               </app-gradient-button>
             </div>
           </div>
@@ -116,7 +93,7 @@
               <span><strong>administrator</strong> to be able to sync users.</span>
             </div>
           </div>
-          <div style="text-align: center; color: #ABB4CD; font-size: 13px; max-width: 465px; margin-left: 25px;">
+          <div style="text-align: center; color: #ABB4CD;">
             By proceeding to sign up your school and use SmartPass, you and your school users are agreeing to our
             <a class="ds-link-text" href="https://www.smartpass.app/terms"><strong>Terms of Service</strong></a> and
             <a class="ds-link-text" href="https://www.smartpass.app/privacy"><strong>Privacy Policy</strong></a>.

@@ -65,13 +65,13 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.activePassesKiosk = new WrappedProvider(new ActivePassProvider(this.liveDataService, of('')));
       this.dataService.currentUser.pipe(
           switchMap(user => {
-              return this.locationService.getLocationsWithTeacher(user);
+              return this.locationService.getLocationsWithTeacherRequest(user);
           }))
           .subscribe(locations => {
           const kioskJwtToken = this.storage.getItem('kioskToken');
           const jwtHelper = new JwtHelperService();
           this.userData = jwtHelper.decodeToken(kioskJwtToken);
-          const kioskLocation = locations.find(loc => loc.id === this.userData.kiosk_location_id);
+          const kioskLocation = locations.find(loc => +loc.id === this.userData.kiosk_location_id);
           this.kioskMode.currentRoom$.next(kioskLocation);
       });
   }

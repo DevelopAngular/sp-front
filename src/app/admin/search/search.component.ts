@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
@@ -13,7 +13,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
-import {BehaviorSubject, of, Subscription} from 'rxjs';
+import {of, Subscription} from 'rxjs';
 import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-dialog.component';
@@ -43,7 +43,7 @@ export class SearchComponent implements OnInit {
   @ViewChildren(XsButtonComponent) set xsb(xsb: QueryList<XsButtonComponent>) {
     if (xsb) {
       this.b = xsb;
-      console.log(this.b);
+      // console.log(this.b);
     }
   }
 
@@ -133,7 +133,7 @@ export class SearchComponent implements OnInit {
       this.resetSearchState();
       this.b.map((b: XsButtonComponent) => b.resetEmit());
       this.selectedDate = null;
-    })
+    });
 
     disableBodyScroll(this.elRef.nativeElement);
 
@@ -168,7 +168,6 @@ export class SearchComponent implements OnInit {
                     return `${loc.title}(${loc.room})`;
                   });
                   this.initialSearchLocationString = titleArray.join(', ');
-                  // console.log(this.initialSearchLocationString);
                   this.search();
                 })
               );
@@ -178,7 +177,6 @@ export class SearchComponent implements OnInit {
       })
     ).subscribe((v) => {
       this.inputPanelVisibility = true;
-      console.log(v, forceSearch );
       forceSearch.unsubscribe();
     });
 
@@ -186,10 +184,6 @@ export class SearchComponent implements OnInit {
 
   onPress(press: boolean) {
     this.buttonDown = press;
-  }
-
-  normalizeDataForTable() {
-
   }
 
   private wrapToHtml(data, htmlTag, dataSet?) {
@@ -204,7 +198,6 @@ export class SearchComponent implements OnInit {
 
       let url = 'v1/hall_passes?';
       if (this.selectedRooms) {
-        console.log(this.selectedRooms);
         this.selectedRooms.forEach(room => {
           if (room.filter === 'Origin') {
               url += 'origin=' + room.id + '&';
@@ -226,6 +219,9 @@ export class SearchComponent implements OnInit {
       }
 
       if (this.selectedDate) {
+        console.log(this.selectedDate.start.format('DD hh:mm A'));
+        console.log(this.selectedDate.end.format('DD hh:mm A'));
+        debugger;
         let start;
         let end;
         if (this.selectedDate['start']) {
@@ -236,7 +232,6 @@ export class SearchComponent implements OnInit {
           end = this.selectedDate['end'].toISOString();
           url += (end ? ('end_time_before=' + end) : '');
         }
-        console.log('Start: ', start, '\nEnd: ', end);
       }
 
       this.hallPassService
@@ -244,7 +239,6 @@ export class SearchComponent implements OnInit {
         .pipe(filter(res => !!res))
         .subscribe((passes: HallPass[]) => {
 
-          // console.log('DATA', passes);
           this.passes = passes;
           this.tableData = passes.map((hallPass, i) => {
 
@@ -252,16 +246,6 @@ export class SearchComponent implements OnInit {
 
             const name = hallPass.student.first_name + ' ' + hallPass.student.last_name +
                 ` (${hallPass.student.primary_email.split('@', 1)[0]})`;
-
-
-            // const passTemplate = {
-            //   'Student Name': `<span>${name}</span>`,
-            //   'Origin': `<span>${hallPass.origin.title}</span>`,
-            //   'TT': this.domSanitizer.bypassSecurityTrustHtml(hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY),
-            //   'Destination': `<span>${hallPass.destination.title}</span>`,
-            //   'Date & Time': `<span>${moment(hallPass.created).format('M/DD h:mm A')}</span>`,
-            //   'Duration': `<span>${(Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'}</span>`
-            // };
 
             const rawObj = {
                 'Student Name': name,
@@ -326,7 +310,7 @@ export class SearchComponent implements OnInit {
             if (!date.start) {
                 this.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
             } else {
-                this.selectedDate = {start: date.start, end: date.end};
+                this.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
             }
             this.hasSearched = false;
         });

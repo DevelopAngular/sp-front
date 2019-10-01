@@ -43,12 +43,10 @@ export class LocationsGroupContainerComponent implements OnInit {
   user$: Observable<User>;
   user: User;
   isStaff: boolean;
-  pinnables: Promise<Pinnable[]>;
+  pinnables: Observable<Pinnable[]>;
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
-
-  teacherRooms$: Observable<Pinnable[]>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -60,15 +58,14 @@ export class LocationsGroupContainerComponent implements OnInit {
   ) { }
 
   get showDate() {
-      if ( this.FORM_STATE.data.date ) {
-
-        if (!this.FORM_STATE.data.date.date ) {
-          return false;
-        } else {
-          return Util.formatDateTime(new Date(this.FORM_STATE.data.date.date));
-        }
-
+    if ( this.FORM_STATE.data.date ) {
+      if (!this.FORM_STATE.data.date.date ) {
+        return false;
+      } else {
+        return Util.formatDateTime(new Date(this.FORM_STATE.data.date.date));
       }
+
+    }
   }
 
   get studentText() {
@@ -124,13 +121,10 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    // this.formService.setFrameMotionDirection('disable');
-
+    // this.formService.compressableBoxController.next(false);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
 
-    // this.FORM_STATE.previousState = 0;
     this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']);
@@ -259,7 +253,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   back(event) {
-
     this.FORM_STATE = event;
     this.data.message = null;
     this.FORM_STATE.data.message = null;
@@ -299,5 +292,9 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
+  }
+
+  get pwaBackBtnVisibility() {
+    return this.screenService.isDeviceLargeExtra;
   }
 }

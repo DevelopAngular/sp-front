@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
   BehaviorSubject,
@@ -40,8 +40,8 @@ import {NavbarDataService} from '../main/navbar-data.service';
 import {PassesAnimations} from './passes.animations';
 import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
-import {init} from '@sentry/browser';
 import {UserService} from '../services/user.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -74,6 +74,7 @@ export class ActivePassProvider implements PassLikeProvider {
 
     const passes$ = this.user$.pipe(
       switchMap(user => {
+        console.log(user);
         return this.liveDataService.watchActiveHallPasses(mergedReplay,
             user.roles.includes('hallpass_student')
               ? {type: 'student', value: user}
@@ -161,7 +162,6 @@ export class InboxInvitationProvider implements PassLikeProvider {
   }
 }
 
-
 @Component({
   selector: 'app-passes',
   templateUrl: './passes.component.html',
@@ -170,12 +170,20 @@ export class InboxInvitationProvider implements PassLikeProvider {
     PassesAnimations.OpenOrCloseRequests,
     PassesAnimations.PassesSlideTopBottom,
     PassesAnimations.RequestCardSlideInOut,
+    PassesAnimations.HeaderSlideInOut,
+    PassesAnimations.HeaderSlideTopBottom,
+    PassesAnimations.PreventInitialChildAnimation,
   ],
 })
+
 export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private scrollableAreaName = 'Passes';
   private scrollableArea: HTMLElement;
+
+  @ViewChild('animatedHeader') animatedHeader: ElementRef<HTMLElement>;
+
+  @ViewChild('passesWrapper') passesWrapper: ElementRef<HTMLElement>;
 
   @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
     if (scrollable) {
@@ -204,7 +212,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(scrollObserver)
           )
           .subscribe((v) => {
-            console.log(scrollOffset);
             if (v) {
               this.scrollableArea.scrollTo({top: scrollOffset});
               scrollObserver.next();
@@ -277,8 +284,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
     private scrollPosition: ScrollPositionService,
-    private userService: UserService
-  ) {
+    private userService: UserService) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -287,7 +293,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     const excludedPasses = this.currentPass$.pipe(map(p => p !== null ? [p] : []));
 
     const dbUser$ = combineLatest(
-      this.userService.effectiveUser,
+      this.userService.effectiveUser.asObservable(),
       this.dataService.currentUser
     ).pipe(
       map(([effectUser, currentUser]) => {
@@ -298,9 +304,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }));
 
-    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, this.dataService.currentUser));
-    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses, this.timeService));
-    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, this.dataService.currentUser));
+    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, dbUser$));
+    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, dbUser$, excludedPasses, this.timeService));
+    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, dbUser$));
 
     this.dataService.currentUser
       .pipe(
@@ -344,9 +350,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.userService.effectiveUser.subscribe(res => {
-    //   debugger;
-    // });
     this.navbarService.inboxClick.subscribe(inboxClick => {
       this.isInboxClicked = inboxClick;
     });
@@ -354,7 +357,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
         this._zone.run(() => {
-          console.log(user);
           this.user = user;
           this.isStaff =
             user.roles.includes('_profile_teacher') ||
@@ -409,9 +411,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cursor = 'default';
     }
   }
+
   ngAfterViewInit(): void {
-  //   console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
-  //   this.scrollableArea.scrollTo({top: this.scrollPosition.getComponentScroll(this.scrollableAreaName), behavior: 'smooth'});
+
   }
 
   ngOnDestroy(): void {
@@ -424,6 +426,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
       panelClass: 'main-form-dialog-container',
       backdropClass: 'custom-backdrop',
+      maxWidth: '100vw',
       data: {
         'forLater': forLater,
         'forStaff': this.isStaff,
@@ -433,7 +436,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onReportFromPassCard(evt) {
-    console.log(evt);
     if (evt) {
       this.dialog.open(ReportSuccessToastComponent, {
         backdropClass: 'invisible-backdrop',
@@ -450,5 +452,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
     }
+  }
+
+  get isAndroid() {
+    return DeviceDetection.isAndroid();
   }
 }

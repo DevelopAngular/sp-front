@@ -4,6 +4,6 @@
 
 <!--<img *ngIf="isStaff" [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back($event)">-->
 
-<div *ngIf="isStaff"  [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'">
-  <app-icon-button (clickEvent)="back($event)" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
+<div [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'">
+  <app-icon-button (clickEvent)="stepBackMobile()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
 </div>

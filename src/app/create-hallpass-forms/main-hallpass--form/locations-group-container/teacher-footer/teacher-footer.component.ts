@@ -1,5 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
+import {CreateFormService} from '../../../create-form.service';
+import {BehaviorSubject} from 'rxjs';
+import {ScreenService} from '../../../../services/screen.service';
 
 @Component({
   selector: 'app-teacher-footer',
@@ -25,8 +28,11 @@ export class TeacherFooterComponent implements OnInit {
   @Output() changeLocation: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   showFullFooter: boolean = false;
-
-  constructor() { }
+  frameMotion$: BehaviorSubject<any>;
+  constructor(
+    private formService: CreateFormService,
+    private screenService: ScreenService
+  ) { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
@@ -49,10 +55,12 @@ export class TeacherFooterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
   }
 
   goToFromWhere(evt: Event) {
     evt.stopPropagation();
+    this.formService.scalableBoxController.next(false);
      if (this.state === 'from' || this.date || this.formState.kioskMode) {
         return false;
      }
@@ -64,7 +72,8 @@ export class TeacherFooterComponent implements OnInit {
 
   goToToWhere(evt: Event) {
     evt.stopPropagation();
-     if (this.state === 'to' || this.state === 'from' || this.formState.kioskMode) {
+    this.formService.scalableBoxController.next(false);
+    if (this.state === 'to' || this.state === 'from' || this.formState.kioskMode) {
        return false;
      }
      this.formState.previousState = this.formState.state;
@@ -74,17 +83,29 @@ export class TeacherFooterComponent implements OnInit {
 
   goToStudents(evt: Event) {
     evt.stopPropagation();
-    if (this.formState.kioskMode) {
-      return false;
+    if (!this.screenService.isDeviceLargeExtra) {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.compressableBoxController.next(true);
     }
-    this.formState.previousState = this.formState.state;
-    this.formState.step = 2;
-    this.formState.previousStep = 3;
-    this.formState.quickNavigator = true;
-    this.changeLocation.emit(this.formState);
+    this.formService.scalableBoxController.next(false);
+
+    setTimeout(() => {
+      if (this.formState.kioskMode) {
+        return false;
+      }
+      this.formState.previousState = this.formState.state;
+      this.formState.step = 2;
+      this.formState.state = 1;
+      this.formState.previousStep = 3;
+      this.formState.previousState = 2;
+      this.formState.quickNavigator = true;
+      this.changeLocation.emit(this.formState);
+    }, 100);
+
   }
 
   goToDate() {
+    this.formService.scalableBoxController.next(false);
     this.formState.previousState = this.formState.state;
     this.formState.step = 1;
     this.formState.state = 1;

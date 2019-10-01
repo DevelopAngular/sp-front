@@ -1,7 +1,7 @@
 ﻿import {Component, OnInit, Input, Output, EventEmitter, ViewChild, Renderer2} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
-import {delay, switchMap, tap} from 'rxjs/operators';
+import {debounceTime, delay, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
 
 
@@ -73,7 +73,8 @@ export class AppInputComponent implements OnInit {
       setTimeout(() => {
             this.controlName.setValue(this.input_value);
       }, 50);
-        this.controlName.valueChanges.subscribe(res => {
+        this.controlName.valueChanges
+          .subscribe(res => {
           this.onUpdate.emit(res);
         });
     }

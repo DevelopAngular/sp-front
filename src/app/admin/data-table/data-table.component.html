@@ -9,7 +9,10 @@
     <table mat-table matSort matSortStart="desc"
            [ngClass]="{
              'light-mode': !(darkMode$ | async),
-             'dark-mode': (darkMode$ | async)
+             'light-mode_allow-hover': !(darkMode$ | async) && !disallowHover,
+             'dark-mode': (darkMode$ | async),
+             'dark-mode_allow-hover': (darkMode$ | async) && !disallowHover
+
            }"
            [dataSource]="dataSource"
            [multiTemplateDataRows]="true"

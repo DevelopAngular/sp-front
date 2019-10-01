@@ -32,8 +32,8 @@ export class ProgressInterceptor implements HttpInterceptor {
                         if ( error.status === 0 || ( error.status >= 400 && error.status < 600 && exeptedUrls) ) {
                           console.log(error);
                           this.http.errorToast$.next({
-                            header: 'Server Error.',
-                            message: 'Operation could not be completed. We’re working on a solution.'
+                            header: 'Something went wrong.',
+                            message: `Please try refreshing the page. If the issue keeps occurring, contact us below. Error status code:${error.status}`
                           });
                         }
                         return throwError(error);

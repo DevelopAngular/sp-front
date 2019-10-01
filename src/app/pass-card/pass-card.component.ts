@@ -12,7 +12,7 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import {filter, map, tap} from 'rxjs/operators';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
-import {BehaviorSubject, interval, merge, of, Subscription} from 'rxjs';
+import {BehaviorSubject, interval, merge, Observable, of, Subject, Subscription} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -70,11 +70,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   isSeen: boolean;
 
-  subscribers$: Subscription;
+  activePassTime$: Observable<string>;
 
   header: string;
   options: any = [];
   cancelEditClick: boolean;
+  frameMotion$: BehaviorSubject<any>;
+
 
   constructor(
       public dialogRef: MatDialogRef<PassCardComponent>,
@@ -84,7 +86,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
-      private createFormService: CreateFormService,
+      private formService: CreateFormService,
       private timeService: TimeService,
       public screenService: ScreenService
   ) {}
@@ -130,26 +132,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
   }
 
-  get hasClose(){
+  get hasClose() {
     return (this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast;
-    // if(this.forInput) {
-    //   return true;
-    // } else if (this.forMonitor) {
-    //   return !this.fromPast;
-    // } else if (this.forStaff) {
-    //   return this.forFuture || this.isActive;
-    // }
-    // else if ( this.user.id === this.pass.student.id && this.forFuture) {
-    //   return this.pass.cancellable_by_student;
-    // }
-    // else if (!this.forStaff && this.forFuture){
-    //   return false;
-    // } else {
-    //   return this.forFuture;
-    // }
   }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     if (this.data['pass']) {
       this.isModal = true;
       this.pass = this.data['pass'];
@@ -162,6 +151,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.forMonitor = this.data['forMonitor'];
       this.fromHistory = this.data['fromHistory'];
       this.fromHistoryIndex = this.data['fromHistoryIndex'];
+      this.activePassTime$ = this.data['activePassTime$'];
     } else {
       this.selectedStudents = this.students;
     }
@@ -174,10 +164,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
             this.buildPages();
           });
         });
-    console.log('[Trashcan]: ', 'this.forInput('+this.forInput +') || (this.pass.cancellable_by_student('+this.pass.cancellable_by_student +') == (this.forStaff('+!this.forStaff +'))', '=', this.forInput || (this.pass.cancellable_by_student && !this.forStaff));
+
     if (!!this.pass && this.isActive) {
-      console.log('Starting interval');
-      merge(of(0), interval(1000)).pipe(map(x => {
+      // console.log('Starting interval');
+      merge(of(0), interval(1000)).pipe(
+        map(x => {
         const end: Date = this.pass.expiration_time;
         const now: Date = this.timeService.nowDate();
         const diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -192,7 +183,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         return x;
       })).subscribe();
     }
-    this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
+    this.formService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   ngOnDestroy() {
@@ -207,12 +198,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.pass.travel_type = travelType;
   }
 
-  formatDateTime(date: Date){
+  formatDateTime(date: Date) {
     date = new Date(date);
     return Util.formatDateTime(date);
   }
 
-  getDuration(){
+  getDuration() {
     let start: Date = this.pass.start_time;
     let end: Date = this.pass.end_time;
     let timeDiff = Math.abs(start.getTime() - end.getTime());
@@ -233,10 +224,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.buildPage('Pass Created', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
     }
 
-    if(this.isActive){
+    if (this.isActive) {
       this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
       this.activePage = (this.pagerPages);
-    } else if(this.fromPast){
+    } else if (this.fromPast) {
       this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
       let start: Date = this.pass.start_time;
       let end: Date = this.pass.end_time;
@@ -301,7 +292,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.cancelEditClick = !this.cancelEditClick;
     }
 
-    if(!this.cancelOpen){
+    if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
       this.options = [];
       this.header = '';
@@ -312,7 +303,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.options.push(this.genOption('Report Student', '#E32C66', 'report'));
         }
         this.options.push(this.genOption('End Pass', '#E32C66', 'end'));
-        // header = 'What would you like to do with this pass?';
+
         this.header = '';
       } else{
         if (this.forInput) {
@@ -320,6 +311,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
             this.formState.step = 3;
               this.formState.previousStep = 4;
+              this.formService.setFrameMotionDirection('disable');
               this.cardEvent.emit(this.formState);
           } else {
             this.dialogRef.close();
@@ -361,7 +353,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       }
 
       if (!this.screenService.isDeviceMid) {
-        UNANIMATED_CONTAINER.next(true)
+        UNANIMATED_CONTAINER.next(true);
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
@@ -389,7 +381,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if(action === 'delete'){
       let body = {};
       this.hallPassService.cancelPass(this.pass.id, body).subscribe((httpData) => {
-        console.log('[Future Pass Cancelled]: ', httpData);
+        // console.log('[Future Pass Cancelled]: ', httpData);
         this.dialogRef.close();
       });
     } else if(action === 'report') {

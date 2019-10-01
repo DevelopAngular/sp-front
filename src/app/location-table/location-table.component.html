@@ -9,6 +9,7 @@
     [fieldIconPosition]="'left'"
     [closeIcon]="true"
     [focused]="isFocused"
+    [isSearch]="true"
     (ontextupdate)="onSearch($event)"
   ></app-round-input>
   <div class="main-content" *ngIf=" type === 'location' ? ( mainContentVisibility && favoritesLoaded ) : mainContentVisibility ">
@@ -24,8 +25,7 @@
            class="choices"
            dragula="locations"
            [(dragulaModel)]="starredChoices"
-           (dragulaModelChange)="updateOrderLocation($event)"
-           (scroll)="leftScroll($event)">
+           (dragulaModelChange)="updateOrderLocation($event)">
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
             (onSelect)="choiceSelected($event)" (onStar)="star($event)"
@@ -55,9 +55,9 @@
       <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 25px" class="fav-header">All Rooms</div>
       <mat-divider class="divider"></mat-divider>
     </div>
-    <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices; else noLocsDummy">
+    <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices">
       <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
-      <div class="choices" (scroll)="onScroll($event)">
+      <div class="choices">
         <app-location-cell
                 *ngFor="let choice of choices"
                 class="choice"
@@ -76,11 +76,11 @@
       </div>
       <!--<div *ngIf="leftShadow" class="shadow"></div>-->
     </div>
-    <ng-template  #noLocsDummy>
+    <div *ngIf="(loaded$ | async) && noChoices">
       <div>
         <img [src]="'./assets/emptyStates/undraw_people_search_wctu.svg'" width="150" [style.margin]="'20px'" alt="undraw_people_search_wctu.svg">
       </div>
       <div style="color: #999999; font-size: 20px;"><span>{{dummyString}}</span></div>
-    </ng-template>
+    </div>
   </div>
 </div>

@@ -1,9 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {map, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
-import { Observable } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import { HttpService } from '../../services/http-service';
-import { filter } from 'rxjs/internal/operators';
 
 export interface Icon {
     id: string;
@@ -23,13 +22,15 @@ export class IconPickerComponent implements OnInit {
 
   @Input() selectedIconPicker;
 
+  @Input() roomName: string;
+
+  @Input() changeTextResult: Subject<string>;
+
   public selectedIconLocalUrl: string;
 
   icons: Icon[] = [];
 
   isSearching: boolean;
-
-  @Input() roomName: string;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
@@ -40,6 +41,7 @@ export class IconPickerComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private http: HttpService,
+
   ) { }
 
 
@@ -58,6 +60,12 @@ export class IconPickerComponent implements OnInit {
           if (!res.length || !this.selectedIconLocalUrl) {
             this.selectedIconLocalUrl = this.selectedIconPicker ? this.selectedIconPicker.replace('FFFFFF', '1F195E') : '';
           }
+      });
+
+    this.changeTextResult.asObservable()
+      .subscribe(text => {
+        this.iconCollectionTitle = text;
+        this.isSearching = true;
       });
   }
 
@@ -81,7 +89,10 @@ export class IconPickerComponent implements OnInit {
               return _icon;
           });
       } else {
-              this.iconCollectionTitle = 'Search icons';
+        if (!this.isSearching) {
+          this.iconCollectionTitle = 'Search icons';
+        }
+        this.isSearching = false;
           return [];
       }
   }

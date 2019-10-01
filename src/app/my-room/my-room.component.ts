@@ -34,6 +34,9 @@ import * as moment from 'moment';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {HallPass} from '../models/HallPass';
+import {HallPassesService} from '../services/hall-passes.service';
+import {Moment} from 'moment';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -181,15 +184,15 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   isCalendarClick: boolean;
 
-  isCalendarSlide: boolean;
-
   isSearchBarClicked: boolean;
 
   resetValue = new Subject();
 
   currentPasses$ = new Subject();
 
-  currentPassesDates: Observable<moment.Moment[]>;
+  currentPassesDates: Map<string, number> = new Map();
+  holdScrollPosition: number = 0;
+  // currentPassesDates: {[key: number]: Moment};
 
   constructor(
       private _zone: NgZone,
@@ -197,7 +200,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private liveDataService: LiveDataService,
       private timeService: TimeService,
       private locationService: LocationsService,
-
+      private passesService: HallPassesService,
       public darkTheme: DarkThemeSwitch,
       public dataService: DataService,
       public dialog: MatDialog,
@@ -215,7 +218,12 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     console.log(this.kioskMode);
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
-    const selectedLocationArray$ = this.selectedLocation$.pipe(map(location => location));
+    const selectedLocationArray$ = this.selectedLocation$
+      .pipe(
+        map((location) => {
+         return location && location.length ? location.map(l => Location.fromJSON(l)) : [];
+        })
+      )
 
     // Construct the providers we need.
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
@@ -280,7 +288,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     combineLatest(
       this.dataService.currentUser,
       this.userService.effectiveUser,
@@ -303,7 +310,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       }),
       switchMap(([cu, eu]) => {
         return combineLatest(
-          this.locationService.getLocationsWithTeacher(this.user.isAssistant() ? this.effectiveUser.user : this.user ),
+          this.locationService.getLocationsWithTeacherRequest(this.user.isAssistant() ? this.effectiveUser.user : this.user ),
           this.locationService.myRoomSelectedLocation$
         );
       }),
@@ -322,16 +329,12 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.currentPassesDates = this.currentPasses$.pipe(
-      bufferCount(3),
-      map(([active, from, to]: [HallPass[], HallPass[], HallPass[]]) => {
-        return [
-          ...active.map(pass => moment(pass.start_time)),
-          ...from.map(pass => moment(pass.start_time)),
-          ...to.map(pass => moment(pass.start_time))
-        ];
-      })
-    );
+    this.passesService.getAggregatedPasses()
+      .subscribe((res: any) => {
+         res.forEach((pass, i) => {
+           this.currentPassesDates.set(new Date(pass.pass_date).toDateString(), i);
+         });
+      });
 
     this.hasPasses = combineLatest(
       this.activePasses.length$,
@@ -422,6 +425,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   displayOptionsPopover(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
       // const target = new ElementRef(evt.currentTarget);
+      UNANIMATED_CONTAINER.next(true);
       const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
@@ -429,7 +433,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           'heading': 'CHANGE ROOM',
           'locations': this.choices,
           'selectedLocation': this.selectedLocation,
-          'trigger': target
+          'trigger': target,
+          'scrollPosition': this.holdScrollPosition
         }
       });
 
@@ -441,10 +446,17 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         this.optionsOpen = false;
       });
 
-      optionDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
-        this.selectedLocation = data === 'all_rooms' ? null : data;
-        this.selectedLocation$.next(data !== 'all_rooms' ? [data] : this.roomOptions);
-      });
+      optionDialog.afterClosed()
+        .pipe(
+          tap(() => UNANIMATED_CONTAINER.next(false)),
+          filter(res => !!res)
+        )
+        .subscribe(data => {
+          console.log(data);
+          this.holdScrollPosition = data.scrollPosition;
+          this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
+          this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
+        });
     }
   }
 
@@ -557,5 +569,24 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
+  }
+
+  get collectionWidth() {
+    let maxWidth = 533;
+
+    if (this.screenService.createCustomBreakPoint(maxWidth)) {
+        maxWidth = 336;
+    }
+
+    if (this.screenService.createCustomBreakPoint(850) && this.isCalendarClick && !this.isIOSTablet && !this.is670pxBreakPoint
+      || this.screenService.createCustomBreakPoint(850) && this.isCalendarClick && !this.is670pxBreakPoint ) {
+      maxWidth = 336;
+    }
+    return maxWidth + 'px';
+  }
+
+  get is670pxBreakPoint() {
+    const customBreakPoint = 670;
+    return this.screenService.createCustomBreakPoint(customBreakPoint);
   }
 }
