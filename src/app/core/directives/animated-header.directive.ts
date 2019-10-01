@@ -40,11 +40,12 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
         }))
       ]
     ).pipe(
-        take(1),
         takeUntil(this.subscriber$)
       )
       .subscribe(([navbar, schoolToggleBar]) => {
-          this.initializeAnimatedHedaer(navbar, schoolToggleBar);
+          if (navbar.nativeElement.getBoundingClientRect().height > 0) {
+            this.initializeAnimatedHedaer(navbar, schoolToggleBar);
+          }
       });
   }
 
