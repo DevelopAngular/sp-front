@@ -59,6 +59,7 @@ import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
+import {OAuthModule} from 'angular-oauth2-oidc';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -156,6 +157,7 @@ const appRoutes: Routes = [
     MatFormFieldModule,
     MatProgressSpinnerModule,
     HttpClientModule,
+    OAuthModule.forRoot(),
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
