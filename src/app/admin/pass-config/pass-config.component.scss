@@ -25,9 +25,6 @@
 
 
   .pass-config-container {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
     width: 100%;
     padding-top: 25px;
     position: sticky;
@@ -110,7 +107,7 @@
     z-index: 1;
   }
   .pass-config-header {
-    height: 99px;
+    min-height: 99px;
     padding: 0 0 0 30px;
     box-sizing: border-box;
     border-radius: 12px;

@@ -3,6 +3,7 @@ import {NavbarElementsRefsService} from '../../services/navbar-elements-refs.ser
 import {BehaviorSubject, combineLatest, iif, of, Subject} from 'rxjs';
 import {filter, switchMap, take, takeUntil} from 'rxjs/operators';
 import {HttpService} from '../../services/http-service';
+import {DeviceDetection} from '../../device-detection.helper';
 
 @Directive({
   selector: '[appAnimatedHeader]'
@@ -43,7 +44,7 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
         takeUntil(this.subscriber$)
       )
       .subscribe(([navbar, schoolToggleBar]) => {
-        this.initializeAnimatedHedaer(navbar, schoolToggleBar);
+          this.initializeAnimatedHedaer(navbar, schoolToggleBar);
       });
   }
 
@@ -70,12 +71,20 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
     this.stopPoint = this.getsStopPoint();
     this.renderer.setStyle(this.animatedHeader.nativeElement, 'top' , `${this.headerTopPos}px`);
     this.fontSize = parseFloat(this.fontSizeStyle);
+
+    if (this.isAndroid) {
+      this.disableAnimationForAndroid();
+      return;
+    }
+
     this.animateHeader();
   }
 
-  @HostListener('window:scroll')
+  @HostListener('window:scroll', ['$event'])
   animateHeader(event = null) {
-    if (document.documentElement.offsetHeight > document.documentElement.scrollHeight || document.body.offsetHeight > document.body.scrollHeight) {
+
+    if (document.documentElement.offsetHeight > document.documentElement.scrollHeight ||
+      document.body.offsetHeight > document.body.scrollHeight || event && this.isAndroid) {
       return;
     }
 
@@ -84,6 +93,14 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
 
     this.renderer.setStyle(this.animatedHeader.nativeElement, 'top', `${logoHeight}px`);
     this.renderer.setStyle(this.animatedHeader.nativeElement, 'font-size', `${fontScale + 'px'}`);
+  }
+
+  disableAnimationForAndroid() {
+      const fontScale = this.fontSize - 10;
+      const logoHeight = this.stopPoint;
+
+      this.renderer.setStyle(this.animatedHeader.nativeElement, 'top', `${logoHeight}px`);
+      this.renderer.setStyle(this.animatedHeader.nativeElement, 'font-size', `${fontScale + 'px'}`);
   }
 
   get scrollY() {
@@ -96,5 +113,9 @@ export class AnimatedHeaderDirective implements AfterViewInit, OnInit, OnDestroy
 
   get fontSizeStyle() {
     return window.getComputedStyle(this.animatedHeader.nativeElement, null).getPropertyValue('font-size');
+  }
+
+  get isAndroid() {
+    return DeviceDetection.isAndroid();
   }
 }

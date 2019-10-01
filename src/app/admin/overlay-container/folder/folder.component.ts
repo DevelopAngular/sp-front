@@ -126,7 +126,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   ) {}
 
   get folderNameTitle() {
-    if (this.overlayService.pageState.getValue().data.pinnable) {
+    if (this.overlayService.pageState.getValue().data && this.overlayService.pageState.getValue().data.pinnable) {
       return `Folder ${this.overlayService.pageState.getValue().data.pinnable.title}`;
     } else {
       return `Folder`;
