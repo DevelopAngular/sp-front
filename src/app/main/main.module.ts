@@ -56,6 +56,7 @@ import {ScreenService} from '../services/screen.service';
 import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
 import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
+import {TeacherPinStudentComponent} from '../teacher-pin-student/teacher-pin-student.component';
 
 @NgModule({
   imports: [
@@ -115,6 +116,7 @@ import {AnimatedHeaderDirective} from '../core/directives/animated-header.direct
     NotificationFormComponent,
     KioskModeComponent,
     TeacherPinComponent,
+    TeacherPinStudentComponent,
     AnimatedHeaderDirective,
   ],
   entryComponents: [

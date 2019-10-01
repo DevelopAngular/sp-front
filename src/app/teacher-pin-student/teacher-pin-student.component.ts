@@ -1,0 +1,54 @@
+import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {fromEvent} from 'rxjs';
+import * as _ from 'lodash';
+
+@Component({
+  selector: 'app-teacher-pin-student',
+  templateUrl: './teacher-pin-student.component.html',
+  styleUrls: ['./teacher-pin-student.component.scss']
+})
+export class TeacherPinStudentComponent implements OnInit {
+
+  @Output() pinResult: EventEmitter<string> = new EventEmitter<string>();
+
+  pin: string = '';
+
+  circles = [
+    {id: 1, pressed: false},
+    {id: 2, pressed: false},
+    {id: 3, pressed: false},
+    {id: 4, pressed: false}
+  ];
+
+  attempts: number = 5;
+
+  incorrect: boolean;
+
+  constructor() { }
+
+  ngOnInit() {
+
+    fromEvent(document, 'keyup')
+      .subscribe((event: KeyboardEvent) => {
+      if (!_.isNaN(parseFloat(event.key))) {
+        this.pin += event.key;
+        const currentElem = this.circles.find(c => c.id === this.pin.length);
+        currentElem.pressed = true;
+        if (this.pin.length === 4 && this.attempts) {
+
+          // ToDO request to server after that clear pin
+          this.incorrect = true;
+          setTimeout(() => {
+            this.pin = '';
+            this.attempts -= 1;
+            this.circles.forEach(circle => {
+              circle.pressed = false;
+            });
+            this.incorrect = false;
+          }, 1000);
+        }
+      }
+    });
+  }
+
+}

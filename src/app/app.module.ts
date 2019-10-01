@@ -60,11 +60,6 @@ import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
 
-const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
-  direction: 'horizontal',
-  slidesPerView: 'auto'
-};
-
 import { StoreModule } from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
@@ -89,8 +84,11 @@ import {SchoolsEffects} from './ngrx/schools/effects';
 import {UserEffects} from './ngrx/user/effects';
 import {SchoolsResolver} from './core/resolvers/schools-resolver';
 import {ProcessEffects} from './ngrx/onboard-process/effects';
-import { TeacherPinComponent } from './teacher-pin/teacher-pin.component';
-import { NavbarElementSenderDirective } from './core/directives/navbar-element-sender.directive';
+
+const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
+  direction: 'horizontal',
+  slidesPerView: 'auto'
+};
 
 const appRoutes: Routes = [
   {

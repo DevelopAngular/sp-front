@@ -1,0 +1,15 @@
+<div class="teacher-pin-view" #comp>
+  <div class="content">
+    <div class="teacher-pin">
+      <div class="pin-title">Enter Teacher Pin</div>
+      <div class="circles" [ngClass]="{incorrect: incorrect}">
+        <div
+          class="circle"
+          *ngFor="let circle of circles; let i = index"
+          [style.background-color]="circle.pressed ? 'white' : 'transparent'"
+        ></div>
+      </div>
+    </div>
+    <div class="pin-info">Type with Keyboard</div>
+  </div>
+</div>

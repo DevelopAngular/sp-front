@@ -103,15 +103,13 @@
           <div *ngIf="request.status==='pending'" (mouseenter)="onHover(desc, title);"
                (mouseleave)="onLeave(desc)">
               <app-card-button
-                [disabled]="performingAction"
                 [width]="'297px'"
                 [height]="'81px'"
                 [gradientColor]="request.color_profile.gradient_color"
                 (onClick)="activeTeacherPin = true"
               >
                 <div class="resend-button-content">
-                  <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-                  <div *ngIf="!performingAction" class="resend-button-content-title" style="display: flex; align-items: center;">
+                  <div class="resend-button-content-title" style="display: flex; align-items: center;">
                     <img style="margin-right: 10px" width="18" height="18" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="Lock">
                     Enter Teacher Pin
                   </div>
@@ -155,17 +153,8 @@
           </div>
         </div>
       </div>
-
-      <div class="teacher-pin-view" *ngIf="!forStaff && activeTeacherPin">
-        <div class="content">
-          <div class="teacher-pin">
-            <div class="pin-title">Enter Teacher Pin</div>
-            <div class="circles">
-              <div class="circle" *ngFor="let c of [1,1,1,1]"></div>
-            </div>
-          </div>
-          <div class="pin-info">Type with Keyboard</div>
-        </div>
+      <div class="teacher-pin" *ngIf="!forStaff && activeTeacherPin">
+        <app-teacher-pin-student></app-teacher-pin-student>
       </div>
 
       <div class="teacher-view" *ngIf="forStaff">

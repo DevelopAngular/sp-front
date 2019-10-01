@@ -129,11 +129,11 @@ export class RequestCardComponent implements OnInit {
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
-  get studentName(){
+  get studentName() {
     return getInnerPassName(this.request);
   }
 
-  get teacherName(){
+  get teacherName() {
     return this.request.teacher.isSameObject(this.user)?'Me':this.request.teacher.first_name.substr(0, 1) +'. ' +this.request.teacher.last_name;
   }
 
