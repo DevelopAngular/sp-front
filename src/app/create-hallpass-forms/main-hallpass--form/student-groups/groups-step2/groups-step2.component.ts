@@ -125,6 +125,10 @@ export class GroupsStep2Component implements OnInit {
     });
   }
 
+  onCancelClick() {
+    this.form.controls['title'].setValue('');
+  }
+
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
   }
