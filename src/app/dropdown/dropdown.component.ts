@@ -69,6 +69,7 @@ export class DropdownComponent implements OnInit {
     // this.scrollPosition = this.scrollableArea()
     this.scrollPosition = this.options.scrollTop;
 
+    // debugger
     const dataAfterClosing = {
       selectedRoom: location,
       scrollPosition: this.scrollPosition
