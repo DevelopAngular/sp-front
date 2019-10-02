@@ -2,14 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-
 import * as _ from 'lodash';
 import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
-
 import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
-
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
 import { AdminService } from './services/admin.service';
@@ -17,7 +14,6 @@ import { GoogleLoginService } from './services/google-login.service';
 import { HttpService, SPError } from './services/http-service';
 import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
-import { UserService } from './services/user.service';
 import { WebConnectionService } from './services/web-connection.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
@@ -96,7 +92,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private kms: KioskModeService,
     private meta: Meta,
     private notifService: NotificationService,
-    private googleAnalytics: GoogleAnalyticsService
+    private googleAnalytics: GoogleAnalyticsService,
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
@@ -278,6 +274,5 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
   }
-
 
 }

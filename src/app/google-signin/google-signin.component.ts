@@ -1,6 +1,5 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
-
 import {of} from 'rxjs';
 import {finalize, tap} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
@@ -55,6 +54,19 @@ export class GoogleSigninComponent implements OnInit {
       }
     });
   }
+
+  ngOnInit(): void {}
+
+  loginSSO() {
+    this.loginService
+      .simpleSignOn();
+      // .then((res) => {
+      //   console.log(res);
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // });
+  }
   updateDemoUsername(event) {
     this.demoUsername = event;
   }
@@ -100,5 +112,4 @@ export class GoogleSigninComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {}
 }

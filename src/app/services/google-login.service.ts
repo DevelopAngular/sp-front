@@ -1,12 +1,12 @@
 import { Injectable, NgZone } from '@angular/core';
-
-
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
+import {delay, filter, map, take, tap} from 'rxjs/operators';
 import { GoogleAuthService } from './google-auth.service';
 import { StorageService } from './storage.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
+import {AuthConfig, JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
+import {HttpClient} from '@angular/common/http';
 
 declare const window;
 
@@ -20,6 +20,45 @@ export interface DemoLogin {
   invalid?: boolean;
   type: 'demo-login';
 }
+
+export const authConfig: AuthConfig = {
+  // issuer: `https://sso.gg4l.com`,
+  loginUrl: `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=PTRDNUBGDX&redirect_uri=${window.location.href}`,
+  skipIssuerCheck: true,
+  skipSubjectCheck: true,
+  // dummyClientSecret: 'zSEk2Qi4UdKWdbRj8ZYUkgJ+bslK9J5DDPxvmMbJd+g=',
+  openUri: (uri => window.open(uri, '_blank')),
+  // oidc: false
+// Url of the Identity Provider
+  // issuer: 'https://steyer-identity-server.azurewebsites.net/identity',
+  // issuer: `https://sso.gg4l.com/oauth/auth`,
+  // responseType: 'code',
+  // URL of the SPA to redirect the user to after login
+  // redirectUri: window.location.origin + '/index.html',
+
+  // The SPA's id. The SPA is registered with this id at the auth-server
+  // clientId: 'PTRDNUBGDX',
+  // scope: 'openid profile email offline_access api',
+  // set the scope for the permissions the client should request
+  // The first three are defined by OIDC. The 4th is a usecase-specific one
+  // scope: 'openid profile email voucher',
+}
+
+// export const authConfig: AuthConfig = {
+//
+//   // Url of the Identity Provider
+//   issuer: 'https://steyer-identity-server.azurewebsites.net/identity',
+//
+//   // URL of the SPA to redirect the user to after login
+//   redirectUri: window.location.origin + '/index.html',
+//
+//   // The SPA's id. The SPA is registered with this id at the auth-server
+//   clientId: 'spa-demo',
+//
+//   // set the scope for the permissions the client should request
+//   // The first three are defined by OIDC. The 4th is a usecase-specific one
+//   scope: 'openid profile email voucher',
+// }
 
 export function isDemoLogin(d: any): d is DemoLogin {
   return (<DemoLogin>d).type === 'demo-login';
@@ -40,10 +79,12 @@ export class GoogleLoginService {
 
   constructor(
     private googleAuth: GoogleAuthService,
+    private oauthService: OAuthService,
     private _zone: NgZone,
     private storage: StorageService,
+    private http: HttpClient
   ) {
-
+    // this.configure();
     this.authToken$.subscribe(auth => {
       // window.waitForAppLoaded();
       if (auth) {
@@ -159,6 +200,45 @@ export class GoogleLoginService {
     this.logout();
   }
 
+  simpleSignOn() {
+    // this.configure();
+    // this.oauthService.initLoginFlow();
+    //
+    // of(null)
+    //   .pipe(
+    //     tap(() => {
+    //     }),
+    //     delay(1000),
+    //   )
+    //   .subscribe(() => {
+    //   });
+    // return this.http.get('https://sso.gg4l.com/oauth/auth?response_type=code&client_id=PTRDNUBGDX&redirect_uri=http://localhost:4200/')
+    //   .toPromise();
+    window.location.href = 'https://sso.gg4l.com/oauth/auth?response_type=code&client_id=PTRDNUBGDX&redirect_uri=http://localhost:4200';
+    //  this.http.post('https://sso.gg4l.com/oauth/token?grant_type=authorization_code&code=WWfkg2&redirect_uri=http://localhost:4200', {
+    //
+    //  }, {
+    //    headers: {
+    //      'Authorization': `Basic ${window.btoa(`PTRDNUBGDX:zSEk2Qi4UdKWdbRj8ZYUkgJ+bslK9J5DDPxvmMbJd+g=`)}`,
+    //      'Referer': 'https://sso.gg4l.com',
+    //      'Origin': 'https://sso.gg4l.com',
+    //      'Host': 'https://sso.gg4l.com',
+    //    }
+    //  }).subscribe((res) => {
+    //    debugger
+    //    console.log(res);
+    //  });
+
+    // const left = (window.innerWidth - 600) / 2;
+    // const wRef = window.open('https://sso.gg4l.com/oauth/auth?response_type=code&client_id=PTRDNUBGDX&redirect_uri=http://localhost:4200', 'windowName', `width=600,height=840,left=${left},top=50`);
+
+  }
+
+  private configure() {
+    this.oauthService.configure(authConfig);
+    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+    this.oauthService.loadDiscoveryDocumentAndTryLogin();
+  }
   /**
    * This method will trigger the Google authentication pop-up.
    *

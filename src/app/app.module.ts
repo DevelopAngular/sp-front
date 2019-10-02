@@ -59,7 +59,7 @@ import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
-import {OAuthModule} from 'angular-oauth2-oidc';
+import {AuthConfig, OAuthModule} from 'angular-oauth2-oidc';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -91,6 +91,8 @@ import {UserEffects} from './ngrx/user/effects';
 import {SchoolsResolver} from './core/resolvers/schools-resolver';
 import {ProcessEffects} from './ngrx/onboard-process/effects';
 import { NavbarElementSenderDirective } from './core/directives/navbar-element-sender.directive';
+
+
 
 const appRoutes: Routes = [
   {
