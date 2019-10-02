@@ -13,7 +13,8 @@
         </div>
 
         <div [ngClass]="iconClass">
-          <app-icon-button [srcString]="'./assets/' +((!forStaff && !forInput && !invalidDate) ? 'Delete' : (!forInput && (forStaff || invalidDate) ? 'Dots' : 'Chevron Left')) +' (Transparent).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="cancelRequest($event)"></app-icon-button>
+          <app-icon-button *ngIf="!activeTeacherPin" [srcString]="'./assets/' +((!forStaff && !forInput && !invalidDate) ? 'Delete' : (!forInput && (forStaff || invalidDate) ? 'Dots' : 'Chevron Left')) +' (Transparent).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="cancelRequest($event)"></app-icon-button>
+          <app-icon-button *ngIf="activeTeacherPin" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="activeTeacherPin = false"></app-icon-button>
         </div>
 
       </div>
@@ -154,7 +155,7 @@
         </div>
       </div>
       <div class="teacher-pin" *ngIf="!forStaff && activeTeacherPin">
-        <app-teacher-pin-student></app-teacher-pin-student>
+        <app-teacher-pin-student [requestId]="request.id"></app-teacher-pin-student>
       </div>
 
       <div class="teacher-view" *ngIf="forStaff">

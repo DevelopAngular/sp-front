@@ -9,8 +9,9 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {takeUntil, tap} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {DeviceDetection} from '../device-detection.helper';
-import {BehaviorSubject, interval, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {HallPassesService} from '../services/hall-passes.service';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -36,7 +37,8 @@ export class InlineRequestCardComponent implements OnInit {
       private requestService: RequestsService,
       public dialog: MatDialog,
       private dataService: DataService,
-      private formService: CreateFormService
+      private formService: CreateFormService,
+      private passesService: HallPassesService
   ) { }
 
   get hasDivider() {
@@ -70,6 +72,9 @@ export class InlineRequestCardComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.passesService.isOpenPassModal$.subscribe(res => {
+      this.activeTeacherPin = !res;
+    });
 
   }
 
@@ -86,7 +91,7 @@ export class InlineRequestCardComponent implements OnInit {
 
       options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
       header = 'Are you sure you want to delete this pass request you sent?';
-      UNANIMATED_CONTAINER.next(true)
+      UNANIMATED_CONTAINER.next(true);
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',

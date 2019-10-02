@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {fromEvent} from 'rxjs';
 import * as _ from 'lodash';
 
@@ -9,7 +9,12 @@ import * as _ from 'lodash';
 })
 export class TeacherPinStudentComponent implements OnInit {
 
+  @Input() requestId: string;
+
   @Output() pinResult: EventEmitter<string> = new EventEmitter<string>();
+  @Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
+
+  @ViewChild('inp') inp: ElementRef;
 
   pin: string = '';
 
@@ -27,10 +32,10 @@ export class TeacherPinStudentComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-
-    fromEvent(document, 'keyup')
+    this.inp.nativeElement.focus();
+    fromEvent(this.inp.nativeElement, 'keyup')
       .subscribe((event: KeyboardEvent) => {
-      if (!_.isNaN(parseFloat(event.key))) {
+      if (!_.isNaN(parseFloat(event.key)) && (event.target as any).id === this.requestId) {
         this.pin += event.key;
         const currentElem = this.circles.find(c => c.id === this.pin.length);
         currentElem.pressed = true;
@@ -49,6 +54,10 @@ export class TeacherPinStudentComponent implements OnInit {
         }
       }
     });
+  }
+
+  blur() {
+    this.inp.nativeElement.focus();
   }
 
 }

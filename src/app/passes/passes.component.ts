@@ -4,20 +4,19 @@ import {
   BehaviorSubject,
   combineLatest,
   ConnectableObservable,
-  empty, fromEvent, interval,
+  empty, interval,
   merge,
   Observable,
-  of, pipe,
+  of,
   ReplaySubject, Subject,
 } from 'rxjs';
 import {
-  delay,
   filter,
-  map, publish, publishBehavior,
+  map, publishBehavior,
   publishReplay,
-  refCount, shareReplay,
+  refCount,
   startWith,
-  switchMap, take, takeUntil,
+  switchMap, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -42,6 +41,7 @@ import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {UserService} from '../services/user.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {HallPassesService} from '../services/hall-passes.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -247,6 +247,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   passesLoaded: Observable<boolean> = of(false);
 
   showEmptyState: Observable<boolean>;
+  openedModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
 
   user: User;
   isStaff = false;
@@ -284,7 +286,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
     private scrollPosition: ScrollPositionService,
-    private userService: UserService) {
+    private userService: UserService,
+    private passesService: HallPassesService
+  ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -445,6 +449,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     }
+  }
+
+  passClick(event) {
+    this.passesService.isOpenPassModal$.next(true);
   }
 
   @HostListener('window:resize')

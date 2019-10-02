@@ -158,7 +158,8 @@
         [title]="'Active Passes'"
         [icon]="'./assets/Walking (Navy).svg'"
         [columns]="3"
-        (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>
+        (reportFromPassCard)="onReportFromPassCard($event)"
+      ></app-pass-collection>
     </div>
     <div class="future-passes pass-collection">
       <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Future (Navy).svg'" [columns]="3"></app-pass-collection>
@@ -180,6 +181,7 @@
                   [title]="isStaff?'Received':'Sent'"
                   [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
                   [columns]="2"
+                  (passClick)="passClick($event)"
           ></app-pass-collection>
           <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
         </div>

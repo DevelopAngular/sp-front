@@ -12,8 +12,10 @@
                     </div>
                 </div>
             </div>
-            <app-icon-button [size]="20" [onDarkShade]="true" [srcString]="'./assets/Delete (Transparent).svg'" (clickEvent)="cancelRequest($event)"></app-icon-button>
-            <!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
+            <app-icon-button *ngIf="!activeTeacherPin" [size]="20" [onDarkShade]="true" [srcString]="'./assets/Delete (Transparent).svg'" (clickEvent)="cancelRequest($event)"></app-icon-button>
+            <app-icon-button *ngIf="activeTeacherPin" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="activeTeacherPin = false"></app-icon-button>
+
+          <!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
         </div>
         <mat-divider></mat-divider>
     </div>
@@ -123,6 +125,6 @@
     </div>
 
   <div class="inline-request-content" *ngIf="activeTeacherPin">
-    <app-teacher-pin-student></app-teacher-pin-student>
+    <app-teacher-pin-student [requestId]="request.id"></app-teacher-pin-student>
   </div>
 </div>
