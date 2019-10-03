@@ -105,8 +105,8 @@
         </div>
       </div>
 
-      <div class="options-wrapper">
-        <app-icon-button  [srcString]="'Settings'" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
+      <div class="options-wrapper" #setButton>
+        <app-icon-button [srcString]="'Settings'" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
       </div>
     </div>
   </div>

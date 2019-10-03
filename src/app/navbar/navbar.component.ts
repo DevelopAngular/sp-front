@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {filter, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -45,6 +45,7 @@ import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 declare const window;
 
@@ -70,6 +71,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
   @ViewChild('navbar') navbar: ElementRef;
+  @ViewChild('setButton') settingsButton: ElementRef;
 
   @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
   @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
@@ -161,6 +163,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private cdr: ChangeDetectorRef,
       private rendered: Renderer2,
       private navbarElementsService: NavbarElementsRefsService,
+      private shortcutsService: KeyboardShortcutsService
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -189,6 +192,13 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit() {
     this.underlinePosition();
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(pluck('key'))
+      .subscribe(key => {
+        if (key[0] === ',') {
+          this.showOptions(this.settingsButton.nativeElement);
+        }
+      });
     this.hideButtons = this.router.url.includes('kioskMode');
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
@@ -371,6 +381,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   showOptions(event) {
+    debugger;
     if (this.screenService.isDeviceLargeExtra) {
       this.sideNavService.toggle$.next(true);
       this.sideNavService.toggleLeft$.next(true);
