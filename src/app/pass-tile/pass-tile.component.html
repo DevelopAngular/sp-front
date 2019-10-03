@@ -41,7 +41,7 @@
      [style.justify-content]="forStaff?'unset':'center'"
      [style.box-shadow]="boxShadow">
   <div class="tile-title tile-title-demo" [style.margin-top]="forStaff?'13px':'0px'" >{{ mock.header }}</div>
-  <div class="tile-content">{{ mock.content }}</div>
+  <div class="tile-subtitle">{{ mock.content }}</div>
   <ng-container *ngIf="!forStaff">
     <img [style.width]="'15px'" [style.height]="'15px'" *ngIf="mock.arrows === 'one'" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-round-trip">
     <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="mock.arrows === 'two'" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-one-way">
