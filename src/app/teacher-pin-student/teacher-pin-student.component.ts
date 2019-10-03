@@ -37,9 +37,11 @@ export class TeacherPinStudentComponent implements OnInit {
       .subscribe((event: KeyboardEvent) => {
       if (!_.isNaN(parseFloat(event.key)) && (event.target as any).id === this.requestId) {
         this.pin += event.key;
-        const currentElem = this.circles.find(c => c.id === this.pin.length);
-        currentElem.pressed = true;
-        if (this.pin.length === 4 && this.attempts) {
+        if (this.pin.length <= 4) {
+          const currentElem = this.circles.find(c => c.id === this.pin.length);
+          currentElem.pressed = true;
+        }
+        if (this.pin.length === 4) {
 
           // ToDO request to server after that clear pin
           this.incorrect = true;
