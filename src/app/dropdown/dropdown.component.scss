@@ -36,14 +36,12 @@
     border-radius: 10px;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.102836);
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
     position: relative;
 }
 
 .consent-header{
   @extend .ds-flex-center-center;
-  //position: sticky;
-  //top: 0;
   height: 50px;
   background-color: #fff;
   color: #134482;
@@ -54,10 +52,8 @@
 
 .options-wrapper{
     width: 100%;
+    height: calc(100% - 50px);
     overflow: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     box-sizing: border-box
 }
 .assistant-greeting {

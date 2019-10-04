@@ -1,10 +1,10 @@
-<div class="wrapper" [ngClass]="{scrollable: openCalendar &&  toggleResult === 'Range', days: toggleResult === 'Days'}">
+<div class="wrapper" [ngClass]="{scrollable: openCalendar &&  toggleResult === 'Range', days: toggleResult === 'Days'}" #container>
   <div class="sticky-header">
     <div class="toggle-header"
          [style.height]="'70px'"
     >
       <div class="toggle-picker">
-        <app-restriction-picker (result)="toggleResult = $event" [selectedChoose]="toggleResult || 'Range'" [width]="265" [height]="25" [choices]="['Range', 'Days', 'Weeks']"></app-restriction-picker>
+        <app-restriction-picker (result)="toggleResult = $event" [selectedChoise]="toggleResult || 'Range'" [width]="265" [height]="32" [choices]="['Range', 'Days', 'Weeks']"></app-restriction-picker>
       </div>
       <!--<div class="selected-date" *ngIf="toggleResult === 'Range'">-->
         <!--{{ selectedDateText }}-->

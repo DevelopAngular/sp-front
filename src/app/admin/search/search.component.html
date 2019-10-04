@@ -147,7 +147,9 @@
       </div>
       <div class="search-content" *ngIf="!hasSearched">
         <div class="default-message" *ngIf="!spinner">
-          <img width="400" [src]="'./assets/emptyStates/searchEmpty.svg' | resolveAsset">
+          <div class="ds-mt-25 ds-pt-10">
+            <img width="400" [src]="'./assets/emptyStates/searchEmpty.svg' | resolveAsset">
+          </div>
           <div class="text">
             <div class="text-title ds-empty-text-title">Start Searching Instantly</div>
             <div class="info ds-empty-text-info">
