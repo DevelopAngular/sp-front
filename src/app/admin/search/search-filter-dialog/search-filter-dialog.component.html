@@ -40,8 +40,8 @@
                 <div class="name">{{ room.title + (room.locations ? ' (' + room.locations.length + ')' : '') }}</div>
                 <app-restriction-picker
                         [width]="265"
-                        [height]="25"
-                        [selectedChoose]="'Destination'"
+                        [height]="32"
+                        [selectedChoise]="'Destination'"
                         [choices]="['Destination', 'Origin', 'Either']"
                         (result)="addRoomFilter($event, room)"
                 ></app-restriction-picker>

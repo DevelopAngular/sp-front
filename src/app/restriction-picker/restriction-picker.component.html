@@ -1,23 +1,27 @@
-<div class="picker-wrapper">
+<div class="picker-wrapper"
+>
   <div class="disabled" *ngIf="disabled"></div>
-  <div class="choices" [style.border]="'none'">
+  <div class="choices"
+       [style.background-color]="'rgba(247,247,247,1)'"
+       [style.height.px]="height">
 <!--  <div class="choices" [style.border]="'1px solid ' + selectedColor">-->
-    <div class="choice" [style.height]="height + 'px'"
-         *ngFor="let choice of choices; let i=index;"
-         [style.border]="'1px solid ' + selectedColor"
-         [style.border-left]="i > 0 ? 'none' : '1px solid ' + selectedColor"
-         [style.opacity]="isDisabled(choice) ? 0.5 : 1"
-         [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
-         [ngClass]="{
-         'left-radius': i === 0,
-         'right-radius': i === choices.length - 1
-         }"
-         (click)="onClick(choice)"
-         [style.width]="width / choices.length + 'px'"
-         [style.color]="selectedChoose === choice ? backgroundColor : selectedColor"
-         [style.font-size]="fontSize + 'px'"
-         [style.background-color]="selectedChoose === choice ? selectedColor : backgroundColor">
-      <div [style.padding-left]="padding + 'px'" [style.padding-right]="padding + 'px'">{{ choice }}</div>
+    <div *ngFor="let choice of choices; let i=index;" [style.height.%]="100" [class.divider]="choices.length >2 && i < choices.length - 1 && selectedChoise !== choice ">
+      <div class="choice"
+           [style.opacity]="isDisabled(choice) ? 0.5 : 1"
+           [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
+           [style.width]="width / choices.length + 'px'"
+           [style.color]="selectedChoise === choice ? selectedColor : color"
+           [style.font-size]="fontSize + 'px'"
+           (click)="onClick(choice)"
+           [@Select]="{ value: selectedChoise === choice ? 'selected' : 'unselected', params: {background: backgroundColor}}"
+      >
+<!--        <div class="option-background"-->
+<!--             -->
+<!--        ></div>-->
+        <div [style.padding-left]="padding + 'px'" [style.padding-right]="padding + 'px'">
+          <span style="line-height: 1">{{ choice }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

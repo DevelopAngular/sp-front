@@ -204,8 +204,6 @@ const appRoutes: Routes = [
     MatSlideToggleModule,
     SwiperModule,
 
-    KeyboardShortcutsModule.forRoot(),
-
     RouterModule.forRoot(
       appRoutes,
       {

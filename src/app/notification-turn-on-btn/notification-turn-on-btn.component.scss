@@ -1,0 +1,46 @@
+@media screen and  (max-width: 425px) {
+  div.notifications-btn {
+    max-width: 100%;
+  }
+}
+
+.notifications-btn {
+  width: 100%;
+  max-width: 301px;
+  background-color: #E2E7F4;
+  border-radius: 8px;
+  height: 58px;
+  margin: 20px 0;
+  cursor: pointer;
+  position: relative;
+
+  &__cancel {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    height: 10px;
+    width: 10px;
+    z-index: 999;
+  }
+
+  &__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__text {
+    font-size: 16px;
+    color: #7F879D;
+    font-weight: 500;
+  }
+
+  &__icon {
+    height: 20px;
+    width: 20px;
+    padding-right: 16px;
+  }
+
+
+}
+

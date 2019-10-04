@@ -2,6 +2,7 @@
   <div  [@RequestCardSlideInOut] *ngIf="isInboxClicked && this.screenService.isDeviceMid">
     <app-display-card [hasDivider]="false" [fontSize]="'29px'" [inbox]="true" >
       <div class="inbox-content">
+        <app-notification-turn-on-btn></app-notification-turn-on-btn>
         <div class="requests-or-invitations">
           <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'" [columns]="2"></app-pass-collection>
           <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
@@ -171,6 +172,7 @@
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Inbox (Navy).svg':'')" [inbox]="true">
       <div class="inbox-content">
         <div class="requests-or-invitations">
+          <app-notification-turn-on-btn></app-notification-turn-on-btn>
           <app-pass-collection
                   [forStaff]="isStaff"
                   [forFuture]="true"
