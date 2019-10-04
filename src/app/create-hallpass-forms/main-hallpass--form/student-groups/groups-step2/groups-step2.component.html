@@ -2,11 +2,14 @@
   <div class="header">
 
     <div class="header_back-button ">
-      <div [ngClass]=" isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'"  class="header_back-button-icon">
+      <div [ngClass]=" isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'"  class="header_back-button-icon" *ngIf="!form.get('title').value; else cancel">
         <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
       </div>
-      <span class="header_back-button"
-            *ngIf="form.get('title').value || selectedStudents.length">Cancel</span>
+      <ng-template #cancel>
+              <span class="header_back-button"  (click)="onCancelClick()"
+                    *ngIf="form.get('title').value || selectedStudents.length">Cancel</span>
+      </ng-template>
+
     </div>
 
 <!--    <div class="header_back-button back-btn-top" (click)="back()">-->

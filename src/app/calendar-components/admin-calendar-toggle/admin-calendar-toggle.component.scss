@@ -3,10 +3,16 @@
 
 .wrapper {
   width: 290px;
+  //height: 345px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  overflow: auto;
+
+  &.range {
+
+  }
 
   &.scrollable {
     height: 451px;

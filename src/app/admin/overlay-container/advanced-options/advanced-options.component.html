@@ -33,11 +33,11 @@
           <div class="toggle" *ngIf="nowRestricted">
             <app-restriction-picker
                     [width]="440"
-                    [height]="50"
+                    [height]="52"
                     [padding]="14"
                     [fontSize]="13"
                     [disabledOptions]="disabledOptions"
-                    [selectedChoose]="optionState.now.state || 'Any teacher (default)'"
+                    [selectedChoise]="optionState.now.state || 'Any teacher (default)'"
                     [choices]="toggleChoices"
                     (result)="changeOptions('now', $event)"
             >
@@ -56,9 +56,9 @@
               <span class="ds-mr-10"><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
               <app-restriction-picker
                       [width]="240"
-                      [height]="30"
+                      [height]="32"
                       [fontSize]="13"
-                      [selectedChoose]="selectedOpt.anyNow"
+                      [selectedChoise]="selectedOpt.anyNow"
                       [choices]="['This Room', 'Origin', 'Both']"
                       (result)="changeState('now_any', $event)"
               ></app-restriction-picker>
@@ -68,9 +68,9 @@
             <div class="ds-mr-10">Pass requests will automatically get sent to all teachers assigned to:</div>
             <app-restriction-picker
                     [width]="240"
-                    [height]="30"
+                    [height]="32"
                     [fontSize]="13"
-                    [selectedChoose]="selectedOpt.allNow"
+                    [selectedChoise]="selectedOpt.allNow"
                     [choices]="['This Room', 'Origin', 'Both']"
                     (result)="changeState('now_all', $event)"
             ></app-restriction-picker>
@@ -102,11 +102,11 @@
         <div class="toggle" *ngIf="futureRestricted">
           <app-restriction-picker
                   [width]="440"
-                  [height]="50"
+                  [height]="52"
                   [fontSize]="13"
                   [padding]="14"
                   [disabledOptions]="disabledOptions"
-                  [selectedChoose]="optionState.future.state || 'Any teacher (default)'"
+                  [selectedChoise]="optionState.future.state || 'Any teacher (default)'"
                   [choices]="toggleChoices"
                   (result)="changeOptions('future', $event)"
           >
@@ -126,9 +126,9 @@
             <span class="ds-mr-10"><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
             <app-restriction-picker
                     [width]="240"
-                    [height]="30"
+                    [height]="32"
                     [fontSize]="13"
-                    [selectedChoose]="selectedOpt.anyFut"
+                    [selectedChoise]="selectedOpt.anyFut"
                     [choices]="['This Room', 'Origin',  'Both']"
                     (result)="changeState('future_any', $event)"
             ></app-restriction-picker>
@@ -138,9 +138,9 @@
           <div class="ds-mr-10">Pass requests will automatically get sent to all teachers assigned to:</div>
           <app-restriction-picker
                   [width]="240"
-                  [height]="30"
+                  [height]="32"
                   [fontSize]="13"
-                  [selectedChoose]="selectedOpt.allFut"
+                  [selectedChoise]="selectedOpt.allFut"
                   [choices]="['This Room', 'Origin',  'Both']"
                   (result)="changeState('future_all', $event)"
           ></app-restriction-picker>

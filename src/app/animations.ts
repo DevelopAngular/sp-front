@@ -10,6 +10,27 @@ export const bumpIn = trigger('pressState', [
   transition('up => down', animate('100ms ease-out')),
   transition('down => up', animate('100ms ease-in'))
 ]);
+
+export const Select = trigger('Select', [
+    state('selected',
+      style({
+        'transform': 'scale(1)',
+        'background': '{{background}}',
+        'boxShadow': '0px 3px 8px 0px rgba(0, 0, 0, .12), 0px 3px 1px 0px rgba(0, 0, 0, .04)'
+      }), { params: { background: 'transparent'}}
+    ),
+    state('unselected',
+      style({
+        'transform': 'scale(.95)',
+        'background': 'transparent'
+      })
+      , { params: { background: 'transparent'}}
+    ),
+    transition('selected <=> unselected', [
+      animate('.15s ease-in')
+    ])
+  ]);
+
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
     query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
