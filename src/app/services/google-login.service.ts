@@ -7,6 +7,7 @@ import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
 import {AuthConfig, JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
 import {HttpClient} from '@angular/common/http';
+import {environment} from '../../environments/environment';
 
 declare const window;
 
@@ -20,6 +21,12 @@ export interface DemoLogin {
   invalid?: boolean;
   type: 'demo-login';
 }
+
+export interface GG4LResponse {
+  code: string;
+}
+
+
 
 export const authConfig: AuthConfig = {
   // issuer: `https://sso.gg4l.com`,
@@ -214,7 +221,8 @@ export class GoogleLoginService {
     //   });
     // return this.http.get('https://sso.gg4l.com/oauth/auth?response_type=code&client_id=PTRDNUBGDX&redirect_uri=http://localhost:4200/')
     //   .toPromise();
-    window.location.href = 'https://sso.gg4l.com/oauth/auth?response_type=code&client_id=PTRDNUBGDX&redirect_uri=http://localhost:4200';
+    window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+
     //  this.http.post('https://sso.gg4l.com/oauth/token?grant_type=authorization_code&code=WWfkg2&redirect_uri=http://localhost:4200', {
     //
     //  }, {

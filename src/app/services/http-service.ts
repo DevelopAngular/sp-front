@@ -193,21 +193,15 @@ export class HttpService {
             // tap(console.log),
             filter(v => !!v),
             switchMap(({auth, server}) => {
-              // console.log((new Date(Date.now() + auth.expires_in)), new Date());
 
               if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
                   const config = new FormData();
-                  const user = JSON.parse(this.storage.getItem('google_auth'));
                   config.append('client_id', server.client_id);
                   config.append('grant_type', 'refresh_token');
                   config.append('token', auth.refresh_token);
-                  // config.append('username', user.username);
-                  // config.append('password', user.password);
-                  // console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
                   map((data: any) => {
-                    // console.log('Auth data : ', data);
                     // don't use TimeService for auth because auth is required for time service
                     // to be useful
                     data['expires'] = new Date(new Date() + data['expires_in']);
@@ -220,7 +214,7 @@ export class HttpService {
                     this.loginService.isAuthenticated$.next(false);
                     return of(null);
                   })
-                );                    // return this.fetchServerAuth();
+                );
               } else {
                 return of(null);
               }
@@ -365,6 +359,10 @@ export class HttpService {
       );
 
     }));
+  }
+
+  gg4l(code: string) {
+    return this.loginGoogleAuth(code);
   }
 
   private loginGoogleAuth(googleToken: string): Observable<AuthContext> {

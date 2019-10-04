@@ -1,9 +1,11 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
 import {of} from 'rxjs';
-import {finalize, tap} from 'rxjs/operators';
+import {filter, finalize, switchMap, tap} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {Meta, Title} from '@angular/platform-browser';
+import {environment} from '../../environments/environment';
+import {ActivatedRoute} from '@angular/router';
 
 declare const window;
 
@@ -21,6 +23,8 @@ export class GoogleSigninComponent implements OnInit {
   public showSpinner: boolean = false;
   public loggedWith: number;
 
+  public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+
   demoLoginEnabled = false;
 
   demoUsername = '';
@@ -32,6 +36,8 @@ export class GoogleSigninComponent implements OnInit {
     private loginService: GoogleLoginService,
     private titleService: Title,
     private metaService: Meta,
+    private route: ActivatedRoute,
+
   ) {
     this.loginService.isAuthLoaded().subscribe(isLoaded => {
       this._ngZone.run(() => {
@@ -55,11 +61,19 @@ export class GoogleSigninComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.queryParams
+      .pipe(
+        filter(qp => !!qp && !!qp.code),
+        // switchMap((qp) => this.httpService.gg4l(qp.code))
+      )
+      .subscribe((qp) => {
+        console.log(qp);
+      });
+  }
 
   loginSSO() {
-    this.loginService
-      .simpleSignOn();
+    this.loginService.simpleSignOn();
       // .then((res) => {
       //   console.log(res);
       // })
