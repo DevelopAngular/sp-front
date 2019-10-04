@@ -193,10 +193,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit() {
     this.underlinePosition();
     this.shortcutsService.onPressKeyEvent$
-      .pipe(pluck('key'))
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroyer$)
+      )
       .subscribe(key => {
         if (key[0] === ',') {
-          this.showOptions(this.settingsButton.nativeElement);
+          const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
+          (settingButton as HTMLElement).click();
+        } else if (key[0] === '1') {
+          this.updateTab('passes');
+          this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer, 0);
         }
       });
     this.hideButtons = this.router.url.includes('kioskMode');
@@ -223,7 +230,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.userService.userData
       .pipe(
-        this.loadingService.watchFirst
+        this.loadingService.watchFirst,
+        takeUntil(this.destroyer$)
       )
       .subscribe(user => {
         this._zone.run(() => {
@@ -237,7 +245,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.userService.effectiveUser
       .pipe(
         this.loadingService.watchFirst,
-        // filter(eu => !!eu),
+        takeUntil(this.destroyer$),
         switchMap((eu: RepresentedUser) => {
           if (eu) {
               this.effectiveUser = eu;
@@ -324,7 +332,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef) {
+  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 550) {
     if (this.isStaff && buttonsContainer && this.tabRefs ||
       this.isAssistant && buttonsContainer && this.tabRefs) {
       setTimeout(() => {
@@ -333,7 +341,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         if (tabRefsArray[selectedTabRef]) {
           this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
         }
-      }, 550);
+      }, timeout);
     }
   }
 
@@ -381,37 +389,38 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   showOptions(event) {
-    debugger;
-    if (this.screenService.isDeviceLargeExtra) {
-      this.sideNavService.toggle$.next(true);
-      this.sideNavService.toggleLeft$.next(true);
+    if (!this.isOpenSettings) {
+      if (this.screenService.isDeviceLargeExtra) {
+        this.sideNavService.toggle$.next(true);
+        this.sideNavService.toggleLeft$.next(true);
+      }
+
+      const target = new ElementRef(event.currentTarget);
+      if (!this.screenService.isDeviceLargeExtra) {
+        this.isOpenSettings = true;
+        UNANIMATED_CONTAINER.next(true);
+        const settingRef = this.dialog.open(SettingsComponent, {
+          panelClass: ['calendar-dialog-container', 'animation'],
+          backdropClass: 'invis-backdrop',
+          data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
+        });
+
+        settingRef.beforeClose().subscribe(() => {
+          this.isOpenSettings = false;
+        });
+
+        settingRef.afterClosed().subscribe(action => {
+          UNANIMATED_CONTAINER.next(false);
+          this.settingsAction(action);
+        });
+      }
+
+      this.settingsClick.emit({ 'trigger': target, 'isSwitch': this.showSwitchButton });
+
+      this.sideNavService.sideNavData$.next({ 'trigger': target, 'isSwitch': this.showSwitchButton });
+
+      this.sideNavService.sideNavType$.next('left');
     }
-
-    const target = new ElementRef(event.currentTarget);
-    if (!this.screenService.isDeviceLargeExtra) {
-      this.isOpenSettings = true;
-      UNANIMATED_CONTAINER.next(true);
-      const settingRef = this.dialog.open(SettingsComponent, {
-        panelClass: ['calendar-dialog-container', 'animation'],
-        backdropClass: 'invis-backdrop',
-        data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
-      });
-
-      settingRef.beforeClose().subscribe(() => {
-        this.isOpenSettings = false;
-      });
-
-      settingRef.afterClosed().subscribe(action => {
-        UNANIMATED_CONTAINER.next(false);
-        this.settingsAction(action);
-      });
-    }
-
-    this.settingsClick.emit({ 'trigger': target, 'isSwitch': this.showSwitchButton });
-
-    this.sideNavService.sideNavData$.next({ 'trigger': target, 'isSwitch': this.showSwitchButton });
-
-    this.sideNavService.sideNavType$.next('left');
   }
 
   showTeaches(target) {

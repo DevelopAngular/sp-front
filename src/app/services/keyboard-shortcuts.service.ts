@@ -72,6 +72,46 @@ export class KeyboardShortcutsService {
           self.onPressKeyEvent$.next(event);
         },
         preventDefault: true
+      },
+      {
+        key: ['1'],
+        command(event: ShortcutEventOutput): any {
+          self.onPressKeyEvent$.next(event);
+        },
+        preventDefault: true
+      },
+      {
+        key: ['2'],
+        command(event: ShortcutEventOutput): any {
+          self.onPressKeyEvent$.next(event);
+        }
+      },
+      {
+        key: ['3'],
+        command(event: ShortcutEventOutput): any {
+          self.onPressKeyEvent$.next(event);
+        }
+      },
+      {
+        key: ['4'],
+        command(event: ShortcutEventOutput): any {
+          self.onPressKeyEvent$.next(event);
+        },
+        preventDefault: true
+      },
+      {
+        key: ['5'],
+        command(event: ShortcutEventOutput): any {
+          self.onPressKeyEvent$.next(event);
+        },
+        preventDefault: true
+      },
+      {
+        key: ['6'],
+        command(event: ShortcutEventOutput): any {
+          self.onPressKeyEvent$.next(event);
+        },
+        preventDefault: true
       }
     );
   }
