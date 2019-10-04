@@ -64,7 +64,7 @@ export class TravelViewComponent implements OnInit {
       'request';
 
     this.isSeen$ = this.createFormService.isSeen$;
-    this.http.currentSchool$.subscribe(res => {
+    this.http.currentSchool$.pipe(filter(res => !!res)).subscribe(res => {
       this.showRoomNumber = res.display_card_room;
     });
       console.log(this.pass);
