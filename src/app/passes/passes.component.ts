@@ -42,6 +42,9 @@ import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {UserService} from '../services/user.service';
 import {DeviceDetection} from '../device-detection.helper';
+import * as moment from 'moment';
+import {NotificationButtonService} from '../services/notification-button.service';
+
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -256,6 +259,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   cursor = 'pointer';
 
+  dismissExpired = true;
+
   showInboxAnimated() {
     return this.dataService.inboxState;
   }
@@ -284,7 +289,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
     private scrollPosition: ScrollPositionService,
-    private userService: UserService) {
+    private userService: UserService,
+    private  notificationButtonService: NotificationButtonService) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -350,9 +356,15 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
+    if (this.notificationButtonService.dismissExpirtationDate === notifBtnDismissExpires) {
+      this.notificationButtonService.dismissButton$.next(false);
+    }
+
     this.navbarService.inboxClick.subscribe(inboxClick => {
       this.isInboxClicked = inboxClick;
     });
+
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
