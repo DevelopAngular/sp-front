@@ -19,7 +19,7 @@
                 [selected]="isSelected(gettingStarted.route)"
                 [content]="gettingStarted.title"
                 [icon]="gettingStarted.imgUrl"
-                (selectedButton)="selectTab(tabRef, navButtonsContainter);"
+                (selectedButton)="selectTab(tabRef, navButtonsContainter)"
                 (onClick)="route(gettingStarted); selectTab(tabRef, navButtonsContainter);">
               </app-nav-button>
             </ng-container>
@@ -28,7 +28,6 @@
       </div>
     </div>
 
-    <!--<div class="divider"></div>-->
     <div class="nav-buttons">
       <div *ngIf="!(fakeMenu | async)">
         <div *ngFor="let button of buttons"
@@ -62,25 +61,11 @@
   </div>
   <div class="nav-footer">
     <div class="footer-text" [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})">{{(user?user.display_name : '')}}</div>
-    <div [style.display]="'flex'">
-      <!--<img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings global-opacity-icons" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">-->
-      <!--{{darkTheme.isEnabled$.value}}-->
-      <!--<img draggable="false" class="footer-settings global-opacity-icons"-->
-           <!--[ngClass]="{'active-route': selectedSettings , 'active-route__dark': selectedSettings && darkTheme.isEnabled$.value}"-->
-           <!--[src]="settingsIcon | resolveAsset" alt="Settings icon"-->
-           <!--(click)="openSettings($event)"-->
-      <!--&gt;-->
+    <div [style.display]="'flex'" #settingsButton>
       <app-icon-button  [srcString]="'Settings'" [size]="20" (clickEvent)="openSettings($event)"></app-icon-button>
     </div>
   </div>
 </div>
-
-
-
-
-
-
-<!-- SVG sprite for admin panel's navbar. Created so that tab's image could change it's fill color smoothly in cognuntion with the text and pointer -->
 
 
 <svg style="display: none;">

@@ -201,9 +201,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         if (key[0] === ',') {
           const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
           (settingButton as HTMLElement).click();
-        } else if (key[0] === '1') {
-          this.updateTab('passes');
-          this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer, 0);
+        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3') {
+          const route = {
+            '1': 'passes',
+            '2': 'hallmonitor',
+            '3': 'myroom'
+          };
+          const currentButton = this.buttons.find(button => button.route === route[key[0]]);
+          if (this.buttonVisibility(currentButton)) {
+            this.updateTab(currentButton.route);
+            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer, 0);
+          }
         }
       });
     this.hideButtons = this.router.url.includes('kioskMode');

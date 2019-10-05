@@ -1,18 +1,17 @@
 import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef} from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { BehaviorSubject ,  Observable } from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import { LoadingService } from '../../services/loading.service';
 import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
-import {map, switchMap} from 'rxjs/operators';
+import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {AdminService} from '../../services/admin.service';
-import {HttpService} from '../../services/http-service';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
+import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 
 declare const window;
 
@@ -23,10 +22,12 @@ declare const window;
 })
 export class NavComponent implements OnInit {
 
-  // @ViewChild('navMain') navMain: ElementRef;
+  @ViewChild('settingsButton') settingsButton: ElementRef;
   @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
   @ViewChild('tabRef') tabRef: ElementRef;
+
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
+
   gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
@@ -34,9 +35,7 @@ export class NavComponent implements OnInit {
     {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
     {title: 'Rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
     {title: 'Accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
-    {title: 'My School', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']},
-    // {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
-    // {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
+    {title: 'My School', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']}
   ];
 
   // progress = 0;
@@ -44,6 +43,8 @@ export class NavComponent implements OnInit {
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
   public pts: string;
+
+  destroy$: Subject<any> = new Subject<any>();
     constructor(
         public router: Router,
         private activeRoute: ActivatedRoute,
@@ -53,10 +54,8 @@ export class NavComponent implements OnInit {
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
-        private adminService: AdminService,
-        private httpService: HttpService,
-        public gsProgress: GettingStartedProgressService
-
+        public gsProgress: GettingStartedProgressService,
+        private shortcutsService: KeyboardShortcutsService
     ) { }
 
   console = console;
@@ -64,49 +63,29 @@ export class NavComponent implements OnInit {
   showButton: boolean;
   selectedSettings: boolean;
 
-  get settingsIcon () {
-    return `./assets/Settings (${this.darkTheme.isEnabled$.value ? 'White' : 'Blue-Gray'}).svg`;
-  }
   get pointerTopSpace() {
     return this.pts;
   }
 
   ngOnInit() {
-
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
-    console.log(this.tab);
-    // if (this.isSelected('takeTour')) {
-    //   this.pts = '-63px';
-    // }
-    // this.httpService.globalReload$.pipe(
-    //   switchMap(() => {
-    //     return this.adminService.getOnboardProgress()
-    //   })
-    // )
-    // .subscribe((data: OnboardItem[]) => {
-    //   console.log(data);
-    //   this.progress = 10;
-    //   data.forEach((item: OnboardItem ): void => {
-    //     if (item.done) {
-    //       console.log(this.progress, Progress[item.name]);
-    //       this.progress +=  Progress[item.name];
-    //     }
-    //   });
-    // });
-    this.router.events.subscribe(value => {
+    this.router.events
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
       if ( value instanceof NavigationEnd ) {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
-        // console.log(this.tab, value.url);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
-        // this.selectTab(this.tabRef.nativeElement, this.navButtonsContainterRef.nativeElement);
       }
     });
 
     this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
+      .pipe(
+        this.loadingService.watchFirst,
+        takeUntil(this.destroy$)
+        )
       .subscribe(user => {
 
         this._zone.run(() => {
@@ -118,20 +97,45 @@ export class NavComponent implements OnInit {
         });
       });
 
-    this.userService.userData.subscribe((user: any) => {
-        // console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
+    this.userService.userData
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user: any) => {
       this.buttons.forEach((button) => {
         if (
           ((this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}`)
             &&
           !button.requiredRoles.every((_role) => user.roles.includes(_role))
       ) {
-          console.log(button);
-          console.log(button.requiredRoles.every((_role) => user.roles.includes(_role)));
+
           this.restrictAccess.emit(true);
           this.fakeMenu.next(true);
         }
       });
+    });
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        takeUntil(this.destroy$),
+        pluck('key')
+      ).subscribe(key => {
+        if (key[0] === ',') {
+          const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
+          (settingButton as HTMLElement).click();
+        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3' || key[0] === '4' || key[0] === '5' || key[0] === '6') {
+          const route = {
+            '1': 'dashboard',
+            '2': 'hallmonitor',
+            '3': 'search',
+            '4': 'passconfig',
+            '5': 'accounts',
+            '6': 'myschool'
+          };
+          const currentButton = this.buttons.find(button => button.route === route[key[0]]);
+          this.route(currentButton);
+          if (!this.router.url.includes(currentButton.route)) {
+            this.selectTab(this.tabRef.nativeElement, this.navButtonsContainterRef.nativeElement);
+          }
+        }
     });
   }
 
@@ -152,49 +156,40 @@ export class NavComponent implements OnInit {
   }
 
   openSettings(event) {
-    console.log(event);
-    this.selectedSettings = true;
-    // return;
-
-    const target = new ElementRef(event.currentTarget);
-    UNANIMATED_CONTAINER.next(true);
-    const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
-      panelClass: 'calendar-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {
-        'trigger': target,
-        'isSwitch': this.showButton,
-        darkBackground: this.darkTheme.isEnabled$.value,
-        'possition': {
-          x: event.clientX,
-          y: event.clientY
+    if (!this.selectedSettings) {
+      this.selectedSettings = true;
+      const target = new ElementRef(event.currentTarget);
+      UNANIMATED_CONTAINER.next(true);
+      const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
+        panelClass: 'calendar-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {
+          'trigger': target,
+          darkBackground: this.darkTheme.isEnabled$.value,
         }
-      }
-    });
+      });
 
-    settingsRef.beforeClose().subscribe(() => {
-      this.selectedSettings = false;
-    });
+      settingsRef.beforeClose().subscribe(() => {
+        this.selectedSettings = false;
+      });
 
-    settingsRef.afterClosed().subscribe(action => {
-      UNANIMATED_CONTAINER.next(false);
-      if (action === 'signout') {
-          // window.waitForAppLoaded();
+      settingsRef.afterClosed().subscribe(action => {
+        UNANIMATED_CONTAINER.next(false);
+        if (action === 'signout') {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
         } else if (action === 'about') {
-            window.open('https://smartpass.app/about');
+          window.open('https://smartpass.app/about');
         } else if (action === 'feedback') {
-            // window.open('https://www.smartpass.app/feedback');
-            // window.open('mailto:address@dmail.com');
           window.location.href = 'mailto:address@dmail.com';
         } else if (action === 'support') {
-            window.open('https://www.smartpass.app/support');
+          window.open('https://www.smartpass.app/support');
         } else if (action === 'privacy') {
           window.open('https://www.smartpass.app/legal');
         }
-    });
+      });
+    }
   }
 
   selectTab(evt: HTMLElement, container: HTMLElement) {
