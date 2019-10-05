@@ -395,7 +395,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       }
     });
     DR.afterClosed().subscribe((_date) => {
-      this.setSearchDate(_date.date);
+      if (_date.date && _date.date !== '') {
+        this.setSearchDate(_date.date);
+      }
     });
   }
 
@@ -497,6 +499,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   onDate(event) {
+    debugger;
     this.setSearchDate(event[0]._d);
   }
 

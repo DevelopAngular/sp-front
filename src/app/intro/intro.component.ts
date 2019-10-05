@@ -355,13 +355,24 @@ export class IntroComponent implements OnInit, AfterViewInit {
   }
 
   allowNotifications() {
+    let notificationDialog;
+
+    if (this.isSafari) {
+      this.introDialogRef.close();
+      notificationDialog = this.dialog.open(NotificationFormComponent, {
+        panelClass: 'form-dialog-container',
+        backdropClass: 'custom-backdrop',
+      });
+      return;
+    }
+
     Notification.requestPermission().then( (result) => {
       if (result === 'denied') {
           this.introDialogRef.close();
-          const notificationDialog = this.dialog.open(NotificationFormComponent, {
+            notificationDialog = this.dialog.open(NotificationFormComponent, {
             panelClass: 'form-dialog-container',
             backdropClass: 'custom-backdrop',
-          });
+           });
       }
     });
 
