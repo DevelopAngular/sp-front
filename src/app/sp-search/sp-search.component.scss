@@ -147,11 +147,9 @@ mat-input-container.md-input-focused label {
   &_scrollable {
     box-sizing: border-box;
     padding: 0 10px;
-    //max-height: 220px;
     overflow: auto;
   }
   &_item {
-    //@extend .appearing;
     border-top: 1px solid #D8D8D8;
     display: flex;
     align-items: center;
@@ -162,6 +160,11 @@ mat-input-container.md-input-focused label {
     cursor: pointer;
     img {
       cursor: pointer;
+    }
+
+    &:focus {
+      outline: none;
+      background-color: #ECF1FF !important;
     }
   }
 }

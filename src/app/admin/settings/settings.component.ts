@@ -74,6 +74,7 @@ export class SettingsComponent implements OnInit {
 
     ngOnInit() {
         this.triggerElementRef = this.data['trigger'];
+        this.isSwitchOption = this.data['isSwitch'];
         this.updateSettingsPosition();
     }
 
@@ -109,7 +110,8 @@ export class SettingsComponent implements OnInit {
       if (this.dialogRef) {
         const matDialogConfig: MatDialogConfig = new MatDialogConfig();
         const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-        matDialogConfig.position = {left: `${rect.left - 130}px`, top: `${rect.top - 370}px`};
+        const top = rect.top - (!this.isSwitchOption ? 370 : 410);
+        matDialogConfig.position = {left: `${rect.left - 130}px`, top: `${top}px`};
         this.dialogRef.updatePosition(matDialogConfig.position);
       }
     }

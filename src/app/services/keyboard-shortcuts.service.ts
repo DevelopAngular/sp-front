@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
+import { ShortcutEventOutput, ShortcutInput, AllowIn } from 'ng-keyboard-shortcuts';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -108,6 +108,20 @@ export class KeyboardShortcutsService {
       },
       {
         key: ['6'],
+        command(event: ShortcutEventOutput): any {
+          self.onPressKeyEvent$.next(event);
+        },
+        preventDefault: true
+      },
+      {
+        key: ['tab'],
+        command(event: ShortcutEventOutput): any {
+          self.onPressKeyEvent$.next(event);
+        },
+        allowIn: [AllowIn.Input]
+      },
+      {
+        key: ['enter'],
         command(event: ShortcutEventOutput): any {
           self.onPressKeyEvent$.next(event);
         },

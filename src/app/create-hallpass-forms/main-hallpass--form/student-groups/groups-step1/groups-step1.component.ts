@@ -4,13 +4,14 @@ import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
 import {BehaviorSubject, Observable, of, timer} from 'rxjs';
-import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../../../services/locations.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import * as _ from 'lodash';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
+import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
+import {pluck} from 'rxjs/operators';
 
 @Component({
   selector: 'app-groups-step1',
@@ -34,8 +35,6 @@ export class GroupsStep1Component implements OnInit {
   isLoadingGroups$: Observable<boolean> = this.userService.isLoadingStudentGroups$;
   isLoadedGroups$: Observable<boolean> = this.userService.isLoadedStudentGroups$;
 
-  // public selectedGroup: StudentList;
-  // public selectedStudents: User[] = [];
   frameMotion$: BehaviorSubject<any>;
 
 
@@ -44,7 +43,8 @@ export class GroupsStep1Component implements OnInit {
     private locationService: LocationsService,
     public sanitizer: DomSanitizer,
     private formService: CreateFormService,
-    private screenService: ScreenService
+    private screenService: ScreenService,
+    private shortcutsService: KeyboardShortcutsService
   ) { }
 
   ngOnInit() {
@@ -56,6 +56,16 @@ export class GroupsStep1Component implements OnInit {
     if (this.selectedGroup) {
       this.selectedStudents = this.formState.data.selectedStudents;
     }
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(pluck('key'))
+      .subscribe(key => {
+        if (key[0] === 'enter') {
+          const element = document.activeElement;
+          // debugger;
+          (element as HTMLElement).click();
+        }
+      });
   }
 
   textColor(item) {

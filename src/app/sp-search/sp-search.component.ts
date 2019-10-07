@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
 import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
@@ -8,9 +8,10 @@ import {HttpClient} from '@angular/common/http';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, switchMap} from 'rxjs/operators';
+import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 
 import * as _ from 'lodash';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 declare const window;
 
@@ -131,7 +132,8 @@ export class SPSearchComponent implements OnInit {
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
-  @ViewChild('studentInput') input;
+  @ViewChild('studentInput') input: ElementRef;
+  @ViewChild('wrapper') wrapper: ElementRef;
 
   private placePredictionService;
   private currentPosition;
@@ -156,6 +158,7 @@ export class SPSearchComponent implements OnInit {
     private httpService: HttpService,
     private http: HttpClient,
     private mapsApi: MapsAPILoader,
+    private shortcutsService: KeyboardShortcutsService
   ) {
 
 
@@ -236,6 +239,15 @@ export class SPSearchComponent implements OnInit {
         this.orgunits.next(this.removeDuplicateStudents(res));
       });
     }
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(pluck('key'))
+      .subscribe(key => {
+        if (key[0] === 'enter') {
+          const element = document.activeElement;
+          (element as HTMLElement).click();
+        }
+      });
   }
 
   onSearch(search: string) {
@@ -351,7 +363,7 @@ export class SPSearchComponent implements OnInit {
   }
 
   addStudent(student: User) {
-    console.log(student);
+    // console.log(student);
     if (this.chipsMode) {
       this.inputField = false;
     }

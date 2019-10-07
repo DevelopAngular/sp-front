@@ -165,6 +165,7 @@ export class NavComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': target,
+          'isSwitch': this.showButton,
           darkBackground: this.darkTheme.isEnabled$.value,
         }
       });

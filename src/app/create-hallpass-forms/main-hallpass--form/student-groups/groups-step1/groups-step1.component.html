@@ -36,7 +36,7 @@
             <div *ngIf="groups?.length && isLoadedGroups$ | async" class="list-of-groups">
               <mat-list>
                 <div *ngFor="let group of groups">
-                  <mat-list-item #_item
+                  <mat-list-item #_item tabindex="0"
                     (click)="selectGroup(group, $event)" class="group"
                     (mouseenter)="_item.hovered = true"
                     (mouseleave)="_item.hovered = false"
