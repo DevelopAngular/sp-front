@@ -166,8 +166,12 @@ export class SettingsComponent implements OnInit {
   }
 
   removeOfflineAuthData() {
-    this.dialogRef.close('signout');
-    combineLatest(this.pwaStorage.removeItem('servers'),
+    if (this.dialogRef) {
+      this.dialogRef.close('signout');
+    }
+
+    combineLatest(
+      this.pwaStorage.removeItem('servers'),
       this.pwaStorage.removeItem('authData') )
       .subscribe();
   }
