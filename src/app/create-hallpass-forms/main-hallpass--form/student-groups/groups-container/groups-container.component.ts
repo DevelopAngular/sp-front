@@ -5,9 +5,10 @@ import {StudentList} from '../../../../models/StudentList';
 import {BehaviorSubject, of, Subject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
-import {delay, filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {delay, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
+import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
 
 export enum States {
   SelectStudents = 1,
@@ -42,7 +43,8 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private formService: CreateFormService,
-    private screenService: ScreenService
+    private screenService: ScreenService,
+    private shortcutsService: KeyboardShortcutsService
   ) {
 
     this.states = States;
@@ -62,12 +64,6 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
 
       this.currentState = this.FORM_STATE.state || 1;
     }
-
-    // this.userService.getStudentGroupsRequest().pipe(
-    //   takeUntil(this.destoy$)
-    // ).subscribe(res => {
-    //   this.groups = res;
-    // });
 
     this.updateData$.pipe(
       switchMap((evt) => {

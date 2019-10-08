@@ -8,7 +8,7 @@ import {HttpClient} from '@angular/common/http';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {map, pluck, share, switchMap, takeUntil} from 'rxjs/operators';
 
 import * as _ from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
@@ -129,7 +129,6 @@ export class SPSearchComponent implements OnInit {
 
   @Input() searchingTeachers: User[];
 
-
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('studentInput') input: ElementRef;
@@ -151,6 +150,8 @@ export class SPSearchComponent implements OnInit {
   showDummy: boolean = false;
   hovered: boolean;
   pressed: boolean;
+
+  destroyKeySubscriber$: Subject<any> = new Subject<any>();
 
   constructor(
     private userService: UserService,
@@ -228,12 +229,10 @@ export class SPSearchComponent implements OnInit {
         }),
         map((gss: any[]) => {
           return gss
-            // .filter((gs) => gs.path.search(search) !== -1)
             .map((gs: {path: string}) => new GSuiteSelector('+' + gs.path));
         })
       )
       .subscribe((res: GSuiteSelector[]) => {
-        // console.log(res);
         this.orgunitsCollection = <GSuiteSelector[]>this.removeDuplicateStudents(res);
         this.showDummy = !this.removeDuplicateStudents(res).length;
         this.orgunits.next(this.removeDuplicateStudents(res));
@@ -241,7 +240,10 @@ export class SPSearchComponent implements OnInit {
     }
 
     this.shortcutsService.onPressKeyEvent$
-      .pipe(pluck('key'))
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroyKeySubscriber$)
+      )
       .subscribe(key => {
         if (key[0] === 'enter') {
           const element = document.activeElement;
@@ -292,14 +294,14 @@ export class SPSearchComponent implements OnInit {
         if (search !== '') {
 
           this.pending$.next(true);
-                  this.placePredictionService.getPlacePredictions({
-                    location: this.currentPosition,
-                    input: search,
-                    radius: 100000,
-                    types: ['establishment']
-                  }, (predictions, status) => {
-                    this.query.next(predictions ? predictions : []);
-                  });
+          this.placePredictionService.getPlacePredictions({
+            location: this.currentPosition,
+            input: search,
+            radius: 100000,
+            types: ['establishment']
+          }, (predictions, status) => {
+            this.query.next(predictions ? predictions : []);
+          });
 
         } else {
 

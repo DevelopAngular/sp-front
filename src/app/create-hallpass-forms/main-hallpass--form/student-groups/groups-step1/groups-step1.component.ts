@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
-import {BehaviorSubject, Observable, of, timer} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject, timer} from 'rxjs';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../../../services/locations.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
@@ -11,14 +11,14 @@ import * as _ from 'lodash';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
-import {pluck} from 'rxjs/operators';
+import {filter, pluck, publishLast, share, takeUntil, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-groups-step1',
   templateUrl: './groups-step1.component.html',
   styleUrls: ['./groups-step1.component.scss']
 })
-export class GroupsStep1Component implements OnInit {
+export class GroupsStep1Component implements OnInit, OnDestroy {
 
   @Input() selectedGroup: StudentList = null;
   @Input() selectedStudents: User[] = [];
@@ -29,14 +29,17 @@ export class GroupsStep1Component implements OnInit {
   @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
   @Output() createGroupEmit: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
-  isEmptyGroups$: Observable<boolean>;
+  @ViewChild('_item') currentGroupElement: ElementRef;
+
   isEmptyGroups: boolean = false;
+
+  isSelectedStudent: boolean = true;
 
   isLoadingGroups$: Observable<boolean> = this.userService.isLoadingStudentGroups$;
   isLoadedGroups$: Observable<boolean> = this.userService.isLoadedStudentGroups$;
 
   frameMotion$: BehaviorSubject<any>;
-
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     public userService: UserService,
@@ -50,7 +53,8 @@ export class GroupsStep1Component implements OnInit {
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
 
-    of(!this.groups || (this.groups && !this.groups.length)).subscribe((v) => {
+    of(!this.groups || (this.groups && !this.groups.length))
+      .subscribe((v) => {
       this.isEmptyGroups = v;
     });
     if (this.selectedGroup) {
@@ -58,14 +62,20 @@ export class GroupsStep1Component implements OnInit {
     }
 
     this.shortcutsService.onPressKeyEvent$
-      .pipe(pluck('key'))
+      .pipe(
+        takeUntil(this.destroy$),
+        pluck('key')
+      )
       .subscribe(key => {
         if (key[0] === 'enter') {
-          const element = document.activeElement;
-          // debugger;
-          (element as HTMLElement).click();
+          debugger;
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   textColor(item) {
@@ -96,7 +106,6 @@ export class GroupsStep1Component implements OnInit {
       this.formService.setFrameMotionDirection('disable');
     }
     setTimeout(() => {
-      // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
       if (this.formState.forLater) {
           this.formState.step = 1;
           this.formState.fromState = 1;
@@ -147,8 +156,6 @@ export class GroupsStep1Component implements OnInit {
   }
 
   editGroup(group) {
-
-    // console.log(' GROUP ==================>', group);
     this.createGroupEmit.emit({
       step: 2,
       state: 3,

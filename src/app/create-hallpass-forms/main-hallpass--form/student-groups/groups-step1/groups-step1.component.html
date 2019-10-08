@@ -35,14 +35,17 @@
             </div>
             <div *ngIf="groups?.length && isLoadedGroups$ | async" class="list-of-groups">
               <mat-list>
-                <div *ngFor="let group of groups">
-                  <mat-list-item #_item tabindex="0"
-                    (click)="selectGroup(group, $event)" class="group"
+                <div *ngFor="let group of groups"
+                >
+                  <mat-list-item
+                    class="group"
+                    (click)="selectGroup(group, $event)"
                     (mouseenter)="_item.hovered = true"
                     (mouseleave)="_item.hovered = false"
                     (mousedown)="_item.pressed = true"
                     (mouseup)="_item.pressed = false"
                     [style.background-color]="getBackground(_item, group)"
+                    #_item
                     [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}"
                   >
                     <div class="group-name">
@@ -96,6 +99,7 @@
       <div class="content-right_sudent-search">
         <div class="search-wrapper">
           <app-sp-search
+            (click)="isSelectedStudent = false"
             [width]="'280px'"
             [listMaxHeight]="'unset'"
             [focused]="true"

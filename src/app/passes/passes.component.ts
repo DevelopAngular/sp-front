@@ -253,7 +253,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   showEmptyState: Observable<boolean>;
 
   isOpenedModal: boolean;
-  hotKeysUnsubscribe$ = new Subject();
+  destroy$: Subject<any> = new Subject();
 
   user: User;
   isStaff = false;
@@ -373,15 +373,19 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
-        pluck('key')
+        takeUntil(this.destroy$),
+        pluck('key'),
+        filter(() => !this.isOpenedModal)
       )
       .subscribe((key) => {
+        this.isOpenedModal = true;
         if (key[0] === 'n') {
           this.showMainForm(false);
         } else if (key[0] === 'f') {
           this.showMainForm(true);
         }
       });
+
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
@@ -432,9 +436,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     (this.showEmptyState as ConnectableObservable<boolean>).connect();
 
     this.isSeen$ = this.createFormService.isSeen$;
-    //
-    // this.notifService.initNotifications(true)
-    //   .then(hasPerm => console.log(`Has permission to show notifications: ${hasPerm}`));
 
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
@@ -449,10 +450,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.scrollableArea && this.scrollableAreaName) {
       this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   showMainForm(forLater: boolean): void {
-    if (!this.isOpenedModal) {
       this.isOpenedModal = true;
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
         panelClass: 'main-form-dialog-container',
@@ -468,7 +470,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       mainFormRef.afterClosed().subscribe(res => {
         this.isOpenedModal = false;
       });
-    }
   }
 
   onReportFromPassCard(evt) {
