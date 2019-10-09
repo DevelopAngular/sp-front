@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Optional, Output} from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
@@ -54,8 +54,8 @@ export class IntroComponent implements OnInit, AfterViewInit {
       private deviceDetection: DeviceDetection,
       public  notifService: NotificationService,
       private cdr: ChangeDetectorRef,
-      private introDialogRef: MatDialogRef<IntroComponent>,
-      private dialog: MatDialog
+      @Optional() private introDialogRef: MatDialogRef<IntroComponent>,
+      @Optional() private dialog: MatDialog
   ) {
     console.log('intro.constructor');
   }
