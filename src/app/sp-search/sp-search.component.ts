@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
 import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
@@ -100,7 +100,7 @@ export class OrgUnit {
   styleUrls: ['./sp-search.component.scss']
 })
 
-export class SPSearchComponent implements OnInit {
+export class SPSearchComponent implements OnInit, OnDestroy {
 
 
   @Input() searchTarget: SearchEntity = 'users';
@@ -150,6 +150,8 @@ export class SPSearchComponent implements OnInit {
   showDummy: boolean = false;
   hovered: boolean;
   pressed: boolean;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private userService: UserService,
@@ -210,8 +212,6 @@ export class SPSearchComponent implements OnInit {
       this.query
         .subscribe(
           (v1: any[]) => {
-            // console.log(v1);
-
             this.schools.next(v1);
             this.pending$.next(false);
             this.showDummy = v1 && !v1.length;
@@ -239,6 +239,7 @@ export class SPSearchComponent implements OnInit {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        takeUntil(this.destroy$),
         pluck('key')
       )
       .subscribe(key => {
@@ -247,6 +248,11 @@ export class SPSearchComponent implements OnInit {
           (element as HTMLElement).click();
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onSearch(search: string) {
@@ -315,7 +321,6 @@ export class SPSearchComponent implements OnInit {
         if (search !== '') {
           const regexp = new RegExp(search, 'i');
           const res = this.orgunitsCollection.filter((gs) => gs.path.search(regexp) !== -1 );
-          this.isOpenedOptions.emit(true);
           this.orgunits.next(this.removeDuplicateStudents(res));
 
         } else {
@@ -336,7 +341,6 @@ export class SPSearchComponent implements OnInit {
           this.showDummy = false;
           this.inputValue$.next('');
           this.pending$.next(false);
-          this.isOpenedOptions.emit(true);
           this.teacherCollection$.next(null);
         }
 
@@ -374,6 +378,7 @@ export class SPSearchComponent implements OnInit {
     this.onSearch('');
     if (!this.selectedOptions.includes(student)) {
       this.selectedOptions.push(student);
+      this.isOpenedOptions.emit(false);
       this.onUpdate.emit(this.getEmitedValue());
     }
   }

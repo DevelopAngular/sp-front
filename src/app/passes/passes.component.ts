@@ -17,7 +17,7 @@ import {
   publishReplay,
   refCount, shareReplay,
   startWith,
-  switchMap, take, takeUntil,
+  switchMap, take, takeUntil, tap,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -373,12 +373,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
-        takeUntil(this.destroy$),
         pluck('key'),
-        filter(() => !this.isOpenedModal)
+        takeUntil(this.destroy$),
+        filter((key) => key[0] === 'n' || key[0] === 'f')
       )
       .subscribe((key) => {
-        this.isOpenedModal = true;
         if (key[0] === 'n') {
           this.showMainForm(false);
         } else if (key[0] === 'f') {
@@ -455,21 +454,23 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMainForm(forLater: boolean): void {
-      this.isOpenedModal = true;
-      const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
-        panelClass: 'main-form-dialog-container',
-        backdropClass: 'custom-backdrop',
-        maxWidth: '100vw',
-        data: {
-          'forLater': forLater,
-          'forStaff': this.isStaff,
-          'forInput': true
-        }
-      });
+      if (!this.isOpenedModal) {
+        this.isOpenedModal = true;
+        const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+          panelClass: 'main-form-dialog-container',
+          backdropClass: 'custom-backdrop',
+          maxWidth: '100vw',
+          data: {
+            'forLater': forLater,
+            'forStaff': this.isStaff,
+            'forInput': true
+          }
+        });
 
-      mainFormRef.afterClosed().subscribe(res => {
-        this.isOpenedModal = false;
-      });
+        mainFormRef.afterClosed().subscribe(res => {
+          this.isOpenedModal = false;
+        });
+      }
   }
 
   onReportFromPassCard(evt) {

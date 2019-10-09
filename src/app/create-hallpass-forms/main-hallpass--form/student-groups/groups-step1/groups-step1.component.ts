@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
-import {elementAt, filter, pluck, publishLast, share, takeUntil, tap, throttleTime} from 'rxjs/operators';
+import {elementAt, filter, pluck, publishLast, share, skip, takeUntil, tap, throttleTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-groups-step1',
@@ -65,11 +65,11 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
     this.shortcutsService.onPressKeyEvent$
       .pipe(
         pluck('key'),
-        filter(() => !this.isOpenedSearchOptions)
+        takeUntil(this.destroy$)
       )
       .subscribe(key => {
-        if (key[0] === 'enter') {
-        debugger;
+        if (key[0] === 'enter' && !this.isOpenedSearchOptions && this.selectedStudents.length) {
+          this.nextStep();
         }
       });
   }
@@ -168,7 +168,6 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
   }
 
   updateInternalData(evt) {
-    this.isOpenedSearchOptions = false;
     this.formState.data.selectedGroup = null;
     this.selectedGroup = null;
     this.formState.data.selectedStudents = evt;
