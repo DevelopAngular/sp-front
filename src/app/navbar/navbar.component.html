@@ -7,7 +7,7 @@
     </div>
     <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
 
-      <div *ngIf="isStaff && !this.screenService.isDeviceLargeExtra" class="teacherNav">
+      <div *ngIf="isStaff && !this.screenService.isDeviceLargeExtra && !user.isAssistant() " class="teacherNav">
         <div *ngFor="let button of buttons; let i = index" class="teacherNav_tab">
           <ng-container *ngIf="buttonVisibility(button)">
             <div

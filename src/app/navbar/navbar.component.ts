@@ -441,11 +441,16 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           })).subscribe();
 
       } else if (action === 'notifications') {
+        if (!this.isSafari) {
+          Notification.requestPermission();
+        }
+
         let notifRef;
-        if (NotificationService.hasSupport && NotificationService.canRequestPermission) {
+        if (NotificationService.hasSupport && NotificationService.canRequestPermission && !this.isSafari) {
             this.notifService.initNotifications(true)
               .then((hasPerm) => {
                 console.log(`Has permission to show notifications: ${hasPerm}`);
+
                 notifRef = this.dialog.open(NotificationFormComponent, {
                   panelClass: 'form-dialog-container',
                   backdropClass: 'custom-backdrop',
@@ -545,6 +550,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   get isKioskMode() {
     return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get isSafari() {
+    return DeviceDetection.isSafari();
   }
 
   get flexDirection() {

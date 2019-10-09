@@ -13,6 +13,8 @@ import {StorageService} from '../services/storage.service';
 import {User} from '../models/User';
 import {forkJoin, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 import {INITIAL_LOCATION_PATHNAME} from '../app.component';
+import {NotificationService} from '../services/notification-service';
+import {environment} from '../../environments/environment.prod';
 
 declare const window;
 
@@ -29,7 +31,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public appLink: string;
   public titleText: string;
-  public isMobileDevice: boolean = false;
+  public isMobileDevice = false;
   public trustedBackgroundUrl: SafeUrl;
   public pending$: Observable<boolean>;
 
@@ -51,6 +53,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private titleService: Title,
     private metaService: Meta,
+    private notifService: NotificationService,
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
@@ -77,6 +80,11 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       takeUntil(this.destroyer$)
     ).subscribe(([currentUser, path]) => {
+
+      if (NotificationService.hasPermission && environment.production) {
+        this.notifService.initNotifications(true);
+      }
+
       console.log(path);
 
       const loadView = currentUser.isAdmin() ? 'admin' : 'main';
