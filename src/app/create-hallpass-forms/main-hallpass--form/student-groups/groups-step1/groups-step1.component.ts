@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
-import {filter, pluck, publishLast, share, takeUntil, tap} from 'rxjs/operators';
+import {elementAt, filter, pluck, publishLast, share, takeUntil, tap, throttleTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-groups-step1',
@@ -34,6 +34,7 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
   isEmptyGroups: boolean = false;
 
   isSelectedStudent: boolean = true;
+  isOpenedSearchOptions: boolean;
 
   isLoadingGroups$: Observable<boolean> = this.userService.isLoadingStudentGroups$;
   isLoadedGroups$: Observable<boolean> = this.userService.isLoadedStudentGroups$;
@@ -63,12 +64,12 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
-        takeUntil(this.destroy$),
-        pluck('key')
+        pluck('key'),
+        filter(() => !this.isOpenedSearchOptions)
       )
       .subscribe(key => {
         if (key[0] === 'enter') {
-          debugger;
+        debugger;
         }
       });
   }
@@ -167,6 +168,7 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
   }
 
   updateInternalData(evt) {
+    this.isOpenedSearchOptions = false;
     this.formState.data.selectedGroup = null;
     this.selectedGroup = null;
     this.formState.data.selectedStudents = evt;
@@ -187,5 +189,3 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
     return DeviceDetection.isIOSTablet();
   }
 }
-
-

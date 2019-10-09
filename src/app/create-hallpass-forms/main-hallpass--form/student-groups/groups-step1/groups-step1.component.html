@@ -104,6 +104,7 @@
             [listMaxHeight]="'unset'"
             [focused]="true"
             [selectedOptions]="selectedStudents"
+            (isOpenedOptions)="isOpenedSearchOptions = $event"
             (onUpdate)="updateInternalData($event)"
           ></app-sp-search>
         </div>

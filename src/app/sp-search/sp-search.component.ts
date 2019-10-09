@@ -5,10 +5,9 @@ import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
-import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, share, switchMap, takeUntil} from 'rxjs/operators';
+import {map, pluck, share, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import * as _ from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
@@ -130,6 +129,7 @@ export class SPSearchComponent implements OnInit {
   @Input() searchingTeachers: User[];
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
+  @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
   @ViewChild('wrapper') wrapper: ElementRef;
@@ -150,8 +150,6 @@ export class SPSearchComponent implements OnInit {
   showDummy: boolean = false;
   hovered: boolean;
   pressed: boolean;
-
-  destroyKeySubscriber$: Subject<any> = new Subject<any>();
 
   constructor(
     private userService: UserService,
@@ -241,8 +239,7 @@ export class SPSearchComponent implements OnInit {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
-        pluck('key'),
-        takeUntil(this.destroyKeySubscriber$)
+        pluck('key')
       )
       .subscribe(key => {
         if (key[0] === 'enter') {
@@ -253,7 +250,7 @@ export class SPSearchComponent implements OnInit {
   }
 
   onSearch(search: string) {
-// debugger
+
     switch (this.searchTarget) {
       case 'users':
           if (search !== '') {
@@ -265,6 +262,7 @@ export class SPSearchComponent implements OnInit {
                 .then((paged: any) => {
                   this.pending$.next(false);
                   this.showDummy = !paged.results.length;
+                  this.isOpenedOptions.emit(true);
                   return this.removeDuplicateStudents(paged.results);
                 });
             } else if (this.type === 'gsuite') {
@@ -317,6 +315,7 @@ export class SPSearchComponent implements OnInit {
         if (search !== '') {
           const regexp = new RegExp(search, 'i');
           const res = this.orgunitsCollection.filter((gs) => gs.path.search(regexp) !== -1 );
+          this.isOpenedOptions.emit(true);
           this.orgunits.next(this.removeDuplicateStudents(res));
 
         } else {
@@ -337,6 +336,7 @@ export class SPSearchComponent implements OnInit {
           this.showDummy = false;
           this.inputValue$.next('');
           this.pending$.next(false);
+          this.isOpenedOptions.emit(true);
           this.teacherCollection$.next(null);
         }
 
