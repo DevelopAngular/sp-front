@@ -1,5 +1,13 @@
+@import '../../sp-colors';
+
 .wrapper {
   cursor: pointer;
+
+  &:focus {
+    outline: none;
+    background-color: #ECF1FF !important;
+    color: $navy !important;
+  }
 }
 
 .wrapper:hover {

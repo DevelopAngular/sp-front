@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, Directive, HostListener } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy} from '@angular/core';
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
-import {finalize, map} from 'rxjs/operators';
+import {finalize, map, pluck, takeUntil} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
-import {combineLatest, Observable} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import * as _ from 'lodash';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 
 export interface Paged<T> {
@@ -19,7 +20,7 @@ export interface Paged<T> {
   styleUrls: ['./location-table.component.scss']
 })
 
-export class LocationTableComponent implements OnInit {
+export class LocationTableComponent implements OnInit, OnDestroy {
 
   @Input() category: string;
   @Input() forKioskMode: boolean = false;
@@ -54,53 +55,20 @@ export class LocationTableComponent implements OnInit {
   mainContentVisibility: boolean = false;
   starredChoices: any[] = [];
   search: string = '';
-  nextChoices: string = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
-
-  selectedLocId: any[] = [];
 
   showSpinner$: Observable<boolean>;
   loaded$: Observable<boolean>;
 
   isFocused: boolean;
 
-  // @HostListener('scroll', ['$event'])
-  // onScroll(event) {
-  //   let tracker = event.target;
-  //
-  //   let limit = tracker.scrollHeight - tracker.clientHeight;
-  //   if (event.target.scrollTop < limit) {
-  //     this.leftShadow = true;
-  //   }
-  //   if (event.target.scrollTop === limit) {
-  //     this.leftShadow = false;
-  //   }
-  //   if (event.target.scrollTop === limit && this.nextChoices) {
-  //       this.locationService.searchLocationsWithConfig(this.nextChoices)
-  //     .pipe(finalize(() => this.leftShadow = true))
-  //       .toPromise().then(p => {
-  //         p.results.map(element => this.choices.push(element));
-  //         this.nextChoices = p.next;
-  //       });
-  //   }
-  // }
-  //
-  // @HostListener('scroll', ['$event'])
-  // leftScroll(event) {
-  //     const tracker = event.target;
-  //     const limit = tracker.scrollHeight - tracker.clientHeight;
-  //     if (event.target.scrollTop < limit) {
-  //         this.rightShadow = true;
-  //     }
-  //     if (event.target.scrollTop === limit) {
-  //         this.rightShadow = false;
-  //     }
-  // }
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
       private http: HttpService,
-      private locationService: LocationsService
+      private locationService: LocationsService,
+      private shortcutsService: KeyboardShortcutsService
   ) {
   }
 
@@ -169,6 +137,23 @@ export class LocationTableComponent implements OnInit {
       });
     }
 
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(key => {
+        if (key[0] === 'enter') {
+          const element = document.activeElement;
+          (element as HTMLElement).click();
+        }
+      });
+
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   updateOrderLocation(locations) {
@@ -220,54 +205,9 @@ export class LocationTableComponent implements OnInit {
             this.hideFavorites = false;
             this.noChoices = !this.choices.length;
           });
-          // const url = 'v1/'
-          //     +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
-          //         +(!!this.category ? ('?category=' +this.category +'&') : '?')
-          //     ))
-          //     +'limit=1000'
-          //     +(this.type==='location'?'&starred=false':'');
-          // if (this.mergedAllRooms) {
-          //   this.mergeLocations(url, this.withMergedStars)
-          //       .pipe(
-          //         map((locs: any) => {
-          //           if (this.forKioskMode) {
-          //             return locs.filter(loc => !loc.restricted);
-          //           } else {
-          //             return locs;
-          //           }
-          //         })
-          //       )
-          //       .subscribe(res => {
-          //         this.choices = res;
-          //         this.hideFavorites = false;
-          //         this.noChoices = !this.choices.length;
-          //
-          //       });
-          // } else {
-          //     this.locationService.getLocationsWithConfigRequest(url)
-          //       .pipe(
-          //         map((locs: any) => {
-          //           if (this.forKioskMode) {
-          //             return locs.filter(loc => !loc.restricted);
-          //           } else {
-          //             return locs;
-          //           }
-          //         })
-          //       )
-          //       .subscribe(p => {
-          //           if (this.staticChoices) {
-          //               this.choices = this.filterResults(this.staticChoices);
-          //           } else {
-          //               this.hideFavorites = false;
-          //               this.choices = _.uniqBy([...p, ...this.starredChoices], 'id');
-          //           }
-          //           this.noChoices = !this.choices.length;
-          //           this.search = '';
-          //       });
-          // }
+
         }
       }
-    // }
 
   }
 

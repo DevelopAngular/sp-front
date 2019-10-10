@@ -1,5 +1,4 @@
 <div class="wrapper">
-  <!--<input class="input" *ngIf="!horizontalTable" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
   <app-round-input
     [style.margin]="'20px' "
     [minWidth]="'20px auto 5px auto'"
@@ -58,23 +57,26 @@
     <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices">
       <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
       <div class="choices">
-        <app-location-cell
-                *ngFor="let choice of choices"
-                class="choice"
-                [hasLocks]="hasLocks"
-                [forLater]="forLater"
-                [forStaff]="forStaff"
-                [showStar]="showStars && !noRightStar"
-                [starred]="isSelected(choice)"
-                (onSelect)="choiceSelected($event)"
-                (onStar)="star($event)"
-                [allowOnStar]="allowOnStar"
-                [value]="choice"
-                [type]="type"
-                [valid]="!invalidLocation || choice.id !== invalidLocation">
-        </app-location-cell>
+        <div
+          class="choice-wrapper"
+          *ngFor="let choice of choices"
+        >
+          <app-location-cell
+            class="choice"
+            [hasLocks]="hasLocks"
+            [forLater]="forLater"
+            [forStaff]="forStaff"
+            [showStar]="showStars && !noRightStar"
+            [starred]="isSelected(choice)"
+            (onSelect)="choiceSelected($event)"
+            (onStar)="star($event)"
+            [allowOnStar]="allowOnStar"
+            [value]="choice"
+            [type]="type"
+            [valid]="!invalidLocation || choice.id !== invalidLocation">
+          </app-location-cell>
+        </div>
       </div>
-      <!--<div *ngIf="leftShadow" class="shadow"></div>-->
     </div>
     <div *ngIf="(loaded$ | async) && noChoices">
       <div>

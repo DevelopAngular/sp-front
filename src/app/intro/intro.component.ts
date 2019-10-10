@@ -39,8 +39,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
   introVersion = '23.46.2';
 
-  enterTick: Subject<KeyboardEvent> = new Subject<KeyboardEvent>();
-
   allowLaterClicked: boolean;
 
   constructor(
@@ -57,7 +55,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
       @Optional() private introDialogRef: MatDialogRef<IntroComponent>,
       @Optional() private dialog: MatDialog
   ) {
-    console.log('intro.constructor');
+    // console.log('intro.constructor');
   }
 
   get isSafari() {

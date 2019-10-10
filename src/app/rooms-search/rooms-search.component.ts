@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { LocationsService } from '../services/locations.service';
 import { Subject } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-import { takeUntil } from 'rxjs/operators';
+import {pluck, takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {Location} from '../models/Location';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-rooms-search',
@@ -36,7 +37,8 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
 
   constructor(
       private locationService: LocationsService,
-      private sanitizer: DomSanitizer
+      private sanitizer: DomSanitizer,
+      private shortcutsService: KeyboardShortcutsService,
   ) { }
 
   ngOnInit() {
@@ -57,11 +59,22 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
     if (this.locations) {
         this.selectedLocations = this.locations;
     }
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        takeUntil(this.destroy$),
+        pluck('key')
+      ).subscribe(key => {
+        if (key[0] === 'enter') {
+          const element = document.activeElement;
+          (element as HTMLElement).click();
+        }
+    });
   }
 
   ngOnDestroy() {
-      this.destroy$.next();
-      this.destroy$.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   textColor(item) {
@@ -120,14 +133,14 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   onSearch(search) {
     this.pending$.next(true);
     if (!search) {
-          this.showSearchResult = false;
+      this.showSearchResult = false;
       this.pending$.next(false);
 
     } else {
           this.locationService.searchLocations(100, `&search=${search}&starred=false`)
               .subscribe(res => {
-                  this.showSearchResult = true;
-                  this.searchResult = res.results;
+                this.showSearchResult = true;
+                this.searchResult = res.results;
                 this.pending$.next(false);
               });
       }
