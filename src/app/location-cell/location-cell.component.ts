@@ -75,7 +75,7 @@ export class LocationCellComponent implements OnInit {
     }
   }
 
-  get textColor(){
+  get textColor() {
     if (this.valid) {
       if (this.hovered) {
         return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
@@ -87,7 +87,7 @@ export class LocationCellComponent implements OnInit {
     }
   }
 
-  get roomColor(){
+  get roomColor() {
     if (this.valid) {
       if (this.hovered) {
         return this.sanitizer.bypassSecurityTrustStyle('#1F195E');

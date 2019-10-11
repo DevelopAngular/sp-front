@@ -133,6 +133,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   @ViewChild('studentInput') input: ElementRef;
   @ViewChild('wrapper') wrapper: ElementRef;
+  @ViewChild('cell') cell: ElementRef;
 
   private placePredictionService;
   private currentPosition;
@@ -142,7 +143,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   selectedSchool;
   orgunitsCollection: GSuiteSelector[];
   orgunits: BehaviorSubject<any[]> = new BehaviorSubject(null);
-  teacherCollection$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>(null);
+  teacherCollection$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   pending$: Subject<boolean> = new Subject();
   students: Promise<any[]>;
@@ -150,6 +151,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   showDummy: boolean = false;
   hovered: boolean;
   pressed: boolean;
+
+  searchCount: number;
+  firstSearchItem: User | GSuiteSelector;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -244,6 +248,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       )
       .subscribe(key => {
         if (key[0] === 'enter') {
+          if (this.searchCount === 1) {
+            (this.cell.nativeElement as HTMLElement).click();
+          }
           const element = document.activeElement;
           (element as HTMLElement).click();
         }
@@ -333,10 +340,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
       case 'local':
         if (search !== '') {
-          const filterItems = _.filter(this.searchingTeachers, (item => {
+          const filterItems: User[] = _.filter(this.searchingTeachers, (item => {
             return (item.display_name).toLowerCase().includes(search);
             }));
-          this.teacherCollection$.next(filterItems);
+          this.teacherCollection$.next(this.removeDuplicateStudents(filterItems));
         } else {
           this.showDummy = false;
           this.inputValue$.next('');
@@ -369,7 +376,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   addStudent(student: User) {
-    // console.log(student);
     if (this.chipsMode) {
       this.inputField = false;
     }
@@ -384,6 +390,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   removeDuplicateStudents(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {
+    this.searchCount = students.length;
+    this.firstSearchItem = students[0];
     if (!students.length) {
       return [];
     }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { LocationsService } from '../services/locations.service';
 import { Subject } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -20,6 +20,8 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   @Input() locations;
 
   @Output() result = new EventEmitter();
+
+  @ViewChild('search') searchItem: ElementRef;
 
   allRooms: Location[];
   categories = [];
@@ -66,6 +68,9 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
         pluck('key')
       ).subscribe(key => {
         if (key[0] === 'enter') {
+          if (this.searchResult.length === 1) {
+            (this.searchItem.nativeElement as HTMLElement).click();
+          }
           const element = document.activeElement;
           (element as HTMLElement).click();
         }

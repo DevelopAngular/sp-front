@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import {finalize, map, pluck, takeUntil} from 'rxjs/operators';
@@ -49,6 +49,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
   @Output() onUpdate: EventEmitter<number[]> = new EventEmitter<number[]>();
+
+  @ViewChild('item') currentItem: ElementRef;
 
   choices: any[] = [];
   noChoices:boolean = false;
@@ -144,6 +146,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       )
       .subscribe(key => {
         if (key[0] === 'enter') {
+          if (this.choices.length === 1) {
+            const wrap = this.currentItem.nativeElement.querySelector('.wrapper');
+            (wrap as HTMLElement).click();
+          }
           const element = document.activeElement;
           (element as HTMLElement).click();
         }
