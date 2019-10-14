@@ -50,6 +50,7 @@ import {
 } from '../ngrx/student-groups/states/groups-getters.state';
 import {getLoadedUser, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getUser} from '../ngrx/user/actions';
+import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 
 @Injectable()
 export class UserService {
@@ -330,9 +331,21 @@ export class UserService {
   getRepresentedUsers(id) {
     return this.http.get(`v1/users/${id}/represented_users`);
   }
+
+  addRepresentedUserRequest(profile, user: User) {
+    this.store.dispatch(addRepresentedUserAction({profile, user}));
+    return of(null);
+  }
+
   addRepresentedUser(id: number, repr_user: User) {
     return this.http.put(`v1/users/${id}/represented_users/${repr_user.id}`);
   }
+
+  deleteRepresentedUserRequest(profile, user: User) {
+    this.store.dispatch(removeRepresentedUserAction({profile, user}));
+    return of(null);
+  }
+
   deleteRepresentedUser(id: number, repr_user: User) {
     return this.http.delete(`v1/users/${id}/represented_users/${repr_user.id}`);
   }

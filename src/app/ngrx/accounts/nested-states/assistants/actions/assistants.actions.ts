@@ -17,4 +17,19 @@ export const updateAssistantActivitySuccess = createAction(`[${ASSISTANTS}] Upda
 export const updateAssistantActivityFailure =
   createAction(`[${ASSISTANTS}] Update Assistant Activity Failure`, props<{errorMessage: string}>());
 
+export const addRepresentedUserAction =
+  createAction(`[${ASSISTANTS}] Add Represented AU`, props<{profile: any, user: any}>());
+export const addRepresentedUserSuccess =
+  createAction(`[${ASSISTANTS}] Add Represented AU Success`, props<{profile: User}>());
+export const addRepresentedUserFailure =
+  createAction(`[${ASSISTANTS}] Add Represented AU Failure`, props<{errorMessage: string}>());
+
+export const removeRepresentedUserAction =
+  createAction(`[${ASSISTANTS}] Remove Represented AU`, props<{profile: any, user: any}>());
+export const removeRepresentedUserSuccess =
+  createAction(`[${ASSISTANTS}] Remove Represented AU Success`, props<{profile: User}>());
+export const removeRepresentedUserFailure =
+  createAction(`[${ASSISTANTS}] Remove Represented AU Failure`, props<{errorMessage: string}>());
+
+
 

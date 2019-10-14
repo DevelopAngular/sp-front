@@ -81,7 +81,7 @@ export class ProfileCardDialogComponent implements OnInit {
 
   ngOnInit() {
 
-    console.log(this.data);
+    // console.log(this.data);
 
     if (this.data.orgUnit) {
       this.layout = 'gSuiteSettings';
@@ -117,7 +117,7 @@ export class ProfileCardDialogComponent implements OnInit {
           } else {
             this.assistantForEditState = false;
           }
-          console.log(users, this.assistantForEditState);
+          // console.log(users, this.assistantForEditState);
         });
       }
 
@@ -236,8 +236,8 @@ export class ProfileCardDialogComponent implements OnInit {
       if (this.assistantForEditState) {
 
         return zip(
-          ...assistantForRemove.map((user) => this.userService.deleteRepresentedUser(this.profile.id, user)),
-          ...assistantForAdd.map((user) => this.userService.addRepresentedUser(this.profile.id, user))
+          ...assistantForRemove.map((user, index) => this.userService.deleteRepresentedUserRequest(this.profile, user)),
+          ...assistantForAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile, user))
         );
       }
     }

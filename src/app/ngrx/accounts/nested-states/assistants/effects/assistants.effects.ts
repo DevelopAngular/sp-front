@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as assistantsActions from '../actions';
-import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
-import {User} from '../../../../../models/User';
+import {catchError, concatMap, map, skip, switchMap, take} from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
+
+import * as _ from 'lodash';
 
 @Injectable()
 export class AssistantsEffects {
@@ -77,7 +78,48 @@ export class AssistantsEffects {
                 };
                 profile.active = action.active;
                 return assistantsActions.updateAssistantActivitySuccess({profile});
-              })
+              }),
+              catchError(error => of(assistantsActions.updateAssistantActivityFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  addRepresentedUser$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.addRepresentedUserAction),
+        concatMap((action: any) => {
+          return this.userService.addRepresentedUser(action.profile.id, action.user)
+            .pipe(
+              map((user: any) => {
+                const profile = action.profile;
+                // profile._originalUserProfile.canActingOnBehalfOf.push({
+                //   roles: [],
+                //   user: action.user
+                // });
+                return assistantsActions.addRepresentedUserSuccess({profile});
+              }),
+              catchError(error => of(assistantsActions.addRepresentedUserFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  removeRepresentedUser$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.removeRepresentedUserAction),
+        concatMap((action: any) => {
+          return this.userService.deleteRepresentedUser(action.profile.id, action.user)
+            .pipe(
+              map(user => {
+                const profile = action.profile;
+                // profile._originalUserProfile.canActingOnBehalfOf =
+                //   _.remove(profile._originalUserProfile.canActingOnBehalfOf, (item: any) => item.user.id === action.user.id);
+                return assistantsActions.removeRepresentedUserSuccess({profile});
+              }),
+              catchError(error => of(assistantsActions.removeRepresentedUserFailure({errorMessage: error.message})))
             );
         })
       );
