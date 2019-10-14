@@ -91,6 +91,7 @@ import {UserEffects} from './ngrx/user/effects';
 import {SchoolsResolver} from './core/resolvers/schools-resolver';
 import {ProcessEffects} from './ngrx/onboard-process/effects';
 import { NavbarElementSenderDirective } from './core/directives/navbar-element-sender.directive';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 
 
@@ -206,6 +207,8 @@ const appRoutes: Routes = [
     MatDialogModule,
     MatSlideToggleModule,
     SwiperModule,
+
+    KeyboardShortcutsModule.forRoot(),
 
     RouterModule.forRoot(
       appRoutes,

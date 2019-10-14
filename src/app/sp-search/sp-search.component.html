@@ -32,16 +32,14 @@
       </app-round-input>
     </div>
 
-
-
     <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'">
       <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
-          <div #cell *ngFor="let student of students | async" class="option-list_item"
+          <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"
-               (click)="inputValue$.next(''); addStudent(student)"
+               (click)="addStudent(student)"
                [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
           >
@@ -69,7 +67,7 @@
       <div *ngIf="( orgunits | async)" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
-          <div #cell *ngFor="let unit of ( orgunits | async)" class="option-list_item"
+          <div #cell *ngFor="let unit of orgunits | async" class="option-list_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"
                (click)="inputValue$.next(''); addUnit(unit)"
@@ -98,7 +96,7 @@
       <div *ngIf="( teacherCollection$ | async)" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
-          <div #cell *ngFor="let teacher of ( teacherCollection$ | async)" class="option-list_item"
+          <div #cell *ngFor="let teacher of ( teacherCollection$ | async)" tabindex="0" class="option-list_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"
                (click)="inputValue$.next(''); addLocalTeacher(teacher)"
@@ -123,8 +121,6 @@
       </ng-template>
     </div>
 
-
-    <!--<pre>{{schools | async | json}}</pre>-->
     <div *ngIf="showOptions && searchTarget === 'schools'" [ngClass]="{'options-wrapper': (schools | async) !== null}" [style.height]="(schools | async) !== null ? '235px' : '0px'">
       <div *ngIf="(schools | async)?.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noSchoolsDummy" style="margin-top: -1px;">
@@ -188,7 +184,7 @@
       <span>Selected</span>
     </div>
     <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
-      <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" class="option-list_item"
+      <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" tabindex="0" class="option-list_item"
            (mouseenter)="cell.hovered = true;"
            (mouseleave)="cell.hovered = false;"
 
@@ -210,5 +206,4 @@
       </div>
     </div>
   </div>
-
 </div>

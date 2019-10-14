@@ -60,6 +60,7 @@
     "moment": "^2.24.0",
     "ng-connection-service": "^1.0.4",
     "ng-gapi": "^0.0.51",
+    "ng-keyboard-shortcuts": "^7.0.0",
     "ng-pick-datetime": "^6.0.16",
     "ng2-charts": "^2.2.2",
     "ng2-dragula": "^2.1.1",

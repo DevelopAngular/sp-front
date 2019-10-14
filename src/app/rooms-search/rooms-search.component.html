@@ -62,7 +62,9 @@
       <mat-divider></mat-divider>
     </div>
     <div class="locations">
-      <div class="room-container" #cat *ngFor="let category of categories"
+      <div class="room-container" #cat
+           tabindex="0"
+           *ngFor="let category of categories"
            (click)="selected(category, true)"
            (mouseenter)="cat.hovered = true"
            (mouseleave)="cat.hovered = false"
@@ -85,7 +87,9 @@
       <mat-divider></mat-divider>
     </div>
     <div class="locations">
-      <div class="room-container" #loc *ngFor="let room of allRooms"
+      <div class="room-container" #loc
+           tabindex="0"
+           *ngFor="let room of allRooms"
            (click)="selected(room)"
            (mouseenter)="loc.hovered = true"
            (mouseleave)="loc.hovered = false"

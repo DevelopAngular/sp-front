@@ -16,10 +16,12 @@ import {ScreenService} from '../../../services/screen.service';
 export class DateTimeContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
+  @Input() isStaff: boolean;
+
   @Output('nextStepEvent')
   nextStepEvent: EventEmitter<Navigation | {action: string, data: any}> = new EventEmitter<Navigation | {action: string, data: any}>();
+
   @ViewChild(DateTimeComponent) dateTimeComponent;
-  @Input() isStaff: boolean;
 
   constructor(
     private formService: CreateFormService,
@@ -35,9 +37,7 @@ export class DateTimeContainerComponent implements OnInit {
 
   nextStep(evt) {
 
-
     this.formService.setFrameMotionDirection('forward');
-
 
     setTimeout(() => {
 
@@ -67,23 +67,14 @@ export class DateTimeContainerComponent implements OnInit {
         this.FORM_STATE.state = 1;
       }
 
-      console.log('Date FORM_STATE =====>', this.FORM_STATE);
-
       this.nextStepEvent.emit(this.FORM_STATE);
     }, 100);
 
   }
 
   back(event) {
-    // if (this.screenService.isDeviceLargeExtra ) {
-    //   this.formService.setFrameMotionDirection('back');
-    // } else {
-    //   this.formService.setFrameMotionDirection('disable');
-    // }
-    // setTimeout(() => {
-      this.FORM_STATE = event;
-      this.nextStepEvent.emit(event);
-    // }, 100);
+    this.FORM_STATE = event;
+    this.nextStepEvent.emit(event);
   }
 
   stepBackMobile() {

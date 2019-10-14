@@ -130,6 +130,12 @@
         img {
           cursor: pointer;
         }
+
+        &:focus {
+          outline: none;
+          background-color: #ECF1FF !important;
+          color: $navy !important;
+        }
       }
     }
   }

@@ -55,6 +55,7 @@ import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/s
 import {ScreenService} from '../services/screen.service';
 import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
+import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notification-turn-on-btn.component';
 
 @NgModule({
   imports: [
@@ -114,6 +115,7 @@ import {AnimatedHeaderDirective} from '../core/directives/animated-header.direct
     NotificationFormComponent,
     KioskModeComponent,
     AnimatedHeaderDirective,
+    NotificationTurnOnBtnComponent
   ],
   entryComponents: [
     CreateHallpassFormsComponent,

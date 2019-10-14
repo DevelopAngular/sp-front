@@ -11,13 +11,13 @@ import {
   ReplaySubject, Subject,
 } from 'rxjs';
 import {
-  delay,
+  delay, distinctUntilChanged,
   filter,
-  map, publish, publishBehavior,
+  map, pluck, publish, publishBehavior,
   publishReplay,
   refCount, shareReplay,
   startWith,
-  switchMap, take, takeUntil,
+  switchMap, take, takeUntil, tap,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -42,6 +42,10 @@ import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {UserService} from '../services/user.service';
 import {DeviceDetection} from '../device-detection.helper';
+import * as moment from 'moment';
+import {NotificationButtonService} from '../services/notification-button.service';
+
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -248,6 +252,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showEmptyState: Observable<boolean>;
 
+  isOpenedModal: boolean;
+  destroy$: Subject<any> = new Subject();
+
   user: User;
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
@@ -255,6 +262,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isInboxClicked: boolean;
 
   cursor = 'pointer';
+
+  dismissExpired = true;
 
   showInboxAnimated() {
     return this.dataService.inboxState;
@@ -284,7 +293,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
     private scrollPosition: ScrollPositionService,
-    private userService: UserService) {
+    private userService: UserService,
+    private shortcutsService: KeyboardShortcutsService,
+    private  notificationButtonService: NotificationButtonService
+  ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -350,9 +362,29 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
+    if (this.notificationButtonService.dismissExpirtationDate === notifBtnDismissExpires) {
+      this.notificationButtonService.dismissButton$.next(false);
+    }
+
     this.navbarService.inboxClick.subscribe(inboxClick => {
       this.isInboxClicked = inboxClick;
     });
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroy$),
+        filter((key) => key[0] === 'n' || key[0] === 'f')
+      )
+      .subscribe((key) => {
+        if (key[0] === 'n') {
+          this.showMainForm(false);
+        } else if (key[0] === 'f') {
+          this.showMainForm(true);
+        }
+      });
+
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
@@ -403,9 +435,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     (this.showEmptyState as ConnectableObservable<boolean>).connect();
 
     this.isSeen$ = this.createFormService.isSeen$;
-    //
-    // this.notifService.initNotifications(true)
-    //   .then(hasPerm => console.log(`Has permission to show notifications: ${hasPerm}`));
 
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
@@ -420,19 +449,28 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.scrollableArea && this.scrollableAreaName) {
       this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   showMainForm(forLater: boolean): void {
-    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
-      panelClass: 'main-form-dialog-container',
-      backdropClass: 'custom-backdrop',
-      maxWidth: '100vw',
-      data: {
-        'forLater': forLater,
-        'forStaff': this.isStaff,
-        'forInput': true
+      if (!this.isOpenedModal) {
+        this.isOpenedModal = true;
+        const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+          panelClass: 'main-form-dialog-container',
+          backdropClass: 'custom-backdrop',
+          maxWidth: '100vw',
+          data: {
+            'forLater': forLater,
+            'forStaff': this.isStaff,
+            'forInput': true
+          }
+        });
+
+        mainFormRef.afterClosed().subscribe(res => {
+          this.isOpenedModal = false;
+        });
       }
-    });
   }
 
   onReportFromPassCard(evt) {

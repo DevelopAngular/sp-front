@@ -75,7 +75,7 @@ export class SettingsComponent implements OnInit {
     ngOnInit() {
         this.triggerElementRef = this.data['trigger'];
         this.isSwitchOption = this.data['isSwitch'];
-        this.updateCalendarPosition();
+        this.updateSettingsPosition();
     }
 
 
@@ -106,16 +106,12 @@ export class SettingsComponent implements OnInit {
       }
     }
 
-    updateCalendarPosition() {
+    updateSettingsPosition() {
       if (this.dialogRef) {
         const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-        const dialogRect = this.elemRef.nativeElement.getBoundingClientRect();
-        console.log(dialogRect);
-        console.log(dialogRect.width);
-        matDialogConfig.position = {
-          left: `${this.data['possition'].x - 148}px`,
-          bottom: `${(window.document.body as HTMLElement).clientHeight - this.data['possition'].y + 20}px`
-        };
+        const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
+        const top = rect.top - (!this.isSwitchOption ? 370 : 410);
+        matDialogConfig.position = {left: `${rect.left - 130}px`, top: `${top}px`};
         this.dialogRef.updatePosition(matDialogConfig.position);
       }
     }

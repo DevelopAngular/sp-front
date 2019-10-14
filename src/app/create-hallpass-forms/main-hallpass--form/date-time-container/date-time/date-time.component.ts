@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TimeService } from '../../../../services/time.service';
 import { Navigation } from '../../main-hall-pass-form.component';
@@ -6,16 +6,18 @@ import { CreateFormService } from '../../../create-form.service';
 import { ColorProfile } from '../../../../models/ColorProfile';
 import * as moment from 'moment';
 import {DeviceDetection} from '../../../../device-detection.helper';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {StorageService} from '../../../../services/storage.service';
 import {ScreenService} from '../../../../services/screen.service';
+import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
+import {pluck, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-date-time',
   templateUrl: './date-time.component.html',
   styleUrls: ['./date-time.component.scss']
 })
-export class DateTimeComponent implements OnInit {
+export class DateTimeComponent implements OnInit, OnDestroy {
 
   @Input() mock = null;
   @Input() isStaff: boolean;
@@ -44,12 +46,15 @@ export class DateTimeComponent implements OnInit {
     'from-header_animation-back': false
   };
 
+  destroy$: Subject<any> = new Subject<any>();
+
 
   constructor(
     public screenService: ScreenService,
     private timeService: TimeService,
     private formService: CreateFormService,
-    private storage: StorageService
+    private storage: StorageService,
+    private shortcutsService: KeyboardShortcutsService
   ) {
   }
 
@@ -59,8 +64,6 @@ export class DateTimeComponent implements OnInit {
     } else {
       return '#00B476';
     }
-    // const color = this.colorProfile ? this.colorProfile.gradient_color : '#00B476,#04CD33';
-    // return `radial-gradient(circle at 98% 97%, ${color})`;
   }
 
   get selectedColor() {
@@ -99,11 +102,25 @@ export class DateTimeComponent implements OnInit {
     });
     this.form.get('declinable').valueChanges
       .subscribe(value => this.storage.setItem('declinable', value));
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroy$)
+      ).subscribe(key => {
+        if (key[0] === 'enter') {
+          this.next();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   calendarResult(date: moment.Moment[]) {
     this.requestTime = moment(date[0]);
-    // console.log((this.requestTime as any)._d);
   }
 
   next() {
@@ -122,7 +139,6 @@ export class DateTimeComponent implements OnInit {
   }
 
   back() {
-    // this.formService.setFrameMotionDirection('back');
     if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1) {
       this.formService.compressableBoxController.next(true);
       this.formService.setFrameMotionDirection('disable');

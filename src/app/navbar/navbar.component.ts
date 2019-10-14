@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {filter, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -45,6 +45,7 @@ import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 declare const window;
 
@@ -70,6 +71,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
   @ViewChild('navbar') navbar: ElementRef;
+  @ViewChild('setButton') settingsButton: ElementRef;
 
   @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
   @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
@@ -136,6 +138,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
             this.isInboxClicked = false;
         }
         this.dataService.updateInbox(this.inboxVisibility);
+
     }
 
   constructor(
@@ -161,6 +164,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private cdr: ChangeDetectorRef,
       private rendered: Renderer2,
       private navbarElementsService: NavbarElementsRefsService,
+      private shortcutsService: KeyboardShortcutsService
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -189,6 +193,28 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit() {
     this.underlinePosition();
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroyer$)
+      )
+      .subscribe(key => {
+        if (key[0] === ',') {
+          const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
+          (settingButton as HTMLElement).click();
+        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3') {
+          const route = {
+            '1': 'passes',
+            '2': 'hallmonitor',
+            '3': 'myroom'
+          };
+          const currentButton = this.buttons.find(button => button.route === route[key[0]]);
+          if (this.buttonVisibility(currentButton)) {
+            this.updateTab(currentButton.route);
+            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer, 0);
+          }
+        }
+      });
     this.hideButtons = this.router.url.includes('kioskMode');
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
@@ -213,7 +239,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.userService.userData
       .pipe(
-        this.loadingService.watchFirst
+        this.loadingService.watchFirst,
+        takeUntil(this.destroyer$)
       )
       .subscribe(user => {
         this._zone.run(() => {
@@ -227,7 +254,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.userService.effectiveUser
       .pipe(
         this.loadingService.watchFirst,
-        // filter(eu => !!eu),
+        takeUntil(this.destroyer$),
         switchMap((eu: RepresentedUser) => {
           if (eu) {
               this.effectiveUser = eu;
@@ -314,7 +341,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef) {
+  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 550) {
     if (this.isStaff && buttonsContainer && this.tabRefs ||
       this.isAssistant && buttonsContainer && this.tabRefs) {
       setTimeout(() => {
@@ -323,7 +350,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         if (tabRefsArray[selectedTabRef]) {
           this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
         }
-      }, 550);
+      }, timeout);
     }
   }
 
@@ -371,36 +398,38 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   showOptions(event) {
-    if (this.screenService.isDeviceLargeExtra) {
-      this.sideNavService.toggle$.next(true);
-      this.sideNavService.toggleLeft$.next(true);
+    if (!this.isOpenSettings) {
+      if (this.screenService.isDeviceLargeExtra) {
+        this.sideNavService.toggle$.next(true);
+        this.sideNavService.toggleLeft$.next(true);
+      }
+
+      const target = new ElementRef(event.currentTarget);
+      if (!this.screenService.isDeviceLargeExtra) {
+        this.isOpenSettings = true;
+        UNANIMATED_CONTAINER.next(true);
+        const settingRef = this.dialog.open(SettingsComponent, {
+          panelClass: ['calendar-dialog-container', 'animation'],
+          backdropClass: 'invis-backdrop',
+          data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
+        });
+
+        settingRef.beforeClose().subscribe(() => {
+          this.isOpenSettings = false;
+        });
+
+        settingRef.afterClosed().subscribe(action => {
+          UNANIMATED_CONTAINER.next(false);
+          this.settingsAction(action);
+        });
+      }
+
+      this.settingsClick.emit({ 'trigger': target, 'isSwitch': this.showSwitchButton });
+
+      this.sideNavService.sideNavData$.next({ 'trigger': target, 'isSwitch': this.showSwitchButton });
+
+      this.sideNavService.sideNavType$.next('left');
     }
-
-    const target = new ElementRef(event.currentTarget);
-    if (!this.screenService.isDeviceLargeExtra) {
-      this.isOpenSettings = true;
-      UNANIMATED_CONTAINER.next(true);
-      const settingRef = this.dialog.open(SettingsComponent, {
-        panelClass: ['calendar-dialog-container', 'animation'],
-        backdropClass: 'invis-backdrop',
-        data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
-      });
-
-      settingRef.beforeClose().subscribe(() => {
-        this.isOpenSettings = false;
-      });
-
-      settingRef.afterClosed().subscribe(action => {
-        UNANIMATED_CONTAINER.next(false);
-        this.settingsAction(action);
-      });
-    }
-
-    this.settingsClick.emit({ 'trigger': target, 'isSwitch': this.showSwitchButton });
-
-    this.sideNavService.sideNavData$.next({ 'trigger': target, 'isSwitch': this.showSwitchButton });
-
-    this.sideNavService.sideNavType$.next('left');
   }
 
   showTeaches(target) {
@@ -440,11 +469,16 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           })).subscribe();
 
       } else if (action === 'notifications') {
+        if (!this.isSafari) {
+          Notification.requestPermission();
+        }
+
         let notifRef;
-        if (NotificationService.hasSupport && NotificationService.canRequestPermission) {
+        if (NotificationService.hasSupport && NotificationService.canRequestPermission && !this.isSafari) {
             this.notifService.initNotifications(true)
               .then((hasPerm) => {
                 console.log(`Has permission to show notifications: ${hasPerm}`);
+
                 notifRef = this.dialog.open(NotificationFormComponent, {
                   panelClass: 'form-dialog-container',
                   backdropClass: 'custom-backdrop',
@@ -544,6 +578,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   get isKioskMode() {
     return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get isSafari() {
+    return DeviceDetection.isSafari();
   }
 
   get flexDirection() {
