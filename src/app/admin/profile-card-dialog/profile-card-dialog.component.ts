@@ -3,12 +3,11 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {Router} from '@angular/router';
-import {map, mapTo, switchMap, tap} from 'rxjs/operators';
+import { mapTo, switchMap } from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {fromEvent, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
-import {HttpService} from '../../services/http-service';
 
 import * as _ from 'lodash';
 import {GSuiteSelector} from '../../sp-search/sp-search.component';
@@ -77,12 +76,9 @@ export class ProfileCardDialogComponent implements OnInit {
     private router: Router,
     private dataService: DataService,
     private userService: UserService,
-    private http: HttpService
   ) {}
 
   ngOnInit() {
-
-    // console.log(this.data);
 
     if (this.data.orgUnit) {
       this.layout = 'gSuiteSettings';
@@ -114,7 +110,7 @@ export class ProfileCardDialogComponent implements OnInit {
         this.assistantForUpdate$.subscribe((users: User[]) => {
           this.assistantToAdd = _.differenceBy(users, this.assistantForInitialState, 'id');
           this.assistantToRemove = _.differenceBy(this.assistantForInitialState, users, 'id');
-          // this.assistantFor = users;
+
           if (!_.isEqual(this.assistantFor, this.assistantForInitialState)) {
             this.assistantForEditState = true;
           } else {
@@ -195,25 +191,6 @@ export class ProfileCardDialogComponent implements OnInit {
 
     this.disabledState = true;
 
-    const assistantForRemove = [];
-    const assistantForAdd = [];
-
-    if (this.assistantForEditState) {
-      this.assistantForInitialState.forEach((iuser: User) => {
-        if (this.assistantFor.findIndex((user) => user.id === iuser.id) < 0) {
-          assistantForRemove.push(iuser);
-          // debugger;
-        }
-      });
-      this.assistantFor.forEach((user: User) => {
-        if (this.assistantForInitialState.findIndex((iuser) => iuser.id === user.id)) {
-          assistantForAdd.push(user);
-          // debugger;
-        }
-      });
-    }
-
-
     if ( this.data.bulkPermissions) {
       return zip(
         ...this.data.bulkPermissions.map((userId) => this.userService.createUserRoles(userId, this.permissionsForm.value))
@@ -221,8 +198,8 @@ export class ProfileCardDialogComponent implements OnInit {
     } else if (this.permissionsFormEditState && this.assistantForEditState) {
       return zip(
         this.userService.createUserRoles(this.profile.id, this.permissionsForm.value),
-        ...assistantForRemove.map((user) => this.userService.deleteRepresentedUser(this.profile.id, user)),
-        ...assistantForAdd.map((user) => this.userService.addRepresentedUser(this.profile.id, user))
+        ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile.id, user)),
+        ...this.assistantToAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile.id, user))
       );
     } else {
       if (this.permissionsFormEditState) {
@@ -230,9 +207,8 @@ export class ProfileCardDialogComponent implements OnInit {
           .createUserRoles(this.profile.id, this.permissionsForm.value);
       }
       if (this.assistantForEditState) {
-        // debugger;
         return zip(
-          ...this.assistantToRemove.map((user, index) => this.userService.deleteRepresentedUserRequest(this.profile, user, index)),
+          ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile, user)),
           ...this.assistantToAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile, user))
         );
       }
