@@ -93,12 +93,11 @@ export class AssistantsEffects {
           return this.userService.addRepresentedUser(action.profile.id, action.user)
             .pipe(
               map((user: any) => {
-                const profile = action.profile;
-                // profile._originalUserProfile.canActingOnBehalfOf.push({
-                //   roles: [],
-                //   user: action.user
-                // });
-                return assistantsActions.addRepresentedUserSuccess({profile});
+                action.profile._originalUserProfile.canActingOnBehalfOf.push({
+                  roles: [...action.user.roles],
+                  user: action.user
+                });
+                return assistantsActions.addRepresentedUserSuccess({profile: action.profile});
               }),
               catchError(error => of(assistantsActions.addRepresentedUserFailure({errorMessage: error.message})))
             );
@@ -114,10 +113,11 @@ export class AssistantsEffects {
           return this.userService.deleteRepresentedUser(action.profile.id, action.user)
             .pipe(
               map(user => {
-                const profile = action.profile;
-                // profile._originalUserProfile.canActingOnBehalfOf =
-                //   _.remove(profile._originalUserProfile.canActingOnBehalfOf, (item: any) => item.user.id === action.user.id);
-                return assistantsActions.removeRepresentedUserSuccess({profile});
+                const index = action.profile._originalUserProfile.canActingOnBehalfOf.findIndex(elem => {
+                  return elem.user.id === action.user.id;
+                });
+                action.profile._originalUserProfile.canActingOnBehalfOf.splice(index, 1);
+                return assistantsActions.removeRepresentedUserSuccess({profile: action.profile});
               }),
               catchError(error => of(assistantsActions.removeRepresentedUserFailure({errorMessage: error.message})))
             );
