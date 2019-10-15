@@ -52,10 +52,8 @@ export class ProfileCardDialogComponent implements OnInit {
   private permissionsFormInitialState;
 
   public controlsIteratable: any[];
-  public profileTouched: boolean = false;
   public disabledState: boolean = false;
   public headerText: string = '';
-  public consentMenuOpened: boolean = false;
   public headerIcon: string;
   public layout: string = 'viewProfile';
 
@@ -68,6 +66,9 @@ export class ProfileCardDialogComponent implements OnInit {
     value: boolean,
     initialValue: boolean
   };
+
+  assistantToAdd: User[];
+  assistantToRemove: User[];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -111,13 +112,14 @@ export class ProfileCardDialogComponent implements OnInit {
         this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
         this.assistantForInitialState = _.cloneDeep(this.assistantFor);
         this.assistantForUpdate$.subscribe((users: User[]) => {
-          this.assistantFor = users;
+          this.assistantToAdd = _.differenceBy(users, this.assistantForInitialState, 'id');
+          this.assistantToRemove = _.differenceBy(this.assistantForInitialState, users, 'id');
+          // this.assistantFor = users;
           if (!_.isEqual(this.assistantFor, this.assistantForInitialState)) {
             this.assistantForEditState = true;
           } else {
             this.assistantForEditState = false;
           }
-          // console.log(users, this.assistantForEditState);
         });
       }
 
@@ -151,7 +153,7 @@ export class ProfileCardDialogComponent implements OnInit {
                       `${this.data.orgUnit.title}s Group Syncing`
                       : '';
 
-    if (this.data.role === '_profile_teacher') {console.log(this.profile);
+    if (this.data.role === '_profile_teacher') {
        this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo;
     }
 
@@ -173,20 +175,12 @@ export class ProfileCardDialogComponent implements OnInit {
     }
 
     this.dialogRef.backdropClick().subscribe((evt) => {
-      console.log(evt);
       this.back();
     });
   }
 
   goToSearch() {
     window.open(`admin/search?profileId=${this.profile.id}&profileName=${this.profile['Name']}&role=${this.data.role}`, '_blank');
-    // this.router.navigate(['admin/search'], {
-    //   queryParams: {
-    //     profileId: this.profile.id,
-    //     profileName: this.profile['Name'],
-    //     role: this.data.role
-    //   }
-    // });
   }
   goToPassConfig(location?: Location) {
     if (location) {
@@ -208,11 +202,13 @@ export class ProfileCardDialogComponent implements OnInit {
       this.assistantForInitialState.forEach((iuser: User) => {
         if (this.assistantFor.findIndex((user) => user.id === iuser.id) < 0) {
           assistantForRemove.push(iuser);
+          // debugger;
         }
       });
       this.assistantFor.forEach((user: User) => {
         if (this.assistantForInitialState.findIndex((iuser) => iuser.id === user.id)) {
           assistantForAdd.push(user);
+          // debugger;
         }
       });
     }
@@ -234,10 +230,10 @@ export class ProfileCardDialogComponent implements OnInit {
           .createUserRoles(this.profile.id, this.permissionsForm.value);
       }
       if (this.assistantForEditState) {
-
+        // debugger;
         return zip(
-          ...assistantForRemove.map((user, index) => this.userService.deleteRepresentedUserRequest(this.profile, user)),
-          ...assistantForAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile, user))
+          ...this.assistantToRemove.map((user, index) => this.userService.deleteRepresentedUserRequest(this.profile, user, index)),
+          ...this.assistantToAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile, user))
         );
       }
     }

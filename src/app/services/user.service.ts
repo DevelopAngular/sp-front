@@ -341,8 +341,8 @@ export class UserService {
     return this.http.put(`v1/users/${id}/represented_users/${repr_user.id}`);
   }
 
-  deleteRepresentedUserRequest(profile, user: User) {
-    this.store.dispatch(removeRepresentedUserAction({profile, user}));
+  deleteRepresentedUserRequest(profile, user: User, index) {
+    this.store.dispatch(removeRepresentedUserAction({profile, user, index}));
     return of(null);
   }
 

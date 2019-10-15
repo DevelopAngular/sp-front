@@ -25,7 +25,7 @@ export const addRepresentedUserFailure =
   createAction(`[${ASSISTANTS}] Add Represented AU Failure`, props<{errorMessage: string}>());
 
 export const removeRepresentedUserAction =
-  createAction(`[${ASSISTANTS}] Remove Represented AU`, props<{profile: any, user: any}>());
+  createAction(`[${ASSISTANTS}] Remove Represented AU`, props<{profile: any, user: any, index: number}>());
 export const removeRepresentedUserSuccess =
   createAction(`[${ASSISTANTS}] Remove Represented AU Success`, props<{profile: User}>());
 export const removeRepresentedUserFailure =
