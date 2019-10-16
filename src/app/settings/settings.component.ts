@@ -96,6 +96,8 @@ export class SettingsComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
+          this.settings = [];
+          this.initializeSettings();
           this.isStaff = user.roles.includes('edit_all_hallpass');
         });
       });
@@ -221,13 +223,15 @@ export class SettingsComponent implements OnInit {
       'action': 'about',
       'title': 'About'
     });
-    this.settings.push({
-      'hidden': false,
-      'gradient': '#5E4FED, #7D57FF',
-      'icon': 'Feedback',
-      'action': 'feedback',
-      'title': 'Feedback'
-    });
+    if (this.user && this.user.isAdmin() || this.user && this.user.isTeacher()) {
+      this.settings.push({
+        'hidden': false,
+        'gradient': '#5E4FED, #7D57FF',
+        'icon': 'Launch',
+        'action': 'wishlist',
+        'title': 'Wishlist'
+      });
+    }
     this.settings.push({
       'hidden': false,
       'gradient': '#F52B4F, #F37426',
