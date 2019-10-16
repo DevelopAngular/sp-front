@@ -181,12 +181,12 @@ function check_kube_domain() {
 
 function install_tiller() {
     echo "Checking Tiller..."
-    helm init --upgrade
-    kubectl rollout status -n "$TILLER_NAMESPACE" -w "deployment/tiller-deploy"
-    if ! helm version --debug; then
-      echo "Failed to init Tiller."
-      return 1
-    fi
+#    helm init --upgrade
+#    kubectl rollout status -n "$TILLER_NAMESPACE" -w "deployment/tiller-deploy"
+#    if ! helm version --debug; then
+#      echo "Failed to init Tiller."
+#      return 1
+#    fi
     echo ""
 }
 
