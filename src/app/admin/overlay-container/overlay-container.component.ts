@@ -5,7 +5,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import {BehaviorSubject, forkJoin, merge, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
 import {
-  delay,
   map,
   switchMap,
   filter,
@@ -615,7 +614,9 @@ export class OverlayContainerComponent implements OnInit {
         this.locationService.updateLocationRequest(this.pinnable.location.id, mergedData)
             .pipe(
               filter(res => !!res),
+              take(1),
               switchMap((loc: Location) => {
+                // debugger;
                 const pinnable = {
                     title: this.roomData.roomName,
                     color_profile: this.color_profile.id,
@@ -623,7 +624,10 @@ export class OverlayContainerComponent implements OnInit {
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
-            })).subscribe(response => this.dialogRef.close());
+            })).subscribe(response => {
+              // debugger;
+              this.dialogRef.close();
+        });
     }
 
     if (this.currentPage === Pages.BulkEditRooms) {
