@@ -46,6 +46,7 @@ import * as moment from 'moment';
 import {NotificationButtonService} from '../services/notification-button.service';
 
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {HttpService} from '../services/http-service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -265,6 +266,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dismissExpired = true;
 
+  public schoolsLength$: Observable<number>;
+
   showInboxAnimated() {
     return this.dataService.inboxState;
   }
@@ -295,7 +298,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollPosition: ScrollPositionService,
     private userService: UserService,
     private shortcutsService: KeyboardShortcutsService,
-    private  notificationButtonService: NotificationButtonService
+    private  notificationButtonService: NotificationButtonService,
+    private httpService: HttpService
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -362,6 +366,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+  this.schoolsLength$ = this.httpService.schoolsLength$;
     const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
     if (this.notificationButtonService.dismissExpirtationDate === notifBtnDismissExpires) {
       this.notificationButtonService.dismissButton$.next(false);
