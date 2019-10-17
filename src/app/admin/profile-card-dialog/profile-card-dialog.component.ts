@@ -156,7 +156,6 @@ export class ProfileCardDialogComponent implements OnInit {
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
       this.controlsIteratable = permissions ? Object.values(permissions) : [];
-      // console.log(permissions);
       const group: any = {};
       for (const key in permissions) {
         const value = (this.profile._originalUserProfile as User).roles.includes(key);

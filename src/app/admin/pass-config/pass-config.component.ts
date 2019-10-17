@@ -181,7 +181,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         return this.locationsService.getLocation(locationId);
       }),
       switchMap((location: Location) => {
-        return zip(this.pinnables$, of(location));
+        return zip(this.pinnables$.pipe(filter(res => !!res.length)), of(location));
       })
     ).subscribe(([pinnables, location]) => {
       this.forceSelectedLocation = location;
@@ -200,9 +200,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
-      return this.updatePinnablesOrder().pipe(takeUntil(this.destroy$)).subscribe(res => {
-        debugger
-      });
+      return this.updatePinnablesOrder().pipe(takeUntil(this.destroy$)).subscribe();
     }
     this.destroy$.next();
     this.destroy$.complete();

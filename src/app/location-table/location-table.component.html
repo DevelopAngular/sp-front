@@ -74,7 +74,7 @@
             [allowOnStar]="allowOnStar"
             [value]="choice"
             [type]="type"
-            [valid]="!invalidLocation || choice.id !== invalidLocation">
+            [valid]="isValidLocation(choice)">
           </app-location-cell>
         </div>
       </div>

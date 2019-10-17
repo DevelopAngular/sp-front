@@ -45,6 +45,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() searchExceptFavourites: boolean = false;
   @Input() allowOnStar: boolean = false;
   @Input() isFavoriteForm: boolean;
+  @Input() originLocation: any;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -215,6 +216,23 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       }
 
+  }
+
+
+  isValidLocation(location) {
+    if (!this.forStaff &&
+      (!this.forLater &&
+        location.request_mode === 'all_teachers_in_room' &&
+        location.request_send_origin_teachers &&
+        !this.originLocation.teachers.length) ||
+      (this.forLater &&
+        location.scheduling_request_mode === 'all_teachers_in_room' &&
+        location.scheduling_request_send_origin_teachers &&
+        !this.originLocation.teachers.length)
+    ) {
+      return false;
+    }
+    return !this.invalidLocation || location.id !== this.invalidLocation;
   }
 
   mergeLocations(url, withStars: boolean) {
