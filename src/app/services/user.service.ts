@@ -12,7 +12,13 @@ import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getAccounts, postAccounts, removeAccount, updateAccountActivity} from '../ngrx/accounts/actions/accounts.actions';
+import {
+  getAccounts,
+  postAccounts,
+  removeAccount,
+  updateAccountActivity,
+  updateAccountPermissions
+} from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection, getCountAllAccounts,
   getLoadedAllAccounts, getLoadingAllAccounts
@@ -310,6 +316,11 @@ export class UserService {
   }
   addUserToProfile(id, role) {
       return this.http.put(`v1/users/${id}/profiles/${role}`);
+  }
+
+  createUserRolesRequest(profile, permissions, role) {
+    this.store.dispatch(updateAccountPermissions({profile, permissions, role}));
+    return of(null);
   }
 
   createUserRoles(id, data) {

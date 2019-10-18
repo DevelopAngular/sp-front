@@ -644,7 +644,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return false;
     }
     if (bulk && this.selectedUsers.length) {
-      data.bulkPermissions = this.selectedUsers.map(user => user.id);
+      data.bulkPermissions = this.selectedUsers;
     }
     if (gSuite) {
       data.gSuiteSettings = gSuite;
