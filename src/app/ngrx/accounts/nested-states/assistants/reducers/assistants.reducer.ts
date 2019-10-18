@@ -30,6 +30,7 @@ const reducer = createReducer(
   on(
     assistantsActions.removeRepresentedUserSuccess,
     assistantsActions.addRepresentedUserSuccess,
+    assistantsActions.updateAssistantPermissionsSuccess,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state});
   })

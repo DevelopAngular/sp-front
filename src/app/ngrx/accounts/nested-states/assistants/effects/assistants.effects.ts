@@ -125,6 +125,24 @@ export class AssistantsEffects {
       );
   });
 
+  updateAssistantPermissions$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.updateAssistantPermissions),
+        concatMap((action: any) => {
+          return this.userService.createUserRoles(action.profile.id, action.permissions)
+            .pipe(
+              map((roles: any) => {
+                const profile = action.profile;
+                profile.roles = roles.map(role => role.codename);
+                return assistantsActions.updateAssistantPermissionsSuccess({profile});
+              }),
+              catchError(error => of(assistantsActions.updateAssistantPermissionsFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService
