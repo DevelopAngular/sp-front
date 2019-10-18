@@ -518,7 +518,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         break;
       case 'enable_sign_in':
         header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} group.`;
-        options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
+        options = [{display: 'Enable sign-in', color: '#00B476', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
         break;
     }
     UNANIMATED_CONTAINER.next(true);
@@ -544,9 +544,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               case 'delete_from_profile':
                return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], this.role)));
               case 'disable_sign_in':
-                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivity(user['id'], false)));
+                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, false, this.role)));
               case 'enable_sign_in':
-                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivity(user['id'], true)));
+                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, true, this.role)));
 
               default:
                 return of(false);
@@ -702,6 +702,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private buildUserListData(userList) {
     this.isLoadUsers = this.limitCounter === userList.length;
     return userList.map((raw, index) => {
+      if (!raw.roles) {
+        debugger;
+      }
       const permissionsRef: any = this.profilePermissions;
         const partOf = [];
         if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
