@@ -660,10 +660,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
-      // console.log(userListReloadTrigger, data.profile.id, this.user.id);
       if (userListReloadTrigger) {
         if (data.profile.id === +this.user.id) {
-          // window.document.location.reload();
           this.userService.getUser()
             .pipe(
               map(raw => User.fromJSON(raw))

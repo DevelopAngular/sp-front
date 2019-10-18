@@ -40,7 +40,7 @@
             <app-pinnable
               [width]="gridRestrictions.pileWidth"
               [height]="gridRestrictions.pileHeight"
-              [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)"
+              [valid]="(pinnable.location && location ? isValidPinnable(pinnable) : true)"
               [forStaff]="isStaff && !dialogData.kioskModeRoom"
               [forLater]="!!date"
               [pinnable]="pinnable"

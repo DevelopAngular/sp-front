@@ -92,7 +92,27 @@ export class ToWhereComponent implements OnInit {
     });
   }
 
+  isValidPinnable(pinnable: Pinnable) {
+    if (pinnable.location.id === this.location.id) {
+      return false;
+    }
+    if (!this.isStaff &&
+      (!this.formState.forLater &&
+      pinnable.location.request_mode === 'all_teachers_in_room' &&
+      pinnable.location.request_send_origin_teachers &&
+      !this.location.teachers.length) ||
+      (this.formState.forLater &&
+      pinnable.location.scheduling_request_mode === 'all_teachers_in_room' &&
+      pinnable.location.scheduling_request_send_origin_teachers &&
+      !this.location.teachers.length)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   pinnableSelected(pinnable) {
+    // debugger;
     if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
       this.formService.setFrameMotionDirection('disable');
     } else {

@@ -8,9 +8,6 @@ import { FormFactor, Navigation } from '../main-hall-pass-form.component';
 import { CreateFormService } from '../../create-form.service';
 import { NextStep } from '../../../animations';
 import { LocationsService } from '../../../services/locations.service';
-import {filter, map} from 'rxjs/operators';
-
-import *as _ from 'lodash';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {FromWhereComponent} from './from-where/from-where.component';
 import {ToCategoryComponent} from './to-category/to-category.component';
@@ -203,10 +200,9 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
-    // const restricted = ((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && !!this.FORM_STATE.forLater));
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
         this.FORM_STATE.previousState = States.from;
-        this.FORM_STATE.state = States.restrictedTarget;
+        this.FORM_STATE.state = this.redirectTo;
     } else {
         this.postComposetData();
     }
