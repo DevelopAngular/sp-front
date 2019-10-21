@@ -462,20 +462,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  showMainForm(forLater: boolean): void {
-    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
-      panelClass: 'main-form-dialog-container',
-      backdropClass: 'custom-backdrop',
-      data: {
-        'forLater': forLater,
-        'forStaff': this.isStaff,
-        'forInput': true,
-        'kioskMode': true,
-        'kioskModeRoom': this.kioskMode.currentRoom$.value
-      }
-    });
-  }
-
   showOptions(target: HTMLElement) {
     this.optionsClick = !this.optionsClick;
     if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {

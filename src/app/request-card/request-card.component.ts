@@ -285,6 +285,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             this.dialogRef.close();
             config = {
                 panelClass: 'form-dialog-container',
+                maxWidth: '100vw',
                 backdropClass: 'custom-backdrop',
                 data: {
                     'entryState': {
@@ -329,6 +330,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     if (!this.messageEditOpen) {
       const infoDialog = this.dialog.open(CreateHallpassFormsComponent, {
         width: '750px',
+        maxWidth: '100vw',
         panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {'entryState': 'restrictedMessage',
@@ -381,6 +383,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
               width: '750px',
               panelClass: 'form-dialog-container',
+              maxWidth: '100vw',
               backdropClass: 'custom-backdrop',
               data: {
                 'fromLocation': this.request.origin,
