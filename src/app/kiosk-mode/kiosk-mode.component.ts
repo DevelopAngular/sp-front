@@ -89,16 +89,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   cardReader(event: KeyboardEvent) {
-      // this.cardReaderValue = ';236=7';
-      // if (event.keyCode === 37) {
-      //     this.cardReaderValue = ';236=7';
-      // } else if (event.keyCode === 38) {
-      //     this.cardReaderValue = ';234=7';
-      // } else if (event.keyCode === 39) {
-      //     this.cardReaderValue = ';654=7';
-      // } else if (event.keyCode === 40) {
-      //     this.cardReaderValue = '%234=2?';
-      // }
       if (event.keyCode === 13 && this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
           combineLatest(
               this.userService.searchUserByCardId(this.cardReaderValue),

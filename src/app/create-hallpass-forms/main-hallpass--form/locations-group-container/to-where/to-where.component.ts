@@ -112,7 +112,6 @@ export class ToWhereComponent implements OnInit {
   }
 
   pinnableSelected(pinnable) {
-    // debugger;
     if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
       this.formService.setFrameMotionDirection('disable');
     } else {
