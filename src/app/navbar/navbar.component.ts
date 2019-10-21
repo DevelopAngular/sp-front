@@ -590,4 +590,15 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
     return direction;
   }
+
+  changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {
+    if (DeviceDetection.isIOSMobile() || DeviceDetection.isIOSMobile()) {
+      this.rendered.setStyle(clickedTab, 'opacity', 0.8);
+      setTimeout( () => {
+        this.rendered.setStyle(clickedTab, 'opacity', 1);
+      }, 200);
+    } else {
+      this.rendered.setStyle(clickedTab, 'opacity', pressed ? 0.8 : 1);
+    }
+  }
 }

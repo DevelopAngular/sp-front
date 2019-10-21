@@ -120,8 +120,8 @@
           <div
             #tabRefMobile
             [style.transition]="'transform .4s ease'"
-            (touchstart)="shrinkTab(tabRefMobile)"
-            (touchend)="expandTab(tabRefMobile)">
+            (touchstart)="changeTabOpacity(tabRefMobile, true)"
+            (touchend)="changeTabOpacity(tabRefMobile, false)">
             <div>
             </div>
             <app-nav-button
