@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material';
 import {ActivePassProvider} from '../hall-monitor/hall-monitor.component';
 import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
-import {combineLatest, of} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -15,6 +15,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {DataService} from '../services/data-service';
 import {LocationsService} from '../services/locations.service';
+import {HttpService} from '../services/http-service';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -39,7 +40,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       user_id: number
   };
 
-
+  countSchools$: Observable<number>;
 
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
@@ -59,9 +60,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       private userService: UserService,
       private passesService: HallPassesService,
       private storage: StorageService,
+      private http: HttpService
   ) { }
 
   ngOnInit() {
+    this.countSchools$ = this.http.schoolsLength$;
       this.activePassesKiosk = new WrappedProvider(new ActivePassProvider(this.liveDataService, of('')));
       this.dataService.currentUser.pipe(
           switchMap(user => {
@@ -86,16 +89,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   cardReader(event: KeyboardEvent) {
-      // this.cardReaderValue = ';236=7';
-      // if (event.keyCode === 37) {
-      //     this.cardReaderValue = ';236=7';
-      // } else if (event.keyCode === 38) {
-      //     this.cardReaderValue = ';234=7';
-      // } else if (event.keyCode === 39) {
-      //     this.cardReaderValue = ';654=7';
-      // } else if (event.keyCode === 40) {
-      //     this.cardReaderValue = '%234=2?';
-      // }
       if (event.keyCode === 13 && this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
           combineLatest(
               this.userService.searchUserByCardId(this.cardReaderValue),
@@ -126,6 +119,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   showMainForm(forLater: boolean, student?): void {
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',
+          maxWidth: '100vw',
           backdropClass: 'custom-backdrop',
           data: {
               'forLater': forLater,

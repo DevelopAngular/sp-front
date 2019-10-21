@@ -19,8 +19,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  .current-pass {
-    //margin-top: 20px;
+  &.with-nav {
+    height: calc(100vh - 168px);
+  }
+  &.no-nav {
+    height: calc(100vh - 118px);
   }
   .pass-buttons{
     display: flex;

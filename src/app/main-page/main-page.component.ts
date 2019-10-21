@@ -78,7 +78,6 @@ export class MainPageComponent implements OnInit, AfterViewInit {
   navbarHeight: string = '78px';
 
   ngOnInit() {
-    this.createFormService.seen();
     this.toggleLeft = this.sideNavService.toggleLeft;
     this.toggleRight = this.sideNavService.toggleRight;
 
