@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -46,6 +46,7 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import * as _ from 'lodash';
 
 declare const window;
 
@@ -101,7 +102,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   isMyRoomRoute: boolean;
 
-  schools: School[] = [];
+  countSchools$: Observable<number>;
 
   buttonHash = {
     passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
@@ -318,9 +319,12 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.sideNavService.fadeClick.subscribe(click =>  this.fadeClick = click);
 
-    this.http.schoolsCollection$.subscribe(schools => {
-        this.schools = schools;
-    });
+    this.countSchools$ = this.http.schoolsCollection$.pipe(
+      map(schools => {
+        const filteredSchools = _.filter(schools, (school => school.my_roles.length > 0));
+        return filteredSchools.length;
+      })
+    );
   }
 
   ngAfterViewInit(): void {

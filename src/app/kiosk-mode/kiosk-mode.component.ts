@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material';
 import {ActivePassProvider} from '../hall-monitor/hall-monitor.component';
 import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
-import {combineLatest, of} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -15,6 +15,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {DataService} from '../services/data-service';
 import {LocationsService} from '../services/locations.service';
+import {HttpService} from '../services/http-service';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -39,7 +40,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       user_id: number
   };
 
-
+  countSchools$: Observable<number>;
 
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
@@ -59,9 +60,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       private userService: UserService,
       private passesService: HallPassesService,
       private storage: StorageService,
+      private http: HttpService
   ) { }
 
   ngOnInit() {
+    this.countSchools$ = this.http.schoolsLength$;
       this.activePassesKiosk = new WrappedProvider(new ActivePassProvider(this.liveDataService, of('')));
       this.dataService.currentUser.pipe(
           switchMap(user => {
