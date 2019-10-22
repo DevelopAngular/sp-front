@@ -111,7 +111,6 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
       }
 
       if ( evt.step === 3 || evt.step === 1 ) {
-        // this.FORM_STATE.step = evt.step;
         this.FORM_STATE.step = this.FORM_STATE.previousStep && this.FORM_STATE.previousStep > 3 ? this.FORM_STATE.previousStep : evt.step ;
         this.FORM_STATE.previousStep = 2;
         this.FORM_STATE.state = this.FORM_STATE.formMode.formFactor === 3 ? 2 : 1;

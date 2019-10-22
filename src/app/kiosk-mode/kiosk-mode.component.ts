@@ -15,7 +15,6 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {DataService} from '../services/data-service';
 import {LocationsService} from '../services/locations.service';
-import {HttpService} from '../services/http-service';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -40,8 +39,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       user_id: number
   };
 
-  countSchools$: Observable<number>;
-
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
   @HostListener('window:keyup', ['$event'])
@@ -60,11 +57,9 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       private userService: UserService,
       private passesService: HallPassesService,
       private storage: StorageService,
-      private http: HttpService
   ) { }
 
   ngOnInit() {
-    this.countSchools$ = this.http.schoolsLength$;
       this.activePassesKiosk = new WrappedProvider(new ActivePassProvider(this.liveDataService, of('')));
       this.dataService.currentUser.pipe(
           switchMap(user => {

@@ -56,32 +56,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
-  public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
   public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
-  private openedResizeDialog: boolean;
+  public isKioskMode: boolean;
   private openConnectionDialog: boolean;
 
   private subscriber$ = new Subject();
-
-  // @HostListener('window:resize', ['$event.target'])
-  // onResize(target) {
-  //     if ((target.innerWidth < 900 || target.innerHeight < 500) && !this.openedResizeDialog) {
-  //       this.openedResizeDialog = true;
-  //       setTimeout(() => {
-  //           this.dialog.open(ResizeInfoDialogComponent, {
-  //               id: 'ResizeDialog',
-  //               panelClass: 'toasr',
-  //               backdropClass: 'white-backdrop',
-  //               disableClose: true
-  //           });
-  //       }, 50);
-  //     } else if ((target.innerWidth >= 900 && target.innerHeight >= 500) && this.openedResizeDialog) {
-  //         this.openedResizeDialog = false;
-  //         this.dialog.getDialogById('ResizeDialog').close();
-  //     }
-  // }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
@@ -89,7 +70,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private http: HttpService,
     private httpNative: HttpClient,
     private adminService: AdminService,
-    // private userService: UserService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -154,8 +134,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.subscriber$),
     )
     .subscribe(t => {
-      // console.log('Auth response ===>', t, window.location.pathname);
-      // debugger
       this._zone.run(() => {
         this.showUISubject.next(true);
         this.isAuthenticated = t;
@@ -189,6 +167,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
+          this.isKioskMode = this.router.url.includes('kioskMode');
           if (route.firstChild) {
             route = route.firstChild;
           }

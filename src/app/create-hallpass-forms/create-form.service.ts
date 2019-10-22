@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
-import {BehaviorSubject, forkJoin, ReplaySubject, zip} from 'rxjs';
+import {BehaviorSubject, forkJoin, of, ReplaySubject, zip} from 'rxjs';
 import { HallPassesService } from '../services/hall-passes.service';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 
 import * as _ from 'lodash';
@@ -37,6 +37,38 @@ export class CreateFormService {
           if (filter) {
             return pins.filter((p: Pinnable) => {
              return (p.type === 'location' && !p.location.restricted) || p.type === 'category';
+            });
+          } else {
+            return pins;
+          }
+        }),
+        switchMap(pinnables => {
+          if (filter) {
+            return zip(...pinnables.map((pin: any) => {
+              if (pin.type === 'category') {
+                return this.locService.getLocationsWithCategory(pin.title)
+                  .pipe(
+                    map(locations => {
+                      pin.myLocations = locations;
+                      return pin;
+                    }));
+              } else {
+                return of(pin);
+              }
+            }));
+          } else {
+            return of(pinnables);
+          }
+        }),
+        map(pins => {
+          if (filter) {
+            return pins.filter(pin => {
+              if (pin.type === 'category') {
+                const validLocs = pin.myLocations.filter(loc => !loc.restricted);
+                return validLocs.length;
+              } else {
+                return true;
+              }
             });
           } else {
             return pins;

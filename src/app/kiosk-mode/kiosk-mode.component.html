@@ -1,4 +1,4 @@
-<div class="kiosk-mode-container" [ngClass]="{'with-nav': (countSchools$ | async) > 1, 'no-nav': (countSchools$ | async) == 1}">
+<div class="kiosk-mode-container">
   <div class="current-pass ds-mb-25">
       <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'" [icon]="'./assets/Plus (Navy).svg'">
         <div class="pass-buttons">
