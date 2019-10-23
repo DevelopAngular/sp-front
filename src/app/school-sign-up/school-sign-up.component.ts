@@ -70,7 +70,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   initLogin() {
     return this.loginService.GoogleOauth.signIn()
       .then((auth) => {
-        console.log(auth);
+        // console.log(auth);
         return auth.getAuthResponse();
       });
 
@@ -103,7 +103,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
               map((res: any) => {
                 this._zone.run(() => {
                   this.loginService.updateAuth(auth);
-                  this.storage.setItem('last_school_id', res.school.id);
+                  this.httpService.setSchool(res.school);
                 });
                 return true;
               }),
