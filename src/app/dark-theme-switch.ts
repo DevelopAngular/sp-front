@@ -130,36 +130,25 @@ export class DarkThemeSwitch {
         case 'low':
           case 'extra':
             return '#0F171E';
-          break;
         case 'default':
           return '#0F171E';
-          break;
         case 'middle':
           return '#1E194F';
         case 'high':
           return '#134482';
-          break;
-        // case 'extra':
-        //   return '#0F171E';
-        //   break;
       }
     } else {
       switch (tone) {
         case 'low':
           return reverse ? '#7F879D' : '#FFFFFF';
-          break;
         case 'middle':
           return reverse ? '#F4F4F4' : '#7F879D';
-          break;
         case 'high':
           return reverse ? '#FFFFFF' : '#7F879D';
-          break;
         case 'extra':
           return reverse ? '#7F879D' : '#F4F4F4';
-          break;
         case 'default':
           return reverse ? '#7F879D' : '#FBFEFF';
-          break;
       }
     }
   }

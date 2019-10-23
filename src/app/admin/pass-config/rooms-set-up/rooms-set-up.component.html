@@ -11,7 +11,7 @@
     <div class="buttons-block">
       <div
         class="started-pack"
-        [style.background-color]="darkTheme.getBackground('high', true)"
+        [style.background-color]="darkTheme.getColor({dark: '#134482', white: '#F4F4F4'})"
         (mousedown)="onPress(true, 'pack')"
         (mouseup)="onPress(false, 'pack')"
         [@pressState]="buttonStatePack"
@@ -32,7 +32,7 @@
       <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">OR</div>
       <div
          class="started-scratch"
-         [style.background-color]="darkTheme.getBackground('high', true)"
+         [style.background-color]="darkTheme.getColor({dark: '#134482', white: '#F4F4F4'})"
          (mousedown)="onPress(true, 'scratch')"
          (mouseup)="onPress(false, 'scratch')"
          [@pressState]="buttonStateScratch"
@@ -46,3 +46,6 @@
     </div>
   </div>
 </div>
+
+
+

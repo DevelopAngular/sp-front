@@ -42,7 +42,7 @@ export class RoomsSetUpComponent implements OnInit {
         },
         {
           title: 'Water Fountain',
-          icon: 'https://png.icons8.com/ios-glyphs/drinking_fountain/FFFFFF/50',
+          icon: 'https://cdn.smartpass.app/icons8/fountain/FFFFFF',
           gradient: '#1893E9,#05B5DE',
           color_profile_id: 8,
           room: 'WF',
@@ -53,7 +53,7 @@ export class RoomsSetUpComponent implements OnInit {
         },
         {
           title: 'Nurse',
-          icon: 'https://png.icons8.com/ios-glyphs/nurse_female/FFFFFF/50',
+          icon: 'https://cdn.smartpass.app/icons8/nurse-male/FFFFFF',
           gradient: '#D22C9F,#F46095',
           color_profile_id: 14,
           room: '101',
