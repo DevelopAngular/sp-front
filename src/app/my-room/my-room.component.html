@@ -33,6 +33,7 @@
     <div [ngClass]="isIOSTablet ? 'ios-my-room-left' : 'my-room-left'" *ngIf="!(kioskMode.currentRoom$ | async)">
       <div [ngClass]="isIOSTablet ? 'ios-my-room-header' : 'my-room-header'" [@headerTrigger]="headerState">
         <div class="selected-teacher"
+             [style.font-size]="selectedLocation && selectedLocation.title.length > 13 ? 29 - (selectedLocation.title.length - 13) * 2 + 'px' : '29px'"
              [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'" #target (click)="showOptions(target)"
              [style.color]="myRoomHeaderColor"
         >
@@ -64,12 +65,13 @@
         <div [ngClass]=" isIOSTablet ? 'ios-date-display-mobile' : 'date-display-mobile'" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
       </div>
 
-      <div [@calendarSlide] = "calendarSlideState('topBottom')" *ngIf="!this.screenService.isIpadWidth && !this.screenService.isDesktopWidth" class="calendar-card-wrapper">
+      <div [@calendarSlide] = "calendarSlideState('topBottom')" *ngIf="is670pxBreakPoint" class="calendar-card-wrapper">
         <mat-card [ngClass]=" isIOSTablet ? 'ios-calendar-card' : 'calendar-card'">
           <app-calendar-picker
             [style.z-index]="0"
             [showTime]="false"
             [showYear]="false"
+            [dotsDates]="currentPassesDates"
             (onSelectDate)="onDate($event)"
           ></app-calendar-picker>
         </mat-card>
@@ -77,11 +79,10 @@
 
       <div class="kiosk-mode-button"
            *ngIf="showKioskModeButton"
-           [style.box-shadow]="shadow"
+           [style.background-color]="(darkTheme.isEnabled$ | async) ? '#134482' : '#F4F4F4'"
            (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
            (mousedown)="onPress(true)" (mouseup)="onPress(false)"
            [@pressState]="buttonState"
-           [style.background-color]="darkTheme.getBackground('high', true)"
            (click)="setRoomToKioskMode()"
       >
         <div class="ds-flex-center-center" [style.color]="darkTheme.getColor()">
@@ -89,12 +90,12 @@
           <span>Enter Kiosk Mode</span>
         </div>
         <div class="kiosk-chevron">
-          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right'})" alt="Chevron Right.svg">
+          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right', lightFill: 'Navy', darkFill: 'White'})" alt="Chevron Right.svg">
         </div>
       </div>
 
       <div class="my-room-body" [@collectionsTrigger] = 'collectionsSlideState'>
-        <div [ngClass]="isIOSTablet ? 'ios-my-room-body-collections' : 'my-room-body-collections'">
+        <div [style.maxWidth]="collectionWidth" [ngClass]="isIOSTablet ? 'ios-my-room-body-collections' : 'my-room-body-collections'">
           <app-pass-collection
             [smoothlyUpdating]="true"
             [isActive]="true"
@@ -140,7 +141,7 @@
             </div>
           </div>
         </div>
-        <div [@calendarSlide] = "calendarSlideState('leftRight')" *ngIf="this.screenService.isIpadWidth" class="calendar-card-wrapper-right">
+        <div [@calendarSlide] = "calendarSlideState('leftRight')" *ngIf="this.screenService.isIpadWidth && !is670pxBreakPoint" class="calendar-card-wrapper-right">
           <mat-card class="calendar-card">
             <app-calendar-picker
               [showTime]="false"

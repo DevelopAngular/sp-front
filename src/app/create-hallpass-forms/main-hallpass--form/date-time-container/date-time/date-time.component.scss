@@ -110,12 +110,29 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 .date-content, .date-content-mock {
-  height: 87%;
+  height: 430px;
   background-color: #FBFEFF;
   width: 100%;
+  position: relative;
+  z-index: 1;
+  .content-background {
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -2;
+  }
 }
 
 .teacher {
@@ -162,12 +179,23 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 10;
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
-  overflow: hidden;
+  //overflow: hidden;
+  .header-background {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .divider-header, .divider-header-mock {

@@ -1,5 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import * as moment from 'moment';
+import {fromEvent} from 'rxjs';
+import {delay, filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-calendar-toggle',
@@ -10,6 +12,50 @@ export class AdminCalendarToggleComponent implements OnInit {
   @ViewChild('elem') elem: ElementRef;
   @ViewChild('day') day: ElementRef;
   @ViewChild('dayButton') dayButton: ElementRef;
+  @ViewChild('container') set content(content: ElementRef) {
+    if (content) {
+      setTimeout(() => {
+        this.container = content.nativeElement;
+        const rect = this.container.getBoundingClientRect();
+        // this.containerInitialHeight = this.containerInitialHeight ? this.containerInitialHeight : rect.height;
+        this.windowInnerHeight = window.innerHeight;
+
+          console.log(rect.bottom, window.innerHeight, this.containerInitialHeight);
+        if ((window.innerHeight) < rect.top + rect.height) {
+          this.container.style.height = window.innerHeight - rect.top - 5 + 'px';
+        }
+        fromEvent(window, 'resize')
+          .pipe(
+            filter(() => true),
+            // delay(10)
+          )
+          .subscribe(() => {
+            const rect = this.container.getBoundingClientRect();
+            const direction = this.windowInnerHeight > window.innerHeight ? 'up' : 'down';
+            let h;
+
+            if (this.openCalendar &&  this.toggleResult === 'Range') {
+              h = 451;
+            } else if (this.toggleResult === 'Weeks') {
+              h = 370;
+            } else if (this.toggleResult === 'Days') {
+              h = 479;
+            } else {
+              h = this.containerInitialHeight;
+            }
+
+            console.log(rect.bottom, window.innerHeight, h);
+            if ((window.innerHeight) < rect.top + rect.height) {
+              this.container.style.height = window.innerHeight - rect.top - 5 + 'px';
+            } else if (window.innerHeight > (rect.top + rect.height) && (rect.height + 5) < h) {
+              this.container.style.height = ((window.innerHeight - rect.top - 5) < h ? (window.innerHeight - rect.top - 5) : h) + 'px';
+            }
+          });
+      }, 300);
+
+
+    }
+  };
 
   @Input() selectedOptions;
 
@@ -17,6 +63,10 @@ export class AdminCalendarToggleComponent implements OnInit {
 
   @Output() settingsRes: EventEmitter<any> = new EventEmitter<any>();
   @Output() adminCalendarRes: EventEmitter<any> = new EventEmitter<any>();
+
+  public container: HTMLElement;
+  public containerInitialHeight: number = 345;
+  public windowInnerHeight: number;
 
   public rangeOptions = [
       { id: 'range_0', title: 'Today', selectedIcon: './assets/Check (Navy).svg'},
@@ -57,7 +107,7 @@ export class AdminCalendarToggleComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.selectedOptions);
+    // console.log(this.selectedOptions);
     if (this.selectedOptions) {
       setTimeout(() => {
           this.toggleResult = this.selectedOptions.toggleResult;
@@ -164,7 +214,6 @@ export class AdminCalendarToggleComponent implements OnInit {
       } else {
           this.settingsRes.emit({toggleResult: this.toggleResult});
           this.adminCalendarRes.emit({start: moment(this.selectedDay).startOf('day'), end: moment(this.selectedDay)});
-            // this.adminCalendarRes.emit(moment(this.selectedDay));
       }
     } else if (this.toggleResult === 'Weeks') {
         this.settingsRes.emit({toggleResult: this.toggleResult});

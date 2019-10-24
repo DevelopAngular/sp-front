@@ -1,4 +1,5 @@
 <div class="from-footer"
+     [attr.data-motion-opacity]="(frameMotion$ | async).direction"
      [style.height]="!showFullFooter ? '43px' : '89px'"
      (click)="showFullFooter = !showFullFooter"
      [ngClass]="{'target-shadow': state !== 'to'}"

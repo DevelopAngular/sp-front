@@ -1,18 +1,14 @@
 
 import {
-    catchError,
-    tap,
-    first,
-    delay,
-    distinctUntilChanged,
-    filter,
-    flatMap,
-    map,
-    skip,
-    switchMap,
-    merge,
-    take,
-    withLatestFrom
+  catchError,
+  tap,
+  first,
+  delay,
+  filter,
+  flatMap,
+  map,
+  switchMap,
+  mapTo
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -22,8 +18,10 @@ import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
 import { LocalStorage } from '@ngx-pwa/local-storage';
-
-import * as moment from 'moment';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
+import { getSchools } from '../ngrx/schools/actions';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -135,9 +133,13 @@ export class HttpService {
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
     switchMap(() => {
-      return this.get<School[]>('v1/schools', undefined, null);
+      return this.getSchools();
     }),
   );
+  public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
+  public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
+  public schoolsLength$: Observable<number> = this.store.select(getSchoolsLength);
+
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
   public kioskTokenSubject$ = new BehaviorSubject<any>(null);
@@ -155,16 +157,15 @@ export class HttpService {
       private http: HttpClient,
       private loginService: GoogleLoginService,
       private storage: StorageService,
-      private pwaStorage: LocalStorage
+      private pwaStorage: LocalStorage,
+      private store: Store<AppState>
   ) {
-
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
     // First, if there is a current school loaded, try to use that one.
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
     this.schools$.subscribe(schools => {
-      // console.log('Schools:', schools);
 
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
@@ -192,21 +193,15 @@ export class HttpService {
             // tap(console.log),
             filter(v => !!v),
             switchMap(({auth, server}) => {
-              // console.log((new Date(Date.now() + auth.expires_in)), new Date());
 
               if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
                   const config = new FormData();
-                  const user = JSON.parse(this.storage.getItem('google_auth'));
                   config.append('client_id', server.client_id);
                   config.append('grant_type', 'refresh_token');
                   config.append('token', auth.refresh_token);
-                  // config.append('username', user.username);
-                  // config.append('password', user.password);
-                  console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
                   map((data: any) => {
-                    // console.log('Auth data : ', data);
                     // don't use TimeService for auth because auth is required for time service
                     // to be useful
                     data['expires'] = new Date(new Date() + data['expires_in']);
@@ -219,7 +214,7 @@ export class HttpService {
                     this.loginService.isAuthenticated$.next(false);
                     return of(null);
                   })
-                );                    // return this.fetchServerAuth();
+                );
               } else {
                 return of(null);
               }
@@ -233,7 +228,7 @@ export class HttpService {
         return { auth: newToken, server: this.accessTokenSubject.value.server};
 
       })).subscribe(res => {
-        console.log(res);
+        // console.log(res);
         this.accessTokenSubject.next(res as AuthContext);
       });
 
@@ -280,9 +275,12 @@ export class HttpService {
     }
 
     return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
+      switchMap(servers => {
+        return this.pwaStorage.setItem('servers', servers)
+          .pipe(mapTo(servers));
+      }),
       map((servers: LoginServer[]) => {
         if (servers.length > 0) {
-          this.pwaStorage.setItem('servers', servers).subscribe(() => {});
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
@@ -291,9 +289,6 @@ export class HttpService {
   }
 
   private loginManual(username: string, password: string): Observable<AuthContext> {
-
-    // console.log('loginManual()');
-// debugger
     const c = new FormData();
     c.append('email', username);
     c.append('platform_type', 'web');
@@ -342,8 +337,10 @@ export class HttpService {
       }
 
       return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+        switchMap(data => {
+          return this.pwaStorage.setItem('authData', data).pipe(mapTo(data));
+        }),
         map((data: any) => {
-          this.pwaStorage.setItem('authData', data).subscribe( () => {});
           this.storage.setItem('refresh_token', data.refresh_token);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
@@ -362,6 +359,10 @@ export class HttpService {
       );
 
     }));
+  }
+
+  gg4l(code: string) {
+    return this.loginGoogleAuth(code);
   }
 
   private loginGoogleAuth(googleToken: string): Observable<AuthContext> {
@@ -459,7 +460,7 @@ export class HttpService {
         // const google_token = localStorage.getItem(SESSION_STORAGE_KEY); // TODO something more robust
         return this.fetchServerAuth().pipe(
           switchMap((ctx: AuthContext) => {
-            console.log('auth:', ctx);
+            // console.log('auth:', ctx);
             this.accessTokenSubject.next(ctx);
             return predicate(ctx);
           }));
@@ -479,6 +480,15 @@ export class HttpService {
       this.storage.removeItem('last_school_id');
     }
     this.currentSchoolSubject.next(school);
+  }
+
+  getSchoolsRequest() {
+    this.store.dispatch(getSchools());
+    return this.schoolsCollection$;
+  }
+
+  getSchools(): Observable<School[]> {
+    return this.get('v1/schools');
   }
 
   getSchool() {

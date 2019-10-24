@@ -1,5 +1,5 @@
 <div class="groups-container">
-  <div class="state-transition-none"  *ngIf="currentState == states.SelectStudents">
+  <div *ngIf="currentState === states.SelectStudents">
     <app-groups-step1
       [selectedGroup]="FORM_STATE.data.selectedGroup"
       [selectedStudents]="FORM_STATE.data.selectedStudents ? FORM_STATE.data.selectedStudents : []"
@@ -11,7 +11,7 @@
     </app-groups-step1>
   </div>
   <!--<br>-->
-  <div class="state-transition-none"  *ngIf="currentState == states.CreateGroup">
+  <div *ngIf="currentState === states.CreateGroup">
     <app-groups-step2
       [selectedStudents]="selectedStudents"
       [form]="groupDTO"
@@ -20,15 +20,15 @@
     </app-groups-step2>
   </div>
   <!--<br>-->
-  <div class="state-transition-none"  *ngIf="currentState === states.EditGroup">
+  <div *ngIf="currentState === states.EditGroup">
     <app-groups-step3
-      [editGroup]="selectedGroup"
+      [groupToEdit]="selectedGroup"
       [form]="groupDTO"
       (stateChangeEvent)="groupNextStep($event)">
     </app-groups-step3>
   </div>
 
-  <div class="state-transition-none"  *ngIf="currentState === states.WhoAreYou">
+  <div *ngIf="currentState === states.WhoAreYou">
     <app-who-you-are
       [formState]="FORM_STATE"
       (stateChangeEvent)="groupNextStep($event)">

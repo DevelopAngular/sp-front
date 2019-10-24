@@ -18,7 +18,6 @@ export class IsStudentOrTeacherGuard implements CanActivate {
 
     return this.userService.getUserWithTimeout().pipe(
       map(u => {
-
         if (u === null) {
           return false;
         }

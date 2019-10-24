@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { CreateFormService } from '../../../create-form.service';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-student-footer',
@@ -22,6 +23,7 @@ export class StudentFooterComponent implements OnInit {
   fromLocation: Location;
   toLocation: Location;
   forInput: boolean;
+  frameMotion$: BehaviorSubject<any>;
 
   constructor(
     private formService: CreateFormService
@@ -44,6 +46,8 @@ export class StudentFooterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     if (this.formState) {
       this.forInput = this.formState.forInput;
       this.fromLocation = this.formState.data.direction.from;
@@ -89,6 +93,7 @@ export class StudentFooterComponent implements OnInit {
   }
 
   private changeAnimationDirection() {
+    this.formService.scalableBoxController.next(false);
     this.formService.setFrameMotionDirection('back');
     this.changeAnimationDirectionEvent.emit(true);
   }

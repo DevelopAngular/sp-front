@@ -1,20 +1,16 @@
 import {
   ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
-  HostBinding,
   Input,
   OnChanges,
   OnInit,
-  Output, SimpleChanges,
-  ViewChild
+  Output, SimpleChanges
 } from '@angular/core';
 import { bumpIn } from '../animations';
 import { Pinnable } from '../models/Pinnable';
 import { DomSanitizer } from '@angular/platform-browser';
 import {interval, Subject} from 'rxjs';
-import {ChangeDetection} from '@angular/cli/lib/config/schema';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({
@@ -112,18 +108,6 @@ export class PinnableComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.changeDetector.detectChanges();
   }
-
-  // get valueAsStyle(): any {
-  //     // this.changeDetector.detectChanges();
-  //   if (this.titleEl) {
-  //     // this.changeDetector.detectChanges();
-  //
-  //     // return this.sanitizer.bypassSecurityTrustStyle(`--space: ${15}px`);
-  //     // this.changeDetector.detectChanges();
-  //
-  //     return this.sanitizer.bypassSecurityTrustStyle(`--space: ${this.titleEl.getBoundingClientRect().width}px`);
-  //   }
-  // }
 
   get buttonState() {
     return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';

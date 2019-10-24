@@ -6,6 +6,7 @@ import {FromWhereComponent} from '../locations-group-container/from-where/from-w
 import {DateTimeComponent} from './date-time/date-time.component';
 import {DeviceDetection} from '../../../device-detection.helper';
 import {UserService} from '../../../services/user.service';
+import {ScreenService} from '../../../services/screen.service';
 
 @Component({
   selector: 'app-date-time-container',
@@ -15,14 +16,17 @@ import {UserService} from '../../../services/user.service';
 export class DateTimeContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
+  @Input() isStaff: boolean;
+
   @Output('nextStepEvent')
   nextStepEvent: EventEmitter<Navigation | {action: string, data: any}> = new EventEmitter<Navigation | {action: string, data: any}>();
+
   @ViewChild(DateTimeComponent) dateTimeComponent;
-  @Input() isStaff: boolean;
 
   constructor(
     private formService: CreateFormService,
     private userService: UserService,
+    private screenService: ScreenService,
   ) { }
 
   ngOnInit() {
@@ -33,9 +37,7 @@ export class DateTimeContainerComponent implements OnInit {
 
   nextStep(evt) {
 
-
     this.formService.setFrameMotionDirection('forward');
-
 
     setTimeout(() => {
 
@@ -65,20 +67,22 @@ export class DateTimeContainerComponent implements OnInit {
         this.FORM_STATE.state = 1;
       }
 
-      console.log('Date FORM_STATE =====>', this.FORM_STATE);
-
       this.nextStepEvent.emit(this.FORM_STATE);
     }, 100);
 
   }
 
   back(event) {
-      this.dateTimeComponent.back();
-      // this.FORM_STATE = event;
-      // this.nextStepEvent.emit(event);
+    this.FORM_STATE = event;
+    this.nextStepEvent.emit(event);
+  }
+
+  stepBackMobile() {
+    this.dateTimeComponent.back();
   }
 
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
   }
+
 }

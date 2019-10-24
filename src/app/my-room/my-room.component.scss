@@ -48,12 +48,14 @@
   &-my-room-wrapper {
     @extend .my-room-wrapper;
     justify-content: unset;
+    height: unset !important;
   }
 
   &-my-room-left {
-    width: initial;
-    margin: 0;
-    height: calc(100vh - 78px);
+    //width: initial;
+    //margin: 0;
+    width: 100%;
+    //height: calc(100vh - 78px);
   }
 
   @media all and (max-width: 1024px) and (min-width: 768px) {
@@ -66,7 +68,7 @@
     &-my-room-body-collections {
       display: flex;
       flex-direction: column;
-      width: 52%;
+      width: 100%;
     }
   }
 }
@@ -126,8 +128,7 @@
   }
 
   div.my-room-left {
-    width: initial;
-    margin: 0;
+    max-width: unset;
   }
 }
 
@@ -172,7 +173,7 @@
   div.my-room-body-collections {
     display: flex;
     flex-direction: column;
-    width: 52%;
+    width: 100%;
   }
 }
 
@@ -184,7 +185,7 @@
   display: flex;
   justify-content: center;
   //height: 100vh;
-  height: calc(100% - 78px);
+  min-height: calc(100vh - 78px);
   overflow: auto;
 }
 
@@ -215,8 +216,10 @@
 .my-room-left {
   //display: flex;
   //flex-direction: column;
-  width: 533px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 533px;
+  min-height: calc(100% - 78px);
+  //margin: 0 auto;
   //height: 10000px;
 }
 
@@ -283,6 +286,7 @@ input {
 .selected-teacher {
   color: #1F195E;
   font-size: 29px;
+  white-space: nowrap;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -461,7 +465,7 @@ input {
   justify-content: center;
   height: 50px;
   min-height: 50px;
-  background-color: #fff;
+  background-color: rgb(244,244,244);
   border-radius: 8px;
   //-webkit-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, .1);
   //-moz-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, .1);

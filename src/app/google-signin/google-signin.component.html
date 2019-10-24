@@ -25,7 +25,16 @@
     </div>
   </app-gradient-button>
 </div>
-
+<div class="ds-w-100 ds-flex-center-center">
+  <app-gradient-button
+    [textColor]="'#FFFFFF'"
+    [buttonLink]="gg4lLink"
+    [linkType]="'_self'"
+    [text]="'GG4L'"
+  >
+<!--    <span>GG4L</span>-->
+  </app-gradient-button>
+</div>
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;">
   <app-round-input
     [focused]="true"

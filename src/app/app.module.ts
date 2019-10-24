@@ -59,16 +59,61 @@ import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
+import {AuthConfig, OAuthModule} from 'angular-oauth2-oidc';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
 };
 
+import { StoreModule } from '@ngrx/store';
+import {EffectsModule} from '@ngrx/effects';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import { reducers } from './ngrx/app-state/app-state';
+import {AccountsEffects} from './ngrx/accounts/effects/accounts.effects';
+import {AllAccountsEffects} from './ngrx/accounts/nested-states/all-accounts/effects';
+import {AdminsEffects} from './ngrx/accounts/nested-states/admins/effects';
+import {ReportsEffects} from './ngrx/reports/effects';
+import {PinnablesEffects} from './ngrx/pinnables/effects';
+import {TeachersEffects} from './ngrx/accounts/nested-states/teachers/effects';
+import {AssistantsEffects} from './ngrx/accounts/nested-states/assistants/effects';
+import {StudentsEffects} from './ngrx/accounts/nested-states/students/effects';
+import {CountAccountsEffects} from './ngrx/accounts/nested-states/count-accounts/effects';
+import {PassStatsEffects} from './ngrx/pass-stats/effects';
+import {DashboardEffects} from './ngrx/dashboard/effects';
+import {StudentGroupsEffects} from './ngrx/student-groups/effects';
+import {TeacherLocationsEffects} from './ngrx/teacherLocations/effects';
+import {LocationsEffects} from './ngrx/locations/effects';
+import {FavoriteLocationsEffects} from './ngrx/favorite-locations/effects';
+import {ColorsEffects} from './ngrx/color-profiles/effects';
+import {SchoolsEffects} from './ngrx/schools/effects';
+import {UserEffects} from './ngrx/user/effects';
+import {SchoolsResolver} from './core/resolvers/schools-resolver';
+import {ProcessEffects} from './ngrx/onboard-process/effects';
+import { NavbarElementSenderDirective } from './core/directives/navbar-element-sender.directive';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
+
+
+
 const appRoutes: Routes = [
-  {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
-  {path: 'school_signup', component: SchoolSignUpComponent, data: {hideScroll: true, hubspot: true, authFree: true}, pathMatch: 'full'},
-  {path: 'accounts_setup', component: AccountsSetupComponent, data: {hideScroll: true, hubspot: true, authFree: true}, pathMatch: 'full'},
+  {
+    path: 'main/intro',
+    canActivate: [AuthenticatedGuard],
+    component: IntroRouteComponent,
+    data: { hideSchoolToggleBar: true}
+  },
+  {
+    path: 'school_signup',
+    component: SchoolSignUpComponent,
+    data: {hideScroll: true, hubspot: true, authFree: true},
+    pathMatch: 'full'
+  },
+  {
+    path: 'accounts_setup',
+    component: AccountsSetupComponent,
+    data: {hideScroll: true, hubspot: true, authFree: true},
+    pathMatch: 'full'
+  },
   {
     path: '',
     component: LoginComponent,
@@ -78,7 +123,7 @@ const appRoutes: Routes = [
     path: 'main',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
     loadChildren: 'app/main/main.module#MainModule',
-    resolve: {currentUser: CurrentUserResolver},
+    resolve: {currentUser: CurrentUserResolver, schools: SchoolsResolver},
     data: {
       hubspot: false,
       authFree: false
@@ -88,7 +133,7 @@ const appRoutes: Routes = [
     path: 'admin',
     canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
     loadChildren: 'app/admin/admin.module#AdminModule',
-    resolve: {currentUser: CurrentUserResolver},
+    resolve: {currentUser: CurrentUserResolver, schools: SchoolsResolver},
     data: {
       hideScroll: true,
       hubspot: true,
@@ -156,11 +201,14 @@ const appRoutes: Routes = [
     MatFormFieldModule,
     MatProgressSpinnerModule,
     HttpClientModule,
+    OAuthModule.forRoot(),
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
     MatSlideToggleModule,
     SwiperModule,
+
+    KeyboardShortcutsModule.forRoot(),
 
     RouterModule.forRoot(
       appRoutes,
@@ -174,7 +222,30 @@ const appRoutes: Routes = [
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
       libraries: ['places']
-    })
+    }),
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([
+      ReportsEffects,
+      PinnablesEffects,
+      AccountsEffects,
+      AllAccountsEffects,
+      AdminsEffects,
+      TeachersEffects,
+      AssistantsEffects,
+      StudentsEffects,
+      CountAccountsEffects,
+      TeacherLocationsEffects,
+      DashboardEffects,
+      PassStatsEffects,
+      StudentGroupsEffects,
+      LocationsEffects,
+      FavoriteLocationsEffects,
+      ColorsEffects,
+      SchoolsEffects,
+      UserEffects,
+      ProcessEffects
+    ]),
+    StoreDevtoolsModule.instrument({})
   ],
   providers: [
     DataService,

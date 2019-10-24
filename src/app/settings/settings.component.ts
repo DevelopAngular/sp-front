@@ -59,64 +59,7 @@ export class SettingsComponent implements OnInit {
       private pwaStorage: LocalStorage,
 
   ) {
-    this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value,
-      'gradient': '#E7A700, #EFCE00',
-      'icon': 'Star',
-      'action': 'favorite',
-      'title': 'Favorites'
-    });
-    this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value,
-      'gradient': '#DA2370, #FB434A',
-      'icon': 'Notifications',
-      'action': 'notifications',
-      'title': 'Notifications'
-    });
-    this.settings.push({
-      'hidden': false,
-      'gradient': '#022F68, #2F66AB',
-      'icon': 'Moon',
-      'action': () => {
-        this.darkTheme.switchTheme();
-        if (this.data) {
-          this.data.darkBackground = !this.data.darkBackground;
-        }
-
-        if (this.dataSideNav) {
-          this.dataSideNav.darkBackground = !this.dataSideNav.darkBackground;
-        }
-      },
-      'title': (this.darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode')
-    });
-    this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value,
-      'gradient': '#03CF31, #00B476',
-      'icon': 'Info',
-      'action': 'intro',
-      'title': 'View Intro'
-    });
-    this.settings.push({
-      'hidden': false,
-      'gradient': '#0B9FC1, #00C0C7',
-      'icon': 'Team',
-      'action': 'about',
-      'title': 'About'
-    });
-    this.settings.push({
-      'hidden': false,
-        'gradient': '#5E4FED, #7D57FF',
-        'icon': 'Feedback',
-        'action': 'feedback',
-        'title': 'Feedback'
-    });
-    this.settings.push({
-      'hidden': false,
-      'gradient': '#F52B4F, #F37426',
-      'icon': 'Support',
-      'action': 'support',
-      'title': 'Support'
-    });
+    this.initializeSettings();
   }
 
   get _themeBackground() {
@@ -140,6 +83,11 @@ export class SettingsComponent implements OnInit {
         this.targetElementRef = sideNavData['trigger'];
         this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
       }
+    });
+
+    this.sideNavService.toggle.subscribe(() => {
+      this.settings = [];
+      this.initializeSettings();
     });
 
     this.updateDialogPosition();
@@ -218,9 +166,74 @@ export class SettingsComponent implements OnInit {
   }
 
   removeOfflineAuthData() {
-    this.dialogRef.close('signout');
-    combineLatest(this.pwaStorage.removeItem('servers'),
+    if (this.dialogRef) {
+      this.dialogRef.close('signout');
+    }
+
+    combineLatest(
+      this.pwaStorage.removeItem('servers'),
       this.pwaStorage.removeItem('authData') )
       .subscribe();
+  }
+
+  initializeSettings() {
+    this.settings.push({
+      'hidden': !!this.kioskMode.currentRoom$.value,
+      'gradient': '#E7A700, #EFCE00',
+      'icon': 'Star',
+      'action': 'favorite',
+      'title': 'Favorites'
+    });
+    this.settings.push({
+      'hidden': !!this.kioskMode.currentRoom$.value,
+      'gradient': '#DA2370, #FB434A',
+      'icon': 'Notifications',
+      'action': 'notifications',
+      'title': 'Notifications'
+    });
+    this.settings.push({
+      'hidden': false,
+      'gradient': '#022F68, #2F66AB',
+      'icon': 'Moon',
+      'action': () => {
+        this.darkTheme.switchTheme();
+        if (this.data) {
+          this.data.darkBackground = !this.data.darkBackground;
+        }
+
+        if (this.dataSideNav) {
+          this.dataSideNav.darkBackground = !this.dataSideNav.darkBackground;
+        }
+      },
+      'title': (this.darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode')
+    });
+    this.settings.push({
+      'hidden': !!this.kioskMode.currentRoom$.value,
+      'gradient': '#03CF31, #00B476',
+      'icon': 'Info',
+      'action': 'intro',
+      'title': 'View Intro'
+    });
+    this.settings.push({
+      'hidden': false,
+      'gradient': '#0B9FC1, #00C0C7',
+      'icon': 'Team',
+      'action': 'about',
+      'title': 'About'
+    });
+    this.settings.push({
+      'hidden': false,
+      'gradient': '#5E4FED, #7D57FF',
+      'icon': 'Feedback',
+      'action': 'feedback',
+      'title': 'Feedback'
+    });
+    this.settings.push({
+      'hidden': false,
+      'gradient': '#F52B4F, #F37426',
+      'icon': 'Support',
+      'action': 'support',
+      'title': 'Support'
+    });
   }
 }

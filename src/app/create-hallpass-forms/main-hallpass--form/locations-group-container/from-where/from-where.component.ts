@@ -24,7 +24,6 @@ export class FromWhereComponent implements OnInit {
         } else {
           blur = 20;
         }
-
         this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
       });
     }
@@ -42,6 +41,15 @@ export class FromWhereComponent implements OnInit {
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
   shadow: boolean;
+  frameMotion$: BehaviorSubject<any>;
+
+  headerTransition = {
+    'from-header': true,
+    'from-header_animation-back': false
+  };
+
+
+
   @HostListener('scroll', ['$event'])
   tableScroll(event) {
     const tracker = event.target;
@@ -53,17 +61,37 @@ export class FromWhereComponent implements OnInit {
       this.shadow = false;
     }
   }
+
+
   constructor(
     private formService: CreateFormService,
     public screenService: ScreenService
   ) { }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
+    this.frameMotion$.subscribe((v: any) => {
+      switch (v.direction) {
+        case 'back':
+          this.headerTransition['from-header'] = false;
+          this.headerTransition['from-header_animation-back'] = true;
+          break;
+        case 'forward':
+          this.headerTransition['from-header'] = true;
+          this.headerTransition['from-header_animation-back'] = false;
+          break;
+        default:
+          this.headerTransition['from-header'] = true;
+          this.headerTransition['from-header_animation-back'] = false;
+      }
+    });
   }
 
   locationChosen(location) {
 
     this.formService.setFrameMotionDirection('forward');
+    this.formService.compressableBoxController.next(false);
 
     setTimeout(() => {
       this.formState.previousState = 1;
@@ -76,8 +104,13 @@ export class FromWhereComponent implements OnInit {
 
   back() {
 
-    this.formService.setFrameMotionDirection('back');
-
+    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater) {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.compressableBoxController.next(true);
+    } else {
+      this.formService.compressableBoxController.next(false);
+      this.formService.setFrameMotionDirection('back');
+    }
 
     setTimeout(() => {
       if (this.formState.forLater || this.formState.missedRequest) {
@@ -94,6 +127,9 @@ export class FromWhereComponent implements OnInit {
       } else {
         this.formState.step = 0;
       }
+      this.formState.previousState = 1;
+
+      console.log(this.formState);
       this.backButton.emit(this.formState);
     }, 100);
   }

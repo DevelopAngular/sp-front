@@ -28,6 +28,7 @@ export class DeviceDetection {
 
 
   constructor() { }
+
   static isAndroid(): boolean {
     return /android/i.test(navigator.userAgent);
   }

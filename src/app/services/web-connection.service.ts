@@ -3,7 +3,7 @@ import { ConnectionService } from 'ng-connection-service';
 import { PollingService } from './polling-service';
 
 import { merge, Observable } from 'rxjs';
-import { skip } from 'rxjs/operators';
+import {skip} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

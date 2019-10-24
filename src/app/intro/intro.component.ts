@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Optional, Output} from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
@@ -10,6 +10,8 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {NotificationService} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
+import {MatDialog, MatDialogRef} from '@angular/material';
+import {NotificationFormComponent} from '../notification-form/notification-form.component';
 
 declare const window;
 
@@ -37,8 +39,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
   introVersion = '23.46.2';
 
-  enterTick: Subject<KeyboardEvent> = new Subject<KeyboardEvent>();
-
   allowLaterClicked: boolean;
 
   constructor(
@@ -52,8 +52,10 @@ export class IntroComponent implements OnInit, AfterViewInit {
       private deviceDetection: DeviceDetection,
       public  notifService: NotificationService,
       private cdr: ChangeDetectorRef,
+      @Optional() private introDialogRef: MatDialogRef<IntroComponent>,
+      @Optional() private dialog: MatDialog
   ) {
-    console.log('intro.constructor');
+    // console.log('intro.constructor');
   }
 
   get isSafari() {
@@ -68,7 +70,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    console.log('intro.onInit()');
 
     fromEvent(document, 'keydown').subscribe((evt: KeyboardEvent) => {
 
@@ -104,7 +105,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
-        console.log('intro.subscribe()' , user);
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.isTeacher() || user.isAssistant() || user.isAdmin();
@@ -339,22 +339,41 @@ export class IntroComponent implements OnInit, AfterViewInit {
         });
         window.appLoaded(2000);
       });
-      // this.saveIntrosEmit$.pipe(
-      //     switchMap(() => {
-      //       if (DeviceDetection.is)
-      //     })
-      // )
   }
 
   ngAfterViewInit(): void {
 
   }
 
+  clickDots(pageNumber) {
+      this.slideIndex = pageNumber;
+  }
+
   allowNotifications() {
+    let notificationDialog;
+
+    if (this.isSafari) {
+      this.introDialogRef.close();
+      notificationDialog = this.dialog.open(NotificationFormComponent, {
+        panelClass: 'form-dialog-container',
+        backdropClass: 'custom-backdrop',
+      });
+      return;
+    }
+
+    Notification.requestPermission().then( (result) => {
+      if (result === 'denied') {
+          this.introDialogRef.close();
+            notificationDialog = this.dialog.open(NotificationFormComponent, {
+            panelClass: 'form-dialog-container',
+            backdropClass: 'custom-backdrop',
+           });
+      }
+    });
+
     this.notifService.initNotifications(true)
       .then((hasPerm) => {
         localStorage.setItem('fcm_sw_registered', hasPerm.toString());
-        console.log(`Has permission to show notifications: ${hasPerm}`);
           this.allowLaterClicked = true;
           this.slide('forward');
       });
@@ -363,6 +382,9 @@ export class IntroComponent implements OnInit, AfterViewInit {
   allowNotificationsLater() {
     this.allowLaterClicked = true;
     this.slide('forward');
+    if (NotificationService.hasPermission) {
+      this.notifService.initNotifications(true);
+    }
   }
 
   endIntro() {
@@ -382,12 +404,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
                 this.user.isAdmin() && !this.user.isTeacher() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
             }
         });
-    // if (this.isStaff) {
-    //   this.storage.setItem('smartpass_intro_teacher', 'seen');
-    // } else {
-    //   this.storage.setItem('smartpass_intro_student', 'seen');
-    // }
-      // this.router.navigate(['select-profile']);
   }
 
   onPress(press: boolean, id: string) {

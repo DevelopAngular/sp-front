@@ -49,7 +49,7 @@
     min-height: 400px;
     background-color: #fff;
     //border: 1px solid #777;
-    box-shadow: 0 0 7px 0px rgba(0, 0, 0, .3);
+    //box-shadow: 0 0 7px 0px rgba(0, 0, 0, .3);
     border-radius: 14px;
     overflow: hidden;
     display: flex;
@@ -124,7 +124,7 @@
           width: 250px;
         }
         &_groups {
-          padding-top: 15px;
+          padding: 15px 0;
         }
         &_upload {
           padding-top: 40px;
@@ -137,9 +137,9 @@
         }
         &_delete-group {
           //padding-bottom: 30px;
-          flex: 1 1 auto;
-          display: flex;
-          align-items: flex-end;
+          //flex: 1 1 auto;
+          //display: flex;
+          //align-items: flex-end;
           .delete-button {
             display: flex;
             flex-direction: column;

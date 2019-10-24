@@ -117,10 +117,10 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   ngOnInit() {
-      if (this.formState.previousState > this.formState.state || this.formState.previousStep > this.formState.step) {
-      this.headerTransition['rest-mes-header'] = false;
-      this.headerTransition['rest-mes-header_animation-back'] = true;
-    }
+    // if (this.formState.previousState > this.formState.state || this.formState.previousStep > this.formState.step) {
+    //   this.headerTransition['rest-mes-header'] = false;
+    //   this.headerTransition['rest-mes-header_animation-back'] = true;
+    // }
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.message = new FormControl(this.formState.data.message);
@@ -128,13 +128,28 @@ export class RestrictedMessageComponent implements OnInit {
     this.toLocation = this.formState.data.direction.to;
     this.teacher = this.formState.data.requestTarget;
     this.messageBoxViewRestriction = this.getViewRestriction();
+    this.frameMotion$.subscribe((v: any) => {
+      switch (v.direction) {
+        case 'back':
+          this.headerTransition['rest-mes-header'] = false;
+          this.headerTransition['rest-mes-header_animation-back'] = true;
+          break;
+        case 'forward':
+          this.headerTransition['rest-mes-header'] = true;
+          this.headerTransition['rest-mes-header_animation-back'] = false;
+          break;
+        default:
+          this.headerTransition['rest-mes-header'] = true;
+          this.headerTransition['rest-mes-header_animation-back'] = false;
+      }
+    });
   }
 
   back() {
 
     this.formService.setFrameMotionDirection('back');
-    this.headerTransition['rest-mes-header'] = true;
-    this.headerTransition['rest-mes-header_animation-back'] = false;
+    // this.headerTransition['rest-mes-header'] = true;
+    // this.headerTransition['rest-mes-header_animation-back'] = false;
 
     setTimeout(() => {
 
@@ -158,7 +173,7 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   sendRequest() {
-    this.formService.setFrameMotionDirection('forward');
+    this.formService.setFrameMotionDirection('disable');
     setTimeout(() => {
       this.resultMessage.emit(this.message.value);
     }, 100);

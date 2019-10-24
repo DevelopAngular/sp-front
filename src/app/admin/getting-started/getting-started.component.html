@@ -1,6 +1,7 @@
 <div class="host" appSafariScroll>
-  <div class="getting-started-wrapper">
-    <div class="card ds-flex-center-between ds-flex-row" style="width: 100%; height: 100px; padding: 40px; box-sizing: border-box">
+
+  <div style="padding: 25px">
+    <div class="card ds-flex-center-between ds-flex-row" style="width: 100%; height: 100px; box-sizing: border-box">
       <div class="ds-flex-center-between ds-w-100 ds-h-100">
         <div style="font-size: 24px; font-weight: bold" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
           Getting Started
@@ -27,6 +28,10 @@
         </div>
       </div>
     </div>
+  </div>
+
+
+  <div class="getting-started-wrapper">
     <div *ngIf="bannerVisibility" class="gs-banner" #gsBanner>
       <div style="color: #1F195E; font-size: 55px; font-weight: bold; white-space: nowrap">
         <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">

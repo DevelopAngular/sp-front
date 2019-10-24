@@ -85,24 +85,38 @@
   ::ng-deep .mat-checkbox-frame {
     border-color: #767676;
   }
+  .allow-hover {
+
+  }
   ::ng-deep .mat-row {
     .mat-cell {
-      cursor:pointer;
       color: #767676;
+      cursor:pointer;
     }
-    &:hover {
-      background-color: #0991C3;
-      color: #FFFFFF;
-      .mat-cell {
-        color: #FFFFFF;
-      }
-    }
+    //&:hover {
+    //  background-color: #0991C3;
+    //  color: #FFFFFF;
+    //  .mat-cell {
+    //    color: #FFFFFF;
+    //  }
+    //}
   }
   .selected-row {
     background-color: #0991C3;
     color: #FFFFFF;
     .mat-cell {
       color: #FFFFFF;
+    }
+  }
+  &_allow-hover {
+    ::ng-deep .mat-row {
+      .mat-cell {
+        color: #767676;
+        cursor: pointer;
+      }
+      &:hover {
+        background-color: #ECF1FF;
+      }
     }
   }
 }
@@ -114,15 +128,27 @@
   ::ng-deep .mat-row {
     .mat-cell {
       color: #767676;
+      cursor: pointer;
     }
-    &:hover {
-      background-color: #ECF1FF;
-    }
+    //&:hover {
+    //  background-color: #ECF1FF;
+    //}
   }
   .selected-row {
     background-color: #ECF1FF;
     .mat-cell {
       color: #767676;
+    }
+  }
+  &_allow-hover {
+    ::ng-deep .mat-row {
+      .mat-cell {
+        color: #767676;
+        cursor: pointer;
+      }
+      &:hover {
+        background-color: #ECF1FF;
+      }
     }
   }
 }

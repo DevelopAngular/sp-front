@@ -1,15 +1,16 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {Select} from '../animations';
 
 @Component({
   selector: 'app-traveltype-picker',
   templateUrl: './traveltype-picker.component.html',
-  styleUrls: ['./traveltype-picker.component.scss']
+  styleUrls: ['./traveltype-picker.component.scss'],
+  animations: [Select]
 })
 export class TraveltypePickerComponent implements OnInit {
 
   @Input() choices: string[];
-  @Input() altColor: string = '#FFFFFF';
-  @Input() border: string = '#FFFFFF';
+  @Input() altColor: string = 'transparent';
   @Input() width: string = '120px';
   @Input() height: string = '20px';
 
@@ -40,11 +41,6 @@ export class TraveltypePickerComponent implements OnInit {
   }
 
   updateTravelType(travelType: string) {
-    if (travelType === 'Round-trip' || travelType === 'Unrestricted') {
-      this.bottomRadius = true;
-    } else {
-      this.bottomRadius = false;
-    }
     this.selectedChoice = travelType;
     this.onSelect.emit(this.travelValue(travelType));
   }
@@ -63,13 +59,10 @@ export class TraveltypePickerComponent implements OnInit {
   }
 
   getFontColor(choice: string) {
-     return this.selectedChoice === choice ? this.altColor : '#FFFFFF';
+     return this.selectedChoice === choice ? this.altColor : 'white';
   }
 
   getBackgroundColor(choice: string) {
-    if (this.selectedChoice !== choice) {
-      return this.altColor;
-    }
-    // return this.selectedChoice === choice ? '#FFFFFF' : this.altColor;
+     return this.selectedChoice === choice ? 'white' : 'transparent';
   }
 }

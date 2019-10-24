@@ -160,6 +160,16 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
+
+    if (this.screenService.isDeviceLargeExtra) {
+      this.hallMonitorCollection.hasSort = false;
+      this.isIpadSearchBar = false;
+    }
+
+    if (this.screenService.isDesktopWidth) {
+      this.hallMonitorCollection.hasSort = true;
+    }
+
     combineLatest(
       this.dataService.currentUser,
       this.userService.effectiveUser,
@@ -291,9 +301,16 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   checkDeviceWidth() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
-    if (this.screenService.isDeviceMid) {
+
+    if (this.screenService.isDeviceLargeExtra) {
+      this.hallMonitorCollection.hasSort = false;
       this.isIpadSearchBar = false;
     }
+
+    if (this.screenService.isDesktopWidth) {
+      this.hallMonitorCollection.hasSort = true;
+    }
+
   }
 
   toggleSearchBar() {

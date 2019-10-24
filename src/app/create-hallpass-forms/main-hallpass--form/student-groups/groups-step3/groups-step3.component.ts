@@ -19,7 +19,25 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   @ViewChild('studentEmails') studentEmailsFile;
 
   @Input() form: FormGroup;
-  @Input() editGroup: StudentList;
+  editGroupInitial: StudentList;
+  editGroup: StudentList;
+  @Input() set groupToEdit(groupToEdit: StudentList) {
+    if (groupToEdit) {
+      this.editGroupInitial = groupToEdit;
+      this.editGroup = _.cloneDeep(groupToEdit);
+      console.log(this.editGroup);
+      this.form.get('title').setValue(this.editGroup.title);
+      this.form.get('users').setValue(this.editGroup.users);
+      this.form.valueChanges
+        .pipe(
+          skip(1)
+        )
+        .subscribe((val: any) => {
+          this.allowToSave = true;
+        });
+
+    }
+  }
 
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
@@ -36,17 +54,6 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.editGroup);
-    this.form.get('title').setValue(this.editGroup.title);
-    this.form.get('users').setValue(this.editGroup.users);
-    this.form.valueChanges
-      .pipe(
-        skip(1)
-      )
-      .subscribe((val: any) => {
-        this.allowToSave = true;
-      });
-
     fromEvent(this.studentEmailsFile.nativeElement , 'change')
       .pipe(
         switchMap((evt: Event) => {
@@ -57,13 +64,13 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
         }),
         map(( res: any) => {
 
-          console.log('Result', res);
+          // console.log('Result', res);
           const raw = XLSX.read(res.target.result, {type: 'binary'});
           const sn = raw.SheetNames[0];
           const stringCollection = raw.Sheets[sn];
           const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
           const headers = data[0];
-          console.log(data);
+          // console.log(data);
 
           return data.slice(1).map(item => item[0]);
         }),
@@ -132,9 +139,8 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
           dto.users = dto.users.map(user => user.id);
 
           if (dto.users.length) {
-            this.userService.updateStudentGroup(this.editGroup.id, dto)
+            this.userService.updateStudentGroupRequest(this.editGroup.id, dto)
               .subscribe((group: StudentList) => {
-                console.log(group);
                 for ( const control in this.form.controls) {
                   this.form.controls[control].setValue(null);
                 }
@@ -146,9 +152,9 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   }
 
   removeGroup() {
-    this.userService.deleteStudentGroup(this.editGroup.id)
+    this.userService.deleteStudentGroupRequest(this.editGroup.id)
       .subscribe((group: StudentList) => {
-        console.log('Deleted users ====>', group);
+        // console.log('Deleted users ====>', group);
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);
         }

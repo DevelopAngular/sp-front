@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '../models/Location';
 import { MatDialogRef } from '@angular/material';
 import { LocationsService } from '../services/locations.service';
-import {DeviceDetection} from '../device-detection.helper';
+import { DeviceDetection } from '../device-detection.helper';
 
 @Component({
   selector: 'app-favorite-form',
@@ -20,7 +20,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-      this.locationService.getFavoriteLocations().toPromise().then((stars:any[]) => {
+      this.locationService.getFavoriteLocationsRequest().subscribe((stars: any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));
         this.starChangesIds = stars.map(star => star.id);
       });
@@ -39,12 +39,12 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   }
 
   onStar(loc: any){
-    console.log(loc, this.starChanges)
+    // console.log(loc, this.starChanges)
     if(loc.starred)
       this.addLoc(loc, this.starChanges);
     else
       this.removeLoc(loc, this.starChanges);
-    console.log(this.starChanges)
+    // console.log(this.starChanges)
   }
 
   addLoc(loc: any, array: any[]){
@@ -56,7 +56,6 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   removeLoc(loc: any, array: any[]){
     var index = array.findIndex((element) => element.id === loc.id);
     if (index > -1) {
-      console.log('removeinf')
       array.splice(index, 1);
       this.starChangesIds.splice(index, 1);
     }

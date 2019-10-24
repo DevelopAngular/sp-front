@@ -1,19 +1,20 @@
-import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
 import {NextStep} from '../../animations';
-import {BehaviorSubject, combineLatest} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
 import {DeviceDetection} from '../../device-detection.helper';
-
+import {HallPassesService} from '../../services/hall-passes.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms.component';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -56,19 +57,18 @@ export interface Navigation {
   kioskMode?: boolean;
 }
 
-
-
 @Component({
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
   animations: [NextStep]
-
 })
-export class MainHallPassFormComponent implements OnInit {
+export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
   public FORM_STATE: Navigation;
   public formSize = {
+    containerHeight: '0px',
+    containerWidth: '0px',
     height: '0px',
     width: '0px'
   };
@@ -79,21 +79,40 @@ export class MainHallPassFormComponent implements OnInit {
   isDeviceMid: boolean;
   isDeviceLarge: boolean;
 
+  private destroy$ = new Subject();
+
+  @HostListener('window:resize')
+  checkDeviceScreen() {
+    this.isDeviceMid = this.screenService.isDeviceMid;
+    this.isDeviceLarge = this.extraLargeDevice;
+    this.setFormSize();
+  }
+
   constructor(
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
-    public dialogRef: MatDialogRef<MainHallPassFormComponent>,
+    public dialogRef: MatDialogRef<CreateHallpassFormsComponent>,
     private formService: CreateFormService,
     private elementRef: ElementRef,
     private dataService: DataService,
     private locationsService: LocationsService,
     private screenService: ScreenService,
+    private passesService: HallPassesService,
+    private cd: ChangeDetectorRef
   ) {}
+
+  get isCompressed() {
+    return  this.formService.compressableBoxController.asObservable();
+  }
+  get isScaled() {
+    return  this.formService.scalableBoxController.asObservable();
+  }
 
   ngOnInit() {
     this.isDeviceMid = this.screenService.isDeviceMid;
     this.isDeviceLarge = this.screenService.isDeviceLarge;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -168,19 +187,25 @@ export class MainHallPassFormComponent implements OnInit {
         };
         break;
     }
+
     this.setFormSize();
+    this.setContainerSize('end');
     this.checkDeviceScreen();
-      this.dataService.currentUser.subscribe((user: User) => {
+      this.dataService.currentUser
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAdmin();
           this.user = user;
       });
 
       combineLatest(
-          this.formService.getPinnable(),
-          this.locationsService.getLocationsWithTeacher(this.user))
-          .pipe(filter(() => this.isStaff),
+          this.passesService.getPinnablesRequest(),
+          this.locationsService.getLocationsWithTeacherRequest(this.user))
+          .pipe(
+            filter(([pin, locs]: [Pinnable[], Location[]]) => this.isStaff && !!pin.length && !!locs.length),
+              takeUntil(this.destroy$),
               map(([pinnables, locations]) => {
-                  const filterPinnables = pinnables.filter(pin => {
+                  const filterPinnables = _.cloneDeep(pinnables).filter(pin => {
                       return locations.find(loc => {
                           return (loc.category ? loc.category : loc.title) === pin.title;
                       });
@@ -199,60 +224,83 @@ export class MainHallPassFormComponent implements OnInit {
           this.FORM_STATE.data.teacherRooms = rooms;
       });
 
+    this.dialogRef
+      .backdropClick()
+      .subscribe(() => {
+        this.formService.setFrameMotionDirection('disable');
+        this.formService.compressableBoxController.next(false);
+        this.formService.scalableBoxController.next(false);
+        this.dialogRef.close();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onNextStep(evt) {
-
     if (evt.step === 0 || evt.action === 'exit') {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.compressableBoxController.next(false);
+      this.formService.scalableBoxController.next(false);
       this.dialogRef.close(evt);
-      return;
     } else {
-      console.log('STEP EVENT ===>', evt);
-
+      // console.log('STEP EVENT ===>', evt);
       this.FORM_STATE = evt;
     }
-    this.setFormSize();
+    // this.setFormSize();
+  }
+
+  setContainerSize(startOrEnd: 'start' | 'end') {
+    // return
+    switch (startOrEnd) {
+      case 'start':
+        this.formSize.containerWidth = this.formSize.width;
+        this.formSize.containerHeight =  this.formSize.height;
+        // this.cd.detectChanges();
+        break;
+      case 'end':
+        this.formSize.containerWidth =  `100vw`;
+        this.formSize.containerHeight =  `100vh`;
+        // this.cd.detectChanges();
+        break;
+    }
   }
 
   setFormSize() {
-    const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
-          if (form && this.FORM_STATE.step !== 4) {
-            form.style.boxShadow = '0 2px 26px 0px rgba(0, 0, 0, 0.15)';
-          }
+    // const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
+    //       form.style.boxShadow = 'none';
+    //       if (form && this.FORM_STATE.step !== 4) {
+    //         form.style.boxShadow = '0 2px 26px 0px rgba(0, 0, 0, 0.15)';
+    //       }
 
     switch (this.FORM_STATE.step) {
-        case 1:
+      case 1:
+        this.formSize.width =  `425px`;
+        this.formSize.height =  `500px`;
+        break;
+      case 2:
+        if (this.dialogData['kioskModeRoom']) {
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
-          break;
-        case 2:
-          if (this.dialogData['kioskModeRoom']) {
-            this.formSize.width =  `425px`;
-            this.formSize.height =  `500px`;
-          } else {
-            this.formSize.width =  this.extraLargeDevice ?  `335px` : `700px`;
-            this.formSize.height = this.extraLargeDevice ?  `500px` : `400px`;
-          }
-          break;
-        case 3:
-          this.formSize.width =  `425px`;
-          this.formSize.height =  `500px`;
-          break;
-        case 4:
-          if (form) {
-            form.style.boxShadow = 'none';
-          }
-          this.formSize.width =  `425px`;
-          this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
-          break;
-      }
-  }
-
-  @HostListener('window:resize')
-  checkDeviceScreen() {
-    this.isDeviceMid = this.screenService.isDeviceMid;
-    this.isDeviceLarge = this.extraLargeDevice;
-    this.setFormSize();
+        } else {
+          this.formSize.width =  this.extraLargeDevice ?  `335px` : `700px`;
+          this.formSize.height = this.extraLargeDevice ?  `500px` : `400px`;
+        }
+        break;
+      case 3:
+        this.formSize.width =  `425px`;
+        this.formSize.height =  `500px`;
+        break;
+      case 4:
+        // if (form) {
+        //   // form.style.boxShadow = 'none';
+        // }
+        this.formSize.width =  `335px`;
+        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
+        break;
+    }
   }
 
   get extraLargeDevice() {

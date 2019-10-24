@@ -242,7 +242,6 @@ export class AddUserDialogComponent implements OnInit {
                   .pipe(
                     switchMap(
                       (assistant: User) => {
-                        console.log(assistant);
                         return zip(
                           ...this.assistantLike.behalfOf.map((teacher: User) => {
                             return this.userService
@@ -263,7 +262,7 @@ export class AddUserDialogComponent implements OnInit {
                   .pipe(
                     switchMap(
                       (assistant: User) => {
-                        console.log(assistant);
+                        // console.log(assistant);
                         return zip(
                           ...this.assistantLike.behalfOf.map((teacher: User) => {
                             return this.userService.addRepresentedUser(+assistant.id, teacher).pipe(tap(console.log));
@@ -294,10 +293,11 @@ export class AddUserDialogComponent implements OnInit {
         })
       )
       .subscribe((res) => {
-        console.log(res);
-        this.pendingSubject.next(false)
+        this.pendingSubject.next(false);
         this.dialogRef.close(true);
-        this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
+        if (this.selectedRoles.length) {
+          this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
+        }
       });
   }
 

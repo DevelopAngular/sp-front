@@ -70,4 +70,7 @@ export class ScreenService {
     return DeviceDetection.isIOSTablet();
   }
 
+  public createCustomBreakPoint(breakPoint: number) {
+    return breakPoint > this.windowWidth || breakPoint >= this.windowWidth ;
+  }
 }

@@ -18,9 +18,9 @@
            (mouseleave)="leave.emit('timeLimit')"
            class="support-icon"
            *ngIf="rightIcon" [src]="rightIcon | resolveAsset"/>
-        <div class="arrow-down-container">
-          <div class="arrow-down"></div>
-        </div>
+<!--        <div class="arrow-down-container">-->
+<!--          <div class="arrow-down"></div>-->
+<!--        </div>-->
       </div>
     </div>
     <div class="input-container">
@@ -60,9 +60,9 @@
           matTooltipClass="tooltip"
           class="success-icon"
           [src]="'./assets/Report (Red).svg' | resolveAsset">
-        <div class="arrow-down-container">
-          <div class="arrow-down">x</div>
-        </div>
+<!--        <div class="arrow-down-container">-->
+<!--          <div class="arrow-down">x</div>-->
+<!--        </div>-->
       </div>
       <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
            class="success-icon" [src]="'./assets/Report (Red).svg' | resolveAsset"/>

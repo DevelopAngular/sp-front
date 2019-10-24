@@ -1,4 +1,4 @@
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import {animate, query, state, style, transition, trigger} from '@angular/animations';
 
 export const PassesAnimations =  {
   OpenOrCloseRequests: trigger('OpenOrCloseRequests', [
@@ -52,13 +52,35 @@ export const PassesAnimations =  {
     ])
   ]),
 
+  HeaderSlideTopBottom: trigger('HeaderSlideTopBottom', [
+    transition(':enter', [
+      style({'top': '100px'}),
+      style({'top': '100%'}),
+      animate('.2s linear', style({'top': '100px'}))
+    ]),
+    transition(':leave', [
+      style({'top': '100px'}),
+      animate('.2s linear', style({'top': '100%'}))
+    ])
+  ]),
+
   RequestCardSlideInOut: trigger('RequestCardSlideInOut', [
     transition(':enter', [
-      style({'margin-top': '-568px'}),
+      style({'margin-top': '-100%'}),
       animate( '.2s linear', style({'margin-top': '0'}))
     ]),
     transition(':leave', [
-      animate( '.2s linear', style({'margin-top': '-568px'}))
+      animate( '.2s linear', style({'margin-top': '-100%'}))
+    ]),
+  ]),
+
+  HeaderSlideInOut: trigger('HeaderSlideInOut', [
+    transition(':enter', [
+      style({'top': '-100%'}),
+      animate( '.2s linear', style({'top': '100px', 'z-index': 0} ))
+    ]),
+    transition(':leave', [
+      animate( '.2s linear', style({'top': '-100%', 'z-index': 0}))
     ]),
   ]),
 
@@ -66,5 +88,11 @@ export const PassesAnimations =  {
     state('slideIn', style({ transform: 'translateX(-50%)' })),
     state('slideOut', style({ transform: 'translateX(0)' })),
     transition('* => *', animate('.1s'))
-  ])
+  ]),
+
+  PreventInitialChildAnimation: trigger('PreventInitialChildAnimation', [
+    transition(':enter', [
+      query(':enter', [], {optional: true})
+    ])
+  ]),
 };

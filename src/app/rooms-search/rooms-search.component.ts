@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { LocationsService } from '../services/locations.service';
 import { Subject } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-import { takeUntil } from 'rxjs/operators';
+import {pluck, takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {Location} from '../models/Location';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-rooms-search',
@@ -19,6 +20,8 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   @Input() locations;
 
   @Output() result = new EventEmitter();
+
+  @ViewChild('search') searchItem: ElementRef;
 
   allRooms: Location[];
   categories = [];
@@ -36,17 +39,18 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
 
   constructor(
       private locationService: LocationsService,
-      private sanitizer: DomSanitizer
+      private sanitizer: DomSanitizer,
+      private shortcutsService: KeyboardShortcutsService,
   ) { }
 
   ngOnInit() {
-    this.locationService.searchLocationsWithConfig('v1/locations?limit=1000&starred=false')
+    this.locationService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false')
         .pipe(takeUntil(this.destroy$))
         .subscribe(res => {
-          this.allRooms = res.results;
+          this.allRooms = res;
         });
 
-    this.locationService.getLocationsWithFilder()
+    this.locationService.getLocationsWithFolder()
         .pipe(takeUntil(this.destroy$))
         .subscribe((res: any) => {
            this.categories = res.categories;
@@ -57,11 +61,25 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
     if (this.locations) {
         this.selectedLocations = this.locations;
     }
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        takeUntil(this.destroy$),
+        pluck('key')
+      ).subscribe(key => {
+        if (key[0] === 'enter') {
+          if (this.searchResult.length === 1) {
+            (this.searchItem.nativeElement as HTMLElement).click();
+          }
+          const element = document.activeElement;
+          (element as HTMLElement).click();
+        }
+    });
   }
 
   ngOnDestroy() {
-      this.destroy$.next();
-      this.destroy$.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   textColor(item) {
@@ -120,14 +138,14 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   onSearch(search) {
     this.pending$.next(true);
     if (!search) {
-          this.showSearchResult = false;
+      this.showSearchResult = false;
       this.pending$.next(false);
 
     } else {
           this.locationService.searchLocations(100, `&search=${search}&starred=false`)
               .subscribe(res => {
-                  this.showSearchResult = true;
-                  this.searchResult = res.results;
+                this.showSearchResult = true;
+                this.searchResult = res.results;
                 this.pending$.next(false);
               });
       }

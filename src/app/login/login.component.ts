@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
@@ -13,6 +13,8 @@ import {StorageService} from '../services/storage.service';
 import {User} from '../models/User';
 import {forkJoin, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 import {INITIAL_LOCATION_PATHNAME} from '../app.component';
+import {NotificationService} from '../services/notification-service';
+import {environment} from '../../environments/environment.prod';
 
 declare const window;
 
@@ -29,7 +31,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public appLink: string;
   public titleText: string;
-  public isMobileDevice: boolean = false;
+  public isMobileDevice = false;
   public trustedBackgroundUrl: SafeUrl;
   public pending$: Observable<boolean>;
 
@@ -48,15 +50,27 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private loginService: GoogleLoginService,
     private storage: StorageService,
     private router: Router,
+    private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private titleService: Title,
     private metaService: Meta,
+    private notifService: NotificationService,
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
   }
 
   ngOnInit() {
+
+    // this.route.queryParams
+    //   .pipe(
+    //     filter(qp => !!qp && !!qp.code)
+    //   )
+    //   .subscribe((qp) => {
+    //     console.log(qp);
+    //
+    //   });
+
     this.titleService.setTitle('SmartPass Sign-in');
     this.metaService.addTag({
       name: 'description',
@@ -77,6 +91,11 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       takeUntil(this.destroyer$)
     ).subscribe(([currentUser, path]) => {
+
+      if (NotificationService.hasPermission && environment.production) {
+        this.notifService.initNotifications(true);
+      }
+
       console.log(path);
 
       const loadView = currentUser.isAdmin() ? 'admin' : 'main';
@@ -85,6 +104,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       // } else {
         this.router.navigate([loadView]);
       // }
+      this.titleService.setTitle('SmartPass');
     });
 
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
