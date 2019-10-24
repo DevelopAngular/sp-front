@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import {Component, OnInit, Input, ElementRef, Renderer2} from '@angular/core';
 import { Util } from '../../Util';
 import { Request } from '../models/Request';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
@@ -38,6 +38,7 @@ export class InlineRequestCardComponent implements OnInit {
       private dataService: DataService,
       private formService: CreateFormService,
       private screenService: ScreenService,
+      private renderer: Renderer2,
   ) { }
 
   get hasDivider() {
@@ -88,32 +89,33 @@ export class InlineRequestCardComponent implements OnInit {
 
 
       this.header = '';
+      this.options = [];
 
       this.options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
       this.header = 'Are you sure you want to delete this pass request you sent?';
-      UNANIMATED_CONTAINER.next(true)
-      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': this.header, 'options': this.options, 'trigger': target}
-      });
 
-      cancelDialog.afterOpen().subscribe( () => {
-        this.cancelOpen = true;
-      });
-
-      cancelDialog.afterClosed()
-        .pipe(
-          tap(() => UNANIMATED_CONTAINER.next(false))
-        )
-        .subscribe(action => {
-        this.cancelOpen = false;
-          if (action === 'delete') {
-              this.requestService.cancelRequest(this.request.id).subscribe((data) => {
-                  console.log('[Request Canceled]: ', data);
-              });
-          }
+      if (!this.screenService.isDeviceMid) {
+        UNANIMATED_CONTAINER.next(true)
+        const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {'header': this.header, 'options': this.options, 'trigger': target}
         });
+
+        cancelDialog.afterOpen().subscribe( () => {
+          this.cancelOpen = true;
+        });
+
+        cancelDialog.afterClosed()
+          .pipe(
+            tap(() => UNANIMATED_CONTAINER.next(false))
+          )
+          .subscribe(action => {
+            this.cancelOpen = false;
+            this.chooseAction(action);
+          });
+      }
+
     }
   }
 
@@ -149,15 +151,21 @@ export class InlineRequestCardComponent implements OnInit {
     return DeviceDetection.isIOSTablet();
   }
 
-  cancelClick() {
-    this.cancelEditClick = false;
-  }
-
-  backdropClick() {
-    this.cancelEditClick = false;
-  }
-
   receiveOption($event: any) {
+    this.chooseAction($event);
+  }
 
+  chooseAction(action) {
+    if (action === 'delete') {
+      this.requestService.cancelRequest(this.request.id).subscribe((data) => {
+        console.log('[Request Canceled]: ', data);
+      });
+    }
+    this.closeMenu();
+  }
+
+  closeMenu() {
+    this.cancelEditClick = false;
+    this.renderer.setStyle(document.body, 'overflow', 'auto');
   }
 }

@@ -58,6 +58,7 @@ import {AnimatedHeaderDirective} from '../core/directives/animated-header.direct
 import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notification-turn-on-btn.component';
 import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -116,7 +117,7 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
     NotificationFormComponent,
     KioskModeComponent,
     AnimatedHeaderDirective,
-    NotificationTurnOnBtnComponent
+    NotificationTurnOnBtnComponent,
   ],
   entryComponents: [
     CreateHallpassFormsComponent,
