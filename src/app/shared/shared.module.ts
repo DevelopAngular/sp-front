@@ -69,6 +69,7 @@ import {ScrollHolderDirective} from '../scroll-holder.directive';
 import {IosCalendarWheelComponent} from '../ios-calendar/ios-calendar-wheel/ios-calendar-wheel.component';
 import {IosCalendarComponent} from '../ios-calendar/ios-calendar.component';
 import {NavbarElementSenderDirective} from '../core/directives/navbar-element-sender.directive';
+import {DomElementCheckerDirective} from '../core/directives/dom-element-checker.directive';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -154,7 +155,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IosCalendarWheelComponent,
     IosCalendarComponent,
     NavbarElementSenderDirective,
-
+    DomElementCheckerDirective
   ],
   entryComponents: [
     PassCardComponent,
