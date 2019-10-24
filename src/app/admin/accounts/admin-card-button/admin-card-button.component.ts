@@ -13,12 +13,9 @@ export class AdminCardButtonComponent implements OnInit {
   @Input() subtitle: string;
   @Input() subtitleIcon: string;
   @Input() integrations: boolean;
+  @Input() isNew: boolean;
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();
-
-  integrationIcons = [
-
-  ];
 
   constructor(public darkTheme: DarkThemeSwitch) { }
 

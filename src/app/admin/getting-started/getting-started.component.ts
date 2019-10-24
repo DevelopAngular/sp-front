@@ -53,7 +53,7 @@ export class GettingStartedComponent implements OnInit {
   }
 
   goMeetting(event) {
-      event.stopPropagation();
+    event.stopPropagation();
     window.open('https://www.smartpass.app/meeting');
   }
 

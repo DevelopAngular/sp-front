@@ -9,7 +9,6 @@ import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
 import {MySchoolComponent} from './my-school/my-school.component';
 import {IosComponentComponent} from './ios-component/ios-component.component';
-// import {TakeTourComponent} from './getting-started/take-tour/take-tour.component';
 
 const routes: Routes = [
   {

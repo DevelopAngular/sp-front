@@ -34,6 +34,7 @@ import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.com
 import { SchoolButtonComponent } from './my-school/school-button/school-button.component';
 import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-card-button.component';
 import { IosComponentComponent } from './ios-component/ios-component.component';
+import { AccountsSyncComponent } from './accounts/accounts-sync/accounts-sync.component';
 
 @NgModule({
   imports: [
@@ -72,6 +73,7 @@ import { IosComponentComponent } from './ios-component/ios-component.component';
     SchoolButtonComponent,
     AdminCardButtonComponent,
     IosComponentComponent,
+    AccountsSyncComponent
 
   ],
   entryComponents: [

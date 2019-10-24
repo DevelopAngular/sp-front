@@ -18,13 +18,12 @@ import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
-import {encode} from 'punycode';
 import {environment} from '../../../environments/environment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
-declare const history: History;
+declare const window;
 
 @Component({
   selector: 'app-accounts',
@@ -355,6 +354,10 @@ export class AccountsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       UNANIMATED_CONTAINER.next(false);
     });
+  }
+
+  openNewTab(url) {
+    window.open(url);
   }
 
   goToAccountsSetup() {
