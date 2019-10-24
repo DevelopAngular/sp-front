@@ -11,7 +11,6 @@ import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {MatSort, Sort} from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import * as moment from 'moment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
@@ -103,7 +102,6 @@ export class GridTableDataSource extends DataSource<any> {
       this.viewport.setRenderedContentOffset(this.offset);
       this.offsetChange.next(this.offset);
       this.visibleData.next(slicedData);
-      // console.log(this.offset);
     });
   }
 
@@ -119,12 +117,17 @@ export class GridTableDataSource extends DataSource<any> {
       case 'Name':
         return item[property].split(' ')[1];
       case 'Date & Time':
-        // return Math.min(moment().diff(item['date'], 'days'));
         return moment(item['date']).milliseconds;
       case 'Duration':
         return item['sortDuration'].as('milliseconds');
       case 'Profile(s)':
         return item[property].map(i => i.title).join('');
+      case 'Last sign-in':
+        if (item['last_sign_in']) {
+          return moment(item['last_sign_in']).toDate();
+        } else {
+          return new Date('1995-12-17T03:24:00');
+        }
       default:
         return item[property];
     }
@@ -312,52 +315,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  normalizeCell(cellData) {
-    if (!cellData) {
-      return new Array(0);
-    }
-    if (Array.isArray(cellData)) {
-      return cellData;
-    } else {
-      return  new Array(cellData);
-    }
-  }
-
-  displayCell(cellElement, cell?, column?) {
-    let value = '';
-    if (typeof cellElement === 'string') {
-      if (column === 'TT') {
-        if (cellElement === 'one_way') {
-          value = SP_ARROW_BLUE_GRAY;
-        }
-        if (cellElement === 'round_trip' || cellElement === 'both') {
-          value = SP_ARROW_DOUBLE_BLUE_GRAY;
-        }
-        cell.innerHTML = value;
-          return;
-      } else {
-          value = cellElement;
-      }
-    } else {
-      value = cellElement.title ? cellElement.title : 'Error!';
-    }
-    return value;
-  }
-
-  selectedCellEmit(event, cellElement, element) {
-    // debugger
-    if (typeof cellElement !== 'string' && cellElement.title !== 'No profile' && !(cellElement instanceof Location) && !this.isCheckbox.value) {
-      event.stopPropagation();
-      cellElement.row = element;
-      this.selectedCell.emit(cellElement);
-    } else {
-      return;
-    }
-  }
-
   selectedRowEmit(evt, row) {
-    // console.log(row)
-    // debugger
     const rowData = row._data;
     const target = evt.target as HTMLElement;
     if (this.isCheckbox.value && !this.isAllowedSelectRow) {
@@ -377,10 +335,6 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   pushOutSelected() {
     this.selectedUsers.emit(this.selection.selected);
-  }
-
-  clearSelection() {
-    this.selection.clear();
   }
 
 }
