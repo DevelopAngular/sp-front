@@ -35,6 +35,7 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
 
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 declare const window;
 
@@ -702,9 +703,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private buildUserListData(userList) {
     this.isLoadUsers = this.limitCounter === userList.length;
     return userList.map((raw, index) => {
-      if (!raw.roles) {
-        debugger;
-      }
       const permissionsRef: any = this.profilePermissions;
         const partOf = [];
         if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
@@ -771,6 +769,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
         Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
         Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
+        Object.defineProperty(rawObj, 'last_sign_in', {enumerable: false, value: raw.last_login });
         Object.defineProperty(rawObj, '_originalUserProfile', {
           enumerable: false,
           configurable: false,
