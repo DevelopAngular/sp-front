@@ -6,7 +6,7 @@ import {ConsentMenuMobileAnimations} from './consent-menu-mobile.animations';
 import {Subject} from 'rxjs';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {takeUntil} from 'rxjs/operators';
-
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-consent-menu-mobile',
@@ -36,6 +36,8 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewI
   @ViewChild('consentMenu') consentMenu: ElementRef<HTMLElement>;
 
   destroyer$: Subject<any> = new Subject<any>();
+  backDropDiv: HTMLDivElement;
+  backDropContainer: Element;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -45,18 +47,28 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewI
   ) {
   }
 
+  get isIOS() {
+    return DeviceDetection.isIOSMobile();
+  }
+
   ngOnInit() {
+    this.backDropDiv = this.renderer.createElement('div');
   }
 
   ngAfterViewInit(): void {
     this.domChecker.domElement$
       .pipe(takeUntil(this.destroyer$))
       .subscribe((menuElement: ElementRef<HTMLElement>) => {
+        if (this.isIOS) {
+          this.backDropContainer = menuElement.nativeElement.closest('mat-sidenav-container');
+          this.createIOSBackdrop(this.backDropContainer);
+          this.renderer.appendChild(this.backDropContainer, this.backDropDiv);
+        }
         if (this.appendToBody) {
-          this.renderer.appendChild( document.body, menuElement.nativeElement);
+          this.renderer.appendChild(document.body, menuElement.nativeElement);
           this.renderer.setStyle(document.body, 'overflow', 'hidden');
         }
-    });
+      });
   }
 
   ngOnDestroy() {
@@ -74,6 +86,9 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewI
 
   cancel() {
     this.cancelClick.emit();
+    if (this.isIOS) {
+      this.renderer.removeChild(this.backDropContainer, this.backDropDiv);
+    }
   }
 
   onBackdropClick() {
@@ -82,6 +97,24 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewI
 
   sendOptionAction(action: any) {
     this.receiveOption.emit(action);
+    if (this.isIOS) {
+      this.renderer.removeChild(this.backDropContainer, this.backDropDiv);
+    }
+  }
+
+  createIOSBackdrop(container: Element) {
+    container.addEventListener('touchmove', (e) => {
+      if (this.display) {
+        e.preventDefault();
+      } else {
+        return true;
+      }
+    });
+    this.backDropDiv.classList.add('cdk-overlay-backdrop', 'custom-backdrop', 'cdk-overlay-backdrop-showing', 'z-index-15');
+    this.backDropDiv.addEventListener('click', () => {
+      this.onBackdropClick();
+      this.renderer.removeChild(container, this.backDropDiv);
+    });
   }
 }
 
