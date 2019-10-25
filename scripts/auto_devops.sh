@@ -76,9 +76,7 @@ function deploy() {
 
     echo "Using helm verb: ${helm_command}"
 
-    helm template
-      --wait \
-      --debug \
+    helm template \
       --set service.enabled="$service_enabled" \
       --set web.repository="$CI_APPLICATION_REPOSITORY" \
       --set web.tag="$CI_APPLICATION_TAG" \
@@ -91,7 +89,6 @@ function deploy() {
       --set web.replicaCount="1" \
       --namespace="$KUBE_NAMESPACE" \
       --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
-      $name_arg "$name" \
       chart/
 
     # Intentionally unquoted so helm and verbs are separate args
