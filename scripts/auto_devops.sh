@@ -88,7 +88,6 @@ function deploy() {
       --set service.domain="$AUTO_DEVOPS_DOMAIN" \
       --set web.replicaCount="1" \
       --namespace="$KUBE_NAMESPACE" \
-      --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
       chart/
 
     # Intentionally unquoted so helm and verbs are separate args
