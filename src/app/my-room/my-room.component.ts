@@ -14,7 +14,7 @@ import { User } from '../models/User';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import { CalendarComponent } from '../admin/calendar/calendar.component';
-import {bufferCount, delay, filter, map, share, shareReplay, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { LocationsService } from '../services/locations.service';
 import { RepresentedUser } from '../navbar/navbar.component';
@@ -29,13 +29,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { StorageService } from '../services/storage.service';
 import { HttpService } from '../services/http-service';
-
-import * as moment from 'moment';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
-import {HallPass} from '../models/HallPass';
 import {HallPassesService} from '../services/hall-passes.service';
-import {Moment} from 'moment';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 /**
@@ -67,7 +63,7 @@ abstract class RoomPassProvider implements PassLikeProvider {
   }
 }
 
-class ActivePassProvider extends RoomPassProvider {
+export class ActivePassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
     return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: locations}, date);
   }
@@ -146,14 +142,11 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   testPasses: PassLikeProvider;
-
-  activePassesKiosk: WrappedProvider;
   activePasses: WrappedProvider;
   originPasses: WrappedProvider;
   destinationPasses: WrappedProvider;
 
   inputValue = '';
-  calendarToggled = false;
   user: User;
   effectiveUser: RepresentedUser;
   isStaff = false;
@@ -192,7 +185,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   currentPassesDates: Map<string, number> = new Map();
   holdScrollPosition: number = 0;
-  // currentPassesDates: {[key: number]: Moment};
 
   constructor(
       private _zone: NgZone,
@@ -223,7 +215,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         map((location) => {
          return location && location.length ? location.map(l => Location.fromJSON(l)) : [];
         })
-      )
+      );
 
     // Construct the providers we need.
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
@@ -426,7 +418,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   displayOptionsPopover(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
-      // const target = new ElementRef(evt.currentTarget);
       UNANIMATED_CONTAINER.next(true);
       const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
@@ -454,7 +445,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           filter(res => !!res)
         )
         .subscribe(data => {
-          console.log(data);
+          // console.log(data);
           this.holdScrollPosition = data.scrollPosition;
           this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
           this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
