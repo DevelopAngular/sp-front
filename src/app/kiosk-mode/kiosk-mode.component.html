@@ -17,7 +17,7 @@
       </app-display-card>
   </div>
   <div class="active-passes">
-    <div class="active-passes">
+    <div class="active-passes" *ngIf="activePassesKiosk">
       <app-pass-collection
               [isActive]="true"
               [forStaff]="true"

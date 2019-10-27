@@ -3,7 +3,6 @@ import {Router} from '@angular/router';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService, ProgressInterface} from '../getting-started-progress.service';
 import {fromEvent} from 'rxjs';
-import {tap} from 'rxjs/operators';
 
 declare const window;
 
@@ -53,7 +52,7 @@ export class GettingStartedComponent implements OnInit {
   }
 
   goMeetting(event) {
-      event.stopPropagation();
+    event.stopPropagation();
     window.open('https://www.smartpass.app/meeting');
   }
 

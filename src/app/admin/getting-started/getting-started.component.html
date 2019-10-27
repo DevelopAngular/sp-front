@@ -66,7 +66,7 @@
             </div>
             <div class="passed">
               <img width="35"
-                   *ngIf="OnboardProgres?.take_a_tour?.start && OnboardProgres?.take_a_tour?.end && OnboardProgres?.take_a_tour?.create_accounts.value"
+                   *ngIf="OnboardProgres?.take_a_tour?.start.value && OnboardProgres?.take_a_tour?.end.value && OnboardProgres?.take_a_tour?.create_accounts.value"
                    [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
             </div>
           </div>
@@ -90,7 +90,7 @@
               </app-icon-button>
             </div>
             <div class="passed">
-              <img width="35" *ngIf="OnboardProgres?.setup_rooms?.start && OnboardProgres?.setup_rooms?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
+              <img width="35" *ngIf="OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
             </div>
           </div>
 
@@ -116,7 +116,7 @@
               </app-icon-button>
             </div>
             <div class="passed">
-              <img width="35" *ngIf="OnboardProgres?.setup_accounts?.start && OnboardProgres?.setup_accounts?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
+              <img width="35" *ngIf="OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
             </div>
           </div>
 
@@ -139,7 +139,7 @@
               </app-icon-button>
             </div>
             <div class="passed">
-              <img width="35" *ngIf="OnboardProgres?.launch_day_prep?.start && OnboardProgres?.launch_day_prep?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
+              <img width="35" *ngIf="OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
             </div>
           </div>
 

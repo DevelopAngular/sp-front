@@ -111,11 +111,7 @@ export class LocationTableComponent implements OnInit {
 
     if (this.staticChoices && this.staticChoices.length) {
       this.choices = this.staticChoices;
-        if (!this.choices.length) {
-          this.noChoices = true;
-        } else {
-          this.noChoices = false;
-        }
+      this.noChoices = !!this.choices.length;
         this.mainContentVisibility = true;
     } else {
         const url = 'v1/'
@@ -127,12 +123,8 @@ export class LocationTableComponent implements OnInit {
         if (this.mergedAllRooms) {
             this.mergeLocations(url, this.withMergedStars)
                 .subscribe(res => {
-                    this.choices = res
-                  if (!this.choices.length) {
-                    this.noChoices = true;
-                  } else {
-                    this.noChoices = false;
-                  }
+                    this.choices = res;
+                    this.noChoices = !!this.choices.length;
                   this.mainContentVisibility = true;
 
                 });
@@ -140,19 +132,15 @@ export class LocationTableComponent implements OnInit {
             this.locationService.searchLocationsWithConfig(url)
                 .toPromise().then(res => {
                     this.choices = res.results.filter(loc => !loc.restricted);
+                    this.noChoices = !!this.choices.length;
             });
         } else {
             this.locationService.searchLocationsWithConfig(url)
                 .toPromise().then(p => {
                   this.choices = p.results;
-                  // this.choices = p.results.concat(p.results,p.results,p.results,p.results);
                   this.nextChoices = p.next;
-              if (!this.choices.length) {
-                this.noChoices = true;
-              } else {
-                this.noChoices = false;
-              }
-              this.mainContentVisibility = true;
+                  this.noChoices = !!this.choices.length;
+                  this.mainContentVisibility = true;
             });
         }
 
@@ -167,11 +155,7 @@ export class LocationTableComponent implements OnInit {
         }
         if (this.forKioskMode) {
           this.choices = this.choices.filter(loc => !loc.restricted);
-          if (!this.choices.length) {
-            this.noChoices = true;
-          } else {
-            this.noChoices = false;
-          }
+          this.noChoices = !!this.choices.length;
         }
           this.favoritesLoaded = true;
           this.mainContentVisibility = true;
@@ -228,11 +212,7 @@ export class LocationTableComponent implements OnInit {
                             : [...filtFevLoc, ...this.filterResults(p.results)];
           })
           .then(() => {
-            if (!this.choices.length) {
-              this.noChoices = true;
-            } else {
-              this.noChoices = false;
-            }
+            this.noChoices = !!this.choices.length;
           });
       } else {
         if (this.staticChoices && this.staticChoices.length) {
@@ -258,11 +238,7 @@ export class LocationTableComponent implements OnInit {
                 .subscribe(res => {
                   this.choices = res;
                   this.hideFavorites = false;
-                  if (!this.choices.length) {
-                    this.noChoices = true;
-                  } else {
-                    this.noChoices = false;
-                  }
+                  this.noChoices = !!this.choices.length;
                 });
           } else {
               this.locationService.searchLocationsWithConfig(url)
@@ -290,11 +266,7 @@ export class LocationTableComponent implements OnInit {
                     this.search = '';
                 })
                 .then(() => {
-                  if (!this.choices.length) {
-                    this.noChoices = true;
-                  } else {
-                    this.noChoices = false;
-                  }
+                  this.noChoices = !!this.choices.length;
                 });
           }
         }
