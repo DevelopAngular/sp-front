@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
-import {finalize, map, pluck, takeUntil} from 'rxjs/operators';
+import {filter, finalize, map, pluck, take, takeUntil} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
-import {combineLatest, Observable, Subject} from 'rxjs';
+import {combineLatest, iif, Observable, Subject, zip} from 'rxjs';
 import * as _ from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
@@ -97,13 +97,11 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       this.mainContentVisibility = true;
     } else {
         const url = 'v1/'
-            +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
-                +(!!this.category ? ('?category=' +this.category +'&') : '?')
-            ))
-            +'limit=1000'
-            +((this.type==='location' && this.showFavorites)?'&starred=false':'');
+            +(this.type==='teachers' ? 'users?role=_profile_teacher&' : 'locations?')
+            +'limit=1000&'
+            +((this.type==='location' && this.showFavorites)?'starred=false':'');
         if (this.mergedAllRooms)  {
-            this.mergeLocations(url, this.withMergedStars)
+            this.mergeLocations(url, this.withMergedStars, this.category)
                 .subscribe(res => {
                     this.choices = res;
                     this.noChoices = !this.choices.length;
@@ -116,7 +114,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                     this.choices = res.filter(loc => !loc.restricted);
                 });
         } else {
-            this.locationService.getLocationsWithConfigRequest(url)
+            this.locationService.getLocationsFromCategory(url, this.category)
                 .subscribe(p => {
                   this.choices = p;
                   this.noChoices = !this.choices.length;
@@ -127,7 +125,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         this.isFocused = this.locationService.focused.value;
     }
     if (this.type === 'location') {
-      this.locationService.getFavoriteLocationsRequest().subscribe((stars: any[]) => {
+      this.locationService.favoriteLocations$.subscribe((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
         if (this.isFavoriteForm) {
             this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
@@ -237,10 +235,12 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     return !this.invalidLocation || location.id !== this.invalidLocation;
   }
 
-  mergeLocations(url, withStars: boolean) {
-    return combineLatest(
-        this.locationService.getLocationsWithConfigRequest(url),
-        this.locationService.getFavoriteLocationsRequest()
+  mergeLocations(url, withStars: boolean, category: string) {
+    const locsRequest$ = !!category ? this.locationService.getLocationsFromCategory(url, category) :
+      this.locationService.getLocationsWithConfigRequest(url);
+    return zip(
+     locsRequest$,
+     this.locationService.getFavoriteLocationsRequest()
     )
         .pipe(
             map(([rooms, favorites]: [any, any[]]) => {

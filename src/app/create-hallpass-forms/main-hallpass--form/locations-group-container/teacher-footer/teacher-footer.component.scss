@@ -24,6 +24,13 @@
   font-size: 15px;
   color: $navy;
 
+  .switch-locs-view {
+    position: absolute;
+    left: 20px;
+    z-index: 1000;
+    cursor: pointer;
+  }
+
   .footer-from-teacher-text {
     width: 100%;
   }

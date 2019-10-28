@@ -12,6 +12,11 @@ export const getFoundLocations = createSelector(
   (state: LocationsState) => state.foundLocations
 );
 
+export const getLocationsFromCategoryGetter = createSelector(
+  getLocationsState,
+  (state: LocationsState) => state.fromCategory
+);
+
 export const getLoadingLocations = createSelector(
   getLocationsState,
   (state: LocationsState) => state.loading

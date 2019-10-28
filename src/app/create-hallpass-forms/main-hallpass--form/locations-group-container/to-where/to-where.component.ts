@@ -9,8 +9,9 @@ import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA} from '@angular/material';
-import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
 import {DeviceDetection} from '../../../../device-detection.helper';
+import {StorageService} from '../../../../services/storage.service';
 
 @Component({
   selector: 'app-to-where',
@@ -49,6 +50,8 @@ export class ToWhereComponent implements OnInit {
   public states;
 
   public teacherRooms: Pinnable[] = [];
+  public isGrid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(JSON.parse(this.storage.getItem('isGrid')));
+  public hiddenBanner: boolean = JSON.parse(this.storage.getItem('hiddenBanner'));
 
   public gridRestrictions: ToWhereGridRestriction = new ToWhereGridRestrictionLg();
 
@@ -62,8 +65,8 @@ export class ToWhereComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
-    public screenService: ScreenService
-
+    public screenService: ScreenService,
+    private storage: StorageService
   ) {
     this.states = States;
   }
@@ -124,6 +127,17 @@ export class ToWhereComponent implements OnInit {
       this.formState.previousState = 2;
       this.selectedPinnable.emit(pinnable);
     }, 100);
+  }
+
+  switchView(isGrid) {
+    this.storage.setItem('isGrid', isGrid);
+    this.isGrid$.next(isGrid);
+    this.removeBanner();
+  }
+
+  removeBanner() {
+    this.hiddenBanner = true;
+    this.storage.setItem('hiddenBanner', true);
   }
 
   back() {
