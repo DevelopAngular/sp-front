@@ -70,6 +70,6 @@ export class NotificationTurnOnBtnComponent implements OnInit {
   }
 
   get isSafari() {
-    return DeviceDetection.isSafari() || DeviceDetection.isIOSMobile();
+    return DeviceDetection.isSafari() || DeviceDetection.isIOSMobile() || DeviceDetection.isIOSTablet();
   }
 }

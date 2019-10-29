@@ -156,7 +156,6 @@ export class ProfileCardDialogComponent implements OnInit {
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
       this.controlsIteratable = permissions ? Object.values(permissions) : [];
-      // console.log(permissions);
       const group: any = {};
       for (const key in permissions) {
         const value = (this.profile._originalUserProfile as User).roles.includes(key);
@@ -193,18 +192,18 @@ export class ProfileCardDialogComponent implements OnInit {
 
     if ( this.data.bulkPermissions) {
       return zip(
-        ...this.data.bulkPermissions.map((userId) => this.userService.createUserRoles(userId, this.permissionsForm.value))
+        ...this.data.bulkPermissions.map((user) => this.userService.createUserRolesRequest(user, this.permissionsForm.value, this.data.role))
       );
     } else if (this.permissionsFormEditState && this.assistantForEditState) {
       return zip(
-        this.userService.createUserRoles(this.profile.id, this.permissionsForm.value),
+        this.userService.createUserRolesRequest(this.profile, this.permissionsForm.value, this.data.role),
         ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile.id, user)),
         ...this.assistantToAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile.id, user))
       );
     } else {
       if (this.permissionsFormEditState) {
         return this.userService
-          .createUserRoles(this.profile.id, this.permissionsForm.value);
+          .createUserRolesRequest(this.profile._originalUserProfile, this.permissionsForm.value, this.data.role);
       }
       if (this.assistantForEditState) {
         return zip(

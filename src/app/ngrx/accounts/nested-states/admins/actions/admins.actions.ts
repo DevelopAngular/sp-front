@@ -19,3 +19,6 @@ export const updateAdminActivity = createAction(`[${ADMIN}] Update Admin Activit
 export const updateAdminActivitySuccess = createAction(`[${ADMIN}] Update Admin Activity Success`, props<{profile: User}>());
 export const updateAdminActivityFailure = createAction(`[${ADMIN}] Update Admin Activity Failure`, props<{errorMessage: string}>());
 
+export const updateAdminPermissions = createAction(`[${ADMIN}] Update Admin Permissions`, props<{profile: User, permissions: any}>());
+export const updateAdminPermissionsSuccess = createAction(`[${ADMIN}] Update Admin Permissions Success`, props<{profile: User}>());
+export const updateAdminPermissionsFailure = createAction(`[${ADMIN}] Update Admin Permissions Failure`, props<{errorMessage: string}>());

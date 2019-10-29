@@ -3,6 +3,7 @@ import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
 import {ScreenService} from '../../../../services/screen.service';
+import {StorageService} from '../../../../services/storage.service';
 
 @Component({
   selector: 'app-teacher-footer',
@@ -26,12 +27,17 @@ export class TeacherFooterComponent implements OnInit {
   @Input() formState: Navigation;
 
   @Output() changeLocation: EventEmitter<Navigation> = new EventEmitter<Navigation>();
+  @Output() locsViewEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   showFullFooter: boolean = false;
   frameMotion$: BehaviorSubject<any>;
+
+  isGrid: boolean;
+
   constructor(
     private formService: CreateFormService,
-    private screenService: ScreenService
+    private screenService: ScreenService,
+    private storage: StorageService
   ) { }
 
   get fromLocationText() {
@@ -55,6 +61,7 @@ export class TeacherFooterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isGrid = JSON.parse(this.storage.getItem('isGrid'));
     this.frameMotion$ = this.formService.getFrameMotionDirection();
   }
 
@@ -102,6 +109,12 @@ export class TeacherFooterComponent implements OnInit {
       this.changeLocation.emit(this.formState);
     }, 100);
 
+  }
+
+  switchLocsView(evt: Event) {
+    this.isGrid = !this.isGrid;
+    evt.stopPropagation();
+    this.locsViewEvent.emit(this.isGrid);
   }
 
   goToDate() {

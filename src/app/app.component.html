@@ -9,7 +9,7 @@
   </div>
 
   <app-school-toggle-bar
-    *ngIf="isAuthenticated && ( schools && schools.length > 1 ) && !hideSchoolToggleBar"
+    *ngIf="isAuthenticated && ( schools && schools.length > 1 ) && !hideSchoolToggleBar && !isKioskMode"
     [schools]="schools">
   </app-school-toggle-bar>
 

@@ -7,6 +7,10 @@ export const getLocations = createAction(`[${COMPONENT}] Get Locations`, props<{
 export const getLocationsSuccess = createAction(`[${COMPONENT}] Get Locations Success`, props<{locations: Location[]}>());
 export const getLocationsFailure = createAction(`[${COMPONENT}] Get Locations Failure`, props<{errorMessage: string}>());
 
+export const getLocationsFromCategory = createAction(`[${COMPONENT}] Get Locations From Category`, props<{url: string}>());
+export const getLocationsFromCategorySuccess = createAction(`[${COMPONENT}] Get Locations From Category Success`, props<{locations: Location[]}>());
+export const getLocationsFromCategoryFailure = createAction(`[${COMPONENT}] Get Locations From Category Failure`, props<{errorMessage: string}>());
+
 export const searchLocations = createAction(`[${COMPONENT}] Search Locations`, props<{url: string}>());
 export const searchLocationsSuccess = createAction(`[${COMPONENT}] Search Locations Success`, props<{foundLocations: Location[]}>());
 export const searchLocationsFailure = createAction(`[${COMPONENT}] Search Locations Failure`, props<{errorMessage: string}>());

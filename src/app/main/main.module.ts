@@ -56,6 +56,8 @@ import {ScreenService} from '../services/screen.service';
 import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
 import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notification-turn-on-btn.component';
+import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
+
 
 @NgModule({
   imports: [
@@ -115,7 +117,7 @@ import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notifi
     NotificationFormComponent,
     KioskModeComponent,
     AnimatedHeaderDirective,
-    NotificationTurnOnBtnComponent
+    NotificationTurnOnBtnComponent,
   ],
   entryComponents: [
     CreateHallpassFormsComponent,
@@ -127,8 +129,8 @@ import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notifi
     InvitationCardComponent,
     InfoEditorComponent,
     NotificationFormComponent,
-    SettingsComponent
-
+    SettingsComponent,
+    ConsentMenuMobileComponent
   ],
   providers: [
     NavbarDataService,

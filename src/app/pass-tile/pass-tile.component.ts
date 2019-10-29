@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
+import {Component, Input, OnInit, Output, OnDestroy, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import {interval, BehaviorSubject, Subject} from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';

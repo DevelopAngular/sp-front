@@ -1,9 +1,8 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { FormGroup } from '@angular/forms';
 
-import {BehaviorSubject, combineLatest, forkJoin, iif, interval, Observable, of, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
-import {delay, filter, finalize, map, mapTo, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
@@ -132,12 +131,11 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.loaded$ = this.hallPassService.loadedPinnables$;
     this.httpService.globalReload$
       .pipe(
-        switchMap(() => {
+        map((res) => {
           this.pinnables$ = this.hallPassService.getPinnablesRequest();
-          return this.pinnables$.pipe(filter((res: any[]) => !!res.length));
+          return res;
         }),
         switchMap((res) => {
-          this.pinnables = res;
           return combineLatest(
             this.adminService.getOnboardProcessRequest().pipe(filter((r: any[]) => !!r.length)),
             this.pinnables$
@@ -147,6 +145,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         }),
         takeUntil(this.destroy$),
         map(([onboard, pinnables]) => {
+          this.pinnables = pinnables;
           if (onboard && (onboard as any[]).length && !pinnables.length) {
             const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
             this.showRooms = !!end.done;
@@ -154,22 +153,21 @@ export class PassConfigComponent implements OnInit, OnDestroy {
               const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
               const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
               if (!start.done) {
-                  this.onboardUpdate$.next('setup_rooms:start');
+                  return 'setup_rooms:start';
               }
               if (!end.done) {
-                  this.onboardUpdate$.next('setup_rooms:end');
+                  return 'setup_rooms:end';
               }
-              this.showRooms = true;
+            this.showRooms = true;
           }
-          this.onboardLoaded = true;
-          return pinnables;
         }),
-      switchMap((pinnables) => {
-        return this.onboardUpdate$.pipe(
-          filter(() => navigator.onLine),
-          switchMap((action) => {
-            return this.adminService.updateOnboardProgress(action);
-          }));
+      switchMap((action) => {
+        this.onboardLoaded = true;
+        if (action) {
+          return this.adminService.updateOnboardProgress(action);
+        } else {
+          return of(null);
+        }
       })).subscribe();
 
     this.activatedRoute.queryParams.pipe(
@@ -181,7 +179,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         return this.locationsService.getLocation(locationId);
       }),
       switchMap((location: Location) => {
-        return zip(this.pinnables$, of(location));
+        return zip(this.pinnables$.pipe(filter(res => !!res.length)), of(location));
       })
     ).subscribe(([pinnables, location]) => {
       this.forceSelectedLocation = location;
@@ -200,9 +198,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
-      return this.updatePinnablesOrder().pipe(takeUntil(this.destroy$)).subscribe(res => {
-        debugger
-      });
+      return this.updatePinnablesOrder().pipe(takeUntil(this.destroy$)).subscribe();
     }
     this.destroy$.next();
     this.destroy$.complete();
@@ -373,7 +369,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
        switchMap(() => {
          this.pendingSubject.next(true);
          if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
-           return this.updatePinnablesOrder()
+           return this.updatePinnablesOrder();
          }
          return of(null);
        })
@@ -396,7 +392,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           travel_types: pin.travel_types,
           max_allowed_time: pin.max_allowed_time
         };
-        return this.locationsService.createLocationRequest(location)
+        return this.locationsService.createLocation(location)
           .pipe(
             filter((loc: Location) => navigator.onLine && !!loc),
             switchMap((loc: Location) => {
@@ -406,13 +402,13 @@ export class PassConfigComponent implements OnInit, OnDestroy {
               icon: pin.icon,
               location: loc.id,
             };
-            return this.hallPassService.postPinnableRequest(pinnable)
-              .pipe(filter((res: Pinnable) => !!res));
+            return this.hallPassService.postPinnableRequest(pinnable);
           }));
       });
 
-      forkJoin(requests$)
+      zip(...requests$)
         .pipe(
+          take(1),
           filter(() => navigator.onLine),
           takeUntil(this.destroy$),
           switchMap((res) => {
@@ -426,9 +422,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       } else {
         this.adminService.updateOnboardProgress('setup_rooms:end').pipe(filter(() => navigator.onLine))
           .subscribe(() => {
-
             this.showRooms = true;
-
           });
       }
   }

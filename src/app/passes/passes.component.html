@@ -1,4 +1,5 @@
- <h1 [@HeaderSlideInOut] *ngIf="isInboxClicked && this.screenService.isDeviceMid" class="requests-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" appAnimatedHeader>Requests</h1>
+ <h1 [@HeaderSlideInOut] *ngIf="isInboxClicked && this.screenService.isDeviceMid" class="requests-title"
+     [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Requests</h1>
   <div  [@RequestCardSlideInOut] *ngIf="isInboxClicked && this.screenService.isDeviceMid">
     <app-display-card [hasDivider]="false" [fontSize]="'29px'" [inbox]="true" >
       <div class="inbox-content">
@@ -24,7 +25,8 @@
   </div>
 
   <div [@PreventInitialChildAnimation]>
-    <h1 class="passes-heading" [@HeaderSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})" appAnimatedHeader>Passes</h1>
+    <h1 class="passes-heading" [@HeaderSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid"
+        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"  [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Passes</h1>
   </div>
 
   <div  class="passes-wrapper" [@PassesSlideTopBottom] [style.padding-top]="isAndroid ? '0px' : '50px'"  *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>

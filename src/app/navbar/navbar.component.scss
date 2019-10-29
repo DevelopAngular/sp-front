@@ -32,7 +32,7 @@
   }
 
   &-selected-tab-pointer {
-    top: -13px;
+    top: -18px;
     border-radius: 0 0 4px 4px;
     width: 58px;
     height: 6px;
@@ -73,7 +73,7 @@
   }
 
   div.selected-tab-pointer {
-    top: -13px;
+    top: -18px;
     border-radius: 0 0 4px 4px;
     width: 58px;
     height: 6px;
@@ -342,7 +342,7 @@
   bottom: 0;
   width: 100%;
   background-color: #fbfbfb;
-  height: 68px;
+  height: 78px;
   align-items: center;
   z-index: 11;
   justify-content: center;
@@ -369,3 +369,10 @@
   background-color: $jade;
 }
 
+.tab--opacity-click {
+  opacity: .8;
+}
+
+.tab--opacity-default {
+  opacity: 1;
+}

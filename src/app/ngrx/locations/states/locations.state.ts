@@ -7,4 +7,5 @@ export interface LocationsState extends EntityState<Location> {
   createdLocationId: string | number;
   updatedLocationId: string | number;
   foundLocations: Location[];
+  fromCategory: Location[];
 }

@@ -3,12 +3,12 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
-import {BehaviorSubject, fromEvent, NEVER, of, throwError, zip} from 'rxjs';
+import {BehaviorSubject, fromEvent, of, throwError, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, filter, map, startWith, switchMap, tap} from 'rxjs/operators';
+import {catchError, filter, map, switchMap, tap} from 'rxjs/operators';
 
 import * as _ from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -326,7 +326,7 @@ export class AddUserDialogComponent implements OnInit {
     if (evtBehalfOf) {
       this.assistantLike.behalfOf = evtBehalfOf;
     }
-    console.log(this.assistantLike);
+    // console.log(this.assistantLike);
   }
 
   showInstructions(role) {

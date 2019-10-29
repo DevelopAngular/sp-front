@@ -9,8 +9,9 @@ import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA} from '@angular/material';
-import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
 import {DeviceDetection} from '../../../../device-detection.helper';
+import {StorageService} from '../../../../services/storage.service';
 
 @Component({
   selector: 'app-to-where',
@@ -44,11 +45,14 @@ export class ToWhereComponent implements OnInit {
   @Input() studentText;
 
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
+  @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
   public states;
 
   public teacherRooms: Pinnable[] = [];
+  public isGrid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(JSON.parse(this.storage.getItem('isGrid')));
+  public hiddenBanner: boolean = JSON.parse(this.storage.getItem('hiddenBanner'));
 
   public gridRestrictions: ToWhereGridRestriction = new ToWhereGridRestrictionLg();
 
@@ -62,8 +66,8 @@ export class ToWhereComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
-    public screenService: ScreenService
-
+    public screenService: ScreenService,
+    private storage: StorageService
   ) {
     this.states = States;
   }
@@ -92,6 +96,25 @@ export class ToWhereComponent implements OnInit {
     });
   }
 
+  isValidPinnable(pinnable: Pinnable) {
+    if (pinnable.location.id === this.location.id) {
+      return false;
+    }
+    if (!this.isStaff &&
+      (!this.formState.forLater &&
+      pinnable.location.request_mode === 'all_teachers_in_room' &&
+      pinnable.location.request_send_origin_teachers &&
+      !this.location.teachers.length) ||
+      (this.formState.forLater &&
+      pinnable.location.scheduling_request_mode === 'all_teachers_in_room' &&
+      pinnable.location.scheduling_request_send_origin_teachers &&
+      !this.location.teachers.length)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   pinnableSelected(pinnable) {
     if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
       this.formService.setFrameMotionDirection('disable');
@@ -105,6 +128,25 @@ export class ToWhereComponent implements OnInit {
       this.formState.previousState = 2;
       this.selectedPinnable.emit(pinnable);
     }, 100);
+  }
+
+  locationSelected(location) {
+    this.formService.setFrameMotionDirection('disable');
+    this.formService.scalableBoxController.next(true);
+    setTimeout(() => {
+      this.selectedLocation.emit(location);
+    }, 100);
+  }
+
+  switchView(isGrid) {
+    this.storage.setItem('isGrid', isGrid);
+    this.isGrid$.next(isGrid);
+    this.removeBanner();
+  }
+
+  removeBanner() {
+    this.hiddenBanner = true;
+    this.storage.setItem('hiddenBanner', true);
   }
 
   back() {
@@ -123,11 +165,9 @@ export class ToWhereComponent implements OnInit {
         !!this.studentText &&
         (this.formState.previousStep === 2 || this.formState.previousStep === 4)
       ) {
-        // this.formState.previousState = this.formState.state;
         this.formState.step = 1;
         this.formState.previousStep = 3;
       } else {
-        // this.formState.previousState = this.formState.state;
         if (this.formState.formMode.formFactor === 3 && this.formState.data.date.declinable) {
             this.formState.step = 1;
         } else {
@@ -139,10 +179,8 @@ export class ToWhereComponent implements OnInit {
           }
         }
       }
-      // this.formState.previousState = this.formState.state;
       this.formState.previousState = 2;
 
-      //
       this.backButton.emit(this.formState);
     }, 100);
   }

@@ -187,8 +187,12 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showIncompleteButton() {
+    if (this.currentPage === Pages.BulkEditRooms) {
+      return this.roomValidButtons.getValue().incomplete;
+    } else {
       return (this.roomValidButtons.getValue().incomplete ||
         !this.selectedIcon || !this.color_profile) && this.showCancelButton;
+    }
   }
 
   get showCancelButton() {
@@ -777,10 +781,11 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   setToEditRoom(_room) {
-    this.overlayService.changePage(Pages.EditRoomInFolder, this.currentPage, {
-      selectedRoomsInFolder: [_room]
-    });
-
-    this.formService.setFrameMotionDirection('forward');
+    // this.formService.setFrameMotionDirection('forward');
+    setTimeout(() => {
+      this.overlayService.changePage(Pages.EditRoomInFolder, 1, {
+        selectedRoomsInFolder: [_room]
+      });
+    }, 10);
   }
 }
