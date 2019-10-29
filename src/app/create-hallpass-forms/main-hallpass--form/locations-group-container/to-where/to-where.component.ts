@@ -45,6 +45,7 @@ export class ToWhereComponent implements OnInit {
   @Input() studentText;
 
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
+  @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
   public states;
@@ -129,6 +130,14 @@ export class ToWhereComponent implements OnInit {
     }, 100);
   }
 
+  locationSelected(location) {
+    this.formService.setFrameMotionDirection('disable');
+    this.formService.scalableBoxController.next(true);
+    setTimeout(() => {
+      this.selectedLocation.emit(location);
+    }, 100);
+  }
+
   switchView(isGrid) {
     this.storage.setItem('isGrid', isGrid);
     this.isGrid$.next(isGrid);
@@ -156,11 +165,9 @@ export class ToWhereComponent implements OnInit {
         !!this.studentText &&
         (this.formState.previousStep === 2 || this.formState.previousStep === 4)
       ) {
-        // this.formState.previousState = this.formState.state;
         this.formState.step = 1;
         this.formState.previousStep = 3;
       } else {
-        // this.formState.previousState = this.formState.state;
         if (this.formState.formMode.formFactor === 3 && this.formState.data.date.declinable) {
             this.formState.step = 1;
         } else {
@@ -172,10 +179,8 @@ export class ToWhereComponent implements OnInit {
           }
         }
       }
-      // this.formState.previousState = this.formState.state;
       this.formState.previousState = 2;
 
-      //
       this.backButton.emit(this.formState);
     }, 100);
   }

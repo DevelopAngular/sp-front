@@ -53,17 +53,20 @@
 
     <app-location-table *ngIf="!(isGrid$ | async)"
       class="locations"
-      [forStaff]="true"
+      [forStaff]="isStaff"
       [height]="'107px'"
       [rightHeaderText]="true"
+      [hasLocks]="true"
       [inputWidth]="'240px'"
-      [forLater]="true"
+      [forLater]="formState.forLater"
       [showStars]="true"
       [noRightStar]="true"
+      [originLocation]="location"
       [showFavorites]="true"
       [type]="'location'"
       [invalidLocation]="(location ? +location.id : '')"
       [placeholder]="'Search rooms'"
+      (onSelect)="locationSelected($event)"
       [dummyString]="'No rooms found'"
       [mergedAllRooms]="true"
     >
@@ -80,7 +83,7 @@
     </div>
   </div>
   <ng-container *ngIf="!displayFooters">
-    <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
+    <app-student-footer *ngIf="!isStaff" (locsViewEvent)="switchView($event)" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
     <app-teacher-footer *ngIf="isStaff" (locsViewEvent)="switchView($event)" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
   </ng-container>
 </div>

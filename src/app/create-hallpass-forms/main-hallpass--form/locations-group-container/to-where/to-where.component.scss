@@ -116,9 +116,11 @@
     width: 100%;
     align-items: center;
 
+    .all-rooms {
+      height: 100%;
+    }
     .teacher-rooms, .all-rooms {
       margin: 10px;
-      height: 100%;
     }
 
     .rooms-title {

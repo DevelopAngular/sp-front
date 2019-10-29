@@ -27,8 +27,13 @@
            (dragulaModelChange)="updateOrderLocation($event)">
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
-            (onSelect)="choiceSelected($event)" (onStar)="star($event)"
-            [value]="choice" [type]="type" [starred]="true" [showStar]="showStars" [allowOnStar]="allowOnStar">
+            (onSelect)="choiceSelected($event)"
+            (onStar)="star($event)"
+            [value]="choice"
+            [type]="type"
+            [starred]="true"
+            [showStar]="!!showStars"
+            [allowOnStar]="allowOnStar">
           </app-location-cell>
         </div>
       </div>
@@ -38,8 +43,18 @@
            class="choices">
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
-            (onSelect)="choiceSelected($event)" (onStar)="star($event)"
-            [value]="choice" [type]="type" [starred]="true" [showStar]="showStars" [allowOnStar]="allowOnStar">
+            (onSelect)="choiceSelected($event)"
+            (onStar)="star($event)"
+            [value]="choice"
+            [type]="type"
+            [hasLocks]="hasLocks"
+            [forLater]="forLater"
+            [forStaff]="forStaff"
+            [starred]="true"
+            [showStar]="!!showStars"
+            [allowOnStar]="allowOnStar"
+            [valid]="isValidLocation(choice)"
+          >
           </app-location-cell>
         </div>
       </div>
@@ -74,7 +89,8 @@
             [allowOnStar]="allowOnStar"
             [value]="choice"
             [type]="type"
-            [valid]="isValidLocation(choice)">
+            [valid]="isValidLocation(choice)"
+          >
           </app-location-cell>
         </div>
       </div>

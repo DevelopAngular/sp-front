@@ -114,8 +114,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                     this.choices = res.filter(loc => !loc.restricted);
                 });
         } else {
-            this.locationService.getLocationsFromCategory(url, this.category)
-                .subscribe(p => {
+          const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url) :
+            this.locationService.getLocationsFromCategory(url, this.category);
+
+                request$.subscribe(p => {
                   this.choices = p;
                   this.noChoices = !this.choices.length;
                   this.mainContentVisibility = true;
@@ -232,7 +234,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     ) {
       return false;
     }
-    return !this.invalidLocation || location.id !== this.invalidLocation;
+    return !this.invalidLocation || +location.id !== +this.invalidLocation;
   }
 
   mergeLocations(url, withStars: boolean, category: string) {

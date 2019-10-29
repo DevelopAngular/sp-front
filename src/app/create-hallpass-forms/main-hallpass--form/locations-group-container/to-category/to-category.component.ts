@@ -103,7 +103,6 @@ export class ToCategoryComponent implements OnInit {
   }
 
   locationChosen(location) {
-    // this.formService.setFrameMotionDirection('forward');
     if (this.formState.formMode.role === 1) {
       this.formService.setFrameMotionDirection('disable');
     } else {
