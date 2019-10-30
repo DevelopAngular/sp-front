@@ -21,7 +21,6 @@ import {
 } from '@angular/material';
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
-import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
 import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/advanced-options.component';
 import { AddExistingRoomComponent } from '../overlay-container/add-existing-room/add-existing-room.component';
@@ -57,7 +56,6 @@ import {ImportRoomsComponent} from '../overlay-container/import-rooms/import-roo
       NavButtonComponent,
       OverlayContainerComponent,
       PinnableCollectionComponent,
-      TogglePickerComponent,
       ColorComponent,
       AdvancedOptionsComponent,
       AddExistingRoomComponent,
@@ -80,7 +78,6 @@ import {ImportRoomsComponent} from '../overlay-container/import-rooms/import-roo
       NavButtonComponent,
       OverlayContainerComponent,
       PinnableCollectionComponent,
-      TogglePickerComponent,
       ColorComponent,
       AddExistingRoomComponent,
       RoomComponent,

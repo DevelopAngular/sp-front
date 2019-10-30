@@ -3,7 +3,7 @@ import { LocationsService } from '../services/locations.service';
 import { Subject } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import {pluck, takeUntil} from 'rxjs/operators';
-import * as _ from 'lodash';
+import { findIndex } from 'lodash';
 import {Location} from '../models/Location';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
@@ -91,7 +91,7 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   }
 
   isSelected(room) {
-      return _.findIndex(this.selectedRooms, (selectedRoom) => {
+      return findIndex(this.selectedRooms, (selectedRoom) => {
           return selectedRoom.title === room.title;
       }) > -1;
   }

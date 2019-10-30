@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
-import {filter, finalize, map, pluck, take, takeUntil} from 'rxjs/operators';
+import {map, pluck, takeUntil} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
-import {combineLatest, iif, Observable, Subject, zip} from 'rxjs';
-import * as _ from 'lodash';
+import {combineLatest, Observable, Subject, zip} from 'rxjs';
+import { sortBy, filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 
@@ -194,7 +194,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           )
           .subscribe(p => {
             this.hideFavorites = true;
-              const filtFevLoc = _.filter(this.starredChoices, (item => {
+              const filtFevLoc = _filter(this.starredChoices, (item => {
                   return item.title.toLowerCase().includes(this.search);
               }));
 
@@ -247,7 +247,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         .pipe(
             map(([rooms, favorites]: [any, any[]]) => {
               if (withStars) {
-                return _.sortBy([...rooms, ...favorites], (item) => {
+                return sortBy([...rooms, ...favorites], (item) => {
                     return item.title.toLowerCase();
                 });
               } else {

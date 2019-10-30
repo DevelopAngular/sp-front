@@ -2,10 +2,8 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as assistantsActions from '../actions';
-import {catchError, concatMap, map, skip, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
-
-import * as _ from 'lodash';
 
 @Injectable()
 export class AssistantsEffects {

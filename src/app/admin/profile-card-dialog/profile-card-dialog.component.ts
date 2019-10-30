@@ -9,7 +9,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {fromEvent, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 
-import * as _ from 'lodash';
+import { cloneDeep, isEqual, differenceBy } from 'lodash';
 import {GSuiteSelector} from '../../sp-search/sp-search.component';
 
 @Component({
@@ -84,11 +84,11 @@ export class ProfileCardDialogComponent implements OnInit {
       this.layout = 'gSuiteSettings';
       this.headerIcon = `./assets/${this.data.orgUnit.title} (Navy).svg`;
 
-      this.orgUnitSelector = _.cloneDeep(this.data.orgUnit.selector);
+      this.orgUnitSelector = cloneDeep(this.data.orgUnit.selector);
 
       this.checkSelectorForUpdating$.subscribe((updatedSelector: GSuiteSelector[]) => {
         this.orgUnitSelector = updatedSelector;
-        this.orgUnitSelectorEditState = !_.isEqual(this.orgUnitSelectorInitialState, updatedSelector);
+        this.orgUnitSelectorEditState = !isEqual(this.orgUnitSelectorInitialState, updatedSelector);
       });
     }
     if (this.data.bulkPermissions) {
@@ -106,12 +106,12 @@ export class ProfileCardDialogComponent implements OnInit {
 
       if (this.data.role === '_profile_assistant') {
         this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
-        this.assistantForInitialState = _.cloneDeep(this.assistantFor);
+        this.assistantForInitialState = cloneDeep(this.assistantFor);
         this.assistantForUpdate$.subscribe((users: User[]) => {
-          this.assistantToAdd = _.differenceBy(users, this.assistantForInitialState, 'id');
-          this.assistantToRemove = _.differenceBy(this.assistantForInitialState, users, 'id');
+          this.assistantToAdd = differenceBy(users, this.assistantForInitialState, 'id');
+          this.assistantToRemove = differenceBy(this.assistantForInitialState, users, 'id');
 
-          if (!_.isEqual(this.assistantFor, this.assistantForInitialState)) {
+          if (!isEqual(this.assistantFor, this.assistantForInitialState)) {
             this.assistantForEditState = true;
           } else {
             this.assistantForEditState = false;
@@ -162,9 +162,9 @@ export class ProfileCardDialogComponent implements OnInit {
         group[key] = new FormControl(value);
       }
       this.permissionsForm = new FormGroup(group);
-      this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
+      this.permissionsFormInitialState = cloneDeep(this.permissionsForm.value);
       this.permissionsForm.valueChanges.subscribe((formValue) => {
-        this.permissionsFormEditState = !_.isEqual(Object.values(this.permissionsFormInitialState), Object.values(formValue));
+        this.permissionsFormEditState = !isEqual(Object.values(this.permissionsFormInitialState), Object.values(formValue));
 
       });
     }

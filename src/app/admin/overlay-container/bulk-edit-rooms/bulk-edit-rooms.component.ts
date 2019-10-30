@@ -7,7 +7,7 @@ import { Location } from '../../../models/Location';
 import { LocationsService } from '../../../services/locations.service';
 import { RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
-import * as _ from 'lodash';
+import { isNull } from 'lodash';
 
 @Component({
   selector: 'app-bulk-edit-rooms',
@@ -66,15 +66,15 @@ export class BulkEditRoomsComponent implements OnInit {
   checkValidForm() {
     if (
       (this.roomData.travelType.length ||
-        !_.isNull(this.roomData.restricted) ||
-        !_.isNull(this.roomData.scheduling_restricted) ||
+        !isNull(this.roomData.restricted) ||
+        !isNull(this.roomData.scheduling_restricted) ||
         this.roomData.timeLimit) && !this.advOptionsButtons
     ) {
       this.roomsValidButtons = {publish: true, incomplete: false, cancel: true};
     } else if (
       (this.roomData.travelType.length ||
-        !_.isNull(this.roomData.restricted) ||
-        !_.isNull(this.roomData.scheduling_restricted) ||
+        !isNull(this.roomData.restricted) ||
+        !isNull(this.roomData.scheduling_restricted) ||
         this.roomData.timeLimit) && this.advOptionsButtons
     ) {
       if (this.advOptionsButtons.incomplete) {

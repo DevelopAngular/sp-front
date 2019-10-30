@@ -8,7 +8,6 @@ import {
   EventEmitter,
   Output,
   ViewChild,
-  AfterContentInit,
   AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy, Renderer2
 } from '@angular/core';
 import { Location } from '@angular/common';
@@ -39,14 +38,11 @@ import {NavbarAnimations} from './navbar.animations';
 import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
-import {NavButtonComponent} from '../nav-button/nav-button.component';
-import {Schedule} from 'primeng/primeng';
-import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
-import * as _ from 'lodash';
+import { filter as _filter } from 'lodash';
 
 declare const window;
 
@@ -321,7 +317,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.countSchools$ = this.http.schoolsCollection$.pipe(
       map(schools => {
-        const filteredSchools = _.filter(schools, (school => school.my_roles.length > 0));
+        const filteredSchools = _filter(schools, (school => school.my_roles.length > 0));
         return filteredSchools.length;
       })
     );

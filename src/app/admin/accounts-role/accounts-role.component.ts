@@ -34,11 +34,6 @@ import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
 
-import * as _ from 'lodash';
-import * as moment from 'moment';
-
-declare const window;
-
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
 

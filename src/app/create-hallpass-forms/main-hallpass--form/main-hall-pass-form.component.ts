@@ -8,7 +8,7 @@ import {NextStep} from '../../animations';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
 import {filter, map, takeUntil} from 'rxjs/operators';
-import * as _ from 'lodash';
+import { find, cloneDeep } from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
@@ -205,14 +205,14 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
             filter(([pin, locs]: [Pinnable[], Location[]]) => this.isStaff && !!pin.length && !!locs.length),
               takeUntil(this.destroy$),
               map(([pinnables, locations]) => {
-                  const filterPinnables = _.cloneDeep(pinnables).filter(pin => {
+                  const filterPinnables = cloneDeep(pinnables).filter(pin => {
                       return locations.find(loc => {
                           return (loc.category ? loc.category : loc.title) === pin.title;
                       });
                   });
                   return filterPinnables.map(fpin => {
                       if (fpin.type === 'category') {
-                          const locFromCategory = _.find(locations, ['category', fpin.title]);
+                          const locFromCategory = find(locations, ['category', fpin.title]);
                           fpin.title = locFromCategory.title;
                           fpin.type = 'location';
                           fpin.location = locFromCategory;

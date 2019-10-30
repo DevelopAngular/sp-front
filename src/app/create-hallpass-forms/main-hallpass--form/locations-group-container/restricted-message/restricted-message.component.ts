@@ -9,7 +9,7 @@ import {MessageBoxViewRestrictionSm} from '../../../../models/message-box-view-r
 import {MessageBoxViewRestriction} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestriction';
 import {MessageBoxViewRestrictionLg} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionLg';
 import {ScreenService} from '../../../../services/screen.service';
-import * as _ from 'lodash';
+import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
@@ -112,7 +112,7 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.teachersNames, 'id');
+    return uniqBy(this.teachersNames, 'id');
   }
 
   ngOnInit() {

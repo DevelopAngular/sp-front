@@ -18,8 +18,6 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { ResolveAssetPipe } from '../resolve-asset.pipe';
 import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.component';
 import { DisplayCardComponent } from '../display-card/display-card.component';
-import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.component';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { PinnableComponent } from '../pinnable/pinnable.component';
@@ -63,7 +61,6 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
 import {ProfileCardDialogComponent} from '../admin/profile-card-dialog/profile-card-dialog.component';
-import {SpDialogBoxComponent} from '../sp-dialog-box/sp-dialog-box.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {ScrollHolderDirective} from '../scroll-holder.directive';
 import {IosCalendarWheelComponent} from '../ios-calendar/ios-calendar-wheel/ios-calendar-wheel.component';
@@ -82,8 +79,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     CommonModule,
     ScrollingModule,
     MatProgressBarModule,
-    OwlDateTimeModule,
-    OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
     MatTooltipModule,
@@ -113,7 +108,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     NavbarComponent,
     NavButtonComponent,
     DisplayCardComponent,
-    DateTimePickerComponent,
     DateTimeComponent,
     PinnableComponent,
     TraveltypePickerComponent,
@@ -150,7 +144,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConsentMenuMobileComponent,
     CreatePassButtonComponent,
     ProfileCardDialogComponent,
-    SpDialogBoxComponent,
     ScrollHolderDirective,
     IosCalendarWheelComponent,
     IosCalendarComponent,
@@ -179,7 +172,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SmartpassLogoComponent,
     NavbarComponent,
     DisplayCardComponent,
-    DateTimePickerComponent,
     PinnableComponent,
     DropdownComponent,
     TraveltypePickerComponent,
@@ -218,7 +210,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConsentMenuMobileComponent,
     CreatePassButtonComponent,
     ProfileCardDialogComponent,
-    SpDialogBoxComponent,
     ScrollHolderDirective,
     IosCalendarWheelComponent,
     IosCalendarComponent

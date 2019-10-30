@@ -11,11 +11,10 @@ import { PassLike} from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import {delay, map, mergeAll, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {delay, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import { TimeService } from '../services/time.service';
-
-import * as _ from 'lodash';
+import { isEqual } from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -128,7 +127,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         this.currentPasses$
           .pipe(
             switchMap((_passes) => {
-              if (_.isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
+              if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
                 return of(_passes);
               } else {
                 this.currentPasses = [];

@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import * as _ from 'lodash';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import { findIndex } from 'lodash';
 import {Select} from '../animations';
 
 @Component({
@@ -34,7 +33,7 @@ export class RestrictionPickerComponent implements OnInit {
   }
 
   isDisabled(option) {
-      return _.findIndex(this.disabledOptions, (opt) => {
+      return findIndex(this.disabledOptions, (opt) => {
           return option === opt;
       }) > -1;
   }

@@ -7,11 +7,11 @@ import {BehaviorSubject, Observable, of, Subject, timer} from 'rxjs';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../../../services/locations.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
-import {elementAt, filter, pluck, publishLast, share, skip, takeUntil, tap, throttleTime} from 'rxjs/operators';
+import {pluck, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-groups-step1',
@@ -146,7 +146,7 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
     if (!group) {
       this.selectedGroup = null;
     } else if ( !this.selectedGroup || (this.selectedGroup && (this.selectedGroup.id !== group.id)) ) {
-      this.selectedGroup = _.cloneDeep(group);
+      this.selectedGroup = cloneDeep(group);
       this.selectedStudents = this.selectedGroup.users;
     } else {
       this.selectedGroup = null;

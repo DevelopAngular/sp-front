@@ -18,7 +18,7 @@ import {ScrollPositionService} from '../../scroll-position.service';
 import {wrapToHtml} from '../helpers';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
-import * as _ from 'lodash';
+import { findIndex } from 'lodash';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -241,7 +241,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
 
     TABLE_RELOADING_TRIGGER.subscribe(({header, tableHeaders}) => {
-      const itemIndex = _.findIndex(this.displayedColumns, (item) => {
+      const itemIndex = findIndex(this.displayedColumns, (item) => {
         return item === header.label;
       });
       const headerIndex = this.columnsToDisplay[0] === 'select' ? header.index + 1 : header.index;

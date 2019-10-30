@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
-import {BehaviorSubject, forkJoin, of, ReplaySubject, zip} from 'rxjs';
+import {BehaviorSubject, of, ReplaySubject, zip} from 'rxjs';
 import { HallPassesService } from '../services/hall-passes.service';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 
-import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'

@@ -21,30 +21,24 @@ import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { IsStudentOrTeacherGuard } from './guards/is-student-or-teacher.guard';
 import { NotSeenIntroGuard } from './guards/not-seen-intro.guard';
-import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
 import { HttpService } from './services/http-service';
 import { IntroComponent } from './intro/intro.component';
 import { LoadingService } from './services/loading.service';
 import { LoginComponent } from './login/login.component';
-import { OptionsComponent } from './options/options.component';
 import { ProgressInterceptor } from './progress-interceptor';
 import { GoogleApiService, SP_GAPI_CONFIG } from './services/google-api.service';
 import { GoogleAuthService } from './services/google-auth.service';
 import { SharedModule } from './shared/shared.module';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './services/user.service';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ErrorToastComponent } from './error-toast/error-toast.component';
 import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';
-import { ItemListComponent } from './item-list/item-list.component';
-import { ItemCellComponent } from './item-cell/item-cell.component';
 import { NextReleaseComponent } from './next-release/next-release.component';
 import { NotificationService } from './services/notification-service';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
-import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
 import { SortMenuComponent } from './sort-menu/sort-menu.component';
 import {APP_BASE_HREF} from '@angular/common';
@@ -55,7 +49,6 @@ import {NotKioskModeGuard} from './not-kiosk-mode.guard';
 import {KioskModeService} from './services/kiosk-mode.service';
 import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component';
 import { AccountsSetupComponent } from './accounts-setup/accounts-setup.component';
-import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
@@ -155,17 +148,12 @@ const appRoutes: Routes = [
     GoogleSigninComponent,
     SignOutComponent,
     ConsentMenuComponent,
-    OptionsComponent,
     IntroComponent,
     LoginComponent,
-    HallDateTimePickerComponent,
     ErrorToastComponent,
     SchoolToggleBarComponent,
-    ItemListComponent,
-    ItemCellComponent,
     NextReleaseComponent,
     ToastConnectionComponent,
-    ResizeInfoDialogComponent,
     SignedOutToastComponent,
     ErrorComponent,
     SortMenuComponent,
@@ -176,12 +164,9 @@ const appRoutes: Routes = [
   ],
   entryComponents: [
     ConsentMenuComponent,
-    OptionsComponent,
-    HallDateTimePickerComponent,
     ErrorToastComponent,
     NextReleaseComponent,
     ToastConnectionComponent,
-    ResizeInfoDialogComponent,
     SignedOutToastComponent,
     IntroDialogComponent,
     SortMenuComponent,
@@ -192,7 +177,6 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     SharedModule,
     ReactiveFormsModule,
-    InfiniteScrollModule,
     MatSliderModule,
     FormsModule,
     MatFormFieldModule,
@@ -260,9 +244,6 @@ const appRoutes: Routes = [
     {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
     {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
     provideErrorHandler()
-  ],
-  exports: [
-    SpDialogBoxComponent
   ],
   bootstrap: [AppComponent]
 })

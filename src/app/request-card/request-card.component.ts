@@ -19,7 +19,7 @@ import {NextStep} from '../animations';
 import {BehaviorSubject, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
-import * as _ from 'lodash';
+import { uniqBy, uniq, isNull } from 'lodash';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
@@ -101,7 +101,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.teacherNames, 'id');
+    return uniqBy(this.teacherNames, 'id');
   }
 
   ngOnInit() {
@@ -240,9 +240,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
       if (this.isFutureOrNowTeachers) {
           if (this.forFuture) {
-              body.teachers = _.uniq(this.futureTeachers.map(t => t.id));
+              body.teachers = uniq(this.futureTeachers.map(t => t.id));
           } else {
-              body.teachers = _.uniq(this.nowTeachers.map(t => t.id));
+              body.teachers = uniq(this.nowTeachers.map(t => t.id));
           }
       } else {
           body.teacher = this.request.teacher.id;
@@ -475,7 +475,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
         messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
           // denyMessage = data['message'];
-          if (_.isNull(matData.data.message)) {
+          if (isNull(matData.data.message)) {
             this.messageEditOpen = false;
             return;
           }

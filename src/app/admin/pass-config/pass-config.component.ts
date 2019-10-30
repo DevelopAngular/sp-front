@@ -8,7 +8,7 @@ import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
-import * as _ from 'lodash';
+import { isArray } from 'lodash';
 import { HallPassesService } from '../../services/hall-passes.service';
 import {SchoolSettingDialogComponent} from '../school-setting-dialog/school-setting-dialog.component';
 import {Location} from '../../models/Location';
@@ -268,7 +268,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     }
 
   selectPinnable({action, selection}) {
-      if (action === 'room/folder_edit' && !_.isArray(selection)) {
+      if (action === 'room/folder_edit' && !isArray(selection)) {
           this.pinnable = selection;
         return this.buildData(this.pinnable.type === 'location' ? 'editRoom' : 'editFolder');
       } else if (action === 'simple') {

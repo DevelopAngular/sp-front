@@ -14,7 +14,7 @@ import { FolderData, OverlayDataService, Pages } from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
 import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 
-import * as _ from 'lodash';
+import { sortBy, cloneDeep, differenceBy, isEqual } from 'lodash';
 import {NextStep} from '../../../animations';
 import {filter, mapTo, takeUntil} from 'rxjs/operators';
 import {ScrollPositionService} from '../../../scroll-position.service';
@@ -134,7 +134,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   get sortSelectedRooms() {
-      return _.sortBy(this.roomsImFolder, (res) => res.title.toLowerCase());
+      return sortBy(this.roomsImFolder, (res) => res.title.toLowerCase());
   }
 
   ngOnInit() {
@@ -157,8 +157,8 @@ export class FolderComponent implements OnInit, OnDestroy {
                 .subscribe((res: Location[]) => {
                     this.roomsImFolder = res;
                     this.initialFolderData = {
-                      folderName: _.cloneDeep(this.folderName),
-                      roomsInFolder: _.cloneDeep(this.roomsImFolder)
+                      folderName: cloneDeep(this.folderName),
+                      roomsInFolder: cloneDeep(this.roomsImFolder)
                     };
                     this.folderRoomsLoaded = true;
                 });
@@ -179,7 +179,7 @@ export class FolderComponent implements OnInit, OnDestroy {
         }
         this.initialFolderData = {
           folderName: 'New Folder',
-          roomsInFolder: _.cloneDeep(this.roomsImFolder)
+          roomsInFolder: cloneDeep(this.roomsImFolder)
         };
         this.folderRoomsLoaded = true;
     }
@@ -207,7 +207,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   changeFolderData() {
     if (
-        !_.isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder) ||
+        !isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder) ||
         this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value
       ) {
         if (this.form.get('folderName').invalid) {
@@ -232,8 +232,8 @@ export class FolderComponent implements OnInit, OnDestroy {
       this.formService.setFrameMotionDirection('forward');
       setTimeout(() => {
           if (page === 'delete') {
-              this.roomsImFolder = _.differenceBy(this.roomsImFolder, this.selectedRooms, 'id');
-              this.roomsToDelete = _.cloneDeep(this.selectedRooms);
+              this.roomsImFolder = differenceBy(this.roomsImFolder, this.selectedRooms, 'id');
+              this.roomsToDelete = cloneDeep(this.selectedRooms);
               this.selectedRooms = [];
           } else {
               this.overlayService.changePage(page, this.currentPage, {
