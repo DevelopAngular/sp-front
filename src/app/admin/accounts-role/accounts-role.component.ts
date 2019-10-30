@@ -660,11 +660,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       disableClose: true
     });
 
-    dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
+    dialogRef.afterClosed()
+      .subscribe((userListReloadTrigger: any) => {
       if (userListReloadTrigger) {
         if (data.profile.id === +this.user.id) {
-          this.userService.getUser()
+          this.userService.getUserRequest()
             .pipe(
+              filter(res => !!res),
               map(raw => User.fromJSON(raw))
             )
             .subscribe((user) => {

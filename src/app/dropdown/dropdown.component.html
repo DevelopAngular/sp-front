@@ -3,7 +3,6 @@
   <div class="consent-header" [style.color]="'#7F879D'" *ngIf="heading">
     {{heading}}
   </div>
-<!--  <div class="option-divider" *ngIf="heading"></div>-->
 
   <div class="options-wrapper" *ngIf="locations" #optionsWrapper>
     <div class="option" (click)="closeDropdown('all_rooms')">
