@@ -6,7 +6,7 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {filter, last, map, share, skip, switchMap, take, tap} from 'rxjs/operators';
+import {exhaust, filter, last, map, share, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -121,6 +121,10 @@ export class UserService {
   ) {
     this.http.globalReload$
         .pipe(
+          tap(() => {
+            this.http.effectiveUserId.next(null);
+            this.effectiveUser.next(null);
+          }),
           switchMap(() => {
             return this.getUserRequest().pipe(filter(res => !!res));
           }),
@@ -133,7 +137,7 @@ export class UserService {
                     const normalizedRU = users.map((raw) => {
                       raw.user = User.fromJSON(raw.user);
                       return raw;
-                    })
+                    });
                     if (users && users.length) {
                       this.representedUsers.next(normalizedRU);
                       this.effectiveUser.next(normalizedRU[0]);

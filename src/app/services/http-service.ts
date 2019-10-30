@@ -8,7 +8,7 @@ import {
   flatMap,
   map,
   switchMap,
-  mapTo
+  mapTo, distinctUntilChanged
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -133,7 +133,7 @@ export class HttpService {
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
     switchMap(() => {
-      return this.getSchools();
+      return this.getSchoolsRequest();
     }),
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
@@ -147,7 +147,7 @@ export class HttpService {
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
     map(school => school ? school.id : null),
-    // distinctUntilChanged(),
+    distinctUntilChanged(),
     delay(5)
   );
 
@@ -166,7 +166,6 @@ export class HttpService {
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
     this.schools$.subscribe(schools => {
-
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
         this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
@@ -190,11 +189,8 @@ export class HttpService {
       interval(10000)
         .pipe(
             switchMap(() => of(this.accessTokenSubject.value)),
-            // tap(console.log),
             filter(v => !!v),
             switchMap(({auth, server}) => {
-              // console.log((new Date(Date.now() + auth.expires_in)), new Date());
-
               if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
                   const config = new FormData();
                   const user = JSON.parse(this.storage.getItem('google_auth'));
@@ -237,15 +233,6 @@ export class HttpService {
         // console.log(res);
         this.accessTokenSubject.next(res as AuthContext);
       });
-
-    // this.accessTokenSubject.pipe(withLatestFrom(this.kioskTokenSubject$),
-    //     map(([{auth, server}, newToken]) => {ы
-    //       return {auth: newToken, server};
-    //     }))
-    //     .subscribe((updatedContext: AuthContext) => {
-    //       debugger;
-    //       this.accessTokenSubject.next(updatedContext);
-    //     });
 
   }
 

@@ -215,10 +215,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
         role: '_all',
       }
     });
-
-    DR.afterClosed().subscribe(res => {
-      this.querySubscriber$.next(this.getUserList());
-    });
   }
 
   getCountRole(role: string) {
