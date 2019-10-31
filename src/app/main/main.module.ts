@@ -2,16 +2,11 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
-import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
 import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { InlinePassCardComponent } from '../inline-pass-card/inline-pass-card.component';
-import { InlineRequestCardComponent } from '../inline-request-card/inline-request-card.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { LocationCellComponent } from '../location-cell/location-cell.component';
 import { LocationTableComponent } from '../location-table/location-table.component';
 import { MainPageComponent } from '../main-page/main-page.component';
-import { MyRoomComponent } from '../my-room/my-room.component';
-import { PassesComponent } from '../passes/passes.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { SettingsComponent } from '../settings/settings.component';
@@ -36,9 +31,7 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
 import {ScreenService} from '../services/screen.service';
-import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
-import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notification-turn-on-btn.component';
 import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
 
 
@@ -51,13 +44,8 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
     ReactiveFormsModule,
   ],
   declarations: [
-    HallMonitorComponent,
-    MyRoomComponent,
-    PassesComponent,
     SettingsComponent,
     MainHallPassFormComponent,
-    InlineRequestCardComponent,
-    InlinePassCardComponent,
     LocationTableComponent,
     FavoriteFormComponent,
     ReportFormComponent,
@@ -82,9 +70,7 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
     FormFactorContainerComponent,
     CreateHallpassFormsComponent,
     NotificationFormComponent,
-    KioskModeComponent,
-    AnimatedHeaderDirective,
-    NotificationTurnOnBtnComponent,
+    AnimatedHeaderDirective
   ],
   entryComponents: [
     CreateHallpassFormsComponent,

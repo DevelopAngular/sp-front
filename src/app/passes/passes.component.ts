@@ -1,23 +1,22 @@
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
   BehaviorSubject,
   combineLatest,
   ConnectableObservable,
-  empty, fromEvent, interval,
+  empty, interval,
   merge,
   Observable,
-  of, pipe,
+  of,
   ReplaySubject, Subject,
 } from 'rxjs';
 import {
-  delay, distinctUntilChanged,
   filter,
-  map, pluck, publish, publishBehavior,
+  map, pluck, publishBehavior,
   publishReplay,
-  refCount, shareReplay,
+  refCount,
   startWith,
-  switchMap, take, takeUntil, tap,
+  switchMap, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
