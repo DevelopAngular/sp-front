@@ -1,19 +1,6 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatChipsModule,
-  MatDialogModule,
-  MatDividerModule,
-  MatGridListModule,
-  MatListModule,
-  MatIconModule,
-  MatProgressBarModule,
-  MatSelectModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatSidenavModule
-} from '@angular/material';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
 import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
 import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
@@ -60,20 +47,8 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
     CommonModule,
     SharedModule,
     MainRoutingModule,
-    MatIconModule,
-    MatSlideToggleModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSelectModule,
-    MatChipsModule,
-    MatSliderModule,
-    MatProgressBarModule,
-    MatDialogModule,
-    MatGridListModule,
-    MatDividerModule,
-    MatGridListModule,
-    MatListModule,
-    MatSidenavModule
   ],
   declarations: [
     HallMonitorComponent,

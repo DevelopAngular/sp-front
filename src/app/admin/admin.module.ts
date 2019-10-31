@@ -1,15 +1,6 @@
 ﻿import { CommonModule, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-    MatCheckboxModule,
-    MatChipsModule,
-    MatDialogModule, MatDividerModule,
-    MatGridListModule,
-    MatIconModule,
-    MatSortModule,
-    MatTableModule
-} from '@angular/material';
 import { ChartsModule } from 'ng2-charts';
 import { SharedModule } from '../shared/shared.module';
 import { AccountsRoleComponent } from './accounts-role/accounts-role.component';
@@ -41,14 +32,6 @@ import { IosComponentComponent } from './ios-component/ios-component.component';
     SharedModule,
     AdminRoutingModule,
     FormsModule,
-    MatTableModule,
-    MatCheckboxModule,
-    MatSortModule,
-    MatGridListModule,
-    MatDialogModule,
-    MatChipsModule,
-    MatIconModule,
-    MatDividerModule,
     AdminSharedModule,
     ChartsModule
   ],

@@ -1,10 +1,6 @@
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AgmCoreModule } from '@agm/core';
@@ -41,7 +37,7 @@ import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
 import { SortMenuComponent } from './sort-menu/sort-menu.component';
-import {APP_BASE_HREF} from '@angular/common';
+import { APP_BASE_HREF } from '@angular/common';
 import { ErrorComponent } from './error/error.component';
 import { IntroRouteComponent } from './intro-route/intro-route.component';
 import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
@@ -177,15 +173,8 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     SharedModule,
     ReactiveFormsModule,
-    MatSliderModule,
     FormsModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule,
     HttpClientModule,
-    MatButtonModule,
-    MatCardModule,
-    MatDialogModule,
-    MatSlideToggleModule,
     SwiperModule,
 
     KeyboardShortcutsModule.forRoot(),

@@ -1,22 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import {
-  MatProgressBarModule,
-  MatGridListModule,
-  MatDialogModule,
-  MatIconModule,
-  MatSelectModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatChipsModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatTableModule,
-  MatProgressSpinnerModule,
-  MatDividerModule,
-  MatTooltipModule,
-  MatListModule,
-} from '@angular/material';
 
 import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
 import { NavButtonComponent } from '../nav-button/nav-button.component';
@@ -72,6 +55,7 @@ import {IosCalendarWheelComponent} from '../ios-calendar/ios-calendar-wheel/ios-
 import {IosCalendarComponent} from '../ios-calendar/ios-calendar.component';
 import {NavbarElementSenderDirective} from '../core/directives/navbar-element-sender.directive';
 import {DomElementCheckerDirective} from '../core/directives/dom-element-checker.directive';
+import {MaterialModule} from './material/material.module';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -83,26 +67,12 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   imports: [
     CommonModule,
     ScrollingModule,
-    MatProgressBarModule,
     FormsModule,
     ReactiveFormsModule,
-    MatTooltipModule,
-    MatListModule,
-    MatCheckboxModule,
-    MatTableModule,
-    MatProgressSpinnerModule,
-    MatGridListModule,
-    MatDialogModule,
-    MatIconModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatChipsModule,
-    MatCardModule,
-    MatDividerModule,
     InputTextareaModule,
     DragulaModule.forRoot(),
     SwiperModule,
+    MaterialModule
   ],
   declarations: [
     DropdownComponent,
@@ -165,11 +135,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   exports: [
     ReactiveFormsModule,
     ScrollingModule,
-    MatTableModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatDividerModule,
+    MaterialModule,
     DragulaModule,
     GradientButtonComponent,
     ResolveAssetPipe,
