@@ -1,16 +1,22 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
-  MatProgressBarModule, MatGridListModule,
+  MatProgressBarModule,
+  MatGridListModule,
   MatDialogModule,
   MatIconModule,
   MatSelectModule,
   MatSliderModule,
   MatSlideToggleModule,
-  MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule, MatDividerModule, MatTooltipModule,
+  MatChipsModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatTableModule,
+  MatProgressSpinnerModule,
+  MatDividerModule,
+  MatTooltipModule,
   MatListModule,
 } from '@angular/material';
-
 
 import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
 import { NavButtonComponent } from '../nav-button/nav-button.component';
@@ -19,7 +25,6 @@ import { ResolveAssetPipe } from '../resolve-asset.pipe';
 import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.component';
 import { DisplayCardComponent } from '../display-card/display-card.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgProgressModule } from '@ngx-progressbar/core';
 import { PinnableComponent } from '../pinnable/pinnable.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { SPSearchComponent } from '../sp-search/sp-search.component';
@@ -96,7 +101,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     MatCardModule,
     MatDividerModule,
     InputTextareaModule,
-    NgProgressModule.withConfig({}),
     DragulaModule.forRoot(),
     SwiperModule,
   ],

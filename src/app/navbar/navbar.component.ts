@@ -22,7 +22,6 @@ import { GoogleLoginService } from '../services/google-login.service';
 import { LoadingService } from '../services/loading.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
-import { NgProgress } from '@ngx-progressbar/core';
 import { UserService } from '../services/user.service';
 import { SettingsComponent } from '../settings/settings.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
@@ -82,7 +81,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   user: User;
   representedUsers: RepresentedUser[];
   effectiveUser: RepresentedUser;
-  isProcess$ = this.process.ref().state;
   tab: string = 'passes';
   inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
 
@@ -149,7 +147,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private locationService: LocationsService,
       private _zone: NgZone,
       private navbarData: NavbarDataService,
-      private process: NgProgress,
       private activeRoute: ActivatedRoute,
       public  notifService: NotificationService,
       public darkTheme: DarkThemeSwitch,
