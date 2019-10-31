@@ -1,15 +1,15 @@
-import {ChangeDetectorRef, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {BehaviorSubject, forkJoin, interval, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
-  map, mapTo,
+  map,
   mergeAll,
-  switchMap, take, takeLast,
+  switchMap, take,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -125,14 +125,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.enabled = false;
       this.syncingDots = '';
       this.intervalId.unsubscribe();
-      // this.destroyer$.next();
-      // this.destroyer$.complete();
     }
   };
 
   public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
-
-  dataTable;
 
   querySubscriber$ = new Subject();
 
@@ -140,12 +136,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   isLoaded$: Observable<boolean>;
 
   tableHeaders;
-
-  @ViewChild(DataTableComponent) set dtRef(dtRef: ElementRef) {
-    if (dtRef) {
-      this.dataTable = dtRef.nativeElement;
-    }
-  }
 
   constructor(
     public router: Router,
@@ -156,8 +146,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private _zone: NgZone,
     private storage: StorageService,
-    private elemRef: ElementRef,
-    private dataService: DataService,
     public darkTheme: DarkThemeSwitch,
     private locService: LocationsService,
     private domSanitizer: DomSanitizer,

@@ -56,6 +56,7 @@ import {IosCalendarComponent} from '../ios-calendar/ios-calendar.component';
 import {NavbarElementSenderDirective} from '../core/directives/navbar-element-sender.directive';
 import {DomElementCheckerDirective} from '../core/directives/dom-element-checker.directive';
 import {MaterialModule} from './material/material.module';
+import { ChartsModule } from 'ng2-charts';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -72,7 +73,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InputTextareaModule,
     DragulaModule.forRoot(),
     SwiperModule,
-    MaterialModule
+    MaterialModule,
+    ChartsModule
   ],
   declarations: [
     DropdownComponent,
@@ -122,7 +124,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IosCalendarWheelComponent,
     IosCalendarComponent,
     NavbarElementSenderDirective,
-    DomElementCheckerDirective
+    DomElementCheckerDirective,
   ],
   entryComponents: [
     PassCardComponent,
@@ -182,7 +184,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileCardDialogComponent,
     ScrollHolderDirective,
     IosCalendarWheelComponent,
-    IosCalendarComponent
+    IosCalendarComponent,
+    ChartsModule
   ],
   providers: [
     {
