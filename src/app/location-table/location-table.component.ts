@@ -207,7 +207,15 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         if (this.staticChoices && this.staticChoices.length) {
           this.choices = this.staticChoices;
         } else {
-          this.locationService.locations$.subscribe(res => {
+          this.locationService.locations$
+            .pipe(map(locs => {
+              if (this.forKioskMode) {
+                return locs.filter(loc => !loc.restricted);
+              } else {
+                return locs;
+              }
+            }))
+            .subscribe(res => {
             this.choices = res;
             this.hideFavorites = false;
             this.noChoices = !this.choices.length;

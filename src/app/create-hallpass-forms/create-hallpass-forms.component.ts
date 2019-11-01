@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CreateFormService } from './create-form.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-create-hallpass-forms',
@@ -9,12 +7,9 @@ import { Observable } from 'rxjs';
 })
 export class CreateHallpassFormsComponent implements OnInit {
 
-  isSeen$: Observable<boolean>;
-
-  constructor(private createFormService: CreateFormService) { }
+  constructor() { }
 
   ngOnInit() {
-    this.isSeen$ = this.createFormService.isSeen$;
   }
 
 }

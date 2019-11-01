@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {merge, of, combineLatest, BehaviorSubject, Observable, Subject, interval} from 'rxjs';
 import { DataService } from '../services/data-service';
@@ -49,7 +49,8 @@ export class ActivePassProvider implements PassLikeProvider {
 @Component({
   selector: 'app-hall-monitor',
   templateUrl: './hall-monitor.component.html',
-  styleUrls: ['./hall-monitor.component.scss']
+  styleUrls: ['./hall-monitor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HallMonitorComponent implements OnInit, OnDestroy {
 

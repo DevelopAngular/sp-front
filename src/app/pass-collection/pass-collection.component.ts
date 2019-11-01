@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, HostListener} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, HostListener, ChangeDetectionStrategy} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {BehaviorSubject, merge, of, zip,  Observable ,  ReplaySubject ,  Subject } from 'rxjs';
 import { DataService } from '../services/data-service';
@@ -73,12 +73,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   timerEvent: Subject<void> = new BehaviorSubject(null);
 
-  // sortOptions = [
-  //     { display: 'Pass Expiration Time', color: this.darkTheme.getColor(), action: 'expiration_time', toggle: false },
-  //     { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
-  //     { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
-  // ];
-
   sort$ = this.dataService.sort$;
   test: any;
 
@@ -145,10 +139,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             this.timerEvent.next(null);
           }, 1000));
         }
-
-    // if (this.screenService.isDeviceSmall) {
-    //   this.grid_gap = '4px';
-    // }
   }
 
   ngOnDestroy() {
