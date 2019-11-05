@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, mapTo, mergeAll, share, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, mapTo, mergeAll, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -22,9 +22,8 @@ import {environment} from '../../../environments/environment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
-import * as _ from 'lodash';
 
-declare const history: History;
+import { isNull } from 'lodash';
 
 @Component({
   selector: 'app-accounts',
@@ -110,7 +109,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       tap(() => this.querySubscriber$.next(this.getUserList())),
       switchMap(() => {
         return this.adminService.getCountAccountsRequest()
-            .pipe(filter(list => !_.isNull(list.profile_count) && !_.isNull(list.student_count)));
+            .pipe(filter(list => !isNull(list.profile_count) && !isNull(list.student_count)));
         }
       ),
       switchMap((u_list: any) => {

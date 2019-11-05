@@ -61,6 +61,7 @@
       [forLater]="formState.forLater"
       [showStars]="true"
       [noRightStar]="true"
+      [forKioskMode]="formState.kioskMode"
       [originLocation]="location"
       [showFavorites]="true"
       [type]="'location'"
@@ -68,7 +69,7 @@
       [placeholder]="'Search rooms'"
       (onSelect)="locationSelected($event)"
       [dummyString]="'No rooms found'"
-      [mergedAllRooms]="true"
+      [mergedAllRooms]="!formState.kioskMode"
     >
     </app-location-table>
 

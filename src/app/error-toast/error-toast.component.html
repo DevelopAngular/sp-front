@@ -5,7 +5,7 @@
       {{errorMessage}}
     </div>
     <div class="error-close-btn" (click)="close($event)">
-      <img [src]="'./assets/Cancel (Blue-Gray).svg'" alt="Cancel (Blue-Gray).svg">
+      <img [src]="'./assets/Cancel (Blue-Gray).svg' | resolveAsset" alt="Cancel (Blue-Gray).svg">
     </div>
   </div>
 </div>

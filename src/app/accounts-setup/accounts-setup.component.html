@@ -1,7 +1,7 @@
 <div class="host">
   <div class="top-right-button">
     <div (click)="close()">
-      <img *ngIf="CloseButton$ | async else logo" width="30" [src]="'./assets/Cancel (Search-Gray).svg'" alt="Search (Search-Gray).svg">
+      <img *ngIf="CloseButton$ | async else logo" width="30" [src]="'./assets/Cancel (Search-Gray).svg' | resolveAsset" alt="Search (Search-Gray).svg">
     </div>
     <ng-template #logo>
       <app-smartpass-logo (click)="goToLogin()" ></app-smartpass-logo>

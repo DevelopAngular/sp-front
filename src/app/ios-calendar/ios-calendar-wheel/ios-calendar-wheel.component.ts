@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import {BehaviorSubject, combineLatest, fromEvent, interval, Observable, ReplaySubject, Subject, Subscription} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, flatMap, map, mergeMap, share, switchMap, take, takeUntil} from 'rxjs/operators';
-import * as _ from 'lodash';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
+import {map, takeUntil} from 'rxjs/operators';
+import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import {Moment} from 'moment';
-import {IosDateSingleton, MINUTE, SWIPE_BLOCKER} from '../ios-date.singleton';
+import {IosDateSingleton, SWIPE_BLOCKER} from '../ios-date.singleton';
 import {DeviceDetection} from '../../device-detection.helper';
 
 export interface SwipeEvent {
@@ -131,7 +131,7 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
           this.selected = this.rotate.rotateAngle ? days[0] : days[1];
           this.selectedUnit.emit(this.selected);
         } else {
-          this.selected = _.cloneDeep(days[10]);
+          this.selected = cloneDeep(days[10]);
           this.selectedUnit.emit(days[10]);
         }
         // console.log(this.wheelData, this.selected);

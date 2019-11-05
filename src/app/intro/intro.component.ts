@@ -55,7 +55,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
       @Optional() private introDialogRef: MatDialogRef<IntroComponent>,
       @Optional() private dialog: MatDialog
   ) {
-    // console.log('intro.constructor');
   }
 
   get isSafari() {

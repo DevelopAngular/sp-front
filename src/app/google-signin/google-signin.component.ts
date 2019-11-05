@@ -1,4 +1,4 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
 
 import {of} from 'rxjs';

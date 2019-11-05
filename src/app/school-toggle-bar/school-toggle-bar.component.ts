@@ -52,8 +52,6 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   showOptions(target: HTMLElement) {
-      // const target = new ElementRef(evt.currentTarget);
-    // console.log('========>', target);
     UNANIMATED_CONTAINER.next(true);
     const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',

@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-
-import * as _ from 'lodash';
+import { filter as _filter, find } from 'lodash';
 import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
 
 import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
@@ -17,7 +16,6 @@ import { GoogleLoginService } from './services/google-login.service';
 import { HttpService, SPError } from './services/http-service';
 import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
-import { UserService } from './services/user.service';
 import { WebConnectionService } from './services/web-connection.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
@@ -145,12 +143,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.http.schoolsCollection$.pipe(
-      map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
+      map(schools => _filter(schools, (school => school.my_roles.length > 0))),
       withLatestFrom(this.http.currentSchool$),
       takeUntil(this.subscriber$))
       .subscribe(([schools, currentSchool]) => {
         this.schools = schools;
-        if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
+        if (currentSchool && !find(schools, {id: currentSchool.id})) {
           this.http.setSchool(schools[0]);
         }
       });

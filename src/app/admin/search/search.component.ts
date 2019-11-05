@@ -3,8 +3,7 @@ import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
 import {PdfGeneratorService, SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
-import { disableBodyScroll } from 'body-scroll-lock';
-import * as _ from 'lodash';
+import { find } from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {MatDialog} from '@angular/material';
 import {HallPassesService} from '../../services/hall-passes.service';
@@ -69,29 +68,6 @@ export class SearchComponent implements OnInit {
 
   buttonDown: boolean;
 
-  // private dataPagination: any = {
-  //   first: 0,
-  //   last: 50,
-  //   range: 50,
-  //   nextPage() {
-  //     this.first += this.range;
-  //     this.last += this.range;
-  //
-  //   }
-  // }
-  //
-  // @HostListener('scroll', ['$event'])
-  // onScroll(event) {
-  //   const tracker = event.target;
-  //   const limit = tracker.scrollHeight - tracker.clientHeight;
-  //   // if (event.target.scrollTop === limit && !this.pending && (this.reportsLimit === this.counter)) {
-  //   if (event.target.scrollTop === limit) {
-  //     this.dataPagination.nextPage();
-  //     // this.reportsLimit += 10;
-  //     // this.getReports();
-  //   }
-  // }
-
   constructor(
       private httpService: HttpService,
       private hallPassService: HallPassesService,
@@ -114,10 +90,6 @@ export class SearchComponent implements OnInit {
      return this.buttonDown ? 'down' : 'up';
   }
 
-  get isDisabled() {
-    return !this.selectedStudents.length && !this.selectedDate && !this.selectedRooms.length && !this.hasSearched || this.spinner;
-  }
-
   get dateText() {
       const start = this.selectedDate.start;
       const end = this.selectedDate.end;
@@ -134,8 +106,6 @@ export class SearchComponent implements OnInit {
       this.b.map((b: XsButtonComponent) => b.resetEmit());
       this.selectedDate = null;
     });
-
-    disableBodyScroll(this.elRef.nativeElement);
 
     const forceSearch: Subscription = this.activatedRoute.queryParams.pipe(
       filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
@@ -219,9 +189,6 @@ export class SearchComponent implements OnInit {
       }
 
       if (this.selectedDate) {
-        console.log(this.selectedDate.start.format('DD hh:mm A'));
-        console.log(this.selectedDate.end.format('DD hh:mm A'));
-        debugger;
         let start;
         let end;
         if (this.selectedDate['start']) {
@@ -317,7 +284,7 @@ export class SearchComponent implements OnInit {
   }
 
   selectedPass(pass) {
-    const selectedPass: HallPass = _.find<HallPass>(this.passes, {id: pass['id']});
+    const selectedPass: HallPass = find<HallPass>(this.passes, {id: pass['id']});
     selectedPass.start_time = new Date(selectedPass.start_time);
     selectedPass.end_time = new Date(selectedPass.end_time);
       const data = {

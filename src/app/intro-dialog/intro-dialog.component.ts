@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-intro-dialog',
@@ -10,7 +10,6 @@ export class IntroDialogComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<IntroDialogComponent>,
-    private dialog: MatDialog,
   ) { }
 
   ngOnInit() {

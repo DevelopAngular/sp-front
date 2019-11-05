@@ -9,8 +9,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
 import {catchError, filter, map, switchMap, tap} from 'rxjs/operators';
-
-import * as _ from 'lodash';
+import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 
@@ -81,7 +80,7 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   get selectedRoles() {
-    return _.filter(this.accounts, ['selected', true]);
+    return _filter(this.accounts, ['selected', true]);
   }
 
   get showNextButton() {

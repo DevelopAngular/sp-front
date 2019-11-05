@@ -7,7 +7,7 @@ import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {tap} from 'rxjs/operators';
-import * as _ from 'lodash';
+import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../device-detection.helper';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
@@ -67,7 +67,7 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.teacherNames, 'id');
+    return uniqBy(this.teacherNames, 'id');
   }
 
   ngOnInit() {

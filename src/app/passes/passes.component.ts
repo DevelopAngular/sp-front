@@ -1,23 +1,32 @@
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
   BehaviorSubject,
   combineLatest,
   ConnectableObservable,
-  empty, fromEvent, interval,
+  empty, interval,
   merge,
   Observable,
-  of, pipe,
+  of,
   ReplaySubject, Subject,
 } from 'rxjs';
 import {
-  delay, distinctUntilChanged,
   filter,
-  map, pluck, publish, publishBehavior,
+  map, pluck, publishBehavior,
   publishReplay,
-  refCount, shareReplay,
+  refCount,
   startWith,
-  switchMap, take, takeUntil, tap,
+  switchMap, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -88,7 +97,6 @@ export class ActivePassProvider implements PassLikeProvider {
         }
       ),
       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-        // console.log('PASSES ===>>>> ', passes);
         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
       })
     );
@@ -179,6 +187,7 @@ export class InboxInvitationProvider implements PassLikeProvider {
     PassesAnimations.HeaderSlideTopBottom,
     PassesAnimations.PreventInitialChildAnimation,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -274,7 +283,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get showInbox() {
     if (!this.isStaff) {
-      // console.log('|||||||||||||| Student Now ===>', this.dataService.inboxState);
       return this.dataService.inboxState;
     } else if (!this.inboxHasItems && !this.passesHaveItems) {
       return of(false);

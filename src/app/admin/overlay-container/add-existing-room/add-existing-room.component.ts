@@ -2,8 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Pinnable } from '../../../models/Pinnable';
 import { bumpIn } from '../../../animations';
 
-import * as _ from 'lodash';
-
 @Component({
   selector: 'app-add-existing-room',
   templateUrl: './add-existing-room.component.html',

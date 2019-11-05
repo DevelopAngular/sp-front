@@ -6,8 +6,7 @@ import {BehaviorSubject, fromEvent} from 'rxjs';
 import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import * as _ from 'lodash';
-import {User} from '../../../../models/User';
+import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
@@ -122,7 +121,7 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.quickSelectedTeachers, 'id');
+    return uniqBy(this.quickSelectedTeachers, 'id');
   }
 
   ngOnInit() {

@@ -7,9 +7,8 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, share, switchMap, takeUntil, tap} from 'rxjs/operators';
-
-import * as _ from 'lodash';
+import {map, pluck, switchMap, takeUntil } from 'rxjs/operators';
+import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 declare const window;
@@ -340,7 +339,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
       case 'local':
         if (search !== '') {
-          const filterItems: User[] = _.filter(this.searchingTeachers, (item => {
+          const filterItems: User[] = _filter(this.searchingTeachers, (item => {
             return (item.display_name).toLowerCase().includes(search);
             }));
           this.teacherCollection$.next(this.removeDuplicateStudents(filterItems));
