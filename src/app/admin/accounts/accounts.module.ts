@@ -3,18 +3,20 @@ import { CommonModule } from '@angular/common';
 
 import { AccountsRoutingModule } from './accounts-routing.module';
 import { AccountsComponent } from './accounts.component';
-import { SharedModule } from '../../shared/shared.module';
+import { AdminCardButtonComponent } from './admin-card-button/admin-card-button.component';
 import { AdminSharedModule } from '../shared/admin-shared.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [
-    AccountsComponent
+    AccountsComponent,
+    AdminCardButtonComponent
   ],
   imports: [
     CommonModule,
     AccountsRoutingModule,
-    SharedModule,
-    AdminSharedModule
+    AdminSharedModule,
+    SharedModule
   ]
 })
 export class AccountsModule { }

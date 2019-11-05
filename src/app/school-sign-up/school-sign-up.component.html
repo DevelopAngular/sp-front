@@ -5,7 +5,7 @@
 <!--  </div>-->
   <div class="school-signin" *ngIf="true">
     <div [style.margin-right]="'80px'">
-      <img [src]="'./assets/School-sign-in.svg'" alt="School-sign-in.svg">
+      <img [src]="'./assets/School-sign-in.svg' | resolveAsset" alt="School-sign-in.svg">
     </div>
     <div [style.width]="'550px'" [style.height]="'550px'" [style.padding-right]="'100px'">
       <div>

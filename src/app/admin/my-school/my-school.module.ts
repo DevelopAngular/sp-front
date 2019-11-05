@@ -5,6 +5,7 @@ import { MySchoolRoutingModule } from './my-school-routing.module';
 import { MySchoolComponent } from './my-school.component';
 import { SharedModule } from '../../shared/shared.module';
 import { SchoolButtonComponent } from './school-button/school-button.component';
+import {AdminSharedModule} from '../shared/admin-shared.module';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { SchoolButtonComponent } from './school-button/school-button.component';
   imports: [
     CommonModule,
     MySchoolRoutingModule,
-    SharedModule
+    SharedModule,
+    AdminSharedModule
   ]
 })
 export class MySchoolModule { }

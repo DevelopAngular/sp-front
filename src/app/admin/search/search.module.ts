@@ -15,6 +15,6 @@ import { AdminSharedModule } from '../shared/admin-shared.module';
     SearchRoutingModule,
     SharedModule,
     AdminSharedModule
-  ]
+  ],
 })
 export class SearchModule { }

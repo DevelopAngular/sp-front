@@ -1,8 +1,5 @@
 import { Component, ElementRef, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
-import {fromEvent} from 'rxjs';
-
-declare const window;
 
 @Component({
   selector: 'app-date-time-filter',

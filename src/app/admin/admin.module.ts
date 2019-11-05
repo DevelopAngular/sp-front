@@ -11,9 +11,11 @@ import { AdminSharedModule } from './shared/admin-shared.module';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
-import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
-import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';
 import { IosComponentComponent } from './ios-component/ios-component.component';
+import {CoreModule} from '../core/core.module';
+import {SearchFilterDialogComponent} from './search/search-filter-dialog/search-filter-dialog.component';
+import {DateTimeFilterComponent} from './search/date-time-filter/date-time-filter.component';
+import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
 
 @NgModule({
   imports: [
@@ -22,6 +24,7 @@ import { IosComponentComponent } from './ios-component/ios-component.component';
     AdminRoutingModule,
     FormsModule,
     AdminSharedModule,
+    CoreModule
   ],
   declarations: [
     AdminPageComponent,
@@ -30,10 +33,10 @@ import { IosComponentComponent } from './ios-component/ios-component.component';
     ColumnsConfigDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
+    IosComponentComponent,
     SearchFilterDialogComponent,
     DateTimeFilterComponent,
-    IosComponentComponent,
-
+    RoomsSearchComponent
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,
@@ -42,7 +45,7 @@ import { IosComponentComponent } from './ios-component/ios-component.component';
     AddUserDialogComponent,
     SettingsComponent,
     SearchFilterDialogComponent,
-    DateTimeFilterComponent
+    DateTimeFilterComponent,
 
   ],
   providers: [

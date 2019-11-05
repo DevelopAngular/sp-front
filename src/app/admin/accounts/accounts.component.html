@@ -82,7 +82,7 @@
       <div class="right-side">
         <app-privacy-card></app-privacy-card>
         <div class="setup-guy">
-          <img [src]="'./assets/accounts-setup-guy.svg'" alt="accounts-setup-guy.svg">
+          <img [src]="'./assets/accounts-setup-guy.svg' | resolveAsset" alt="accounts-setup-guy.svg">
         </div>
       </div>
     </div>
@@ -95,7 +95,6 @@
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
               <div class="count">
-                <!--<img width="15" height="15" [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" alt="">-->
                 <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(countAccounts$ | async)}} accounts</div>
               </div>
             </div>

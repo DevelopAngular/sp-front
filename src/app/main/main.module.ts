@@ -12,7 +12,6 @@ import { RequestCardComponent } from '../request-card/request-card.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { SharedModule } from '../shared/shared.module';
 import { MainRoutingModule } from './main-routing.module';
-import { NavbarDataService } from './navbar-data.service';
 import { FromWhereComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/from-where/from-where.component';
 import { ToWhereComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-where/to-where.component';
 import { LocationsGroupContainerComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/locations-group-container.component';
@@ -30,9 +29,11 @@ import {StudentFooterComponent} from '../create-hallpass-forms/main-hallpass--fo
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
-import {ScreenService} from '../services/screen.service';
 import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
-import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
+import {CoreModule} from '../core/core.module';
+import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
+import {NavbarComponent} from '../navbar/navbar.component';
+import {NavButtonComponent} from '../nav-button/nav-button.component';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
     MainRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    CoreModule
   ],
   declarations: [
     SettingsComponent,
@@ -70,7 +72,10 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
     FormFactorContainerComponent,
     CreateHallpassFormsComponent,
     NotificationFormComponent,
-    AnimatedHeaderDirective
+    AnimatedHeaderDirective,
+    DateTimeComponent,
+    NavbarComponent,
+    NavButtonComponent,
   ],
   entryComponents: [
     CreateHallpassFormsComponent,
@@ -79,12 +84,9 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
     RequestCardComponent,
     InvitationCardComponent,
     NotificationFormComponent,
-    SettingsComponent,
-    ConsentMenuMobileComponent
+    SettingsComponent
   ],
   providers: [
-    NavbarDataService,
-    ScreenService
   ]
 })
 export class MainModule {

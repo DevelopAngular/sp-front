@@ -19,13 +19,17 @@ import { EditRoomInFolderComponent } from '../overlay-container/edit-room-in-fol
 import { BulkEditRoomsComponent } from '../overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
 import { BulkEditRoomsInFolderComponent } from '../overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
 import { ImportRoomsComponent } from '../overlay-container/import-rooms/import-rooms.component';
-import {AdminCardButtonComponent} from '../accounts/admin-card-button/admin-card-button.component';
+import { CoreModule } from '../../core/core.module';
+import {PrivacyCardComponent} from '../accounts/privacy-card/privacy-card.component';
+import {AccountGroupsComponent} from '../accounts/account-groups/account-groups.component';
+import {ProfileComponent} from '../accounts/account-groups/profile/profile.component';
 
 @NgModule({
   imports: [
     CommonModule,
     SharedModule,
     FormsModule,
+    CoreModule
   ],
   declarations: [
       ColorPalletPickerComponent,
@@ -45,7 +49,9 @@ import {AdminCardButtonComponent} from '../accounts/admin-card-button/admin-card
       BulkEditRoomsComponent,
       BulkEditRoomsInFolderComponent,
       ImportRoomsComponent,
-      AdminCardButtonComponent,
+      PrivacyCardComponent,
+      ProfileComponent,
+      AccountGroupsComponent,
   ],
   exports: [
       ColorPalletPickerComponent,
@@ -64,7 +70,10 @@ import {AdminCardButtonComponent} from '../accounts/admin-card-button/admin-card
       BulkEditRoomsComponent,
       BulkEditRoomsInFolderComponent,
       ImportRoomsComponent,
-      AdminCardButtonComponent,
+      CoreModule,
+      PrivacyCardComponent,
+      ProfileComponent,
+      AccountGroupsComponent,
   ],
   entryComponents: [
       OverlayContainerComponent,

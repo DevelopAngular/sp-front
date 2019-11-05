@@ -1,11 +1,10 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleLoginService} from '../services/google-login.service';
 import {UserService} from '../services/user.service';
 import {catchError, delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {User} from '../models/User';
-import {from, fromEvent, Observable, of, Subject, throwError} from 'rxjs';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {fromEvent, Observable, of, Subject, throwError} from 'rxjs';
+import {ActivatedRoute, Router} from '@angular/router';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {HttpClient} from '@angular/common/http';
 import AuthResponse = gapi.auth2.AuthResponse;
