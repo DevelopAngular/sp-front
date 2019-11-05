@@ -52,6 +52,9 @@ import {SortMenuComponent} from '../sort-menu/sort-menu.component';
 import {NextReleaseComponent} from '../next-release/next-release.component';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {CoreModule} from '../core/core.module';
+import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
+import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
+import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -114,7 +117,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SortMenuComponent,
     NextReleaseComponent,
     SignedOutToastComponent,
-    ConsentMenuMobileComponent
+    ConsentMenuMobileComponent,
+    PrivacyCardComponent,
+    ProfileComponent,
+    AccountGroupsComponent,
   ],
   entryComponents: [
     PassCardComponent,
@@ -170,7 +176,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroComponent,
     GoogleSigninComponent,
     CoreModule,
-    ConsentMenuMobileComponent
+    ConsentMenuMobileComponent,
+    PrivacyCardComponent,
+    ProfileComponent,
+    AccountGroupsComponent,
   ],
   providers: [
     {

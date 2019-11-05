@@ -27,9 +27,6 @@ import {ProfileComponent} from '../accounts/account-groups/profile/profile.compo
       NavButtonComponent,
       PinnableCollectionComponent,
       ColorComponent,
-      PrivacyCardComponent,
-      ProfileComponent,
-      AccountGroupsComponent,
   ],
   exports: [
       ColorPalletPickerComponent,
@@ -39,9 +36,6 @@ import {ProfileComponent} from '../accounts/account-groups/profile/profile.compo
       NavButtonComponent,
       PinnableCollectionComponent,
       ColorComponent,
-      PrivacyCardComponent,
-      ProfileComponent,
-      AccountGroupsComponent,
       SharedModule
   ]
 })
