@@ -12,10 +12,19 @@ import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-co
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 import { IosComponentComponent } from './ios-component/ios-component.component';
-import {CoreModule} from '../core/core.module';
 import {SearchFilterDialogComponent} from './search/search-filter-dialog/search-filter-dialog.component';
 import {DateTimeFilterComponent} from './search/date-time-filter/date-time-filter.component';
 import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
+import {AdvancedOptionsComponent} from './overlay-container/advanced-options/advanced-options.component';
+import {AddExistingRoomComponent} from './overlay-container/add-existing-room/add-existing-room.component';
+import {RoomComponent} from './overlay-container/room/room.component';
+import {FolderComponent} from './overlay-container/folder/folder.component';
+import {NewRoomInFolderComponent} from './overlay-container/new-room-in-folder/new-room-in-folder.component';
+import {EditRoomInFolderComponent} from './overlay-container/edit-room-in-folder/edit-room-in-folder.component';
+import {BulkEditRoomsComponent} from './overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
+import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
+import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
+import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
 
 @NgModule({
   imports: [
@@ -24,7 +33,6 @@ import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
     AdminRoutingModule,
     FormsModule,
     AdminSharedModule,
-    CoreModule
   ],
   declarations: [
     AdminPageComponent,
@@ -36,7 +44,17 @@ import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
     IosComponentComponent,
     SearchFilterDialogComponent,
     DateTimeFilterComponent,
-    RoomsSearchComponent
+    RoomsSearchComponent,
+    AdvancedOptionsComponent,
+    AddExistingRoomComponent,
+    RoomComponent,
+    FolderComponent,
+    NewRoomInFolderComponent,
+    EditRoomInFolderComponent,
+    BulkEditRoomsComponent,
+    BulkEditRoomsInFolderComponent,
+    ImportRoomsComponent,
+    OverlayContainerComponent,
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,
@@ -46,7 +64,7 @@ import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
     SettingsComponent,
     SearchFilterDialogComponent,
     DateTimeFilterComponent,
-
+    OverlayContainerComponent,
   ],
   providers: [
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

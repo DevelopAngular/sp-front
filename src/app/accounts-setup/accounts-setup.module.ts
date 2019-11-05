@@ -14,7 +14,6 @@ import {AdminSharedModule} from '../admin/shared/admin-shared.module';
     CommonModule,
     AccountsSetupRoutingModule,
     SharedModule,
-    AdminSharedModule
   ]
 })
 export class AccountsSetupModule { }

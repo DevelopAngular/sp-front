@@ -189,9 +189,6 @@ export class SearchComponent implements OnInit {
       }
 
       if (this.selectedDate) {
-        console.log(this.selectedDate.start.format('DD hh:mm A'));
-        console.log(this.selectedDate.end.format('DD hh:mm A'));
-        debugger;
         let start;
         let end;
         if (this.selectedDate['start']) {

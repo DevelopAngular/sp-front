@@ -30,7 +30,6 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
 import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
-import {CoreModule} from '../core/core.module';
 import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
 import {NavbarComponent} from '../navbar/navbar.component';
 import {NavButtonComponent} from '../nav-button/nav-button.component';
@@ -43,7 +42,6 @@ import {NavButtonComponent} from '../nav-button/nav-button.component';
     MainRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    CoreModule
   ],
   declarations: [
     SettingsComponent,
