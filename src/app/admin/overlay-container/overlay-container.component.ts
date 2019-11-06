@@ -10,7 +10,8 @@ import {
   filter,
   take,
   debounceTime,
-  distinctUntilChanged, tap,
+  distinctUntilChanged,
+  tap
 } from 'rxjs/operators';
 
 import { NextStep } from '../../animations';

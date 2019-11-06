@@ -26,7 +26,6 @@ export class AccountGroupsComponent implements OnInit {
 
   public  orgUnits: OrgUnit[] = [];
   public orgUnits$ = new ReplaySubject<OrgUnit[]>(1);
-  public  orgUnitsInitialState: OrgUnit[];
   public  orgUnitsEditState: boolean;
   private orgUnitsOldCopy: OrgUnit[];
 
@@ -69,7 +68,7 @@ export class AccountGroupsComponent implements OnInit {
        }
        this.orgUnitsOldCopy = cloneDeep(this.orgUnits);
        this.orgUnits$.next(this.orgUnits);
-       console.log(this.orgUnits);
+       // console.log(this.orgUnits);
      });
 
   }
@@ -93,11 +92,9 @@ export class AccountGroupsComponent implements OnInit {
       this.orgUnits.forEach((item: OrgUnit) => {
         syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
       });
-      console.log(syncBody);
+      // console.log(syncBody);
 
       this.pending = true;
-      // this.orgUnits = [];
-      // this.orgUnits$.next(null);
       this.adminService.updateGSuiteOrgs(syncBody)
         .pipe(
           switchMap(() => {
@@ -105,7 +102,7 @@ export class AccountGroupsComponent implements OnInit {
           })
         )
         .subscribe((res) => {
-          console.log(res);
+          // console.log(res);
           this.pending = false;
           this.orgUnitsEditState = false;
           this.updater.next(true);

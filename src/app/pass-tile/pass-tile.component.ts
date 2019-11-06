@@ -39,6 +39,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
+  destroy$: Subject<any> = new Subject<any>();
+
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';
   }
@@ -90,7 +92,10 @@ export class PassTileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.valid = this.isActive;
     if (this.timerEvent) {
-      this.timerEvent.pipe(filter(() => !!this.pass['expiration_time'])).subscribe(() => {
+      this.timerEvent.pipe(
+        filter(() => !!this.pass['expiration_time']),
+        takeUntil(this.destroy$)
+      ).subscribe(() => {
         const end: Date = this.pass['expiration_time'];
         const now: Date = this.timeService.nowDate();
         const diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -104,10 +109,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.timers.forEach(id => {
-      clearInterval(id);
-    });
-    this.timers = [];
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   backgroundGradient() {

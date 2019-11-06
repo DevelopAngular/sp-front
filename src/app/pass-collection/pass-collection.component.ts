@@ -143,7 +143,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.timers.forEach(id => {
-      console.log('Clearing interval');
+      // console.log('Clearing interval');
       clearInterval(id);
     });
     this.timers = [];

@@ -4,7 +4,7 @@ import { KioskModeService } from '../services/kiosk-mode.service';
 import { MatDialog } from '@angular/material';
 import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
-import {combineLatest, Observable, of} from 'rxjs';
+import {combineLatest, of} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';

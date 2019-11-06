@@ -41,12 +41,12 @@ export class GoogleSigninComponent implements OnInit {
     });
     this.httpService.errorToast$.subscribe(v => {
       this.showSpinner = !!v;
-    })
+    });
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
         const errMessage = this.loggedWith === 1
           ? 'Please sign in with your school account or contact your school administrator.'
-          : 'Please check your username and password or contact your school administrator.'
+          : 'Please check your username and password or contact your school administrator.';
 
         this.httpService.errorToast$.next({
           header: 'Oops! Sign in error.',

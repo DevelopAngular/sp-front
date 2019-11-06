@@ -23,7 +23,6 @@ import { ScreenService } from '../services/screen.service';
 import { SortMenuComponent } from '../sort-menu/sort-menu.component';
 import { MyRoomAnimations } from './my-room.animations';
 import { KioskModeService } from '../services/kiosk-mode.service';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { bumpIn } from '../animations';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';

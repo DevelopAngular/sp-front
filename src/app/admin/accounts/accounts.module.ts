@@ -17,4 +17,5 @@ import { AdminSharedModule } from '../shared/admin-shared.module';
     AdminSharedModule,
   ]
 })
-export class AccountsModule { }
+export class AccountsModule {
+}

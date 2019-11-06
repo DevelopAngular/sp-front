@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
-import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';

@@ -7,7 +7,7 @@ import {SideNavService} from '../services/side-nav.service';
 import {BehaviorSubject, combineLatest, empty, Observable, of, ReplaySubject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {PassLikeProvider, WrappedProvider} from '../models/providers';
+import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {Request} from '../models/Request';
 import {User} from '../models/User';

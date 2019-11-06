@@ -128,7 +128,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     }
     if (this.type === 'location') {
       this.locationService.favoriteLocations$.subscribe((stars: any[]) => {
-        this.starredChoices = stars.map(val => Location.fromJSON(val));
+        this.starredChoices = this.kioskModeFilter(stars.map(val => Location.fromJSON(val)));
         if (this.isFavoriteForm) {
             this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
         }
@@ -185,11 +185,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         this.locationService.searchLocationsRequest(url)
           .pipe(
             map((locs: any) => {
-              if (this.forKioskMode) {
-                return locs.filter(loc => !loc.restricted);
-              } else {
-                return locs;
-              }
+              return this.kioskModeFilter(locs);
             })
           )
           .subscribe(p => {
@@ -208,12 +204,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           this.choices = this.staticChoices;
         } else {
           this.locationService.locations$
-            .pipe(map(locs => {
-              if (this.forKioskMode) {
-                return locs.filter(loc => !loc.restricted);
-              } else {
-                return locs;
-              }
+            .pipe(
+              map(locs => {
+                return this.kioskModeFilter(locs);
             }))
             .subscribe(res => {
             this.choices = res;
@@ -224,6 +217,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       }
 
+  }
+
+  kioskModeFilter(locs: Location[]) {
+    if (this.forKioskMode) {
+      return locs.filter(loc => !loc.restricted);
+    } else {
+      return locs;
+    }
   }
 
 
@@ -255,9 +256,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         .pipe(
             map(([rooms, favorites]: [any, any[]]) => {
               if (withStars) {
-                return sortBy([...rooms, ...favorites], (item) => {
-                    return item.title.toLowerCase();
+                const locs = sortBy([...rooms, ...favorites], (item) => {
+                  return item.title.toLowerCase();
                 });
+                return this.kioskModeFilter(locs);
               } else {
                 return rooms;
               }

@@ -28,7 +28,8 @@ export class NavbarDataService {
   constructor(private userService: UserService, private dataService: DataService, private liveData: LiveDataService) {
 
 
-    const badgeCount$ = this.userService.userData.pipe(switchMap(user => {
+    const badgeCount$ = this.userService.userData.pipe(
+      switchMap(user => {
 
         const invitationCount$ = this.liveData.watchInboxInvitations(user)
           .pipe(map(invitations => count(invitations, invitation => !invitation.isRead)));

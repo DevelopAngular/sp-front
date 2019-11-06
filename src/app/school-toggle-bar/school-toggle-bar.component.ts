@@ -3,7 +3,6 @@ import {MatDialog} from '@angular/material';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
-import {StorageService} from '../services/storage.service';
 import {filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';

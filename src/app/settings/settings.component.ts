@@ -6,7 +6,6 @@ import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {RELEASE_NAME} from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
-import {trigger} from '@angular/animations';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
