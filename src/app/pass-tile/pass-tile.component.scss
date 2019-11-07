@@ -39,7 +39,7 @@
 }
 
 .tile-title-container {
-  min-width: 141.5px;
+  min-width: 143px;
 }
 
 .tile-title {
@@ -71,6 +71,8 @@
   position: relative;
   overflow: hidden;
   z-index: 2;
+  display: flex;
+  justify-content: center;
   flex: 1 1 auto;
   height: 30px;
 }
