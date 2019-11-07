@@ -106,9 +106,11 @@ export class NavComponent implements OnInit {
             &&
           !button.requiredRoles.every((_role) => user.roles.includes(_role))
       ) {
-
           this.restrictAccess.emit(true);
           this.fakeMenu.next(true);
+        } else {
+          this.restrictAccess.emit(false);
+          this.fakeMenu.next(false);
         }
       });
     });

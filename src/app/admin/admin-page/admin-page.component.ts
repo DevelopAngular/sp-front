@@ -38,11 +38,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.schoolsLength$ = this.httpService.schoolsLength$;
 
-
-    this.httpService.schoolsLength$.subscribe(value => {
-      console.log(value);
-    });
-
     this.showDummySwitcher$.subscribe((v) => {
       if (v) {
         window.appLoaded();
