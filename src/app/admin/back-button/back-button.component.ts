@@ -1,11 +1,12 @@
-import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, Input, ChangeDetectionStrategy} from '@angular/core';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-back-button',
   templateUrl: './back-button.component.html',
-  styleUrls: ['./back-button.component.scss']
+  styleUrls: ['./back-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BackButtonComponent implements OnInit {
   @Input() allowDarkTheme: boolean = true;
