@@ -16,10 +16,6 @@ export class AdminCardButtonComponent implements OnInit {
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
-  integrationIcons = [
-
-  ];
-
   constructor(public darkTheme: DarkThemeSwitch) { }
 
   ngOnInit() {
