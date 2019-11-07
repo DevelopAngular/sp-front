@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import {filter, map, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
 import {PdfGeneratorService, SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
@@ -111,10 +111,10 @@ export class SearchComponent implements OnInit {
       filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
       switchMap((qp: any): any => {
         this.inputPanelVisibility = false;
-        // console.log('qp', qp);
+
         const {profileId, profileName, role } = qp;
         this.router.navigate( ['admin/search']);
-        // console.log(profileId);
+
         switch (role) {
           case '_profile_student':
 
@@ -141,6 +141,15 @@ export class SearchComponent implements OnInit {
                   this.search();
                 })
               );
+
+          // case '_profile_assistant':
+          //   return this.userService.searchProfileById(profileId)
+          //     .pipe(
+          //       tap((user: User) => {
+          //         debugger;
+          //         this.search();
+          //       })
+          //     );
           default:
             return of(null);
         }
