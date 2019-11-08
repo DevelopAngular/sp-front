@@ -342,11 +342,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             controlName: 'access_pass_config',
             controlLabel: 'Rooms Tab Access',
           },
-          // 'admin_school_settings': {
-          //   controlName: 'admin_school_settings',
-          //   allowed: true,
-          //   controlLabel: 'Access to School Settings'
-          // },
         }
                    :
         this.role === '_profile_teacher'
@@ -354,7 +349,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         {
           'access_hall_monitor': {
             controlName: 'access_hall_monitor',
-            // allowed: this.user.roles.includes('admin_hall_monitor'),
             controlLabel: 'Access to Hall Monitor'
           },
         }
