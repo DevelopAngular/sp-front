@@ -37,6 +37,7 @@ export class GridTableDataSource extends DataSource<any> {
   }
 
   set allData(data: any[]) {
+    // debugger
     this._data = data;
     this.viewport.scrollToOffset(0);
     this.viewport.setTotalContentSize(this.itemSize * data.length);
@@ -55,7 +56,7 @@ export class GridTableDataSource extends DataSource<any> {
     stickySpace: boolean, private domSanitizer: DomSanitizer
   ) {
     super();
-
+// debugger
     this.domSanitizer = domSanitizer;
 
     this._data = initialData;
@@ -73,7 +74,6 @@ export class GridTableDataSource extends DataSource<any> {
     for (const key in this._fixedColumnsPlaceholder) {
       if (key === 'TT') {
         this._fixedColumnsPlaceholder[key] = this.domSanitizer.bypassSecurityTrustHtml(this._fixedColumnsPlaceholder[key]);
-
       } else if (key === 'Group(s)') {
         console.log(this._fixedColumnsPlaceholder[key]);
         this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key].map(g => g.title).join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + ' .';
@@ -83,20 +83,15 @@ export class GridTableDataSource extends DataSource<any> {
       } else {
         this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key] + ' .';
       }
-
-
     }
 
     this._fixedColumnsPlaceholder = wrapToHtml.call(this, this._fixedColumnsPlaceholder, 'span') as {[key: string]: SafeHtml; _data: any};
-
-
     console.log(this._fixedColumnsPlaceholder);
-
     this.viewport.elementScrolled().subscribe((ev: any) => {
-
       const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
       const prevExtraData = start > 0 && start <= 12 && this.stickySpace ? 1 : start > 12 ? 12 : 0;
       const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData)).concat(this._fixedColumnsPlaceholder);
+      console.log(start - prevExtraData, '-', start + (PAGESIZE - prevExtraData));
 
       this.offset = ROW_HEIGHT * (start - prevExtraData);
       this.viewport.setRenderedContentOffset(this.offset);
@@ -187,12 +182,15 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
 
   @Input() set data(value: any[]) {
+    console.log(value);
     this._data = [...value];
-    this.dataSource = new GridTableDataSource(this._data, this.viewport, ROW_HEIGHT, this.sort, this.stickySpace, this.domSanitizer);
-    this.dataSource.offsetChange
-      .subscribe(offset => {
-        this.placeholderHeight = offset;
-    });
+    if (!this.dataSource) {
+      this.dataSource = new GridTableDataSource(this._data, this.viewport, ROW_HEIGHT, this.sort, this.stickySpace, this.domSanitizer);
+      this.dataSource.offsetChange
+        .subscribe(offset => {
+          this.placeholderHeight = offset;
+        });
+    }
     this.dataSource.allData = this._data;
     this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
       const data = this.dataSource.allData;
