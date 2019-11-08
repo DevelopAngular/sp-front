@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {Router} from '@angular/router';
-import { mapTo, switchMap } from 'rxjs/operators';
+import {map, mapTo, switchMap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {fromEvent, Observable, of, Subject, zip} from 'rxjs';
@@ -11,6 +11,7 @@ import {UserService} from '../../services/user.service';
 
 import { cloneDeep, isEqual, differenceBy } from 'lodash';
 import {GSuiteSelector} from '../../sp-search/sp-search.component';
+import {LocationsService} from '../../services/locations.service';
 
 @Component({
   selector: 'app-profile-card-dialog',
@@ -76,6 +77,7 @@ export class ProfileCardDialogComponent implements OnInit {
     private router: Router,
     private dataService: DataService,
     private userService: UserService,
+    private locationService: LocationsService
   ) {}
 
   ngOnInit() {
@@ -105,8 +107,16 @@ export class ProfileCardDialogComponent implements OnInit {
       };
 
       if (this.data.role === '_profile_assistant') {
-        this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
-        this.assistantForInitialState = cloneDeep(this.assistantFor);
+        if (this.data.allAccounts) {
+          this.userService.getRepresentedUsers(this.profile._originalUserProfile.id)
+            .subscribe((res: any[]) => {
+              this.assistantFor = res.map(ru => ru.user);
+              this.assistantForInitialState = cloneDeep(this.assistantFor);
+            });
+        } else {
+          this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
+          this.assistantForInitialState = cloneDeep(this.assistantFor);
+        }
         this.assistantForUpdate$.subscribe((users: User[]) => {
           this.assistantToAdd = differenceBy(users, this.assistantForInitialState, 'id');
           this.assistantToRemove = differenceBy(this.assistantForInitialState, users, 'id');
@@ -150,7 +160,14 @@ export class ProfileCardDialogComponent implements OnInit {
                       : '';
 
     if (this.data.role === '_profile_teacher') {
-       this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo;
+      if (this.data.allAccounts) {
+        this.locationService.getLocationsWithTeacher(this.profile._originalUserProfile)
+          .subscribe(res => {
+            this.teacherAssignedTo = res;
+          });
+      } else {
+        this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo;
+      }
     }
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {

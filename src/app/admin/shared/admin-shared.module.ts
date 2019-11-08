@@ -9,9 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
-import {PrivacyCardComponent} from '../accounts/privacy-card/privacy-card.component';
-import {AccountGroupsComponent} from '../accounts/account-groups/account-groups.component';
-import {ProfileComponent} from '../accounts/account-groups/profile/profile.component';
 
 @NgModule({
   imports: [
