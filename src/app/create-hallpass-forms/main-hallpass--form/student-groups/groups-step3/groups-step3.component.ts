@@ -8,7 +8,7 @@ import {UserService} from '../../../../services/user.service';
 import {fromEvent, Observable, throwError} from 'rxjs';
 import * as XLSX from 'xlsx';
 import {User} from '../../../../models/User';
-import * as _ from 'lodash';
+import { cloneDeep, uniqBy } from 'lodash';
 
 @Component({
   selector: 'app-groups-step3',
@@ -19,7 +19,25 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   @ViewChild('studentEmails') studentEmailsFile;
 
   @Input() form: FormGroup;
-  @Input() editGroup: StudentList;
+  editGroupInitial: StudentList;
+  editGroup: StudentList;
+  @Input() set groupToEdit(groupToEdit: StudentList) {
+    if (groupToEdit) {
+      this.editGroupInitial = groupToEdit;
+      this.editGroup = cloneDeep(groupToEdit);
+      console.log(this.editGroup);
+      this.form.get('title').setValue(this.editGroup.title);
+      this.form.get('users').setValue(this.editGroup.users);
+      this.form.valueChanges
+        .pipe(
+          skip(1)
+        )
+        .subscribe((val: any) => {
+          this.allowToSave = true;
+        });
+
+    }
+  }
 
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
@@ -36,17 +54,6 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.editGroup);
-    this.form.get('title').setValue(this.editGroup.title);
-    this.form.get('users').setValue(this.editGroup.users);
-    this.form.valueChanges
-      .pipe(
-        skip(1)
-      )
-      .subscribe((val: any) => {
-        this.allowToSave = true;
-      });
-
     fromEvent(this.studentEmailsFile.nativeElement , 'change')
       .pipe(
         switchMap((evt: Event) => {
@@ -103,7 +110,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
         this.loadingIndicator = false;
         console.log(students);
         this.uploadedStudents = students;
-        this.editGroup.users = _.uniqBy(this.editGroup.users.concat(students.existingStudents), 'id');
+        this.editGroup.users = uniqBy(this.editGroup.users.concat(students.existingStudents), 'id');
         this.updateUsers(this.editGroup.users);
 
         // this.loadingIndicator = false;

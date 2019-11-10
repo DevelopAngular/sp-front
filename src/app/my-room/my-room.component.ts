@@ -23,7 +23,6 @@ import { ScreenService } from '../services/screen.service';
 import { SortMenuComponent } from '../sort-menu/sort-menu.component';
 import { MyRoomAnimations } from './my-room.animations';
 import { KioskModeService } from '../services/kiosk-mode.service';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { bumpIn } from '../animations';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -451,20 +450,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
         });
     }
-  }
-
-  showMainForm(forLater: boolean): void {
-    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
-      panelClass: 'main-form-dialog-container',
-      backdropClass: 'custom-backdrop',
-      data: {
-        'forLater': forLater,
-        'forStaff': this.isStaff,
-        'forInput': true,
-        'kioskMode': true,
-        'kioskModeRoom': this.kioskMode.currentRoom$.value
-      }
-    });
   }
 
   showOptions(target: HTMLElement) {

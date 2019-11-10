@@ -18,11 +18,18 @@
   z-index: 1;
   align-items: center;
   width: 100%;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
   overflow: hidden;
   font-size: 15px;
   color: $navy;
+
+  .switch-locs-view {
+    position: absolute;
+    left: 20px;
+    z-index: 1000;
+    cursor: pointer;
+  }
 
   .footer-from-teacher-text {
     width: 100%;

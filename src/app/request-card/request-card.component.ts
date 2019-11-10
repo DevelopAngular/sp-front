@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy} from '@angular/core';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { Util } from '../../Util';
@@ -9,20 +9,21 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep} from '../animations';
-import {BehaviorSubject, of} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
-import * as _ from 'lodash';
+import { uniqBy, uniq, isNull } from 'lodash';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-request-card',
@@ -30,7 +31,7 @@ import {DeviceDetection} from '../device-detection.helper';
   styleUrls: ['./request-card.component.scss'],
   animations: [NextStep]
 })
-export class RequestCardComponent implements OnInit {
+export class RequestCardComponent implements OnInit, OnDestroy {
 
   @Input() request: Request;
   @Input() forFuture: boolean = false;
@@ -64,6 +65,8 @@ export class RequestCardComponent implements OnInit {
   header: string;
   cancelEditClick: boolean;
 
+  destroy$: Subject<any> = new Subject<any>();
+
 
   constructor(
       public dialogRef: MatDialogRef<RequestCardComponent>,
@@ -74,7 +77,8 @@ export class RequestCardComponent implements OnInit {
       private _zone: NgZone,
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
-      private screenService: ScreenService
+      private screenService: ScreenService,
+      private shortcutsService: KeyboardShortcutsService
   ) {}
 
   get invalidDate() {
@@ -97,7 +101,7 @@ export class RequestCardComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.teacherNames, 'id');
+    return uniqBy(this.teacherNames, 'id');
   }
 
   ngOnInit() {
@@ -115,8 +119,24 @@ export class RequestCardComponent implements OnInit {
       this.fromHistoryIndex = this.data['fromHistoryIndex'];
     }
 
-      this.dataService.currentUser
-    .pipe(this.loadingService.watchFirst)
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(key => {
+        if (key[0] === 'a') {
+          this.approveRequest();
+        } else if (key[0] === 'd') {
+          this.denyRequest('');
+        }
+      });
+
+    this.dataService.currentUser
+    .pipe(
+      this.loadingService.watchFirst,
+      takeUntil(this.destroy$)
+    )
     .subscribe(user => {
       this._zone.run(() => {
         this.user = user;
@@ -126,7 +146,12 @@ export class RequestCardComponent implements OnInit {
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
-  get studentName(){
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  get studentName() {
     return getInnerPassName(this.request);
   }
 
@@ -215,9 +240,9 @@ export class RequestCardComponent implements OnInit {
 
       if (this.isFutureOrNowTeachers) {
           if (this.forFuture) {
-              body.teachers = _.uniq(this.futureTeachers.map(t => t.id));
+              body.teachers = uniq(this.futureTeachers.map(t => t.id));
           } else {
-              body.teachers = _.uniq(this.nowTeachers.map(t => t.id));
+              body.teachers = uniq(this.nowTeachers.map(t => t.id));
           }
       } else {
           body.teacher = this.request.teacher.id;
@@ -232,8 +257,10 @@ export class RequestCardComponent implements OnInit {
               'duration' : this.request.duration,
               'travel_type' : this.request.travel_type
           };
-         console.log('this invitation =>', invitation);
-          this.requestService.createInvitation(invitation).pipe(switchMap(() => {
+         // console.log('this invitation =>', invitation);
+          this.requestService.createInvitation(invitation).pipe(
+            takeUntil(this.destroy$),
+            switchMap(() => {
               return this.requestService.cancelRequest(this.request.id);
           })).subscribe(res => {
               this.performingAction = true;
@@ -241,6 +268,7 @@ export class RequestCardComponent implements OnInit {
           });
       } else {
       this.requestService.createRequest(body).pipe(
+          takeUntil(this.destroy$),
           switchMap(res => {
               return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
                   (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
@@ -257,6 +285,7 @@ export class RequestCardComponent implements OnInit {
             this.dialogRef.close();
             config = {
                 panelClass: 'form-dialog-container',
+                maxWidth: '100vw',
                 backdropClass: 'custom-backdrop',
                 data: {
                     'entryState': {
@@ -290,15 +319,18 @@ export class RequestCardComponent implements OnInit {
           };
 
          return this.requestService.createRequest(body);
-      }), switchMap(() => this.requestService.cancelRequest(this.request.id)))
+      }),
+        takeUntil(this.destroy$),
+        switchMap(() => this.requestService.cancelRequest(this.request.id)))
           .subscribe(console.log);
     }
   }
 
-  editMessage(){
-    if(!this.messageEditOpen) {
+  editMessage() {
+    if (!this.messageEditOpen) {
       const infoDialog = this.dialog.open(CreateHallpassFormsComponent, {
         width: '750px',
+        maxWidth: '100vw',
         panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {'entryState': 'restrictedMessage',
@@ -344,12 +376,14 @@ export class RequestCardComponent implements OnInit {
           if (this.isSeen) {
             this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
             this.formState.previousStep = 4;
+            this.createFormService.setFrameMotionDirection('disable');
             this.cardEvent.emit(this.formState);
           } else {
             this.dialogRef.close();
             const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
               width: '750px',
               panelClass: 'form-dialog-container',
+              maxWidth: '100vw',
               backdropClass: 'custom-backdrop',
               data: {
                 'fromLocation': this.request.origin,
@@ -441,7 +475,7 @@ export class RequestCardComponent implements OnInit {
 
         messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
           // denyMessage = data['message'];
-          if (_.isNull(matData.data.message)) {
+          if (isNull(matData.data.message)) {
             this.messageEditOpen = false;
             return;
           }
@@ -462,7 +496,9 @@ export class RequestCardComponent implements OnInit {
       this.denyRequest('No message');
 
     } else if (action === 'delete') {
-      this.requestService.cancelRequest(this.request.id).subscribe(() => {
+      this.requestService.cancelRequest(this.request.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
         this.dialogRef.close();
       });
     } else if (action === 'change_date') {
@@ -493,8 +529,10 @@ export class RequestCardComponent implements OnInit {
     const body = {
       'message' : denyMessage
     };
-    this.requestService.denyRequest(this.request.id, body).subscribe((httpData) => {
-      console.log('[Request Denied]: ', httpData);
+    this.requestService.denyRequest(this.request.id, body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((httpData) => {
+      // console.log('[Request Denied]: ', httpData);
       this.dialogRef.close();
     });
   }
@@ -506,7 +544,9 @@ export class RequestCardComponent implements OnInit {
   approveRequest() {
     this.performingAction = true;
     const body = [];
-    this.requestService.acceptRequest(this.request.id, body).subscribe(() => {
+    this.requestService.acceptRequest(this.request.id, body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
       this.dialogRef.close();
     });
   }

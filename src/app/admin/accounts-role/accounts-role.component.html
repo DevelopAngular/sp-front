@@ -10,27 +10,6 @@
           </div>
           <div class="ds-h-100 ds-mx-10" *ngIf="(dataTableEditState | async)"></div>
           <div class="ds-mt-20 ds-mx-5" [ngSwitch]="role">
-<!--            <div *ngSwitchCase="'_all'">-->
-<!--              <div class="ds-mr-20">-->
-
-<!--                <div class="card_header ds-mb-10">-->
-<!--                  <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})" [style.padding-left]="0">All Accounts</span>-->
-<!--                </div>-->
-<!--                <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">-->
-<!--                  <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"-->
-<!--                       [matTooltip]="'All accounts at one place.'"-->
-<!--                       matTooltipClass="tooltip"-->
-<!--                       alt="">-->
-<!--                  <span [style.font-weight]="'bold'">{{(accounts$ | async).total }} account{{(accounts$ | async).total > 1 ? 's' : ''}}</span><br>-->
-<!--                  <div class="arrow-down-container">-->
-<!--                    <div class="arrow-down"></div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div  *ngIf="(dataTableEditState | async)" class="card_title">-->
-<!--                  <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
             <div *ngSwitchCase="'_profile_admin'">
               <div class="card_header ds-mb-10">
                 <img [src]="darkTheme.getIcon({
@@ -380,25 +359,6 @@
           <app-account-groups
             (accountsToSync)="syncOrgUnits($event)"
           ></app-account-groups>
-        </div>
-      </div>
-
-      <div class="footer">
-        <div class="text">
-          <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Disconnect G Suite</div>
-          <div class="info" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-            When you disconnect your account, we’ll stop syncing your accounts with G Suite.
-            No account data will be erased, but users will no longer be able to sign in to SmartPass.<br/>
-            <strong>Only origindaladmin@example.com is able to perform this action since their account will not lose access.</strong>
-          </div>
-        </div>
-        <div class="button">
-          <app-gradient-button
-                  [gradient]="'#DA2370, #FB434A'"
-                  [hoverColor]="'#DA2370'"
-                  [size]="'small'"
-          >Disconnect G Suite
-          </app-gradient-button>
         </div>
       </div>
     </div>

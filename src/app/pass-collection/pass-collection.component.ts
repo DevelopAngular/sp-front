@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, HostListener} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, HostListener, ChangeDetectionStrategy} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {BehaviorSubject, merge, of, zip,  Observable ,  ReplaySubject ,  Subject } from 'rxjs';
 import { DataService } from '../services/data-service';
@@ -11,11 +11,10 @@ import { PassLike} from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import {delay, map, mergeAll, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {delay, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import { TimeService } from '../services/time.service';
-
-import * as _ from 'lodash';
+import { isEqual } from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -68,15 +67,11 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
 
+  activePassTime$;
+
   timers: number[] = [];
 
   timerEvent: Subject<void> = new BehaviorSubject(null);
-
-  // sortOptions = [
-  //     { display: 'Pass Expiration Time', color: this.darkTheme.getColor(), action: 'expiration_time', toggle: false },
-  //     { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
-  //     { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
-  // ];
 
   sort$ = this.dataService.sort$;
   test: any;
@@ -126,7 +121,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         this.currentPasses$
           .pipe(
             switchMap((_passes) => {
-              if (_.isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
+              if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
                 return of(_passes);
               } else {
                 this.currentPasses = [];
@@ -144,15 +139,11 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             this.timerEvent.next(null);
           }, 1000));
         }
-
-    // if (this.screenService.isDeviceSmall) {
-    //   this.grid_gap = '4px';
-    // }
   }
 
   ngOnDestroy() {
     this.timers.forEach(id => {
-      console.log('Clearing interval');
+      // console.log('Clearing interval');
       clearInterval(id);
     });
     this.timers = [];
@@ -174,7 +165,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     return this.emptyMessage;
   }
 
-  showPass(pass: PassLike) {
+  showPass(pass) {
     this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }
@@ -198,7 +189,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         forMonitor: this.forMonitor,
         forStaff: this.forStaff && !this.kioskMode.currentRoom$.value,
         kioskMode: !!this.kioskMode.currentRoom$.value,
-        hideReport: this.isAdminPage
+        hideReport: this.isAdminPage,
+        activePassTime$: this.activePassTime$
       };
       data.isActive = !data.fromPast && !data.forFuture;
     } else {

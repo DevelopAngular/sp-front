@@ -11,239 +11,185 @@ export const bumpIn = trigger('pressState', [
   transition('down => up', animate('100ms ease-in'))
 ]);
 
+export const Select = trigger('Select', [
+    state('selected',
+      style({
+        'transform': 'scale(1)',
+        'background': '{{background}}',
+        'boxShadow': '0px 3px 8px 0px rgba(0, 0, 0, .12), 0px 3px 1px 0px rgba(0, 0, 0, .04)'
+      }), { params: { background: 'transparent'}}
+    ),
+    state('unselected',
+      style({
+        'transform': 'scale(.95)',
+        'background': 'transparent'
+      })
+      , { params: { background: 'transparent'}}
+    ),
+    transition('selected <=> unselected', [
+      animate('.15s ease-in')
+    ])
+  ]);
+
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-      query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
+    query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.24) scaleX(0.6)',
+      }),
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.0) scaleX(1.0)',
+
+      }),
+    ])), {optional: true}),
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('.45s 0s ease', keyframes([
+      style({
+        opacity: 0,
+        transform: 'scaleY(0.8) scaleX(1.65)',
+      }),
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.0) scaleX(1.0)',
+
+      }),
+    ])), {optional: true}),
+    query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
         style({
           opacity: 0,
-          transform: 'scale(1.2)'
+          transform: 'scale(1.2)',
         }),
         style({
           opacity: 1,
-          transform: 'scale(1)'
+          transform: 'scale(1)',
         })
       ])), {optional: true}),
       query(`
-      .from-wrapper-to-date,
-      .to-wrapper-to-datee,
-      .from-header,
-      .to-header,
-      .category-header_animation-back
-      .category-header,
-      .rest-tar-header,
-      .rest-mes-header,
-      .date-picker,
-      .student-groups,
-      .locations
-      `, animate('0.4s 0s ease', keyframes([
+      [data-motion-opacity='forward']
+      `, [
+        animate('0.0s',
+            style({
+              opacity: 0,
+              // boxShadow: 'none',
+            })
+        ),
+        animate('0.20s ease-in',
           style({
-            background: 'transparent',
+            opacity: 0.25,
+            // boxShadow: 'none',
           }),
-          style({
-            background: 'transparent',
-          }),
-        ])), {optional: true}
-      ),
-      query(`.back-button-white`, animate('0.4s 0s ease', keyframes([
-          style({
-            opacity: 0,
-          }),
-
-          style({
-            opacity: 0,
-          }),
-        ])), {optional: true}
-      ),
-      query(`
-      .divider,
-      .category-header_animation-back,
-      .date-picker,
-      .student-groups,
-      .target-footer,
-      .from-footer
-      `, animate('0.4s 0s ease', keyframes([
-          style({
-            opacity: 0,
-          }),
+        ),
+        animate('0.20s ease-out',
           style({
             opacity: 1,
+            // boxShadow: 'none',
           })
-        ])), {optional: true}
+        ),
+      ], {optional: true}
       ),
       query(`
-      .divider-header,
-      .from-header-text,
-      .to-header-text,
-      .category-header-text,
-      .rest-tar-header-text,
-      .rest-mes-header-text,
-      .from-content,
-      .to-content,
-      .category-content,
-      .rest-tar-content,
-      .rest-mes-content,
-      .date-content,
-      .student-select,
-      .message-entry,
-      .divider-text-message,
-      .divider-text-students,
-      .page-1,
-      .page-2,
-      .page-3,
-      .page-4,
-      .slide,
-      .new-room-in-folder-header,
-      .room-name, .folder-name, .room-number,
-      .rooms-in-folder,
-      .teacher-search,
-      .travel-settings,
-      .restriction-settings,
-      .existing-rooms,
-      .import-rooms-content
-      `, animate('0.4s 0s ease', keyframes([
-          style({
-            opacity: 0,
-            transform: 'translateX({{from}}px)',
-          }),
-          style({
-            opacity: 1,
-            transform: 'translateX(0px)',
-          })
-        ])), {optional: true}
+      [data-motion-translate='forward'], [data-motion-translate='back']
+      `,
+        [
+          animate('0.0s', style({
+              opacity: 0,
+              transform: 'translateX({{from}}px)',
+            })
+          ),
+          animate('0.20s ease-in', style({
+              opacity: 0.25,
+              transform: 'translateX({{halfFrom}}px)',
+            })
+          ),
+          animate('0.20s ease-out', style({
+              opacity: 1,
+              transform: 'translateX(0px)',
+            })
+          ),
+        ], {optional: true}
       )
     ]), { params: { from: 100, halfFrom: 50}}
   ),
   transition(':leave', group([                                                              // :LEAVE PSEUDOSTATE
-    query(`
-      .from-wrapper-to-date,
-      .to-wrapper-to-date,
-      .date-picker,
-      .student-groups,
-      .locations
-      `, animate('0.4s 0s ease', keyframes([
-        style({
-          background: 'transparent',
-          boxShadow: 'none',
-        }),
-        style({
-          background: 'transparent',
-          boxShadow: 'none',
-        }),
-      ])), {optional: true}
-    ),
-    query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
+    query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
       style({
         opacity: 1,
-        transform: 'scale(1)'
+        transform: 'scaleY(1.0) scaleX(1.0)',
+
+      }),
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.24) scaleX(0.6)',
+      })
+    ])), {optional: true}),
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('.45s 0s ease', keyframes([
+      style({
+        opacity: 1,
+        transform: 'scaleY(1.0) scaleX(1.0)',
       }),
       style({
         opacity: 0,
-        transform: 'scale(0.8)'
+        transform: 'scaleY(0.8) scaleX(1.65)',
+      }),
+    ])), {optional: true}),
+    query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
+      style({
+        opacity: 1,
+        transform: 'scale(1)',
+
+      }),
+      style({
+        opacity: 0,
+        transform: 'scale(0.8)',
       })
     ])), {optional: true}),
       query(`
-      .from-header,
-      .to-header,
-      .to-header-back,
-      .category-header,
-      .rest-tar-header,
-      .rest-mes-header
+      [data-motion-opacity='back']
       `,
-      animate('0.4s 0s ease', keyframes([
-          style({
-            'z-index': 9,
-            boxShadow: 'none',
-
-          }),
-          style({
-            'z-index': 9,
-            boxShadow: 'none',
-          }),
-        ])), {optional: true}
-      ),
-    query(`.back-button-grey`, animate('0.4s 0s ease', keyframes([
-        style({
-          opacity: 0,
-        }),
-
-        style({
-          opacity: 0,
-        }),
-      ])), {optional: true}
-    ),
-      query(`
-      .divider,
-      .category-header_animation-back,
-      .date-picker,
-      .student-groups,
-      .locations,
-      .target-footer,
-      .from-footer
-      `,
-      animate('0.4s 0s ease', keyframes([
-          style({
-            opacity: 1,
-          }),
-          style({
-            opacity: 0,
-          }),
-        ])), {optional: true}
-      ),
-      query(`
-      .room-name-container
-      `,
-      animate('1.4s 0s ease', keyframes([
-            style({
-              position: 'relative',
-              height: '0px',
-              width: '0px'
-            }),
-            style({
-              position: 'relative',
-              height: '0px',
-              width: '0px'
-            }),
-
-        ])), {optional: true}
-      ),
-    query(`
-      .divider-header,
-      .from-header-text,
-      .to-header-text,
-      .rest-tar-header_animation-back,
-      .rest-mes-header_animation-back,
-      .category-header-text,
-      .rest-tar-header-text,
-      .rest-mes-header-text,
-      .from-content,
-      .to-content,
-      .category-content,
-      .rest-tar-content,
-      .rest-mes-content,
-      .date-content,
-      .from-content-to-date,
-      .student-select,
-      .message-entry,
-      .divider-text-message,
-      .divider-text-students,
-      .page-1,
-      .page-2,
-      .page-3,
-      .page-4,
-      .slide
-      `,
-      animate('0.4s 0s ease', keyframes([
+        [
+          animate('0.0s',
             style({
               opacity: 1,
-              transform: 'translateX(0px)',
+              // boxShadow: 'none',
+            })
+          ),
+          animate('0.20s ease-in',
+            style({
+              opacity: 0.25,
+              // boxShadow: 'none',
             }),
+          ),
+          animate('0.20s ease-out',
             style({
               opacity: 0,
-              transform: 'translateX({{to}}px)',
-            }),
+              // boxShadow: 'none',
+            })
+          ),
 
-        ])), {optional: true}
-      )
+        ], {optional: true}
+      ),
+      query(`
+        [data-motion-translate='forward'], [data-motion-translate='back']
+        `,
+        [
+          animate('0.0s', style({
+              opacity: 1,
+              transform: 'translateX(0px)',
+            })
+          ),
+          animate('0.20s ease-in', style({
+              opacity: 0.25,
+              transform: 'translateX({{halfTo}}px)',
+            })
+          ),
+          animate('0.20s ease-out', style({
+              opacity: 0,
+              transform: 'translateX({{to}}px)',
+            })
+          )
+        ], {optional: true}
+        )
     ]), { params: { to: -100, halfTo: -50}}
   )
 ]);

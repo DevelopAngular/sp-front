@@ -1,19 +1,22 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
-import {StorageService} from '../services/storage.service';
 import {filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {NavbarDataService} from '../main/navbar-data.service';
+import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 
 @Component({
   selector: 'app-school-toggle-bar',
   templateUrl: './school-toggle-bar.component.html',
   styleUrls: ['./school-toggle-bar.component.scss']
 })
-export class SchoolToggleBarComponent implements OnInit, OnDestroy {
+export class SchoolToggleBarComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  @ViewChild('schoolToggle') schoolToggle: ElementRef;
 
   @Input() schools: School[];
 
@@ -24,9 +27,15 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private http: HttpService,
+    private navbarService: NavbarDataService,
+    private navbarElementsService: NavbarElementsRefsService,
   ) { }
 
   ngOnInit() {
+    this.schools = this.schools.sort( (school, schoolToCompare) => {
+        return school.name.localeCompare(schoolToCompare.name);
+    });
+
     this.http.currentSchool$.pipe(takeUntil(this.subscriber$), filter(res => !!res)).subscribe(school => {
       this.currentSchool = school;
     });
@@ -37,9 +46,11 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy {
     this.subscriber$.complete();
   }
 
+  ngAfterViewInit(): void {
+    this.navbarElementsService.schoolToggle$.next(this.schoolToggle);
+  }
+
   showOptions(target: HTMLElement) {
-      // const target = new ElementRef(evt.currentTarget);
-    // console.log('========>', target);
     UNANIMATED_CONTAINER.next(true);
     const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',

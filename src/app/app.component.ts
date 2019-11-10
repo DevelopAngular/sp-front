@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-
-import * as _ from 'lodash';
+import { filter as _filter, find } from 'lodash';
 import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
 
 import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
@@ -17,13 +16,15 @@ import { GoogleLoginService } from './services/google-login.service';
 import { HttpService, SPError } from './services/http-service';
 import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
-import { UserService } from './services/user.service';
 import { WebConnectionService } from './services/web-connection.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
 import {Meta} from '@angular/platform-browser';
 import {NotificationService} from './services/notification-service';
+import {GoogleAnalyticsService} from './services/google-analytics.service';
+import {ShortcutInput} from 'ng-keyboard-shortcuts';
+import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
 
 declare const window;
 
@@ -41,6 +42,8 @@ export const INITIAL_LOCATION_PATHNAME =  new ReplaySubject<string>(1);
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  shortcuts: ShortcutInput[];
+
   private dialogContainer: HTMLElement;
   @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
     this.dialogContainer = content.nativeElement;
@@ -51,32 +54,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
-  public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
   public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
-  private openedResizeDialog: boolean;
+  public isKioskMode: boolean;
   private openConnectionDialog: boolean;
 
   private subscriber$ = new Subject();
-
-  // @HostListener('window:resize', ['$event.target'])
-  // onResize(target) {
-  //     if ((target.innerWidth < 900 || target.innerHeight < 500) && !this.openedResizeDialog) {
-  //       this.openedResizeDialog = true;
-  //       setTimeout(() => {
-  //           this.dialog.open(ResizeInfoDialogComponent, {
-  //               id: 'ResizeDialog',
-  //               panelClass: 'toasr',
-  //               backdropClass: 'white-backdrop',
-  //               disableClose: true
-  //           });
-  //       }, 50);
-  //     } else if ((target.innerWidth >= 900 && target.innerHeight >= 500) && this.openedResizeDialog) {
-  //         this.openedResizeDialog = false;
-  //         this.dialog.getDialogById('ResizeDialog').close();
-  //     }
-  // }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
@@ -84,7 +68,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private http: HttpService,
     private httpNative: HttpClient,
     private adminService: AdminService,
-    private userService: UserService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -95,13 +78,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private kms: KioskModeService,
     private meta: Meta,
     private notifService: NotificationService,
+    private googleAnalytics: GoogleAnalyticsService,
+    private shortcutsService: KeyboardShortcutsService
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
-    // console.log('Initial location path ===>', );
+    this.shortcutsService.initialize();
+    this.shortcuts = this.shortcutsService.shortcuts;
 
+    this.googleAnalytics.init();
     const fcm_sw = localStorage.getItem('fcm_sw_registered');
     if (fcm_sw === 'true') {
       this.notifService.initNotifications(true);
@@ -145,8 +132,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.subscriber$),
     )
     .subscribe(t => {
-      console.log('Auth response ===>', t, window.location.pathname);
-      // debugger
       this._zone.run(() => {
         this.showUISubject.next(true);
         this.isAuthenticated = t;
@@ -157,13 +142,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
 
-    this.http.schools$.pipe(
-      map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
+    this.http.schoolsCollection$.pipe(
+      map(schools => _filter(schools, (school => school.my_roles.length > 0))),
       withLatestFrom(this.http.currentSchool$),
       takeUntil(this.subscriber$))
       .subscribe(([schools, currentSchool]) => {
         this.schools = schools;
-        if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
+        if (currentSchool && !find(schools, {id: currentSchool.id})) {
           this.http.setSchool(schools[0]);
         }
       });
@@ -180,6 +165,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
+          this.isKioskMode = this.router.url.includes('kioskMode');
           if (route.firstChild) {
             route = route.firstChild;
           }

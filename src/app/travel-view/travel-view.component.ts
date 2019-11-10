@@ -76,6 +76,7 @@ export class TravelViewComponent implements OnInit {
       const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
         // width: '750px',
         panelClass: 'form-dialog-container',
+        maxWidth: '100vw',
         backdropClass: 'invis-backdrop',
         data: {
               'forInput': false,

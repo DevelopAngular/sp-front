@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-
-
-
-import { BehaviorSubject ,  Observable , ReplaySubject, Subject} from 'rxjs';
-import {map, shareReplay, switchMap} from 'rxjs/operators';
+import { BehaviorSubject ,  Observable, Subject} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import { HttpService } from './http-service';
 import { PassLike } from '../models/index';
 import { Invitation } from '../models/Invitation';
@@ -59,21 +56,6 @@ export class DataService {
 
   updateInbox(state: boolean) {
     this.inboxSource.next(state);
-  }
-
-  updateHMSearch(hmSearch: string) {
-  }
-
-  updateHMSort(hmSort: string) {
-  }
-
-  updateMRRoom(mrRoom: Location) {
-  }
-
-  updateMRSearch(mrSearch: string) {
-  }
-
-  updateMRDate(mrDate: Date) {
   }
 
   constructor(

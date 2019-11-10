@@ -1,10 +1,9 @@
-import {Component, ElementRef, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup} from '@angular/forms';
 import {StorageService} from '../../services/storage.service';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-columns-config-dialog',

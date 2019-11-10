@@ -1,4 +1,4 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
 
 import {of} from 'rxjs';
@@ -41,12 +41,12 @@ export class GoogleSigninComponent implements OnInit {
     });
     this.httpService.errorToast$.subscribe(v => {
       this.showSpinner = !!v;
-    })
+    });
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
         const errMessage = this.loggedWith === 1
           ? 'Please sign in with your school account or contact your school administrator.'
-          : 'Please check your username and password or contact your school administrator.'
+          : 'Please check your username and password or contact your school administrator.';
 
         this.httpService.errorToast$.next({
           header: 'Oops! Sign in error.',
@@ -70,7 +70,7 @@ export class GoogleSigninComponent implements OnInit {
       this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
-      window.waitForAppLoaded();
+      window.waitForAppLoaded(true);
       of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
       .pipe(
         tap((res) => { console.log(res); }),
@@ -90,7 +90,7 @@ export class GoogleSigninComponent implements OnInit {
       .signIn()
       .then(() => {
         this.showSpinner = false;
-        window.waitForAppLoaded();
+        // window.waitForAppLoaded();
       })
       .catch((err) => {
         if (err && err.error !== 'popup_closed_by_user') {

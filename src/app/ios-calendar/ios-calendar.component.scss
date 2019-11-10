@@ -39,8 +39,12 @@
       color: #A3A3A3;
       overflow: hidden;
       .wheel {
-        flex: 1 1 auto;
+        //flex: 1 1 auto;
         height: 100%;
+      }
+      &__selected {
+        height: 40px;
+        position: absolute;
       }
     }
   }

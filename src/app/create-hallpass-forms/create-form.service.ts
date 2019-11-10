@@ -1,25 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, of, ReplaySubject, zip} from 'rxjs';
 import { HallPassesService } from '../services/hall-passes.service';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
+import {LocationsService} from '../services/locations.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class CreateFormService {
 
-  isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private transition: any;
   private frameMotionDirection$: BehaviorSubject<any>;
 
-  constructor(private hallPassService: HallPassesService) {
+  public scalableBoxController = new ReplaySubject<boolean>(1);
+  public compressableBoxController = new ReplaySubject<boolean>(1);
+  public isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+
+  constructor(private hallPassService: HallPassesService, private locService: LocationsService) {
     this.transition = {
       to: -100,
       halfTo: -50,
       from: 100,
       halfFrom: 50,
-      direction: 'forward'
+      direction: 'disable'
     };
     this.frameMotionDirection$ = new BehaviorSubject(this.transition);
   }
@@ -27,9 +32,43 @@ export class CreateFormService {
   getPinnable(filter?: boolean) {
     return this.hallPassService.pinnables$
       .pipe(
-        map((pins) => {
+        map((pins: Pinnable[]) => {
           if (filter) {
-            return pins.filter((p: Pinnable) => (p.type === 'location' && !p.location.restricted) || p.type === 'category');
+            return pins.filter((p: Pinnable) => {
+             return (p.type === 'location' && !p.location.restricted) || p.type === 'category';
+            });
+          } else {
+            return pins;
+          }
+        }),
+        switchMap(pinnables => {
+          if (filter) {
+            return zip(...pinnables.map((pin: any) => {
+              if (pin.type === 'category') {
+                return this.locService.getLocationsWithCategory(pin.title)
+                  .pipe(
+                    map(locations => {
+                      pin.myLocations = locations;
+                      return pin;
+                    }));
+              } else {
+                return of(pin);
+              }
+            }));
+          } else {
+            return of(pinnables);
+          }
+        }),
+        map(pins => {
+          if (filter) {
+            return pins.filter(pin => {
+              if (pin.type === 'category') {
+                const validLocs = pin.myLocations.filter(loc => !loc.restricted);
+                return validLocs.length;
+              } else {
+                return true;
+              }
+            });
           } else {
             return pins;
           }
@@ -37,21 +76,13 @@ export class CreateFormService {
       );
   }
 
-  seen() {
-    // if (localStorage.getItem('first-modal') === 'seen') {
-    //   this.isSeen$.next(true);
-    // } else {
-    //   localStorage.setItem('first-modal', 'seen');
-    // }
-  }
-
   setFrameMotionDirection(direction: string = 'forward') {
 
 
     switch (direction) {
       case 'disable':
-        this.transition.to = -100;
-        this.transition.halfTo = -50;
+        this.transition.to = 0;
+        this.transition.halfTo = 0;
         this.transition.from = 0;
         this.transition.halfFrom = 0;
         this.frameMotionDirection$.next(this.transition);

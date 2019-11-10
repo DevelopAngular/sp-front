@@ -2,17 +2,28 @@ import { Injectable } from '@angular/core';
 
 import { HttpService } from './http-service';
 import { School } from '../models/School';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {GSuiteOrgs} from '../models/GSuiteOrgs';
-import {share, switchMap, take} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 import {AppState} from '../ngrx/app-state/app-state';
 import {Store} from '@ngrx/store';
-import {getFoundReports, getIsLoadedReports, getIsLoadingReports, getReportsCollection} from '../ngrx/reports/states/reports-getters.state';
-import {getReports, searchReports} from '../ngrx/reports/actions';
+import {
+  getAddedReports,
+  getFoundReports,
+  getIsLoadedReports,
+  getIsLoadingReports,
+  getReportsCollection
+} from '../ngrx/reports/states/reports-getters.state';
+import {getReports, postReport, searchReports} from '../ngrx/reports/actions';
 import {getCountAccountsResult} from '../ngrx/accounts/nested-states/count-accounts/state/count-accouns-getters.state';
 import {getCountAccounts} from '../ngrx/accounts/nested-states/count-accounts/actions';
 import {getDashboardData} from '../ngrx/dashboard/actions';
 import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters.state';
+import {ColorProfile} from '../models/ColorProfile';
+import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
+import {getColorProfiles} from '../ngrx/color-profiles/actions';
+import {getLoadedProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
+import {getOnboardProcess} from '../ngrx/onboard-process/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +33,16 @@ export class AdminService {
     reports$: this.store.select(getReportsCollection),
     loaded$: this.store.select(getIsLoadedReports),
     loading$: this.store.select(getIsLoadingReports),
-    foundReports: this.store.select(getFoundReports)
+    foundReports: this.store.select(getFoundReports),
+    addedReports: this.store.select(getAddedReports)
   };
+
+  colorProfiles$: Observable<ColorProfile[]> = this.store.select(getColorProfilesCollection);
+  loadingColorProfiles$: Observable<boolean> = this.store.select(getLoadingColors);
+  loadedColorProfiles$: Observable<boolean> = this.store.select(getLoadedColors);
+
+  onboardProcessData$ = this.store.select(getProcessData);
+  loadedOnboardProcess$: Observable<boolean> = this.store.select(getLoadedProcess);
 
   countAccounts$ = this.store.select(getCountAccountsResult);
   dashboardData$ = this.store.select(getDashboardDataResult);
@@ -39,6 +58,10 @@ export class AdminService {
   getReportsData(limit = 10) {
     this.store.dispatch(getReports({ limit }));
     return this.reports.reports$;
+  }
+  sendReportRequest(data) {
+    this.store.dispatch(postReport({data}));
+    return this.reports.addedReports;
   }
 
   sendReport(data) {
@@ -78,6 +101,11 @@ export class AdminService {
     return this.http.get('v1/admin/dashboard');
   }
 
+  getOnboardProcessRequest() {
+    this.store.dispatch(getOnboardProcess());
+    return this.onboardProcessData$;
+  }
+
   getOnboardProgress() {
     return this.http.get('v1/admin/onboard_progress');
   }
@@ -107,14 +135,16 @@ export class AdminService {
   }
 
   //// Color Profile
+  getColorsRequest() {
+    this.store.dispatch(getColorProfiles());
+    return this.colorProfiles$;
+  }
+
   getColors() {
     return this.http.get('v1/color_profiles');
   }
 
   //// Schools
-  getSchools(): Observable<School[]> {
-    return this.http.get('v1/schools');
-  }
 
   getSchoolById(id: number): Observable<School> {
     return this.http.get(`v1/schools/${id}`);

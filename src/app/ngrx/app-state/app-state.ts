@@ -5,24 +5,42 @@ import { dashboardDataReducer } from '../dashboard/reducers';
 import { passStatsReducer } from '../pass-stats/reducers';
 import { studentGroupsReducer } from '../student-groups/reducers';
 import { teacherLocationsReducer } from '../teacherLocations/reducers';
+import { locationsReducer } from '../locations/reducers';
+import { favoriteLocationsReducer } from '../favorite-locations/reducers';
+import { colorsReducer } from '../color-profiles/reducers';
+import { schoolsReducer } from '../schools/reducers';
+import { userReducer } from '../user/reducers/user.reducer';
+import { onboardProcessReducer } from '../onboard-process/reducers/process.reducer';
 
 
 export interface AppState {
   readonly reports;
   readonly pinnables;
   readonly accounts;
+  readonly locations;
+  readonly favoriteLocations;
   readonly teacherLocations;
   readonly dashboard;
   readonly passStats;
   readonly studentGroups;
+  readonly colorProfiles;
+  readonly schools;
+  readonly user;
+  readonly onboardProcess;
 }
 
 export const reducers = {
   reports: reportsReducer,
   pinnables: pinnablesReducer,
   accounts: accountsReducer,
+  locations: locationsReducer,
+  favoriteLocations: favoriteLocationsReducer,
   teacherLocations: teacherLocationsReducer,
   dashboard: dashboardDataReducer,
   passStats: passStatsReducer,
-  studentGroups: studentGroupsReducer
+  studentGroups: studentGroupsReducer,
+  colorProfiles: colorsReducer,
+  schools: schoolsReducer,
+  user: userReducer,
+  onboardProcess: onboardProcessReducer
 };

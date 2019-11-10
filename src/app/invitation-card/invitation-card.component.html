@@ -94,17 +94,17 @@
 
       <div class="bottom-block">
         <app-pager *ngIf="invitation.status !== 'pending'; else pending" [page]="2">
-          <div class="page-1">
+          <div class="page-1" [attr.data-motion-translate]="true">
             <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
           </div>
-          <div class="page-2">
+          <div class="page-2" [attr.data-motion-translate]="true">
             <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
           </div>
 
-          <div class="page-5">
+          <div class="page-5" [attr.data-motion-translate]="true">
             <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
           </div>
-          <div class="page-6">
+          <div class="page-6" [attr.data-motion-translate]="true">
             <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
           </div>
         </app-pager>

@@ -3,10 +3,10 @@ import {User} from '../../../../models/User';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
-import {fromEvent, Observable, of, throwError} from 'rxjs';
+import {fromEvent, Observable, throwError} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
-import * as _ from 'lodash';
+import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 
@@ -90,7 +90,7 @@ export class GroupsStep2Component implements OnInit {
         this.loadingIndicator = false;
         console.log(students);
         this.uploadedStudents = students;
-        this.selectedStudents = _.uniqBy(this.selectedStudents.concat(students.existingStudents), 'id');
+        this.selectedStudents = uniqBy(this.selectedStudents.concat(students.existingStudents), 'id');
         this.form.get('users').setValue(this.selectedStudents);
         this.test();
       });
@@ -123,6 +123,10 @@ export class GroupsStep2Component implements OnInit {
         selectedStudents: this.selectedStudents
       }
     });
+  }
+
+  onCancelClick() {
+    this.form.controls['title'].setValue('');
   }
 
   get isIOSTablet() {

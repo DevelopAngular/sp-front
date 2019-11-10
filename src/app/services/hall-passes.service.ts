@@ -1,10 +1,16 @@
 import { Injectable } from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import { Pinnable } from '../models/Pinnable';
 import { HttpService } from './http-service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getCurrentPinnable, getIsLoadedPinnables, getIsLoadingPinnables, getPinnableCollection} from '../ngrx/pinnables/states';
+import {
+  getCurrentPinnable,
+  getIsLoadedPinnables,
+  getIsLoadingPinnables,
+  getPinnableCollection,
+  getPinnablesIds
+} from '../ngrx/pinnables/states';
 import {getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
 import {getPassStats} from '../ngrx/pass-stats/actions';
 import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
@@ -17,6 +23,7 @@ export class HallPassesService {
   pinnables$: Observable<Pinnable[]>;
   loadedPinnables$: Observable<boolean>;
   isLoadingPinnables$: Observable<boolean>;
+  pinnablesCollectionIds$: Observable<number[] | string[]>;
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
@@ -27,6 +34,7 @@ export class HallPassesService {
     this.isLoadingPinnables$ = this.store.select(getIsLoadingPinnables);
     this.currentPinnable$ = this.store.select(getCurrentPinnable);
     this.passStats$ = this.store.select(getPassStatsResult);
+    this.pinnablesCollectionIds$ = this.store.select(getPinnablesIds);
   }
 
     getActivePasses() {
@@ -93,9 +101,9 @@ export class HallPassesService {
         return this.http.patch(`v1/pinnables/${id}`, data);
     }
 
-    deletePinnableRequest(pinnable) {
-      this.store.dispatch(removePinnable({pinnable}));
-      return this.currentPinnable$;
+    deletePinnableRequest(id) {
+      this.store.dispatch(removePinnable({id}));
+      return of(true);
     }
 
     deletePinnable(id) {

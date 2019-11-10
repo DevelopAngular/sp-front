@@ -30,15 +30,17 @@
       </app-pass-collection>
     </div>
   </div>
+  <div class="inp" [style.opacity]="0" style="position: absolute; top: 0">
+    <input
+      [hidden]="hideInput"
+      tabindex="1"
+      type="text"
+      autofocus
+      #input
+      [(ngModel)]="cardReaderValue"
+      (keyup)="cardReader($event)"
+      (blur)="onCardReaderBlur()"
+    >
+  </div>
 </div>
-<input
-    [hidden]="hideInput"
-    tabindex="1"
-    type="text"
-    autofocus
-    #input
-    [(ngModel)]="cardReaderValue"
-    (keyup)="cardReader($event)"
-    (blur)="onCardReaderBlur()"
-    [style.opacity]="0"
->
+

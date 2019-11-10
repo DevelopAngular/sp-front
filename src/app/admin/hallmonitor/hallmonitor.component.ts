@@ -11,12 +11,11 @@ import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {delay, filter, map, switchMap, take, takeUntil, tap, toArray} from 'rxjs/operators';
+import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ScrollPositionService} from '../../scroll-position.service';
-
-import * as _ from 'lodash';
+import { takeRight } from 'lodash';
 import * as moment from 'moment';
 
 
@@ -153,7 +152,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
           if (!this.isSupplementReports) {
             this.studentreport = list;
           } else {
-            this.studentreport.push(..._.takeRight(list, 10));
+            this.studentreport.push(...takeRight(list, 10));
             this.isSupplementReports = false;
           }
         });

@@ -26,8 +26,8 @@ const reducer = createReducer(
   on(pinnablesActions.updatePinnableSuccess, (state, {pinnable}) => {
     return adapter.upsertOne(pinnable, {...state, loading: false, loaded: true, currentPinnableId: pinnable.id});
   }),
-  on(pinnablesActions.removeSuccessPinnable, (state, { pinnable }) => {
-    return adapter.removeOne(pinnable.id, {...state, loading: false, loaded: true, currentPinnableId: pinnable.id});
+  on(pinnablesActions.removeSuccessPinnable, (state, { id }) => {
+    return adapter.removeOne(+id, {...state, loading: false, loaded: true, currentPinnableId: id});
   }),
   on(pinnablesActions.getPinnablesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false}))
 );

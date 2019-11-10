@@ -6,8 +6,7 @@ import {BehaviorSubject, fromEvent} from 'rxjs';
 import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import * as _ from 'lodash';
-import {User} from '../../../../models/User';
+import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
@@ -122,13 +121,28 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.quickSelectedTeachers, 'id');
+    return uniqBy(this.quickSelectedTeachers, 'id');
   }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
+    this.frameMotion$.subscribe((v: any) => {
+      switch (v.direction) {
+        case 'back':
+          this.headerTransition['rest-tar-header'] = false;
+          this.headerTransition['rest-tar-header_animation-back'] = true;
+          break;
+        case 'forward':
+          this.headerTransition['rest-tar-header'] = true;
+          this.headerTransition['rest-tar-header_animation-back'] = false;
+          break;
+        default:
+          this.headerTransition['rest-tar-header'] = true;
+          this.headerTransition['rest-tar-header_animation-back'] = false;
+      }
+    });
   }
 
   textColor(item) {

@@ -8,7 +8,6 @@ import {
   EventEmitter,
   Output,
   ViewChild,
-  AfterContentInit,
   AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy, Renderer2
 } from '@angular/core';
 import { Location } from '@angular/common';
@@ -16,14 +15,13 @@ import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {filter, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
 import { LoadingService } from '../services/loading.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
-import { NgProgress } from '@ngx-progressbar/core';
 import { UserService } from '../services/user.service';
 import { SettingsComponent } from '../settings/settings.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
@@ -39,11 +37,11 @@ import {NavbarAnimations} from './navbar.animations';
 import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
-import {NavButtonComponent} from '../nav-button/nav-button.component';
-import {Schedule} from 'primeng/primeng';
-import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
+import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import { filter as _filter } from 'lodash';
 
 declare const window;
 
@@ -68,6 +66,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('tabPointer') tabPointer: ElementRef;
   @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
+  @ViewChild('navbar') navbar: ElementRef;
+  @ViewChild('setButton') settingsButton: ElementRef;
 
   @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
   @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
@@ -81,7 +81,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   user: User;
   representedUsers: RepresentedUser[];
   effectiveUser: RepresentedUser;
-  isProcess$ = this.process.ref().state;
   tab: string = 'passes';
   inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
 
@@ -97,7 +96,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   isMyRoomRoute: boolean;
 
-  schools: School[] = [];
+  countSchools$: Observable<number>;
 
   buttonHash = {
     passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
@@ -134,6 +133,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
             this.isInboxClicked = false;
         }
         this.dataService.updateInbox(this.inboxVisibility);
+
     }
 
   constructor(
@@ -147,7 +147,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private locationService: LocationsService,
       private _zone: NgZone,
       private navbarData: NavbarDataService,
-      private process: NgProgress,
       private activeRoute: ActivatedRoute,
       public  notifService: NotificationService,
       public darkTheme: DarkThemeSwitch,
@@ -157,7 +156,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       public screenService: ScreenService,
       private sideNavService: SideNavService,
       private cdr: ChangeDetectorRef,
-      private rendered: Renderer2
+      private rendered: Renderer2,
+      private navbarElementsService: NavbarElementsRefsService,
+      private shortcutsService: KeyboardShortcutsService
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -186,6 +187,28 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit() {
     this.underlinePosition();
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroyer$)
+      )
+      .subscribe(key => {
+        if (key[0] === ',') {
+          const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
+          (settingButton as HTMLElement).click();
+        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3') {
+          const route = {
+            '1': 'passes',
+            '2': 'hallmonitor',
+            '3': 'myroom'
+          };
+          const currentButton = this.buttons.find(button => button.route === route[key[0]]);
+          if (this.buttonVisibility(currentButton)) {
+            this.updateTab(currentButton.route);
+            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer, 0);
+          }
+        }
+      });
     this.hideButtons = this.router.url.includes('kioskMode');
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
@@ -196,7 +219,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = this.router.url.includes('kioskMode');
-        console.log('Hide ===>>', value.url);
+        // console.log('Hide ===>>', value.url);
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit[urlSplit.length - 1];
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
@@ -210,7 +233,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.userService.userData
       .pipe(
-        this.loadingService.watchFirst
+        this.loadingService.watchFirst,
+        takeUntil(this.destroyer$)
       )
       .subscribe(user => {
         this._zone.run(() => {
@@ -224,7 +248,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.userService.effectiveUser
       .pipe(
         this.loadingService.watchFirst,
-        // filter(eu => !!eu),
+        takeUntil(this.destroyer$),
         switchMap((eu: RepresentedUser) => {
           if (eu) {
               this.effectiveUser = eu;
@@ -288,13 +312,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.sideNavService.fadeClick.subscribe(click =>  this.fadeClick = click);
 
-    this.http.schools$.subscribe(schools => {
-        this.schools = schools;
-    });
+    this.countSchools$ = this.http.schoolsCollection$.pipe(
+      map(schools => {
+        const filteredSchools = _filter(schools, (school => school.my_roles.length > 0));
+        return filteredSchools.length;
+      })
+    );
   }
 
   ngAfterViewInit(): void {
-      this.underlinePosition();
+    this.underlinePosition();
+    this.navbarElementsService.navbarRef$.next(this.navbar);
   }
 
   underlinePosition() {
@@ -310,7 +338,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef) {
+  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 550) {
     if (this.isStaff && buttonsContainer && this.tabRefs ||
       this.isAssistant && buttonsContainer && this.tabRefs) {
       setTimeout(() => {
@@ -319,7 +347,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         if (tabRefsArray[selectedTabRef]) {
           this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
         }
-      }, 550);
+      }, timeout);
     }
   }
 
@@ -367,36 +395,38 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   showOptions(event) {
-    if (this.screenService.isDeviceLargeExtra) {
-      this.sideNavService.toggle$.next(true);
-      this.sideNavService.toggleLeft$.next(true);
+    if (!this.isOpenSettings) {
+      if (this.screenService.isDeviceLargeExtra) {
+        this.sideNavService.toggle$.next(true);
+        this.sideNavService.toggleLeft$.next(true);
+      }
+
+      const target = new ElementRef(event.currentTarget);
+      if (!this.screenService.isDeviceLargeExtra) {
+        this.isOpenSettings = true;
+        UNANIMATED_CONTAINER.next(true);
+        const settingRef = this.dialog.open(SettingsComponent, {
+          panelClass: ['calendar-dialog-container', 'animation'],
+          backdropClass: 'invis-backdrop',
+          data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
+        });
+
+        settingRef.beforeClose().subscribe(() => {
+          this.isOpenSettings = false;
+        });
+
+        settingRef.afterClosed().subscribe(action => {
+          UNANIMATED_CONTAINER.next(false);
+          this.settingsAction(action);
+        });
+      }
+
+      this.settingsClick.emit({ 'trigger': target, 'isSwitch': this.showSwitchButton });
+
+      this.sideNavService.sideNavData$.next({ 'trigger': target, 'isSwitch': this.showSwitchButton });
+
+      this.sideNavService.sideNavType$.next('left');
     }
-
-    const target = new ElementRef(event.currentTarget);
-    if (!this.screenService.isDeviceLargeExtra) {
-      this.isOpenSettings = true;
-      UNANIMATED_CONTAINER.next(true);
-      const settingRef = this.dialog.open(SettingsComponent, {
-        panelClass: ['calendar-dialog-container', 'animation'],
-        backdropClass: 'invis-backdrop',
-        data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
-      });
-
-      settingRef.beforeClose().subscribe(() => {
-        this.isOpenSettings = false;
-      });
-
-      settingRef.afterClosed().subscribe(action => {
-        UNANIMATED_CONTAINER.next(false);
-        this.settingsAction(action);
-      });
-    }
-
-    this.settingsClick.emit({ 'trigger': target, 'isSwitch': this.showSwitchButton });
-
-    this.sideNavService.sideNavData$.next({ 'trigger': target, 'isSwitch': this.showSwitchButton });
-
-    this.sideNavService.sideNavType$.next('left');
   }
 
   showTeaches(target) {
@@ -482,10 +512,12 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           } else {
               window.open('https://smartpass.app/studentdocs');
           }
-      } else if (action === 'feedback') {
-          window.location.href = 'mailto:feedback@smartpass.app';
+      } else if (action === 'wishlist') {
+          window.location.href = 'https://wishlist.smartpass.app/';
       } else if (action === 'privacy') {
-          window.open('https://www.smartpass.app/legal');
+        window.open('https://www.smartpass.app/privacy');
+      } else if (action === 'terms') {
+        window.open('https://www.smartpass.app/terms');
       }
   }
 
@@ -508,6 +540,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.screenService.isDeviceLarge && !this.screenService.isDeviceMid) {
       this.sideNavService.toggleRight$.next(true);
     }
+
+    // this.navbarElementsService.navbarRef$.next(this.navbar);
   }
 
   get notificationBadge$() {
@@ -552,5 +586,16 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
     if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
     return direction;
+  }
+
+  changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {
+    if (DeviceDetection.isIOSMobile() || DeviceDetection.isIOSMobile()) {
+      this.rendered.setStyle(clickedTab, 'opacity', 0.8);
+      setTimeout( () => {
+        this.rendered.setStyle(clickedTab, 'opacity', 1);
+      }, 200);
+    } else {
+      this.rendered.setStyle(clickedTab, 'opacity', pressed ? 0.8 : 1);
+    }
   }
 }

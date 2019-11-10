@@ -1,16 +1,15 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
-import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
-import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, switchMap} from 'rxjs/operators';
-
-import * as _ from 'lodash';
+import {map, pluck, switchMap, takeUntil } from 'rxjs/operators';
+import { filter as _filter } from 'lodash';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 declare const window;
 
@@ -100,7 +99,7 @@ export class OrgUnit {
   styleUrls: ['./sp-search.component.scss']
 })
 
-export class SPSearchComponent implements OnInit {
+export class SPSearchComponent implements OnInit, OnDestroy {
 
 
   @Input() searchTarget: SearchEntity = 'users';
@@ -128,10 +127,12 @@ export class SPSearchComponent implements OnInit {
 
   @Input() searchingTeachers: User[];
 
-
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
+  @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  @ViewChild('studentInput') input;
+  @ViewChild('studentInput') input: ElementRef;
+  @ViewChild('wrapper') wrapper: ElementRef;
+  @ViewChild('cell') cell: ElementRef;
 
   private placePredictionService;
   private currentPosition;
@@ -141,7 +142,7 @@ export class SPSearchComponent implements OnInit {
   selectedSchool;
   orgunitsCollection: GSuiteSelector[];
   orgunits: BehaviorSubject<any[]> = new BehaviorSubject(null);
-  teacherCollection$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>(null);
+  teacherCollection$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   pending$: Subject<boolean> = new Subject();
   students: Promise<any[]>;
@@ -150,12 +151,18 @@ export class SPSearchComponent implements OnInit {
   hovered: boolean;
   pressed: boolean;
 
+  searchCount: number;
+  firstSearchItem: User | GSuiteSelector;
+
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     private userService: UserService,
     private sanitizer: DomSanitizer,
     private httpService: HttpService,
     private http: HttpClient,
     private mapsApi: MapsAPILoader,
+    private shortcutsService: KeyboardShortcutsService
   ) {
 
 
@@ -208,8 +215,6 @@ export class SPSearchComponent implements OnInit {
       this.query
         .subscribe(
           (v1: any[]) => {
-            // console.log(v1);
-
             this.schools.next(v1);
             this.pending$.next(false);
             this.showDummy = v1 && !v1.length;
@@ -225,21 +230,39 @@ export class SPSearchComponent implements OnInit {
         }),
         map((gss: any[]) => {
           return gss
-            // .filter((gs) => gs.path.search(search) !== -1)
             .map((gs: {path: string}) => new GSuiteSelector('+' + gs.path));
         })
       )
       .subscribe((res: GSuiteSelector[]) => {
-        // console.log(res);
         this.orgunitsCollection = <GSuiteSelector[]>this.removeDuplicateStudents(res);
         this.showDummy = !this.removeDuplicateStudents(res).length;
         this.orgunits.next(this.removeDuplicateStudents(res));
       });
     }
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        takeUntil(this.destroy$),
+        pluck('key')
+      )
+      .subscribe(key => {
+        if (key[0] === 'enter') {
+          if (this.searchCount === 1) {
+            (this.cell.nativeElement as HTMLElement).click();
+          }
+          const element = document.activeElement;
+          (element as HTMLElement).click();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onSearch(search: string) {
-// debugger
+
     switch (this.searchTarget) {
       case 'users':
           if (search !== '') {
@@ -251,6 +274,7 @@ export class SPSearchComponent implements OnInit {
                 .then((paged: any) => {
                   this.pending$.next(false);
                   this.showDummy = !paged.results.length;
+                  this.isOpenedOptions.emit(true);
                   return this.removeDuplicateStudents(paged.results);
                 });
             } else if (this.type === 'gsuite') {
@@ -280,14 +304,14 @@ export class SPSearchComponent implements OnInit {
         if (search !== '') {
 
           this.pending$.next(true);
-                  this.placePredictionService.getPlacePredictions({
-                    location: this.currentPosition,
-                    input: search,
-                    radius: 100000,
-                    types: ['establishment']
-                  }, (predictions, status) => {
-                    this.query.next(predictions ? predictions : []);
-                  });
+          this.placePredictionService.getPlacePredictions({
+            location: this.currentPosition,
+            input: search,
+            radius: 100000,
+            types: ['establishment']
+          }, (predictions, status) => {
+            this.query.next(predictions ? predictions : []);
+          });
 
         } else {
 
@@ -315,10 +339,10 @@ export class SPSearchComponent implements OnInit {
 
       case 'local':
         if (search !== '') {
-          const filterItems = _.filter(this.searchingTeachers, (item => {
+          const filterItems: User[] = _filter(this.searchingTeachers, (item => {
             return (item.display_name).toLowerCase().includes(search);
             }));
-          this.teacherCollection$.next(filterItems);
+          this.teacherCollection$.next(this.removeDuplicateStudents(filterItems));
         } else {
           this.showDummy = false;
           this.inputValue$.next('');
@@ -351,7 +375,6 @@ export class SPSearchComponent implements OnInit {
   }
 
   addStudent(student: User) {
-    console.log(student);
     if (this.chipsMode) {
       this.inputField = false;
     }
@@ -360,11 +383,14 @@ export class SPSearchComponent implements OnInit {
     this.onSearch('');
     if (!this.selectedOptions.includes(student)) {
       this.selectedOptions.push(student);
+      this.isOpenedOptions.emit(false);
       this.onUpdate.emit(this.getEmitedValue());
     }
   }
 
   removeDuplicateStudents(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {
+    this.searchCount = students.length;
+    this.firstSearchItem = students[0];
     if (!students.length) {
       return [];
     }

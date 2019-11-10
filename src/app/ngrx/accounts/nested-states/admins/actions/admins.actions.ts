@@ -15,4 +15,10 @@ export const removeAdminAccount = createAction(`[${ADMIN}] Remove Admin Account`
 export const removeAdminAccountSuccess = createAction(`[${ADMIN}] Remove Admin Account Success`, props<{id: string | number}>());
 export const removeAdminAccountFailure = createAction(`[${ADMIN}] Remove Admin Account Failure`, props<{errorMessage: string}>());
 
+export const updateAdminActivity = createAction(`[${ADMIN}] Update Admin Activity`, props<{profile: User, active: boolean}>());
+export const updateAdminActivitySuccess = createAction(`[${ADMIN}] Update Admin Activity Success`, props<{profile: User}>());
+export const updateAdminActivityFailure = createAction(`[${ADMIN}] Update Admin Activity Failure`, props<{errorMessage: string}>());
 
+export const updateAdminPermissions = createAction(`[${ADMIN}] Update Admin Permissions`, props<{profile: User, permissions: any}>());
+export const updateAdminPermissionsSuccess = createAction(`[${ADMIN}] Update Admin Permissions Success`, props<{profile: User}>());
+export const updateAdminPermissionsFailure = createAction(`[${ADMIN}] Update Admin Permissions Failure`, props<{errorMessage: string}>());

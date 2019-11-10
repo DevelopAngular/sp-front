@@ -44,10 +44,10 @@ export class PinnablesEffects {
       .pipe(
         ofType(pinnablesActions.removePinnable),
         concatMap((action: any) => {
-          return this.passesService.deletePinnable(action.pinnable.id)
+          return this.passesService.deletePinnable(action.id)
             .pipe(
               map(res => {
-                return pinnablesActions.removeSuccessPinnable({pinnable: action.pinnable});
+                return pinnablesActions.removeSuccessPinnable({id: action.id});
               }),
               catchError(error => of(pinnablesActions.removePinnableFailure({ errorMessage: error.message })))
             );

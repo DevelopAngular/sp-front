@@ -41,6 +41,26 @@ export class StudentsEffects {
       );
   });
 
+  updateStudentActivity$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(studentsActions.updateStudentActivity),
+        concatMap((action: any) => {
+          return this.userService.setUserActivity(action.profile.id, action.active)
+            .pipe(
+              map(user => {
+                const profile = {
+                  ...action.profile
+                };
+                profile.active = action.active;
+                return studentsActions.updateStudentActivitySuccess({profile});
+              }),
+              catchError(error => of(studentsActions.updateStudentActivityFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

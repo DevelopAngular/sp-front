@@ -1,19 +1,22 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import * as _ from 'lodash';
+import { findIndex } from 'lodash';
+import {Select} from '../animations';
 
 @Component({
   selector: 'app-restriction-picker',
   templateUrl: './restriction-picker.component.html',
-  styleUrls: ['./restriction-picker.component.scss']
+  styleUrls: ['./restriction-picker.component.scss'],
+  animations: [Select]
 })
 export class RestrictionPickerComponent implements OnInit {
 
   @Input() choices: string[];
   @Input() width: number;  // px
-  @Input() height: number = 25;  // px
-  @Input() selectedColor: string = '#1E194F';
-  @Input() backgroundColor: string = '#FFFFFF';
-  @Input() selectedChoose: any;
+  @Input() height: number = 32;  // px
+  @Input() color: string = '#7F879D';
+  @Input() selectedColor: string = '#FFFFFF';
+  @Input() backgroundColor: string = '#1E194F';
+  @Input() selectedChoise: any;
   @Input() fontSize: number = 13;  // px
   @Input() disabled: boolean;
   @Input() disabledOptions: string[];
@@ -24,20 +27,20 @@ export class RestrictionPickerComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if (this.selectedChoose) {
-      this.result.emit(this.selectedChoose);
+    if (this.selectedChoise) {
+      this.result.emit(this.selectedChoise);
     }
   }
 
   isDisabled(option) {
-      return _.findIndex(this.disabledOptions, (opt) => {
+      return findIndex(this.disabledOptions, (opt) => {
           return option === opt;
       }) > -1;
   }
 
   onClick(choice) {
     if (!this.isDisabled(choice)) {
-        this.selectedChoose = choice;
+        this.selectedChoise = choice;
         this.result.emit(choice);
     }
   }

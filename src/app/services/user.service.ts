@@ -6,13 +6,19 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {last, map, share, skip, switchMap, take, tap} from 'rxjs/operators';
+import {exhaust, filter, last, map, share, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getAccounts, postAccounts, removeAccount} from '../ngrx/accounts/actions/accounts.actions';
+import {
+  getAccounts,
+  postAccounts,
+  removeAccount,
+  updateAccountActivity,
+  updateAccountPermissions
+} from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection, getCountAllAccounts,
   getLoadedAllAccounts, getLoadingAllAccounts
@@ -40,7 +46,6 @@ import {
   getLoadingStudents,
   getStudentsAccountsCollection
 } from '../ngrx/accounts/nested-states/students/states';
-import {LocationsService} from './locations.service';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
 import {
@@ -49,6 +54,9 @@ import {
   getLoadingGroups,
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
+import {getLoadedUser, getUserData} from '../ngrx/user/states/user-getters.state';
+import {clearUser, getUser} from '../ngrx/user/actions';
+import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 
 @Injectable()
 export class UserService {
@@ -96,6 +104,9 @@ export class UserService {
     assistant: this.store.select(getLoadingAssistants)
   };
 
+  user$: Observable<User> = this.store.select(getUserData);
+  loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
+
   studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
@@ -108,25 +119,32 @@ export class UserService {
     private errorHandler: ErrorHandler,
     private store: Store<AppState>,
   ) {
-
-    // this.userData.subscribe(
-    //   u => console.log('next user:', u),
-    //   e => console.log('user error:', e),
-    //   () => console.log('userData complete'));
-
     this.http.globalReload$
         .pipe(
-          switchMap(() => this.getUser()), map(raw => User.fromJSON(raw)),
+          tap(() => {
+            this.http.effectiveUserId.next(null);
+            this.effectiveUser.next(null);
+          }),
+          switchMap(() => {
+            return this.getUserRequest().pipe(filter(res => !!res));
+          }),
+          map(raw => User.fromJSON(raw)),
           switchMap((user: User) => {
             if (user.isAssistant()) {
-              return this.getUserRepresented().pipe(map((users: RepresentedUser[]) => {
-                if (users && users.length) {
-                  this.representedUsers.next(users);
-                  this.effectiveUser.next(users[0]);
-                  this.http.effectiveUserId.next(+users[0].user.id);
-                }
-                return user;
-              }));
+              return this.getUserRepresented()
+                .pipe(
+                  map((users: RepresentedUser[]) => {
+                    const normalizedRU = users.map((raw) => {
+                      raw.user = User.fromJSON(raw.user);
+                      return raw;
+                    });
+                    if (users && users.length) {
+                      this.representedUsers.next(normalizedRU);
+                      this.effectiveUser.next(normalizedRU[0]);
+                      this.http.effectiveUserId.next(+normalizedRU[0].user.id);
+                    }
+                    return user;
+                  }));
             } else {
                 this.representedUsers.next(null);
                 this.effectiveUser.next(null);
@@ -145,7 +163,7 @@ export class UserService {
           id: `${user.id}`,
           email: user.primary_email,
           is_student: user.isStudent(),
-          is_teacher: user.isStudent(),
+          is_teacher: user.isTeacher(),
           is_admin: user.isAdmin(),
         });
       });
@@ -180,6 +198,15 @@ export class UserService {
     } else if (role === '_profile_assistant') {
       return this.accounts.assistantAccounts;
     }
+  }
+
+  getUserRequest() {
+    this.store.dispatch(getUser());
+    return this.user$;
+  }
+
+  clearUser() {
+    this.store.dispatch(clearUser());
   }
 
   getUser() {
@@ -251,6 +278,11 @@ export class UserService {
       }
   }
 
+  setUserActivityRequest(profile, active: boolean, role: string) {
+    this.store.dispatch(updateAccountActivity({profile, active, role}));
+    return of(null);
+  }
+
   setUserActivity(id, activity: boolean) {
       return this.http.patch(`v1/users/${id}/active`, {active: activity});
   }
@@ -290,6 +322,11 @@ export class UserService {
       return this.http.put(`v1/users/${id}/profiles/${role}`);
   }
 
+  createUserRolesRequest(profile, permissions, role) {
+    this.store.dispatch(updateAccountPermissions({profile, permissions, role}));
+    return of(null);
+  }
+
   createUserRoles(id, data) {
     return this.http.patch(`v1/users/${id}/roles`, data);
   }
@@ -309,9 +346,21 @@ export class UserService {
   getRepresentedUsers(id) {
     return this.http.get(`v1/users/${id}/represented_users`);
   }
+
+  addRepresentedUserRequest(profile, user: User) {
+    this.store.dispatch(addRepresentedUserAction({profile, user}));
+    return of(null);
+  }
+
   addRepresentedUser(id: number, repr_user: User) {
     return this.http.put(`v1/users/${id}/represented_users/${repr_user.id}`);
   }
+
+  deleteRepresentedUserRequest(profile, user: User) {
+    this.store.dispatch(removeRepresentedUserAction({profile, user}));
+    return of(null);
+  }
+
   deleteRepresentedUser(id: number, repr_user: User) {
     return this.http.delete(`v1/users/${id}/represented_users/${repr_user.id}`);
   }
@@ -336,7 +385,7 @@ export class UserService {
 
   updateStudentGroupRequest(id, group) {
     this.store.dispatch(updateStudentGroup({id, group}));
-    return this.currentStudentGroup$;
+    return this.currentStudentGroup$.pipe(filter(sg => !!sg));
   }
 
   updateStudentGroup(id, body) {

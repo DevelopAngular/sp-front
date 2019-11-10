@@ -21,6 +21,18 @@ const reducer = createReducer(
   }),
   on(assistantsActions.removeAssistantSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});
+  }),
+  on(
+    assistantsActions.updateAssistantActivitySuccess,
+    (state, {profile}) => {
+    return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
+  }),
+  on(
+    assistantsActions.removeRepresentedUserSuccess,
+    assistantsActions.addRepresentedUserSuccess,
+    assistantsActions.updateAssistantPermissionsSuccess,
+    (state, {profile}) => {
+    return adapter.upsertOne(profile, {...state});
   })
 );
 

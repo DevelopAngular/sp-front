@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {map, switchMap} from 'rxjs/operators';
+import {filter, map, switchMap, take} from 'rxjs/operators';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {BehaviorSubject} from 'rxjs';
@@ -74,10 +74,11 @@ export class GettingStartedProgressService {
     this.httpService.globalReload$
       .pipe(
         switchMap(() => {
-          return this.adminService.getOnboardProgress();
+          return this.adminService.getOnboardProcessRequest();
         })
       )
       .pipe(
+        filter((res: any[]) => !!res.length),
         map((data: Array<OnboardItem>) => {
           this.onboardProgress.progress = 0;
           this.onboardProgress.offset = 130;
@@ -98,7 +99,6 @@ export class GettingStartedProgressService {
           if (this.onboardProgress.progress === 100) {
             this.onboardProgress.offset = 0;
           }
-          console.log(this.onboardProgress);
           return this.onboardProgress;
         })
       )
@@ -108,7 +108,8 @@ export class GettingStartedProgressService {
   }
 
   updateProgress(ticket: keyof ProgressInterface ) {
-    this.adminService.updateOnboardProgress(ticket).subscribe(() => this.httpService.setSchool(this.httpService.getSchool()));
+    this.adminService.updateOnboardProgress(ticket)
+      .subscribe(() => this.httpService.setSchool(this.httpService.getSchool()));
   }
 
 }

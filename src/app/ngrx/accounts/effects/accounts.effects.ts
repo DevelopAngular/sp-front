@@ -66,6 +66,42 @@ export class AccountsEffects {
       );
   });
 
+  updateAccountActivity$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.updateAccountActivity),
+        map((action: any) => {
+          if (action.role === '_profile_teacher') {
+            return roleActions.updateTeacherActivity({profile: action.profile, active: action.active});
+          } else if (action.role === '_profile_student') {
+            return roleActions.updateStudentActivity({profile: action.profile, active: action.active});
+          } else if (action.role === '_profile_assistant') {
+            return roleActions.updateAssistantActivity({profile: action.profile, active: action.active});
+          } else if (action.role === '_profile_admin') {
+            return roleActions.updateAdminActivity({profile: action.profile, active: action.active});
+          }
+
+          return action;
+        })
+      );
+  });
+
+  updateAccountPermissions$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.updateAccountPermissions),
+        map((action: any) => {
+          if (action.role === '_profile_teacher') {
+            return roleActions.updateTeacherPermissions({profile: action.profile, permissions: action.permissions});
+          } else if (action.role === '_profile_admin') {
+            return roleActions.updateAdminPermissions({profile: action.profile, permissions: action.permissions});
+          } else if (action.role === '_profile_assistant') {
+            return roleActions.updateAssistantPermissions({profile: action.profile, permissions: action.permissions});
+          }
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

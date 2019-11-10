@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, mapTo, mergeAll, share, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, mapTo, mergeAll, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -22,9 +22,9 @@ import {environment} from '../../../environments/environment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
-import * as _ from 'lodash';
 
-declare const history: History;
+import { isNull } from 'lodash';
+import {LocationsService} from '../../services/locations.service';
 
 @Component({
   selector: 'app-accounts',
@@ -84,7 +84,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private locationService: LocationsService
   ) {}
 
   formatDate(date) {
@@ -110,7 +111,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
       tap(() => this.querySubscriber$.next(this.getUserList())),
       switchMap(() => {
         return this.adminService.getCountAccountsRequest()
-            .pipe(filter(list => !_.isNull(list.profile_count) && !_.isNull(list.student_count)));
+            .pipe(
+              filter(list => !isNull(list.profile_count) && !isNull(list.student_count))
+            );
         }
       ),
       switchMap((u_list: any) => {
@@ -215,10 +218,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
         role: '_all',
       }
     });
-
-    DR.afterClosed().subscribe(res => {
-      this.querySubscriber$.next(this.getUserList());
-    });
   }
 
   getCountRole(role: string) {
@@ -233,13 +232,126 @@ export class AccountsComponent implements OnInit, OnDestroy {
     }
   }
 
-    findProfileByRole(evt) {
-      if (evt.name && evt.role) {
-        setTimeout(() => {
-           this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.name}});
-        }, 250);
-      }
+  findProfileByRole(evt) {
+    if (evt.name && evt.role) {
+      setTimeout(() => {
+         this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.name}});
+      }, 250);
     }
+  }
+
+  prepareData(evt, bulk = false) {
+    const role = evt._originalUserProfile.roles.includes('_profile_teacher') ? '_profile_teacher' :
+      evt._originalUserProfile.roles.includes('_profile_admin') ? '_profile_admin' :
+        evt._originalUserProfile.roles.includes('_profile_assistant') ? '_profile_assistant' : '_profile_student';
+
+    const profileTitle =
+      role === '_profile_admin' ? 'administrator' :
+        role === '_profile_teacher' ? 'teacher' :
+          role === '_profile_assistant' ? 'assistant' : 'student';
+
+    const profilePermissions: any =
+      role === '_profile_admin'
+        ?
+        {
+          'access_admin_dashboard': {
+            controlName: 'access_admin_dashboard',
+            controlLabel: 'Dashboard Tab Access',
+          },
+          'access_hall_monitor': {
+            controlName: 'access_hall_monitor',
+            controlLabel: 'Hall Monitor Tab Access',
+          },
+          'access_admin_search': {
+            controlName: 'access_admin_search',
+            controlLabel: 'Search Tab Access',
+          },
+          'access_user_config': {
+            controlName: 'access_user_config',
+            controlLabel: 'Accounts Tab Access',
+          },
+          'access_pass_config': {
+            controlName: 'access_pass_config',
+            controlLabel: 'Rooms Tab Access',
+          },
+        }
+        :
+        role === '_profile_teacher'
+          ?
+          {
+            'access_hall_monitor': {
+              controlName: 'access_hall_monitor',
+              controlLabel: 'Access to Hall Monitor'
+            },
+          }
+          :
+          role === '_profile_assistant'
+            ?
+            {
+              'access_passes': {
+                controlName: 'access_passes',
+                controlLabel: 'Passes Tab Access'
+              },
+              'access_hall_monitor': {
+                controlName: 'access_hall_monitor',
+                controlLabel: 'Hall Monitor Tab Access'
+              },
+              'access_teacher_room': {
+                controlName: 'access_teacher_room',
+                controlLabel: 'My Room Tab Access'
+              },
+            }
+            :
+            {};
+
+    if (role === '_profile_admin') {
+      profilePermissions['access_user_config'].disabled = (evt.id === +this.user.id);
+    }
+
+      const data = {
+        profile: evt,
+        profileTitle: profileTitle,
+        bulkPermissions: null,
+        role,
+        allAccounts: true,
+        permissions: profilePermissions
+      };
+      if (bulk && this.selectedUsers.length) {
+        data.bulkPermissions = this.selectedUsers;
+      }
+      this.showProfileCard(data);
+  }
+
+  showProfileCard(data) {
+
+    const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: data,
+      disableClose: true
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((userListReloadTrigger: any) => {
+        // if (userListReloadTrigger) {
+        //   if (data.profile.id === +this.user.id) {
+        //     this.userService.getUserRequest()
+        //       .pipe(
+        //         filter(res => !!res),
+        //         map(raw => User.fromJSON(raw))
+        //       )
+        //       .subscribe((user) => {
+        //         this.userService.userData.next(user);
+        //       });
+        //
+        //   }
+        //   this.selectedUsers = [];
+        // }
+        this.querySubscriber$.next(this.userService.accounts.allAccounts);
+      });
+  }
 
     setSelected(e) {
       this.selectedUsers = e;
@@ -357,6 +469,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
                 writable: false,
                 value: raw
             });
+            Object.defineProperty(rawObj, 'Sign-in status', { enumerable: false, value: raw.active ? 'Enabled' : 'Disabled'});
+            Object.defineProperty(rawObj, 'Last sign-in', { enumerable: false, value: raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in' })
 
             Object.defineProperty(record, '_data', { enumerable: false, value: rawObj });
 

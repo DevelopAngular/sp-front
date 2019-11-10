@@ -1,4 +1,4 @@
-window.waitForAppLoaded = function() {
+window.waitForAppLoaded = function(force = false) {
 
   var urlBLackList = [
     'school_signup',
@@ -8,7 +8,7 @@ window.waitForAppLoaded = function() {
     return window.location.pathname.search(new RegExp(item, 'i')) === -1;
   })
 
-  if (!allowPreloader) {
+  if (!force && (!allowPreloader || window.location.pathname === '/')) {
     return false;
   }
 
@@ -71,7 +71,7 @@ window.waitForAppLoaded = function() {
 
       setTimeout(function() {
         preloaderRef.style.opacity = '0';
-      }, 1000);
+      }, 500);
       setTimeout(function() {
         window.preloader.n = 200;
         window.preloader.percent = 0;
@@ -96,4 +96,4 @@ window.appLoaded = function(timeout = 100) {
   }, timeout);
 };
 
-// window.waitForAppLoaded();
+window.waitForAppLoaded();

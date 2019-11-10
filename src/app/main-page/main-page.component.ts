@@ -7,7 +7,7 @@ import {SideNavService} from '../services/side-nav.service';
 import {BehaviorSubject, combineLatest, empty, Observable, of, ReplaySubject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {PassLikeProvider, WrappedProvider} from '../models/providers';
+import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
@@ -29,7 +29,7 @@ export class MainPageComponent implements OnInit, AfterViewInit {
     public userService: UserService,
     public darkTheme: DarkThemeSwitch,
     private createFormService: CreateFormService,
-    private screenService: ScreenService,
+    public screenService: ScreenService,
     private sideNavService: SideNavService,
     private dataService: DataService,
     private loadingService: LoadingService,
@@ -78,14 +78,13 @@ export class MainPageComponent implements OnInit, AfterViewInit {
   navbarHeight: string = '78px';
 
   ngOnInit() {
-    this.createFormService.seen();
     this.toggleLeft = this.sideNavService.toggleLeft;
     this.toggleRight = this.sideNavService.toggleRight;
 
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
-        this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
+        this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.isAssistant();
       });
 
     this.inboxHasItems = combineLatest(
@@ -140,6 +139,7 @@ export class MainPageComponent implements OnInit, AfterViewInit {
   fadeClick() {
     this.sideNavService.toggleLeft$.next(false);
     this.sideNavService.toggleRight$.next(false);
+
     this.sideNavService.sideNavAction$.next('');
     this.sideNavService.fadeClick$.next(true);
   }

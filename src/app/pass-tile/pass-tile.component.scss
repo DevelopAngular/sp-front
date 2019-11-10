@@ -30,8 +30,6 @@
     overflow: visible;
     font-style: normal;
     font-stretch: normal;
-    /* line-height: 1.08;
-    letter-spacing: 0.3px; */
     transition: box-shadow .3s ease;
     justify-content: center;
     align-items: center;
@@ -40,10 +38,29 @@
     position: relative;
 }
 
-.tile-title{
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 3px;
+.tile-title-container {
+  min-width: 143px;
+}
+
+.tile-title {
+  width: 100%;
+  font-weight: bold;
+  font-size: 16px;
+  position: absolute;
+}
+
+.tile-subtitle {
+  font-size: 13.5px;
+}
+
+.tile-title-truncated {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tile-title-demo {
+  position: static;
 }
 
 .tile-type {
@@ -51,7 +68,13 @@
 }
 
 .tile-content{
-    font-size: 13.5px;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  flex: 1 1 auto;
+  height: 30px;
 }
 
 .badge{

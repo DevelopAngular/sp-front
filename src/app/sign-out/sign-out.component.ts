@@ -2,9 +2,9 @@ import { AfterContentInit, Component } from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
 import { HttpService } from '../services/http-service';
 import {environment} from '../../environments/environment';
-import {Router} from '@angular/router';
 import {UserService} from '../services/user.service';
 declare const window;
+
 @Component({
   selector: 'app-sign-out',
   templateUrl: './sign-out.component.html',
@@ -12,8 +12,13 @@ declare const window;
 })
 export class SignOutComponent implements AfterContentInit {
 
-  constructor(private http: HttpService, private loginService: GoogleLoginService, private router: Router, private userService: UserService) {
+  constructor(
+    private http: HttpService,
+    private loginService: GoogleLoginService,
+    private userService: UserService
+  ) {
     this.http.setSchool(null);
+    this.userService.clearUser();
   }
 
   ngAfterContentInit() {

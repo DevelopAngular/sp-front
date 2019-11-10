@@ -40,8 +40,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       user_id: number
   };
 
-
-
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
   @HostListener('window:keyup', ['$event'])
@@ -128,6 +126,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   showMainForm(forLater: boolean, student?): void {
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',
+          maxWidth: '100vw',
           backdropClass: 'custom-backdrop',
           data: {
               'forLater': forLater,

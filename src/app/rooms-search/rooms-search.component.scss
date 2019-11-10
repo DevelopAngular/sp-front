@@ -20,6 +20,12 @@
 
     .locations {
 
+      .room-container:focus {
+          outline: none;
+          background-color: #ECF1FF !important;
+          color: $navy !important;
+      }
+
       .location {
         display: flex;
         justify-content: space-between;

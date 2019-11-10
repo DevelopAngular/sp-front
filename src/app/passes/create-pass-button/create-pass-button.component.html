@@ -10,7 +10,6 @@
     (mousedown)="buttonDown = true"
     (mouseup)="buttonDown = false"
     (touchstart)= "buttonDown = true;"
-    (touchend)="buttonDown = false; buttonClick($event)"
     [ngClass]="{'disabled': disabled}"
 >
   <div class="title">{{ title }}</div>

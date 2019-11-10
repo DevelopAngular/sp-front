@@ -15,6 +15,6 @@ export const updatePinnable = createAction(`[${COMPONENT}] Update Pinnable`, pro
 export const updatePinnableSuccess = createAction(`[${COMPONENT}] Update pinnable Success`, props<{pinnable: Pinnable}>());
 export const updatePinnableFailure = createAction(`[${COMPONENT}] Update Pinnable Failure`, props<{ errorMessage: string}>());
 
-export const removePinnable = createAction(`[${COMPONENT}] Remove Pinnable`, props<{ pinnable: Pinnable}>());
-export const removeSuccessPinnable = createAction(`[${COMPONENT}] Remove Success Pinnable`, props<{ pinnable: Pinnable }>());
+export const removePinnable = createAction(`[${COMPONENT}] Remove Pinnable`, props<{ id: string | number}>());
+export const removeSuccessPinnable = createAction(`[${COMPONENT}] Remove Success Pinnable`, props<{ id: string | number }>());
 export const removePinnableFailure = createAction(`[${COMPONENT}] Remove Pinnable Failure`, props<{ errorMessage: string }>());

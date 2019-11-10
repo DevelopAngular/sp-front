@@ -1,23 +1,32 @@
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
   BehaviorSubject,
   combineLatest,
   ConnectableObservable,
-  empty, fromEvent, interval,
+  empty, interval,
   merge,
   Observable,
-  of, pipe,
+  of,
   ReplaySubject, Subject,
 } from 'rxjs';
 import {
-  delay,
   filter,
-  map, publish, publishBehavior,
+  map, pluck, publishBehavior,
   publishReplay,
-  refCount, shareReplay,
+  refCount,
   startWith,
-  switchMap, take, takeUntil,
+  switchMap, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -40,8 +49,13 @@ import {NavbarDataService} from '../main/navbar-data.service';
 import {PassesAnimations} from './passes.animations';
 import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
-import {init} from '@sentry/browser';
 import {UserService} from '../services/user.service';
+import {DeviceDetection} from '../device-detection.helper';
+import * as moment from 'moment';
+import {NotificationButtonService} from '../services/notification-button.service';
+
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {HttpService} from '../services/http-service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -74,6 +88,7 @@ export class ActivePassProvider implements PassLikeProvider {
 
     const passes$ = this.user$.pipe(
       switchMap(user => {
+        console.log(user);
         return this.liveDataService.watchActiveHallPasses(mergedReplay,
             user.roles.includes('hallpass_student')
               ? {type: 'student', value: user}
@@ -82,7 +97,6 @@ export class ActivePassProvider implements PassLikeProvider {
         }
       ),
       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-        // console.log('PASSES ===>>>> ', passes);
         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
       })
     );
@@ -161,7 +175,6 @@ export class InboxInvitationProvider implements PassLikeProvider {
   }
 }
 
-
 @Component({
   selector: 'app-passes',
   templateUrl: './passes.component.html',
@@ -170,12 +183,21 @@ export class InboxInvitationProvider implements PassLikeProvider {
     PassesAnimations.OpenOrCloseRequests,
     PassesAnimations.PassesSlideTopBottom,
     PassesAnimations.RequestCardSlideInOut,
+    PassesAnimations.HeaderSlideInOut,
+    PassesAnimations.HeaderSlideTopBottom,
+    PassesAnimations.PreventInitialChildAnimation,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
+
 export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private scrollableAreaName = 'Passes';
   private scrollableArea: HTMLElement;
+
+  @ViewChild('animatedHeader') animatedHeader: ElementRef<HTMLElement>;
+
+  @ViewChild('passesWrapper') passesWrapper: ElementRef<HTMLElement>;
 
   @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
     if (scrollable) {
@@ -204,7 +226,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(scrollObserver)
           )
           .subscribe((v) => {
-            console.log(scrollOffset);
             if (v) {
               this.scrollableArea.scrollTo({top: scrollOffset});
               scrollObserver.next();
@@ -241,6 +262,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showEmptyState: Observable<boolean>;
 
+  isOpenedModal: boolean;
+  destroy$: Subject<any> = new Subject();
+
   user: User;
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
@@ -249,13 +273,16 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   cursor = 'pointer';
 
+  dismissExpired = true;
+
+  public schoolsLength$: Observable<number>;
+
   showInboxAnimated() {
     return this.dataService.inboxState;
   }
 
   get showInbox() {
     if (!this.isStaff) {
-      // console.log('|||||||||||||| Student Now ===>', this.dataService.inboxState);
       return this.dataService.inboxState;
     } else if (!this.inboxHasItems && !this.passesHaveItems) {
       return of(false);
@@ -277,7 +304,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
     private scrollPosition: ScrollPositionService,
-    private userService: UserService
+    private userService: UserService,
+    private shortcutsService: KeyboardShortcutsService,
+    private  notificationButtonService: NotificationButtonService,
+    private httpService: HttpService
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -287,7 +317,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     const excludedPasses = this.currentPass$.pipe(map(p => p !== null ? [p] : []));
 
     const dbUser$ = combineLatest(
-      this.userService.effectiveUser,
+      this.userService.effectiveUser.asObservable(),
       this.dataService.currentUser
     ).pipe(
       map(([effectUser, currentUser]) => {
@@ -298,9 +328,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }));
 
-    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, this.dataService.currentUser));
-    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses, this.timeService));
-    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, this.dataService.currentUser));
+    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, dbUser$));
+    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, dbUser$, excludedPasses, this.timeService));
+    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, dbUser$));
 
     this.dataService.currentUser
       .pipe(
@@ -344,17 +374,34 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.userService.effectiveUser.subscribe(res => {
-    //   debugger;
-    // });
+  this.schoolsLength$ = this.httpService.schoolsLength$;
+    const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
+    if (this.notificationButtonService.dismissExpirtationDate === notifBtnDismissExpires) {
+      this.notificationButtonService.dismissButton$.next(false);
+    }
+
     this.navbarService.inboxClick.subscribe(inboxClick => {
       this.isInboxClicked = inboxClick;
     });
+
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(
+        pluck('key'),
+        takeUntil(this.destroy$),
+        filter((key) => key[0] === 'n' || key[0] === 'f')
+      )
+      .subscribe((key) => {
+        if (key[0] === 'n') {
+          this.showMainForm(false);
+        } else if (key[0] === 'f') {
+          this.showMainForm(true);
+        }
+      });
+
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
         this._zone.run(() => {
-          console.log(user);
           this.user = user;
           this.isStaff =
             user.roles.includes('_profile_teacher') ||
@@ -401,39 +448,45 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     (this.showEmptyState as ConnectableObservable<boolean>).connect();
 
     this.isSeen$ = this.createFormService.isSeen$;
-    //
-    // this.notifService.initNotifications(true)
-    //   .then(hasPerm => console.log(`Has permission to show notifications: ${hasPerm}`));
 
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
     }
   }
+
   ngAfterViewInit(): void {
-  //   console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
-  //   this.scrollableArea.scrollTo({top: this.scrollPosition.getComponentScroll(this.scrollableAreaName), behavior: 'smooth'});
+
   }
 
   ngOnDestroy(): void {
     if (this.scrollableArea && this.scrollableAreaName) {
       this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   showMainForm(forLater: boolean): void {
-    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
-      panelClass: 'main-form-dialog-container',
-      backdropClass: 'custom-backdrop',
-      data: {
-        'forLater': forLater,
-        'forStaff': this.isStaff,
-        'forInput': true
+      if (!this.isOpenedModal) {
+        this.isOpenedModal = true;
+        const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+          panelClass: 'main-form-dialog-container',
+          backdropClass: 'custom-backdrop',
+          maxWidth: '100vw',
+          data: {
+            'forLater': forLater,
+            'forStaff': this.isStaff,
+            'forInput': true
+          }
+        });
+
+        mainFormRef.afterClosed().subscribe(res => {
+          this.isOpenedModal = false;
+        });
       }
-    });
   }
 
   onReportFromPassCard(evt) {
-    console.log(evt);
     if (evt) {
       this.dialog.open(ReportSuccessToastComponent, {
         backdropClass: 'invisible-backdrop',
@@ -450,5 +503,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
     }
+  }
+
+  get isAndroid() {
+    return DeviceDetection.isAndroid();
   }
 }

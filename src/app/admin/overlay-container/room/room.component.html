@@ -28,7 +28,8 @@
           </app-input>
       </div>
 
-      <div class="teacher-search" *ngIf="currentPage !== 9 && currentPage !== 10">
+      <div class="teacher-search"
+           *ngIf="currentPage !== 9 && currentPage !== 10">
 
         <div class="teacher-title">
           <span [ngStyle]="{'color': !data?.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
@@ -78,9 +79,9 @@
           </div>
           <app-restriction-picker
               [width]="276"
-              [height]="25"
+              [height]="32"
               [choices]="['Round-trip', 'One-way' , 'Both']"
-              [selectedChoose]="travelTypes"
+              [selectedChoise]="travelTypes"
               (result)="travelUpdate($event)"
           >
           </app-restriction-picker>
@@ -116,9 +117,9 @@
           </div>
           <app-restriction-picker
                   [width]="187"
-                  [height]="25"
+                  [height]="32"
                   [choices]="['Unrestricted', 'Restricted']"
-                  [selectedChoose]="restricted"
+                  [selectedChoise]="restricted"
                   (result)="restrictedEvent($event)">
           </app-restriction-picker>
         </div>
@@ -138,9 +139,9 @@
           </div>
           <app-restriction-picker
                   [width]="187"
-                  [height]="25"
+                  [height]="32"
                   [choices]="['Unrestricted', 'Restricted']"
-                  [selectedChoose]="schedulingRestricted"
+                  [selectedChoise]="schedulingRestricted"
                   (result)="schedulingRestrictedEvent($event)">
           </app-restriction-picker>
         </div>

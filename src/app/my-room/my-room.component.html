@@ -27,12 +27,14 @@
 <!--          <img [@calendarIconTrigger]='calendarIconState' class="calendar-icon"  src = "../../assets/Calendar%20(Blue).svg">-->
 <!--        </ng-template>-->
       </div>
+      <p *ngIf="screenService.isDeviceMid" class="my-room-title">My Room</p>
     </div>
   </div>
   <div *ngIf="UI" [ngClass]="isIOSTablet ? 'ios-my-room-wrapper' : 'my-room-wrapper'" #scrollableArea>
     <div [ngClass]="isIOSTablet ? 'ios-my-room-left' : 'my-room-left'" *ngIf="!(kioskMode.currentRoom$ | async)">
       <div [ngClass]="isIOSTablet ? 'ios-my-room-header' : 'my-room-header'" [@headerTrigger]="headerState">
         <div class="selected-teacher"
+             [style.font-size]="selectedLocation && selectedLocation.title.length > 13 ? 29 - (selectedLocation.title.length - 13) * 2 + 'px' : '29px'"
              [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'" #target (click)="showOptions(target)"
              [style.color]="myRoomHeaderColor"
         >

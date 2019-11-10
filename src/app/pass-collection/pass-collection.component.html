@@ -21,6 +21,7 @@
       <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">
           <app-pass-tile (click)="showPass(pass)"
+                         (tileSelected)="activePassTime$ = $event"
                          [timerEvent]="timerEvent"
                          [fromPast]="fromPast"
                          [forFuture]="forFuture"

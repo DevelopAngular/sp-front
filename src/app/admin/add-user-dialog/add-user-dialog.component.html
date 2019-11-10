@@ -61,8 +61,8 @@
         <div class="account-type-picker">
           <app-restriction-picker
             [choices]="accountTypes"
-            [selectedChoose]="typeChoosen"
-            [height]="25"
+            [selectedChoise]="typeChoosen"
+            [height]="32"
             [width]="167"
             [fontSize]="13"
             (result)="typeChoosen = $event"
@@ -93,16 +93,14 @@
     <div class="content_rest" *ngIf="typeChoosen === accountTypes[1]">
       <form class="new-alt-acc-form" [formGroup]="newAlternativeAccount">
 
-        <div [style.padding-bottom]="'10px'">
+        <div style="width: 238px">
           <app-input
             [input_label]="'Full Name'"
             [controlName]="newAlternativeAccount.get('name')"
             [formGroup]="newAlternativeAccount"
             [input_value]="newAlternativeAccount.get('name').value"
-            [errorIconTop]="3"
-            [padding]="'1px'"
             [width]="'222px'"
-            [height]="'30px'"
+            [height]="'40px'"
 
           ></app-input>
         </div>
@@ -117,10 +115,8 @@
                 [formGroup]="newAlternativeAccount"
                 [input_value]="newAlternativeAccount.get('username').value"
                 [isFocus]="newAlternativeAccount.touched"
-                [padding]="'1px'"
-                [errorIconTop]="3"
-                [width]="'159px'"
-                [height]="'30px'"
+                [width]="'222px'"
+                [height]="'40px'"
 
               ></app-input>
             </div>
@@ -128,15 +124,13 @@
 
               <app-input
                 [input_label]="'Password'"
+                [input_type]="'password'"
                 [controlName]="newAlternativeAccount.get('password')"
                 [formGroup]="newAlternativeAccount"
                 [input_value]="newAlternativeAccount.get('password').value"
-                [errorIconTop]="3"
                 [isFocus]="newAlternativeAccount.touched"
-                [padding]="'1px'"
-                [width]="'159px'"
-                [height]="'30px'"
-
+                [width]="'222px'"
+                [height]="'40px'"
               ></app-input>
             </div>
 
@@ -144,7 +138,7 @@
         </div>
 
       </form>
-      <div class="info-text" *ngIf="typeChoosen === accountTypes[1] && showSaveButton()">
+      <div class="info-text" *ngIf="typeChoosen === accountTypes[1]">
         Password must be at least 6 characters long and contain either a number or symbol. <br/>
         <div style="margin-top: 7px">New users aren’t emailed this, you will need to share their password with them.</div>
       </div>

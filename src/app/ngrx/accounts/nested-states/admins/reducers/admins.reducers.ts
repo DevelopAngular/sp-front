@@ -22,6 +22,11 @@ const reducer = createReducer(
   }),
   on(adminsActions.removeAdminAccountSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});
+  }),
+  on(adminsActions.updateAdminActivitySuccess,
+    adminsActions.updateAdminPermissionsSuccess,
+    (state, {profile}) => {
+    return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   })
 );
 

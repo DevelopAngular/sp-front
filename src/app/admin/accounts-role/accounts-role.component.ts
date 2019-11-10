@@ -1,15 +1,15 @@
-import {ChangeDetectorRef, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {BehaviorSubject, forkJoin, interval, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
-  map, mapTo,
+  map,
   mergeAll,
-  switchMap, take, takeLast,
+  switchMap, take,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -33,10 +33,6 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
-
-import * as _ from 'lodash';
-
-declare const window;
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -129,14 +125,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.enabled = false;
       this.syncingDots = '';
       this.intervalId.unsubscribe();
-      // this.destroyer$.next();
-      // this.destroyer$.complete();
     }
   };
 
   public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
-
-  dataTable;
 
   querySubscriber$ = new Subject();
 
@@ -145,52 +137,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   tableHeaders;
 
-  @ViewChild(DataTableComponent) set dtRef(dtRef: ElementRef) {
-    if (dtRef) {
-      this.dataTable = dtRef.nativeElement;
-    }
-  }
-
-  // @HostListener('scroll', ['$event'])
-  // onScroll(event) {
-  //   const target = event.target;
-  //   const limit = target.scrollHeight - target.clientHeight;
-  //   if (event.target.scrollTop === limit && this.isLoadUsers) {
-  //     this.limitCounter += 20;
-  //       this.userService
-  //         .getUsersList(this.role, '', this.limitCounter)
-  //         .pipe(
-  //           takeUntil(this.destroy$),
-  //           map(res => res.results),
-  //           switchMap((userList: User[]) => {
-  //             if (this.role === '_profile_teacher' && userList.length) {
-  //               return this.addUserLocations(userList);
-  //             } else if (this.role === '_profile_assistant' && userList.length) {
-  //               return zip(
-  //                 ...userList.map((user: User) => {
-  //                   return this.userService.getRepresentedUsers(user.id)
-  //                     .pipe(
-  //                       switchMap((ru: RepresentedUser[]) => {
-  //                         (user as any).canActingOnBehalfOf = ru;
-  //                         return of(user);
-  //                       })
-  //                     );
-  //                 }));
-  //             } else {
-  //               return of(userList);
-  //             }
-  //           })
-  //         )
-  //         .subscribe(userList => {
-  //           this.dataTableHeadersToDisplay = [];
-  //           this.userList = this.buildUserListData(userList);
-  //           this.selectedUsers = [];
-  //           if (this.dataTable) {
-  //             this.dataTable.clearSelection();
-  //           }
-  //         });
-  //   }
-  // }
 
   constructor(
     public router: Router,
@@ -201,13 +147,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private _zone: NgZone,
     private storage: StorageService,
-    private elemRef: ElementRef,
-    private dataService: DataService,
     public darkTheme: DarkThemeSwitch,
     private locService: LocationsService,
     private domSanitizer: DomSanitizer,
 
-  ) {}
+  ) {
+
+  }
 
   get noUsersDummyVisibility() {
     switch (this.role) {
@@ -231,6 +177,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    const obs = new Observable(function(v) {
+      v.next(1);
+    })
+
+    obs.subscribe((v) => {
+      console.log(v);
+    })
+
     this.querySubscriber$.pipe(
       mergeAll(),
       takeUntil(this.destroy$))
@@ -273,8 +228,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }),
       map((params) => {
         this.role = params.role;
-        this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
-        this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
+        if (this.role !== 'g_suite') {
+          this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
+          this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
+        }
         return params;
       }),
       tap(() => this.router.navigate(['admin/accounts', this.role])),
@@ -385,11 +342,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             controlName: 'access_pass_config',
             controlLabel: 'Rooms Tab Access',
           },
-          // 'admin_school_settings': {
-          //   controlName: 'admin_school_settings',
-          //   allowed: true,
-          //   controlLabel: 'Access to School Settings'
-          // },
         }
                    :
         this.role === '_profile_teacher'
@@ -397,7 +349,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         {
           'access_hall_monitor': {
             controlName: 'access_hall_monitor',
-            // allowed: this.user.roles.includes('admin_hall_monitor'),
             controlLabel: 'Access to Hall Monitor'
           },
         }
@@ -557,7 +508,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         break;
       case 'enable_sign_in':
         header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} group.`;
-        options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
+        options = [{display: 'Enable sign-in', color: '#00B476', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
         break;
     }
     UNANIMATED_CONTAINER.next(true);
@@ -583,9 +534,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               case 'delete_from_profile':
                return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], this.role)));
               case 'disable_sign_in':
-                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivity(user['id'], false)));
+                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, false, this.role)));
               case 'enable_sign_in':
-                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivity(user['id'], true)));
+                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, true, this.role)));
 
               default:
                 return of(false);
@@ -658,8 +609,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
-    // console.log(evt);
-
     if (this.role === '_profile_admin') {
       if ((evt.id === +this.user.id)) {
         this.profilePermissions['access_user_config'].disabled = true;
@@ -679,13 +628,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       gSuiteSettings: gSuite,
       role: this.role,
       permissions: this.profilePermissions
-    }
+    };
 
     if (this.selectedUsers.length && !bulk || this.role === '_all' && !gSuite)  {
       return false;
     }
     if (bulk && this.selectedUsers.length) {
-      data.bulkPermissions = this.selectedUsers.map(user => user.id);
+      data.bulkPermissions = this.selectedUsers;
     }
     if (gSuite) {
       data.gSuiteSettings = gSuite;
@@ -700,13 +649,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       disableClose: true
     });
 
-    dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
-      // console.log(userListReloadTrigger, data.profile.id, this.user.id);
+    dialogRef.afterClosed()
+      .subscribe((userListReloadTrigger: any) => {
       if (userListReloadTrigger) {
         if (data.profile.id === +this.user.id) {
-          // window.document.location.reload();
-          this.userService.getUser()
+          this.userService.getUserRequest()
             .pipe(
+              filter(res => !!res),
               map(raw => User.fromJSON(raw))
             )
             .subscribe((user) => {
@@ -715,8 +664,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
         }
         this.selectedUsers = [];
-        this.querySubscriber$.next(this.getUserList());
       }
+      this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
     });
   }
 
@@ -745,7 +694,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private buildUserListData(userList) {
     this.isLoadUsers = this.limitCounter === userList.length;
     return userList.map((raw, index) => {
-
       const permissionsRef: any = this.profilePermissions;
         const partOf = [];
         if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
@@ -812,6 +760,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
         Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
         Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
+        Object.defineProperty(rawObj, 'last_sign_in', {enumerable: false, value: raw.last_login });
         Object.defineProperty(rawObj, '_originalUserProfile', {
           enumerable: false,
           configurable: false,

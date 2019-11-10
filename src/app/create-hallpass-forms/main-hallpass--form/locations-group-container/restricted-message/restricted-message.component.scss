@@ -44,7 +44,8 @@
   align-items: center;
   justify-content: space-between;
   position: relative;
-  background-color: #ffffff;
+  z-index: 1;
+  //background-color: #ffffff;
   border-radius: 14px;
   overflow: hidden;
   .rest-mes-header, .rest-mes-header_animation-back {
@@ -56,11 +57,21 @@
     align-items: center;
     position: relative;
     z-index: 10;
-    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+    //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
-    overflow: hidden;
-
+    //overflow: hidden;
+    .header-background {
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: -1;
+      //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+    }
     .back-button {
       &-wrapper {
         position: absolute;
@@ -121,14 +132,17 @@
     position: relative;
     z-index: 1;
     flex: 1 1 auto;
+    width: 100%;
     .rest-mes-content {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      margin-top: 25px;
+      box-sizing: border-box;
+      //padding: 0 15px;
 
       .message-box{
+        margin-top: 25px;
         border: 1px solid transparent;
         padding: 10px;
         position: relative;
@@ -153,11 +167,21 @@
       }
 
       .buttons {
-
+        margin-right: 35px;
       }
     }
   }
-
+  .content-background {
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -2;
+  }
   .message-footer {
     width: 100%;
     display: flex;

@@ -1,56 +1,90 @@
-<div style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
-  <div class="" [ngClass]="{'to-header': formState.previousState === states.from || formState.previousStep <= formState.step, 'to-header-back': formState.previousState === states.category || formState.previousStep === 4 }" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'" #header>
-
+<div [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
+  <div [ngClass]="headerTransition" #header>
+    <div class="header-background"
+         [attr.data-motion-opacity]="(frameMotion$ | async).direction"
+         [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'"></div>
     <div *ngIf="!screenService.isDeviceLargeExtra"  class="back-button back-button-grey">
       <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
     </div>
-
-    <div class="to-header-text">
+    <div class="to-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="text ds-dialog-title">To where?</div>
     </div>
   </div>
-
-  <div class="to-content" #rc>
-    <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
+  <div class="content-background"
+       [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+  <div class="to-content" [attr.data-motion-translate]="(frameMotion$ | async).direction" #rc>
+    <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length && (isGrid$ | async)">
       <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
       <div class="rooms">
         <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let room of teacherRooms">
             <app-pinnable
-                    [width]="gridRestrictions.pileWidth"
-                    [height]="gridRestrictions.pileHeight"
-                    [valid]="(room.location && location ? room.location.id != location.id : true)"
-                    [forStaff]="isStaff"
-                    [forLater]="!!date"
-                    [pinnable]="room"
-                    (onSelectEvent)="pinnableSelected($event)"
+              [width]="gridRestrictions.pileWidth"
+              [height]="gridRestrictions.pileHeight"
+              [valid]="(room.location && location ? room.location.id != location.id : true)"
+              [forStaff]="isStaff"
+              [forLater]="!!date"
+              [pinnable]="room"
+              (onSelectEvent)="pinnableSelected($event)"
             ></app-pinnable>
           </mat-grid-tile>
         </mat-grid-list>
       </div>
     </div>
-    <div class="all-rooms">
+    <div class="all-rooms" *ngIf="isGrid$ | async">
       <div  [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
       <div class="pin-collection">
         <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">
             <app-pinnable
-                    [width]="gridRestrictions.pileWidth"
-                    [height]="gridRestrictions.pileHeight"
-                    [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)"
-                    [forStaff]="isStaff && !dialogData.kioskModeRoom"
-                    [forLater]="!!date"
-                    [pinnable]="pinnable"
-                    (onSelectEvent)="pinnableSelected($event)"
+              [width]="gridRestrictions.pileWidth"
+              [height]="gridRestrictions.pileHeight"
+              [valid]="(pinnable.location && location ? isValidPinnable(pinnable) : true)"
+              [forStaff]="isStaff && !dialogData.kioskModeRoom"
+              [forLater]="!!date"
+              [pinnable]="pinnable"
+              (onSelectEvent)="pinnableSelected($event)"
             ></app-pinnable>
           </mat-grid-tile>
         </mat-grid-list>
       </div>
     </div>
+
+    <app-location-table *ngIf="!(isGrid$ | async)"
+      class="locations"
+      [forStaff]="isStaff"
+      [height]="'107px'"
+      [rightHeaderText]="true"
+      [hasLocks]="true"
+      [inputWidth]="'240px'"
+      [forLater]="formState.forLater"
+      [showStars]="true"
+      [noRightStar]="true"
+      [forKioskMode]="formState.kioskMode"
+      [originLocation]="location"
+      [showFavorites]="true"
+      [type]="'location'"
+      [invalidLocation]="(location ? +location.id : '')"
+      [placeholder]="'Search rooms'"
+      (onSelect)="locationSelected($event)"
+      [dummyString]="'No rooms found'"
+      [mergedAllRooms]="true"
+    >
+    </app-location-table>
+
+    <div class="banner-container" *ngIf="!hiddenBanner">
+      <div class="banner">
+        <div class="left">
+          <img [src]="'./assets/Arrow-bottom.svg' | resolveAsset" width="18" height="22" alt="Arrow">
+          <div class="text">Switch views to search and see favorites</div>
+        </div>
+        <img [src]="'./assets/Close.svg' | resolveAsset" width="11" height="11" (click)="removeBanner()">
+      </div>
+    </div>
   </div>
   <ng-container *ngIf="!displayFooters">
-    <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
-    <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
+    <app-student-footer *ngIf="!isStaff" (locsViewEvent)="switchView($event)" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
+    <app-teacher-footer *ngIf="isStaff" (locsViewEvent)="switchView($event)" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
   </ng-container>
 </div>

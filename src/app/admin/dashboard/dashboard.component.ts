@@ -1,5 +1,5 @@
-import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {combineLatest, forkJoin, fromEvent, interval, of, Subject, zip} from 'rxjs';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {combineLatest, interval, of, Subject} from 'rxjs';
 import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DataService } from '../../services/data-service';
 import { HttpService } from '../../services/http-service';
@@ -16,8 +16,6 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ThemeService} from 'ng2-charts';
 import {ScrollPositionService} from '../../scroll-position.service';
 
-declare const window;
-
 
 @Component({
   selector: 'app-dashboard',
@@ -25,8 +23,6 @@ declare const window;
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  // @ViewChild('draggableContainer') draggableContainer: ElementRef;
-
 
   private scrollableAreaName = 'Dashboard';
   private scrollableArea: HTMLElement;

@@ -56,6 +56,7 @@
         margin: auto 0;
         height: 30px;
         background-color: #FFFFFF;
+        //background-color: rgba(110,99,00, .99);
         border-top: 1px solid gray;
         border-bottom: 1px solid gray;
         display: flex;
@@ -63,12 +64,12 @@
         justify-content: center;
         -webkit-transform-style: preserve-3d;
         transform-style: preserve-3d;
-        transform: translateZ(115px);
+        transform: translateZ(120px);
         overflow: hidden;
         //display: none;
         .unit-clip {
           //transform: translateZ(125px);
-          font-size: 1.2em !important;
+          font-size: 1.25em !important;
           color: #333;
           font-weight: 500;
           z-index: 3;
@@ -79,6 +80,7 @@
         width: 100%;
         //overflow: hidden;
         flex: 1 1 auto;
+        font-weight: 400;
         //position: relative;
         //z-index: 0;
         .scroll {
@@ -107,7 +109,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.15em;
+          font-size: 1.2em;
           //z-index: 1;
           //-webkit-transform-style: preserve-3d;
           //-moz-transform-style: preserve-3d;
@@ -133,7 +135,7 @@
               margin: auto;
               max-height: 35px ;
               height: 35px;
-              max-width: 100px;
+              //max-width: 100px;
               display: flex;
               align-items: center;
               justify-content: center;

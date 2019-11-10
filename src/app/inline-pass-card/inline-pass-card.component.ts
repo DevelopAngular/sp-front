@@ -3,9 +3,10 @@ import { HallPass} from '../models/HallPass';
 import { HttpService } from '../services/http-service';
 import { DataService } from '../services/data-service';
 import { interval, merge, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {map, pluck} from 'rxjs/operators';
 import {HallPassesService} from '../services/hall-passes.service';
 import { TimeService } from '../services/time.service';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -37,6 +38,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
       private dataService: DataService,
       private hallPassService: HallPassesService,
       private timeService: TimeService,
+      private shortcutsService: KeyboardShortcutsService
   ) { }
 
     get gradient() {
@@ -60,14 +62,20 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
               return x;
           }
       })).subscribe();
+      this.shortcutsService.onPressKeyEvent$
+        .pipe(pluck('key'))
+        .subscribe(key => {
+          if (key[0] === 'e') {
+            this.endPass();
+          }
+        });
   }
 
   ngOnDestroy() {
     this.subscribers$.unsubscribe();
   }
 
-  endPass(){
-    // console.log('END PASS ===>', this.pass);
+  endPass() {
     this.performingAction = true;
     this.hallPassService.endPass(this.pass.id).subscribe(data => {
       console.log('[Pass Ended]', data);

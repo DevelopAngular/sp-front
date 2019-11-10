@@ -12,3 +12,6 @@ export const removeStudent = createAction(`[${STUDENTS}] Remove Student`, props<
 export const removeStudentSuccess = createAction(`[${STUDENTS}] Remove Student Success`, props<{id: string | number}>());
 export const removeStudentFailure = createAction(`[${STUDENTS}] Remove Student Failure`, props<{errorMessage: string}>());
 
+export const updateStudentActivity = createAction(`[${STUDENTS}] Update Student Activity`, props<{profile: User, active: boolean}>());
+export const updateStudentActivitySuccess = createAction(`[${STUDENTS}] Update Student Activity Success`, props<{profile: User}>());
+export const updateStudentActivityFailure = createAction(`[${STUDENTS}] Update Student Activity Failure`, props<{errorMessage: string}>());

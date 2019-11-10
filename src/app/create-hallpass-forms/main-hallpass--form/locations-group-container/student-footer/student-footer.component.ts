@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { CreateFormService } from '../../../create-form.service';
+import {BehaviorSubject} from 'rxjs';
+import {StorageService} from '../../../../services/storage.service';
 
 @Component({
   selector: 'app-student-footer',
@@ -18,13 +20,18 @@ export class StudentFooterComponent implements OnInit {
 
   @Output() changeAnimationDirectionEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() changeLocation: EventEmitter<Navigation> = new EventEmitter<Navigation>();
+  @Output() locsViewEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   fromLocation: Location;
   toLocation: Location;
   forInput: boolean;
+  frameMotion$: BehaviorSubject<any>;
+
+  isGrid: boolean;;
 
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private storage: StorageService,
   ) { }
 
   get fromLocationText() {
@@ -44,11 +51,20 @@ export class StudentFooterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isGrid = JSON.parse(this.storage.getItem('isGrid'));
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     if (this.formState) {
       this.forInput = this.formState.forInput;
       this.fromLocation = this.formState.data.direction.from;
       this.toLocation = this.formState.data.direction.to;
     }
+  }
+
+  switchLocsView(evt: Event) {
+    this.isGrid = !this.isGrid;
+    evt.stopPropagation();
+    this.locsViewEvent.emit(this.isGrid);
   }
 
   goToFromWhere() {
@@ -89,6 +105,7 @@ export class StudentFooterComponent implements OnInit {
   }
 
   private changeAnimationDirection() {
+    this.formService.scalableBoxController.next(false);
     this.formService.setFrameMotionDirection('back');
     this.changeAnimationDirectionEvent.emit(true);
   }

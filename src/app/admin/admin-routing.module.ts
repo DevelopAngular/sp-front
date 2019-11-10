@@ -1,31 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
-import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
-import { SearchComponent } from './search/search.component';
-import { PassConfigComponent } from './pass-config/pass-config.component';
-import {AccountsComponent} from './accounts/accounts.component';
-import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
-import {MySchoolComponent} from './my-school/my-school.component';
-import {ReportsResolver} from '../core/resolvers/reports-resolver';
-import {PinnablesResolver} from '../core/resolvers/pinnables-resolver';
-import {AllAccountsResolver} from '../core/resolvers/all-accounts-resolver';
-import {AccountRoleResolver} from '../core/resolvers/account-role-resolver';
-import {IosComponentComponent} from './ios-component/ios-component.component';
+import { IosComponentComponent } from './ios-component/ios-component.component';
 
 const routes: Routes = [
   {
     path: '', component: AdminPageComponent,
     children: [
       {path: 'gettingstarted', loadChildren: 'app/admin/getting-started/getting-started.module#GettingStartedModule'},
-      {path: 'dashboard', component: DashboardComponent},
-      {path: 'hallmonitor', component: HallmonitorComponent},
-      {path: 'search', component: SearchComponent},
-      {path: 'accounts', component: AccountsComponent },
-      {path: 'accounts/:role', component: AccountsRoleComponent },
-      {path: 'passconfig', component: PassConfigComponent, resolve: { pinnables: PinnablesResolver }},
-      {path: 'myschool', component: MySchoolComponent},
+      {path: 'dashboard', loadChildren: 'app/admin/dashboard/dashboard.module#DashboardModule'},
+      {path: 'hallmonitor', loadChildren: 'app/admin/hallmonitor/hallmonitor.module#HallmonitorModule'},
+      {path: 'search', loadChildren: 'app/admin/search/search.module#SearchModule'},
+      {path: 'accounts', loadChildren: 'app/admin/accounts/accounts.module#AccountsModule'},
+      {path: 'accounts/:role', loadChildren: 'app/admin/accounts-role/accounts-role.module#AccountsRoleModule' },
+      {path: 'passconfig', loadChildren: 'app/admin/pass-config/pass-config.module#PassConfigModule'},
+      {path: 'myschool', loadChildren: 'app/admin/my-school/my-school.module#MySchoolModule'},
       {path: 'ios', component: IosComponentComponent},
       {path: '**', redirectTo: '', pathMatch: 'full'},
     ]

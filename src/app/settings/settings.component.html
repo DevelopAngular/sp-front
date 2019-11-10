@@ -62,8 +62,8 @@
          (mouseleave)="hoveredSignout = false"
          (click)="signOutAction()">Sign out</div>
     <div class="options" [style.color]="getColor(null, null)">
-      <span class="version" [style.cursor]="'pointer'">{{version}}</span>
-      <span class="privacy" (click)="dialogRef.close('privacy')">Privacy & Terms</span>
+      <span class="privacy" (click)="dialogRef.close('privacy')">Privacy</span>
+      <span class="privacy" (click)="dialogRef.close('terms')">Terms</span>
     </div>
   </div>
 </div>

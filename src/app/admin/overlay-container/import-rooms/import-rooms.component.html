@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="new-room-in-folder sticky-header">
-    <div class="new-room-in-folder-header">
+    <div class="new-room-in-folder-header" [attr.data-motion-translate]="true">
       <div class="back-button" *ngIf="!showCancel">
         <app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="goBack()"></app-icon-button>
       </div>
@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div class="import-rooms-content">
+  <div class="import-rooms-content" [attr.data-motion-translate]="true">
     <div class="import-screen" *ngIf="getRoomImportScreen() === 1">
       <div class="ds-w-100" [ngClass]="{'ds-flex-center-between': !uploadingProgress.inProgress && !uploadingProgress.completed}">
         <div>

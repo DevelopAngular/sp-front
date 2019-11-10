@@ -1,8 +1,8 @@
-<div class="wrapper">
+<div class="wrapper" #scrollableArea>
   <div class="content">
-    <div class="folder-name">
+    <div class="folder-name" style="width: 289px">
       <app-input
-              [width]="'289px'"
+              [width]="'275px'"
               [maxLength]="17"
               [input_label]="'Folder Name'"
               [input_value]="(folderName !== 'New Folder' ? folderName : '')"
@@ -10,19 +10,20 @@
               [formGroup]="form"
               [isFocus]="currentPage === 3"
               [controlName]="form.get('folderName')"
-              (blurEvent)="overlayService.roomNameBlur$.next($event)"
+              (blurEvent)="overlayService.folderNameBlur$.next($event)"
       >
       </app-input>
     </div>
-    <div *ngIf="folderRoomsLoaded" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <div *ngIf="folderRoomsLoaded">
     <div class="rooms-wrapper rooms-in-folder">
       <div class="sticky" *ngIf="roomsImFolder.length">
         <div class="rooms-in-folder-title">
           <div class="all-rooms-checkbox">
-            <mat-checkbox style="margin-left: 12px; margin-right: 15px"
-                          [checked]="roomsImFolder.length === selectedRooms.length"
-                          [indeterminate]="roomsImFolder.length && roomsImFolder.length < selectedRooms.length"
-                          (change)="selectedRoomsEvent($event, null, true)"
+            <mat-checkbox
+              style="margin-left: 12px;margin-right: 15px"
+              [checked]="roomsImFolder.length === selectedRooms.length"
+              [indeterminate]="roomsImFolder.length && roomsImFolder.length < selectedRooms.length"
+              (change)="selectedRoomsEvent($event, null, true)"
             >
             </mat-checkbox>
           </div>
@@ -33,7 +34,7 @@
         <mat-divider style="margin-top: 9px"></mat-divider>
       </div>
       <div class="rooms-in-folder-content">
-        <div class="rooms-list" #roomList *ngIf="roomsImFolder.length > 0">
+        <div class="rooms-list" *ngIf="roomsImFolder.length > 0">
           <mat-list>
             <div *ngFor="let room of sortSelectedRooms">
               <div

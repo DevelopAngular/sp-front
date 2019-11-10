@@ -2,8 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as assistantsActions from '../actions';
-import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
-import {User} from '../../../../../models/User';
+import {catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
 
 @Injectable()
@@ -59,6 +58,84 @@ export class AssistantsEffects {
                 return assistantsActions.removeAssistantSuccess({id: action.id});
               }),
               catchError(error => of(assistantsActions.removeAssistantFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateAssistantActivity$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.updateAssistantActivity),
+        concatMap((action: any) => {
+          return this.userService.setUserActivity(action.profile.id, action.active)
+            .pipe(
+              map(user => {
+                const profile = {
+                  ...action.profile
+                };
+                profile.active = action.active;
+                return assistantsActions.updateAssistantActivitySuccess({profile});
+              }),
+              catchError(error => of(assistantsActions.updateAssistantActivityFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  addRepresentedUser$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.addRepresentedUserAction),
+        concatMap((action: any) => {
+          return this.userService.addRepresentedUser(action.profile.id, action.user)
+            .pipe(
+              map((user: any) => {
+                action.profile._originalUserProfile.canActingOnBehalfOf.push({
+                  roles: [...action.user.roles],
+                  user: action.user
+                });
+                return assistantsActions.addRepresentedUserSuccess({profile: action.profile});
+              }),
+              catchError(error => of(assistantsActions.addRepresentedUserFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  removeRepresentedUser$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.removeRepresentedUserAction),
+        concatMap((action: any) => {
+          return this.userService.deleteRepresentedUser(action.profile.id, action.user)
+            .pipe(
+              map(user => {
+                const index = action.profile._originalUserProfile.canActingOnBehalfOf.findIndex(elem => {
+                  return elem.user.id === action.user.id;
+                });
+                action.profile._originalUserProfile.canActingOnBehalfOf.splice(index, 1);
+                return assistantsActions.removeRepresentedUserSuccess({profile: action.profile});
+              }),
+              catchError(error => of(assistantsActions.removeRepresentedUserFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateAssistantPermissions$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.updateAssistantPermissions),
+        concatMap((action: any) => {
+          return this.userService.createUserRoles(action.profile.id, action.permissions)
+            .pipe(
+              map((roles: any) => {
+                const profile = action.profile;
+                profile.roles = roles.map(role => role.codename);
+                return assistantsActions.updateAssistantPermissionsSuccess({profile});
+              }),
+              catchError(error => of(assistantsActions.updateAssistantPermissionsFailure({errorMessage: error.message})))
             );
         })
       );

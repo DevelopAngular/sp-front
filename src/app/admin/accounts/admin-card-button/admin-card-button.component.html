@@ -1,5 +1,6 @@
 <div
      class="wrapper"
+     (click)="onClick.emit()"
      #wrap
      (mouseenter)="wrap.hovered = true"
      (mouseleave)="wrap.hovered = false"
@@ -21,7 +22,6 @@
       [size]="20"
       [srcString]="'Chevron Right'"
       [eventBubbling]="true"
-      (clickEvent)="onClick.emit()"
     ></app-icon-button>
   </div>
 <!--    <img *ngIf="wrap.hovered && !integrations" width="24" height="24" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">-->

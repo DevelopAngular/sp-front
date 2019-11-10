@@ -5,7 +5,6 @@ import { BehaviorSubject } from 'rxjs';
 
 import { RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
-import {LocationsService} from '../../../services/locations.service';
 
 @Component({
   selector: 'app-edit-room-in-folder',
@@ -41,7 +40,7 @@ export class EditRoomInFolderComponent implements OnInit {
         }
     };
 
-    constructor(private locationService: LocationsService) { }
+    constructor() { }
 
     get showSave() {
         return this.roomValidButtons.getValue().publish;
@@ -55,8 +54,7 @@ export class EditRoomInFolderComponent implements OnInit {
         return this.roomValidButtons.getValue().cancel;
     }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   goBack() {
     this.back.emit();

@@ -1,22 +1,16 @@
 <div style="position: relative;">
   <div class="rest-mes-wrapper">
-    <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
+    <div
+      [ngClass]="headerTransition">
+      <div class="header-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction" [style.background-image]="headerGradient"></div>
       <div class="back-button-wrapper" (click)="back()">
         <img [ngClass]=" isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'" class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
       </div>
-      <div class="rest-mes-header-text">
+      <div class="rest-mes-header-text"
+           [attr.data-motion-translate]="(frameMotion$ | async).direction"
+      >
         <img class="search-icon" [src]="'./assets/Message (White).svg' | resolveAsset">
         <div class="text ds-dialog-title-white">Message</div>
-      </div>
-    </div>
-
-    <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
-      <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
-        <div class="teacher" *ngFor="let teacher of filteredTeachers; let i = index">
-        <span class="" style="color: #7F879D; font-size: 16px; font-weight: normal; margin-right: 3px">
-          {{ teacher.display_name + (filteredTeachers.length > 1 && i !== filteredTeachers.length - 1 ? ', ' : '') + ' ' }}
-        </span>
-        </div>
       </div>
     </div>
 
@@ -30,24 +24,37 @@
     <!--</div>-->
     <!--</div>-->
 
+    <div class="content-background"
+         [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
     <div class="content-wrapper">
-      <div class="rest-mes-content">
-        <div data-grammarly-issue-container [style.width]="'100%'">
-      <textarea
-        #messageBox
-        class="message-box"
-        pInputTextarea
-        [maxlength]="160"
-        autoResize="autoResize"
-        [placeholder]="'Attach a message'"
-        [formControl]="message"
-        [style.width]="messageBoxViewRestriction.textAreaWidth"
-        [style.height]="'88px'"
-        [style.min-height]="'88px'"
-        [style.max-height]="date ? '190px' : '207px'"
-        autofocus
+      <div class="rest-mes-content"
+           [attr.data-motion-translate]="(frameMotion$ | async).direction"
       >
-    </textarea>
+        <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
+          <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
+            <div class="teacher" *ngFor="let teacher of filteredTeachers; let i = index">
+        <span class="" style="color: #7F879D; font-size: 16px; font-weight: normal; margin-right: 3px">
+          {{ teacher.display_name + (filteredTeachers.length > 1 && i !== filteredTeachers.length - 1 ? ', ' : '') + ' ' }}
+        </span>
+            </div>
+          </div>
+        </div>
+        <div data-grammarly-issue-container [style.width]="'100%'" [style.padding]="'0px 25px'" [style.width.%]="85">
+          <textarea
+            #messageBox
+            class="message-box"
+            pInputTextarea
+            [maxlength]="160"
+            autoResize="autoResize"
+            [placeholder]="'Attach a message'"
+            [formControl]="message"
+            [style.width]="messageBoxViewRestriction.textAreaWidth"
+            [style.height]="'88px'"
+            [style.min-height]="'88px'"
+            [style.max-height]="date ? '190px' : '207px'"
+            autofocus
+          >
+          </textarea>
         </div>
         <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">
           <app-gradient-button size="editable"

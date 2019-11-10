@@ -6,7 +6,6 @@ import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {RELEASE_NAME} from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
-import {trigger} from '@angular/animations';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
@@ -96,6 +95,8 @@ export class SettingsComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
+          this.settings = [];
+          this.initializeSettings();
           this.isStaff = user.roles.includes('edit_all_hallpass');
         });
       });
@@ -166,8 +167,12 @@ export class SettingsComponent implements OnInit {
   }
 
   removeOfflineAuthData() {
-    this.dialogRef.close('signout');
-    combineLatest(this.pwaStorage.removeItem('servers'),
+    if (this.dialogRef) {
+      this.dialogRef.close('signout');
+    }
+
+    combineLatest(
+      this.pwaStorage.removeItem('servers'),
       this.pwaStorage.removeItem('authData') )
       .subscribe();
   }
@@ -217,13 +222,15 @@ export class SettingsComponent implements OnInit {
       'action': 'about',
       'title': 'About'
     });
-    this.settings.push({
-      'hidden': false,
-      'gradient': '#5E4FED, #7D57FF',
-      'icon': 'Feedback',
-      'action': 'feedback',
-      'title': 'Feedback'
-    });
+    if (this.user && this.user.isAdmin() || this.user && this.user.isTeacher()) {
+      this.settings.push({
+        'hidden': false,
+        'gradient': '#5E4FED, #7D57FF',
+        'icon': 'Launch',
+        'action': 'wishlist',
+        'title': 'Wishlist'
+      });
+    }
     this.settings.push({
       'hidden': false,
       'gradient': '#F52B4F, #F37426',

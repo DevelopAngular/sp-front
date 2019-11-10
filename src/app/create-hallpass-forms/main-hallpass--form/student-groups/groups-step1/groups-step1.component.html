@@ -1,25 +1,27 @@
 <div [ngClass]=" isIOSTablet ? 'ios-step-1-container' : 'step-1-container'">
   <div class="header">
-
+    <div class="header-background"
+         [attr.data-motion-opacity]="(frameMotion$ | async).direction"
+         [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'"></div>
     <div class="header_back-button ">
       <div [ngClass]=" isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'"  class="header_back-button-icon">
         <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
       </div>
     </div>
 
-    <div class="header_title">
+    <div class="header_title"  [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <img class="header_icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="header_text ds-dialog-title">Select students(s)</div>
     </div>
   </div>
-  <div class="content">
+  <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="content-left">
       <div class="content-left_wrapper">
         <div class="student-group-name-wrapper">
           <div class="ds-dialog-subtitle student-group-name">Student Groups</div>
         </div>
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
-          <div  class="goups-container">
+          <div  class="goups-container" [style.overflow]="groups.length > 0 ? 'auto' : 'hidden'">
             <div *ngIf="isLoadingGroups$ | async" class="loading-theme_blue-gray spinner ds-flex-center-center">
               <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
             </div>
@@ -33,14 +35,17 @@
             </div>
             <div *ngIf="groups?.length && isLoadedGroups$ | async" class="list-of-groups">
               <mat-list>
-                <div *ngFor="let group of groups">
-                  <mat-list-item #_item
-                    (click)="selectGroup(group, $event)" class="group"
+                <div *ngFor="let group of groups"
+                >
+                  <mat-list-item
+                    class="group"
+                    (click)="selectGroup(group, $event)"
                     (mouseenter)="_item.hovered = true"
                     (mouseleave)="_item.hovered = false"
                     (mousedown)="_item.pressed = true"
                     (mouseup)="_item.pressed = false"
                     [style.background-color]="getBackground(_item, group)"
+                    #_item
                     [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}"
                   >
                     <div class="group-name">
@@ -98,6 +103,7 @@
             [listMaxHeight]="'unset'"
             [focused]="true"
             [selectedOptions]="selectedStudents"
+            (isOpenedOptions)="isOpenedSearchOptions = $event"
             (onUpdate)="updateInternalData($event)"
           ></app-sp-search>
         </div>
@@ -137,7 +143,7 @@
       [minHeight]="'35px'"
       [fontSize]="'14px'"
       [cursor]="'pointer'"
-      (buttonClick)="nextStep()"
+      (click)="nextStep()"
     >Next ({{selectedStudents.length}})
     </app-gradient-button>
   </div>

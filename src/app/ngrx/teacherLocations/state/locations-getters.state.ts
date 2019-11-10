@@ -1,7 +1,7 @@
-import {AppState} from '../../app-state/app-state';
-import {adapter} from '../reducers';
+import { AppState } from '../../app-state/app-state';
+import { adapter } from '../reducers';
 
 
-export const getLocationsState = (state: AppState) => state.teacherLocations;
+export const getTeacherLocationsState = (state: AppState) => state.teacherLocations;
 
-export const getLocationsCollection = adapter.getSelectors(getLocationsState).selectAll;
+export const getTeacherLocationsCollection = adapter.getSelectors(getTeacherLocationsState).selectAll;

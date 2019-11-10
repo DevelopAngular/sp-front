@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs';
+import {Component, Input, OnInit, Output, OnDestroy, EventEmitter, ViewChild, ElementRef} from '@angular/core';
+import {interval, BehaviorSubject, Subject} from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { TimeService } from '../services/time.service';
@@ -7,7 +7,7 @@ import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisi
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
-import {filter} from 'rxjs/operators';
+import {filter, takeUntil} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 
 @Component({
@@ -35,25 +35,11 @@ export class PassTileComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   hovered: boolean;
   timers: number[] = [];
+  hoverDestroyer$: Subject<any>;
 
-  //
-  // mockData = {
-  //   headers: [
-  //     'Counselor',
-  //     'Gardner',
-  //     'Bathroom'
-  //   ],
-  //   gradients: [
-  //     '#E38314,#EAB219',
-  //     '#F52B4F,#F37426',
-  //     '#5C4AE3,#336DE4'
-  //   ],
-  //   dates: [
-  //     'Tomorrow, 9:03 AM',
-  //     'Sept 29, 11:35 AM',
-  //     'Today, 8:35 AM'
-  //   ]
-  // };
+  activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  destroy$: Subject<any> = new Subject<any>();
 
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';
@@ -96,39 +82,35 @@ export class PassTileComponent implements OnInit, OnDestroy {
     }
   }
 
-  constructor(private sanitizer: DomSanitizer, private timeService: TimeService, private screenService: ScreenService) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private timeService: TimeService,
+    private screenService: ScreenService
+  ) {
   }
 
   ngOnInit() {
-      // if (this.mock) {
-      // this.pass = null;
-      // this.fromPast = false;
-      // this.forFuture = true;
-      // this.isActive = false;
-      // this.forStaff = false;
-      // this.timerEvent = new Subject<any>();
-    // }
-
     this.valid = this.isActive;
     if (this.timerEvent) {
-      this.timerEvent.pipe(filter(() => !!this.pass['expiration_time'])).subscribe(() => {
+      this.timerEvent.pipe(
+        filter(() => !!this.pass['expiration_time']),
+        takeUntil(this.destroy$)
+      ).subscribe(() => {
         const end: Date = this.pass['expiration_time'];
         const now: Date = this.timeService.nowDate();
         const diff: number = (end.getTime() - now.getTime()) / 1000;
         const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
         const secs: number = Math.abs(Math.floor(diff) % 60);
         this.valid = end > now;
+        this.activePassTime$.next(mins + ':' + (secs < 10 ? '0' + secs : secs));
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
       });
     }
   }
 
   ngOnDestroy() {
-    this.timers.forEach(id => {
-      console.log('Clearing interval');
-      clearInterval(id);
-    });
-    this.timers = [];
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   backgroundGradient() {
@@ -143,7 +125,6 @@ export class PassTileComponent implements OnInit, OnDestroy {
   onPress(press: boolean, event) {
     if (this.screenService.isDeviceLargeExtra) event.preventDefault();
     this.buttonDown = press;
-    // console.log("[Button State]: ", "The button is " +this.buttonState);
   }
 
   onTap(state: boolean) {
@@ -151,7 +132,38 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   onClick(event) {
-    this.tileSelected.emit(event);
+    this.tileSelected.emit(this.activePassTime$);
+  }
+
+  onHover(evt: Event, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = (evt.target as HTMLElement);
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        }
+      });
+  }
+
+  onLeave({target: target}) {
+    target.style.marginLeft = '0px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `100%`;
+
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
   }
 
 }

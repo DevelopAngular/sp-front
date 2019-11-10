@@ -1,12 +1,10 @@
 import {
-  AfterContentInit,
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
-  Input, OnChanges,
+  Input,
   OnInit,
-  Output, SimpleChanges,
+  Output,
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material';

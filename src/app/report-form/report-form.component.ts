@@ -9,6 +9,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-report-form',
@@ -78,8 +79,7 @@ export class ReportFormComponent implements OnInit {
       'message' : this.reportMessage
     };
 
-    this.adminService.sendReport(body).subscribe(data => {
-      console.log(data);
+    this.adminService.sendReportRequest(body).pipe(filter(res => !!res)).subscribe(data => {
       this.dialogRef.close(data);
     });
   }

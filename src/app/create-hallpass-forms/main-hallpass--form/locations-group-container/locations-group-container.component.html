@@ -1,6 +1,7 @@
 <div class="locations-group-wrapper">
 <!--  <pre>  {{FORM_STATE.state}} {{FORM_STATE.previousState}} {{ FORM_STATE.state > FORM_STATE.previousState}}</pre>-->
   <!--<pre>{{frameMotion$| async | json}}</pre>-->
+<!--  <pre>{{FORM_STATE.previousStep}} - {{FORM_STATE.previousState}}</pre>-->
   <div *ngIf="FORM_STATE.state === 1" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
 
     <app-from-where
@@ -22,6 +23,7 @@
       [location]="data.fromLocation"
       (backButton)="back($event)"
       (selectedPinnable)="toWhere($event)"
+      (selectedLocation)="toWhereFromLocation($event)"
     ></app-to-where>
   </div>
   <!--<div *ngIf="FORM_STATE.state === 3" style="position: absolute">-->
@@ -37,7 +39,6 @@
       (locFromCategory)="fromCategory($event)"
     ></app-to-category>
   </div>
-  <!--<div *ngIf="FORM_STATE.state === 4" style="position: absolute">-->
   <div *ngIf="FORM_STATE.state === 4" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-restricted-target
@@ -49,7 +50,6 @@
     ></app-restricted-target>
   </div>
 
-  <!--<div *ngIf="FORM_STATE.state === 5" style="position: absolute">-->
   <div *ngIf="FORM_STATE.state === 5" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-restricted-message
@@ -64,6 +64,6 @@
 
 </div>
 
-<div [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
+<div *ngIf="pwaBackBtnVisibility" [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
   <app-icon-button (clickEvent)="stepBack()" [srcString]="'Back Button'" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
 </div>

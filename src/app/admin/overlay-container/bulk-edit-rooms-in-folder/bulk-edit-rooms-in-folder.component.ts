@@ -4,7 +4,7 @@ import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import { Location } from '../../../models/Location';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { BehaviorSubject } from 'rxjs';
-import * as _ from 'lodash';
+import { isNull } from 'lodash';
 
 @Component({
   selector: 'app-bulk-edit-rooms-in-folder',
@@ -67,14 +67,14 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
     if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
       if (
         (this.roomData.travelType.length &&
-        !_.isNull(this.roomData.restricted) &&
-        !_.isNull(this.roomData.scheduling_restricted) &&
+        !isNull(this.roomData.restricted) &&
+        !isNull(this.roomData.scheduling_restricted) &&
         this.roomData.timeLimit) && !this.advOptionsButtons
       ) {
         this.roomsValidButtons.next({publish: true, cancel: true, incomplete: false});
       } else if ((this.roomData.travelType.length &&
-        !_.isNull(this.roomData.restricted) &&
-        !_.isNull(this.roomData.scheduling_restricted) &&
+        !isNull(this.roomData.restricted) &&
+        !isNull(this.roomData.scheduling_restricted) &&
         this.roomData.timeLimit) && this.advOptionsButtons) {
 
         if (this.advOptionsButtons.incomplete) {
@@ -89,15 +89,15 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
     } else {
       if (
         (this.roomData.travelType.length ||
-          !_.isNull(this.roomData.restricted) ||
-          !_.isNull(this.roomData.scheduling_restricted) ||
+          !isNull(this.roomData.restricted) ||
+          !isNull(this.roomData.scheduling_restricted) ||
           this.roomData.timeLimit) && !this.advOptionsButtons
       ) {
         this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
       } else if (
         (this.roomData.travelType.length ||
-          !_.isNull(this.roomData.restricted) ||
-          !_.isNull(this.roomData.scheduling_restricted) ||
+          !isNull(this.roomData.restricted) ||
+          !isNull(this.roomData.scheduling_restricted) ||
           this.roomData.timeLimit) && this.advOptionsButtons
       ) {
         if (this.advOptionsButtons.incomplete) {

@@ -1,10 +1,10 @@
 :host {
-  div.ng-trigger-NextStep {
-    right: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100% !important;
-  }
+  //div.ng-trigger-NextStep {
+  //  right: 0;
+  //  left: 50%;
+  //  transform: translateX(-50%);
+  //  width: 100% !important;
+  //}
 
   div.ios-back-btn-bottom {
     display: block;
@@ -42,9 +42,11 @@
     //background-color: #fff;
     position: relative;
     height: 500px;
-    border-radius: 15px;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 14px;
     overflow: hidden;
-    z-index: 50;
+    //z-index: 50;
   }
 
   .next-step {
@@ -61,6 +63,6 @@
   }
 
   .back-btn-bottom {
-    display: none;
+    //display: none;
   }
 }
