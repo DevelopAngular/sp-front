@@ -206,7 +206,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   ) {
     this.setSearchDate(this.timeService.nowDate());
-    console.log(this.kioskMode);
+    // console.log(this.kioskMode);
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
     const selectedLocationArray$ = this.selectedLocation$
