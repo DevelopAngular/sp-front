@@ -27,7 +27,7 @@
 <!--          <img [@calendarIconTrigger]='calendarIconState' class="calendar-icon"  src = "../../assets/Calendar%20(Blue).svg">-->
 <!--        </ng-template>-->
       </div>
-      <p *ngIf="screenService.isDeviceMid" class="my-room-title">My Room</p>
+      <p *ngIf="screenService.isDeviceMid && !isSearchBarClicked" class="my-room-title">My Room</p>
     </div>
   </div>
   <div *ngIf="UI" [ngClass]="isIOSTablet ? 'ios-my-room-wrapper' : 'my-room-wrapper'" #scrollableArea>

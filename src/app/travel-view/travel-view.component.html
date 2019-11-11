@@ -22,8 +22,7 @@
     </app-card-button>
   </ng-template>
   <img class="arrow" [src]="'./assets/' +(pass?.travel_type==='one_way'?'SP Arrow':'SP Arrow Double') +' (White).svg' | resolveAsset"
-      [style.height]="'55px'" [style.width]="(pass?.travel_type==='one_way'?'56px':'125px')"
-      >
+      [style.height]="'55px'" [style.width]="(pass?.travel_type==='one_way'?'56px':'125px')">
   <div>
     {{ destinationRoomName }}
   </div>

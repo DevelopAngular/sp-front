@@ -88,7 +88,6 @@ export class ActivePassProvider implements PassLikeProvider {
 
     const passes$ = this.user$.pipe(
       switchMap(user => {
-        console.log(user);
         return this.liveDataService.watchActiveHallPasses(mergedReplay,
             user.roles.includes('hallpass_student')
               ? {type: 'student', value: user}
