@@ -269,11 +269,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
 
-  isInboxClicked: boolean;
+  isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
-
-  dismissExpired = true;
 
   public schoolsLength$: Observable<number>;
 
@@ -380,9 +378,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.notificationButtonService.dismissButton$.next(false);
     }
 
-    this.navbarService.inboxClick.subscribe(inboxClick => {
-      this.isInboxClicked = inboxClick;
-    });
+    this.isInboxClicked$ = this.navbarService.inboxClick$.asObservable();
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
