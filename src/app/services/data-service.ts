@@ -56,7 +56,6 @@ export class DataService {
 
   updateInbox(state: boolean) {
     this.inboxSource.next(state);
-    debugger;
   }
 
   constructor(

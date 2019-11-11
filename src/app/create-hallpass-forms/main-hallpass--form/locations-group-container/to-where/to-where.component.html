@@ -14,7 +14,7 @@
   <div class="content-background"
        [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
   <div class="to-content" [attr.data-motion-translate]="(frameMotion$ | async).direction" #rc>
-    <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length && (isGrid$ | async)">
+    <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length && !(isLocationList$ | async)">
       <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
       <div class="rooms">
         <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
@@ -32,7 +32,7 @@
         </mat-grid-list>
       </div>
     </div>
-    <div class="all-rooms" *ngIf="isGrid$ | async">
+    <div class="all-rooms" *ngIf="!(isLocationList$ | async)">
       <div  [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
       <div class="pin-collection">
         <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <app-location-table *ngIf="!(isGrid$ | async)"
+    <app-location-table *ngIf="isLocationList$ | async"
       class="locations"
       [forStaff]="isStaff"
       [height]="'107px'"
