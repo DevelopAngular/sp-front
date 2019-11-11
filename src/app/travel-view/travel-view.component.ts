@@ -8,7 +8,6 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {BehaviorSubject} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
-import {School} from '../models/School';
 import {ScreenService} from '../services/screen.service';
 
 @Component({
@@ -58,7 +57,7 @@ export class TravelViewComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.destinationRoomName);
+    // console.log(this.destinationRoomName);
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
     (this.pass instanceof Invitation) ? 'invitation' :
       'request';

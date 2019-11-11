@@ -5,7 +5,7 @@
      [ngClass]="{'target-shadow': state !== 'to'}"
 >
   <div class="switch-locs-view" *ngIf="state === 'to'" (click)="switchLocsView($event)">
-    <img [src]="(isGrid ? './assets/List (Blue-Gray).svg' : './assets/Grid (Blue-Gray).svg') | resolveAsset" width="20" height="20">
+    <img [src]="(!isGrid ? './assets/List (Blue-Gray).svg' : './assets/Grid (Blue-Gray).svg') | resolveAsset" width="20" height="20">
   </div>
     <div class="footer-from-teacher-text">
       <div class="default-footer" *ngIf="!showFullFooter">

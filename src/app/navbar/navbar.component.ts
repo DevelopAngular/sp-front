@@ -528,6 +528,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   inboxClick() {
+    // debugger;
     this.inboxVisibility = !this.inboxVisibility;
     this.storage.setItem('showInbox', this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);

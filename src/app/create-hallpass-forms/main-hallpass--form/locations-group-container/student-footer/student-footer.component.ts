@@ -63,8 +63,8 @@ export class StudentFooterComponent implements OnInit {
 
   switchLocsView(evt: Event) {
     this.isGrid = !this.isGrid;
+    this.locsViewEvent.emit(!this.isGrid);
     evt.stopPropagation();
-    this.locsViewEvent.emit(this.isGrid);
   }
 
   goToFromWhere() {
