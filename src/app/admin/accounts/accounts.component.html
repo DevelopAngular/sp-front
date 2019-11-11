@@ -207,6 +207,7 @@
               [displayedColumns]="dataTableHeadersToDisplay"
               (selectedCell)="findProfileByRole($event)"
               (selectedUsers)="setSelected($event)"
+              (selectedRow)="prepareData($event)"
       >
       </app-data-table>
     </div>

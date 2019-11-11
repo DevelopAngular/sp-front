@@ -51,11 +51,6 @@ export class ToggleInputComponent implements OnInit {
           this.sizedLayout['checkbox-container__regular'] = true;
       }
     });
-
-    // if (!this.mock) {
-    //   this.e = fromEvent(this.inp.nativeElement, 'change');
-    //   this.e.subscribe((e: any) => this.pushOut(e.target.checked) );
-    // }
   }
 
 
