@@ -26,7 +26,7 @@
         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"  [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Passes</h1>
   </div>
 
-  <div  class="passes-wrapper" [@PassesSlideTopBottom] [style.padding-top]="isAndroid ? '0px' : '50px'"  *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>
+  <div  class="passes-wrapper" [@PassesSlideTopBottom] [style.padding-top]="isSmartphone ? '0px' : '50px'"  *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>
     <div class="main-page-left">
       <div class="current-pass">
         <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
