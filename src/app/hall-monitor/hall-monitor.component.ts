@@ -273,7 +273,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
           });
           this.dataService.sort$.next(selectedItem.action);
       });
-    } , 100);
+    } , 10);
   }
 
   onReportFromPassCard(studends) {

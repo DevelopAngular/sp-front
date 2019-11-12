@@ -118,8 +118,8 @@
   }
 
   div.student-search {
-    width: 76%;
-    margin-right: 10px;
+    //width: 76%;
+    //margin-right: 10px;
   }
 
   div.student-search-wrapper {
@@ -136,8 +136,8 @@
 
 @media all and (max-width: 940px) and (min-width: 768px) {
   div.student-search {
-    width: 379px;
-    margin-right: 10px;
+    //width: 379px;
+    //margin-right: 10px;
   }
 
   div.student-search-wrapper {
@@ -279,6 +279,7 @@ input {
 }
 
 .cancel {
+  margin-right: 10px;
   color: #007cff;
   border-bottom: 1px solid transparent;
 }
