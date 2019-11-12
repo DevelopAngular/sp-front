@@ -73,7 +73,7 @@ export class DropdownComponent implements OnInit {
     const dataAfterClosing = {
       selectedRoom: location,
       scrollPosition: this.scrollPosition
-    }
+    };
     this._matDialogRef.close(dataAfterClosing);
   }
 

@@ -357,10 +357,10 @@ input {
   justify-content: center;
   align-items: center;
 
-  &-calendar {
-    position: absolute;
-    right: 0;
-  }
+  //&-calendar {
+  //  position: absolute;
+  //  right: 0;
+  //}
 }
 
 .my-room-options-mobile {
@@ -420,12 +420,14 @@ input {
 
 .cancel {
   &-wrapper {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 99;
+    position: absolute;
+    right: 10px;
+    //width: 60px;
+    //height: 60px;
+    //display: flex;
+    //align-items: center;
+    //position: relative;
+    //z-index: 99;
   }
 
   color: #007cff;
