@@ -34,6 +34,7 @@
           <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
 <!--            <div class="student-search">-->
               <app-round-input
+                [focused]="true"
                 [type]="inputRestrictionSm.type"
                 [minWidth]="inputRestrictionSm.minWidth"
                 [width]="inputRestrictionSm.width"
