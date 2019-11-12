@@ -153,7 +153,7 @@ export class ToWhereComponent implements OnInit {
 
     this.formService.scalableBoxController.next(false);
 
-    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater) {
+    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater && !this.formState.kioskMode) {
       this.formService.setFrameMotionDirection('disable');
       this.formService.compressableBoxController.next(true);
     } else {
