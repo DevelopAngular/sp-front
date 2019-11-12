@@ -32,7 +32,7 @@
             <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
           </div>
           <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
-            <div class="student-search ">
+<!--            <div class="student-search">-->
               <app-round-input
                 [type]="inputRestrictionSm.type"
                 [minWidth]="inputRestrictionSm.minWidth"
@@ -40,11 +40,10 @@
                 [placeholder]="inputRestrictionSm.placeholder"
                 [fieldIconPosition]="inputRestrictionSm.fieldIconPosition"
                 [closeIcon]="inputRestrictionSm.closeIcon"
-                [style.margin-right]="'40px'"
                 (ontextupdate)="onSearch($event)"
                 [selectReset$] = "resetvalue"
               ></app-round-input>
-            </div>
+<!--            </div>-->
           </div>
 
           <div class="cancel-wrapper" *ngIf="isIpadSearchBar">
