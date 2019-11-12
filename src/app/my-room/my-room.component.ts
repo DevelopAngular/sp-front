@@ -200,13 +200,13 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private sanitizer: DomSanitizer,
       private storage: StorageService,
       private http: HttpService,
-      private screenService: ScreenService,
+      public screenService: ScreenService,
       public router: Router,
       private scrollPosition: ScrollPositionService
 
   ) {
     this.setSearchDate(this.timeService.nowDate());
-    console.log(this.kioskMode);
+    // console.log(this.kioskMode);
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
     const selectedLocationArray$ = this.selectedLocation$
@@ -247,10 +247,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   get dateDisplay() {
     return Util.formatDateTime(this.searchDate).split(',')[0];
-  }
-
-  get choices() {
-    return this.roomOptions;
   }
 
   get showArrow() {
@@ -423,7 +419,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         backdropClass: 'invis-backdrop',
         data: {
           'heading': 'CHANGE ROOM',
-          'locations': this.choices,
+          'locations': this.roomOptions,
           'selectedLocation': this.selectedLocation,
           'trigger': target,
           'scrollPosition': this.holdScrollPosition
@@ -475,7 +471,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   onDate(event) {
-    debugger;
     this.setSearchDate(event[0]._d);
   }
 
@@ -490,7 +485,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         dialogData.list[0].isSelected = false;
       }
 
-      this.choices.forEach((choice) => {
+      this.roomOptions.forEach((choice) => {
         let isItemSelected: boolean;
 
         if (this.selectedLocation && (this.selectedLocation.title === choice.title)) {
@@ -516,7 +511,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         }).selectedItem;
         this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
       });
-    }, 100);
+    }, 10);
   }
 
   calendarSlideState(stateName: string): string {

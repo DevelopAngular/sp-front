@@ -4,6 +4,7 @@ import { WebConnectionService } from '../services/web-connection.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { MatDialogConfig, MatDialogRef } from '@angular/material';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-toast-connection',
@@ -17,7 +18,8 @@ export class ToastConnectionComponent implements OnInit, OnDestroy {
 
   constructor(
       private connection: WebConnectionService,
-      private dialogRef: MatDialogRef<ToastConnectionComponent>
+      private dialogRef: MatDialogRef<ToastConnectionComponent>,
+      public screenService: ScreenService
   ) { }
 
   ngOnInit() {

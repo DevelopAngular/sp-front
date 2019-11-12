@@ -55,7 +55,7 @@ export class NotificationTurnOnBtnComponent implements OnInit {
   }
 
   dismissClick() {
-    // localStorage.setItem('notif_btn_dismiss_expiration', JSON.stringify(this.dismissExpirationDate));
+    localStorage.setItem('notif_btn_dismiss_expiration', JSON.stringify(this.dismissExpirationDate));
     this.notificationButtonService.dismissButton$.next(true);
   }
 

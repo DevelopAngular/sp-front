@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import {Moment} from 'moment';
 import {IosDateSingleton, SWIPE_BLOCKER} from './ios-date.singleton';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-ios-calendar',
@@ -24,7 +25,8 @@ export class IosCalendarComponent implements OnInit {
   private _selected: Moment;
 
   constructor(
-    private iosDate: IosDateSingleton
+    private iosDate: IosDateSingleton,
+    private http: HttpClient
   ) { }
 
 

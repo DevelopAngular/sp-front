@@ -33,7 +33,7 @@ export const Select = trigger('Select', [
 
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-    query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
+    query(`[data-motion-compress*='students']`, animate('1.45s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.24) scaleX(0.6)',
@@ -44,7 +44,7 @@ export const NextStep = trigger('NextStep', [                                   
 
       }),
     ])), {optional: true}),
-    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('.45s 0s ease', keyframes([
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('1.45s 0s ease', keyframes([
       style({
         opacity: 0,
         transform: 'scaleY(0.8) scaleX(1.65)',
@@ -112,7 +112,7 @@ export const NextStep = trigger('NextStep', [                                   
     ]), { params: { from: 100, halfFrom: 50}}
   ),
   transition(':leave', group([                                                              // :LEAVE PSEUDOSTATE
-    query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
+    query(`[data-motion-compress*='students']`, animate('1.45s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.0) scaleX(1.0)',
@@ -123,7 +123,7 @@ export const NextStep = trigger('NextStep', [                                   
         transform: 'scaleY(1.24) scaleX(0.6)',
       })
     ])), {optional: true}),
-    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('.45s 0s ease', keyframes([
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('1.45s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.0) scaleX(1.0)',

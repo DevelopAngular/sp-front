@@ -39,6 +39,7 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
 
   destoy$ = new Subject();
 
+  frameMotion$: BehaviorSubject<any>;
 
   constructor(
     private userService: UserService,
@@ -56,12 +57,10 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    if (!this.screenService.isDeviceLargeExtra) {
-      this.formService.compressableBoxController.next(true);
-    }
+
+    this.checkCompresingAbbility();
 
     if (this.FORM_STATE) {
-
       this.currentState = this.FORM_STATE.state || 1;
     }
 
@@ -93,10 +92,14 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
     this.destoy$.complete();
   }
 
-  onStateChange(evt) {
-    if (!this.screenService.isDeviceLargeExtra) {
+  private checkCompresingAbbility() {
+    if (!this.screenService.isDeviceLargeExtra && !this.FORM_STATE.kioskMode) {
       this.formService.compressableBoxController.next(true);
     }
+  }
+
+  onStateChange(evt) {
+    this.checkCompresingAbbility();
     setTimeout(() => {
       if ( evt === 'exit' ) {
         this.nextStepEvent.emit({ action: 'exit', data: null });
@@ -110,7 +113,20 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
           return this.nextStepEvent.emit(this.FORM_STATE);
       }
 
-      if ( evt.step === 3 || evt.step === 1 ) {
+      if ( evt.step === 3 && this.FORM_STATE.kioskMode) {
+        this.selectedStudents = evt.data.selectedStudents;
+        this.groupDTO.get('users').setValue(evt.data.selectedStudents);
+
+        this.FORM_STATE.step = 3 ;
+        this.FORM_STATE.state = 2;
+        this.FORM_STATE.previousStep = 2;
+        this.FORM_STATE.fromState = 4;
+
+        this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
+        this.nextStepEvent.emit(this.FORM_STATE);
+      }
+
+      if ( (evt.step === 3 || evt.step === 1) && !this.FORM_STATE.kioskMode) {
         this.FORM_STATE.step = this.FORM_STATE.previousStep && this.FORM_STATE.previousStep > 3 ? this.FORM_STATE.previousStep : evt.step ;
         this.FORM_STATE.previousStep = 2;
         this.FORM_STATE.state = this.FORM_STATE.formMode.formFactor === 3 ? 2 : 1;
@@ -123,6 +139,7 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
   }
 
   groupNextStep(evt) {
+
     switch (evt.state) {
       case 3:
         this.selectedGroup = evt.data.selectedGroup;
@@ -137,7 +154,6 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
         break;
     }
     this.currentState = evt.state;
-
   }
 
 }

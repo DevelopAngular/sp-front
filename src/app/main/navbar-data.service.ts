@@ -48,8 +48,4 @@ export class NavbarDataService {
 
 
   }
-
-  get inboxClick() {
-    return this.inboxClick$.asObservable();
-  }
 }

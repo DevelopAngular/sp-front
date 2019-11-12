@@ -115,6 +115,10 @@ export class RoundInputComponent implements OnInit {
       this.pending$ = new Subject<boolean>();
     }
 
+    if (this.focused) {
+      this.input.nativeElement.focus();
+    }
+
     if (this.isSearch) {
       fromEvent(this.input.nativeElement, 'input')
         .pipe(

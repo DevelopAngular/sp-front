@@ -88,7 +88,6 @@ export class ActivePassProvider implements PassLikeProvider {
 
     const passes$ = this.user$.pipe(
       switchMap(user => {
-        console.log(user);
         return this.liveDataService.watchActiveHallPasses(mergedReplay,
             user.roles.includes('hallpass_student')
               ? {type: 'student', value: user}
@@ -269,11 +268,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
 
-  isInboxClicked: boolean;
+  isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
-
-  dismissExpired = true;
 
   public schoolsLength$: Observable<number>;
 
@@ -380,9 +377,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.notificationButtonService.dismissButton$.next(false);
     }
 
-    this.navbarService.inboxClick.subscribe(inboxClick => {
-      this.isInboxClicked = inboxClick;
-    });
+    this.isInboxClicked$ = this.navbarService.inboxClick$.asObservable();
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
@@ -505,7 +500,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  get isAndroid() {
-    return DeviceDetection.isAndroid();
+  get isSmartphone() {
+    return DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile();
   }
 }

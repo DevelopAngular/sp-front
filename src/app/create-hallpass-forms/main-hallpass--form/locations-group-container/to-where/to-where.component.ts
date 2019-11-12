@@ -51,7 +51,7 @@ export class ToWhereComponent implements OnInit {
   public states;
 
   public teacherRooms: Pinnable[] = [];
-  public isGrid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(JSON.parse(this.storage.getItem('isGrid')));
+  public isLocationList$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(JSON.parse(this.storage.getItem('isGrid')));
   public hiddenBanner: boolean = JSON.parse(this.storage.getItem('hiddenBanner'));
 
   public gridRestrictions: ToWhereGridRestriction = new ToWhereGridRestrictionLg();
@@ -140,7 +140,7 @@ export class ToWhereComponent implements OnInit {
 
   switchView(isGrid) {
     this.storage.setItem('isGrid', isGrid);
-    this.isGrid$.next(isGrid);
+    this.isLocationList$.next(isGrid);
     this.removeBanner();
   }
 
@@ -153,7 +153,7 @@ export class ToWhereComponent implements OnInit {
 
     this.formService.scalableBoxController.next(false);
 
-    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater) {
+    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater && !this.formState.kioskMode) {
       this.formService.setFrameMotionDirection('disable');
       this.formService.compressableBoxController.next(true);
     } else {
