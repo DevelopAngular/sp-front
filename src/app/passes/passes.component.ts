@@ -500,7 +500,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  get isAndroid() {
-    return DeviceDetection.isAndroid();
+  get isSmartphone() {
+    return DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile();
   }
 }
