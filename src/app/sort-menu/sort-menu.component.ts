@@ -1,13 +1,12 @@
-import {Component, EventEmitter, Inject, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {Location} from '../models/Location';
 
 @Component({
   selector: 'app-sort-menu',
   templateUrl: './sort-menu.component.html',
-  styleUrls: ['./sort-menu.component.scss'],
+  styleUrls: ['./sort-menu.component.scss']
 })
 export class SortMenuComponent implements OnInit, OnDestroy {
 

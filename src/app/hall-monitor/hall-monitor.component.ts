@@ -139,7 +139,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
-  selectedSortOption: any;
+  selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
 
   constructor(
     private userService: UserService,
