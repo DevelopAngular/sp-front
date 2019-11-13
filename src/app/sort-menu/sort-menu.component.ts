@@ -6,7 +6,8 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 @Component({
   selector: 'app-sort-menu',
   templateUrl: './sort-menu.component.html',
-  styleUrls: ['./sort-menu.component.scss']
+  styleUrls: ['./sort-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SortMenuComponent implements OnInit, OnDestroy {
 

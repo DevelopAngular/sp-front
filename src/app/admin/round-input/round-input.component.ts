@@ -115,10 +115,6 @@ export class RoundInputComponent implements OnInit {
       this.pending$ = new Subject<boolean>();
     }
 
-    if (this.focused) {
-      this.input.nativeElement.focus();
-    }
-
     if (this.isSearch) {
       fromEvent(this.input.nativeElement, 'input')
         .pipe(
@@ -142,11 +138,15 @@ export class RoundInputComponent implements OnInit {
         this.value = _value;
       });
     }
+
+    if (this.focused) {
+      this.input.nativeElement.focus();
+    }
   }
 
   handleError() {
     if (this.selfSearch && !this.endpoint) {
-      throw Error('\n \n SP Error => \n ---------------------- \n Please provide an api endpoint for search! \n');
+      throw Error('\n \n SP Error => \n ------ \n Please provide an api endpoint for search! \n');
     }
   }
 
