@@ -90,7 +90,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "hallpass:build"
+            "browserTarget": "hallpass:build",
+            "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {
             "local": {
