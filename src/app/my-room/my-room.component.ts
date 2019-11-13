@@ -475,43 +475,21 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   openOptionsMenu() {
-    setTimeout(() => {
-      const dialogData = {
-        title: 'change room',
-        list: [{name: 'all rooms', isSelected: true, selectedItem: null}],
-      };
-
-      if (this.selectedLocation) {
-        dialogData.list[0].isSelected = false;
-      }
-
-      this.roomOptions.forEach((choice) => {
-        let isItemSelected: boolean;
-
-        if (this.selectedLocation && (this.selectedLocation.title === choice.title)) {
-          isItemSelected = true;
-        }
-
-        dialogData.list.push({
-          name: choice.title,
-          isSelected: isItemSelected,
-          selectedItem: choice,
-        });
-      });
-
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: {bottom: '0'},
         panelClass: 'options-dialog',
-        data: dialogData
+        data: {
+          title: 'change room',
+          selectedItem: this.selectedLocation,
+          items: this.roomOptions,
+          showAll: true
+        }
       });
 
-      dialogRef.componentInstance.onListItemClick.subscribe((index) => {
-        this.selectedLocation = dialogData.list.find((option, i) => {
-          return i === index;
-        }).selectedItem;
+      dialogRef.componentInstance.onListItemClick.subscribe((location) => {
+        this.selectedLocation = location;
         this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
       });
-    }, 10);
   }
 
   calendarSlideState(stateName: string): string {

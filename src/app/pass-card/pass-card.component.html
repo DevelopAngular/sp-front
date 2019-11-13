@@ -13,9 +13,6 @@
 
         <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
 
-
-
-        <!--<img *ngIf="hasClose" (click)="cancelEdit($event)" class="pass-card-header-close" [src]="closeIcon | resolveAsset">-->
       </div>
     <mat-divider></mat-divider>
   </div>
@@ -89,11 +86,11 @@
       </app-pager>
     </div>
   </div>
+    <div class="pass-card-footer" *ngIf="forStaff || data.kioskMode">
+      <div class="student-footer"></div>
+      <div class="student-text"> {{ studentText }} </div>
+    </div>
 
-  <div class="pass-card-footer" *ngIf="forStaff || data.kioskMode">
-    <div class="student-footer"></div>
-    <div class="student-text"> {{ studentText }} </div>
-  </div>
 </div>
 
 <app-consent-menu-mobile
