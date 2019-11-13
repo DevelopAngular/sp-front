@@ -3,12 +3,19 @@
     <p class="sort-menu-header-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">{{data.title}}</p>
   </header>
   <ul class="sort-menu-options">
-    <li *ngFor="let sortByItem of data.list; let i = index "
-        (click)=selectSortOption(i)
+    <li *ngIf="showAllRooms"
+      (click)=selectSortOption(null)
+      [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
+      [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
+    All Rooms
+      <img *ngIf="!selectedItem" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
+    </li>
+    <li *ngFor="let item of items; let i = index "
+        (click)=selectSortOption(item)
         [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
-      {{ sortByItem.name }}
-      <img *ngIf="sortByItem.isSelected" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
+      {{ item.title }}
+      <img *ngIf="selectedItem && item.id === selectedItem.id" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
     </li>
   </ul>
 </section>

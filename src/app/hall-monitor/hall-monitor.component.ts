@@ -139,6 +139,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
+  selectedSortOption: any;
+
   constructor(
     private userService: UserService,
     public dataService: DataService,
@@ -250,30 +252,33 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   openSortMenu() {
-    setTimeout( () => {
-
-      const dialogData = {
-        title: 'sort by',
-        list: [
-          {name: 'pass expiration time', isSelected: false, action: 'expiration_time'},
-          {name: 'student name', isSelected: false, action: 'student_name'},
-          {name: 'destination', isSelected: false, action: 'destination_name'},
-        ],
-      };
+      // const dialogData = {
+      //   title: 'sort by',
+      //   items: [
+      //     {id: 1, title: 'pass expiration time', action: 'expiration_time'},
+      //     {id: 2, title: 'student name', action: 'student_name'},
+      //     {id: 3, title: 'destination', action: 'destination_name'},
+      //   ]
+      // };
 
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: { bottom: '1px' },
         panelClass: 'sort-dialog',
-        data: dialogData
+        data: {
+          title: 'sort by',
+          items: [
+            {id: 1, title: 'pass expiration time', action: 'expiration_time'},
+            {id: 2, title: 'student name', action: 'student_name'},
+            {id: 3, title: 'destination', action: 'destination_name'},
+          ],
+          selectedItem: this.selectedSortOption
+        }
       });
 
-      dialogRef.componentInstance.onListItemClick.subscribe((index) =>  {
-          const selectedItem = dialogData.list.find((item, i ) => {
-            return i === index;
-          });
-          this.dataService.sort$.next(selectedItem.action);
+      dialogRef.componentInstance.onListItemClick.subscribe((item) =>  {
+          this.dataService.sort$.next(item.action);
+          this.selectedSortOption = item;
       });
-    } , 10);
   }
 
   onReportFromPassCard(studends) {
