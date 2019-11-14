@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter, find } from 'lodash';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent, interval, Observable, ReplaySubject, Subject} from 'rxjs';
 
 import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
@@ -61,6 +61,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private openConnectionDialog: boolean;
 
   private subscriber$ = new Subject();
+
+  @HostListener('window:orientationchange', ['$event'])
+  change(event) {
+    if (DeviceDetection.isAndroid()) {
+      switch (window.screen.orientation.angle) {
+        case 90: {
+          // document.querySelector('body').style.transform = 'rotate(-90deg)';
+          // document.querySelector('body').style.width = '100%';
+        }
+      }
+    }
+  }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
@@ -179,8 +191,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
-
-        // console.log(data);
         const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
         let newHub: any;
 
@@ -218,11 +228,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
 
-        if (data.hideSchoolToggleBar) {
-          this.hideSchoolToggleBar = true;
-        } else {
-          this.hideSchoolToggleBar = false;
-        }
+        this.hideSchoolToggleBar = data.hideSchoolToggleBar;
         this.hideScroll = data.hideScroll;
       });
   }

@@ -161,17 +161,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isIpadWidth = this.screenService.isIpadWidth;
-    this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
-
-    if (this.screenService.isDeviceLargeExtra) {
-      this.hallMonitorCollection.hasSort = false;
-      this.isIpadSearchBar = false;
-    }
-
-    if (this.screenService.isDesktopWidth) {
-      this.hallMonitorCollection.hasSort = true;
-    }
+    this.detectDevice();
 
     combineLatest(
       this.dataService.currentUser,
@@ -235,11 +225,9 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-backdrop',
     });
 
-    dialogRef.afterOpened().subscribe( () => {
-
-    });
-
-    dialogRef.afterClosed().pipe(filter(res => !!res), map(res => {
+    dialogRef.afterClosed().pipe(
+      filter(res => !!res),
+      map(res => {
         this.sendReports = res;
         this.isActiveMessage = true;
         return res;
@@ -252,14 +240,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   openSortMenu() {
-      // const dialogData = {
-      //   title: 'sort by',
-      //   items: [
-      //     {id: 1, title: 'pass expiration time', action: 'expiration_time'},
-      //     {id: 2, title: 'student name', action: 'student_name'},
-      //     {id: 3, title: 'destination', action: 'destination_name'},
-      //   ]
-      // };
 
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: { bottom: '1px' },
@@ -303,24 +283,26 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.reportFormInstance.back();
   }
 
-  @HostListener('window:resize')
-  checkDeviceWidth() {
+  detectDevice() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
 
     if (this.screenService.isDeviceLargeExtra) {
       this.hallMonitorCollection.hasSort = false;
-      this.isIpadSearchBar = false;
+      // this.isIpadSearchBar = false;
     }
 
     if (this.screenService.isDesktopWidth) {
       this.hallMonitorCollection.hasSort = true;
     }
+  }
 
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    this.detectDevice();
   }
 
   toggleSearchBar() {
-    this.isSearchClicked = !this.isSearchClicked;
     if (this.screenService.isDeviceLargeExtra) {
       this.isIpadSearchBar = !this.isIpadSearchBar;
     }
