@@ -61,10 +61,10 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.titleService.setTitle('SmartPass Sign-in');
-    // this.metaService.addTag({
-    //   name: 'description',
-    //   content: 'Digital hall pass system and school safety solution. Sign-in with your school account. Don\'t have an account? Sign your school up for a free 60 day trial.'
-    // });
+    this.metaService.addTag({
+      name: 'description',
+      content: 'Digital hall pass system and school safety solution. Sign-in with your school account. Don\'t have an account? Sign your school up for a free 60 day trial.'
+    });
 
     if (this.isIOSMobile || this.isAndroid) {
       window.waitForAppLoaded();

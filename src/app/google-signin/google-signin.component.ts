@@ -67,7 +67,7 @@ export class GoogleSigninComponent implements OnInit {
     this.showSpinner = true;
     if (this.demoUsername && this.demoPassword) {
       this.titleService.setTitle('SmartPass');
-      // this.metaService.removeTag('name = "description"');
+      this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
       window.waitForAppLoaded(true);
