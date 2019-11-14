@@ -85,6 +85,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    // this.storageService.removeItem('refresh_token');
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
@@ -99,8 +100,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
-      this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
-      this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
+      // this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
+      // this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
     });
 
     if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
