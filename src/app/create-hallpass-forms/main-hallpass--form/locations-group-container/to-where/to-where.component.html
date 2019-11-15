@@ -73,7 +73,7 @@
     >
     </app-location-table>
 
-    <div class="banner-container" *ngIf="!hiddenBanner">
+    <div class="banner-container" *ngIf="!hiddenBanner && !displayFooters">
       <div class="banner">
         <div class="left">
           <img [src]="'./assets/Arrow-bottom.svg' | resolveAsset" width="18" height="22" alt="Arrow">

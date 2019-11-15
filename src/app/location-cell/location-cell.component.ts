@@ -3,6 +3,7 @@ import { Location } from '../models/Location';
 import { HttpService } from '../services/http-service';
 import { DomSanitizer } from '@angular/platform-browser';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-location-cell',
@@ -48,7 +49,7 @@ export class LocationCellComponent implements OnInit {
   constructor(
     private http: HttpService,
     private sanitizer: DomSanitizer,
-    private darkTheme: DarkThemeSwitch
+    public screen: ScreenService
   ) {}
 
   get showLock(){

@@ -27,6 +27,14 @@ export class PagerComponent implements OnInit, AfterViewInit {
 
   @Input() arrowPosition: string = '-27px';
 
+  hideRightButton = new BehaviorSubject(false);
+  hideLeftButton = new BehaviorSubject(true);
+  frameMotion$: BehaviorSubject<any>;
+
+  config: SwiperConfigInterface;
+
+  swiperInitialized: boolean;
+
   @HostListener('window:keyup', ['$event'])
     onKeyUp(event: KeyboardEvent) {
       if (event.keyCode === KEY_CODE.LEFT_ARROW && this.hideLeftButton.value) {
@@ -36,21 +44,13 @@ export class PagerComponent implements OnInit, AfterViewInit {
       }
     }
 
-  hideRightButton = new BehaviorSubject(false);
-  hideLeftButton = new BehaviorSubject(true);
-  frameMotion$: BehaviorSubject<any>;
-
-  config: SwiperConfigInterface;
-
-  swiperInitialized: boolean;
-
   constructor(
     private formService: CreateFormService,
     private cdr: ChangeDetectorRef,
     public screenService: ScreenService,
     public mobileDevice: MobileDeviceService,
   ) {
-    console.log(this.page);
+    // console.log(this.page);
   }
 
   get $pages() {
