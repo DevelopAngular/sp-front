@@ -39,7 +39,9 @@
           <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"
-               (click)="addStudent(student)"
+               (touchstart)="cell.hovered = true;"
+               (touchend)="cell.hovered = false;"
+               (tap)="addStudent(student)"
                [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
           >

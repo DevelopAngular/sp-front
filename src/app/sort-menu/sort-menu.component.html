@@ -4,14 +4,22 @@
   </header>
   <ul class="sort-menu-options">
     <li *ngIf="showAllRooms"
-      (click)=selectSortOption(null)
+      (tap)="selectSortOption(null)"
+        #_all
+        (touchstart)="_all.hovered = true"
+        (touchend)="_all.hovered = false"
+        [style.background-color]="getBackground(_all)"
       [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
       [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
     All Rooms
       <img *ngIf="!selectedItem" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
     </li>
     <li *ngFor="let item of items; let i = index "
-        (click)=selectSortOption(item)
+        (tap)=selectSortOption(item)
+        #_item
+        (touchstart)="_item.hovered = true"
+        (touchend)="_item.hovered = false"
+        [style.background-color]="getBackground(_item)"
         [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
       {{ item.title }}

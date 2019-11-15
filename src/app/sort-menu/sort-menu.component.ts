@@ -24,6 +24,18 @@ export class SortMenuComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
   ) {}
 
+  getBackground(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
+      } else {
+        return '#ECF1FF';
+      }
+    } else {
+      return '#FFFFFF';
+    }
+  }
+
   ngOnInit() {
     this.items = this.data['items'];
     this.selectedItem = this.data['selectedItem'];

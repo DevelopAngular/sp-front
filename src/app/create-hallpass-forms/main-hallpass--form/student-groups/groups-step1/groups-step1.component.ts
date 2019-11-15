@@ -152,7 +152,7 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
       this.selectedGroup = null;
       this.selectedStudents = [];
     }
-    evt.stopPropagation();
+      evt.stopPropagation();
 
   }
 
