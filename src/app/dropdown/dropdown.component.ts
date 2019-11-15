@@ -65,6 +65,18 @@ export class DropdownComponent implements OnInit {
     });
   }
 
+  getBackground(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
+      } else {
+        return '#ECF1FF';
+      }
+    } else {
+      return '#FFFFFF';
+    }
+  }
+
   closeDropdown(location) {
     // this.scrollPosition = this.scrollableArea()
     this.scrollPosition = this.options.scrollTop;
