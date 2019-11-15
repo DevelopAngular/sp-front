@@ -112,8 +112,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
-      this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
-      this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black-translucent' : 'default' } );
+      // this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
+      // this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black-translucent' : 'default' } );
     });
 
     if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
@@ -122,9 +122,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       link.setAttribute('href', './assets/css/custom_scrollbar.css');
       document.head.appendChild(link);
     } else {
-      document.body.requestFullscreen().catch((err) => {
-        console.log(err);
-      });
+      // document.body.requestFullscreen()
+      //   .then(ok => {
+      //     console.log(ok);
+      //   })
+      //   .catch((err) => {
+      //   console.log(err);
+      // });
     }
 
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
