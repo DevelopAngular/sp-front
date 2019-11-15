@@ -154,7 +154,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private storage: StorageService,
       public kioskMode: KioskModeService,
       public screenService: ScreenService,
-      private sideNavService: SideNavService,
+      public sideNavService: SideNavService,
       private cdr: ChangeDetectorRef,
       private rendered: Renderer2,
       private navbarElementsService: NavbarElementsRefsService,
@@ -532,7 +532,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.inboxVisibility = !this.inboxVisibility;
     this.storage.setItem('showInbox', this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);
-    if(this.tab !== 'passes'){
+    if (this.tab !== 'passes') {
       this.updateTab('passes');
     }
 

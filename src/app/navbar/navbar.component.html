@@ -110,38 +110,38 @@
   </div>
 </div>
 
-  <div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
-        user.isAssistant() && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
-    <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
-      <div *ngFor="let button of buttons" class="teacherNav_tab">
-        <ng-container *ngIf="isStaff && buttonVisibility(button) || user.isAssistant() && buttonVisibility(button)">
-          <div
-            #tabRefMobile
-            [style.transition]="'transform .4s ease'"
-            (touchstart)="changeTabOpacity(tabRefMobile, true)"
-            (touchend)="changeTabOpacity(tabRefMobile, false)">
-            <div>
-            </div>
-            <app-nav-button
-              [selected]="tab === button.route"
-              [content]="button.title"
-              [icon]="button.imgUrl"
-              (onClick)="updateTab(button.route); selectTab(tabRefMobile, navButtonsContainerMobile)">
-            </app-nav-button>
+<div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
+      user.isAssistant() && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
+  <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
+    <div *ngFor="let button of buttons" class="teacherNav_tab">
+      <ng-container *ngIf="isStaff && buttonVisibility(button) || user.isAssistant() && buttonVisibility(button)">
+        <div
+          #tabRefMobile
+          [style.transition]="'transform .4s ease'"
+          (touchstart)="changeTabOpacity(tabRefMobile, true)"
+          (touchend)="changeTabOpacity(tabRefMobile, false)">
+          <div>
           </div>
-        </ng-container>
-      </div>
-      <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
+          <app-nav-button
+            [selected]="tab === button.route"
+            [content]="button.title"
+            [icon]="button.imgUrl"
+            (onClick)="updateTab(button.route); selectTab(tabRefMobile, navButtonsContainerMobile)">
+          </app-nav-button>
+        </div>
+      </ng-container>
     </div>
+    <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
   </div>
+</div>
 
 <svg style="display: none;">
   <defs>
     <symbol id="SP Arrow">
-        <g id="Group-2" transform="translate(14.000000, 0.000000)" fill="currentColor">
-            <rect id="Rectangle" x="27" y="32" width="96" height="118" rx="16.969697"></rect>
-            <path d="M96,23.6238095 L42.2459627,23.6238095 C28.9911287,23.6238095 18.2459627,34.3689755 18.2459627,47.6238095 L18.2459627,123 L16.969697,123 C7.59759212,123 -6.28010944e-14,115.402408 -6.39488462e-14,106.030303 L-6.39488462e-14,16.969697 C-6.5096598e-14,7.59759212 7.59759212,-1.2489227e-14 16.969697,-1.42108547e-14 L79.030303,-1.42108547e-14 C88.4024079,-1.59324824e-14 96,7.59759212 96,16.969697 L96,23.6238095 Z" id="Combined-Shape"></path>
-        </g>
+      <g id="Group-2" transform="translate(14.000000, 0.000000)" fill="currentColor">
+        <rect id="Rectangle" x="27" y="32" width="96" height="118" rx="16.969697"></rect>
+        <path d="M96,23.6238095 L42.2459627,23.6238095 C28.9911287,23.6238095 18.2459627,34.3689755 18.2459627,47.6238095 L18.2459627,123 L16.969697,123 C7.59759212,123 -6.28010944e-14,115.402408 -6.39488462e-14,106.030303 L-6.39488462e-14,16.969697 C-6.5096598e-14,7.59759212 7.59759212,-1.2489227e-14 16.969697,-1.42108547e-14 L79.030303,-1.42108547e-14 C88.4024079,-1.59324824e-14 96,7.59759212 96,16.969697 L96,23.6238095 Z" id="Combined-Shape"></path>
+      </g>
     </symbol>
     <symbol id="Walking">
       <g stroke="none" stroke-width="1" fill="currentColor" fill-rule="evenodd">
