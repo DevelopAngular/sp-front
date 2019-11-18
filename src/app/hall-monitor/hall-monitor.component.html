@@ -1,4 +1,4 @@
-<div *ngIf="user" style="position: relative; height: calc(100% - 78px); overflow: auto" #scrollableArea>
+<div *ngIf="user" style="position: relative; height: auto; min-height: calc(100% - 78px); overflow: visible" #scrollableArea>
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div [ngClass]="isIOSTablet ? 'ios-hall-monitor-top' : 'hall-monitor-top'">
       <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">

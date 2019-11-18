@@ -190,7 +190,8 @@
 .hall-monitor-wrapper {
   position: relative;
   min-height: calc(100vh - 78px);
-  //height: 100%;
+  height: 100%;
+  overflow: auto;
 }
 
 .hall-monitor-top {

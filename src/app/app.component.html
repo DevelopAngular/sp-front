@@ -1,4 +1,5 @@
 <div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false">
+<!--  <div style="position: sticky; top: 0;">Sticky rtest</div>-->
   <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
   <div *ngIf="errorToastTrigger | async">
     <app-error-toast
@@ -12,8 +13,8 @@
     *ngIf="isAuthenticated && ( schools && schools.length > 1 ) && !hideSchoolToggleBar && !isKioskMode"
     [schools]="schools">
   </app-school-toggle-bar>
-
-  <div class="router-outlet" style="height: 100%; overflow: hidden !important;" *ngIf="isAuthenticated || true">
+<!--  style="height: 100%; overflow: hidden !important;"-->
+  <div class="router-outlet">
     <router-outlet></router-outlet>
   </div>
 </div>
