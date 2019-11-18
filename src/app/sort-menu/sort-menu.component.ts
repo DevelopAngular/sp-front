@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Inject, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -11,6 +11,8 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 })
 export class SortMenuComponent implements OnInit, OnDestroy {
 
+  @ViewChild('_item') item: ElementRef;
+
   items: any[];
   selectedItem: any;
 
@@ -22,6 +24,7 @@ export class SortMenuComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<SortMenuComponent>,
     public darkTheme: DarkThemeSwitch,
+    private renderer: Renderer2
   ) {}
 
   getBackground(item) {
@@ -33,6 +36,14 @@ export class SortMenuComponent implements OnInit, OnDestroy {
       }
     } else {
       return '#FFFFFF';
+    }
+  }
+
+  changeColor(value, elem) {
+    if (value) {
+      this.renderer.setStyle(elem.target, 'background-color', '#ECF1FF');
+    } else {
+      this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
   }
 
