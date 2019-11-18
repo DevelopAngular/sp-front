@@ -149,7 +149,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private liveDataService: LiveDataService,
     public darkTheme: DarkThemeSwitch,
-    private screenService: ScreenService,
+    public screenService: ScreenService,
     private scrollPosition: ScrollPositionService
   ) {
     this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
@@ -184,7 +184,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
           this.canView = this.user.roles.includes('access_hall_monitor') && this.user.roles.includes('view_traveling_users');
         }
       });
-    })
+    });
 
 
     this.hasPasses = combineLatest(

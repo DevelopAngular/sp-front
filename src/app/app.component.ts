@@ -242,7 +242,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const myPush = function (a) {
       if (!BUILD_INFO_REAL) {
-        console.log('Pushed:', a);
+        // console.log('Pushed:', a);
       }
       _hsq.push(a);
     };

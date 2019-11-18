@@ -53,6 +53,7 @@ export class RoundInputComponent implements OnInit {
   @Input() selectReset$: Subject<string>;
   @Input() selections: any[] = [];
   @Input() isSearch: boolean;
+  @Input() backgroundColor: string = 'transparent';
 
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
