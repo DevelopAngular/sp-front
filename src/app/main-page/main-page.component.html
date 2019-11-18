@@ -28,7 +28,6 @@
 
   <mat-sidenav-content [style.overflow]="isStaff ? 'hidden' : 'auto'">
     <div class="sticky" [style.height]="navbarHeight">
-      <pre style="position: absolute;left: 100px; z-index: 1000000000;">          {{sideNavService.left}}</pre>
       <app-navbar (settingsClick)="onSettingClick($event)"></app-navbar>
     </div>
     <ng-container *ngIf="!(shouldShowRouter() | async)">

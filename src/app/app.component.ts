@@ -112,8 +112,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
-      // this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
-      // this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black-translucent' : 'default' } );
+      this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
+      this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black-translucent' : 'default' } );
     });
 
     if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {

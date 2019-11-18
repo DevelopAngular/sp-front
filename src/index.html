@@ -1,16 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="touch-action: none !important;">
 <head>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5NCCB9C2PJ"></script>
   <script>
+
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-5NCCB9C2PJ');
   </script>
+<!--  <script>-->
+<!--    window.onload = function() {-->
+<!--      var i = 0;-->
+<!--      var html = document;-->
+<!--      var x = document.createElement('div');-->
+<!--      x.style.top = '0px';-->
+<!--      x.style.position = 'fixed';-->
+<!--      x.style.zIndex = '10000000';-->
+<!--      x.innerHTML = window.visualViewport.height;-->
+<!--      document.body.appendChild(x);-->
+<!--      console.log(x);-->
+<!--      var xhr = new XMLHttpRequest()-->
+<!--      xhr.open('POST', 'http://localhost:3000/');-->
+<!--      xhr.send({test: 'west'});-->
+<!--      window.addEventListener('scroll', (e) => {-->
+<!--        x.innerHTML = i++;-->
+<!--      });-->
 
+<!--    }-->
+<!--  </script>-->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-title" content="Smartpass">
@@ -52,7 +72,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </head>
-<body>
+<body style="touch-action: none !important;">
 
 <div id="preloaderRef" class="preloader-container">
   <div>
@@ -95,6 +115,43 @@
 
 <app-root></app-root>
 
+<script>
+  // document.body.addEventListener('touchmove', function(event) {
+  //   event.preventDefault();
+  // }
+  //   , {
+  //   passive: false,
+  // }, true)
+  //
+
+  // var x = document.createElement('div');
+
+  window.onresize = function(e) {
+    document.body.style.width = window.innerWidth;
+    document.body.style.height = window.innerHeight;
+    // x.innerHTML = window.visualViewport.height + '/' + window.scrollY + '/ FC';
+  }
+  // window.onresize();
+  window.onload = function() {
+    console.log('LOADED! => \n');
+    window.onresize();
+
+    // var i = 0;
+    // var html = document;
+    // x.style.top = '50px';
+    // x.style.position = 'fixed';
+    // x.style.zIndex = '10000000';
+    // x.innerHTML = window.visualViewport.height;
+    // document.body.appendChild(x);
+    // console.log(x);
+    // window.addEventListener('fullscreenchange', () => {
+      // x.innerHTML = window.visualViewport.height + '/' + window.scrollY + '/ FC';
+    // });
+    // window.addEventListener('scroll', (e) => {
+    //   x.innerHTML = window.visualViewport.height + '/' + window.scrollY + window.navigator.standalone;
+    // });
+  }
+</script>
 <script type="text/javascript" src="preloader.js"></script>
 <noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>

@@ -145,6 +145,10 @@ $base:5px;
         font-size: 21px;
         font-weight: bold;
         z-index: 2;
+        width: 5px;
+        height: 5px;
+        background: currentColor;
+        border-radius: 50%;
       }
       //height: 30px;
       //width: $dayBase;
