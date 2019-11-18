@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import { Location } from '../models/Location';
 import { HttpService } from '../services/http-service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -42,6 +42,8 @@ export class LocationCellComponent implements OnInit {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
+  @ViewChild('cell') cell: ElementRef;
+
   overStar: boolean = false;
   hovered: boolean;
   pressed: boolean;
@@ -49,7 +51,8 @@ export class LocationCellComponent implements OnInit {
   constructor(
     private http: HttpService,
     private sanitizer: DomSanitizer,
-    public screen: ScreenService
+    public screen: ScreenService,
+    private renderer: Renderer2
   ) {}
 
   get showLock(){
@@ -102,6 +105,22 @@ export class LocationCellComponent implements OnInit {
 
   ngOnInit() {
     this.value.starred = this.starred;
+  }
+
+  changeColor(hovered, pressed?: boolean) {
+    if (this.valid) {
+      if (hovered) {
+        if (pressed) {
+          this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#E2E7F4');
+        } else {
+          this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#ECF1FF');
+        }
+      } else {
+        this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#FFFFFF');
+      }
+    } else {
+      this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#FFFFFF');
+    }
   }
 
   cellSelected() {

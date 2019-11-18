@@ -38,6 +38,7 @@
                 [minWidth]="inputRestrictionSm.minWidth"
                 [width]="inputRestrictionSm.width"
                 [placeholder]="inputRestrictionSm.placeholder"
+                [backgroundColor]="'#F4F4F4'"
                 [fieldIconPosition]="inputRestrictionSm.fieldIconPosition"
                 [closeIcon]="inputRestrictionSm.closeIcon"
                 (ontextupdate)="onSearch($event)"
@@ -68,8 +69,7 @@
         [icon]="hallMonitorCollection.icon"
         [columns]="hallMonitorCollection.columns"
         (reportFromPassCard)="onReportFromPassCard($event)"
-      >
-      </app-pass-collection>
+      ></app-pass-collection>
       <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue != ''">
           <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
@@ -102,7 +102,9 @@
       [hoverColor]="sortBtn.hoverColor"
       [minWidth]="sortBtn.minWidth"
       [minHeight]="sortBtn.minHeight"
-    ><span class="sort-btn-label">Sort</span> </app-gradient-button>
+    >
+      <span class="sort-btn-label">Sort</span>
+    </app-gradient-button>
   </div>
 
 

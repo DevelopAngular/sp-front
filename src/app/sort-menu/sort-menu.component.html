@@ -6,20 +6,19 @@
     <li *ngIf="showAllRooms"
       (tap)="selectSortOption(null)"
         #_all
-        (touchstart)="_all.hovered = true"
-        (touchend)="_all.hovered = false"
+        (touchstart)="changeColor(true, $event)"
+        (touchend)="changeColor(false, $event)"
         [style.background-color]="getBackground(_all)"
       [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
       [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
     All Rooms
       <img *ngIf="!selectedItem" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
     </li>
-    <li *ngFor="let item of items; let i = index "
-        (tap)=selectSortOption(item)
+    <li *ngFor="let item of items; let i = index"
+        (tap)="selectSortOption(item)"
         #_item
-        (touchstart)="_item.hovered = true"
-        (touchend)="_item.hovered = false"
-        [style.background-color]="getBackground(_item)"
+        (touchstart)="changeColor(true, $event)"
+        (touchend)="changeColor(false, $event)"
         [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
       {{ item.title }}
