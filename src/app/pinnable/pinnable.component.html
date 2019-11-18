@@ -1,6 +1,8 @@
 <div *ngIf="!mock" mat-raised-button class="clickRipple" [style.cursor]="disabled ? 'default' : 'pointer'" (click)="onSelect()"
      [@pressState]="buttonState" [style.box-shadow]="shadow"
-     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+     (mousedown)="onPress(true)"
+     (mouseup)="onPress(false)"
+     (touchstart)="onPress(true)"
      (mouseenter)="hovered = true" (mouseleave)="onPress(false); hovered = false"
      [style.width]="width"
 >

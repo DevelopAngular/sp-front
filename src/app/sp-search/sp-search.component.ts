@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
 import {BehaviorSubject, of, Subject} from 'rxjs';
@@ -162,7 +162,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private http: HttpClient,
     private mapsApi: MapsAPILoader,
-    private shortcutsService: KeyboardShortcutsService
+    private shortcutsService: KeyboardShortcutsService,
+    private renderer: Renderer2
   ) {
 
 
@@ -193,6 +194,14 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       }
     } else {
       return '#FFFFFF';
+    }
+  }
+
+  changeColor(value, elem) {
+    if (value) {
+      this.renderer.setStyle(elem.target, 'background-color', '#ECF1FF');
+    } else {
+      this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
   }
 

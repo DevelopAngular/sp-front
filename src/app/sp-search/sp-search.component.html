@@ -37,12 +37,11 @@
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
-               (mouseenter)="cell.hovered = true;"
-               (mouseleave)="cell.hovered = false;"
-               (touchstart)="cell.hovered = true;"
-               (touchend)="cell.hovered = false;"
+               (mouseenter)="changeColor(true, $event)"
+               (mouseleave)="changeColor(false, $event)"
+               (touchstart)="changeColor(true, $event)"
+               (touchend)="changeColor(true, $event)"
                (tap)="addStudent(student)"
-               [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
           >
             <span>
@@ -70,10 +69,11 @@
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let unit of orgunits | async" class="option-list_item"
-               (mouseenter)="cell.hovered = true;"
-               (mouseleave)="cell.hovered = false;"
+               (mouseenter)="changeColor(true, $event)"
+               (mouseleave)="changeColor(false, $event)"
+               (touchstart)="changeColor(true, $event)"
+               (touchend)="changeColor(true, $event)"
                (click)="inputValue$.next(''); addUnit(unit)"
-               [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
           >
             <span>
@@ -99,10 +99,11 @@
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let teacher of ( teacherCollection$ | async)" tabindex="0" class="option-list_item"
-               (mouseenter)="cell.hovered = true;"
-               (mouseleave)="cell.hovered = false;"
+               (mouseenter)="changeColor(true, $event)"
+               (mouseleave)="changeColor(false, $event)"
+               (touchstart)="changeColor(true, $event)"
+               (touchend)="changeColor(true, $event)"
                (click)="inputValue$.next(''); addLocalTeacher(teacher)"
-               [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
           >
             <span>
@@ -128,10 +129,11 @@
       <div *ngIf="!showDummy; else noSchoolsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div *ngFor="let school of schools | async" class="option-list_item"
-               (mouseenter)="cell.hovered = true;"
-               (mouseleave)="cell.hovered = false;"
+               (mouseenter)="changeColor(true, $event)"
+               (mouseleave)="changeColor(false, $event)"
+               (touchstart)="changeColor(true, $event)"
+               (touchend)="changeColor(true, $event)"
                (click)="inputValue$.next(''); selectSchool(school)"
-               [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
                #cell
           >
@@ -187,10 +189,10 @@
     </div>
     <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
       <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" tabindex="0" class="option-list_item"
-           (mouseenter)="cell.hovered = true;"
-           (mouseleave)="cell.hovered = false;"
-
-           [style.background-color]="getBackground(cell)"
+           (mouseenter)="changeColor(true, $event)"
+           (mouseleave)="changeColor(false, $event)"
+           (touchstart)="changeColor(true, $event)"
+           (touchend)="changeColor(true, $event)"
            [style.color]="textColor(cell)"
       >
         <span *ngIf="this.searchTarget === 'users'">
