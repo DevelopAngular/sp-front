@@ -27,6 +27,8 @@ export interface Setting {
 
 export class SettingsComponent implements OnInit {
 
+  @Input() dataSideNav: any = null;
+
   targetElementRef: ElementRef;
   settings: Setting[] = [];
   user: User;
@@ -42,7 +44,6 @@ export class SettingsComponent implements OnInit {
   hoveredColor: string;
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
-  @Input() dataSideNav: any = null;
 
   constructor(
       public dialog: MatDialog,
@@ -222,15 +223,13 @@ export class SettingsComponent implements OnInit {
       'action': 'about',
       'title': 'About'
     });
-    if (this.user && this.user.isAdmin() || this.user && this.user.isTeacher()) {
-      this.settings.push({
-        'hidden': false,
-        'gradient': '#5E4FED, #7D57FF',
-        'icon': 'Launch',
-        'action': 'wishlist',
-        'title': 'Wishlist'
-      });
-    }
+    this.settings.push({
+      'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
+      'gradient': '#5E4FED, #7D57FF',
+      'icon': 'Launch',
+      'action': 'wishlist',
+      'title': 'Wishlist'
+    });
     this.settings.push({
       'hidden': false,
       'gradient': '#F52B4F, #F37426',
