@@ -1,14 +1,31 @@
  <h1 [@HeaderSlideInOut] *ngIf="(isInboxClicked$ | async) && screenService.isDeviceMid" class="requests-title"
      [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Requests</h1>
   <div [@RequestCardSlideInOut] *ngIf="(isInboxClicked$ | async) && screenService.isDeviceMid">
-    <app-display-card [hasDivider]="false" [fontSize]="'29px'" [inbox]="true" >
+    <app-display-card [hasDivider]="false" [hasHeader]="false" [fontSize]="'29px'" [inbox]="true" >
       <div class="inbox-content">
         <app-notification-turn-on-btn></app-notification-turn-on-btn>
         <div class="requests-or-invitations">
-          <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'" [columns]="2"></app-pass-collection>
+          <app-pass-collection
+            [forStaff]="isStaff"
+            [forFuture]="true"
+            [isActive]="false"
+            [passProvider]="isStaff?receivedRequests:sentRequests"
+            [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+            [columns]="2"
+            [headerWidth]="'94%'"
+          ></app-pass-collection>
         </div>
         <div class="requests-or-invitations">
-          <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [passProvider]="isStaff?sentRequests:receivedRequests" [title]="isStaff?'Sent':'Received'" [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'" [columns]="2"></app-pass-collection>
+          <app-pass-collection
+            [forStaff]="isStaff"
+            [forFuture]="true"
+            [isActive]="false"
+            [passProvider]="isStaff?sentRequests:receivedRequests"
+            [title]="isStaff?'Sent':'Received'"
+            [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
+            [columns]="2"
+            [headerWidth]="'94%'"
+          ></app-pass-collection>
         </div>
 
         <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
@@ -88,6 +105,7 @@
           [style.width]="'400px'"
           [passProvider]="pastPasses"
           [title]="'Expired Passes'"
+          [headerWidth]="'86%'"
           [icon]="'./assets/Expired (Navy).svg'"
           [columns]="3"
           (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
@@ -98,7 +116,16 @@
       <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Inbox (Navy).svg':'')" [inbox]="true">
         <div class="inbox-content">
           <div class="requests-or-invitations">
-            <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'262px'" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'" [columns]="2"></app-pass-collection>
+            <app-pass-collection
+              [forStaff]="isStaff"
+              [forFuture]="true"
+              [isActive]="false"
+              [style.width]="'262px'"
+              [passProvider]="isStaff?receivedRequests:sentRequests"
+              [title]="isStaff?'Received':'Sent'"
+              [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+              [columns]="2"
+            ></app-pass-collection>
             <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
           </div>
           <div class="requests-or-invitations">
@@ -158,13 +185,31 @@
         [title]="'Active Passes'"
         [icon]="'./assets/Walking (Navy).svg'"
         [columns]="3"
-        (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>
+        (reportFromPassCard)="onReportFromPassCard($event)"
+      ></app-pass-collection>
     </div>
     <div class="future-passes pass-collection">
-      <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Future (Navy).svg'" [columns]="3"></app-pass-collection>
+      <app-pass-collection
+        [forFuture]="true"
+        [forStaff]="isStaff"
+        [style.width]="'460px'"
+        [passProvider]="futurePasses"
+        [title]="'Scheduled Passes'"
+        [icon]="'./assets/Future (Navy).svg'"
+        [columns]="3"
+      ></app-pass-collection>
     </div>
     <div class="past-passes pass-collection">
-      <app-pass-collection [maxHeight]="'100%'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired (Navy).svg'" [columns]="3"></app-pass-collection>
+      <app-pass-collection
+        [maxHeight]="'100%'"
+        [fromPast]="true"
+        [forStaff]="isStaff"
+        [style.width]="'460px'"
+        [passProvider]="pastPasses"
+        [title]="'Expired Passes'"
+        [icon]="'./assets/Expired (Navy).svg'"
+        [columns]="3"
+      ></app-pass-collection>
     </div>
   </div>
   <div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
