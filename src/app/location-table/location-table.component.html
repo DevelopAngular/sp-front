@@ -9,6 +9,7 @@
     [closeIcon]="true"
     [focused]="isFocused"
     [isSearch]="true"
+    [backgroundColor]="!screenService.isDeviceLargeExtra ? '#FFFFFF' : '#F4F4F4'"
     (ontextupdate)="onSearch($event)"
   ></app-round-input>
   <div class="main-content" *ngIf=" type === 'location' ? ( mainContentVisibility && favoritesLoaded ) : mainContentVisibility ">

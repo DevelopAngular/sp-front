@@ -7,9 +7,10 @@
       <div  *ngIf="isSearchBarClicked" [ngClass]="isIOSTablet ? 'ios-search-wrapper' : 'search-wrapper' ">
         <app-round-input
           [minWidth]="'100%'"
-          [width]="'100%'"
+          [width]="'90%'"
           [type]="'text'"
           [focused]="true"
+          [backgroundColor]="'#F4F4F4'"
           [placeholder]="'Search'"
           [fieldIconPosition]="'left'"
           [closeIcon]="true"

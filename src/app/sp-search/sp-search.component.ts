@@ -10,6 +10,7 @@ import {School} from '../models/School';
 import {map, pluck, switchMap, takeUntil } from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {ScreenService} from '../services/screen.service';
 
 declare const window;
 
@@ -163,7 +164,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private mapsApi: MapsAPILoader,
     private shortcutsService: KeyboardShortcutsService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    public screenService: ScreenService
   ) {
 
 
@@ -182,18 +184,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
     } else {
       return this.sanitizer.bypassSecurityTrustStyle('#555558');
-    }
-  }
-
-  getBackground(item) {
-    if (item.hovered) {
-      if (item.pressed) {
-        return '#E2E7F4';
-      } else {
-        return '#ECF1FF';
-      }
-    } else {
-      return '#FFFFFF';
     }
   }
 

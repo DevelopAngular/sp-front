@@ -8,6 +8,7 @@
 html {
   background-color: #FCFDFF;
   padding: 0 0;
+  overscroll-behavior: contain;
 }
 
 body {
@@ -16,7 +17,6 @@ body {
   font-family: $primaryFont;
   width: 100%;
   min-height: 100vh;
-  overscroll-behavior: contain;
 
   // IOS PWA styles
   -webkit-overflow-scrolling: touch;

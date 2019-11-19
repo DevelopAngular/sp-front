@@ -6,6 +6,7 @@ import {LocationsService} from '../services/locations.service';
 import {combineLatest, Observable, Subject, zip} from 'rxjs';
 import { sortBy, filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {ScreenService} from '../services/screen.service';
 
 
 export interface Paged<T> {
@@ -71,7 +72,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   constructor(
       private http: HttpService,
       private locationService: LocationsService,
-      private shortcutsService: KeyboardShortcutsService
+      private shortcutsService: KeyboardShortcutsService,
+      public screenService: ScreenService
   ) {
   }
 

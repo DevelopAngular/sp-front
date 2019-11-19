@@ -220,23 +220,16 @@
 }
 
 .my-room-left {
-  //display: flex;
-  //flex-direction: column;
   width: 100%;
   max-width: 533px;
   min-height: calc(100% - 78px);
-  //margin: 0 auto;
-  //height: 10000px;
 }
 
 .no-content-info {
   display: flex;
   justify-content: center;
   color: #7f879d;
-  //margin-top: 50px;
   font-size: 16pt;
-  //height: 650px;
-  //height: 100%;
   flex: 1 1 auto;
 }
 
