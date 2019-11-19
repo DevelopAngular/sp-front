@@ -1,8 +1,6 @@
 {
   "name": "SmartPass",
   "short_name": "SmartPass",
-  "theme_color": "#1976d2",
-  "background_color": "#FCFDFF",
   "display": "standalone",
   "scope": "/app/",
   "start_url": "/app/",
