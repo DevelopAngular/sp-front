@@ -14,6 +14,9 @@
   div.inbox-content {
     width: 100%;
     min-height: calc(100vh - 78px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   div.current-pass,
@@ -54,12 +57,16 @@
     width: 100%;
   }
 
+  .requests-or-invitations {
+    width: 328px;
+  }
+
 }
 
 @media all and (max-width: 768px) {
   div.main-page-left {
     margin-right: 0;
-    width: 100%;
+    //width: 100%;
     margin-top: 15px;
   }
 
@@ -95,6 +102,10 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+.passes-mobile-height {
+  height: calc(100vh - 127px);
 }
 
 .main-page-left{
