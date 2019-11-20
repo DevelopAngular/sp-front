@@ -55,7 +55,7 @@
         <div [ngClass]="isIOSTablet ? 'ios-date-display-mobile' : 'date-display-mobile'" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
       </div>
 
-      <div class="option-wrapper option-wrapper-calendar" (click)="calendarClick()">
+      <div class="option-wrapper option-wrapper-calendar">
 
         <app-icon-button [@calendarIconTrigger]='calendarIconState' [srcString]="'Calendar'" [size]="20" (clickEvent)="calendarClick()"></app-icon-button>
 

@@ -468,6 +468,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   cleanSearchValue() {
     this.resetValue.next('');
+    this.inputValue = '';
+    this.searchQuery$.next('');
+    this.toggleSearchBar();
   }
 
   onDate(event) {
