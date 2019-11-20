@@ -56,11 +56,9 @@
       </div>
 
       <div class="option-wrapper option-wrapper-calendar">
-
         <app-icon-button [@calendarIconTrigger]='calendarIconState' [srcString]="'Calendar'" [size]="20" (clickEvent)="calendarClick()"></app-icon-button>
-
       </div>
-<!--      <p *ngIf="screenService.isDeviceMid && !isSearchBarClicked" class="my-room-title">My Room</p>-->
+
     </div>
   </div>
   <div *ngIf="UI" class="my-room-wrapper" #scrollableArea>
