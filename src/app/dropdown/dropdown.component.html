@@ -63,7 +63,7 @@
   </div>
 
   <div class="options-wrapper" *ngIf="schools" #optionsWrapper>
-    <div class="option" *ngFor="let school of schools" (tap)="_matDialogRef.close(school)">
+    <div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">
       <div #_option class="option-data"
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,

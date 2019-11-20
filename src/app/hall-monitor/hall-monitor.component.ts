@@ -289,7 +289,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
     if (this.screenService.isDeviceLargeExtra) {
       this.hallMonitorCollection.hasSort = false;
-      // this.isIpadSearchBar = false;
     }
 
     if (this.screenService.isDesktopWidth) {

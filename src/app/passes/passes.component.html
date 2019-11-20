@@ -12,7 +12,6 @@
             [passProvider]="isStaff?receivedRequests:sentRequests"
             [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
             [columns]="2"
-            [headerWidth]="'94%'"
           ></app-pass-collection>
         </div>
         <div class="requests-or-invitations">
@@ -24,7 +23,6 @@
             [title]="isStaff?'Sent':'Received'"
             [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
             [columns]="2"
-            [headerWidth]="'94%'"
           ></app-pass-collection>
         </div>
 
@@ -43,7 +41,7 @@
         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"  [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Passes</h1>
   </div>
 
-  <div class="passes-wrapper" [@PassesSlideTopBottom] [style.padding-top]="isSmartphone ? '0px' : '50px'" *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>
+  <div class="passes-wrapper passes-mobile-height" [@PassesSlideTopBottom] [style.padding-top]="isSmartphone ? '0px' : '50px'" *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>
     <div class="main-page-left">
       <div class="current-pass">
         <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
@@ -78,6 +76,7 @@
           [forStaff]="isStaff"
           [style.width]="'400px'"
           [passProvider]="activePasses"
+          [headerWidth]="'92%'"
           [title]="'Active Passes'"
           [icon]="'./assets/Walking (Navy).svg'"
           [columns]="3"
@@ -92,6 +91,7 @@
           [style.width]="'400px'"
           [passProvider]="futurePasses"
           [title]="'Scheduled Passes'"
+          [headerWidth]="'92%'"
           [icon]="'./assets/Future (Navy).svg'"
           [columns]="3"
           (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
@@ -105,7 +105,7 @@
           [style.width]="'400px'"
           [passProvider]="pastPasses"
           [title]="'Expired Passes'"
-          [headerWidth]="'86%'"
+          [headerWidth]="'92%'"
           [icon]="'./assets/Expired (Navy).svg'"
           [columns]="3"
           (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
@@ -126,20 +126,15 @@
               [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
               [columns]="2"
             ></app-pass-collection>
-            <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
           </div>
           <div class="requests-or-invitations">
             <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'262px'" [passProvider]="isStaff?sentRequests:receivedRequests" [title]="isStaff?'Sent':'Received'" [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'" [columns]="2"></app-pass-collection>
-            <!--<div *ngIf="isStaff ? (sentRequests.length$ | async) : (receivedRequests.length$ | async)" class="text">No requests sent or received</div>-->
           </div>
-          <!--<div *ngIf="">PPC</div>-->
-          <!-- No pass requests -->
           <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
             <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
             <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
             <div class="text ds-empty-text-info">No pass requests sent or received</div>
           </div>
-          <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
         </div>
       </app-display-card>
     </div>
@@ -227,7 +222,6 @@
                   [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
                   [columns]="2"
           ></app-pass-collection>
-          <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
         </div>
         <div class="requests-or-invitations">
           <app-pass-collection
@@ -240,16 +234,12 @@
                   [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
                   [columns]="2"
           ></app-pass-collection>
-          <!--<div *ngIf="isStaff ? (sentRequests.length$ | async) : (receivedRequests.length$ | async)" class="text">No requests sent or received</div>-->
         </div>
-        <!--<div *ngIf="">PPC</div>-->
-        <!-- No pass requests -->
         <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
           <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
           <div class="text ds-empty-text-info">No pass requests sent or received</div>
         </div>
-        <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
       </div>
     </app-display-card>
   </div>
