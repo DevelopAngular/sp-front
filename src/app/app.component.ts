@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import * as _ from 'lodash';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
+import { filter as _filter, find } from 'lodash';
+import {BehaviorSubject, fromEvent, interval, Observable, ReplaySubject, Subject} from 'rxjs';
+
 import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
+
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
 import { AdminService } from './services/admin.service';
@@ -52,32 +54,25 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
-  public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
   public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
-  private openedResizeDialog: boolean;
+  public isKioskMode: boolean;
   private openConnectionDialog: boolean;
 
   private subscriber$ = new Subject();
 
-  // @HostListener('window:resize', ['$event.target'])
-  // onResize(target) {
-  //     if ((target.innerWidth < 900 || target.innerHeight < 500) && !this.openedResizeDialog) {
-  //       this.openedResizeDialog = true;
-  //       setTimeout(() => {
-  //           this.dialog.open(ResizeInfoDialogComponent, {
-  //               id: 'ResizeDialog',
-  //               panelClass: 'toasr',
-  //               backdropClass: 'white-backdrop',
-  //               disableClose: true
-  //           });
-  //       }, 50);
-  //     } else if ((target.innerWidth >= 900 && target.innerHeight >= 500) && this.openedResizeDialog) {
-  //         this.openedResizeDialog = false;
-  //         this.dialog.getDialogById('ResizeDialog').close();
-  //     }
-  // }
+  @HostListener('window:orientationchange', ['$event'])
+  change(event) {
+    if (DeviceDetection.isAndroid()) {
+      switch (window.screen.orientation.angle) {
+        case 90: {
+          // document.querySelector('body').style.transform = 'rotate(-90deg)';
+          // document.querySelector('body').style.width = '100%';
+        }
+      }
+    }
+  }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
@@ -85,7 +80,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private http: HttpService,
     private httpNative: HttpClient,
     private adminService: AdminService,
-    // private userService: UserService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -103,6 +97,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    // this.storageService.removeItem('refresh_token');
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
@@ -117,8 +112,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
-      this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
-      this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
+      // this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
+      // this.meta.updateTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
+      document.documentElement.style.background = val ? '#0F171E' : '#FBFEFF';
+      document.body.style.boxShadow = `0px 0px 100px 100px ${val ? '#0F171E' : '#FBFEFF'}`;
+      // box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
     });
 
     if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
@@ -126,6 +124,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       link.setAttribute('rel', 'stylesheet');
       link.setAttribute('href', './assets/css/custom_scrollbar.css');
       document.head.appendChild(link);
+    } else {
+      // document.body.requestFullscreen()
+      //   .then(ok => {
+      //     console.log(ok);
+      //   })
+      //   .catch((err) => {
+      //   console.log(err);
+      // });
     }
 
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
@@ -150,8 +156,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.subscriber$),
     )
     .subscribe(t => {
-      // console.log('Auth response ===>', t, window.location.pathname);
-      // debugger
       this._zone.run(() => {
         this.showUISubject.next(true);
         this.isAuthenticated = t;
@@ -163,12 +167,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.http.schoolsCollection$.pipe(
-      map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
+      map(schools => _filter(schools, (school => school.my_roles.length > 0))),
       withLatestFrom(this.http.currentSchool$),
       takeUntil(this.subscriber$))
       .subscribe(([schools, currentSchool]) => {
         this.schools = schools;
-        if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
+        if (currentSchool && !find(schools, {id: currentSchool.id})) {
           this.http.setSchool(schools[0]);
         }
       });
@@ -185,6 +189,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
+          this.isKioskMode = this.router.url.includes('kioskMode');
           if (route.firstChild) {
             route = route.firstChild;
           }
@@ -193,8 +198,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
-
-        // console.log(data);
         const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
         let newHub: any;
 
@@ -232,11 +235,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
 
-        if (data.hideSchoolToggleBar) {
-          this.hideSchoolToggleBar = true;
-        } else {
-          this.hideSchoolToggleBar = false;
-        }
+        this.hideSchoolToggleBar = data.hideSchoolToggleBar;
         this.hideScroll = data.hideScroll;
       });
   }
@@ -246,7 +245,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const myPush = function (a) {
       if (!BUILD_INFO_REAL) {
-        console.log('Pushed:', a);
+        // console.log('Pushed:', a);
       }
       _hsq.push(a);
     };
@@ -282,5 +281,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
   }
+
 
 }

@@ -1,7 +1,7 @@
 ﻿<div class="overlay">
   <div class="display-card">
     <div class="display-card-wrapper" [ngClass]="{'inbox': inbox}" [style.background-color]="backgroundColor">
-      <div class="display-card-header justify-content" [style.min-height]="(inbox ? '35px' : '')"  [style.margin-bottom]="headerBottomSpace">
+      <div class="display-card-header justify-content" *ngIf="hasHeader" [style.min-height]="(inbox ? '35px' : '')"  [style.margin-bottom]="headerBottomSpace">
         <div class="flexCls">
           <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
           <div *ngIf="(!!icon && inbox)" class="inbox-wrapper">

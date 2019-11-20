@@ -9,6 +9,7 @@
     [closeIcon]="true"
     [focused]="isFocused"
     [isSearch]="true"
+    [backgroundColor]="!screenService.isDeviceLargeExtra ? '#FFFFFF' : '#F4F4F4'"
     (ontextupdate)="onSearch($event)"
   ></app-round-input>
   <div class="main-content" *ngIf=" type === 'location' ? ( mainContentVisibility && favoritesLoaded ) : mainContentVisibility ">
@@ -27,8 +28,14 @@
            (dragulaModelChange)="updateOrderLocation($event)">
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
-            (onSelect)="choiceSelected($event)" (onStar)="star($event)"
-            [value]="choice" [type]="type" [starred]="true" [showStar]="showStars" [allowOnStar]="allowOnStar">
+            (onSelect)="choiceSelected($event)"
+            (onStar)="star($event)"
+            [value]="choice"
+            [type]="type"
+            [starred]="true"
+            [showStar]="!!showStars"
+            [allowOnStar]="allowOnStar"
+          >
           </app-location-cell>
         </div>
       </div>
@@ -38,8 +45,18 @@
            class="choices">
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
-            (onSelect)="choiceSelected($event)" (onStar)="star($event)"
-            [value]="choice" [type]="type" [starred]="true" [showStar]="showStars" [allowOnStar]="allowOnStar">
+            (onSelect)="choiceSelected($event)"
+            (onStar)="star($event)"
+            [value]="choice"
+            [type]="type"
+            [hasLocks]="hasLocks"
+            [forLater]="forLater"
+            [forStaff]="forStaff"
+            [starred]="true"
+            [showStar]="!!showStars"
+            [allowOnStar]="allowOnStar"
+            [valid]="isValidLocation(choice)"
+          >
           </app-location-cell>
         </div>
       </div>
@@ -74,7 +91,8 @@
             [allowOnStar]="allowOnStar"
             [value]="choice"
             [type]="type"
-            [valid]="!invalidLocation || choice.id !== invalidLocation">
+            [valid]="isValidLocation(choice)"
+          >
           </app-location-cell>
         </div>
       </div>

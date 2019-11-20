@@ -24,6 +24,7 @@ mat-sidenav-content {
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
 }
 
 .app-settings {
@@ -31,6 +32,7 @@ mat-sidenav-content {
 }
 
 .settings-side-nav {
+  //overflow: hidden;
   border-top-right-radius: 14px;
   border-bottom-right-radius: 14px;
 }
@@ -39,6 +41,7 @@ mat-sidenav-content {
   width: 405px;
   border-top-left-radius: 14px;
   border-bottom-left-radius: 14px;
+  display: none;
 }
 
 .request-card {
@@ -92,6 +95,11 @@ mat-sidenav-container,
 mat-sidenav-content {
   z-index: unset;
   background-color: transparent;
+  //position: relative;
+}
+
+mat-sidenav-content {
+  padding-top: 50px;
 }
 
 mat-sidenav {

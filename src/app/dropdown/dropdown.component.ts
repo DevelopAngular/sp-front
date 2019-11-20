@@ -1,4 +1,16 @@
-import {Component, OnInit, Input, Output, EventEmitter, ElementRef, Inject, HostListener, ViewChild, OnChanges} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ElementRef,
+  Inject,
+  HostListener,
+  ViewChild,
+  OnChanges,
+  Renderer2
+} from '@angular/core';
 import { Location } from '../models/Location';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { School } from '../models/School';
@@ -35,7 +47,7 @@ export class DropdownComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any[],
     _matDialogRef: MatDialogRef<DropdownComponent>,
     public  darkTheme: DarkThemeSwitch,
-    private userService: UserService
+    private renderer: Renderer2
   ) {
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
@@ -65,6 +77,18 @@ export class DropdownComponent implements OnInit {
     });
   }
 
+  changeColor(hovered, elem, pressed?: boolean) {
+      if (hovered) {
+        if (pressed) {
+          this.renderer.setStyle(elem.target, 'background-color', this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4');
+        } else {
+          this.renderer.setStyle(elem.target, 'background-color', this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#ECF1FF');
+        }
+      } else {
+        this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
+      }
+  }
+
   closeDropdown(location) {
     // this.scrollPosition = this.scrollableArea()
     this.scrollPosition = this.options.scrollTop;
@@ -73,7 +97,7 @@ export class DropdownComponent implements OnInit {
     const dataAfterClosing = {
       selectedRoom: location,
       scrollPosition: this.scrollPosition
-    }
+    };
     this._matDialogRef.close(dataAfterClosing);
   }
 

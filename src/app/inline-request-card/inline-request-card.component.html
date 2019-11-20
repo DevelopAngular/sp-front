@@ -100,3 +100,12 @@
         </div>
     </div>
 </div>
+
+<app-consent-menu-mobile
+  [appendToBody]="true"
+  [display]="cancelEditClick"
+  [header]="header"
+  [options]="options"
+  (cancelClick)="closeMenu()"
+  (backDropClick)="closeMenu()"
+  (receiveOption)="receiveOption($event)"></app-consent-menu-mobile>

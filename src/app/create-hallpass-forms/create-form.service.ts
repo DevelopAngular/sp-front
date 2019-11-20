@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
-import {BehaviorSubject, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, of, ReplaySubject, zip} from 'rxjs';
 import { HallPassesService } from '../services/hall-passes.service';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
+import {LocationsService} from '../services/locations.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,7 @@ export class CreateFormService {
   public compressableBoxController = new ReplaySubject<boolean>(1);
   public isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  constructor(private hallPassService: HallPassesService) {
+  constructor(private hallPassService: HallPassesService, private locService: LocationsService) {
     this.transition = {
       to: -100,
       halfTo: -50,
@@ -30,23 +32,48 @@ export class CreateFormService {
   getPinnable(filter?: boolean) {
     return this.hallPassService.pinnables$
       .pipe(
-        map((pins) => {
+        map((pins: Pinnable[]) => {
           if (filter) {
-            // debugger;
-            return pins.filter((p: Pinnable) => (p.type === 'location' && !p.location.restricted) || p.type === 'category');
+            return pins.filter((p: Pinnable) => {
+             return (p.type === 'location' && !p.location.restricted) || p.type === 'category';
+            });
+          } else {
+            return pins;
+          }
+        }),
+        switchMap(pinnables => {
+          if (filter) {
+            return zip(...pinnables.map((pin: any) => {
+              if (pin.type === 'category') {
+                return this.locService.getLocationsWithCategory(pin.title)
+                  .pipe(
+                    map(locations => {
+                      pin.myLocations = locations;
+                      return pin;
+                    }));
+              } else {
+                return of(pin);
+              }
+            }));
+          } else {
+            return of(pinnables);
+          }
+        }),
+        map(pins => {
+          if (filter) {
+            return pins.filter(pin => {
+              if (pin.type === 'category') {
+                const validLocs = pin.myLocations.filter(loc => !loc.restricted);
+                return validLocs.length;
+              } else {
+                return true;
+              }
+            });
           } else {
             return pins;
           }
         })
       );
-  }
-
-  seen() {
-    // if (localStorage.getItem('first-modal') === 'seen') {
-    //   this.isSeen$.next(true);
-    // } else {
-    //   localStorage.setItem('first-modal', 'seen');
-    // }
   }
 
   setFrameMotionDirection(direction: string = 'forward') {

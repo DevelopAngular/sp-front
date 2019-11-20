@@ -1,40 +1,17 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatChipsModule,
-  MatDialogModule,
-  MatDividerModule,
-  MatGridListModule,
-  MatListModule,
-  MatIconModule,
-  MatProgressBarModule,
-  MatSelectModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatSidenavModule
-} from '@angular/material';
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
-import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
 import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { InfoEditorComponent } from '../info-editor/info-editor.component';
-import { InlinePassCardComponent } from '../inline-pass-card/inline-pass-card.component';
-import { InlineRequestCardComponent } from '../inline-request-card/inline-request-card.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { LocationCellComponent } from '../location-cell/location-cell.component';
-import { LocationPickerComponent } from '../location-picker/location-picker.component';
 import { LocationTableComponent } from '../location-table/location-table.component';
 import { MainPageComponent } from '../main-page/main-page.component';
-import { MyRoomComponent } from '../my-room/my-room.component';
-import { PassesComponent } from '../passes/passes.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
-import { RequestAcceptComponent } from '../request-accept/request-accept.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { SharedModule } from '../shared/shared.module';
 import { MainRoutingModule } from './main-routing.module';
-import { NavbarDataService } from './navbar-data.service';
 import { FromWhereComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/from-where/from-where.component';
 import { ToWhereComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-where/to-where.component';
 import { LocationsGroupContainerComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/locations-group-container.component';
@@ -52,49 +29,29 @@ import {StudentFooterComponent} from '../create-hallpass-forms/main-hallpass--fo
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
-import {ScreenService} from '../services/screen.service';
-import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
-import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notification-turn-on-btn.component';
+import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
+import {NavbarComponent} from '../navbar/navbar.component';
+import {NavButtonComponent} from '../nav-button/nav-button.component';
+
 
 @NgModule({
   imports: [
     CommonModule,
     SharedModule,
     MainRoutingModule,
-    MatIconModule,
-    MatSlideToggleModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSelectModule,
-    NgxMatSelectSearchModule,
-    MatChipsModule,
-    MatSliderModule,
-    MatProgressBarModule,
-    MatDialogModule,
-    MatGridListModule,
-    MatDividerModule,
-    MatGridListModule,
-    MatListModule,
-    MatSidenavModule
   ],
   declarations: [
-    HallMonitorComponent,
-    MyRoomComponent,
-    PassesComponent,
     SettingsComponent,
     MainHallPassFormComponent,
-    InfoEditorComponent,
-    RequestAcceptComponent,
-    InlineRequestCardComponent,
-    InlinePassCardComponent,
     LocationTableComponent,
     FavoriteFormComponent,
     ReportFormComponent,
     RequestCardComponent,
     InvitationCardComponent,
     LocationCellComponent,
-    LocationPickerComponent,
     MainPageComponent,
     FromWhereComponent,
     ToWhereComponent,
@@ -113,26 +70,21 @@ import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notifi
     FormFactorContainerComponent,
     CreateHallpassFormsComponent,
     NotificationFormComponent,
-    KioskModeComponent,
     AnimatedHeaderDirective,
-    NotificationTurnOnBtnComponent
+    DateTimeComponent,
+    NavbarComponent,
+    NavButtonComponent,
   ],
   entryComponents: [
     CreateHallpassFormsComponent,
-    RequestAcceptComponent,
-    InfoEditorComponent,
     FavoriteFormComponent,
     ReportFormComponent,
     RequestCardComponent,
     InvitationCardComponent,
-    InfoEditorComponent,
     NotificationFormComponent,
     SettingsComponent
-
   ],
   providers: [
-    NavbarDataService,
-    ScreenService
   ]
 })
 export class MainModule {

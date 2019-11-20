@@ -25,12 +25,12 @@
       <app-gradient-button *ngIf="showPublishButton"
                            [minHeight]="'40px'"
                            [style.width]="'120px'"
-                           [gradient]="'#FFFFFF, #FFFFFF'"
-                           [textColor]="color_profile.solid_color"
+                           [gradient]="currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
+                           [textColor]="color_profile ? color_profile.solid_color : 'White'"
                            [cursor]="'pointer'"
                            [fontSize]="'14px'"
                            (buttonClick)="onPublish()"
-        >{{ (showPublishSpinner ? null : 'Publish') }}
+        >{{ (showPublishSpinner ? null : 'Save') }}
         <mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
       </app-gradient-button>
 

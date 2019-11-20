@@ -117,6 +117,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   onClick(evt) {
     this.pressed = !this.pressed;
     if (!this.eventBubbling) {
+      // debugger
       evt.stopPropagation();
     }
     this.clickEvent.emit(evt);

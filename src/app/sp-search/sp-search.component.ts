@@ -1,16 +1,16 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
-import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, share, switchMap, takeUntil, tap} from 'rxjs/operators';
-
-import * as _ from 'lodash';
+import {map, pluck, switchMap, takeUntil } from 'rxjs/operators';
+import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {ScreenService} from '../services/screen.service';
 
 declare const window;
 
@@ -163,7 +163,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private http: HttpClient,
     private mapsApi: MapsAPILoader,
-    private shortcutsService: KeyboardShortcutsService
+    private shortcutsService: KeyboardShortcutsService,
+    private renderer: Renderer2,
+    public screenService: ScreenService
   ) {
 
 
@@ -185,15 +187,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  getBackground(item) {
-    if (item.hovered) {
-      if (item.pressed) {
-        return '#E2E7F4';
-      } else {
-        return '#ECF1FF';
-      }
+  changeColor(value, elem) {
+    if (value) {
+      this.renderer.setStyle(elem.target, 'background-color', '#ECF1FF');
     } else {
-      return '#FFFFFF';
+      this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
   }
 
@@ -340,7 +338,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
       case 'local':
         if (search !== '') {
-          const filterItems: User[] = _.filter(this.searchingTeachers, (item => {
+          const filterItems: User[] = _filter(this.searchingTeachers, (item => {
             return (item.display_name).toLowerCase().includes(search);
             }));
           this.teacherCollection$.next(this.removeDuplicateStudents(filterItems));

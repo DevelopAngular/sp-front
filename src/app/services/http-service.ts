@@ -8,7 +8,7 @@ import {
   flatMap,
   map,
   switchMap,
-  mapTo
+  mapTo, distinctUntilChanged
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -90,7 +90,12 @@ function makeUrl(server: LoginServer, endpoint: string) {
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
     return endpoint;
   } else {
-    return server.api_root + endpoint;
+    if (!environment.production) {
+      const proxyPath = new URL(server.api_root).pathname;
+      return (proxyPath + endpoint) as string;
+    } else {
+      return server.api_root + endpoint;
+    }
   }
 }
 
@@ -133,7 +138,7 @@ export class HttpService {
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
     switchMap(() => {
-      return this.getSchools();
+      return this.getSchoolsRequest();
     }),
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
@@ -147,7 +152,7 @@ export class HttpService {
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
     map(school => school ? school.id : null),
-    // distinctUntilChanged(),
+    distinctUntilChanged(),
     delay(5)
   );
 
@@ -166,7 +171,6 @@ export class HttpService {
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
     this.schools$.subscribe(schools => {
-
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
         this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
@@ -190,18 +194,21 @@ export class HttpService {
       interval(10000)
         .pipe(
             switchMap(() => of(this.accessTokenSubject.value)),
-            // tap(console.log),
             filter(v => !!v),
             switchMap(({auth, server}) => {
-
               if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
                   const config = new FormData();
+                  const user = JSON.parse(this.storage.getItem('google_auth'));
                   config.append('client_id', server.client_id);
                   config.append('grant_type', 'refresh_token');
                   config.append('token', auth.refresh_token);
+                  // config.append('username', user.username);
+                  // config.append('password', user.password);
+                  // console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
                   map((data: any) => {
+                    // console.log('Auth data : ', data);
                     // don't use TimeService for auth because auth is required for time service
                     // to be useful
                     data['expires'] = new Date(new Date() + data['expires_in']);
@@ -214,7 +221,7 @@ export class HttpService {
                     this.loginService.isAuthenticated$.next(false);
                     return of(null);
                   })
-                );
+                );                    // return this.fetchServerAuth();
               } else {
                 return of(null);
               }
@@ -231,15 +238,6 @@ export class HttpService {
         // console.log(res);
         this.accessTokenSubject.next(res as AuthContext);
       });
-
-    // this.accessTokenSubject.pipe(withLatestFrom(this.kioskTokenSubject$),
-    //     map(([{auth, server}, newToken]) => {ы
-    //       return {auth: newToken, server};
-    //     }))
-    //     .subscribe((updatedContext: AuthContext) => {
-    //       debugger;
-    //       this.accessTokenSubject.next(updatedContext);
-    //     });
 
   }
 
@@ -359,10 +357,6 @@ export class HttpService {
       );
 
     }));
-  }
-
-  gg4l(code: string) {
-    return this.loginGoogleAuth(code);
   }
 
   private loginGoogleAuth(googleToken: string): Observable<AuthContext> {

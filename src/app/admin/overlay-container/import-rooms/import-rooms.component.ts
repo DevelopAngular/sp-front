@@ -7,7 +7,7 @@ import { map, switchMap } from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {OverlayDataService, Pages} from '../overlay-data.service';
 
-import * as _ from 'lodash';
+import { groupBy } from 'lodash';
 import * as XLSX from 'xlsx';
 
 export interface RoomInfo {
@@ -68,7 +68,7 @@ export class ImportRoomsComponent implements OnInit {
               }
               return r;
             });
-            const groupedRooms = _.groupBy(rows, (r: RoomInfo) => r.title.toLowerCase());
+            const groupedRooms = groupBy(rows, (r: RoomInfo) => r.title.toLowerCase());
             let normalizedRooms: RoomInfo[] = [];
 
             for (const key in groupedRooms) {
@@ -181,7 +181,7 @@ export class ImportRoomsComponent implements OnInit {
             }
             return r;
           });
-          const groupedRooms = _.groupBy(rows, (r: any) => r.title);
+          const groupedRooms = groupBy(rows, (r: any) => r.title);
           let normalizedRooms = [];
           console.log(groupedRooms);
 

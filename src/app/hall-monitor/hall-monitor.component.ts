@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {merge, of, combineLatest, BehaviorSubject, Observable, Subject, interval} from 'rxjs';
 import { DataService } from '../services/data-service';
@@ -49,7 +49,8 @@ export class ActivePassProvider implements PassLikeProvider {
 @Component({
   selector: 'app-hall-monitor',
   templateUrl: './hall-monitor.component.html',
-  styleUrls: ['./hall-monitor.component.scss']
+  styleUrls: ['./hall-monitor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HallMonitorComponent implements OnInit, OnDestroy {
 
@@ -138,6 +139,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
+  selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
+
   constructor(
     private userService: UserService,
     public dataService: DataService,
@@ -146,7 +149,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private liveDataService: LiveDataService,
     public darkTheme: DarkThemeSwitch,
-    private screenService: ScreenService,
+    public screenService: ScreenService,
     private scrollPosition: ScrollPositionService
   ) {
     this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
@@ -158,17 +161,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isIpadWidth = this.screenService.isIpadWidth;
-    this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
-
-    if (this.screenService.isDeviceLargeExtra) {
-      this.hallMonitorCollection.hasSort = false;
-      this.isIpadSearchBar = false;
-    }
-
-    if (this.screenService.isDesktopWidth) {
-      this.hallMonitorCollection.hasSort = true;
-    }
+    this.detectDevice();
 
     combineLatest(
       this.dataService.currentUser,
@@ -191,7 +184,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
           this.canView = this.user.roles.includes('access_hall_monitor') && this.user.roles.includes('view_traveling_users');
         }
       });
-    })
+    });
 
 
     this.hasPasses = combineLatest(
@@ -232,11 +225,9 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-backdrop',
     });
 
-    dialogRef.afterOpened().subscribe( () => {
-
-    });
-
-    dialogRef.afterClosed().pipe(filter(res => !!res), map(res => {
+    dialogRef.afterClosed().pipe(
+      filter(res => !!res),
+      map(res => {
         this.sendReports = res;
         this.isActiveMessage = true;
         return res;
@@ -249,30 +240,25 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   openSortMenu() {
-    setTimeout( () => {
-
-      const dialogData = {
-        title: 'sort by',
-        list: [
-          {name: 'pass expiration time', isSelected: false, action: 'expiration_time'},
-          {name: 'student name', isSelected: false, action: 'student_name'},
-          {name: 'destination', isSelected: false, action: 'destination_name'},
-        ],
-      };
 
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: { bottom: '1px' },
         panelClass: 'sort-dialog',
-        data: dialogData
+        data: {
+          title: 'sort by',
+          items: [
+            {id: 1, title: 'pass expiration time', action: 'expiration_time'},
+            {id: 2, title: 'student name', action: 'student_name'},
+            {id: 3, title: 'destination', action: 'destination_name'},
+          ],
+          selectedItem: this.selectedSortOption
+        }
       });
 
-      dialogRef.componentInstance.onListItemClick.subscribe((index) =>  {
-          const selectedItem = dialogData.list.find((item, i ) => {
-            return i === index;
-          });
-          this.dataService.sort$.next(selectedItem.action);
+      dialogRef.componentInstance.onListItemClick.subscribe((item) =>  {
+          this.dataService.sort$.next(item.action);
+          this.selectedSortOption = item;
       });
-    } , 100);
   }
 
   onReportFromPassCard(studends) {
@@ -297,24 +283,26 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.reportFormInstance.back();
   }
 
-  @HostListener('window:resize')
-  checkDeviceWidth() {
+  detectDevice() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
 
     if (this.screenService.isDeviceLargeExtra) {
       this.hallMonitorCollection.hasSort = false;
-      this.isIpadSearchBar = false;
+      // this.isIpadSearchBar = false;
     }
 
     if (this.screenService.isDesktopWidth) {
       this.hallMonitorCollection.hasSort = true;
     }
+  }
 
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    this.detectDevice();
   }
 
   toggleSearchBar() {
-    this.isSearchClicked = !this.isSearchClicked;
     if (this.screenService.isDeviceLargeExtra) {
       this.isIpadSearchBar = !this.isIpadSearchBar;
     }

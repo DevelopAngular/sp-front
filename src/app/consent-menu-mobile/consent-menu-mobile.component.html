@@ -1,4 +1,4 @@
-<div class="consest-menu"  *ngIf="display" [@menuAppearance] >
+<div #consentMenu appDomElementChecker class="consest-menu"  *ngIf="display" [@menuAppearance] >
 <div class="consent-wrapper" [style.background-color]="darkTheme.getBackground('low')">
   <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('low')"></div></div>
   <div class="rounded-corners-box">
@@ -66,4 +66,4 @@
 </div>
 
 
-<div (click)="onBackdropClick()" *ngIf="display" class="cdk-overlay-backdrop custom-backdrop cdk-overlay-backdrop-showing z-index-15"></div>
+<div (click)="onBackdropClick()" *ngIf="display && !isIOS" class="cdk-overlay-backdrop custom-backdrop cdk-overlay-backdrop-showing z-index-15"></div>

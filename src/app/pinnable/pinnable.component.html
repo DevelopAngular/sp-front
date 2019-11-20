@@ -1,6 +1,8 @@
 <div *ngIf="!mock" mat-raised-button class="clickRipple" [style.cursor]="disabled ? 'default' : 'pointer'" (click)="onSelect()"
      [@pressState]="buttonState" [style.box-shadow]="shadow"
-     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+     (mousedown)="onPress(true)"
+     (mouseup)="onPress(false)"
+     (touchstart)="onPress(true)"
      (mouseenter)="hovered = true" (mouseleave)="onPress(false); hovered = false"
      [style.width]="width"
 >
@@ -11,7 +13,7 @@
       <img class="selected-icon" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="ICON">
     </div>
     <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
-      <div *ngIf="pinnable.title.length > 14 && pinnable.type === 'location' || pinnable.title.length > 10 && pinnable.type === 'category'; else old" class="title-bar" #title>
+      <div *ngIf="pinnable && pinnable.title.length > 14 && pinnable.type === 'location' || pinnable.title.length > 10 && pinnable.type === 'category'; else old" class="title-bar" #title>
         <div class="title"
              (mouseover)="onHover($event, title)"
              (mouseleave)="onLeave($event)"

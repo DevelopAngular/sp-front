@@ -1,12 +1,10 @@
 import {
-  AfterContentInit,
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
-  Input, OnChanges,
+  Input,
   OnInit,
-  Output, SimpleChanges,
+  Output,
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material';
@@ -55,6 +53,7 @@ export class RoundInputComponent implements OnInit {
   @Input() selectReset$: Subject<string>;
   @Input() selections: any[] = [];
   @Input() isSearch: boolean;
+  @Input() backgroundColor: string = '#FFFFFF';
 
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
@@ -140,11 +139,15 @@ export class RoundInputComponent implements OnInit {
         this.value = _value;
       });
     }
+
+    if (this.focused) {
+      this.input.nativeElement.focus();
+    }
   }
 
   handleError() {
     if (this.selfSearch && !this.endpoint) {
-      throw Error('\n \n SP Error => \n ---------------------- \n Please provide an api endpoint for search! \n');
+      throw Error('\n \n SP Error => \n ------ \n Please provide an api endpoint for search! \n');
     }
   }
 

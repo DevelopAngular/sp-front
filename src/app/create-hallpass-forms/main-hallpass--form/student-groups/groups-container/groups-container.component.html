@@ -31,7 +31,7 @@
   <div *ngIf="currentState === states.WhoAreYou">
     <app-who-you-are
       [formState]="FORM_STATE"
-      (stateChangeEvent)="groupNextStep($event)">
+      (stateChangeEvent)="onStateChange($event)">
     </app-who-you-are>
   </div>
 </div>

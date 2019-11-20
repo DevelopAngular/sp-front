@@ -3,7 +3,6 @@
   <div class="consent-header" [style.color]="'#7F879D'" *ngIf="heading">
     {{heading}}
   </div>
-<!--  <div class="option-divider" *ngIf="heading"></div>-->
 
   <div class="options-wrapper" *ngIf="locations" #optionsWrapper>
     <div class="option" (click)="closeDropdown('all_rooms')">
@@ -14,10 +13,13 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
-           (mouseup)="_option.style.background = 'transparent'"
-           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
-           (mouseleave)="_option.style.background = 'transparent'">
+           (touchstart)="changeColor(true, $event)"
+           (touchend)="changeColor(false, $event)"
+           (mousedown)="changeColor(true, $event, true)"
+           (mouseup)="changeColor(true, $event)"
+           (mouseover)="changeColor(true, $event)"
+           (mouseleave)="changeColor(false, $event)"
+      >
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">All Rooms</span>
         </div>
@@ -37,10 +39,11 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'"
-           (mouseup)="_option.style.background = 'transparent'"
-           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : '#ECF1FF'"
-           (mouseleave)="_option.style.background = 'transparent'"
+           (touchstart)="changeColor(true, $event)"
+           (mousedown)="changeColor(true, $event, true)"
+           (mouseup)="changeColor(true, $event)"
+           (mouseover)="changeColor(true, $event)"
+           (mouseleave)="changeColor(false, $event)"
       >
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">{{ location.title }}</span>
@@ -60,16 +63,18 @@
   </div>
 
   <div class="options-wrapper" *ngIf="schools" #optionsWrapper>
-    <div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">
+    <div class="option" *ngFor="let school of schools" (tap)="_matDialogRef.close(school)">
       <div #_option class="option-data"
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
-           (mouseup)="_option.style.background = 'transparent'"
-           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
-           (mouseleave)="_option.style.background = 'transparent'"
+           (touchstart)="changeColor(true, $event)"
+           (touchend)="changeColor(false, $event)"
+           (mousedown)="changeColor(true, $event, true)"
+           (mouseup)="changeColor(true, $event)"
+           (mouseover)="changeColor(true, $event)"
+           (mouseleave)="changeColor(false, $event)"
       >
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">{{ school.name }}</span>
@@ -91,10 +96,12 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (mousedown)="_option.style.backgroundColor = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
-           (mouseup)="_option.style.backgroundColor = 'transparent'"
-           (mouseover)="_option.style.backgroundColor = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
-           (mouseleave)="_option.style.backgroundColor = 'transparent'"
+           (touchstart)="changeColor(true, $event)"
+           (touchend)="changeColor(false, $event)"
+           (mousedown)="changeColor(true, $event, true)"
+           (mouseup)="changeColor(true, $event)"
+           (mouseover)="changeColor(true, $event)"
+           (mouseleave)="changeColor(false, $event)"
       >
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">{{ teacher.user.display_name }}</span>

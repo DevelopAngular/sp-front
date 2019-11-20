@@ -3,8 +3,7 @@ import { User } from '../../../models/User';
 import { bumpIn } from '../../../animations';
 import { DarkThemeSwitch } from '../../../dark-theme-switch';
 import { DomSanitizer } from '@angular/platform-browser';
-
-import * as _ from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import {Subject} from 'rxjs';
 
 export interface OptionState {
@@ -95,10 +94,10 @@ export class AdvancedOptionsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.optionState = _.cloneDeep(this.data);
-        this.initialState = _.cloneDeep(this.optionState);
+        this.optionState = cloneDeep(this.data);
+        this.initialState = cloneDeep(this.optionState);
         this.resetOptions$.subscribe(data => {
-          this.optionState = _.cloneDeep(data);
+          this.optionState = cloneDeep(data);
         });
         this.buildData();
     }
@@ -170,7 +169,7 @@ export class AdvancedOptionsComponent implements OnInit {
             (now.state === 'Certain \n teacher(s)' && !now.data.selectedTeachers.length) ||
             (future.state === 'Certain \n teacher(s)' && !future.data.selectedTeachers.length)
         ) {
-            if (!_.isEqual(this.initialState, this.optionState)) {
+            if (!isEqual(this.initialState, this.optionState)) {
                 this.isShowButtons = {
                     publish: false,
                     incomplete: true,
@@ -184,7 +183,7 @@ export class AdvancedOptionsComponent implements OnInit {
                 };
             }
         } else {
-            if (_.isEqual(this.initialState, this.optionState)) {
+            if (isEqual(this.initialState, this.optionState)) {
                 this.isShowButtons = {
                     publish: false,
                     incomplete: false,

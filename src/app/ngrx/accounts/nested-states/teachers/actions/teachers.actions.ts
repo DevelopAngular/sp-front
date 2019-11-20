@@ -16,3 +16,7 @@ export const updateTeacherActivity = createAction(`[${TEACHER}] Update Teacher A
 export const updateTeacherActivitySuccess = createAction(`[${TEACHER}] Update Teacher Activity Success`, props<{profile: User}>());
 export const updateTeacherActivityFailure = createAction(`[${TEACHER}] Update Teacher Activity Failure`, props<{errorMessage: string}>());
 
+export const updateTeacherPermissions = createAction(`[${TEACHER}] Update Teacher Permissions`, props<{profile: User, permissions: any}>());
+export const updateTeacherPermissionsSuccess = createAction(`[${TEACHER}] Update Teacher Permissions Success`, props<{profile: User}>());
+export const updateTeacherPermissionsFailure = createAction(`[${TEACHER}] Update Teacher Permissions Failure`, props<{errorMessage: string}>());
+

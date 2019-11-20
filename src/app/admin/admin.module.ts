@@ -1,39 +1,30 @@
 ﻿import { CommonModule, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-    MatCheckboxModule,
-    MatChipsModule,
-    MatDialogModule, MatDividerModule,
-    MatGridListModule,
-    MatIconModule,
-    MatSortModule,
-    MatTableModule
-} from '@angular/material';
-import { ChartsModule } from 'ng2-charts';
 import { SharedModule } from '../shared/shared.module';
-import { AccountsRoleComponent } from './accounts-role/accounts-role.component';
-import { AccountsComponent } from './accounts/accounts.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { AdminRoutingModule } from './admin-routing.module';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
-import { PassConfigComponent } from './pass-config/pass-config.component';
 import { PdfGeneratorService } from './pdf-generator.service';
-import { SearchComponent } from './search/search.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
-import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
-import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';
-import { MySchoolComponent } from './my-school/my-school.component';
-import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.component';
-import { SchoolButtonComponent } from './my-school/school-button/school-button.component';
-import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-card-button.component';
 import { IosComponentComponent } from './ios-component/ios-component.component';
+import {SearchFilterDialogComponent} from './search/search-filter-dialog/search-filter-dialog.component';
+import {DateTimeFilterComponent} from './search/date-time-filter/date-time-filter.component';
+import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
+import {AdvancedOptionsComponent} from './overlay-container/advanced-options/advanced-options.component';
+import {AddExistingRoomComponent} from './overlay-container/add-existing-room/add-existing-room.component';
+import {RoomComponent} from './overlay-container/room/room.component';
+import {FolderComponent} from './overlay-container/folder/folder.component';
+import {NewRoomInFolderComponent} from './overlay-container/new-room-in-folder/new-room-in-folder.component';
+import {EditRoomInFolderComponent} from './overlay-container/edit-room-in-folder/edit-room-in-folder.component';
+import {BulkEditRoomsComponent} from './overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
+import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
+import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
+import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
 
 @NgModule({
   imports: [
@@ -41,38 +32,29 @@ import { IosComponentComponent } from './ios-component/ios-component.component';
     SharedModule,
     AdminRoutingModule,
     FormsModule,
-    MatTableModule,
-    MatCheckboxModule,
-    MatSortModule,
-    MatGridListModule,
-    MatDialogModule,
-    MatChipsModule,
-    MatIconModule,
-    MatDividerModule,
     AdminSharedModule,
-    ChartsModule
   ],
   declarations: [
     AdminPageComponent,
-    DashboardComponent,
-    HallmonitorComponent,
-    SearchComponent,
-    PassConfigComponent,
-    AccountsComponent,
-    AccountsRoleComponent,
     SettingsComponent,
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
+    IosComponentComponent,
     SearchFilterDialogComponent,
     DateTimeFilterComponent,
-    MySchoolComponent,
-    RoomsSetUpComponent,
-    SchoolButtonComponent,
-    AdminCardButtonComponent,
-    IosComponentComponent,
-
+    RoomsSearchComponent,
+    AdvancedOptionsComponent,
+    AddExistingRoomComponent,
+    RoomComponent,
+    FolderComponent,
+    NewRoomInFolderComponent,
+    EditRoomInFolderComponent,
+    BulkEditRoomsComponent,
+    BulkEditRoomsInFolderComponent,
+    ImportRoomsComponent,
+    OverlayContainerComponent,
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,
@@ -81,8 +63,8 @@ import { IosComponentComponent } from './ios-component/ios-component.component';
     AddUserDialogComponent,
     SettingsComponent,
     SearchFilterDialogComponent,
-    DateTimeFilterComponent
-
+    DateTimeFilterComponent,
+    OverlayContainerComponent,
   ],
   providers: [
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

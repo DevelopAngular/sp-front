@@ -10,12 +10,14 @@ export const locationsInitialState: LocationsState = locsAdapter.getInitialState
   loaded: false,
   createdLocationId: null,
   updatedLocationId: null,
-  foundLocations: []
+  foundLocations: [],
+  fromCategory: []
 });
 
 const reducer = createReducer(
   locationsInitialState,
   on(locationsActions.getLocations,
+     locationsActions.getLocationsFromCategory,
      locationsActions.searchLocations,
      locationsActions.postLocation,
      locationsActions.updateLocation,
@@ -30,6 +32,14 @@ const reducer = createReducer(
       loading: false,
       loaded: true,
       foundLocations
+    };
+  }),
+  on(locationsActions.getLocationsFromCategorySuccess, (state, {locations}) => {
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      fromCategory: locations
     };
   }),
   on(locationsActions.postLocationSuccess, (state, {location}) => {

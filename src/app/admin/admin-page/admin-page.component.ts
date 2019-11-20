@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 
 import {combineLatest, BehaviorSubject, Observable, of} from 'rxjs';
 import { UserService } from '../../services/user.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {delay, filter, map, skip, switchMap, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
 import {HttpService} from '../../services/http-service';
@@ -37,11 +37,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.schoolsLength$ = this.httpService.schoolsLength$;
-
-
-    this.httpService.schoolsLength$.subscribe(value => {
-      console.log(value);
-    });
 
     this.showDummySwitcher$.subscribe((v) => {
       if (v) {

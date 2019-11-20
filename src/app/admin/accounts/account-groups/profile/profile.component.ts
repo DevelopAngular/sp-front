@@ -3,8 +3,8 @@ import {DarkThemeSwitch} from '../../../../dark-theme-switch';
 import {MatDialog} from '@angular/material';
 import {ProfileCardDialogComponent} from '../../../profile-card-dialog/profile-card-dialog.component';
 import {GSuiteSelector, OrgUnit} from '../../../../sp-search/sp-search.component';
-import * as _ from 'lodash';
-import {pipe, ReplaySubject, Subject} from 'rxjs';
+import { cloneDeep } from 'lodash';
+import {ReplaySubject} from 'rxjs';
 import {filter} from 'rxjs/operators';
 
 
@@ -49,7 +49,7 @@ export class ProfileComponent implements OnInit, OnChanges {
       }
       this.title = this.profile.title;
       this.icon = this.profile.title;
-      this.orgUnitCopy = _.cloneDeep(this.profile);
+      this.orgUnitCopy = cloneDeep(this.profile);
       this.selector$.next(this.profile.selector);
     }
   }
@@ -98,7 +98,7 @@ export class ProfileComponent implements OnInit, OnChanges {
 
             this.selector$.next(this.orgUnitCopy.selector);
             this.profile = this.orgUnitCopy;
-            this.orgUnitCopy = _.cloneDeep(this.orgUnitCopy);
+            this.orgUnitCopy = cloneDeep(this.orgUnitCopy);
             this.select.emit(this.profile);
 
           });

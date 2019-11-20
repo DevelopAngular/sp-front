@@ -173,6 +173,7 @@ export class InvitationCardComponent implements OnInit {
             this.dialogRef.close();
             const conf = {
                 panelClass: 'form-dialog-container',
+                maxWidth: '100vw',
                 backdropClass: 'custom-backdrop',
                 data: {
                     'entryState': {

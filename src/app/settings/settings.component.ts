@@ -6,7 +6,6 @@ import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {RELEASE_NAME} from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
-import {trigger} from '@angular/animations';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
@@ -28,6 +27,8 @@ export interface Setting {
 
 export class SettingsComponent implements OnInit {
 
+  @Input() dataSideNav: any = null;
+
   targetElementRef: ElementRef;
   settings: Setting[] = [];
   user: User;
@@ -43,7 +44,6 @@ export class SettingsComponent implements OnInit {
   hoveredColor: string;
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
-  @Input() dataSideNav: any = null;
 
   constructor(
       public dialog: MatDialog,
@@ -96,6 +96,8 @@ export class SettingsComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
+          this.settings = [];
+          this.initializeSettings();
           this.isStaff = user.roles.includes('edit_all_hallpass');
         });
       });
@@ -222,11 +224,11 @@ export class SettingsComponent implements OnInit {
       'title': 'About'
     });
     this.settings.push({
-      'hidden': false,
+      'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
       'gradient': '#5E4FED, #7D57FF',
-      'icon': 'Feedback',
-      'action': 'feedback',
-      'title': 'Feedback'
+      'icon': 'Launch',
+      'action': 'wishlist',
+      'title': 'Wishlist'
     });
     this.settings.push({
       'hidden': false,

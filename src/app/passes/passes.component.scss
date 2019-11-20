@@ -42,6 +42,8 @@
     transform: translateX(-50%) scale(1);
     margin: 0;
     z-index: 10;
+    top: 69.5px;
+    font-size: 22px;
   }
 
   .passes {
@@ -86,9 +88,13 @@
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
-  min-height: calc(100vh - 78px);
+  height: calc(100vh - 128px);
   overflow: auto;
   padding-top: 50px;
+  //padding-bottom: 78px;
+  //-webkit-box-sizing: border-box;
+  //-moz-box-sizing: border-box;
+  //box-sizing: border-box;
 }
 
 .main-page-left{
@@ -96,7 +102,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
 }
 
 .current-pass{

@@ -145,6 +145,10 @@ $base:5px;
         font-size: 21px;
         font-weight: bold;
         z-index: 2;
+        width: 5px;
+        height: 5px;
+        background: currentColor;
+        border-radius: 50%;
       }
       //height: 30px;
       //width: $dayBase;
@@ -161,20 +165,20 @@ $base:5px;
         &.selected {
           color: $background-white;
           //background-color: $jade;
-          border-radius: 6px;
+          border-radius: 5px;
           cursor: pointer;
         }
       }
 
       &::after {
         content: '';
-        height: 27px;
-        width: 50px;
+        height: 100%;
+        width: 100%;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        border-radius: 6px;
+        border-radius: 5px;
         transition: background-color 150ms linear, color 150ms linear;
         z-index: 1;
       }

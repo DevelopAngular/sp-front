@@ -16,12 +16,10 @@
 
 .kiosk-mode-container {
   margin-top: 40px;
+  height: calc(100vh - 118px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  .current-pass {
-    //margin-top: 20px;
-  }
   .pass-buttons{
     display: flex;
     flex-direction: row;

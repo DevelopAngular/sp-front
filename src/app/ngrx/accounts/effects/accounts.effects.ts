@@ -86,6 +86,22 @@ export class AccountsEffects {
       );
   });
 
+  updateAccountPermissions$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.updateAccountPermissions),
+        map((action: any) => {
+          if (action.role === '_profile_teacher') {
+            return roleActions.updateTeacherPermissions({profile: action.profile, permissions: action.permissions});
+          } else if (action.role === '_profile_admin') {
+            return roleActions.updateAdminPermissions({profile: action.profile, permissions: action.permissions});
+          } else if (action.role === '_profile_assistant') {
+            return roleActions.updateAssistantPermissions({profile: action.profile, permissions: action.permissions});
+          }
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

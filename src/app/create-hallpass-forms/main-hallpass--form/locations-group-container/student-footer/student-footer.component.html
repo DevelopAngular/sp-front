@@ -2,6 +2,9 @@
   <div class="target-footer"
        [attr.data-motion-opacity]="(frameMotion$ | async).direction"
        [style.height]="date ? '65px' : '43px'" [ngClass]="{'target-shadow': state !== 'to'}">
+    <div class="switch-locs-view" *ngIf="state === 'to'" (click)="switchLocsView($event)">
+      <img [src]="(!isGrid ? './assets/List (Blue-Gray).svg' : './assets/Grid (Blue-Gray).svg') | resolveAsset" width="20" height="20">
+    </div>
     <div class="footer-from-text">
       <div class="date cursor" [style.color]="'#1F195E'" *ngIf="date" (click)="goToDate()">{{ date }}</div>
       <div class="center-text">

@@ -15,11 +15,12 @@ import {
   getFoundLocations,
   getLoadedLocations,
   getLoadingLocations,
-  getLocationsCollection,
+  getLocationsCollection, getLocationsFromCategoryGetter,
   getUpdatedLocation
 } from '../ngrx/locations/states/locations-getters.state';
 import {
   getLocations,
+  getLocationsFromCategory,
   postLocation,
   updateLocation,
   searchLocations,
@@ -44,6 +45,7 @@ export class LocationsService {
   loadedLocations$: Observable<boolean> = this.store.select(getLoadedLocations);
 
   foundLocations$: Observable<Location[]> = this.store.select(getFoundLocations);
+  locsFromCategory$: Observable<Location[]> = this.store.select(getLocationsFromCategoryGetter);
 
   favoriteLocations$: Observable<Location[]> = this.store.select(getFavoriteLocationsCollection);
   loadingFavoriteLocations$: Observable<boolean> = this.store.select(getLoadingFavoriteLocations);
@@ -118,6 +120,12 @@ export class LocationsService {
     searchLocationsRequest(url) {
       this.store.dispatch(searchLocations({url}));
       return this.foundLocations$;
+    }
+
+    getLocationsFromCategory(url, category) {
+      url += `category=${category}`;
+      this.store.dispatch(getLocationsFromCategory({url}));
+      return this.locsFromCategory$;
     }
 
     getLocationsWithConfigRequest(url) {

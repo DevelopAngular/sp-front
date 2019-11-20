@@ -82,7 +82,7 @@
       <div class="right-side">
         <app-privacy-card></app-privacy-card>
         <div class="setup-guy">
-          <img [src]="'./assets/accounts-setup-guy.svg'" alt="accounts-setup-guy.svg">
+          <img [src]="'./assets/accounts-setup-guy.svg' | resolveAsset" alt="accounts-setup-guy.svg">
         </div>
       </div>
     </div>
@@ -95,7 +95,6 @@
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
               <div class="count">
-                <!--<img width="15" height="15" [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" alt="">-->
                 <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(countAccounts$ | async)}} accounts</div>
               </div>
             </div>
@@ -208,11 +207,9 @@
               [displayedColumns]="dataTableHeadersToDisplay"
               (selectedCell)="findProfileByRole($event)"
               (selectedUsers)="setSelected($event)"
+              (selectedRow)="prepareData($event)"
       >
       </app-data-table>
     </div>
-<!--    <div class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center"  *ngIf="pending$ | async">-->
-<!--      <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>-->
-<!--    </div>-->
   </div>
 </div>

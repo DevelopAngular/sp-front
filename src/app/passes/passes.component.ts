@@ -1,23 +1,32 @@
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
   BehaviorSubject,
   combineLatest,
   ConnectableObservable,
-  empty, fromEvent, interval,
+  empty, interval,
   merge,
   Observable,
-  of, pipe,
+  of,
   ReplaySubject, Subject,
 } from 'rxjs';
 import {
-  delay, distinctUntilChanged,
   filter,
-  map, pluck, publish, publishBehavior,
+  map, pluck, publishBehavior,
   publishReplay,
-  refCount, shareReplay,
+  refCount,
   startWith,
-  switchMap, take, takeUntil, tap,
+  switchMap, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -46,6 +55,7 @@ import * as moment from 'moment';
 import {NotificationButtonService} from '../services/notification-button.service';
 
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {HttpService} from '../services/http-service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -78,7 +88,6 @@ export class ActivePassProvider implements PassLikeProvider {
 
     const passes$ = this.user$.pipe(
       switchMap(user => {
-        console.log(user);
         return this.liveDataService.watchActiveHallPasses(mergedReplay,
             user.roles.includes('hallpass_student')
               ? {type: 'student', value: user}
@@ -87,7 +96,6 @@ export class ActivePassProvider implements PassLikeProvider {
         }
       ),
       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-        // console.log('PASSES ===>>>> ', passes);
         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
       })
     );
@@ -178,6 +186,7 @@ export class InboxInvitationProvider implements PassLikeProvider {
     PassesAnimations.HeaderSlideTopBottom,
     PassesAnimations.PreventInitialChildAnimation,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -259,11 +268,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
 
-  isInboxClicked: boolean;
+  isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
 
-  dismissExpired = true;
+  public schoolsLength$: Observable<number>;
 
   showInboxAnimated() {
     return this.dataService.inboxState;
@@ -271,7 +280,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get showInbox() {
     if (!this.isStaff) {
-      // console.log('|||||||||||||| Student Now ===>', this.dataService.inboxState);
       return this.dataService.inboxState;
     } else if (!this.inboxHasItems && !this.passesHaveItems) {
       return of(false);
@@ -295,7 +303,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollPosition: ScrollPositionService,
     private userService: UserService,
     private shortcutsService: KeyboardShortcutsService,
-    private  notificationButtonService: NotificationButtonService
+    private  notificationButtonService: NotificationButtonService,
+    private httpService: HttpService
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -362,14 +371,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+  this.schoolsLength$ = this.httpService.schoolsLength$;
     const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
     if (this.notificationButtonService.dismissExpirtationDate === notifBtnDismissExpires) {
       this.notificationButtonService.dismissButton$.next(false);
     }
 
-    this.navbarService.inboxClick.subscribe(inboxClick => {
-      this.isInboxClicked = inboxClick;
-    });
+    this.isInboxClicked$ = this.navbarService.inboxClick$.asObservable();
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
@@ -492,7 +500,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  get isAndroid() {
-    return DeviceDetection.isAndroid();
+  get isSmartphone() {
+    return DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile();
   }
 }

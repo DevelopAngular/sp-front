@@ -20,7 +20,8 @@ export class DisplayCardComponent implements OnInit {
   @Input() righticon: string;
   @Input() subtitle: string;
   @Input() subtitle_fontSize: string;
-  @Input() righttext:string;
+  @Input() righttext: string;
+  @Input() hasHeader: boolean = true;
 
 
   constructor(

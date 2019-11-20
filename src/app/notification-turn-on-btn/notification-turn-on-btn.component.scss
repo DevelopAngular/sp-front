@@ -16,17 +16,19 @@
 
   &__cancel {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 0px;
+    top: 0px;
     height: 10px;
     width: 10px;
     z-index: 999;
+    padding: 10px;
   }
 
   &__content {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
   }
 
   &__text {

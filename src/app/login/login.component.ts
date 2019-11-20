@@ -99,6 +99,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log(path);
 
       const loadView = currentUser.isAdmin() ? 'admin' : 'main';
+
       // if (path.length) {
       //   this.router.navigate(path);
       // } else {
