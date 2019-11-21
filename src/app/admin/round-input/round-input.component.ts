@@ -107,6 +107,9 @@ export class RoundInputComponent implements OnInit {
 
   ngOnInit() {
     this.handleError();
+    if (this.focused) {
+      this.input.nativeElement.focus();
+    }
 
     if (this.selfSearch) {
       this.pending$ = new Subject<boolean>();
@@ -136,9 +139,6 @@ export class RoundInputComponent implements OnInit {
       });
     }
 
-    if (this.focused) {
-      this.input.nativeElement.focus();
-    }
   }
 
   handleError() {

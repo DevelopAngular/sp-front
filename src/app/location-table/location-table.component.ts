@@ -126,7 +126,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             });
         }
 
-        this.isFocused = this.locationService.focused.value;
+        this.isFocused = !this.isFavoriteForm;
     }
     if (this.type === 'location') {
       this.locationService.favoriteLocations$.subscribe((stars: any[]) => {
@@ -137,7 +137,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         if (this.forKioskMode) {
           this.choices = this.choices.filter(loc => !loc.restricted);
         }
-          this.favoritesLoaded = true;
+        this.favoritesLoaded = true;
           this.mainContentVisibility = true;
       });
     }

@@ -56,6 +56,7 @@ export class LocationsService {
   myRoomSelectedLocation$: BehaviorSubject<Location> = new BehaviorSubject(null);
 
   focused: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
   constructor(private http: HttpService, private store: Store<AppState>) { }
 
     getLocationsWithCategory(category: string) {

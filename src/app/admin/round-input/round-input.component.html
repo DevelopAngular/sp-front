@@ -20,16 +20,20 @@
         </div>
       </div>
       <input
-          #input class="input"
+         #input
+         class="input"
          spellcheck="false"
+         tabindex="-1"
          [type]="html5type"
          [style.margin]="'0px'"
          [style.height]="height"
-         [style.width]="width" [style.min-width]="minWidth"
+         [style.width]="width"
+         [style.min-width]="minWidth"
          [style.box-shadow]="_boxShadow"
          [style.padding]="fieldIconPosition === 'left' ? '0 0 0 45px' : '0 45px 0 15px'"
          [style.background-color]="backgroundColor"
-         [placeholder]="placeholder" [readonly]="type == 'dates'"
+         [placeholder]="placeholder"
+         [readonly]="type == 'dates'"
          (input)="changeAction(input)"
          (click)="focusAction(true)"
          (focusout)="focusAction(false)"
