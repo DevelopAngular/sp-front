@@ -4,6 +4,9 @@
   flex-direction: column;
   background-color: #FBFEFF;
   overflow: hidden;
+  .router-outlet {
+    height: 100%;
+  }
 }
 
 .unanimated-dialog-container {

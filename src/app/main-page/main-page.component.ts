@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, HostListener, NgZone, OnInit} from '@angular/core';
 import {UserService} from '../services/user.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 import {SideNavService} from '../services/side-nav.service';
 import {BehaviorSubject, combineLatest, empty, Observable, of, ReplaySubject} from 'rxjs';
@@ -14,6 +14,8 @@ import {User} from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {InboxInvitationProvider, InboxRequestProvider} from '../passes/passes.component';
 import {NavigationEnd, Router} from '@angular/router';
+import {filter as _filter} from 'lodash';
+import {HttpService} from '../services/http-service';
 
 declare const window;
 
@@ -24,6 +26,8 @@ declare const window;
 })
 
 export class MainPageComponent implements OnInit, AfterViewInit {
+
+  public topPadding = '0px';
 
   constructor(
     public userService: UserService,
@@ -36,9 +40,19 @@ export class MainPageComponent implements OnInit, AfterViewInit {
     private liveDataService: LiveDataService,
     private _zone: NgZone,
     private router: Router,
+    private http: HttpService
   ) {
 
     const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
+
+    this.http.schoolsCollection$
+      .pipe(
+        map(schools => _filter(schools, (school => school.my_roles.length > 0))),
+        // takeUntil(this.subscriber$)
+      )
+      .subscribe((schools) => {
+        this.topPadding = schools.length > 1 ? '50px' : '0px';
+      });
 
     this.dataService.currentUser
       .pipe(
