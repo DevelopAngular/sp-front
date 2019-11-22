@@ -28,20 +28,7 @@ export class SortMenuComponent implements OnInit, OnDestroy {
     private renderer: Renderer2
   ) {}
 
-  getBackground(item) {
-    if (item.hovered) {
-      if (item.pressed) {
-        return '#E2E7F4';
-      } else {
-        return '#ECF1FF';
-      }
-    } else {
-      return '#FFFFFF';
-    }
-  }
-
   changeColor(value, elem) {
-    console.log('!!!!!!!');
     if (value) {
       this.renderer.setStyle(elem.target, 'background-color', '#ECF1FF');
     } else {
@@ -59,7 +46,6 @@ export class SortMenuComponent implements OnInit, OnDestroy {
   }
 
   selectSortOption(location): void {
-    console.log('click');
     this.selectedItem = location;
     this.onListItemClick.emit(location);
   }
