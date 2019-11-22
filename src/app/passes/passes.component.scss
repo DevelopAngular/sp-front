@@ -104,8 +104,15 @@
   //box-sizing: border-box;
 }
 
-.passes-mobile-height {
+.mobile-pass-wrapper {
+  position: relative;
   height: calc(100vh - 127px);
+  overflow: auto;
+
+  .passes-mobile-height {
+    position: absolute;
+    width: 100%;
+  }
 }
 
 .main-page-left{
