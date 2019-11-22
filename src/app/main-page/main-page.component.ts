@@ -95,6 +95,15 @@ export class MainPageComponent implements OnInit, AfterViewInit {
     this.toggleLeft = this.sideNavService.toggleLeft;
     this.toggleRight = this.sideNavService.toggleRight;
 
+    this.toggleLeft.subscribe(res => {
+      if (res) {
+        document.documentElement.style.position = 'fixed';
+      } else {
+        document.documentElement.style.position = 'static';
+
+      }
+    });
+
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {

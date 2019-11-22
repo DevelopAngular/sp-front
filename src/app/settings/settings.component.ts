@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';

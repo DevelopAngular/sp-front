@@ -40,8 +40,7 @@
     <h1 class="passes-heading" [@HeaderSlideTopBottom] *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"  [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Passes</h1>
   </div>
-  <div class="mobile-pass-wrapper">
-    <div class="passes-wrapper passes-mobile-height" [@PassesSlideTopBottom] [style.padding-top]="isSmartphone ? '0px' : '50px'" *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>
+    <div class="passes-wrapper passes-mobile-height" *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid" [@PassesSlideTopBottom] [style.padding-top]="isSmartphone ? '0px' : '50px'" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>
       <div class="main-page-left">
         <div class="current-pass">
           <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
@@ -139,7 +138,6 @@
         </app-display-card>
       </div>
     </div>
-  </div>
 
 
 <div class="passes-wrapper" [ngClass]="{'scroll': isStaff}" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)" #scrollableArea>
