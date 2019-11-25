@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { HttpService } from '../../../services/http-service';
 import * as schoolsActions from '../actions';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import { catchError, concatMap, map } from 'rxjs/operators';
 import { School } from '../../../models/School';
-import {of} from 'rxjs';
+import { of } from 'rxjs';
 
 @Injectable()
 export class SchoolsEffects {
@@ -15,6 +15,7 @@ export class SchoolsEffects {
       concatMap(action => {
         return this.http.getSchools()
           .pipe(
+            map(schools => schools.map(school => School.fromJSON(school))),
             map((schools: School[]) => {
               return schoolsActions.getSchoolsSuccess({schools});
             }),
