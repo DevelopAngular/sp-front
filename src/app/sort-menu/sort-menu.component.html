@@ -8,7 +8,6 @@
         #_all
         (touchstart)="changeColor(true, $event)"
         (touchend)="changeColor(false, $event)"
-        [style.background-color]="getBackground(_all)"
       [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
       [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
     All Rooms

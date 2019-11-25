@@ -1,4 +1,4 @@
-<div class="settings-wrapper"  *ngIf="data || dataSideNav" [style.background-color]="darkTheme.getBackground('high', true)">
+<div class="settings-wrapper" (scroll)="$event.stopPropagation()"  *ngIf="data || dataSideNav" [style.background-color]="darkTheme.getBackground('high', true)">
   <div class="top-arrow-container" (click)="dialogRef.close()">
     <div class="top-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
   </div>

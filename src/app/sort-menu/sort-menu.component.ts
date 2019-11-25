@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, On
 import {MatDialogRef} from '@angular/material';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-sort-menu',
@@ -26,18 +27,6 @@ export class SortMenuComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     private renderer: Renderer2
   ) {}
-
-  getBackground(item) {
-    if (item.hovered) {
-      if (item.pressed) {
-        return '#E2E7F4';
-      } else {
-        return '#ECF1FF';
-      }
-    } else {
-      return '#FFFFFF';
-    }
-  }
 
   changeColor(value, elem) {
     if (value) {
