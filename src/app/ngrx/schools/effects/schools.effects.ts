@@ -15,7 +15,6 @@ export class SchoolsEffects {
       concatMap(action => {
         return this.http.getSchools()
           .pipe(
-            map(schools => schools.map(school => School.fromJSON(school))),
             map((schools: School[]) => {
               return schoolsActions.getSchoolsSuccess({schools});
             }),
