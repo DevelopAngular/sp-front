@@ -468,7 +468,7 @@ export class HttpService {
   }
 
   setSchool(school: School) {
-    if (school instanceof School) {
+    if (!!school && school.id) {
       this.storage.setItem('last_school_id', school.id);
     } else {
       this.storage.removeItem('last_school_id');
