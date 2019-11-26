@@ -67,6 +67,17 @@
       <div class="header-wrapper">
         <div class="school-header" [style.background-color]="darkTheme.getBackground('high', true)">
           <div class="school-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ (currentSchool$ | async).name }}</div>
+          <app-gradient-button
+            [cursor]="'pointer'"
+            (buttonClick)="openSettings()"
+            [gradient]="'#F4F4F4, #F4F4F4'"
+            [hoverColor]="'#F5F5F5'"
+            [textColor]="'#1F195E'"
+            [size]="'medium'"
+            [leftIcon]="'./assets/Settings (Navy).svg'"
+          >
+            Settings
+          </app-gradient-button>
         </div>
 
       </div>
@@ -94,7 +105,14 @@
       </div>
 
       <div class="right-block">
-        <img [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My_school">
+        <div class="start-day">
+          <div class="start-day-content">
+            <div class="start-day-header">45 days until launch</div>
+            <div class="start-day-info">The day your school will start using SmartPass. Students won’t be able to sign in until launch day, but staff can!</div>
+          </div>
+        </div>
+
+<!--        <img [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My_school">-->
       </div>
     </div>
   </div>

@@ -10,6 +10,7 @@ import {CalendarComponent} from '../calendar/calendar.component';
 import {bumpIn} from '../../animations';
 
 import * as moment from 'moment';
+import {SchoolSettingsComponent} from './school-settings/school-settings.component';
 
 declare const window;
 
@@ -71,6 +72,13 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
 
   redirect(button) {
     window.open(button.link);
+  }
+
+  openSettings() {
+      const setDialog = this.dialog.open(SchoolSettingsComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd'
+      });
   }
 
   openCalendar(event) {

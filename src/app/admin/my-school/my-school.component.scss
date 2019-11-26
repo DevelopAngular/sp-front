@@ -129,7 +129,7 @@
           padding: 0 25px;
           .school-header {
             height: 99px;
-            padding: 0 0 0 40px;
+            padding: 0 25px 0 40px;
             box-sizing: border-box;
             border-radius: 12px;
             width: 100%;
@@ -137,6 +137,7 @@
             background-color: #FFFFFF;
             display: flex;
             align-items: center;
+            justify-content: space-between;
 
             .school-title {
               font-weight: bold;
@@ -208,7 +209,28 @@
 
         .right-block {
           display: flex;
-          align-items: flex-end;
+          //align-items: flex-end;
+
+          .start-day {
+            width: 475px;
+            height: 227px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+
+            .start-day-content {
+              padding: 35px 0 0 35px;
+              .start-day-header {
+                font-size: 24px;
+                color: $navy;
+                font-weight: bold;
+              }
+
+              .start-day-info {
+                font-size: 17px;
+                color: $blue-gray;
+              }
+            }
+          }
         }
       }
     }

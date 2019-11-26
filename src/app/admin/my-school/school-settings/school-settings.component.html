@@ -1,0 +1,33 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="title">
+      <img [src]="'./assets/Settings (Navy).svg' | resolveAsset" width="20" height="20" alt="Settings">
+      <div class="ds-dialog-title" style="margin-left: 12px">Settings</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="school-name">
+      <app-input
+        [width]="'360px'"
+        [input_value]="(school$ | async).name"
+        [input_label]="'School Name'"
+        [formGroup]="form"
+        [controlName]="form.get('schoolName')"
+      ></app-input>
+    </div>
+
+    <div class="block">
+      <div class="label">Sign-up date</div>
+      <div class="value">September 1, 2019</div>
+    </div>
+    <div class="block">
+      <div class="label">Launch day</div>
+      <div class="value">Not launched</div>
+    </div>
+    <div class="block">
+      <div class="label">Address</div>
+      <div class="value">4004 Redwing Lane Audubon, PA 19403</div>
+    </div>
+  </div>
+</div>
