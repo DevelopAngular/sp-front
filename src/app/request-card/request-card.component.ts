@@ -162,11 +162,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     return this.request.teacher.isSameObject(this.user)?'Me':this.request.teacher.first_name.substr(0, 1) +'. ' +this.request.teacher.last_name;
   }
 
-    get gradient() {
-        return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
-    }
+  get gradient() {
+      return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
+  }
 
-  get status(){
+  get status() {
     return this.request.status.charAt(0).toUpperCase() + this.request.status.slice(1);
   }
 

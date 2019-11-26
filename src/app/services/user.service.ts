@@ -213,6 +213,10 @@ export class UserService {
      return this.http.get<User>('v1/users/@me');
   }
 
+  postUser(data) {
+    return this.http.patch('v1/users/@me', data);
+  }
+
   getIntros() {
     return this.http.get('v1/intros');
   }
