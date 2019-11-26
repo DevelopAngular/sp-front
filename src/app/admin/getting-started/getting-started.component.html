@@ -150,6 +150,30 @@
 
         </div>
 
+        <div class="card card__tour-item">
+          <div class="card_header">
+            <img class="tour-item_image" [src]="'./assets/Billing (Jade).svg' | resolveAsset" alt="">
+            <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Billing</span>
+          </div>
+          <div class="ds-mt-15 ds-mr-25 ds-pr-10">
+            Pay with any major credit card or with an ACH credit or domestic wire transfer.
+          </div>
+          <div class="card_explore-item" (click)="markItem(['admin', 'myschool'], 'launch_day_prep:start')">
+            <div class="go">
+              <app-icon-button
+                      [size]="20"
+                      [srcString]="'Chevron Right'"
+                      [eventBubbling]="true"
+              >
+              </app-icon-button>
+            </div>
+            <!--<div class="passed">-->
+              <!--<img width="35" *ngIf="gsProgress.onboardProgress?.launch_day_prep?.start && gsProgress.onboardProgress?.launch_day_prep?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">-->
+            <!--</div>-->
+          </div>
+
+        </div>
+
       </div>
     </div>
   </div>

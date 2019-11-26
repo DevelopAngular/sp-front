@@ -1,21 +1,29 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material';
 import {HttpService} from '../../services/http-service';
 import {Observable, of} from 'rxjs';
 import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
 import {filter, mapTo, switchMap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {CalendarComponent} from '../calendar/calendar.component';
+import {bumpIn} from '../../animations';
+
+import * as moment from 'moment';
 
 declare const window;
 
 @Component({
   selector: 'app-my-school',
   templateUrl: './my-school.component.html',
-  styleUrls: ['./my-school.component.scss']
+  styleUrls: ['./my-school.component.scss'],
+  animations: [bumpIn]
 })
 export class MySchoolComponent implements OnInit, AfterViewInit {
 
   currentSchool$: Observable<School>;
+
+  selectedDate: moment.Moment;
 
   buttons = [
       { title: 'Quick Start Guides', description: 'Short how-to guides for students and teachers.', link: 'https://www.smartpass.app/support/quickstartguides' },
@@ -27,10 +35,13 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
 
   buttonDown: boolean;
 
+  openSchoolPage: boolean;
+
   constructor(
       private http: HttpService,
       private adminService: AdminService,
       public darkTheme: DarkThemeSwitch,
+      private dialog: MatDialog,
   ) { }
 
   ngOnInit() {
@@ -60,5 +71,20 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
 
   redirect(button) {
     window.open(button.link);
+  }
+
+  openCalendar(event) {
+      const target = new ElementRef(event.currentTarget);
+      const DR = this.dialog.open(CalendarComponent, {
+          panelClass: 'calendar-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {
+              'trigger': target,
+          }
+      });
+
+      DR.afterClosed().subscribe(res => {
+          this.selectedDate = moment(res.date);
+      });
   }
 }
