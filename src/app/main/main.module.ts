@@ -33,6 +33,7 @@ import {AnimatedHeaderDirective} from '../core/directives/animated-header.direct
 import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
 import {NavbarComponent} from '../navbar/navbar.component';
 import {NavButtonComponent} from '../nav-button/nav-button.component';
+import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
 
 
 @NgModule({
@@ -74,6 +75,7 @@ import {NavButtonComponent} from '../nav-button/nav-button.component';
     DateTimeComponent,
     NavbarComponent,
     NavButtonComponent,
+    TeacherPinComponent
   ],
   entryComponents: [
     CreateHallpassFormsComponent,
@@ -82,7 +84,8 @@ import {NavButtonComponent} from '../nav-button/nav-button.component';
     RequestCardComponent,
     InvitationCardComponent,
     NotificationFormComponent,
-    SettingsComponent
+    SettingsComponent,
+    TeacherPinComponent
   ],
   providers: [
   ]

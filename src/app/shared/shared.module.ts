@@ -55,6 +55,7 @@ import {CoreModule} from '../core/core.module';
 import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
+import {TeacherPinStudentComponent} from '../teacher-pin-student/teacher-pin-student.component';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -121,6 +122,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
+    TeacherPinStudentComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -180,6 +182,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
+    TeacherPinStudentComponent
   ],
   providers: [
     {
