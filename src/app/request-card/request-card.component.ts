@@ -16,7 +16,7 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep} from '../animations';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
 import { uniqBy, uniq, isNull } from 'lodash';
@@ -65,6 +65,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   header: string;
   cancelEditClick: boolean;
 
+  hoverDestroyer$: Subject<any>;
+
+  activeTeacherPin: boolean;
   destroy$: Subject<any> = new Subject<any>();
 
 
@@ -155,7 +158,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     return getInnerPassName(this.request);
   }
 
-  get teacherName(){
+  get teacherName() {
     return this.request.teacher.isSameObject(this.user)?'Me':this.request.teacher.first_name.substr(0, 1) +'. ' +this.request.teacher.last_name;
   }
 
@@ -214,7 +217,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       }
   }
 
-  formatDateTime(date: Date, timeOnly?: boolean){
+  formatDateTime(date: Date, timeOnly?: boolean) {
     return Util.formatDateTime(date, timeOnly);
   }
   // log(arg) {
@@ -566,6 +569,37 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   receiveOption(action) {
     this.chooseAction(action);
     this.dialogRef.close();
+  }
+
+  onHover(evt: HTMLElement, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = evt;
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        }
+      });
+  }
+
+  onLeave(target: HTMLElement) {
+    target.style.marginLeft = '0px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `100%`;
+
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
   }
 
   get isIOSTablet() {

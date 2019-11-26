@@ -1,0 +1,64 @@
+
+@-webkit-keyframes
+shake {
+
+40% {
+    -webkit-transform: translate(-25px, 0);
+    transform: translate(-25px, 0);
+  }
+60% {
+    -webkit-transform: translate(10px, 0);
+    transform: translate(15px, 0);
+  }
+80% {
+    -webkit-transform: translate(-5px, 0);
+    transform: translate(-10px, 0);
+  }
+}
+
+
+.teacher-pin-view {
+  width: 335px;
+  height: 319px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .teacher-pin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      .pin-title {
+        color: white;
+        font-size: 20px;
+      }
+
+      .circles {
+        display: flex;
+        margin-top: 22px;
+
+        &.incorrect {
+            -webkit-animation: shake .3s ease;
+        }
+        .circle {
+          width: 15px;
+          height: 15px;
+          border: 1px solid white;
+          border-radius: 50%;
+          margin: 11px;
+        }
+      }
+    }
+
+    .pin-info {
+      color: white;
+      margin-top: 165px;
+    }
+  }
+}

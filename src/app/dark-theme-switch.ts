@@ -6,7 +6,7 @@ export type Tone = 'low' | 'middle' | 'high' | 'default' | 'extra';
 export interface ColorConfig {
   setting?: any;
   hover?: boolean;
-  hoveredColor?: string;
+  hoverId?: number;
   dark?: string;
   white?: string;
 }
@@ -16,7 +16,7 @@ export interface IconConfig {
   lightFill?: string;
   setting?: any;
   hover?: boolean;
-  hoveredColor?: string;
+  hoverId?: number;
   static?: boolean;
 }
 
@@ -62,7 +62,7 @@ export class DarkThemeSwitch {
       if (this.isEnabled$.value) {
         fill = 'White';
       } else {
-        fill = config.hover && config.hoveredColor === config.setting.gradient ? 'White' : 'Blue-Gray';
+        fill = config.hover && config.hoverId === config.setting.id ? 'White' : 'Blue-Gray';
       }
     }
 
@@ -104,7 +104,7 @@ export class DarkThemeSwitch {
       if (this.isEnabled$.value) {
         return '#EFEFEF';
       } else {
-        if (config.hover && config.hoveredColor === config.setting.gradient) {
+        if (config.hover && config.hoverId === config.setting.id) {
           return '#EFEFEF';
         } else {
           return '#7F879D';

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {from, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, from, Observable, of, Subject} from 'rxjs';
 import { Pinnable } from '../models/Pinnable';
 import { HttpService } from './http-service';
 import {Store} from '@ngrx/store';
@@ -29,6 +29,8 @@ export class HallPassesService {
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
+
+  isOpenPassModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(private http: HttpService, private store: Store<AppState>) {
     this.pinnables$ = this.store.select(getPinnableCollection);

@@ -1,0 +1,16 @@
+<input type="text" tabindex="1" style="position: absolute; width: 1px; opacity: 0" autofocus (blur)="blur()" [id]="requestId" #inp>
+<div class="teacher-pin-view">
+  <div class="content">
+    <div class="teacher-pin">
+      <div class="pin-title">Enter Teacher Pin</div>
+      <div class="circles" [ngClass]="{incorrect: incorrect}">
+        <div
+          class="circle"
+          *ngFor="let circle of circles; let i = index"
+          [style.background-color]="circle.pressed ? 'white' : 'transparent'"
+        ></div>
+      </div>
+    </div>
+    <div class="pin-info">{{attempts < 5 ? 'Pass Request will delete after 5 attempts' : 'Type with Keyboard'}}</div>
+  </div>
+</div>

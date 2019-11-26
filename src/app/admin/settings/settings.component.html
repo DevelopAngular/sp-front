@@ -42,13 +42,13 @@
         <div class="link"
              *ngFor="let setting of settings"
              (click)="handleAction(setting)"
-             (mouseenter)="onHover(setting.gradient)"
+             (mouseenter)="onHover({color: setting.gradient, id: setting.id})"
              (mouseleave)="hovered = false"
-             [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
+             [style.background]="hovered && hoverId === setting.id ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
         >
-          <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">
+          <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoverId) | resolveAsset" alt="link">
           <div class="setting-name"
-               [style.color]="getColor(setting, hovered, hoveredColor)"
+               [style.color]="getColor(setting, hovered, hoverId)"
           >{{ setting.title }}</div>
         </div>
       </div>

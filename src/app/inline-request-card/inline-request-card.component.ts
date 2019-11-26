@@ -6,11 +6,12 @@ import { MatDialog } from '@angular/material';
 import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
-import {tap} from 'rxjs/operators';
+import {takeUntil, tap} from 'rxjs/operators';
 import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../device-detection.helper';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
 
 @Component({
@@ -32,6 +33,10 @@ export class InlineRequestCardComponent implements OnInit {
   header: any;
   options = [];
 
+  hoverDestroyer$: Subject<any>;
+
+  activeTeacherPin: boolean;
+
   constructor(
       private requestService: RequestsService,
       public dialog: MatDialog,
@@ -39,6 +44,7 @@ export class InlineRequestCardComponent implements OnInit {
       private formService: CreateFormService,
       private screenService: ScreenService,
       private renderer: Renderer2,
+      private passesService: HallPassesService
   ) { }
 
   get hasDivider() {
@@ -72,6 +78,9 @@ export class InlineRequestCardComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.passesService.isOpenPassModal$.subscribe(res => {
+      this.activeTeacherPin = !res;
+    });
 
   }
 
@@ -141,6 +150,37 @@ export class InlineRequestCardComponent implements OnInit {
       });
     });
 
+  }
+
+  onHover(evt: HTMLElement, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = evt;
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        }
+      });
+  }
+
+  onLeave(target: HTMLElement) {
+    target.style.marginLeft = '0px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `100%`;
+
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
   }
 
   genOption(display, color, action){

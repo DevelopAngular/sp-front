@@ -39,6 +39,7 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
+import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import { filter as _filter } from 'lodash';
@@ -360,15 +361,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  getColor(setting?, hover?: boolean, hoveredColor?: string) {
-
-    return this.darkTheme.getColor({
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
-    });
-  }
-
   selectTab(event: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = event.getBoundingClientRect();
@@ -454,6 +446,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       if (action === 'signout') {
         // window.waitForAppLoaded();
         this.router.navigate(['sign-out']);
+      } else if (action === 'myPin') {
+        const teachPinDialog = this.dialog.open(TeacherPinComponent, {
+          panelClass: 'form-dialog-container',
+          backdropClass: 'custom-backdrop',
+        });
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
               panelClass: 'form-dialog-container',
@@ -524,12 +521,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   updateTab(route: string) {
     this.tab = route;
-    console.log('[updateTab()]: ', this.tab);
+    // console.log('[updateTab()]: ', this.tab);
     this.router.navigateByUrl('/main/' + this.tab);
   }
 
   inboxClick() {
-    // debugger;
     this.inboxVisibility = !this.inboxVisibility;
     this.storage.setItem('showInbox', this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);

@@ -221,6 +221,7 @@
                   [title]="isStaff?'Received':'Sent'"
                   [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
                   [columns]="2"
+                  (passClick)="passClick($event)"
           ></app-pass-collection>
         </div>
         <div class="requests-or-invitations">

@@ -24,9 +24,9 @@ import {
   filter,
   map, pluck, publishBehavior,
   publishReplay,
-  refCount,
+  refCount, shareReplay,
   startWith,
-  switchMap, takeUntil,
+  switchMap, take, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -56,6 +56,7 @@ import {NotificationButtonService} from '../services/notification-button.service
 
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
+import {HallPassesService} from '../services/hall-passes.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -260,6 +261,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   passesLoaded: Observable<boolean> = of(false);
 
   showEmptyState: Observable<boolean>;
+  openedModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
 
   isOpenedModal: boolean;
   destroy$: Subject<any> = new Subject();
@@ -304,8 +307,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private shortcutsService: KeyboardShortcutsService,
     private  notificationButtonService: NotificationButtonService,
-    private httpService: HttpService
-  ) {
+    private httpService: HttpService,
+    private passesService: HallPassesService
+    ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -491,6 +495,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     }
+  }
+
+  passClick(event) {
+    this.passesService.isOpenPassModal$.next(true);
   }
 
   @HostListener('window:resize')

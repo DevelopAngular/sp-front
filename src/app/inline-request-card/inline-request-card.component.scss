@@ -218,8 +218,24 @@
     left: 10px;
 }
 
+.description-container {
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  height: 30px;
+  width: 75%;
+
+  .description-title {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: absolute;
+  }
+}
+
 .resend-button-content{
-    width: 269px;
+    //width: 269px;
     height: 81px;
     display: flex;
     flex-direction: column;
@@ -228,7 +244,7 @@
     user-select: none;
     cursor: pointer;
     position: relative;
-    margin: -50px 0 0 0%;
+    margin: -81px 0 0 0%;
 }
 
 .resend-button-content-title{
@@ -274,14 +290,14 @@
     background: white;
     border-radius: 2px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #D6D6D6; 
+    background: #D6D6D6;
     border-radius: 2px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #B6B6B6; 
+    background: #B6B6B6;
 }
