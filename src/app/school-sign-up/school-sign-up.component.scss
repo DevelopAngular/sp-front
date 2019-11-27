@@ -5,8 +5,8 @@
   width: 100vw;
   height: 100vh;
   .host {
-    width: 100%;
-    height: 100%;
+    width: inherit;
+    height: inherit;
     display: flex;
     justify-content: center;
     overflow: hidden;
@@ -36,7 +36,7 @@
     .background {
       position: absolute;
       z-index: auto;
-      width: 50%;
+      width: 100%;
       height: 100%;
       background-repeat: no-repeat;
       background-position: right top;
@@ -63,10 +63,18 @@
         z-index: 1;
         flex: 1 1 auto;
         box-shadow: 0px 0px 45px 55px #FBFEFF;
-        padding: 30px;
+        margin: 30px 0px 0px 30px;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
+      }
+      .sides-container {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        .sides {
+
+        }
       }
       .left-side {
         @extend .ds-h-100;
@@ -81,18 +89,28 @@
 
       .right-side {
         flex: 1 1 auto;
-        padding-top: 120px;
+        align-self: center;
         box-sizing: border-box;
         position: relative;
         z-index: 1;
         width: 550px;
-        min-width: 550px; height: 550px;
+        min-width: 550px;
+        //height: 550px;
+        padding-top: 120px;
         padding-right:100px;
+        padding-left: 65px;
       }
       &_big-title {
+        @extend .ds-flex-start-start;
+        @extend .ds-flex-column;
         color: $navy;
         font-size: 55px;
         font-weight: bold;
+        white-space: nowrap;
+      }
+      &_sub-title {
+        -ms-text-align-last: right;
+        text-align-last: right;
       }
       .school-input {
         display: flex;
@@ -144,9 +162,24 @@
         //margin: 20px auto 40px 60px;
         box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, .06);
       }
+      .links {
+        align-self: flex-start;
+        text-align: center;
+        color: #ABB4CD;
+        font-size: 13px;
+        max-width: 465px;
+        margin-left: 25px;
+        position: relative;
+        top: -20px;
+        position: relative;
+        z-index: 1;
+      }
     }
 
-    @media all and (max-width: 1300px) {
+    @media all and (max-width: 1366px) {
+      .background {
+        background-position: 150% 0%;
+      }
       .school-signin {
         //justify-content: flex-end;
         //flex-direction: column;
@@ -155,6 +188,44 @@
     @media all and (max-width: 1024px) {
       .background {
         display: none;
+      }
+      .school-signin {
+        .logo {
+          flex: 0;
+          height: auto;
+          position: absolute;
+          top: 0px;
+          left: 0px;
+        }
+        .sides-container {
+          align-items: center;
+        }
+        .sides {
+          flex-direction: column;
+        }
+        .left-side {
+          padding-top: 100px;
+          align-items: center;
+        }
+        .right-side {
+          padding-top: 65px;
+          padding-right: 65px;
+          display: flex;
+          justify-content: center;
+        }
+        &_big-title {
+          flex-direction: row;
+          font-size: 31px;
+          margin-bottom: 10px;
+        }
+        &_sub-title {
+          text-align: center;
+        }
+        .links {
+          top: 45px;
+          margin: 0;
+          align-self: center;
+        }
       }
     }
 

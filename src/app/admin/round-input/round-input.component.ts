@@ -2,9 +2,9 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
+  Input, OnChanges,
   OnInit,
-  Output,
+  Output, SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material';
@@ -25,7 +25,7 @@ export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates';
   styleUrls: ['./round-input.component.scss'],
   exportAs: 'roundInputRef'
 })
-export class RoundInputComponent implements OnInit {
+export class RoundInputComponent implements OnInit, OnChanges {
 
   @ViewChild('input') input: ElementRef;
 
@@ -140,6 +140,14 @@ export class RoundInputComponent implements OnInit {
     }
 
   }
+
+  ngOnChanges(sc: SimpleChanges) {
+    console.log(sc);
+    if ('focused' in sc && !sc.focused.isFirstChange() && sc.focused.currentValue) {
+      this.input.nativeElement.focus();
+    }
+  }
+
 
   handleError() {
     if (this.selfSearch && !this.endpoint) {
