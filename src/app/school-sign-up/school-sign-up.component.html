@@ -41,10 +41,10 @@
   <div class="school-signin">
     <div class="logo">
 
-      <app-smartpass-logo style="margin: 30px;" [logoAsset]="'./assets/Logo (White-Gray).svg'"></app-smartpass-logo>
+      <app-smartpass-logo [logoAsset]="'./assets/Logo (White-Gray).svg'"></app-smartpass-logo>
     </div>
 
-    <div class="" style="flex: 1 1 auto;display: flex;flex-direction: column">
+    <div class="sides-container">
 
       <div style="flex: 1 1 auto; display: flex;" class="sides">
 
@@ -84,7 +84,7 @@
                     [searchTarget]="'schools'"
                     [selectedOptions]="[]"
                     [chipsMode]="false"
-                    [focused]="true"
+                    [focused]="inputIndex === 0"
                     [role]="'_profile_teacher'"
                     [dummyRoleText]="'teachers'"
                     [rollUpAfterSelection]="true"
@@ -120,6 +120,7 @@
                   [fieldSpace]="'0px'"
                   [height]="'35px'"
                   [formGroup]="schoolForm"
+                  [isFocus]="inputIndex === 1"
                   [controlName]="schoolForm.get('full_name')"
                   [input_value]="schoolForm.get('full_name').value"
                   [input_label]="'Full name'"
@@ -131,6 +132,7 @@
                   [fieldSpace]="'0px'"
                   [height]="'35px'"
                   [formGroup]="schoolForm"
+                  [isFocus]="inputIndex === 2"
                   [controlName]="schoolForm.get('email')"
                   [input_value]="schoolForm.get('email').value"
                   [input_label]="'School email'"
@@ -142,6 +144,7 @@
                   [fieldSpace]="'0px'"
                   [height]="'35px'"
                   [formGroup]="schoolForm"
+                  [isFocus]="inputIndex === 3"
                   [controlName]="schoolForm.get('password')"
                   [input_value]="schoolForm.get('password').value"
                   [input_label]="'Password'"
@@ -155,7 +158,8 @@
                   [gradient]="'#FFFFFF, #00B476'"
                   [fontWeight]="'normal'"
                   [rightIcon]="'./assets/Chevron Right (White).svg'"
-                  [disabled]="schoolForm.valid"
+                  [disabled]="schoolForm.invalid"
+                  (buttonClick)="createSchool()"
                 >
               <span style="font-weight: normal;">
                 Sign up
@@ -175,7 +179,7 @@
         </div>
       </div>
 
-      <div style="text-align: center; color: #ABB4CD; font-size: 13px; max-width: 465px; margin-left: 25px; position: relative; top: -20px;">
+      <div class="links">
         By proceeding to sign up your school and use SmartPass, you and your school users are agreeing to our
         <a class="ds-link-text" href="https://www.smartpass.app/terms"><strong>Terms of Service</strong></a> and
         <a class="ds-link-text" href="https://www.smartpass.app/privacy"><strong>Privacy Policy</strong></a>.
