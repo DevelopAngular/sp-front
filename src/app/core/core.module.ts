@@ -6,6 +6,8 @@ import {ErrorToastComponent} from '../error-toast/error-toast.component';
 import {SchoolToggleBarComponent} from '../school-toggle-bar/school-toggle-bar.component';
 import {ToastConnectionComponent} from '../toast-connection/toast-connection.component';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import {ScrollHolderDirective} from '../scroll-holder.directive';
+import {NoAccountComponent} from '../no-account/no-account.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +16,7 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    NoAccountComponent
   ],
   imports: [
     CommonModule,
@@ -26,11 +29,13 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    NoAccountComponent
   ],
   entryComponents: [
     ErrorToastComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    NoAccountComponent
   ],
 })
 export class CoreModule { }

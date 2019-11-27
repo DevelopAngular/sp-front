@@ -6,6 +6,8 @@ import {HttpService} from '../services/http-service';
 import {Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
 import {ActivatedRoute} from '@angular/router';
+import {NoAccountComponent} from '../no-account/no-account.component';
+import {MatDialog} from '@angular/material';
 
 declare const window;
 
@@ -37,6 +39,7 @@ export class GoogleSigninComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
     private route: ActivatedRoute,
+    private dialog: MatDialog
 
   ) {
     this.loginService.isAuthLoaded().subscribe(isLoaded => {
@@ -86,11 +89,27 @@ export class GoogleSigninComponent implements OnInit {
   }
 
   toggleDemoLogin() {
-    this.demoLoginEnabled = !this.demoLoginEnabled;
+    // this.demoLoginEnabled = !this.demoLoginEnabled;
+    this.dialog.open(NoAccountComponent, {
+      panelClass: 'main-form-dialog-container'
+    });
   }
 
-  demoLogin() {
+  demoLogin(mock: boolean = true, sso?: boolean) {
+
+    if (mock) {
+      if (this.demoUsername === 'west') {
+        this.showSpinner = true;
+        this.initLogin();
+      } else {
+        this.demoLoginEnabled = true;
+      }
+      return;
+    }
+
+
     this.showSpinner = true;
+
     if (this.demoUsername && this.demoPassword) {
       this.titleService.setTitle('SmartPass');
       this.metaService.removeTag('name = "description"');
