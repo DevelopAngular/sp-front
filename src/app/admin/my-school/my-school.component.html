@@ -11,28 +11,7 @@
           <div class="selected-date">
             <div class="label" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Set a launch day</div>
 
-            <div class="chip"
-                 #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}"
-                 (mouseenter)="dchip.hovered = true;"
-                 (mouseleave)="dchip.hovered = false"
-                 [style.opacity]="dchip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
-                 (mousedown)="buttonDown = true"
-                 (mouseup)="buttonDown = false"
-                 [@pressState]="buttonDown ? 'down' : 'up'"
-            >
-              <div class="overlay" (click)="openCalendar($event)">
-                <div class="add-icon" *ngIf="!selectedDate">
-                  <img [src]="'./assets/Calendar (Navy).svg'" width="16" #fieldIcon alt="Check.svg">
-                </div>
-                <div class="all-text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})" *ngIf="!selectedDate">
-                  Select a date
-                </div>
-                <div class="selected-text" *ngIf="selectedDate">{{ selectedDate.format('MMMM DD') }}</div>
-              </div>
-              <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
-                <img (click)="selectedDate = null;" [src]="'./assets/Cancel (Navy).svg'" width="16" #fieldIcon alt="Check.svg">
-              </div>
-            </div>
+            <app-date-chip [selectedDate]="selectedDate" (dateEmit)="selected($event)"></app-date-chip>
 
           </div>
 
@@ -58,7 +37,7 @@
         </div>
       </div>
       <div class="image">
-        <img [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My_school">
+        <img width="750" height="538" [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My_school">
       </div>
     </div>
   </div>
@@ -74,8 +53,7 @@
             [hoverColor]="'#F5F5F5'"
             [textColor]="'#1F195E'"
             [size]="'medium'"
-            [leftIcon]="'./assets/Settings (Navy).svg'"
-          >
+            [leftIcon]="'./assets/Settings (Navy).svg'">
             Settings
           </app-gradient-button>
         </div>
@@ -107,8 +85,12 @@
       <div class="right-block">
         <div class="start-day">
           <div class="start-day-content">
-            <div class="start-day-header">45 days until launch</div>
+            <div class="start-day-header">{{ countLaunchDay }} days until launch</div>
             <div class="start-day-info">The day your school will start using SmartPass. Students won’t be able to sign in until launch day, but staff can!</div>
+            <app-date-chip [disabled]="true" [selectedDate]="selectedDate"></app-date-chip>
+          </div>
+          <div class="image">
+            <img width="244" height="155" [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My-School">
           </div>
         </div>
 

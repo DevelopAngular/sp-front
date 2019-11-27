@@ -6,12 +6,14 @@ import { MySchoolComponent } from './my-school.component';
 import { SchoolButtonComponent } from './school-button/school-button.component';
 import { AdminSharedModule } from '../shared/admin-shared.module';
 import { SchoolSettingsComponent } from './school-settings/school-settings.component';
+import { DateChipComponent } from './date-chip/date-chip.component';
 
 @NgModule({
   declarations: [
     MySchoolComponent,
     SchoolButtonComponent,
-    SchoolSettingsComponent
+    SchoolSettingsComponent,
+    DateChipComponent
   ],
   imports: [
     CommonModule,

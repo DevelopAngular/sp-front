@@ -41,54 +41,6 @@
               font-weight: bold;
               margin-bottom: 10px;
             }
-
-            .chip {
-              background-color: #F4F4F4;
-              border-radius: 8px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              white-space: nowrap;
-              position: relative;
-              min-width: 100px;
-              width: 154px;
-              .overlay {
-                display: flex;
-                padding: 10px;
-                cursor: pointer;
-
-                .all-text {
-                  color: #7F879D;
-                  font-size: 14px;
-                }
-                .selected-text {
-                  color: $navy;
-                  font-size: 14px;
-                }
-              }
-
-              &.hovered {
-                box-shadow: 0 1px 3px #F8F8F8;
-                transition: box-shadow .25s ease;
-              }
-
-              .add-icon {
-                width: 16px;
-                height: 16px;
-                cursor: pointer;
-                margin-right: 10px;
-              }
-
-              .reset-icon {
-                width: 16px;
-                height: 16px;
-                cursor: pointer;
-                position: absolute;
-                right: 10px;
-                background-color: #F8F8F8;
-                box-shadow: -6px 1px 6px #F8F8F8;
-              }
-            }
           }
 
           .info-text {
@@ -104,14 +56,16 @@
           }
 
           .footer-text {
-            margin-bottom: 60px;
+            margin-bottom: 165px;
             font-size: 14px;
+            width: 357px;
           }
         }
 
         .image {
           display: flex;
-          align-items: flex-end;
+          align-items: center;
+          //position: relative;
         }
       }
     }
@@ -149,20 +103,17 @@
         }
       }
 
-
-
       .content {
-        width: 100%;
+        padding: 60px;
         display: flex;
+        width: 950px;
         justify-content: space-between;
         height: calc(100vh - 190px);
         .left-block {
           min-width: 355px;
           width: 355px;
-          margin-left: 77px;
           display: flex;
           flex-direction: column;
-          justify-content: center;
           .title {
             color: $navy;
             font-weight: bold;
@@ -214,8 +165,10 @@
           .start-day {
             width: 475px;
             height: 227px;
+            position: relative;
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
 
             .start-day-content {
               padding: 35px 0 0 35px;
@@ -227,8 +180,17 @@
 
               .start-day-info {
                 font-size: 17px;
-                color: $blue-gray;
+                width: 345px;
+                color: #7f879d;
+                margin-top: 12px;
+                margin-bottom: 18px;
               }
+            }
+
+            .image {
+              position: absolute;
+              right: -79px;
+              bottom: -26px;
             }
           }
         }

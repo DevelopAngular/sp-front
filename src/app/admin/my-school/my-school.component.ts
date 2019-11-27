@@ -37,6 +37,7 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
   buttonDown: boolean;
 
   openSchoolPage: boolean;
+  countLaunchDay: number;
 
   constructor(
       private http: HttpService,
@@ -50,13 +51,13 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
       this.adminService.getOnboardProcessRequest().pipe(
         filter((res: any[]) => !!res.length),
         switchMap((res: any[]) => {
-        const start = res.find(setting => setting.name === 'launch_day_prep:start');
-        if (!start.done) {
-          return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(res));
-        } else {
-          return of(res);
-        }
-      }),
+          const start = res.find(setting => setting.name === 'launch_day_prep:start');
+          if (!start.done) {
+            return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(res));
+          } else {
+            return of(res);
+          }
+        }),
         switchMap((res: any[]) => {
             const end = res.find(setting => setting.name === 'launch_day_prep:end');
             if (!end.done) {
@@ -70,6 +71,11 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
     // window.appLoaded();
   }
 
+  selected(date) {
+    this.selectedDate = date;
+    this.countLaunchDay = this.selectedDate.diff(moment(), 'days');
+  }
+
   redirect(button) {
     window.open(button.link);
   }
@@ -81,18 +87,4 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
       });
   }
 
-  openCalendar(event) {
-      const target = new ElementRef(event.currentTarget);
-      const DR = this.dialog.open(CalendarComponent, {
-          panelClass: 'calendar-dialog-container',
-          backdropClass: 'invis-backdrop',
-          data: {
-              'trigger': target,
-          }
-      });
-
-      DR.afterClosed().subscribe(res => {
-          this.selectedDate = moment(res.date);
-      });
-  }
 }
