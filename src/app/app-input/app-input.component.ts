@@ -13,7 +13,6 @@ import {of} from 'rxjs';
 export class AppInputComponent implements OnInit {
 
     @Input() input_type: string = 'text';
-    @Input() input_class: string;
     @Input() input_value: string | number;
     @Input() input_label: string;
     @Input() placeholder: string = '';
@@ -21,6 +20,7 @@ export class AppInputComponent implements OnInit {
     @Input() width: string = '0px';
     @Input() height: string = '40px';
     @Input() padding: string = '8px';
+    @Input() fieldSpace: string = '8px';
     @Input() rightIcon: string;
     @Input() tooltipText: string;
     @Input() textAlign: string;

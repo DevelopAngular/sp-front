@@ -210,10 +210,12 @@ export class GradientButtonComponent implements OnInit {
   }
 
   onPress(press: boolean, event) {
-    if (this.screenService.isDeviceLargeExtra) event.preventDefault();
-    if (!this.disabled)
+    if (this.screenService.isDeviceLargeExtra) {
+      event.preventDefault();
+    }
+    if (!this.disabled) {
       this.buttonDown = press;
-    //console.log("[Button State]: ", "The button is " +this.buttonState);
+    }
   }
 
   onTap(tap: boolean) {
@@ -224,9 +226,8 @@ export class GradientButtonComponent implements OnInit {
   }
 
   onClick(event) {
-    if(!this.disabled) {
-
-      this.buttonClick.emit(event)
+    if (!this.disabled) {
+      this.buttonClick.emit(event);
     } else {
       return;
     }
@@ -234,8 +235,9 @@ export class GradientButtonComponent implements OnInit {
 
   onHover(hover: boolean){
     this.hovered = hover;
-    if(!hover)
+    if (!hover) {
       this.buttonDown = false;
+    }
   }
 
 }

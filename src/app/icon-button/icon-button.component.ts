@@ -87,14 +87,12 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
       rgb = '247, 247, 247, ';
 
     } else {
-
       if (this.hovered && !this.down) {
         alphaChannel = .75;
       } else {
         alphaChannel = .5;
       }
       rgb = '244, 244, 244, ';
-
     }
     return this.sanitizer.bypassSecurityTrustStyle(`rgba(${rgb}${ this.hasShadow ? alphaChannel : 0 }`);
   }
@@ -117,7 +115,6 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   onClick(evt) {
     this.pressed = !this.pressed;
     if (!this.eventBubbling) {
-      // debugger
       evt.stopPropagation();
     }
     this.clickEvent.emit(evt);

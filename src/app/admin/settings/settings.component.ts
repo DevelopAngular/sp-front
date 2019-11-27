@@ -73,7 +73,7 @@ export class SettingsComponent implements OnInit {
   }
 
     ngOnInit() {
-        this.triggerElementRef = this.data['trigger'];
+      this.triggerElementRef = this.data['trigger'];
         this.isSwitchOption = this.data['isSwitch'];
         this.updateSettingsPosition();
     }
@@ -99,11 +99,18 @@ export class SettingsComponent implements OnInit {
     }
 
     handleAction(setting) {
+      // debugger
       if ( typeof setting.action === 'string' ) {
         this.dialogRef.close(setting.action);
       } else {
         setting.action();
       }
+    }
+
+    test(evt) {
+      console.log(evt);
+      // debugger
+      // this.dialogRef.close();
     }
 
     updateSettingsPosition() {

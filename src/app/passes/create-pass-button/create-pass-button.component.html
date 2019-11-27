@@ -6,12 +6,12 @@
     [ngClass]="{'disabled': disabled}"
     [@pressState]="buttonState"
     (click)="buttonClick()"
-    (mouseenter)="hovered = true"
-    (mouseleave)="buttonDown = false; hovered = false"
-    (mousedown)="buttonDown = true"
-    (mouseup)="buttonDown = false"
+    (pointerenter)="hovered = true"
+    (pointerleave)="buttonDown = false; hovered = false"
+    (pointerdown)="buttonDown = true"
+    (pointerup)="buttonDown = false"
     (touchstart)= "buttonDown = true;"
-    (touchmove)="but.preventClick = true"
+    (pointemove)="but.preventClick = true"
     (touchend)= "buttonDown = false; hovered = false; !but.preventClick ? but.click() : but.preventClick = false"
 >
   <div class="title">{{ title }}</div>
