@@ -158,8 +158,10 @@ export class NavComponent implements OnInit {
   }
 
   openSettings(event) {
+
     if (!this.selectedSettings) {
       this.selectedSettings = true;
+      // debugger
       const target = new ElementRef(event.currentTarget);
       UNANIMATED_CONTAINER.next(true);
       const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
@@ -173,10 +175,12 @@ export class NavComponent implements OnInit {
       });
 
       settingsRef.beforeClose().subscribe(() => {
+        // debugger
         this.selectedSettings = false;
       });
 
       settingsRef.afterClosed().subscribe(action => {
+        // debugger
         UNANIMATED_CONTAINER.next(false);
         if (action === 'signout') {
           this.router.navigate(['sign-out']);

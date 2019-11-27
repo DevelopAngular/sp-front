@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import { environment } from '../../environments/environment';
 import {constructUrl, QueryParams} from '../live-data/helpers';
-import {catchError, delay, map, mapTo, switchMap, tap} from 'rxjs/operators';
+import {catchError, delay, filter, map, mapTo, switchMap, tap} from 'rxjs/operators';
 import {BehaviorSubject, from, Observable, of, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleAuthService} from '../services/google-auth.service';
@@ -12,7 +12,7 @@ import {GoogleLoginService} from '../services/google-login.service';
 import {UserService} from '../services/user.service';
 import {StorageService} from '../services/storage.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
@@ -78,6 +78,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   @Output() schoolCreatedEvent: EventEmitter<boolean> = new EventEmitter();
 
+  public trustedBackgroundUrl: SafeUrl;
+
   private pending: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Observable<boolean> = this.pending.asObservable();
   private AuthToken: string;
@@ -86,6 +88,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   public school: any;
   public errorToast;
   public schoolForm: FormGroup;
+  enterSchoolName: boolean = true;
 
   constructor(
     private googleAuth: GoogleAuthService,
@@ -103,6 +106,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   ) {
     this.jwt = new JwtHelperService();
     this.errorToast = this.httpService.errorToast$;
+    this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Signup Background.svg\')');
     window.appLoaded(0);
   }
 
@@ -118,10 +122,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     });
 
     this.schoolForm = this.fb.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+      google_place_id: ['', Validators.required],
+      full_name: ['', Validators.required],
       // schoolEmail: [''],
-      schoolEmail: ['', {
+      email: ['', {
         validators:  [Validators.required, (v) => {
           return  v.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(v.value.slice(v.value.indexOf('@') + 1)) ?  {invalid_email: true}  : null;
         }],
@@ -130,15 +134,18 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         //     return of(null);
         //   }
         // ]
-      }
-       ],
-      password: ['', Validators.required]
+      }],
+      password: ['', {
+        validators: [Validators.required, Validators.min(8)]
+      }]
     });
     this.schoolForm.valueChanges
       .pipe(
+        filter(f => !!f),
         map((f) => {
           return f.schoolEmail;
-        })
+        }),
+        filter(f => !!f),
       )
       .subscribe((f) => {
         if (f.indexOf('@') >= 0) {
@@ -162,38 +169,26 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
   createSchool() {
     this.pending.next(true);
-      return from(this.initLogin())
-        .pipe(
-          tap(p => console.log(p)),
-          switchMap((auth: any) => {
 
-            const hd = this.jwt.decodeToken(auth.id_token)['hd'];
 
-              if (!hd || hd === 'gmail.com') {
-                this.loginService.showLoginError$.next(false);
-                this.showError.loggedWith = LoginMethod.OAuth;
-                this.showError.error = true;
-                return of(false);
-              } else {
-                this.gsProgress.updateProgress('create_school:start');
-                return this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
-                  user_token: auth.id_token,
-                  google_place_id: this.school.place_id
-                }, {
-                  headers: {
-                    'Authorization': 'Bearer ' + this.AuthToken // it's temporary
-                  }
-                }).pipe(
-                  // tap(() => this.gsProgress.updateProgress('create_school:end')),
-                  map((res: any) => {
-                    this._zone.run(() => {
-                      this.loginService.updateAuth(auth);
-                      this.storage.setItem('last_school_id', res.school.id);
-                    });
-                    return true;
-                  }),
-                );
-              }
+          this.gsProgress.updateProgress('create_school:start');
+
+          this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
+            // user_token: auth.id_token,
+            // google_place_id: this.school.place_id,
+            ...this.schoolForm.value
+          }, {
+            headers: {
+              'Authorization': 'Bearer ' + this.AuthToken // it's temporary
+            }
+          }).pipe(
+            // tap(() => this.gsProgress.updateProgress('create_school:end')),
+            map((res: any) => {
+              this._zone.run(() => {
+                // this.loginService.updateAuth(auth);
+                this.storage.setItem('last_school_id', res.school.id);
+              });
+              return true;
             }),
             delay(1000),
             switchMap(() => {
@@ -206,7 +201,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
               this.pending.next(false);
               return throwError(err);
             })
-          ).subscribe((res) => {
+          )
+          .subscribe((res) => {
             this.pending.next(false);
             if (res) {
               this._zone.run(() => {
@@ -217,30 +213,38 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
 
   checkSchool(school: any) {
-    this.pending.next(true);
-    this.http.get(constructUrl(environment.schoolOnboardApiRoot + '/onboard/schools/check_school', {place_id: school.place_id}), {
-      headers: {
-        'Authorization': 'Bearer ' + this.AuthToken // it's temporary
-      }})
-      .pipe(
-        catchError((err) => {
-          if (err.status === 401) {
-            this.httpService.errorToast$.next({
-              header: 'Key invalid.',
-              message: 'Please contact us at support@smartpass.app'
-            });
+    if (school) {
+      this.pending.next(true);
+      this.http.get(constructUrl(environment.schoolOnboardApiRoot + '/onboard/schools/check_school', {place_id: school.place_id}), {
+        headers: {
+          'Authorization': 'Bearer ' + this.AuthToken // it's temporary
+        }})
+        .pipe(
+          catchError((err) => {
+            if (err.status === 401) {
+              this.httpService.errorToast$.next({
+                header: 'Key invalid.',
+                message: 'Please contact us at support@smartpass.app'
+              });
+            }
+            return throwError(err);
+          })
+        )
+        .subscribe((onboard: any) => {
+          if (onboard.school_registered) {
+            this.router.navigate(['']);
+          } else {
+            this.school = school;
+            this.schoolForm.controls.google_place_id.setValue( this.school.place_id);
+            this.enterSchoolName = false;
           }
-          return throwError(err);
-        })
-      )
-      .subscribe((onboard: any) => {
-        if (onboard.school_registered) {
-          this.router.navigate(['']);
-        } else {
-          this.school = school;
-        }
-        this.pending.next(false);
-      });
+          this.pending.next(false);
+        });
+    } else {
+      if (this.school) {
+        this.enterSchoolName = false;
+      }
+    }
   }
 
 }

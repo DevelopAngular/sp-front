@@ -20,7 +20,6 @@ export class CreatePassButtonComponent implements OnInit {
   hovered: boolean;
 
   solid_color = '#00B476';
-
   constructor(private sanitizer: DomSanitizer) { }
 
   get buttonState() {

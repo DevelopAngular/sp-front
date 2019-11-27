@@ -1,8 +1,8 @@
 <div class="nav-button-wrapper"
-     (click)="doClick()"
      [style.color]="textColor"
+     (click)="doClick()"
+     (touchend)="doClick()"
 >
-  <!--<img class="nav-button-icon" [src]="_icon | resolveAsset">-->
   <svg width="25px" height="25px" viewBox="0 0 150 150">
     <use [attr.xlink:href]="iconId"></use>
   </svg>
