@@ -1,8 +1,8 @@
 <div class="wrapper"
      #cell
+     (click)="cellSelected()"
      (touchstart)="changeColor(true)"
      (touchend)="changeColor(false)"
-     (tap)="cellSelected()"
      (mouseenter)="changeColor(true)"
      (mouseleave)="changeColor(false)"
      (mousedown)="changeColor(true, true)"

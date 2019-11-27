@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import { environment } from '../../environments/environment';
 import {constructUrl, QueryParams} from '../live-data/helpers';
-import {catchError, delay, map, switchMap, tap} from 'rxjs/operators';
+import {catchError, delay, map, mapTo, switchMap, tap} from 'rxjs/operators';
 import {BehaviorSubject, from, Observable, of, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleAuthService} from '../services/google-auth.service';
@@ -14,8 +14,60 @@ import {StorageService} from '../services/storage.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 declare const window;
+
+export const INVALID_DOMAINS = [
+  /* Default domains included */
+  'aol.com', 'att.net', 'comcast.net', 'facebook.com', 'gmail.com', 'gmx.com', 'googlemail.com',
+  'google.com', 'hotmail.com', 'hotmail.co.uk', 'mac.com', 'me.com', 'mail.com', 'msn.com',
+  'live.com', 'sbcglobal.net', 'verizon.net', 'yahoo.com', 'yahoo.co.uk',
+
+  /* Other global domains */
+  'email.com', 'fastmail.fm', 'games.com' /* AOL */, 'gmx.net', 'hush.com', 'hushmail.com', 'icloud.com',
+  'iname.com', 'inbox.com', 'lavabit.com', 'love.com' /* AOL */, 'outlook.com', 'pobox.com', 'protonmail.ch', 'protonmail.com', 'tutanota.de', 'tutanota.com', 'tutamail.com', 'tuta.io',
+  'keemail.me', 'rocketmail.com' /* Yahoo */, 'safe-mail.net', 'wow.com' /* AOL */, 'ygm.com' /* AOL */,
+  'ymail.com' /* Yahoo */, 'zoho.com', 'yandex.com',
+
+  /* United States ISP domains */
+  'bellsouth.net', 'charter.net', 'cox.net', 'earthlink.net', 'juno.com',
+
+  /* British ISP domains */
+  'btinternet.com', 'virginmedia.com', 'blueyonder.co.uk', 'freeserve.co.uk', 'live.co.uk',
+  'ntlworld.com', 'o2.co.uk', 'orange.net', 'sky.com', 'talktalk.co.uk', 'tiscali.co.uk',
+  'virgin.net', 'wanadoo.co.uk', 'bt.com',
+
+  /* Domains used in Asia */
+  'sina.com', 'sina.cn', 'qq.com', 'naver.com', 'hanmail.net', 'daum.net', 'nate.com', 'yahoo.co.jp', 'yahoo.co.kr', 'yahoo.co.id', 'yahoo.co.in', 'yahoo.com.sg', 'yahoo.com.ph', '163.com', 'yeah.net', '126.com', '21cn.com', 'aliyun.com', 'foxmail.com',
+
+  /* French ISP domains */
+  'hotmail.fr', 'live.fr', 'laposte.net', 'yahoo.fr', 'wanadoo.fr', 'orange.fr', 'gmx.fr', 'sfr.fr', 'neuf.fr', 'free.fr',
+
+  /* German ISP domains */
+  'gmx.de', 'hotmail.de', 'live.de', 'online.de', 't-online.de' /* T-Mobile */, 'web.de', 'yahoo.de',
+
+  /* Italian ISP domains */
+  'libero.it', 'virgilio.it', 'hotmail.it', 'aol.it', 'tiscali.it', 'alice.it', 'live.it', 'yahoo.it', 'email.it', 'tin.it', 'poste.it', 'teletu.it',
+
+  /* Russian ISP domains */
+  'mail.ru', 'rambler.ru', 'yandex.ru', 'ya.ru', 'list.ru',
+
+  /* Belgian ISP domains */
+  'hotmail.be', 'live.be', 'skynet.be', 'voo.be', 'tvcablenet.be', 'telenet.be',
+
+  /* Argentinian ISP domains */
+  'hotmail.com.ar', 'live.com.ar', 'yahoo.com.ar', 'fibertel.com.ar', 'speedy.com.ar', 'arnet.com.ar',
+
+  /* Domains used in Mexico */
+  'yahoo.com.mx', 'live.com.mx', 'hotmail.es', 'hotmail.com.mx', 'prodigy.net.mx',
+
+  /* Domains used in Canada */
+  'yahoo.ca', 'hotmail.ca', 'bell.net', 'shaw.ca', 'sympatico.ca', 'rogers.com',
+
+  /* Domains used in Brazil */
+  'yahoo.com.br', 'hotmail.com.br', 'outlook.com.br', 'uol.com.br', 'bol.com.br', 'terra.com.br', 'ig.com.br', 'itelefonica.com.br', 'r7.com', 'zipmail.com.br', 'globo.com', 'globomail.com', 'oi.com.br'
+];
 
 @Component({
   selector: 'app-school-sign-up',
@@ -25,6 +77,7 @@ declare const window;
 export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   @Output() schoolCreatedEvent: EventEmitter<boolean> = new EventEmitter();
+
   private pending: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Observable<boolean> = this.pending.asObservable();
   private AuthToken: string;
@@ -32,6 +85,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   public showError = { loggedWith: null, error: null };
   public school: any;
   public errorToast;
+  public schoolForm: FormGroup;
+
   constructor(
     private googleAuth: GoogleAuthService,
     private http: HttpClient,
@@ -43,7 +98,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private _zone: NgZone,
-    private gsProgress: GettingStartedProgressService
+    private gsProgress: GettingStartedProgressService,
+    private fb: FormBuilder
   ) {
     this.jwt = new JwtHelperService();
     this.errorToast = this.httpService.errorToast$;
@@ -54,11 +110,40 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
     this.route.queryParams.subscribe((qp: QueryParams) => {
       if (!qp.key) {
-        this.router.navigate(['']);
+          this.router.navigate(['']);
       } else {
         this.AuthToken = qp.key as string;
       }
       console.log(this.AuthToken);
+    });
+
+    this.schoolForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      // schoolEmail: [''],
+      schoolEmail: ['', {
+        validators:  [Validators.required, (v) => {
+          return  v.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(v.value.slice(v.value.indexOf('@') + 1)) ?  {invalid_email: true}  : null;
+        }],
+        // asyncValidators: [
+        //   (v) => {
+        //     return of(null);
+        //   }
+        // ]
+      }
+       ],
+      password: ['', Validators.required]
+    });
+    this.schoolForm.valueChanges
+      .pipe(
+        map((f) => {
+          return f.schoolEmail;
+        })
+      )
+      .subscribe((f) => {
+        if (f.indexOf('@') >= 0) {
+          console.log(f.slice(f.indexOf('@') + 1));
+        }
     });
   }
   ngAfterViewInit() {
@@ -70,65 +155,65 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   initLogin() {
     return this.loginService.GoogleOauth.signIn()
       .then((auth) => {
-        // console.log(auth);
+        console.log(auth);
         return auth.getAuthResponse();
       });
 
   }
   createSchool() {
     this.pending.next(true);
-    return from(this.initLogin())
-      .pipe(
-        tap(p => console.log(p)),
-        switchMap((auth: any) => {
+      return from(this.initLogin())
+        .pipe(
+          tap(p => console.log(p)),
+          switchMap((auth: any) => {
 
-          const hd = this.jwt.decodeToken(auth.id_token)['hd'];
+            const hd = this.jwt.decodeToken(auth.id_token)['hd'];
 
-          if (!hd || hd === 'gmail.com') {
-            this.loginService.showLoginError$.next(false);
-            this.showError.loggedWith = LoginMethod.OAuth;
-            this.showError.error = true;
-            return of(false);
-          } else {
-            this.gsProgress.updateProgress('create_school:start');
-            return this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
-              user_token: auth.id_token,
-              google_place_id: this.school.place_id
-            }, {
-              headers: {
-                'Authorization': 'Bearer ' + this.AuthToken // it's temporary
+              if (!hd || hd === 'gmail.com') {
+                this.loginService.showLoginError$.next(false);
+                this.showError.loggedWith = LoginMethod.OAuth;
+                this.showError.error = true;
+                return of(false);
+              } else {
+                this.gsProgress.updateProgress('create_school:start');
+                return this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
+                  user_token: auth.id_token,
+                  google_place_id: this.school.place_id
+                }, {
+                  headers: {
+                    'Authorization': 'Bearer ' + this.AuthToken // it's temporary
+                  }
+                }).pipe(
+                  // tap(() => this.gsProgress.updateProgress('create_school:end')),
+                  map((res: any) => {
+                    this._zone.run(() => {
+                      this.loginService.updateAuth(auth);
+                      this.storage.setItem('last_school_id', res.school.id);
+                    });
+                    return true;
+                  }),
+                );
               }
-            }).pipe(
-              // tap(() => this.gsProgress.updateProgress('create_school:end')),
-              map((res: any) => {
-                this._zone.run(() => {
-                  this.loginService.updateAuth(auth);
-                  this.httpService.setSchool(res.school);
-                });
-                return true;
-              }),
-            );
-          }
-        }),
-        delay(1000),
-        switchMap(() => {
-          return this.loginService.isAuthenticated$;
-        }),
-        catchError((err) => {
-          if (err && err.error !== 'popup_closed_by_user') {
-            this.loginService.showLoginError$.next(true);
-          }
-          this.pending.next(false);
-          return throwError(err);
-        })
-      ).subscribe((res) => {
-        this.pending.next(false);
-        if (res) {
-          this._zone.run(() => {
-            this.router.navigate(['admin', 'gettingstarted']);
+            }),
+            delay(1000),
+            switchMap(() => {
+              return this.loginService.isAuthenticated$;
+            }),
+            catchError((err) => {
+              if (err && err.error !== 'popup_closed_by_user') {
+                this.loginService.showLoginError$.next(true);
+              }
+              this.pending.next(false);
+              return throwError(err);
+            })
+          ).subscribe((res) => {
+            this.pending.next(false);
+            if (res) {
+              this._zone.run(() => {
+                this.router.navigate(['admin', 'gettingstarted']);
+              });
+            }
           });
-        }
-      });
   }
 
   checkSchool(school: any) {

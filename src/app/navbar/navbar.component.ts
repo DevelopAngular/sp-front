@@ -466,6 +466,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           })).subscribe();
 
       } else if (action === 'notifications') {
+
         if (!this.isSafari) {
           Notification.requestPermission();
         }

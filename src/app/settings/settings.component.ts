@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
@@ -10,6 +10,7 @@ import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {combineLatest} from 'rxjs';
+import {DeviceDetection} from '../device-detection.helper';
 
 export interface Setting {
   hidden: boolean;
@@ -187,7 +188,7 @@ export class SettingsComponent implements OnInit {
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value,
+      'hidden': !!this.kioskMode.currentRoom$.value || DeviceDetection.isIOSMobile() || DeviceDetection.isIOSTablet(),
       'gradient': '#DA2370, #FB434A',
       'icon': 'Notifications',
       'action': 'notifications',

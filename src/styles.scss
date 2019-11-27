@@ -75,6 +75,7 @@ div {
   scrollbar-face-color: #D6D6D6;
   scrollbar-track-color: white;
   background-color: transparent;
+  z-index: 100;
 }
 
 .form-dialog-container-white .mat-dialog-container {
@@ -435,6 +436,14 @@ body {
     }
   }
 }
+
+//@media all and (display-mode: standalone) {
+//  body {
+//    opacity: .3 !important;
+//  }
+//  /* Here goes the CSS rules that will only apply if app is running standalone */
+//}
+
 //
 //body {
 //  overflow: hidden !important;

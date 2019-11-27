@@ -51,11 +51,13 @@
             &&
             controlName.touched
             &&
-            (controlName.errors.room_name || controlName.errors.folder_name || controlName.errors.room_number)'>
+            (controlName.errors.email_in_use || controlName.errors.invalid_email || controlName.errors.room_name || controlName.errors.folder_name || controlName.errors.room_number)'>
         <img
           [matTooltip]="
             controlName.errors.folder_name ? 'Folder name already used' :
-            controlName.errors.room_name ? 'Room name already used' : null
+            controlName.errors.room_name ? 'Room name already used' :
+            controlName.errors.email_in_use ? 'Email already in use' :
+            controlName.errors.invalid_email ? 'Please use your school email address' : null
           "
           matTooltipClass="tooltip"
           class="success-icon"
@@ -64,7 +66,7 @@
 <!--          <div class="arrow-down">x</div>-->
 <!--        </div>-->
       </div>
-      <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
+      <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.email_in_use && !controlName.errors.invalid_email && !controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
            class="success-icon" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
       <div class="disabled"></div>
     </div>

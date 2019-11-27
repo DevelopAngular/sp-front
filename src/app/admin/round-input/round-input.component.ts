@@ -8,13 +8,11 @@ import {
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {TimeService} from '../../services/time.service';
 import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {constructUrl} from '../../live-data/helpers';
-import {LocationsService} from '../../services/locations.service';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
@@ -73,10 +71,8 @@ export class RoundInputComponent implements OnInit {
   constructor (
     public httpService: HttpService,
     public dialog: MatDialog,
-    private timeService: TimeService,
     public darkTheme: DarkThemeSwitch,
     public sanitizer: DomSanitizer,
-    public locationsService: LocationsService,
   ) { }
 
   get labelIcon() {
@@ -111,6 +107,9 @@ export class RoundInputComponent implements OnInit {
 
   ngOnInit() {
     this.handleError();
+    if (this.focused) {
+      this.input.nativeElement.focus();
+    }
 
     if (this.selfSearch) {
       this.pending$ = new Subject<boolean>();
@@ -140,9 +139,6 @@ export class RoundInputComponent implements OnInit {
       });
     }
 
-    if (this.focused) {
-      this.input.nativeElement.focus();
-    }
   }
 
   handleError() {
@@ -159,7 +155,6 @@ export class RoundInputComponent implements OnInit {
 
   changeAction(inp: HTMLInputElement, reset?: boolean) {
     if (reset) {
-      // this.selected = reset;
       inp.value = '';
       inp.focus();
     }
