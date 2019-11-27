@@ -1,7 +1,6 @@
 <div class="container">
   <div *ngIf="!logoAsset" class="logo-wrapper" [style.transform]="transformRules">
     <img class="logo" [src]="'./assets/SP Arrow (Blue-Gray).svg' | resolveAsset">
-    <div class="title">SmartPass</div>
   </div>
   <div *ngIf="logoAsset" class="logo-wrapper" [style.transform]="transformRules">
     <img height="24" [src]="logoAsset | resolveAsset">
