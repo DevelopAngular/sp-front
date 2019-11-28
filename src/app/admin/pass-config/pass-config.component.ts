@@ -137,7 +137,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         }),
         switchMap((res) => {
           return combineLatest(
-            this.adminService.getOnboardProcessRequest().pipe(filter((r: any[]) => !!r.length)),
+            this.adminService.onboardProcessData$.pipe(filter((r: any[]) => !!r.length)),
             this.pinnables$
           ).pipe(
               filter(() => navigator.onLine)

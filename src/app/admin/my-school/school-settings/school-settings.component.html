@@ -10,7 +10,7 @@
     <div class="school-name">
       <app-input
         [width]="'360px'"
-        [input_value]="(school$ | async).name"
+        [input_value]="(school$ | async)?.name"
         [input_label]="'School Name'"
         [formGroup]="form"
         [controlName]="form.get('schoolName')"

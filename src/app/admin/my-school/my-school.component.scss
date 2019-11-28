@@ -53,6 +53,7 @@
             flex: 1;
             display: flex;
             align-items: center;
+            width: 357px;
           }
 
           .footer-text {
@@ -191,6 +192,12 @@
               position: absolute;
               right: -79px;
               bottom: -26px;
+
+              &-launched {
+                position: absolute;
+                right: -23px;
+                bottom: -55px;
+              }
             }
           }
         }

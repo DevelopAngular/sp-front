@@ -1,16 +1,15 @@
-import {AfterViewInit, Component, ElementRef, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {HttpService} from '../../services/http-service';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
-import {filter, mapTo, switchMap} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {CalendarComponent} from '../calendar/calendar.component';
-import {bumpIn} from '../../animations';
-
-import * as moment from 'moment';
 import {SchoolSettingsComponent} from './school-settings/school-settings.component';
+
+import {bumpIn} from '../../animations';
+import * as moment from 'moment';
 
 declare const window;
 
@@ -20,7 +19,7 @@ declare const window;
   styleUrls: ['./my-school.component.scss'],
   animations: [bumpIn]
 })
-export class MySchoolComponent implements OnInit, AfterViewInit {
+export class MySchoolComponent implements OnInit, OnDestroy {
 
   currentSchool$: Observable<School>;
 
@@ -35,9 +34,14 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
   ];
 
   buttonDown: boolean;
+  process$: Observable<any>;
 
   openSchoolPage: boolean;
+  updateProgress$: Subject<boolean> = new Subject<boolean>();
   countLaunchDay: number;
+  loaded: boolean;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
       private http: HttpService,
@@ -46,34 +50,56 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
       private dialog: MatDialog,
   ) { }
 
+  get isLaunched() {
+    return this.selectedDate && moment().isSameOrAfter(this.selectedDate, 'day');
+  }
+
   ngOnInit() {
     this.currentSchool$ = this.http.currentSchool$;
-      this.adminService.getOnboardProcessRequest().pipe(
+    this.process$ = this.adminService.onboardProcessData$;
+    this.process$.pipe(
+        takeUntil(this.destroy$),
         filter((res: any[]) => !!res.length),
         switchMap((res: any[]) => {
           const start = res.find(setting => setting.name === 'launch_day_prep:start');
+          const end = res.find(setting => setting.name === 'launch_day_prep:end');
           if (!start.done) {
-            return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(res));
-          } else {
-            return of(res);
+            return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(false));
+          } else if (!!start.done && !!end.done) {
+            this.openSchoolPage = true;
+            return of(true);
           }
         }),
-        switchMap((res: any[]) => {
+      ).subscribe(() => {
+        this.loaded = true;
+    });
+
+      this.updateProgress$
+        .pipe(
+          filter(res => !!res),
+          switchMap(isOpen => {
+            return this.process$;
+          }),
+          switchMap((res: any[]) => {
             const end = res.find(setting => setting.name === 'launch_day_prep:end');
             if (!end.done) {
               return this.adminService.updateOnboardProgress(end.name);
             } else {
               return of(null);
             }
-        })).subscribe();
+          })
+        ).subscribe();
   }
-  ngAfterViewInit(): void {
-    // window.appLoaded();
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   selected(date) {
     this.selectedDate = date;
     this.countLaunchDay = this.selectedDate.diff(moment(), 'days');
+    this.updateProgress$.next(true);
   }
 
   redirect(button) {
