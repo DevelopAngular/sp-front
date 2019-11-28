@@ -15,6 +15,62 @@
     <!--<mat-divider class="divider" *ngIf="!openedContent"></mat-divider>-->
   </div>
   <div class="options-content" *ngIf="openedContent">
+    <div class="active-pass-count-restrictions">
+      <div class="label ds-navy ds-flex-center-start" style="font-weight: bold;">
+        <span class="ds-pr-20">Active Pass Limits</span><img [width]="20" [src]="'./assets/Support (Gray).svg'" alt="Support (Gray).svg">
+      </div>
+      <div class="ds-flex-start-start">
+        <div class="from">
+          <div class="ds-flex-center-start">
+            <app-toggle-input
+              [delimiter]="false"
+              [form]="mockAPCForm"
+              [controlName]="'fromEnabled'"
+              [controlSize]="'small'"
+            ></app-toggle-input>
+            <span class="ds-pl-15">Passes <span style="font-weight: bold;">from</span> this room</span>
+          </div>
+          <div>
+            <app-input
+              [width]="'120px'"
+              [height]="'35px'"
+              [maxLength]="15"
+              [fieldSpace]="'0px'"
+              [input_value]="mockAPCForm.get('from').value"
+              [formGroup]="mockAPCForm"
+              [controlName]="mockAPCForm.get('from')"
+              [disabled]="!mockAPCForm.get('fromEnabled').value"
+            >
+            </app-input>
+          </div>
+        </div>
+        <div class="to ds-ml-25" *ngIf="!false">
+          <div class="ds-flex-center-start">
+            <app-toggle-input
+              [delimiter]="false"
+              [form]="mockAPCForm"
+              [controlName]="'toEnabled'"
+              [controlSize]="'small'"
+            ></app-toggle-input>
+            <span class="ds-pl-15">Passes <span style="font-weight: bold;">to</span> this room</span>
+          </div>
+          <div>
+            <app-input
+              [width]="'120px'"
+              [height]="'35px'"
+              [maxLength]="15"
+              [fieldSpace]="'0px'"
+              [input_value]="mockAPCForm.get('to').value"
+              [formGroup]="mockAPCForm"
+              [controlName]="mockAPCForm.get('to')"
+              [disabled]="!mockAPCForm.get('toEnabled').value"
+
+            >
+            </app-input>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="content-header">
       <span class="text">Sending Pass Request to?</span>
       <img

@@ -73,6 +73,7 @@ export class GettingStartedProgressService {
   ) {
     this.httpService.globalReload$
       .pipe(
+
         switchMap(() => {
           return this.adminService.getOnboardProcessRequest();
         })

@@ -1,5 +1,5 @@
 <div *ngIf="!mock" [formGroup]="form" class="layout" [ngClass]="{'delimiter': delimiter}">
-  <div [style.padding-top]="'5px'">
+  <div [style.padding-top]="'5px'" *ngIf="controlLabel">
     <span class="ds-cell-text-2">{{controlLabel}}</span>
   </div>
   <div style="display: flex; align-items: center;">
@@ -16,7 +16,7 @@
   </div>
 </div>
 <div *ngIf="mock" class="layout">
-  <div [style.padding-top]="'5px'">
+  <div [style.padding-top]="'5px'" *ngIf="controlLabel">
     <span class="ds-cell-text-2">{{controlLabel}}</span>
   </div>
   <div style="display: flex; align-items: center;">

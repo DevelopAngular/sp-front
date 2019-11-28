@@ -5,6 +5,7 @@ import { DarkThemeSwitch } from '../../../dark-theme-switch';
 import { DomSanitizer } from '@angular/platform-browser';
 import { cloneDeep, isEqual } from 'lodash';
 import {Subject} from 'rxjs';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 export interface OptionState {
     now: {
@@ -53,6 +54,8 @@ export class AdvancedOptionsComponent implements OnInit {
     hideFutureBlock: boolean;
     isActiveTooltip: boolean;
 
+    mockAPCForm: FormGroup;
+
     toggleChoices = [
         'Any teacher (default)',
         'Any teachers assigned',
@@ -77,8 +80,15 @@ export class AdvancedOptionsComponent implements OnInit {
 
     constructor(
         public darkTheme: DarkThemeSwitch,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private fb: FormBuilder
     ) {
+      this.mockAPCForm = this.fb.group({
+        fromEnabled: [''],
+        from: [''],
+        toEnabled: [''],
+        to: ['']
+      });
     }
 
     get bgColor() {

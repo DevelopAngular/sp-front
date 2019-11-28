@@ -3,6 +3,7 @@ import {FormGroup} from '@angular/forms';
 import { Observable, fromEvent } from 'rxjs';
 import {startWith} from 'rxjs/operators';
 
+export type ToggleInputSize = 'small' | 'regular' | 'large';
 
 @Component({
   selector: 'app-toggle-input',
@@ -14,7 +15,7 @@ export class ToggleInputComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() controlName: string;
   @Input() controlLabel: string;
-  @Input() controlSize: string = 'regular'; // Can be small, regular or large ;
+  @Input() controlSize: ToggleInputSize = 'regular';
   @Input() disabled: boolean = false;
   @Input() delimiter: boolean = true;
   @Input() mock: boolean = false;
