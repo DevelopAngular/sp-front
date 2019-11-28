@@ -9,7 +9,7 @@ import { AdminSharedModule } from '../shared/admin-shared.module';
 @NgModule({
   declarations: [
     AccountsComponent,
-    AdminCardButtonComponent
+    AdminCardButtonComponent,
   ],
   imports: [
     CommonModule,
