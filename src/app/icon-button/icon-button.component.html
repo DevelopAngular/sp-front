@@ -2,10 +2,14 @@
      [style.width]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.height]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.background-color]="bgc"
-     (mouseover)="hovered = true;"
-     (mouseleave)="hovered = false;"
-     (mousedown)="down = true"
-     (mouseup)="down = false"
+     (pointerover)="hovered = true;"
+     (pointerleave)="hovered = false;"
+     (pointerdown)="down = true"
+     (pointerup)="down = false"
+     (pointerstart)= "down = true;"
+     (pointermove)="iconButtonRef.preventClick = true"
+     (pointerend)= "down = false; hovered = false; !iconButtonRef.preventClick ? iconButtonRef.click() : iconButtonRef.preventClick = false"
+
      (click)="onClick($event)" #iconButtonRef >
     <img [src]="src | resolveAsset"
          [attr.width]="size"

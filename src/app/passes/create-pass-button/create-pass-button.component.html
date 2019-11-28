@@ -3,14 +3,16 @@
     class="button-wrapper"
     [style.background]="backgroundGradient()"
     [style.box-shadow]="boxShadow"
+    [ngClass]="{'disabled': disabled}"
     [@pressState]="buttonState"
     (click)="buttonClick()"
-    (mouseenter)="hovered = true"
-    (mouseleave)="buttonDown = false; hovered = false"
-    (mousedown)="buttonDown = true"
-    (mouseup)="buttonDown = false"
+    (pointerenter)="hovered = true"
+    (pointerleave)="buttonDown = false; hovered = false"
+    (pointerdown)="buttonDown = true"
+    (pointerup)="buttonDown = false"
     (touchstart)= "buttonDown = true;"
-    [ngClass]="{'disabled': disabled}"
+    (pointemove)="but.preventClick = true"
+    (touchend)= "buttonDown = false; hovered = false; !but.preventClick ? but.click() : but.preventClick = false"
 >
   <div class="title">{{ title }}</div>
 </div>

@@ -30,25 +30,25 @@ export class SettingsComponent implements OnInit {
 
     public settings = [
         {
-            'gradient': '#1893E9, #05B5DE',
-            'icon': 'Team',
-            'hover_icon': './assets/Team (White).svg',
-            'action': 'about',
-            'title': 'About'
+          'gradient': '#1893E9, #05B5DE',
+          'icon': 'Team',
+          'hover_icon': './assets/Team (White).svg',
+          'action': 'about',
+          'title': 'About'
         },
         {
-            'gradient': '#5E4FED, #7D57FF',
-            'icon': 'Feedback',
-            'hover_icon': './assets/Feedback (White).svg',
-            'action': 'feedback',
-            'title': 'Feedback'
+          'gradient': '#5E4FED, #7D57FF',
+          'icon': 'Launch',
+          'hover_icon': './assets/Launch (White).svg',
+          'action': 'wishlist',
+          'title': 'Wishlist'
         },
         {
-            'gradient': '#F52B4F, #F37426',
-            'icon': 'Support',
-            'hover_icon': './assets/Support (White).svg',
-            'action': 'support',
-            'title': 'Support'
+          'gradient': '#F52B4F, #F37426',
+          'icon': 'Support',
+          'hover_icon': './assets/Support (White).svg',
+          'action': 'support',
+          'title': 'Support'
         },
     ];
 
@@ -73,7 +73,7 @@ export class SettingsComponent implements OnInit {
   }
 
     ngOnInit() {
-        this.triggerElementRef = this.data['trigger'];
+      this.triggerElementRef = this.data['trigger'];
         this.isSwitchOption = this.data['isSwitch'];
         this.updateSettingsPosition();
     }
@@ -99,11 +99,18 @@ export class SettingsComponent implements OnInit {
     }
 
     handleAction(setting) {
+      // debugger
       if ( typeof setting.action === 'string' ) {
         this.dialogRef.close(setting.action);
       } else {
         setting.action();
       }
+    }
+
+    test(evt) {
+      console.log(evt);
+      // debugger
+      // this.dialogRef.close();
     }
 
     updateSettingsPosition() {

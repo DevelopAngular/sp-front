@@ -124,14 +124,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       link.setAttribute('rel', 'stylesheet');
       link.setAttribute('href', './assets/css/custom_scrollbar.css');
       document.head.appendChild(link);
-    } else {
-      // document.body.requestFullscreen()
-      //   .then(ok => {
-      //     console.log(ok);
-      //   })
-      //   .catch((err) => {
-      //   console.log(err);
-      // });
     }
 
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
@@ -281,6 +273,5 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
   }
-
 
 }
