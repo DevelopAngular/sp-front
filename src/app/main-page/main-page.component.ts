@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, HostListener, NgZone, OnInit} from '@angular/core';
 import {UserService} from '../services/user.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {map, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 import {SideNavService} from '../services/side-nav.service';
-import {BehaviorSubject, combineLatest, empty, Observable, of, ReplaySubject} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {WrappedProvider} from '../models/providers';
@@ -47,8 +47,7 @@ export class MainPageComponent implements OnInit, AfterViewInit {
 
     this.http.schoolsCollection$
       .pipe(
-        map(schools => _filter(schools, (school => school.my_roles.length > 0))),
-        // takeUntil(this.subscriber$)
+        map(schools => _filter(schools, (school => school.my_roles.length > 0)))
       )
       .subscribe((schools) => {
         this.topPadding = schools.length > 1 ? '50px' : '0px';
