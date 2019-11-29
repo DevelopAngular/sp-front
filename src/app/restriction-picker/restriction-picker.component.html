@@ -5,7 +5,7 @@
        [style.background-color]="'rgba(247,247,247,1)'"
        [style.height.px]="height">
 <!--  <div class="choices" [style.border]="'1px solid ' + selectedColor">-->
-    <div *ngFor="let choice of choices; let i=index;" [style.height.%]="100" [class.divider]="choices.length >2 && i < choices.length - 1 && selectedChoise !== choice ">
+    <div *ngFor="let choice of choices; let i=index;" [style.height.%]="100" [class.divider]="choices.length > 1 && i < choices.length - 1 && selectedChoise !== choice ">
       <div class="choice"
            [style.opacity]="isDisabled(choice) ? 0.5 : 1"
            [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"

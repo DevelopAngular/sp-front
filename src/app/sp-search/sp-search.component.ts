@@ -1,4 +1,16 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
 import {BehaviorSubject, of, Subject} from 'rxjs';
@@ -106,7 +118,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() searchTarget: SearchEntity = 'users';
 
   @Input() disabled: boolean = false;
-  @Input() focused: boolean = false;
+  @Input() focused: boolean = true;
   @Input() showOptions: boolean = true;
   @Input() selectedOptions: Array<User | School | GSuiteSelector> = [];
   @Input() selectedOrgUnits: any[] = [];
@@ -255,6 +267,13 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
   }
 
+  // ngOnChanges(sc: SimpleChanges) {
+  //   console.log(sc);
+  //   if (!sc.isFocus.isFirstChange() && sc.isFocus.currentValue) {
+  //     this.input.nativeElement.focus();
+  //   }
+  // }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -371,6 +390,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   onBlur(event) {
     // console.log(event);
     // this.students = null;
+    this.onUpdate.emit(null);
   }
 
   addStudent(student: User) {

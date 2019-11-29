@@ -1,4 +1,4 @@
-﻿import {Component, OnInit, Input, Output, EventEmitter, ViewChild, Renderer2} from '@angular/core';
+﻿import {Component, OnInit, Input, Output, EventEmitter, ViewChild, Renderer2, SimpleChanges, OnChanges} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
 import {debounceTime, delay, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
@@ -10,10 +10,9 @@ import {of} from 'rxjs';
   templateUrl: './app-input.component.html',
   styleUrls: ['./app-input.component.scss']
 })
-export class AppInputComponent implements OnInit {
+export class AppInputComponent implements OnInit, OnChanges {
 
     @Input() input_type: string = 'text';
-    @Input() input_class: string;
     @Input() input_value: string | number;
     @Input() input_label: string;
     @Input() placeholder: string = '';
@@ -21,6 +20,7 @@ export class AppInputComponent implements OnInit {
     @Input() width: string = '0px';
     @Input() height: string = '40px';
     @Input() padding: string = '8px';
+    @Input() fieldSpace: string = '8px';
     @Input() rightIcon: string;
     @Input() tooltipText: string;
     @Input() textAlign: string;
@@ -77,6 +77,13 @@ export class AppInputComponent implements OnInit {
           .subscribe(res => {
           this.onUpdate.emit(res);
         });
+    }
+
+    ngOnChanges(sc: SimpleChanges) {
+      // console.log(sc);
+      if ('isFocus' in sc && !sc.isFocus.isFirstChange() && sc.isFocus.currentValue) {
+        this.input.nativeElement.focus();
+      }
     }
 
     updateFocus(el) {

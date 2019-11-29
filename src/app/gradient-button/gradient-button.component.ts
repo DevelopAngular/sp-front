@@ -54,7 +54,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() minWidth: string = 'auto'; // > editable
   @Input() minHeight: string; // > editable
   @Input() fontSize: string = '20px'; // > editable
-  @Input() fontWeight: string = 'bold'; // > editable
+  @Input() fontWeight: string = 'normal'; // > editable
   @Input() leftImageWidth: string; // > editable
   @Input() leftImageHeight: string; // > editable
   @Input() cursor: string = 'pointer';
@@ -92,7 +92,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '40px';
           this.minWidth = '100px';
           this.fontSize = '14px';
-          this.fontWeight = 'bold';
+          // this.fontWeight = 'bold';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';
           break;
@@ -102,7 +102,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '50px';
           this.minWidth = '100px';
           this.fontSize = '15px';
-          this.fontWeight = 'bold';
+          // this.fontWeight = 'bold';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';
 
@@ -113,7 +113,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '75px';
           this.minWidth = '120px';
           this.fontSize = '17px';
-          this.fontWeight = 'bold';
+          // this.fontWeight = 'bold';
           this.cornerRadius = '10px';
           this.padding = '0px 20px';
 
@@ -124,7 +124,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '100px';
           this.minWidth = '160px';
           this.fontSize = '22px';
-          this.fontWeight = 'bold';
+          // this.fontWeight = 'bold';
           this.cornerRadius = '12px';
           this.padding = '0px 20px';
 
@@ -210,10 +210,12 @@ export class GradientButtonComponent implements OnInit {
   }
 
   onPress(press: boolean, event) {
-    if (this.screenService.isDeviceLargeExtra) event.preventDefault();
-    if (!this.disabled)
+    if (this.screenService.isDeviceLargeExtra) {
+      event.preventDefault();
+    }
+    if (!this.disabled) {
       this.buttonDown = press;
-    //console.log("[Button State]: ", "The button is " +this.buttonState);
+    }
   }
 
   onTap(tap: boolean) {
@@ -224,9 +226,8 @@ export class GradientButtonComponent implements OnInit {
   }
 
   onClick(event) {
-    if(!this.disabled) {
-
-      this.buttonClick.emit(event)
+    if (!this.disabled) {
+      this.buttonClick.emit(event);
     } else {
       return;
     }
@@ -234,8 +235,9 @@ export class GradientButtonComponent implements OnInit {
 
   onHover(hover: boolean){
     this.hovered = hover;
-    if(!hover)
+    if (!hover) {
       this.buttonDown = false;
+    }
   }
 
 }

@@ -145,8 +145,9 @@ export class PinnableComponent implements OnInit, OnChanges {
   }
 
   onSelect() {
-    if (this.valid && !this.disabled)
+    if (this.valid && !this.disabled) {
       this.onSelectEvent.emit(this.pinnable);
+    }
   }
 
   getGradient() {
