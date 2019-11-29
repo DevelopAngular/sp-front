@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {delay, filter, map, skip, switchMap, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
 import {HttpService} from '../../services/http-service';
+import {AdminService} from '../../services/admin.service';
 declare const window;
 @Component({
   selector: 'app-admin-page',
@@ -25,6 +26,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private httpService: HttpService,
+    private adminService: AdminService
   ) {
     this.showDummySwitcher$ = combineLatest(
       this.userService.userData,
@@ -37,6 +39,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.schoolsLength$ = this.httpService.schoolsLength$;
+    this.httpService.globalReload$
+      .pipe(
+        switchMap(() => {
+          return this.adminService.getOnboardProcessRequest();
+        })
+      ).subscribe();
 
     this.showDummySwitcher$.subscribe((v) => {
       if (v) {

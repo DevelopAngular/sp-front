@@ -57,20 +57,23 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.currentSchool$ = this.http.currentSchool$;
     this.process$ = this.adminService.onboardProcessData$;
-    this.process$.pipe(
-        takeUntil(this.destroy$),
-        filter((res: any[]) => !!res.length),
-        switchMap((res: any[]) => {
-          const start = res.find(setting => setting.name === 'launch_day_prep:start');
-          const end = res.find(setting => setting.name === 'launch_day_prep:end');
-          if (!start.done) {
-            return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(false));
-          } else if (!!start.done && !!end.done) {
-            this.openSchoolPage = true;
-            return of(true);
-          }
-        }),
-      ).subscribe(() => {
+    this.http.globalReload$.pipe(
+      takeUntil(this.destroy$),
+      switchMap(() => this.process$),
+      filter((res: any[]) => !!res.length),
+      switchMap((res: any[]) => {
+        const start = res.find(setting => setting.name === 'launch_day_prep:start');
+        const end = res.find(setting => setting.name === 'launch_day_prep:end');
+        if (!start.done) {
+          return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(false));
+        } else if (!!start.done && !!end.done) {
+          this.openSchoolPage = true;
+          return of(true);
+        }
+        this.openSchoolPage = false;
+        return of(null);
+      })
+    ).subscribe(() => {
         this.loaded = true;
     });
 
@@ -99,6 +102,18 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   selected(date) {
     this.selectedDate = date;
     this.countLaunchDay = this.selectedDate.diff(moment(), 'days');
+  }
+
+  saveRequest() {
+    this.openSchoolPage = true;
+    // this.currentSchool$
+    //   .pipe(
+    //     switchMap(school => {
+    //       return this.adminService.updateSchoolSettings(school.id, { launch_date: this.selectedDate.toISOString()});
+    //     })
+    //   ).subscribe(res => {
+    //     debugger;
+    //   });
     this.updateProgress$.next(true);
   }
 
