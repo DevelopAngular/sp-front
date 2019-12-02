@@ -7,7 +7,6 @@
              [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
              (mouseenter)="hoveredProfile = true"
              (mouseleave)="hoveredProfile = false"
-
              appCrossPointerEventTarget
              (pointerClickEvent)="dialogRef.close('switch')"
 
@@ -22,7 +21,6 @@
              [style.background]="_themeBackground"
              (mouseenter)="hoveredTheme = true"
              (mouseleave)="hoveredTheme = false"
-
              appCrossPointerEventTarget
              (pointerDownEvent)="pressedTheme = true"
              (pointerClickEvent)="pressedTheme = false; darkTheme.switchTheme(); data.darkBackground = !data.darkBackground;"

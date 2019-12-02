@@ -54,7 +54,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() minWidth: string = 'auto'; // > editable
   @Input() minHeight: string; // > editable
   @Input() fontSize: string = '20px'; // > editable
-  @Input() fontWeight: string = 'normal'; // > editable
+  @Input() fontWeight: string = '500'; // > editable
   @Input() leftImageWidth: string; // > editable
   @Input() leftImageHeight: string; // > editable
   @Input() cursor: string = 'pointer';
@@ -73,26 +73,16 @@ export class GradientButtonComponent implements OnInit {
   buttonDown = false;
   hovered: boolean = false;
 
-  @HostListener(('ontouchend' in document.documentElement) ? 'touchend' : 'click', ['$event']) onClick(evt) {
-    if (!this.disabled) {
-      this.buttonClick.emit(event);
-    } else {
-      return;
-    }
-  }
+  constructor(
+    private sanitizer: DomSanitizer
+  ) {}
 
-  constructor(private sanitizer: DomSanitizer, private screenService: ScreenService) {
-  }
   ngOnInit(): void {
-    // console.log('Gradient ==>>>', this.gradient);
-    // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
-    //   this.size = 'small';
-    // }
+
     if (this.size && this.size !== 'editable') {
 
       this.width = 'auto';
       this.minWidth = this.width;
-
 
       switch (this.size) {
         case 'small':
@@ -218,29 +208,29 @@ export class GradientButtonComponent implements OnInit {
     }
   }
 
-  onPress(press: boolean, event) {
-    if (this.screenService.isDeviceLargeExtra) {
-      event.preventDefault();
-    }
-    if (!this.disabled) {
-      this.buttonDown = press;
-    }
-  }
-
-  onTap(tap: boolean) {
-    // if(!this.disabled)
-      this.buttonDown = tap;
-
-    // console.log(this.buttonDown);
-  }
-
-  // onClick(event) {
+  // onPress(press: boolean, event) {
+  //   if (this.screenService.isDeviceLargeExtra) {
+  //     event.preventDefault();
+  //   }
   //   if (!this.disabled) {
-  //     this.buttonClick.emit(event);
-  //   } else {
-  //     return;
+  //     this.buttonDown = press;
   //   }
   // }
+
+  // onTap(tap: boolean) {
+  //   // if(!this.disabled)
+  //     this.buttonDown = tap;
+  //
+  //   // console.log(this.buttonDown);
+  // }
+
+  onClick(event) {
+    if (!this.disabled) {
+      this.buttonClick.emit(event);
+    } else {
+      return;
+    }
+  }
 
   onHover(hover: boolean){
     this.hovered = hover;

@@ -12,7 +12,11 @@
           <span>%</span>
         </div>
         <div>
-          <div (click)="selectTab(tabRef, navButtonsContainter);" #tabRef>
+          <div
+            appCrossPointerEventTarget
+            (pointerClickEvent)="selectTab(tabRef, navButtonsContainter);"
+            #tabRef
+          >
             <ng-container *ngIf="hasRoles(gettingStarted.requiredRoles) | async">
               <app-nav-button
                 [style.margin-bottom]="'15px'"
@@ -32,9 +36,9 @@
       <div *ngIf="!(fakeMenu | async)">
         <div *ngFor="let button of buttons"
              [style.transition]="'transform .4s ease'"
-             (mousedown)="tabRef.style.transform = 'scale(.96)'"
-             (mouseup)="tabRef.style.transform = 'unset'"
-             (click)="selectTab(tabRef, navButtonsContainter);"
+             appCrossPointerEventTarget
+             (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
+             (pointerClickEvent)="tabRef.style.transform = 'unset'"
              #tabRef>
           <ng-container *ngIf="hasRoles(button.requiredRoles) | async">
             <app-nav-button
@@ -62,7 +66,7 @@
   <div class="nav-footer">
     <div class="footer-text" [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})">{{(user?user.display_name : '')}}</div>
     <div [style.display]="'flex'" #settingsButton>
-      <app-icon-button  [srcString]="'Settings'" [size]="20" [eventBubbling]="false" (clickEvent)="openSettings($event)"></app-icon-button>
+      <app-icon-button  [srcString]="'Settings'" [size]="20" (clickEvent)="openSettings($event)"></app-icon-button>
     </div>
   </div>
 </div>

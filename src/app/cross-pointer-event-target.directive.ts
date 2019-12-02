@@ -5,8 +5,9 @@ import {Directive, EventEmitter, HostListener, Input, Output} from '@angular/cor
 })
 export class CrossPointerEventTargetDirective {
 
-  @Output() pointerDownEvent: EventEmitter<any> = new EventEmitter();
-  @Output() pointerClickEvent: EventEmitter<any> = new EventEmitter();
+  @Output() pointerDownEvent: EventEmitter<MouseEvent | TouchEvent> = new EventEmitter();
+  @Output() pointerClickEvent: EventEmitter<MouseEvent | TouchEvent> = new EventEmitter();
+  @Output() pointerCancelEvent: EventEmitter<null> = new EventEmitter();
 
   @HostListener(('ontouchend' in document.documentElement) ? 'touchend' : 'click', ['$event']) handleClick(evt) {
 
@@ -23,7 +24,10 @@ export class CrossPointerEventTargetDirective {
         console.log(allowTouch);
         if (Object.values(allowTouch).every(v => !!v)) {
           this.pointerClickEvent.emit(evt as TouchEvent);
+        } else {
+          this.pointerCancelEvent.emit(null);
         }
+
         break;
 
       case 'click':
@@ -34,20 +38,10 @@ export class CrossPointerEventTargetDirective {
 
   }
 
-  @HostListener(('ontouchstart' in document.documentElement) ? 'ontouchstart' : 'mousedown', ['$event']) handleDown(evt) {
-
+  @HostListener(('ontouchstart' in document.documentElement) ? 'touchstart' : 'mousedown', ['$event']) handleDown(evt) {
     switch (evt.type) {
 
       case 'touchstart':
-        // const rect = evt.target.getBoundingClientRect();
-        // const singleTouch = evt.changedTouches[0];
-        // const allowTouch = {
-        //   x: singleTouch.clientX >= rect.left && singleTouch.clientX <= rect.right,
-        //   y: singleTouch.clientY >= rect.top && singleTouch.clientX <= rect.bottom,
-        // };
-        //
-        // if (Object.values(allowTouch).every(v => !!v)) {
-        // }
         this.pointerDownEvent.emit(evt as TouchEvent);
         break;
 
