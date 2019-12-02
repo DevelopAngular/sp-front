@@ -62,7 +62,7 @@
   <div class="nav-footer">
     <div class="footer-text" [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})">{{(user?user.display_name : '')}}</div>
     <div [style.display]="'flex'" #settingsButton>
-      <app-icon-button  [srcString]="'Settings'" [size]="20" (clickEvent)="openSettings($event)"></app-icon-button>
+      <app-icon-button  [srcString]="'Settings'" [size]="20" [eventBubbling]="false" (clickEvent)="openSettings($event)"></app-icon-button>
     </div>
   </div>
 </div>

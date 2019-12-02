@@ -650,8 +650,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed()
-      .subscribe((userListReloadTrigger: any) => {
-      if (userListReloadTrigger) {
+      .pipe(
+        filter(userListReloadTrigger => !!userListReloadTrigger)
+      )
+      .subscribe(() => {
         if (data.profile.id === +this.user.id) {
           this.userService.getUserRequest()
             .pipe(
@@ -664,8 +666,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
         }
         this.selectedUsers = [];
-      }
-      this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
+        this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
     });
   }
 
