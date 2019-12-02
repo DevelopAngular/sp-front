@@ -1,5 +1,5 @@
  <h1 [@HeaderSlideInOut] *ngIf="(isInboxClicked$ | async) && screenService.isDeviceMid" class="requests-title"
-     [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Requests</h1>
+     [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})" [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Requests</h1>
   <div [@RequestCardSlideInOut] *ngIf="(isInboxClicked$ | async) && screenService.isDeviceMid">
     <app-display-card [hasDivider]="false" [hasHeader]="false" [fontSize]="'29px'" [inbox]="true" >
       <div class="inbox-content">

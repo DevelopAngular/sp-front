@@ -1,5 +1,5 @@
 <div class="host" [style.background]="darkTheme.getColor({dark: '#0F171E', white : '#FFFFFF'})" [style.position]="isStaff || screenService.isDeviceLargeExtra ? 'fixed' : 'static'" [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0">
-  <div #navbar [ngClass]="{shadow: isStaff}" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar" appNavbarElementSender>
+  <div #navbar [ngClass]="{shadow: isStaff || screenService.isDeviceLargeExtra}" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar" appNavbarElementSender>
     <div [ngClass]="isIOSTablet ? 'ios-heading': 'heading'" class="grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>

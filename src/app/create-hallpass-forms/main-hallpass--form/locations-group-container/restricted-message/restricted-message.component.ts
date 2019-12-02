@@ -112,11 +112,10 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return uniqBy(this.teachersNames, 'id');
+    return uniqBy(this.teachersNames, '+id');
   }
 
   ngOnInit() {
-
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.message = new FormControl(this.formState.data.message);
     this.fromLocation = this.formState.data.direction.from;
