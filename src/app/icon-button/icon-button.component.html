@@ -2,22 +2,21 @@
      [style.width]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.height]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.background-color]="bgc"
+
      (mouseover)="hovered = true;"
      (mouseleave)="hovered = false;"
-     (mousedown)="down = true"
-     (mouseup)="down = false"
 
-     (touchmove)="iconButtonRef.preventClick = down"
-     (touchstart)="down = true"
+     appCrossPointerEventTarget
+     (pointerDownEvent)="down = true"
+     (pointerClickEvent)="down = false; onClick($event)"
 
      #iconButtonRef
 >
-<!--     (touchend)= "$event.preventDefault(); iconButtonRef.preventClick ? null : onClick($event); iconButtonRef.preventClick = false; down = false; hovered = false; "-->
     <img [src]="src | resolveAsset"
          [attr.width]="size"
          [attr.height]="size"
          [style.opacity]="opacity"
          draggable="false"
          class="icon"
-         alt="img" #imgRef>
+         alt="img">
 </div>

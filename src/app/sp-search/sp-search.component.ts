@@ -141,6 +141,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() searchingTeachers: User[];
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
+  @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
@@ -390,7 +391,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   onBlur(event) {
     // console.log(event);
     // this.students = null;
-    this.onUpdate.emit(null);
+    this.blurEvent.emit(null);
   }
 
   addStudent(student: User) {

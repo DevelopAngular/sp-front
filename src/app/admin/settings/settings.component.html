@@ -4,10 +4,13 @@
     <div class="settings-content">
       <div class="profile-switch">
         <div class="option"  *ngIf="isSwitchOption"
+             [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
              (mouseenter)="hoveredProfile = true"
              (mouseleave)="hoveredProfile = false"
-             (mouseup)="dialogRef.close('switch')"
-             [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
+
+             appCrossPointerEventTarget
+             (pointerClickEvent)="dialogRef.close('switch')"
+
         >
           <img class="switch-icon" [src]="getIcon('Profile Switch', null, hoveredProfile) | resolveAsset">
           <div class="option-title" [style.color]="getColor(null, hoveredProfile)">Teacher View</div>
@@ -19,9 +22,10 @@
              [style.background]="_themeBackground"
              (mouseenter)="hoveredTheme = true"
              (mouseleave)="hoveredTheme = false"
-             (mousedown)="pressedTheme = true"
-             (mouseup)="pressedTheme = false; darkTheme.switchTheme(); data.darkBackground = !data.darkBackground;"
 
+             appCrossPointerEventTarget
+             (pointerDownEvent)="pressedTheme = true"
+             (pointerClickEvent)="pressedTheme = false; darkTheme.switchTheme(); data.darkBackground = !data.darkBackground;"
         >
 
           <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Moon (White).svg' : getIcon('Moon', null, hoveredTheme) | resolveAsset">
@@ -42,10 +46,11 @@
       <div class="links">
         <div class="link"
              *ngFor="let setting of settings"
-             (mouseup)="handleAction(setting)"
+             [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
              (mouseenter)="onHover(setting.gradient)"
              (mouseleave)="hovered = false"
-             [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="handleAction(setting)"
         >
           <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">
           <div class="setting-name"
@@ -61,7 +66,9 @@
            [style.color]="getColor(null, hoveredSignout)"
            (mouseenter)="hoveredSignout = true"
            (mouseleave)="hoveredSignout = false"
-           (mouseup)="signOut()">
+           appCrossPointerEventTarget
+           (pointerClickEvent)="signOut()"
+      >
         <span>Sign out</span>
       </div>
       <div class="versions" [style.color]="getColor(null, null)">
@@ -69,7 +76,10 @@
                (mouseup)="dialogRef.close('privacy')">Privacy & Terms</div>
       </div>
     </div>
-    <div class="bottom-arrow-container" (mouseup)="dialogRef.close(); test($event)">
+    <div class="bottom-arrow-container"
+         appCrossPointerEventTarget
+         (pointerClickEvent)="dialogRef.close(); test($event)"
+    >
       <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
     </div>
 </div>

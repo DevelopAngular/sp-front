@@ -29,6 +29,7 @@ import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.di
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    CrossPointerEventTargetDirective
   ],
   entryComponents: [
     ErrorToastComponent,

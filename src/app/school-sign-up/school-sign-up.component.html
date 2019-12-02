@@ -90,14 +90,14 @@
                     [rollUpAfterSelection]="true"
                     [cancelButton]="false"
                     [placeholder]="'Search schools'"
-                    (blur)="enterSchoolName = false"
+                    (blurEvent)="enterSchoolName = false"
                     (onUpdate)="checkSchool($event)"
                   ></app-sp-search>
                   <div class="selected-school" *ngIf="school && !enterSchoolName" (click)="enterSchoolName = true">
                     <div>
                       <img [width]="20" [height]="20" [src]="'./assets/School (Blue-Gray).svg' | resolveAsset" alt="School (Blue-Gray).svg">
                     </div>
-                    <div>
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                       <span> {{school.structured_formatting.main_text}}</span>
                     </div>
                   </div>

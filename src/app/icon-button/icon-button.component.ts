@@ -26,16 +26,18 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   hovered: boolean = false;
   down: boolean = false;
   preventClick = false;
+
   private destroyer$: Subject<any> = new Subject();
 
-  @HostListener(('ontouchend' in document.documentElement) ? 'touchend' : 'click', ['$event']) onClick(evt) {
-    this.pressed = !this.pressed;
-    if (!this.eventBubbling) {
-      evt.stopPropagation();
-    }
-    console.log(evt);
-    this.clickEvent.emit(evt);
-  }
+  // @HostListener(('ontouchend' in document.documentElement) ? 'touchend' : 'click', ['$event']) onClick(evt) {
+  //   this.pressed = !this.pressed;
+  //   if (!this.eventBubbling) {
+  //     evt.stopPropagation();
+  //   }
+  //   console.log(evt);
+  //   console.log(evt.target.getBoundingClientRect());
+  //   this.clickEvent.emit(evt);
+  // }
 
   constructor(
     private darkTheme: DarkThemeSwitch,
@@ -131,14 +133,14 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  // onClick(evt) {
-  //   alert('test');
-  //   this.pressed = !this.pressed;
-  //   if (!this.eventBubbling) {
-  //     evt.stopPropagation();
-  //   }
-  //   this.clickEvent.emit(evt);
-  // }
+  onClick(evt) {
+    // alert('test');
+    this.pressed = !this.pressed;
+    if (!this.eventBubbling) {
+      evt.stopPropagation();
+    }
+    this.clickEvent.emit(evt);
+  }
 
   ngOnDestroy(): void {
     this.destroyer$.next();
