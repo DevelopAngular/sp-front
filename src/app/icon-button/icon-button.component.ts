@@ -1,7 +1,7 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {fromEvent, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
@@ -25,14 +25,35 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hovered: boolean = false;
   down: boolean = false;
+  preventClick = false;
 
   private destroyer$: Subject<any> = new Subject();
 
+  // @HostListener(('ontouchend' in document.documentElement) ? 'touchend' : 'click', ['$event']) onClick(evt) {
+  //   this.pressed = !this.pressed;
+  //   if (!this.eventBubbling) {
+  //     evt.stopPropagation();
+  //   }
+  //   console.log(evt);
+  //   console.log(evt.target.getBoundingClientRect());
+  //   this.clickEvent.emit(evt);
+  // }
+
   constructor(
     private darkTheme: DarkThemeSwitch,
-    private sanitizer: DomSanitizer
-  ) { }
-
+    private sanitizer: DomSanitizer,
+    private elementRef: ElementRef<any>
+  ) {
+    // fromEvent(this.elementRef.nativeElement, ('ontouchend' in document.documentElement) ? 'touchend' : 'click')
+    //   .pipe(
+    //     // filter(() => return !this.preventClick)
+    //     switchMap(() => {
+    //       return fromEvent(this.elementRef.nativeElement, ('ontoum' in document.documentElement) ? 'touchend' : 'click')
+    //
+    //     })
+    //   )
+    //   .subscribe();
+  }
   get src() {
     let lightFill;
 
@@ -113,6 +134,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onClick(evt) {
+    // alert('test');
     this.pressed = !this.pressed;
     if (!this.eventBubbling) {
       evt.stopPropagation();

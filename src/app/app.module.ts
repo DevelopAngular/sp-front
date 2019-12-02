@@ -65,6 +65,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 
+
 const appRoutes: Routes = [
   {
     path: 'main/intro',
