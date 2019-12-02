@@ -12,7 +12,7 @@
     (pointerup)="buttonDown = false"
     (touchstart)= "buttonDown = true;"
     (pointemove)="but.preventClick = true"
-    (touchend)= "buttonDown = false; hovered = false; !but.preventClick ? but.click() : but.preventClick = false"
+    (touchend)= "buttonDown = false; hovered = false; !but.preventClick ? buttonClick() : but.preventClick = false"
 >
   <div class="title">{{ title }}</div>
 </div>

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { bumpIn } from '../animations';
 import {ScreenService} from '../services/screen.service';
@@ -69,8 +69,17 @@ export class GradientButtonComponent implements OnInit {
   @Input() isGradient: boolean;
   @Output() buttonClick = new EventEmitter<any>();
 
+
   buttonDown = false;
   hovered: boolean = false;
+
+  @HostListener(('ontouchend' in document.documentElement) ? 'touchend' : 'click', ['$event']) onClick(evt) {
+    if (!this.disabled) {
+      this.buttonClick.emit(event);
+    } else {
+      return;
+    }
+  }
 
   constructor(private sanitizer: DomSanitizer, private screenService: ScreenService) {
   }
@@ -225,13 +234,13 @@ export class GradientButtonComponent implements OnInit {
     // console.log(this.buttonDown);
   }
 
-  onClick(event) {
-    if (!this.disabled) {
-      this.buttonClick.emit(event);
-    } else {
-      return;
-    }
-  }
+  // onClick(event) {
+  //   if (!this.disabled) {
+  //     this.buttonClick.emit(event);
+  //   } else {
+  //     return;
+  //   }
+  // }
 
   onHover(hover: boolean){
     this.hovered = hover;
