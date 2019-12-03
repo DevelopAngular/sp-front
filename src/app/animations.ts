@@ -1,4 +1,9 @@
 import {animate, group, keyframes, query, state, style, transition, trigger} from '@angular/animations';
+import {ScreenService} from './services/screen.service';
+
+const screenService = new ScreenService();
+const commonAnimationSpeed = screenService.isDeviceLargeExtra ? '.23s' : '.45s';
+const subframeAnimationSpeed = screenService.isDeviceLargeExtra ? '.10s' : '.20s';
 
 export const bumpIn = trigger('pressState', [
   state('down', style({
@@ -33,7 +38,7 @@ export const Select = trigger('Select', [
 
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-    query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
+    query(`[data-motion-compress*='students']`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.24) scaleX(0.6)',
@@ -44,7 +49,7 @@ export const NextStep = trigger('NextStep', [                                   
 
       }),
     ])), {optional: true}),
-    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('.45s 0s ease', keyframes([
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
       style({
         opacity: 0,
         transform: 'scaleY(0.8) scaleX(1.65)',
@@ -74,13 +79,13 @@ export const NextStep = trigger('NextStep', [                                   
               // boxShadow: 'none',
             })
         ),
-        animate('0.20s ease-in',
+        animate(`${subframeAnimationSpeed} ease-in`,
           style({
             opacity: 0.25,
             // boxShadow: 'none',
           }),
         ),
-        animate('0.20s ease-out',
+        animate(`${subframeAnimationSpeed} ease-out`,
           style({
             opacity: 1,
             // boxShadow: 'none',
@@ -97,12 +102,12 @@ export const NextStep = trigger('NextStep', [                                   
               transform: 'translateX({{from}}px)',
             })
           ),
-          animate('0.20s ease-in', style({
+          animate(`${subframeAnimationSpeed} ease-in`, style({
               opacity: 0.25,
               transform: 'translateX({{halfFrom}}px)',
             })
           ),
-          animate('0.20s ease-out', style({
+          animate(`${subframeAnimationSpeed} ease-out`, style({
               opacity: 1,
               transform: 'translateX(0px)',
             })
@@ -112,7 +117,7 @@ export const NextStep = trigger('NextStep', [                                   
     ]), { params: { from: 100, halfFrom: 50}}
   ),
   transition(':leave', group([                                                              // :LEAVE PSEUDOSTATE
-    query(`[data-motion-compress*='students']`, animate('.45s 0s ease', keyframes([
+    query(`[data-motion-compress*='students']`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.0) scaleX(1.0)',
@@ -123,7 +128,7 @@ export const NextStep = trigger('NextStep', [                                   
         transform: 'scaleY(1.24) scaleX(0.6)',
       })
     ])), {optional: true}),
-    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate('.45s 0s ease', keyframes([
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.0) scaleX(1.0)',
@@ -154,13 +159,13 @@ export const NextStep = trigger('NextStep', [                                   
               // boxShadow: 'none',
             })
           ),
-          animate('0.20s ease-in',
+          animate(`${subframeAnimationSpeed} ease-in`,
             style({
               opacity: 0.25,
               // boxShadow: 'none',
             }),
           ),
-          animate('0.20s ease-out',
+          animate(`${subframeAnimationSpeed} ease-out`,
             style({
               opacity: 0,
               // boxShadow: 'none',
@@ -178,12 +183,12 @@ export const NextStep = trigger('NextStep', [                                   
               transform: 'translateX(0px)',
             })
           ),
-          animate('0.20s ease-in', style({
+          animate(`${subframeAnimationSpeed} ease-in`, style({
               opacity: 0.25,
               transform: 'translateX({{halfTo}}px)',
             })
           ),
-          animate('0.20s ease-out', style({
+          animate(`${subframeAnimationSpeed} ease-out`, style({
               opacity: 0,
               transform: 'translateX({{to}}px)',
             })
