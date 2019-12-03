@@ -389,9 +389,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   onBlur(event) {
-    // console.log(event);
-    // this.students = null;
-    this.blurEvent.emit(null);
+    setTimeout(() => {
+      this.blurEvent.emit(null);
+    }, 100);
   }
 
   addStudent(student: User) {

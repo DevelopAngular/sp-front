@@ -26,6 +26,7 @@ export class AppInputComponent implements OnInit, OnChanges {
     @Input() textAlign: string;
     @Input() isErrorIcon: boolean = true;
     @Input() isFocus: boolean;
+    @Input() forcedFocus: boolean;
     @Input() errorIconTop: number = 8;
     @Input() disabled: boolean = false;
 
@@ -64,11 +65,13 @@ export class AppInputComponent implements OnInit, OnChanges {
         }),
       ).subscribe();
 
-      if (this.isFocus) {
-        setTimeout(() => {
+      setTimeout(() => {
+        if (this.isFocus) {
           this.input.nativeElement.focus();
-        }, 50);
-      }
+        } else {
+          this.input.nativeElement.blur();
+        }
+      }, 50);
 
       setTimeout(() => {
             this.controlName.setValue(this.input_value);
@@ -81,7 +84,8 @@ export class AppInputComponent implements OnInit, OnChanges {
 
     ngOnChanges(sc: SimpleChanges) {
       // console.log(sc);
-      if ('isFocus' in sc && !sc.isFocus.isFirstChange() && sc.isFocus.currentValue) {
+      if ('forcedFocus' in sc && !sc.forcedFocus.isFirstChange() && sc.forcedFocus.currentValue) {
+        // debugger
         this.input.nativeElement.focus();
       }
     }
@@ -93,7 +97,7 @@ export class AppInputComponent implements OnInit, OnChanges {
       if (this.isFocus) {
         el.focus();
         this.focusEvent.emit();
-      } else {
+      } else if (!this.forcedFocus) {
         el.blur();
       }
     }

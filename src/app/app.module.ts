@@ -76,7 +76,7 @@ const appRoutes: Routes = [
   {
     path: 'school_signup',
     loadChildren: 'app/school-sign-up/school-sign-up.module#SchoolSignUpModule',
-    data: {hideScroll: true, hubspot: true, authFree: true},
+    data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: true, authFree: true},
   },
   {
     path: 'accounts_setup',

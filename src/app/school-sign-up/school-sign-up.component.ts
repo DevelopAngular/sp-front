@@ -128,40 +128,43 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       console.log(this.AuthToken);
     });
 
-    this.schoolForm = this.fb.group({
-      google_place_id: ['', Validators.required],
-      full_name: ['', Validators.required],
-      // schoolEmail: [''],
-      email: ['', {
-        validators:  [Validators.required, (v) => {
-          return  v.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(v.value.slice(v.value.indexOf('@') + 1)) ?  {invalid_email: true}  : null;
-        }],
-        // asyncValidators: [
-        //   (v) => {
-        //     return of(null);
-        //   }
-        // ]
-      }],
-      password: ['', {
-        validators: [Validators.required, Validators.min(8)]
-      }]
+    this.schoolForm = new FormGroup({
+      google_place_id: new FormControl('', Validators.required),
+      full_name: new FormControl('', Validators.required),
+      email: new FormControl('',
+        [
+        Validators.required,
+        Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+.[a-zA-Z0-9]+$'),
+        (v) => {
+          return  v.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(v.value.slice(v.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
+        }
+      ]),
+      password: new FormControl('',
+        [
+        Validators.required,
+        Validators.minLength(8)
+      ])
     });
     this.schoolForm.markAsTouched();
     this.schoolForm.valueChanges
       .pipe(
-        filter(f => !!f),
-        map((f) => {
-          return f.schoolEmail;
-        }),
-        filter(f => !!f),
+        // filter(f => !!f),
+        // map((f) => {
+        //   return f.schoolEmail;
+        // }),
+        // filter(f => !!f),
       )
       .subscribe((f) => {
-        if (f.indexOf('@') >= 0) {
-          console.log(f.slice(f.indexOf('@') + 1));
-        }
+        // if (f.indexOf('@') >= 0) {
+          console.log(f, this.schoolForm);
+        // }
     });
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        tap((s) => {
+          s.event.preventDefault();
+          // console.log(e);
+        }),
         pluck('key'),
         takeUntil(this.destroy$)
       )
@@ -192,11 +195,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
   createSchool() {
     this.pending.next(true);
-
-    console.log(this.schoolForm.value);
-    // return;
-
-
     this.gsProgress.updateProgress('create_school:start');
 
           this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
@@ -238,6 +236,13 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
           });
   }
 
+  onBlur () {
+    if (!this.pending.value) {
+      this.enterSchoolName = false;
+      // this.inputIndex = null;
+    }
+  }
+
   checkSchool(school: any) {
     if (school) {
       this.pending.next(true);
@@ -263,8 +268,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             this.school = school;
             this.schoolForm.controls.google_place_id.setValue( this.school.place_id);
             this.enterSchoolName = false;
+            this.inputIndex = 1;
           }
           this.pending.next(false);
+
         });
     } else {
       if (this.school) {
