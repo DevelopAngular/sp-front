@@ -1,7 +1,7 @@
 <div class="nav-button-wrapper"
      [style.color]="textColor"
-     (click)="doClick()"
-     (touchend)="doClick()"
+     appCrossPointerEventTarget
+     (pointerClickEvent)="doClick()"
 >
   <svg width="25px" height="25px" viewBox="0 0 150 150">
     <use [attr.xlink:href]="iconId"></use>

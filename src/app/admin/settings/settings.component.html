@@ -8,8 +8,9 @@
              (mouseenter)="hoveredProfile = true"
              (mouseleave)="hoveredProfile = false"
              appCrossPointerEventTarget
-             (pointerClickEvent)="dialogRef.close('switch')"
-
+             (pointerClickEvent)="hoveredProfile = false; dialogRef.close('switch')"
+             (pointerDownEvent)="hoveredProfile = true; dialogRef.close('switch')"
+             (pointerCancelEvent)="hoveredProfile = false"
         >
           <img class="switch-icon" [src]="getIcon('Profile Switch', null, hoveredProfile) | resolveAsset">
           <div class="option-title" [style.color]="getColor(null, hoveredProfile)">Teacher View</div>
@@ -22,8 +23,9 @@
              (mouseenter)="hoveredTheme = true"
              (mouseleave)="hoveredTheme = false"
              appCrossPointerEventTarget
-             (pointerDownEvent)="pressedTheme = true"
              (pointerClickEvent)="pressedTheme = false; darkTheme.switchTheme(); data.darkBackground = !data.darkBackground;"
+             (pointerDownEvent)="pressedTheme = true"
+             (pointerCancelEvent)="pressedTheme = false;"
         >
 
           <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Moon (White).svg' : getIcon('Moon', null, hoveredTheme) | resolveAsset">
@@ -48,7 +50,9 @@
              (mouseenter)="onHover(setting.gradient)"
              (mouseleave)="hovered = false"
              appCrossPointerEventTarget
-             (pointerClickEvent)="handleAction(setting)"
+             (pointerClickEvent)="hovered = false; handleAction(setting)"
+             (pointerDownEvent)="hovered = true"
+             (pointerCancelEvent)="hovered = false"
         >
           <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">
           <div class="setting-name"
@@ -65,7 +69,9 @@
            (mouseenter)="hoveredSignout = true"
            (mouseleave)="hoveredSignout = false"
            appCrossPointerEventTarget
-           (pointerClickEvent)="signOut()"
+           (pointerClickEvent)="hoveredSignout = false; signOut()"
+           (pointerDownEvent)="hoveredSignout = true"
+           (pointerCancelEvent)="hoveredSignout = false"
       >
         <span>Sign out</span>
       </div>
@@ -76,7 +82,7 @@
     </div>
     <div class="bottom-arrow-container"
          appCrossPointerEventTarget
-         (pointerClickEvent)="dialogRef.close(); test($event)"
+         (pointerClickEvent)="dialogRef.close()"
     >
       <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
     </div>
