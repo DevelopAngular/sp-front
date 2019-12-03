@@ -109,10 +109,12 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
                 });
         } else if (this.forKioskMode) {
-            this.locationService.getLocationsWithConfigRequest(url)
-                .subscribe(res => {
-                    this.choices = res.filter(loc => !loc.restricted);
-                });
+          const request$ = !!this.category ? this.locationService.getLocationsFromCategory(url, this.category) :
+            this.locationService.getLocationsWithConfigRequest(url);
+
+          request$.subscribe(res => {
+              this.choices = res.filter(loc => !loc.restricted);
+          });
         } else {
           const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url) :
             this.locationService.getLocationsFromCategory(url, this.category);
