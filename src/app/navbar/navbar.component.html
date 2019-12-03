@@ -86,7 +86,7 @@
 <!--        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
         <app-icon-button [@inboxAppearance] *ngIf="!isInboxClicked" [srcString]="'Inbox'" [size]="20" (clickEvent)="inboxClick()"></app-icon-button>
         <div class="inbox-icon inbox-icon-arrow" [@inboxAppearance] *ngIf="isInboxClicked">
-          <app-icon-button [srcString]="'Arrow Down'" [size]="20" (clickEvent)="inboxClick()"></app-icon-button>
+          <app-icon-button [srcString]="'Arrow Down'" [size]="20"></app-icon-button>
         </div>
 <!--        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
         <div  [@inboxAppearance] class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 && !isInboxClicked">

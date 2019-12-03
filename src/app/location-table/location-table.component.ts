@@ -128,7 +128,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             });
         }
 
-        this.isFocused = !this.isFavoriteForm;
+        this.isFocused = !this.isFavoriteForm && !(!this.forStaff && this.screenService.isDeviceLargeExtra);
     }
     if (this.type === 'location') {
       this.locationService.favoriteLocations$.subscribe((stars: any[]) => {
