@@ -1,7 +1,7 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {fromEvent, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
@@ -30,9 +30,8 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private darkTheme: DarkThemeSwitch,
-    private sanitizer: DomSanitizer
-  ) { }
-
+    private sanitizer: DomSanitizer,
+  ) {}
   get src() {
     let lightFill;
 
@@ -46,7 +45,6 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         lightFill = 'Blue-Gray';
       }
-
     }
 
     return this.darkTheme.getIcon({

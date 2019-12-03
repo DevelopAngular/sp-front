@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { bumpIn } from '../animations';
 import {ScreenService} from '../services/screen.service';
@@ -54,7 +54,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() minWidth: string = 'auto'; // > editable
   @Input() minHeight: string; // > editable
   @Input() fontSize: string = '20px'; // > editable
-  @Input() fontWeight: string = 'bold'; // > editable
+  @Input() fontWeight: string = '500'; // > editable
   @Input() leftImageWidth: string; // > editable
   @Input() leftImageHeight: string; // > editable
   @Input() cursor: string = 'pointer';
@@ -69,21 +69,20 @@ export class GradientButtonComponent implements OnInit {
   @Input() isGradient: boolean;
   @Output() buttonClick = new EventEmitter<any>();
 
+
   buttonDown = false;
   hovered: boolean = false;
 
-  constructor(private sanitizer: DomSanitizer, private screenService: ScreenService) {
-  }
+  constructor(
+    private sanitizer: DomSanitizer
+  ) {}
+
   ngOnInit(): void {
-    // console.log('Gradient ==>>>', this.gradient);
-    // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
-    //   this.size = 'small';
-    // }
+
     if (this.size && this.size !== 'editable') {
 
       this.width = 'auto';
       this.minWidth = this.width;
-
 
       switch (this.size) {
         case 'small':
@@ -92,7 +91,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '40px';
           this.minWidth = '100px';
           this.fontSize = '14px';
-          this.fontWeight = 'bold';
+          // this.fontWeight = 'bold';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';
           break;
@@ -102,7 +101,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '50px';
           this.minWidth = '100px';
           this.fontSize = '15px';
-          this.fontWeight = 'bold';
+          // this.fontWeight = 'bold';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';
 
@@ -113,7 +112,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '75px';
           this.minWidth = '120px';
           this.fontSize = '17px';
-          this.fontWeight = 'bold';
+          // this.fontWeight = 'bold';
           this.cornerRadius = '10px';
           this.padding = '0px 20px';
 
@@ -124,7 +123,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '100px';
           this.minWidth = '160px';
           this.fontSize = '22px';
-          this.fontWeight = 'bold';
+          // this.fontWeight = 'bold';
           this.cornerRadius = '12px';
           this.padding = '0px 20px';
 
@@ -209,21 +208,21 @@ export class GradientButtonComponent implements OnInit {
     }
   }
 
-  onPress(press: boolean, event) {
-    if (this.screenService.isDeviceLargeExtra) {
-      event.preventDefault();
-    }
-    if (!this.disabled) {
-      this.buttonDown = press;
-    }
-  }
+  // onPress(press: boolean, event) {
+  //   if (this.screenService.isDeviceLargeExtra) {
+  //     event.preventDefault();
+  //   }
+  //   if (!this.disabled) {
+  //     this.buttonDown = press;
+  //   }
+  // }
 
-  onTap(tap: boolean) {
-    // if(!this.disabled)
-      this.buttonDown = tap;
-
-    // console.log(this.buttonDown);
-  }
+  // onTap(tap: boolean) {
+  //   // if(!this.disabled)
+  //     this.buttonDown = tap;
+  //
+  //   // console.log(this.buttonDown);
+  // }
 
   onClick(event) {
     if (!this.disabled) {

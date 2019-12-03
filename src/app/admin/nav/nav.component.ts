@@ -188,8 +188,8 @@ export class NavComponent implements OnInit {
           this.router.navigate(['main']);
         } else if (action === 'about') {
           window.open('https://smartpass.app/about');
-        } else if (action === 'feedback') {
-          window.location.href = 'mailto:address@dmail.com';
+        } else if (action === 'wishlist') {
+          window.open('https://wishlist.smartpass.app');
         } else if (action === 'support') {
           window.open('https://www.smartpass.app/support');
         } else if (action === 'privacy') {

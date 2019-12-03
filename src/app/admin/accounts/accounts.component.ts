@@ -334,21 +334,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed()
-      .subscribe((userListReloadTrigger: any) => {
-        // if (userListReloadTrigger) {
-        //   if (data.profile.id === +this.user.id) {
-        //     this.userService.getUserRequest()
-        //       .pipe(
-        //         filter(res => !!res),
-        //         map(raw => User.fromJSON(raw))
-        //       )
-        //       .subscribe((user) => {
-        //         this.userService.userData.next(user);
-        //       });
-        //
-        //   }
-        //   this.selectedUsers = [];
-        // }
+      .pipe(
+        filter(userListReloadTrigger => !!userListReloadTrigger)
+      )
+      .subscribe(() => {
+        this.selectedUsers = [];
         this.querySubscriber$.next(this.userService.accounts.allAccounts);
       });
   }

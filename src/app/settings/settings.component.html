@@ -1,5 +1,8 @@
 <div class="settings-wrapper" (scroll)="$event.stopPropagation()"  *ngIf="data || dataSideNav" [style.background-color]="darkTheme.getBackground('high', true)">
-  <div class="top-arrow-container" (click)="dialogRef.close()">
+  <div class="top-arrow-container"
+       appCrossPointerEventTarget
+       (pointerClickEvent)="dialogRef.close()"
+  >
     <div class="top-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
   </div>
   <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
@@ -9,7 +12,12 @@
            (mouseenter)="hoveredMasterOption = true"
            (mouseleave)="hoveredMasterOption = false"
            [style.background-color]="hoveredMasterOption ? 'rgb(228, 235, 255)' : 'transparent'"
-           (click)="signOutAction()">
+           appCrossPointerEventTarget
+           (pointerClickEvent)="hoveredMasterOption = false; signOutAction()"
+           (pointerDownEvent)="hoveredMasterOption = true"
+           (pointerCancelEvent)="hoveredMasterOption = false;"
+
+      >
         <img class="switch-icon" [src]="getIcon('Tablet', null,  hoveredMasterOption) | resolveAsset">
         <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Exit Kiosk Mode</div>
         <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredMasterOption) | resolveAsset">
@@ -23,7 +31,12 @@
            (mouseenter)="hoveredMasterOption = true"
            (mouseleave)="hoveredMasterOption = false"
            [style.background-color]="hoveredMasterOption ? 'rgb(228, 235, 255)' : 'transparent'"
-           (click)="switchAction()">
+           appCrossPointerEventTarget
+           (pointerClickEvent)="hoveredMasterOption = false; switchAction()"
+           (pointerDownEvent)="hoveredMasterOption = true"
+           (pointerCancelEvent)="hoveredMasterOption = false;"
+
+      >
         <img class="switch-icon" [src]="getIcon('Profile Switch', null,  hoveredMasterOption) | resolveAsset">
         <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Admin View</div>
         <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredMasterOption) | resolveAsset">
@@ -35,7 +48,10 @@
     <div class="setting" *ngFor="let setting of settings; let i = index">
       <div *ngIf="!setting.hidden">
         <div class="content"
-             (click)="handleAction(setting);"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="handleAction(setting); hovered = false"
+             (pointerDownEvent)="onHover(setting.gradient)"
+             (pointerCancelEvent)="hovered = false;"
              (mouseenter)="onHover(setting.gradient)"
              (mouseleave)="hovered = false"
              [style.background]="hovered && hoveredColor === setting.gradient ?
@@ -60,10 +76,21 @@
          [style.color]="getColor(null, hoveredSignout)"
          (mouseenter)="hoveredSignout = true"
          (mouseleave)="hoveredSignout = false"
-         (click)="signOutAction()">Sign out</div>
+
+         appCrossPointerEventTarget
+         (pointerClickEvent)="hoveredSignout = false; signOutAction()"
+         (pointerDownEvent)="hoveredSignout = true"
+         (pointerCancelEvent)="hoveredSignout = false;"
+    >Sign out</div>
     <div class="options" [style.color]="getColor(null, null)">
-      <span class="privacy" (click)="dialogRef.close('privacy')">Privacy</span>
-      <span class="privacy" (click)="dialogRef.close('terms')">Terms</span>
+      <span class="privacy"
+            appCrossPointerEventTarget
+            (pointerClickEvent)="dialogRef.close('privacy')"
+      >Privacy</span>
+      <span class="privacy"
+            appCrossPointerEventTarget
+            (pointerClickEvent)="dialogRef.close('terms')"
+      >Terms</span>
     </div>
   </div>
 </div>

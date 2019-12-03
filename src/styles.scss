@@ -9,6 +9,8 @@ html {
   background-color: #FCFDFF;
   padding: 0 0;
   overscroll-behavior: contain;
+  right: 0;
+  left: 0;
 }
 
 body {
@@ -17,12 +19,14 @@ body {
   font-family: $primaryFont;
   width: 100%;
   min-height: 100vh;
-
   // IOS PWA styles
   -webkit-overflow-scrolling: touch;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  input, textarea, select > option {
+    font-family: inherit;
+  }
 }
 
 .filter-shadow {
