@@ -51,10 +51,7 @@
   <div class="content" *ngIf="!state" #rc>
     <div class="content_top">
       <div class="content_top-header">
-        <span class="ds-dialog-heading">Account Type</span>
-        <span class="ds-mt-5 ds-blue-gray">
-          Learn more <span class="ds-link-text"> here</span>.
-        </span>
+        <span class="ds-dialog-heading" style="padding-bottom: 0">Account Type</span>
       </div>
       <div class="content_top-body">
 
@@ -95,7 +92,7 @@
 
         <div style="width: 238px">
           <app-input
-            [input_label]="'Full Name'"
+            [input_label]="'Full name'"
             [controlName]="newAlternativeAccount.get('name')"
             [formGroup]="newAlternativeAccount"
             [input_value]="newAlternativeAccount.get('name').value"
@@ -110,7 +107,7 @@
             <div style="padding-bottom: 0px;">
 
               <app-input
-                [input_label]="'Username or Email'"
+                [input_label]="'Email or username'"
                 [controlName]="newAlternativeAccount.get('username')"
                 [formGroup]="newAlternativeAccount"
                 [input_value]="newAlternativeAccount.get('username').value"

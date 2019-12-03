@@ -108,7 +108,9 @@ export class RoundInputComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.handleError();
     if (this.focused) {
-      this.input.nativeElement.focus();
+      setTimeout(() => {
+        this.input.nativeElement.focus();
+      }, 100);
     }
 
     if (this.selfSearch) {

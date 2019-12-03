@@ -178,14 +178,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    const obs = new Observable(function(v) {
-      v.next(1);
-    })
-
-    obs.subscribe((v) => {
-      console.log(v);
-    })
-
     this.querySubscriber$.pipe(
       mergeAll(),
       takeUntil(this.destroy$))
