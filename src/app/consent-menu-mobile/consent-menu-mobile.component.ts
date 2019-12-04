@@ -59,6 +59,7 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewI
     this.domChecker.domElement$
       .pipe(takeUntil(this.destroyer$))
       .subscribe((menuElement: ElementRef<HTMLElement>) => {
+        // debugger
         if (this.isIOS) {
           this.backDropContainer = menuElement.nativeElement.closest('mat-sidenav-container');
           this.createIOSBackdrop(this.backDropContainer);

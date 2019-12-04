@@ -256,6 +256,11 @@ textarea:focus {
   background: rgba(255, 255, 255, 0.5);
 }
 
+.pwa-backdrop {
+  background-color: rgba(0, 0, 0, .10);
+
+}
+
 .custom-bd {
   background-image: linear-gradient(to right, transparent 219px,rgba(0, 0, 0, 0.3) 0);
 }

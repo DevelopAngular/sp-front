@@ -352,6 +352,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest(evt: MouseEvent) {
+    debugger
     if (this.screenService.isDeviceMid) {
       this.cancelEditClick = !this.cancelEditClick;
     }
