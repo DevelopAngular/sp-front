@@ -174,6 +174,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     });
   }
 
+  onStart(value) {
+    if (value) {
+    debugger;
+    } else {
+    debugger;
+    }
+  }
+
 
   onSearch(search: string) {
     this.search = search.toLowerCase();
