@@ -1,5 +1,5 @@
 <ng-container *ngIf="userLoaded">
-  <div [ngClass]="isIOSTablet ? 'ios-my-room-options-mobile-wrapper' : 'my-room-options-mobile-wrapper'"  [style.background-color]="darkTheme.getBackground('default', false)">
+  <div [ngClass]="isIOSTablet ? 'ios-my-room-options-mobile-wrapper' : 'my-room-options-mobile-wrapper'"  [style.background-color]="darkTheme.getBackground('low', false)">
     <div [ngClass]="isIOSTablet ? 'ios-my-room-options-mobile' : 'my-room-options-mobile' ">
       <div class="option-wrapper">
         <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"></app-icon-button>
