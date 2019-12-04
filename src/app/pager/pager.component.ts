@@ -26,6 +26,7 @@ export class PagerComponent implements OnInit, AfterViewInit {
   @Input() pages = 2;
 
   @Input() arrowPosition: string = '-27px';
+  @Input() isStaff: boolean;
 
   hideRightButton = new BehaviorSubject(false);
   hideLeftButton = new BehaviorSubject(true);
