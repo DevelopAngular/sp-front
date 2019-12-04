@@ -7,7 +7,7 @@
         <div class="ds-dialog-title-white">Favorites</div>
       </div>
     </div>
-    <div class="content">
+    <div class="content" [ngStyle]="{ 'overflow': (overflow$ | async) }">
       <app-location-table class="locations"
                           [rightHeaderText]="true"
                           [isEdit]="true"
