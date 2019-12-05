@@ -21,7 +21,7 @@ export class TravelViewComponent implements OnInit {
   @Input() pass: HallPass | Invitation | Request;
   @Input() shrink: boolean = false;
   @Input() forStaff: boolean = false;
-  @Input() height: string = this.screenService.isDeviceLargeExtra ? '185px' : '217px';
+  @Input() height: string = '217px';
 
   @Output() locationSelected: EventEmitter<any> = new EventEmitter();
   isSeen$: BehaviorSubject<boolean>;

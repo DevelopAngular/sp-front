@@ -22,7 +22,7 @@
       .frame {
         transform: translateX(0px);
         display: flex;
-        animation: moving 25s cubic-bezier(0, 0, 0, 0) infinite;
+        animation: moving 75s cubic-bezier(0, 0, 0, 0) infinite;
       }
       @keyframes moving {
         0% {
@@ -55,6 +55,7 @@
       color: $blue-gray;
       position: relative;
       z-index: auto;
+      overflow: auto;
       .logo {
         @extend .ds-flex-start-end;
         @extend .ds-h-100;
@@ -63,10 +64,13 @@
         z-index: 1;
         flex: 1 1 auto;
         box-shadow: 0px 0px 45px 55px #FBFEFF;
-        margin: 30px 0px 0px 30px;
+        //margin: 30px 0px 0px 30px;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
+        &__sticky-inner {
+          margin: 30px 0px 0px 30px;
+        }
       }
       .sides-container {
         flex: 1 1 auto;
@@ -109,8 +113,7 @@
         white-space: nowrap;
       }
       &_sub-title {
-        -ms-text-align-last: right;
-        text-align-last: right;
+        text-align: left;
       }
       .school-input {
         display: flex;
@@ -144,8 +147,8 @@
           border-radius: 50px;
           background-color: #F7F7F7;
           margin-top: 10px;
-          white-space: nowrap;
-          text-overflow: ellipsis;
+          padding-right: 15px;
+          box-sizing: border-box;
           img:first-of-type {
             margin: 0px 10px 0px 17px;
           }
@@ -173,6 +176,7 @@
         top: -20px;
         position: relative;
         z-index: 1;
+        padding-bottom: 50px;
       }
     }
 
@@ -183,6 +187,12 @@
       .school-signin {
         //justify-content: flex-end;
         //flex-direction: column;
+        .logo {
+          &__sticky-inner {
+            position: absolute;
+            left: 0px;
+          }
+        }
       }
     }
     @media all and (max-width: 1024px) {
@@ -191,6 +201,7 @@
       }
       .school-signin {
         .logo {
+          box-shadow: none;
           flex: 0;
           height: auto;
           position: absolute;

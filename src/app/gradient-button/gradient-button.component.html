@@ -9,13 +9,17 @@
      [style.opacity]="hovered && !buttonDown && !disabled ? 0.85 : (buttonDown && !disabled ? 0.7 : (disabled ? 0.5 : 1))"
      [style.cursor]="cursor"
      [style.border-radius]="cornerRadius"
-     (pointerenter)="onHover(true)" (pointerleave)="onHover(false)"
-     (pointerdFown)="onPress(true, $event); onTap(true)"
-     (touchmove)="button.preventClick = true"
-     (pointerup)="onPress(false, $event); buttonDown = false; hovered = false; onTap(false); !button.preventClick ? onClick($event) : button.preventClick = false"
+
+     (mouseenter)="onHover(true)"
+     (mouseleave)="onHover(false)"
+
+     appCrossPointerEventTarget
+     (pointerDownEvent)="buttonDown = true"
+     (pointerCancelEvent)="buttonDown = false"
+     (pointerClickEvent)="buttonDown = false; hovered = false; onClick($event)"
+
      [@pressState]="buttonState"
-     [ngClass]="{'center': !(leftIcon || rightIcon), 'disabled': disabled}" #button>
-    <!--<span style="position: absolute; top: 0; left: 3px; font-size: 10px;">{{size}}</span>-->
+     [ngClass]="{'center': !(leftIcon || rightIcon), 'disabled': disabled}">
   <div *ngIf="!buttonLink" class="wrapper-container" [style.width]="textWidth" [style.padding]="padding">
     <div class="wrapper">
       <img draggable="false" *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">

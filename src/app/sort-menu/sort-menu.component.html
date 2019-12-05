@@ -4,22 +4,24 @@
   </header>
   <ul class="sort-menu-options">
     <li *ngIf="showAllRooms"
-      (click)="selectSortOption(null)"
+        [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
+        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})"
+        appCrossPointerEventTarget
+        (pointerClickEvent)="changeColor(false, $event); selectSortOption(null)"
+        (pointerDownEvent)="changeColor(true, $event)"
         #_all
-        (touchstart)="changeColor(true, $event)"
-        (touchend)="changeColor(false, $event)"
-      [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
-      [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
+    >
     All Rooms
       <img *ngIf="!selectedItem" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
     </li>
     <li *ngFor="let item of items; let i = index"
-        (click)="selectSortOption(item)"
-        #_item
-        (touchstart)="changeColor(true, $event)"
-        (touchend)="changeColor(false, $event)"
         [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
-        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
+        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})"
+        appCrossPointerEventTarget
+        (pointerClickEvent)="changeColor(false, $event); selectSortOption(item)"
+        (pointerDownEvent)="changeColor(true, $event)"
+        #_item
+    >
       {{ item.title }}
       <img *ngIf="selectedItem && item.id === selectedItem.id" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
     </li>

@@ -196,7 +196,8 @@ export class InvitationCardComponent implements OnInit {
             this.dateEditOpen = true;
         });
 
-        dateDialog.afterClosed().pipe(filter(() => resend_request && this.forStaff),
+        dateDialog.afterClosed().pipe(
+          filter((res) => res.data.date && resend_request && this.forStaff),
             switchMap((state) => {
                 const body = {
                     'students' : this.invitation.student.id,
@@ -226,38 +227,6 @@ export class InvitationCardComponent implements OnInit {
             this.formState.previousStep = 4;
             this.createFormService.setFrameMotionDirection('disable');
             this.cardEvent.emit(this.formState);
-        } else {
-          this.dialogRef.close();
-          const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-          const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-              width: '750px',
-              panelClass: 'form-dialog-container',
-              backdropClass: 'custom-backdrop',
-              data: {
-                  'toIcon': isCategory ? this.invitation.icon : null,
-                  'toProfile': this.invitation.color_profile,
-                  'toCategory': isCategory ? this.invitation.destination.category : null,
-                  'fromLocation': this.selectedOrigin,
-                  'fromHistory': this.fromHistory,
-                  'fromHistoryIndex': this.fromHistoryIndex,
-                  'colorProfile': this.invitation.color_profile,
-                  'forLater': this.forFuture,
-                  'forStaff': this.forStaff,
-                  'selectedStudents': this.selectedStudents || true,
-                  'requestTime': this.invitation.date_choices[0]
-              }
-          });
-          dialogRef.afterClosed().pipe(filter(res => !!res))
-              .subscribe((result: Object) => {
-                  this.openInputCard(result['templatePass'],
-                      result['forLater'],
-                      result['forStaff'],
-                      result['selectedStudents'],
-                      (result['type'] === 'invitation' ? InvitationCardComponent : RequestCardComponent),
-                      result['fromHistory'],
-                      result['fromHistoryIndex']
-                  );
-              });
         }
           return false;
       } else if (!this.forStaff) {
@@ -324,24 +293,24 @@ export class InvitationCardComponent implements OnInit {
     return {display: display, color: color, action: action}
   }
 
-    openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-        const data = {
-            'pass': templatePass,
-            'fromPast': false,
-            'fromHistory': fromHistory,
-            'fromHistoryIndex': fromHistoryIndex,
-            'forFuture': forLater,
-            'forInput': true,
-            'forStaff': forStaff,
-            'selectedStudents': selectedStudents,
-        };
-        this.dialog.open(component, {
-            panelClass: (forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-            backdropClass: 'custom-backdrop',
-            disableClose: true,
-            data: data
-        });
-    }
+    // openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
+    //     const data = {
+    //         'pass': templatePass,
+    //         'fromPast': false,
+    //         'fromHistory': fromHistory,
+    //         'fromHistoryIndex': fromHistoryIndex,
+    //         'forFuture': forLater,
+    //         'forInput': true,
+    //         'forStaff': forStaff,
+    //         'selectedStudents': selectedStudents,
+    //     };
+    //     this.dialog.open(component, {
+    //         panelClass: (forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
+    //         backdropClass: 'custom-backdrop',
+    //         disableClose: true,
+    //         data: data
+    //     });
+    // }
 
   cancelClick() {
     this.cancelEditClick = false;

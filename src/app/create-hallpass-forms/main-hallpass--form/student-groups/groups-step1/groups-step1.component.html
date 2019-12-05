@@ -39,11 +39,9 @@
                 >
                   <mat-list-item
                     class="group"
-                    (click)="selectGroup(group, $event)"
-                    (touchstart)="_item.hovered = true"
-                    (touchend)="_item.hovered = false"
-                    (mouseenter)="_item.hovered = true"
-                    (mouseleave)="_item.hovered = false"
+                    appCrossPointerEventTarget
+                    (pointerDownEvent)="_item.hovered = true"
+                    (pointerClickEvent)="_item.hovered = false; selectGroup(group, $event)"
                     (mousedown)="_item.pressed = true"
                     (mouseup)="_item.pressed = false"
                     [style.background-color]="getBackground(_item, group)"

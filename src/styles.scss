@@ -9,6 +9,8 @@ html {
   background-color: #FCFDFF;
   padding: 0 0;
   overscroll-behavior: contain;
+  right: 0;
+  left: 0;
 }
 
 body {
@@ -252,6 +254,11 @@ textarea:focus {
 
 .white-backdrop {
   background: rgba(255, 255, 255, 0.5);
+}
+
+.pwa-backdrop {
+  background-color: rgba(0, 0, 0, .10);
+
 }
 
 .custom-bd {
