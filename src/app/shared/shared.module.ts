@@ -49,7 +49,6 @@ import {GoogleSigninComponent} from '../google-signin/google-signin.component';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {IntroComponent} from '../intro/intro.component';
 import {SortMenuComponent} from '../sort-menu/sort-menu.component';
-import {NextReleaseComponent} from '../next-release/next-release.component';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {CoreModule} from '../core/core.module';
 import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
@@ -115,7 +114,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroDialogComponent,
     IntroComponent,
     SortMenuComponent,
-    NextReleaseComponent,
     SignedOutToastComponent,
     ConsentMenuMobileComponent,
     PrivacyCardComponent,
@@ -129,7 +127,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConsentMenuComponent,
     IntroDialogComponent,
     SortMenuComponent,
-    NextReleaseComponent,
     SignedOutToastComponent,
     ConsentMenuMobileComponent
   ],

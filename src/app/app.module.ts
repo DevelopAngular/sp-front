@@ -117,7 +117,10 @@ const appRoutes: Routes = [
     path: 'error',
     loadChildren: 'app/error/error.module#ErrorModule'
   },
-
+  {
+    path: 'dev',
+    loadChildren: 'app/development/development.module#DevelopmentModule',
+  },
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
 

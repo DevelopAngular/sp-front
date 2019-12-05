@@ -8,6 +8,7 @@ import {ToastConnectionComponent} from '../toast-connection/toast-connection.com
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {ScrollHolderDirective} from '../scroll-holder.directive';
 import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.directive';
+import {NextReleaseComponent} from '../next-release/next-release.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.di
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
-    CrossPointerEventTargetDirective
+    CrossPointerEventTargetDirective,
+    NextReleaseComponent
   ],
   imports: [
     CommonModule,
@@ -29,12 +31,15 @@ import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.di
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
-    CrossPointerEventTargetDirective
+    CrossPointerEventTargetDirective,
+    NextReleaseComponent
+
   ],
   entryComponents: [
     ErrorToastComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    NextReleaseComponent
   ],
 })
 export class CoreModule { }

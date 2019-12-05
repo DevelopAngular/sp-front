@@ -25,6 +25,7 @@ import {NotificationService} from './services/notification-service';
 import {GoogleAnalyticsService} from './services/google-analytics.service';
 import {ShortcutInput} from 'ng-keyboard-shortcuts';
 import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
+import {NextReleaseComponent} from './next-release/next-release.component';
 
 declare const window;
 
@@ -97,6 +98,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    this.dialog.open(NextReleaseComponent, {
+      panelClass: 'main-form-dialog-container',
+      data: {
+        isStudent: false,
+        isTeacher: true,
+      }
+    })
     // this.storageService.removeItem('refresh_token');
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
