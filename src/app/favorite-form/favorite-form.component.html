@@ -7,22 +7,24 @@
         <div class="ds-dialog-title-white">Favorites</div>
       </div>
     </div>
-    <div class="content" [ngStyle]="{ 'overflow': (overflow$ | async) }">
-      <app-location-table class="locations"
-                          [rightHeaderText]="true"
-                          [isEdit]="true"
-                          (onStar)="onStar($event)"
-                          [showFavorites]="true"
-                          (onUpdate)="starChangesIds = $event"
-                          [type]="'location'"
-                          [allowOnStar]="true"
-                          [placeholder]="'Search rooms'"
-                          [isFavoriteForm]="true"
-                          [searchExceptFavourites]="true"
-                          [showStars]="true">
-      </app-location-table>
-      <div class="bottom-shadow-hint"></div>
-    </div>
+<!--    <div class="content-wrapper" style="height: 100%; overflow: hidden; position: relative">-->
+      <div class="content" [style.overflow]="(overflow$ | async) ? 'auto' : 'hidden'">
+        <app-location-table class="locations"
+                            [rightHeaderText]="true"
+                            [isEdit]="true"
+                            (onStar)="onStar($event)"
+                            [showFavorites]="true"
+                            (onUpdate)="starChangesIds = $event"
+                            [type]="'location'"
+                            [allowOnStar]="true"
+                            [placeholder]="'Search rooms'"
+                            [isFavoriteForm]="true"
+                            [searchExceptFavourites]="true"
+                            [showStars]="true">
+        </app-location-table>
+        <div class="bottom-shadow-hint"></div>
+      </div>
+<!--    </div>-->
   </div>
 
 <div [ngClass]="isIOSTablet ? 'ios-back-button-wrapper' : 'back-button-wrapper'" (click)="back()">

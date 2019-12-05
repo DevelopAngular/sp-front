@@ -1,9 +1,11 @@
 import {animate, group, keyframes, query, state, style, transition, trigger} from '@angular/animations';
-import {ScreenService} from './services/screen.service';
+import {DeviceDetection} from './device-detection.helper';
 
-const screenService = new ScreenService();
-const commonAnimationSpeed = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) <= 1024 ? '2.23s' : '2.45s';
-const subframeAnimationSpeed = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) <= 1024 ? '2.10s' : '2.20s';
+const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+// const breakPoint = DeviceDetection.isIOSTablet() ? 1024 : 940;
+const isDeviceLargeExtra = windowWidth <= 940;
+const commonAnimationSpeed = isDeviceLargeExtra ? '.23s' : '.45s';
+const subframeAnimationSpeed = isDeviceLargeExtra ? '.10s' : '.20s';
 
 export const bumpIn = trigger('pressState', [
   state('down', style({
@@ -60,7 +62,7 @@ export const NextStep = trigger('NextStep', [                                   
 
       }),
     ])), {optional: true}),
-    query(`[data-motion-scale=true]`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
+    query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
         style({
           opacity: 0,
           transform: 'scale(1.2)',
@@ -138,7 +140,7 @@ export const NextStep = trigger('NextStep', [                                   
         transform: 'scaleY(0.8) scaleX(1.65)',
       }),
     ])), {optional: true}),
-    query(`[data-motion-scale=true]`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
+    query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'scale(1)',
