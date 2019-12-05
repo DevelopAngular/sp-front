@@ -65,11 +65,11 @@ feature_testing:
     AUTO_DEVOPS_DOMAIN: "smartpass-feature.lavanote.com"
     IMAGE_TAG_SUFFIX: "feature-testing"
   environment:
-    name: feature-testign
+    name: feature-testing
     url: "https://smartpass-feature.lavanote.com"
   only:
     refs:
-      - "feat/*"
+      - /^feat\/.*$/
     kubernetes: active
   tags:
     - "docker-passthrough"

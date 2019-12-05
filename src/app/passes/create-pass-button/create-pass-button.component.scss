@@ -4,6 +4,13 @@
     height: 95px;
   }
 }
+@media all and (max-width: 940px) {
+  div.button-wrapper {
+    .title {
+      font-size: 20px;
+    }
+  }
+}
 
 .button-wrapper{
   width: 143px;

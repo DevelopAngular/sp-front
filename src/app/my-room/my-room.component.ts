@@ -457,6 +457,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   showOptions(target: HTMLElement) {
+    // debugger
     this.optionsClick = !this.optionsClick;
     if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
       this.openOptionsMenu();
@@ -486,6 +487,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   openOptionsMenu() {
+    // debugger
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: {bottom: '0'},
         panelClass: 'options-dialog',
