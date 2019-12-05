@@ -1,12 +1,12 @@
 <div class="scaled-card" [attr.data-motion-scale]=true style="display: flex; justify-content: center">
 
-  <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
+  <div [style.height]="forStaff ? '451px' : '412px'"
        [style.width]="'334px'"
        *ngIf="FORM_STATE.formMode.formFactor === states.HallPass && template">
     <!--HAL-->
     <app-pass-card
       [pass]="template"
-      [forStaff]="FORM_STATE.formMode.role === 1 && !dialogData.kioskModeRoom"
+      [forStaff]="forStaff && !dialogData.kioskModeRoom"
       [forInput]="true"
       [forKioskMode]="!!dialogData.kioskModeRoom"
       [formState]="FORM_STATE"
@@ -21,7 +21,7 @@
     <!--REQ {{FORM_STATE.formMode.formFactor}} | {{states.Request}}-->
     <app-request-card
       [request]="template"
-      [forStaff]="FORM_STATE.formMode.role === 1"
+      [forStaff]="forStaff"
       [forInput]="true"
       [formState]="FORM_STATE"
       [forFuture]="FORM_STATE.data.date ? true : false"
@@ -29,13 +29,13 @@
     ></app-request-card>
   </div>
 
-  <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
+  <div [style.height]="forStaff ? '451px' : '412px'"
        [style.width]="'334px'"
        *ngIf="FORM_STATE.formMode.formFactor === states.Invitation && template">
     <!--INV-->
     <app-invitation-card
       [invitation]="template"
-      [forStaff]="FORM_STATE.formMode.role === 1"
+      [forStaff]="forStaff"
       [forInput]="true"
       [formState]="FORM_STATE"
       [forFuture]="FORM_STATE.data.date ? true : false"
