@@ -1,9 +1,11 @@
 import {animate, group, keyframes, query, state, style, transition, trigger} from '@angular/animations';
-import {ScreenService} from './services/screen.service';
+import {DeviceDetection} from './device-detection.helper';
 
-const screenService = new ScreenService();
-const commonAnimationSpeed = screenService.isDeviceLargeExtra ? '.23s' : '.45s';
-const subframeAnimationSpeed = screenService.isDeviceLargeExtra ? '.10s' : '.20s';
+const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+// const breakPoint = DeviceDetection.isIOSTablet() ? 1024 : 940;
+const isDeviceLargeExtra = windowWidth <= 940;
+const commonAnimationSpeed = isDeviceLargeExtra ? '.23s' : '.45s';
+const subframeAnimationSpeed = isDeviceLargeExtra ? '.10s' : '.20s';
 
 export const bumpIn = trigger('pressState', [
   state('down', style({
