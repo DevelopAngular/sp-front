@@ -10,7 +10,8 @@ export class School extends BaseModel {
         public earliest_pass_time?: string,
         public gsuite_config?: any,
         public gsuite_hosted_domain?: string,
-        public latest_pass_time?: string
+        public latest_pass_time?: string,
+        public launch_date?: string
     ) {
         super();
     }
@@ -29,7 +30,8 @@ export class School extends BaseModel {
             earliest_pass_time: string = JSON['earliest_pass_time'],
             gsuite_config: any = JSON['gsuite_config'],
             gsuite_hosted_domain: string = JSON['gsuite_hosted_domain'],
-            latest_pass_time: string = JSON['latest_pass_time'];
+            latest_pass_time: string = JSON['latest_pass_time'],
+            launch_date: string = JSON['launch_date'];
 
         return new School(
             display_card_room,
@@ -38,7 +40,8 @@ export class School extends BaseModel {
             earliest_pass_time,
             gsuite_config,
             gsuite_hosted_domain,
-            latest_pass_time
+            latest_pass_time,
+            launch_date
         );
     }
 }

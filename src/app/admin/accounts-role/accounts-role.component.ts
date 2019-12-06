@@ -602,11 +602,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
     if (this.role === '_profile_admin') {
-      if ((evt.id === +this.user.id)) {
-        this.profilePermissions['access_user_config'].disabled = true;
-      } else {
-        this.profilePermissions['access_user_config'].disabled = false;
-      }
+      this.profilePermissions['access_user_config'].disabled = evt.id === +this.user.id;
     }
     const profileTitle =
       this.role === '_profile_admin' ? 'administrator' :

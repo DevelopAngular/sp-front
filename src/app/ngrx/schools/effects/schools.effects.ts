@@ -5,6 +5,7 @@ import * as schoolsActions from '../actions';
 import { catchError, concatMap, map } from 'rxjs/operators';
 import { School } from '../../../models/School';
 import { of } from 'rxjs';
+import {AdminService} from '../../../services/admin.service';
 
 @Injectable()
 export class SchoolsEffects {
@@ -24,8 +25,29 @@ export class SchoolsEffects {
     );
   });
 
+  patchSchool$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateSchool),
+        concatMap((action: any) => {
+          return this.adminService.updateSchoolSettings(action.school.id, action.fields)
+            .pipe(
+              map((school: any) => {
+                const updatedSchool = {
+                  ...action.school,
+                  ...action.fields
+                };
+                return schoolsActions.updateSchoolSuccess({school: updatedSchool});
+              }),
+              catchError(error => of(schoolsActions.updateSchoolFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
-    private http: HttpService
+    private http: HttpService,
+    private adminService: AdminService
   ) {}
 }

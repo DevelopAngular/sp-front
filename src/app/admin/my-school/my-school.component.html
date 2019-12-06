@@ -11,7 +11,7 @@
           <div class="selected-date">
             <div class="label" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Set a launch day</div>
 
-            <app-date-chip [selectedDate]="selectedDate" (dateEmit)="selected($event)"></app-date-chip>
+            <app-date-chip [selectedDate]="selectedDate" (dateEmit)="selectedDate = $event"></app-date-chip>
 
           </div>
 
@@ -46,7 +46,7 @@
       <div class="header-container">
         <div class="header-wrapper">
           <div class="school-header" [style.background-color]="darkTheme.getBackground('high', true)">
-            <div class="school-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ (currentSchool$ | async).name }}</div>
+            <div class="school-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ currentSchool.name }}</div>
             <app-gradient-button
               [cursor]="'pointer'"
               (buttonClick)="openSettings()"
@@ -86,9 +86,9 @@
         <div class="right-block">
           <div class="start-day" *ngIf="!isLaunched; else launched">
             <div class="start-day-content">
-              <div class="start-day-header">{{ selectedDate ? (countLaunchDay === 0 ? 'Launch tomorrow': countLaunchDay + ' days until launch') : 'Set a launch day'}}</div>
+              <div class="start-day-header">{{ launchDay ? (countLaunchDay === 0 ? 'Launch tomorrow': countLaunchDay + ' days until launch') : 'Set a launch day'}}</div>
               <div class="start-day-info">The day your school will start using SmartPass. Students won’t be able to sign in until launch day, but staff can!</div>
-              <app-date-chip [selectedDate]="selectedDate" (dateEmit)="selected($event)"></app-date-chip>
+              <app-date-chip [selectedDate]="launchDay" (dateEmit)="selected($event)"></app-date-chip>
             </div>
             <div class="image">
               <img width="244" height="155" [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My-School">
@@ -99,7 +99,7 @@
             <div class="start-day">
               <div class="start-day-content">
                 <div class="start-day-header">Launched!</div>
-                <div class="start-day-info" [style.width]="'200px'">Launch day: {{ selectedDate.format('MMMM DD, YYYY') }}</div>
+                <div class="start-day-info" [style.width]="'200px'">Launch day: {{ launchDay.format('MMMM DD, YYYY') }}</div>
               </div>
               <div class="image-launched">
                 <img [src]="'./assets/admin-images/Launched.svg' | resolveAsset" alt="My-School">

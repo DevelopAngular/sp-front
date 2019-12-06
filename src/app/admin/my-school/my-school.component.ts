@@ -4,7 +4,7 @@ import {HttpService} from '../../services/http-service';
 import {Observable, of, Subject} from 'rxjs';
 import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
-import {filter, map, mapTo, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SchoolSettingsComponent} from './school-settings/school-settings.component';
 
@@ -21,7 +21,7 @@ declare const window;
 })
 export class MySchoolComponent implements OnInit, OnDestroy {
 
-  currentSchool$: Observable<School>;
+  currentSchool: School;
 
   selectedDate: moment.Moment;
 
@@ -38,6 +38,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
 
   openSchoolPage: boolean;
   updateProgress$: Subject<boolean> = new Subject<boolean>();
+  updateLaunchDate$: Subject<boolean> = new Subject<boolean>();
+  launchDay: moment.Moment;
   countLaunchDay: number;
   loaded: boolean;
 
@@ -55,7 +57,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.currentSchool$ = this.http.currentSchool$;
+    this.currentSchool = this.http.currentSchoolSubject.value;
+    this.buildLaunchDay();
     this.process$ = this.adminService.onboardProcessData$;
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
@@ -65,7 +68,7 @@ export class MySchoolComponent implements OnInit, OnDestroy {
         const start = res.find(setting => setting.name === 'launch_day_prep:start');
         const end = res.find(setting => setting.name === 'launch_day_prep:end');
         if (!start.done) {
-          return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(false));
+          return this.adminService.updateOnboardProgress(start.name);
         } else if (!!start.done && !!end.done) {
           this.openSchoolPage = true;
           return of(true);
@@ -77,21 +80,39 @@ export class MySchoolComponent implements OnInit, OnDestroy {
         this.loaded = true;
     });
 
-      this.updateProgress$
-        .pipe(
-          filter(res => !!res),
-          switchMap(isOpen => {
-            return this.process$;
-          }),
-          switchMap((res: any[]) => {
-            const end = res.find(setting => setting.name === 'launch_day_prep:end');
-            if (!end.done) {
-              return this.adminService.updateOnboardProgress(end.name);
-            } else {
-              return of(null);
-            }
-          })
-        ).subscribe();
+    this.updateProgress$
+      .pipe(
+        filter(res => !!res),
+        switchMap(isOpen => {
+          return this.process$;
+        }),
+        switchMap((res: any[]) => {
+          const end = res.find(setting => setting.name === 'launch_day_prep:end');
+          if (!end.done) {
+            return this.adminService.updateOnboardProgress(end.name);
+          } else {
+            return of(null);
+          }
+        })
+      ).subscribe();
+
+    this.updateLaunchDate$
+      .pipe(
+        switchMap(() => {
+          return this.adminService.updateSchoolSettingsRequest(this.currentSchool, {launch_date: this.selectedDate.toISOString()});
+        }),
+        filter(res => !!res)
+      )
+      .subscribe(res => {
+      this.http.currentSchoolSubject.next(res);
+      this.buildLaunchDay();
+      this.updateProgress$.next(true);
+    });
+  }
+
+  buildLaunchDay() {
+    this.launchDay = moment(this.currentSchool.launch_date);
+    this.countLaunchDay = this.launchDay.diff(moment(), 'days');
   }
 
   ngOnDestroy(): void {
@@ -101,20 +122,12 @@ export class MySchoolComponent implements OnInit, OnDestroy {
 
   selected(date) {
     this.selectedDate = date;
-    this.countLaunchDay = this.selectedDate.diff(moment(), 'days');
+    this.updateLaunchDate$.next(true);
   }
 
   saveRequest() {
     this.openSchoolPage = true;
-    // this.currentSchool$
-    //   .pipe(
-    //     switchMap(school => {
-    //       return this.adminService.updateSchoolSettings(school.id, { launch_date: this.selectedDate.toISOString()});
-    //     })
-    //   ).subscribe(res => {
-    //     debugger;
-    //   });
-    this.updateProgress$.next(true);
+    this.updateLaunchDate$.next(true);
   }
 
   redirect(button) {
