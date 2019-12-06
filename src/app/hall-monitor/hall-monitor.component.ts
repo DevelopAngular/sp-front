@@ -225,10 +225,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-backdrop',
     });
 
-
-    dialogRef.backdropClick().subscribe(() => {
-      alert('backdrop');
-    })
     dialogRef.afterClosed().pipe(
       filter(res => !!res),
       map(res => {
