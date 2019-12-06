@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../../../../models/User';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
@@ -9,6 +9,16 @@ import {delay, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
+import {DeviceDetection} from '../../../../device-detection.helper';
+import {FromWhereComponent} from '../../locations-group-container/from-where/from-where.component';
+import {ToWhereComponent} from '../../locations-group-container/to-where/to-where.component';
+import {ToCategoryComponent} from '../../locations-group-container/to-category/to-category.component';
+import {RestrictedTargetComponent} from '../../locations-group-container/restricted-target/restricted-target.component';
+import {RestrictedMessageComponent} from '../../locations-group-container/restricted-message/restricted-message.component';
+import {GroupsStep1Component} from '../groups-step1/groups-step1.component';
+import {GroupsStep2Component} from '../groups-step2/groups-step2.component';
+import {GroupsStep3Component} from '../groups-step3/groups-step3.component';
+import {WhoYouAreComponent} from '../who-you-are/who-you-are.component';
 
 export enum States {
   SelectStudents = 1,
@@ -24,6 +34,11 @@ export enum States {
 })
 
 export class GroupsContainerComponent implements OnInit, OnDestroy {
+
+  @ViewChild(GroupsStep1Component) g1;
+  @ViewChild(GroupsStep2Component) g2;
+  @ViewChild(GroupsStep3Component) g3;
+  @ViewChild(WhoYouAreComponent) whoYouAre;
 
   @Input() FORM_STATE: Navigation;
 
@@ -55,6 +70,12 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
     });
   }
 
+  get pwaBackBtnVisibility() {
+    return this.screenService.isDeviceLargeExtra;
+  }
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 
   ngOnInit() {
 
@@ -154,6 +175,31 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
         break;
     }
     this.currentState = evt.state;
+  }
+
+  stepBack() {
+    // debugger
+    switch (this.FORM_STATE.state) {
+      case 1:
+        this.g1.back();
+        this.nextStepEvent.emit(this.FORM_STATE);
+        break;
+      case 2:
+        if (this.g2) {
+          this.g2.back();
+        }
+        break;
+      case 3:
+        if (this.g3) {
+          this.g3.back();
+        }
+        break;
+      case 4:
+        if (this.whoYouAre) {
+          this.whoYouAre.back();
+        }
+        break;
+    }
   }
 
 }

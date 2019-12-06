@@ -8,7 +8,7 @@
 
      appCrossPointerEventTarget
      (pointerDownEvent)="down = true"
-     (pointerClickEvent)="onClick($event)"
+     (pointerClickEvent)="down = false; onClick($event)"
 
      #iconButtonRef
 >
