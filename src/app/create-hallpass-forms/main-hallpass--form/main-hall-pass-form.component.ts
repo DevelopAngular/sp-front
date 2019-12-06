@@ -28,8 +28,7 @@ export interface FormMode {
 export interface Navigation {
   step: number;
   previousStep?: number;
-  quickNavigator?: boolean;
-  state?: any;
+  state?: number;
   previousState?: number;
   fromState?: number;
   formMode?: FormMode;
@@ -50,6 +49,7 @@ export interface Navigation {
     requestTarget?: User,
     hasClose?: boolean
   };
+  quickNavigator?: boolean;
   forInput?: boolean;
   forLater?: boolean;
   missedRequest?: boolean;
