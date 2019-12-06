@@ -14,14 +14,17 @@ export class CrossPointerEventTargetDirective {
     switch (evt.type) {
 
       case 'touchend':
+
+        evt.preventDefault();
         const rect = evt.target.getBoundingClientRect();
         const singleTouch = evt.changedTouches[0];
         const allowTouch = {
           x: singleTouch.clientX >= rect.left && singleTouch.clientX <= rect.right,
           y: singleTouch.clientY >= rect.top && singleTouch.clientY <= rect.bottom,
         };
-        console.log(rect, singleTouch);
-        console.log(allowTouch);
+        // console.log(rect, singleTouch);
+        // console.log(allowTouch);
+
         if (Object.values(allowTouch).every(v => !!v)) {
           this.pointerClickEvent.emit(evt as TouchEvent);
         } else {

@@ -1,11 +1,4 @@
 import {animate, group, keyframes, query, state, style, transition, trigger} from '@angular/animations';
-import {DeviceDetection} from './device-detection.helper';
-
-const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-// const breakPoint = DeviceDetection.isIOSTablet() ? 1024 : 940;
-const isDeviceLargeExtra = windowWidth <= 940;
-const commonAnimationSpeed = isDeviceLargeExtra ? '.23s' : '.45s';
-const subframeAnimationSpeed = isDeviceLargeExtra ? '.10s' : '.20s';
 
 export const bumpIn = trigger('pressState', [
   state('down', style({
@@ -40,7 +33,7 @@ export const Select = trigger('Select', [
 
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-    query(`[data-motion-compress*='students']`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
+    query(`[data-motion-compress*='students']`, animate(`{{frameSpeed}} 0s ease`, keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.24) scaleX(0.6)',
@@ -51,7 +44,7 @@ export const NextStep = trigger('NextStep', [                                   
 
       }),
     ])), {optional: true}),
-    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate(`{{frameSpeed}} 0s ease`, keyframes([
       style({
         opacity: 0,
         transform: 'scaleY(0.8) scaleX(1.65)',
@@ -62,7 +55,7 @@ export const NextStep = trigger('NextStep', [                                   
 
       }),
     ])), {optional: true}),
-    query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
+    query(`[data-motion-scale=true]`, animate(`{{frameSpeed}} 0s ease`, keyframes([
         style({
           opacity: 0,
           transform: 'scale(1.2)',
@@ -81,13 +74,13 @@ export const NextStep = trigger('NextStep', [                                   
               // boxShadow: 'none',
             })
         ),
-        animate(`${subframeAnimationSpeed} ease-in`,
+        animate(`{{subFrameSpeed}} ease-in`,
           style({
             opacity: 0.25,
             // boxShadow: 'none',
           }),
         ),
-        animate(`${subframeAnimationSpeed} ease-out`,
+        animate(`{{subFrameSpeed}} ease-out`,
           style({
             opacity: 1,
             // boxShadow: 'none',
@@ -104,22 +97,22 @@ export const NextStep = trigger('NextStep', [                                   
               transform: 'translateX({{from}}px)',
             })
           ),
-          animate(`${subframeAnimationSpeed} ease-in`, style({
+          animate(`{{subFrameSpeed}} ease-in`, style({
               opacity: 0.25,
               transform: 'translateX({{halfFrom}}px)',
             })
           ),
-          animate(`${subframeAnimationSpeed} ease-out`, style({
+          animate(`{{subFrameSpeed}} ease-out`, style({
               opacity: 1,
               transform: 'translateX(0px)',
             })
           ),
         ], {optional: true}
       )
-    ]), { params: { from: 100, halfFrom: 50}}
+    ]), { params: { from: 100, halfFrom: 50, speed: 1}}
   ),
   transition(':leave', group([                                                              // :LEAVE PSEUDOSTATE
-    query(`[data-motion-compress*='students']`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
+    query(`[data-motion-compress*='students']`, animate(`{{frameSpeed}} 0s ease`, keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.0) scaleX(1.0)',
@@ -130,7 +123,7 @@ export const NextStep = trigger('NextStep', [                                   
         transform: 'scaleY(1.24) scaleX(0.6)',
       })
     ])), {optional: true}),
-    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate(`${commonAnimationSpeed} 0s ease`, keyframes([
+    query(`[data-motion-compress*='locations'],[data-motion-compress*='calendar']`, animate(`{{frameSpeed}} 0s ease`, keyframes([
       style({
         opacity: 1,
         transform: 'scaleY(1.0) scaleX(1.0)',
@@ -140,7 +133,7 @@ export const NextStep = trigger('NextStep', [                                   
         transform: 'scaleY(0.8) scaleX(1.65)',
       }),
     ])), {optional: true}),
-    query(`[data-motion-scale=true]`, animate('0.45s 0s ease', keyframes([
+    query(`[data-motion-scale=true]`, animate(`{{frameSpeed}} 0s ease`, keyframes([
       style({
         opacity: 1,
         transform: 'scale(1)',
@@ -161,13 +154,13 @@ export const NextStep = trigger('NextStep', [                                   
               // boxShadow: 'none',
             })
           ),
-          animate(`${subframeAnimationSpeed} ease-in`,
+          animate(`{{subFrameSpeed}} ease-in`,
             style({
               opacity: 0.25,
               // boxShadow: 'none',
             }),
           ),
-          animate(`${subframeAnimationSpeed} ease-out`,
+          animate(`{{subFrameSpeed}} ease-out`,
             style({
               opacity: 0,
               // boxShadow: 'none',
@@ -185,12 +178,12 @@ export const NextStep = trigger('NextStep', [                                   
               transform: 'translateX(0px)',
             })
           ),
-          animate(`${subframeAnimationSpeed} ease-in`, style({
+          animate(`{{subFrameSpeed}} ease-in`, style({
               opacity: 0.25,
               transform: 'translateX({{halfTo}}px)',
             })
           ),
-          animate(`${subframeAnimationSpeed} ease-out`, style({
+          animate(`{{subFrameSpeed}} ease-out`, style({
               opacity: 0,
               transform: 'translateX({{to}}px)',
             })

@@ -98,7 +98,6 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private passesService: HallPassesService,
-    private cd: ChangeDetectorRef
   ) {}
 
   get isCompressed() {
@@ -261,8 +260,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         // this.cd.detectChanges();
         break;
       case 'end':
-        this.formSize.containerWidth =  `100vw`;
-        this.formSize.containerHeight =  `100vh`;
+        this.formSize.containerWidth =  `${window.innerWidth}px`;
+        this.formSize.containerHeight =  `${window.innerHeight}px`;
         // this.cd.detectChanges();
         break;
     }
