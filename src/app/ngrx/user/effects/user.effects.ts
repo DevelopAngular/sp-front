@@ -25,6 +25,22 @@ export class UserEffects {
       );
   });
 
+  getUserPin$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(userActions.getUserPinAction),
+        concatMap(action => {
+          return this.userService.getUserPin()
+            .pipe(
+              map(({pin}) => {
+                return userActions.getUserPinSuccess({pin});
+              }),
+              catchError(error => of(userActions.getUserPinFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

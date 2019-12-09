@@ -54,8 +54,8 @@ import {
   getLoadingGroups,
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
-import {getLoadedUser, getUserData} from '../ngrx/user/states/user-getters.state';
-import {clearUser, getUser} from '../ngrx/user/actions';
+import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
+import {clearUser, getUser, getUserPinAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 
 @Injectable()
@@ -105,6 +105,7 @@ export class UserService {
   };
 
   user$: Observable<User> = this.store.select(getUserData);
+  userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
   loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
 
   studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
@@ -213,8 +214,13 @@ export class UserService {
      return this.http.get<User>('v1/users/@me');
   }
 
-  postUser(data) {
-    return this.http.patch('v1/users/@me', data);
+  getUserPinRequest() {
+    this.store.dispatch(getUserPinAction());
+    return this.userPin$;
+  }
+
+  getUserPin() {
+    return this.http.get('v1/users/@me/pin_info');
   }
 
   getIntros() {

@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import {UserService} from '../services/user.service';
 import {Observable} from 'rxjs';
 import {User} from '../models/User';
-import {switchMap} from 'rxjs/operators';
+import {filter, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-teacher-pin',
@@ -22,6 +22,11 @@ export class TeacherPinComponent implements OnInit {
     this.form = new FormGroup({
       pin: new FormControl()
     });
+    // this.userService.getUserPinRequest()
+    //   .pipe(filter(res => !!res))
+    //   .subscribe(res => {
+    //     this.form.get('pin').setValue(res);
+    //   });
     //
     // this.form.valueChanges
     //   .pipe(

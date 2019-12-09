@@ -4,6 +4,7 @@ import * as userActions from '../actions';
 
 const userInitialState: UserState = {
   user: null,
+  userPin: null,
   loading: false,
   loaded: false
 };
@@ -19,7 +20,13 @@ const reducer = createReducer(
       loaded: true
     };
   }),
-  on(userActions.clearUser, state => ({...state, user: null, loaded: true, loading: false}))
+  on(userActions.clearUser, state => ({...state, user: null, loaded: true, loading: false})),
+  on(userActions.getUserPinSuccess, (state, {pin}) => {
+    return {
+      ...state,
+      userPin: pin
+    };
+  })
 );
 
 export function userReducer(state: any | undefined, action: Action) {
