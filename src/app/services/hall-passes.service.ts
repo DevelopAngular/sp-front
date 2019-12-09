@@ -5,13 +5,14 @@ import { HttpService } from './http-service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
+  getArrangedLoading,
   getCurrentPinnable,
   getIsLoadedPinnables,
   getIsLoadingPinnables,
   getPinnableCollection,
   getPinnablesIds
 } from '../ngrx/pinnables/states';
-import {getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
+import {arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
 import {getPassStats} from '../ngrx/pass-stats/actions';
 import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
 
@@ -24,6 +25,7 @@ export class HallPassesService {
   loadedPinnables$: Observable<boolean>;
   isLoadingPinnables$: Observable<boolean>;
   pinnablesCollectionIds$: Observable<number[] | string[]>;
+  isLoadingArranged$: Observable<boolean> = this.store.select(getArrangedLoading);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
@@ -117,6 +119,11 @@ export class HallPassesService {
     getArrangedPinnables() {
         return this.http.get('v1/pinnables?arranged=true');
     }
+
+  createArrangedPinnableRequest(order) {
+    this.store.dispatch(arrangedPinnable({order}));
+    return of(null);
+  }
 
     createArrangedPinnable(body) {
         return this.http.post(`v1/pinnables/arranged`, body);
