@@ -47,7 +47,7 @@
     <div class="request-card-content-modal" *ngIf="isModal">
       <div class="student-view" *ngIf="!forStaff && !activeTeacherPin">
         <div class="center-block">
-          <app-pager *ngIf="!forInput"  [arrowPosition]="'-93px'">
+          <app-pager *ngIf="!forInput"  [arrowPosition]="'-93px'" [isStaff]="false">
             <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
               <ng-template #noInput>
@@ -74,7 +74,8 @@
             <div class="page-5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
               <ng-template #noInput>
-                <app-travel-view [pass]="request" [shrink]="true"></app-travel-view>
+                <app-travel-view *ngIf="!screenService.isDeviceLargeExtra" [pass]="request" [shrink]="true"></app-travel-view>
+                <app-travel-view *ngIf="screenService.isDeviceLargeExtra" [height]="'164px'" [pass]="request" [shrink]="true"></app-travel-view>
               </ng-template>
             </div>
 
@@ -162,7 +163,7 @@
 
       <div class="teacher-view" *ngIf="forStaff">
         <div class="pager" style="height: 210px">
-          <app-pager *ngIf="!forInput" [arrowPosition]="'-93px'">
+          <app-pager *ngIf="!forInput" [arrowPosition]="'-93px'" [isStaff]="true">
             <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
               <ng-template #noInput>

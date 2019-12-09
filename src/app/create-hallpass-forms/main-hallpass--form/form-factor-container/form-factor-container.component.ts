@@ -21,6 +21,7 @@ export class FormFactorContainerComponent implements OnInit {
 
 
   @Input() FORM_STATE: Navigation;
+  @Input() forStaff: boolean;
   @Output() nextStepEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   public states: any = FormFactor;

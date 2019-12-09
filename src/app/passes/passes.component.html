@@ -1,5 +1,5 @@
  <h1 [@HeaderSlideInOut] *ngIf="(isInboxClicked$ | async) && screenService.isDeviceMid" class="requests-title"
-     [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Requests</h1>
+     [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})" [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Requests</h1>
   <div [@RequestCardSlideInOut] *ngIf="(isInboxClicked$ | async) && screenService.isDeviceMid">
     <app-display-card [hasDivider]="false" [hasHeader]="false" [fontSize]="'29px'" [inbox]="true" >
       <div class="inbox-content">
@@ -40,7 +40,7 @@
     <h1 class="passes-heading" [@HeaderSlideTopBottom] *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"  [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Passes</h1>
   </div>
-    <div class="passes-wrapper passes-mobile-height" *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid" [@PassesSlideTopBottom] [style.padding-top]="isSmartphone ? '0px' : '50px'" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>
+    <div class="passes-wrapper passes-mobile-height"  [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'" *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid" [@PassesSlideTopBottom] [style.padding-bottom]="isSmartphone ? '50px' : '0px'"  [style.padding-top]="isSmartphone ? '0px' : '50px'" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " #scrollableArea>
       <div class="main-page-left">
         <div class="current-pass">
           <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
@@ -140,7 +140,7 @@
     </div>
 
 
-<div class="passes-wrapper" [ngClass]="{'scroll': isStaff}" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)" #scrollableArea>
+<div class="passes-wrapper" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'" [ngClass]="{'scroll': isStaff}" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)" #scrollableArea>
   <h1 class="passes-heading">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">

@@ -118,7 +118,6 @@ export class KeyboardShortcutsService {
         command(event: ShortcutEventOutput): any {
           self.onPressKeyEvent$.next(event);
         },
-        preventDefault: true,
         allowIn: [AllowIn.Input]
       },
       {

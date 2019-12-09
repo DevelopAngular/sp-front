@@ -80,7 +80,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       private _zone: NgZone,
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
-      private screenService: ScreenService,
+      public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService
   ) {}
 

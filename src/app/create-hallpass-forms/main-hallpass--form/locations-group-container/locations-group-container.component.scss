@@ -7,10 +7,12 @@
   //}
 
   div.ios-back-btn-bottom {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
-    width: 28px;
-    height: 28px;
+    width: 50px;
+    height: 46px;
     left: 50%;
     transform: translateX(-50%);
     bottom: -45px;
@@ -22,10 +24,12 @@
     }
 
     div.back-btn-bottom {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: absolute;
-      width: 28px;
-      height: 28px;
+      width: 50px;
+      height: 46px;
       left: 50%;
       transform: translateX(-50%);
       bottom: -45px;

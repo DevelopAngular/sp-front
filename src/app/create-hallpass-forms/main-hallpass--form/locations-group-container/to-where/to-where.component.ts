@@ -153,13 +153,14 @@ export class ToWhereComponent implements OnInit {
 
     this.formService.scalableBoxController.next(false);
 
-    if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater && !this.formState.kioskMode) {
-      this.formService.setFrameMotionDirection('disable');
-      this.formService.compressableBoxController.next(true);
-    } else {
+    // if (!this.screenService.isDeviceLargeExtra && this.formState.formMode.role === 1 && !this.formState.forLater && !this.formState.kioskMode) {
+    //   // debugger
+    //   this.formService.setFrameMotionDirection('disable');
+    //   this.formService.compressableBoxController.next(true);
+    // } else {
       this.formService.compressableBoxController.next(false);
       this.formService.setFrameMotionDirection('back');
-    }
+    // }
     setTimeout(() => {
       if (!!this.date &&
         !!this.studentText &&

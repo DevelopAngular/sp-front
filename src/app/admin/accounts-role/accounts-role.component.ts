@@ -178,14 +178,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    const obs = new Observable(function(v) {
-      v.next(1);
-    })
-
-    obs.subscribe((v) => {
-      console.log(v);
-    })
-
     this.querySubscriber$.pipe(
       mergeAll(),
       takeUntil(this.destroy$))
@@ -650,8 +642,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed()
-      .subscribe((userListReloadTrigger: any) => {
-      if (userListReloadTrigger) {
+      .pipe(
+        filter(userListReloadTrigger => !!userListReloadTrigger)
+      )
+      .subscribe(() => {
         if (data.profile.id === +this.user.id) {
           this.userService.getUserRequest()
             .pipe(
@@ -664,8 +658,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
         }
         this.selectedUsers = [];
-      }
-      this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
+        this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
     });
   }
 

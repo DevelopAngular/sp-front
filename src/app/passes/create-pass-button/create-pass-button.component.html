@@ -5,14 +5,13 @@
     [style.box-shadow]="boxShadow"
     [ngClass]="{'disabled': disabled}"
     [@pressState]="buttonState"
-    (click)="buttonClick()"
-    (pointerenter)="hovered = true"
-    (pointerleave)="buttonDown = false; hovered = false"
-    (pointerdown)="buttonDown = true"
-    (pointerup)="buttonDown = false"
-    (touchstart)= "buttonDown = true;"
-    (pointemove)="but.preventClick = true"
-    (touchend)= "buttonDown = false; hovered = false; !but.preventClick ? but.click() : but.preventClick = false"
+    (mouseenter)="hovered = true"
+    (mouseleave)="hovered = false"
+
+    appCrossPointerEventTarget
+    (pointerClickEvent)="buttonDown = false; buttonClick()"
+    (pointerDownEvent)="buttonDown = true"
+    (pointerCancelEvent)="buttonDown = false"
 >
   <div class="title">{{ title }}</div>
 </div>

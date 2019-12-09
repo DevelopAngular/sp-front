@@ -122,15 +122,6 @@ export class PassTileComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPress(press: boolean, event) {
-    if (this.screenService.isDeviceLargeExtra) event.preventDefault();
-    this.buttonDown = press;
-  }
-
-  onTap(state: boolean) {
-    this.buttonDown = state;
-  }
-
   onClick(event) {
     this.tileSelected.emit(this.activePassTime$);
   }
