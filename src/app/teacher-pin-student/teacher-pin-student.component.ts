@@ -1,6 +1,8 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {fromEvent} from 'rxjs';
 import * as _ from 'lodash';
+import {UserService} from '../services/user.service';
+import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-teacher-pin-student',
@@ -29,7 +31,7 @@ export class TeacherPinStudentComponent implements OnInit {
 
   incorrect: boolean;
 
-  constructor() { }
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
     this.inp.nativeElement.focus();
@@ -42,7 +44,6 @@ export class TeacherPinStudentComponent implements OnInit {
           currentElem.pressed = true;
         }
         if (this.pin.length === 4) {
-
           // ToDO request to server after that clear pin
           this.incorrect = true;
           setTimeout(() => {

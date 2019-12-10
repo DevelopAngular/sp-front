@@ -41,6 +41,23 @@ export class UserEffects {
       );
   });
 
+  updateUser$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(userActions.updateUserAction),
+        concatMap((action: any) => {
+          return this.userService.updateUser(action.id, action.data)
+            .pipe(
+              map((user: User) => {
+                debugger;
+                return userActions.updateUserSuccess({user});
+              }),
+              catchError(error => of(userActions.updateUserFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

@@ -9,4 +9,8 @@ export const getUserPinAction = createAction(`[User] Get User Pin`);
 export const getUserPinSuccess = createAction(`[User] Get User Pin Success`, props<{pin: string | number}>());
 export const getUserPinFailure = createAction(`[User] Get User Pin Failure`, props<{errorMessage: string}>());
 
+export const updateUserAction = createAction(`[User] Update User`, props<{id: number | string, data: any}>());
+export const updateUserSuccess = createAction(`[User] Update User Success`, props<{user: User}>());
+export const updateUserFailure = createAction(`[User] Update User Failure`, props<{errorMessage: string}>());
+
 export const clearUser = createAction(`[User] Clear User`);

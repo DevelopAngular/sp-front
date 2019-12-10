@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../services/user.service';
 import {Observable} from 'rxjs';
 import {User} from '../models/User';
@@ -14,16 +14,17 @@ export class TeacherPinComponent implements OnInit {
 
   form: FormGroup;
   user$: Observable<User>;
+  userPin$: Observable<string | number>;
 
   constructor(private userService: UserService) { }
 
   ngOnInit() {
     this.user$ = this.userService.user$;
+    this.userPin$ = this.userService.userPin$;
     this.form = new FormGroup({
-      pin: new FormControl()
+      pin: new FormControl('', [Validators.required, Validators.minLength(4)])
     });
-    // this.userService.getUserPinRequest()
-    //   .pipe(filter(res => !!res))
+    // this.userService.userPin$
     //   .subscribe(res => {
     //     this.form.get('pin').setValue(res);
     //   });

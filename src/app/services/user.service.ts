@@ -6,7 +6,7 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {exhaust, filter, last, map, share, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
+import {exhaust, filter, last, map, mapTo, share, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -55,7 +55,7 @@ import {
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
 import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
-import {clearUser, getUser, getUserPinAction} from '../ngrx/user/actions';
+import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 
 @Injectable()
@@ -152,6 +152,13 @@ export class UserService {
                 this.http.effectiveUserId.next(null);
               return of(user);
             }
+          }),
+          switchMap(user => {
+            if (user.isTeacher() && !user.isAssistant()) {
+              return this.getUserPinRequest().pipe(filter(res => !!res), mapTo(user));
+            } else {
+              return of(user);
+            }
           })
         )
         .subscribe(user => {
@@ -221,6 +228,15 @@ export class UserService {
 
   getUserPin() {
     return this.http.get('v1/users/@me/pin_info');
+  }
+
+  updateUserRequest(id, data) {
+    this.store.dispatch(updateUserAction({id, data}));
+    return this.user$;
+  }
+
+  updateUser(userId, data) {
+    return this.http.patch(`v1/users/${userId}`, data);
   }
 
   getIntros() {
