@@ -6,6 +6,8 @@ import {ErrorToastComponent} from '../error-toast/error-toast.component';
 import {SchoolToggleBarComponent} from '../school-toggle-bar/school-toggle-bar.component';
 import {ToastConnectionComponent} from '../toast-connection/toast-connection.component';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
+import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +16,8 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    SignedOutToastComponent,
+    GradientButtonComponent
   ],
   imports: [
     CommonModule,
@@ -26,11 +30,14 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    SignedOutToastComponent,
+    GradientButtonComponent
   ],
   entryComponents: [
     ErrorToastComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    SignedOutToastComponent
   ],
 })
 export class CoreModule { }
