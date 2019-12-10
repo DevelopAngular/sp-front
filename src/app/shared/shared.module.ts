@@ -1,7 +1,6 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
 import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.component';
 import { DisplayCardComponent } from '../display-card/display-card.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -50,12 +49,12 @@ import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {IntroComponent} from '../intro/intro.component';
 import {SortMenuComponent} from '../sort-menu/sort-menu.component';
 import {NextReleaseComponent} from '../next-release/next-release.component';
-import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {CoreModule} from '../core/core.module';
 import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
 import {TeacherPinStudentComponent} from '../teacher-pin-student/teacher-pin-student.component';
+import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -77,7 +76,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   ],
   declarations: [
     GoogleSigninComponent,
-    GradientButtonComponent,
     SmartpassLogoComponent,
     DisplayCardComponent,
     PinnableComponent,
@@ -117,11 +115,11 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroComponent,
     SortMenuComponent,
     NextReleaseComponent,
-    SignedOutToastComponent,
     ConsentMenuMobileComponent,
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
+    ReportSuccessToastComponent,
     TeacherPinStudentComponent
   ],
   entryComponents: [
@@ -132,14 +130,13 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroDialogComponent,
     SortMenuComponent,
     NextReleaseComponent,
-    SignedOutToastComponent,
-    ConsentMenuMobileComponent
+    ConsentMenuMobileComponent,
+    ReportSuccessToastComponent
   ],
   exports: [
     ReactiveFormsModule,
     ScrollingModule,
     DragulaModule,
-    GradientButtonComponent,
     SmartpassLogoComponent,
     DisplayCardComponent,
     PinnableComponent,
@@ -182,6 +179,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
+    ReportSuccessToastComponent,
     TeacherPinStudentComponent
   ],
   providers: [
