@@ -3,6 +3,7 @@
     <div class="back-button">
       <app-icon-button
         [srcString]="'Back Button'"
+        (clickEvent)="close()"
         [size]="28"
         [onDarkShade]="false"
         [blueWhite]="true"

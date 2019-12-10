@@ -230,8 +230,8 @@ export class UserService {
     return this.http.get('v1/users/@me/pin_info');
   }
 
-  updateUserRequest(id, data) {
-    this.store.dispatch(updateUserAction({id, data}));
+  updateUserRequest(user, data) {
+    this.store.dispatch(updateUserAction({user, data}));
     return this.user$;
   }
 

@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, mergeAll, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -444,13 +444,22 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   settingsAction(action: string) {
       if (action === 'signout') {
-        // window.waitForAppLoaded();
         this.router.navigate(['sign-out']);
       } else if (action === 'myPin') {
         const teachPinDialog = this.dialog.open(TeacherPinComponent, {
           panelClass: 'form-dialog-container',
           backdropClass: 'custom-backdrop',
         });
+
+        teachPinDialog.afterClosed()
+          .pipe(
+            mergeAll(),
+            filter(res => !!res),
+            switchMap(data => {
+              debugger;
+              return this.userService.updateUserRequest(this.user, data);
+            })
+          ).subscribe();
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
               panelClass: 'form-dialog-container',

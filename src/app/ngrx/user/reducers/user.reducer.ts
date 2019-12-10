@@ -21,7 +21,7 @@ const reducer = createReducer(
     };
   }),
   on(userActions.clearUser, state => ({...state, user: null, loaded: true, loading: false})),
-  on(userActions.getUserPinSuccess, (state, {pin}) => {
+  on(userActions.getUserPinSuccess, userActions.updateUserPinSuccess, (state, {pin}) => {
     return {
       ...state,
       userPin: pin
