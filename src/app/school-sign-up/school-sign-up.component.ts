@@ -258,6 +258,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
                 message: 'Please contact us at support@smartpass.app'
               });
             }
+            this.pending.next(false);
             return throwError(err);
           })
         )
