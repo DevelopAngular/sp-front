@@ -193,7 +193,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       this.dataService.currentUser
         .pipe(takeUntil(this.destroy$))
         .subscribe((user: User) => {
-          this.isStaff = user.isTeacher() || user.isAdmin();
+          this.isStaff = user.isTeacher() || user.isAssistant();
           this.user = user;
       });
 
