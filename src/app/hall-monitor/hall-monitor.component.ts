@@ -49,8 +49,7 @@ export class ActivePassProvider implements PassLikeProvider {
 @Component({
   selector: 'app-hall-monitor',
   templateUrl: './hall-monitor.component.html',
-  styleUrls: ['./hall-monitor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./hall-monitor.component.scss']
 })
 export class HallMonitorComponent implements OnInit, OnDestroy {
 
