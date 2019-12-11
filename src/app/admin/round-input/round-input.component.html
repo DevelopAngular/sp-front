@@ -34,7 +34,6 @@
          [style.background-color]="backgroundColor"
          [placeholder]="placeholder"
          [readonly]="type == 'dates'"
-         (input)="changeAction(input)"
          (click)="focusAction(true)"
          (focusout)="focusAction(false)"
          [(ngModel)]="value"
@@ -44,11 +43,11 @@
            [src]="fieldIcon | resolveAsset"
            alt="icon"
            draggable="false">
-      <img *ngIf="closeIcon && (showCloseIcon | async)" class="field-icon field-icon__close"
+      <img *ngIf="closeIcon && (showCloseIcon.asObservable() | async)" class="field-icon field-icon__close"
            [style.opacity]="input.value.length ? '.7' : '0'"
            [src]="closeIconAsset | resolveAsset" alt="icon"
            draggable="false"
-           (click)="changeAction(input, true)">
+           (click)="reset()">
     </div>
   </div>
 </div>

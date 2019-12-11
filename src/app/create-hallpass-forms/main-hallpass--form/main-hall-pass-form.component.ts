@@ -28,8 +28,7 @@ export interface FormMode {
 export interface Navigation {
   step: number;
   previousStep?: number;
-  quickNavigator?: boolean;
-  state?: any;
+  state?: number;
   previousState?: number;
   fromState?: number;
   formMode?: FormMode;
@@ -50,6 +49,7 @@ export interface Navigation {
     requestTarget?: User,
     hasClose?: boolean
   };
+  quickNavigator?: boolean;
   forInput?: boolean;
   forLater?: boolean;
   missedRequest?: boolean;
@@ -98,7 +98,6 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private passesService: HallPassesService,
-    private cd: ChangeDetectorRef
   ) {}
 
   get isCompressed() {
@@ -194,7 +193,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       this.dataService.currentUser
         .pipe(takeUntil(this.destroy$))
         .subscribe((user: User) => {
-          this.isStaff = user.isTeacher() || user.isAdmin();
+          this.isStaff = user.isTeacher() || user.isAssistant();
           this.user = user;
       });
 
@@ -261,8 +260,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         // this.cd.detectChanges();
         break;
       case 'end':
-        this.formSize.containerWidth =  `100vw`;
-        this.formSize.containerHeight =  `100vh`;
+        this.formSize.containerWidth =  `${window.innerWidth}px`;
+        this.formSize.containerHeight =  `${window.innerHeight}px`;
         // this.cd.detectChanges();
         break;
     }

@@ -4,6 +4,7 @@ import {BehaviorSubject, of, ReplaySubject, zip} from 'rxjs';
 import { HallPassesService } from '../services/hall-passes.service';
 import {map, switchMap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
+import {ScreenService} from '../services/screen.service';
 
 
 @Injectable({
@@ -18,13 +19,20 @@ export class CreateFormService {
   public compressableBoxController = new ReplaySubject<boolean>(1);
   public isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  constructor(private hallPassService: HallPassesService, private locService: LocationsService) {
+  constructor(
+    private hallPassService: HallPassesService,
+    private locService: LocationsService,
+    private screenService: ScreenService,
+
+  ) {
     this.transition = {
       to: -100,
       halfTo: -50,
       from: 100,
       halfFrom: 50,
-      direction: 'disable'
+      direction: 'disable',
+      frameSpeed: this.screenService.isDeviceLargeExtra ? '.23s' : '.45s',
+      subFrameSpeed: this.screenService.isDeviceLargeExtra ? '.10s' : '.20s',
     };
     this.frameMotionDirection$ = new BehaviorSubject(this.transition);
   }

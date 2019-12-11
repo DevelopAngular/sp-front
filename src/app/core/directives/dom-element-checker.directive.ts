@@ -15,6 +15,7 @@ export class DomElementCheckerDirective implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    // debugger
     this.domChecker.domElement$.next(this.el);
   }
 }
