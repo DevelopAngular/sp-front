@@ -146,7 +146,8 @@ export class InboxRequestProvider implements PassLikeProvider {
       this.isStudent = user.isStudent();
       return this.liveDataService.watchInboxRequests(user);
     }))
-      .pipe(map(req => {
+      .pipe(
+        map(req => {
         if (this.isStudent) {
           return req.filter((r) => !!r.request_time);
         }
@@ -166,10 +167,8 @@ export class InboxInvitationProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const invitations$ = this.user$.pipe(switchMap(user => this.liveDataService.watchInboxInvitations(user)),
-      map(inv => {
-        return inv;
-      }));
+    const invitations$ = this.user$.pipe(
+      switchMap(user => this.liveDataService.watchInboxInvitations(user)));
 
     return invitations$;
   }
