@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import { environment } from '../../environments/environment';
 import {constructUrl, QueryParams} from '../live-data/helpers';
-import {catchError, delay, filter, map, mapTo, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, debounceTime, delay, distinctUntilChanged, filter, map, mapTo, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, from, Observable, of, Subject, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleAuthService} from '../services/google-auth.service';
@@ -135,9 +135,24 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         [
         Validators.required,
         Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+.[a-zA-Z0-9]+$'),
-        (v) => {
-          return  v.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(v.value.slice(v.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
+        (fc: FormControl) => {
+          return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
         }
+      ], [
+          (fc: FormControl) => {
+            return fc.valueChanges
+                .pipe(
+                  debounceTime(250),
+                  distinctUntilChanged(),
+                  switchMap(() => {
+                    return this.httpService
+                      .post('check-email', {email: fc.value})
+                  }),
+                  map((res: any) => {
+                    return res.exists ? {email_in_use: true} : null;
+                  })
+                );
+          }
       ]),
       password: new FormControl('',
         [
