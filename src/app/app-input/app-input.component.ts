@@ -1,8 +1,6 @@
 ﻿import {Component, OnInit, Input, Output, EventEmitter, ViewChild, Renderer2, SimpleChanges, OnChanges} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
-import {debounceTime, delay, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
-import {of} from 'rxjs';
 
 
 @Component({
@@ -16,7 +14,7 @@ export class AppInputComponent implements OnInit, OnChanges {
     @Input() input_value: string | number;
     @Input() input_label: string;
     @Input() placeholder: string = '';
-    @Input() maxLength: number = 100;
+    @Input() maxLength: string = '100';
     @Input() width: string = '0px';
     @Input() height: string = '40px';
     @Input() padding: string = '8px';
@@ -57,14 +55,6 @@ export class AppInputComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-      // console.log('right_icon ===> ', this.isFocus);
-      of(null).pipe(
-        delay(1000),
-        switchMap(() => {
-          return  this.formGroup.valueChanges;
-        }),
-      ).subscribe();
-
       setTimeout(() => {
         if (this.isFocus) {
           this.input.nativeElement.focus();

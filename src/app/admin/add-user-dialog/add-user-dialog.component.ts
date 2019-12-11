@@ -101,7 +101,10 @@ export class AddUserDialogComponent implements OnInit {
       name: new FormControl('', [
           Validators.required,
       ]),
-      username: new FormControl('', [Validators.required]),
+      username: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6)
+      ]),
       password: new FormControl('', [Validators.required]),
     });
 
