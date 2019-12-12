@@ -1,26 +1,24 @@
 <div class="travel-view-wrapper" [style.height]="height">
-  <div *ngIf="(!(type==='invitation') || forStaff); else originButton;">
-    <!--{{ showRoomNumber ? ((type==='invitation')?(pass?.default_origin?pass?.default_origin.nameRoom:"Origin") : pass?.origin.nameRoom) :-->
-    <!--((type==='invitation')?(pass?.default_origin?pass?.default_origin.title:"Origin"):pass?.origin.title)}}-->
+  <div>
     {{ originRoomName }}
   </div>
-  <ng-template #originButton>
-    <app-card-button (onClick)="changeLocation()" [width]="'135px'" [height]="'65px'" [gradientColor]="pass?.color_profile.gradient_color">
-      <div class="origin-button-content" *ngIf="!pass?.default_origin; else hasOrigin;">
-        <img class="origin-button-content-icon" [src]="'./assets/Search Normal (White).svg' | resolveAsset">
-        <div class="origin-button-content-text">
-          Origin
-        </div>
-      </div>
-      <ng-template #hasOrigin>
-        <div class="origin-button-content">
-          <div class="origin-button-content-text">
-            {{ pass?.default_origin.title }}
-          </div>
-        </div>
-      </ng-template>
-    </app-card-button>
-  </ng-template>
+<!--  <ng-template #originButton>-->
+<!--    <app-card-button (onClick)="changeLocation()" [width]="'135px'" [height]="'65px'" [gradientColor]="pass?.color_profile.gradient_color">-->
+<!--      <div class="origin-button-content" *ngIf="!pass?.default_origin; else hasOrigin;">-->
+<!--        <img class="origin-button-content-icon" [src]="'./assets/Search Normal (White).svg' | resolveAsset">-->
+<!--        <div class="origin-button-content-text">-->
+<!--          Origin-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <ng-template #hasOrigin>-->
+<!--        <div class="origin-button-content">-->
+<!--          <div class="origin-button-content-text">-->
+<!--            {{ pass?.default_origin.title }}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </ng-template>-->
+<!--    </app-card-button>-->
+<!--  </ng-template>-->
   <img class="arrow" [src]="'./assets/' +(pass?.travel_type==='one_way'?'SP Arrow':'SP Arrow Double') +' (White).svg' | resolveAsset"
       [style.height]="'55px'" [style.width]="(pass?.travel_type==='one_way'?'56px':'125px')">
   <div>
