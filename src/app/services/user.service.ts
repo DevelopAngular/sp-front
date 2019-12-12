@@ -432,4 +432,8 @@ export class UserService {
   exportUserData(id) {
     return this.http.get(`v1/users/${id}/export_data`);
   }
+
+  checkUserEmail(email) {
+    return this.http.post('v1/check-email', {email});
+  }
 }
