@@ -46,8 +46,8 @@
       <div class="links">
         <div class="link"
              *ngFor="let setting of settings"
-             [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
-             (mouseenter)="onHover(setting.gradient)"
+             [style.background]="hovered && hoveredColor === setting.background ? setting.background : 'none'"
+             (mouseenter)="onHover(setting.background)"
              (mouseleave)="hovered = false"
              appCrossPointerEventTarget
              (pointerClickEvent)="hovered = false; handleAction(setting)"
