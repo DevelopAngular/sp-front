@@ -54,20 +54,12 @@ div {
                                   not supported by any browser */
 }
 
-
-.validationIcon {
-  min-width: 20px;
-}
-
 .intro-dialog-container .mat-dialog-container {
   background-color: transparent;
   box-shadow: none;
 }
 .intro-backdrop-container {
   background: rgba(255, 255, 255, .5);
-}
-.custom-dialog-container .mat-dialog-container {
-  padding: 0px;
 }
 
 .form-dialog-container .mat-dialog-container {
@@ -366,7 +358,7 @@ body {
 
   .main-form-dialog-container,
   .form-dialog-container {
-    max-width: 335px !important;
+    //max-width: 335px !important;
   }
 }
 
@@ -460,3 +452,9 @@ body {
 //  top: 0 !important;
 //  left: 0 !important;
 //}
+
+@media all and (prefers-color-scheme: light) {
+  body {
+    //display: none !important;
+  }
+}

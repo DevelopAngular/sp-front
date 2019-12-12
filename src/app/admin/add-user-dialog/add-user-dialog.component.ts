@@ -8,7 +8,7 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, filter, map, switchMap, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
@@ -101,8 +101,14 @@ export class AddUserDialogComponent implements OnInit {
       name: new FormControl('', [
           Validators.required,
       ]),
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required]),
+      username: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6)
+      ], [this.uniqueEmailValidator.bind(this)]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8)
+      ]),
     });
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
@@ -126,6 +132,24 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe(() => {
         this.pendingSubject.next(false);
       });
+  }
+
+  uniqueEmailValidator(control: FormControl) {
+    return control.valueChanges
+      .pipe(
+        take(1),
+        distinctUntilChanged(),
+        debounceTime(300),
+        switchMap(value => {
+          return this.userService.checkUserEmail(value)
+            .pipe(
+              take(1),
+              map(({exists}: {exists: boolean}) => {
+                return (exists ? { uniqEmail: true } : null);
+              })
+            );
+        })
+      );
   }
 
   textColor(item) {

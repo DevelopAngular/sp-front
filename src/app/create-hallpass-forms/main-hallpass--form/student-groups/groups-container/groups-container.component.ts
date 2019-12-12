@@ -178,6 +178,7 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
   }
 
   stepBack() {
+    // debugger
     switch (this.FORM_STATE.state) {
       case 1:
         this.g1.back();

@@ -30,21 +30,21 @@ export class SettingsComponent implements OnInit {
 
     public settings = [
         {
-          'gradient': '#1893E9, #05B5DE',
+          'background': '#139BE6',
           'icon': 'Team',
           'hover_icon': './assets/Team (White).svg',
           'action': 'about',
           'title': 'About'
         },
         {
-          'gradient': '#5E4FED, #7D57FF',
+          'background': '#6651F1',
           'icon': 'Launch',
           'hover_icon': './assets/Launch (White).svg',
           'action': 'wishlist',
           'title': 'Wishlist'
         },
         {
-          'gradient': '#F52B4F, #F37426',
+          'background': '#F53D45',
           'icon': 'Support',
           'hover_icon': './assets/Support (White).svg',
           'action': 'support',
@@ -67,7 +67,7 @@ export class SettingsComponent implements OnInit {
       ?
       !this.darkTheme.isEnabled$.value
         ?
-        'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
+        '#134482'
           : 'rgb(228, 235, 255)'
             : 'transparent';
   }

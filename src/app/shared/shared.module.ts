@@ -1,7 +1,6 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
 import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.component';
 import { DisplayCardComponent } from '../display-card/display-card.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,7 +22,6 @@ import {DragulaModule} from 'ng2-dragula';
 import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SafariScrollDirective} from '../safari-scroll.directive';
 import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
 import {CalendarPickerComponent} from '../calendar-components/calendar-picker/calendar-picker.component';
@@ -50,11 +48,14 @@ import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {IntroComponent} from '../intro/intro.component';
 import {SortMenuComponent} from '../sort-menu/sort-menu.component';
 import {NextReleaseComponent} from '../next-release/next-release.component';
-import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {CoreModule} from '../core/core.module';
 import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
+import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
+import {MoovingTilesComponent} from '../core/mooving-tiles/mooving-tiles.component';
+import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
+import {SpAppearanceComponent} from '../core/sp-appearance/sp-appearance.component';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -76,7 +77,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   ],
   declarations: [
     GoogleSigninComponent,
-    GradientButtonComponent,
     SmartpassLogoComponent,
     DisplayCardComponent,
     PinnableComponent,
@@ -95,7 +95,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RoundInputComponent,
     AppInputComponent,
     CalendarComponent,
-    RestrictionPickerComponent,
     SafariScrollDirective,
     ToggleInputComponent,
     CalendarPickerComponent,
@@ -116,11 +115,13 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroComponent,
     SortMenuComponent,
     NextReleaseComponent,
-    SignedOutToastComponent,
     ConsentMenuMobileComponent,
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
+    ReportSuccessToastComponent,
+    SpAppearanceComponent,
+    RestrictionPickerComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -130,14 +131,14 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroDialogComponent,
     SortMenuComponent,
     NextReleaseComponent,
-    SignedOutToastComponent,
-    ConsentMenuMobileComponent
+    ConsentMenuMobileComponent,
+    ReportSuccessToastComponent,
+    SpAppearanceComponent,
   ],
   exports: [
     ReactiveFormsModule,
     ScrollingModule,
     DragulaModule,
-    GradientButtonComponent,
     SmartpassLogoComponent,
     DisplayCardComponent,
     PinnableComponent,
@@ -157,7 +158,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassCardComponent,
     InputTextareaModule,
     CalendarComponent,
-    RestrictionPickerComponent,
     SafariScrollDirective,
     ToggleInputComponent,
     CalendarPickerComponent,
@@ -180,6 +180,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
+    ReportSuccessToastComponent,
+    SpAppearanceComponent,
+    RestrictionPickerComponent
   ],
   providers: [
     {

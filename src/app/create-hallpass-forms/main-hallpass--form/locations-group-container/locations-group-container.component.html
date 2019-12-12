@@ -64,6 +64,6 @@
 
 </div>
 
-<div *ngIf="pwaBackBtnVisibility" appCrossPointerEventTarget (pointerClickEvent)="stepBack()" [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
+<div *ngIf="pwaBackBtnVisibility" appCrossPointerEventTarget [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
   <app-icon-button (clickEvent)="stepBack()" [srcString]="'Back Button'" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
 </div>

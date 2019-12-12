@@ -62,7 +62,7 @@ export class DarkThemeSwitch {
       if (this.isEnabled$.value) {
         fill = 'White';
       } else {
-        fill = config.hover && config.hoveredColor === config.setting.gradient ? 'White' : 'Blue-Gray';
+        fill = config.hover && config.hoveredColor === config.setting.background ? 'White' : 'Blue-Gray';
       }
     }
 
@@ -104,7 +104,7 @@ export class DarkThemeSwitch {
       if (this.isEnabled$.value) {
         return '#EFEFEF';
       } else {
-        if (config.hover && config.hoveredColor === config.setting.gradient) {
+        if (config.hover && config.hoveredColor === config.setting.background) {
           return '#EFEFEF';
         } else {
           return '#7F879D';
