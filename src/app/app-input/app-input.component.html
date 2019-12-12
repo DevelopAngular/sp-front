@@ -48,21 +48,50 @@
             &&
             controlName.touched
             &&
-            (controlName.errors.email_in_use || controlName.errors.invalid_email || controlName.errors.room_name || controlName.errors.folder_name || controlName.errors.room_number || controlName.errors.minlength)'>
+            (
+            controlName.errors.email_in_use ||
+            controlName.errors.invalid_email ||
+            controlName.errors.room_name ||
+            controlName.errors.folder_name ||
+            controlName.errors.room_number ||
+            controlName.errors.minlength ||
+            controlName.errors.uniqEmail)'
+      >
         <img
           [matTooltip]="
             controlName.errors.folder_name ? 'Folder name already used' :
             controlName.errors.room_name ? 'Room name already used' :
             controlName.errors.email_in_use ? 'Email already in use' :
             controlName.errors.invalid_email ? 'Please use your school email address' :
-            controlName.errors.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' : null
+            controlName.errors.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' :
+            controlName.errors.uniqEmail ? 'Account with that email/username already exists' : null
           "
           matTooltipClass="tooltip"
           class="success-icon"
           [src]="'./assets/Report (Red).svg' | resolveAsset">
       </div>
-      <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.email_in_use && !controlName.errors.invalid_email && !controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number && !controlName.errors.minlength)'
-           class="success-icon" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
+      <img
+        *ngIf='isErrorIcon &&
+        controlName.invalid &&
+        controlName.errors &&
+        controlName.touched &&
+        (
+        !controlName.errors.email_in_use &&
+        !controlName.errors.invalid_email &&
+        !controlName.errors.room_name &&
+        !controlName.errors.folder_name &&
+        !controlName.errors.room_number &&
+        !controlName.errors.minlength &&
+        !controlName.errors.uniqEmail
+        )'
+        class="success-icon"
+        [src]="'./assets/Report (Red).svg' | resolveAsset"
+      />
+      <img
+        *ngIf="isSuccessIcon && controlName.value.length >= 8"
+        class="success-icon"
+        [src]="'./assets/Check (Navy).svg' | resolveAsset"
+      />
       <div class="disabled"></div>
     </div>
   </div>

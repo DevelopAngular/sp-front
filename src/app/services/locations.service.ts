@@ -167,8 +167,4 @@ export class LocationsService {
     updateFavoriteLocations(body) {
         return this.http.put('v1/users/@me/starred', body);
     }
-
-    get isFocused() {
-      return this.focused.asObservable();
-    }
 }

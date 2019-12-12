@@ -31,7 +31,7 @@
         <mat-divider></mat-divider>
       </div>
   </div>
-    <div class="notif-empty-state" *ngIf="!isDisabledNotif">
+    <div class="notif-empty-state" *ngIf="!isDisabledNotif && !isSafari">
         <img draggable="false" [src]="'./assets/emptyStates/notificationsEmpty.svg' | resolveAsset">
         <div class="info">
             <div class="title ds-empty-text-title">Notifications Disabled</div>
@@ -43,6 +43,16 @@
             </p>
         </div>
     </div>
+  <div class="notif-empty-state" *ngIf="!isDisabledNotif && isSafari">
+    <img draggable="false" [src]="'./assets/Safari (Blue-Gray).svg' | resolveAsset">
+    <div class="info">
+      <div class="title ds-empty-text-title">Notifications Not Available</div>
+      <p class="descriptions ds-empty-text-info">
+        SmartPass notifications are not available on Safari.
+        Please use Chrome or Firefox browsers for notifications.
+      </p>
+    </div>
+  </div>
 </div>
 
 <div [ngClass]="isIOSTablet ? 'ios-back-button-wrapper' : 'back-button-wrapper'" (click)="dialogRef.close()">
