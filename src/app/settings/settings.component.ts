@@ -11,6 +11,7 @@ import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {combineLatest} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
+import {SpAppearanceComponent} from '../core/sp-appearance/sp-appearance.component';
 
 export interface Setting {
   hidden: boolean;
@@ -38,8 +39,6 @@ export class SettingsComponent implements OnInit {
   isSwitch: boolean;
 
   hoveredMasterOption: boolean;
-  hoveredTheme: boolean;
-  pressedTheme: boolean;
   hoveredSignout: boolean;
   hovered: boolean;
   hoveredColor: string;
@@ -61,16 +60,6 @@ export class SettingsComponent implements OnInit {
 
   ) {
     this.initializeSettings();
-  }
-
-  get _themeBackground() {
-    return this.hoveredTheme
-              ?
-              this.pressedTheme
-                ?
-                'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
-                  : 'rgb(228, 235, 255)'
-                    : 'transparent';
   }
 
   ngOnInit() {
@@ -197,18 +186,14 @@ export class SettingsComponent implements OnInit {
     this.settings.push({
       'hidden': false,
       'background': '#134482',
-      'icon': 'Moon',
+      'icon': 'Glasses',
       'action': () => {
-        this.darkTheme.switchTheme();
-        if (this.data) {
-          this.data.darkBackground = !this.data.darkBackground;
-        }
-
-        if (this.dataSideNav) {
-          this.dataSideNav.darkBackground = !this.dataSideNav.darkBackground;
-        }
+        // this.darkTheme.switchTheme();
+        this.dialog.open(SpAppearanceComponent, {
+          panelClass: 'form-dialog-container',
+        });
       },
-      'title': (this.darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode')
+      'title': 'Appearance'
     });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
@@ -217,13 +202,13 @@ export class SettingsComponent implements OnInit {
       'action': 'intro',
       'title': 'View Intro'
     });
-    this.settings.push({
-      'hidden': false,
-      'background': '#07ABC3',
-      'icon': 'Team',
-      'action': 'about',
-      'title': 'About'
-    });
+    // this.settings.push({
+    //   'hidden': false,
+    //   'background': '#07ABC3',
+    //   'icon': 'Team',
+    //   'action': 'about',
+    //   'title': 'About'
+    // });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
       'background': '#6651F1',

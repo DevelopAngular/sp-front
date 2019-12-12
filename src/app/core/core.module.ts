@@ -43,7 +43,7 @@ import { MoovingTilesComponent } from './mooving-tiles/mooving-tiles.component';
     ErrorToastComponent,
     ToastConnectionComponent,
     DropdownComponent,
-    SignedOutToastComponent
+    SignedOutToastComponent,
   ],
 })
 export class CoreModule { }

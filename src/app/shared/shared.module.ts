@@ -22,7 +22,6 @@ import {DragulaModule} from 'ng2-dragula';
 import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SafariScrollDirective} from '../safari-scroll.directive';
 import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
 import {CalendarPickerComponent} from '../calendar-components/calendar-picker/calendar-picker.component';
@@ -54,6 +53,9 @@ import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
+import {MoovingTilesComponent} from '../core/mooving-tiles/mooving-tiles.component';
+import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
+import {SpAppearanceComponent} from '../core/sp-appearance/sp-appearance.component';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -93,7 +95,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RoundInputComponent,
     AppInputComponent,
     CalendarComponent,
-    RestrictionPickerComponent,
     SafariScrollDirective,
     ToggleInputComponent,
     CalendarPickerComponent,
@@ -118,7 +119,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
-    ReportSuccessToastComponent
+    ReportSuccessToastComponent,
+    SpAppearanceComponent,
+    RestrictionPickerComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -129,7 +132,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SortMenuComponent,
     NextReleaseComponent,
     ConsentMenuMobileComponent,
-    ReportSuccessToastComponent
+    ReportSuccessToastComponent,
+    SpAppearanceComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -154,7 +158,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassCardComponent,
     InputTextareaModule,
     CalendarComponent,
-    RestrictionPickerComponent,
     SafariScrollDirective,
     ToggleInputComponent,
     CalendarPickerComponent,
@@ -177,7 +180,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
-    ReportSuccessToastComponent
+    ReportSuccessToastComponent,
+    SpAppearanceComponent,
+    RestrictionPickerComponent
   ],
   providers: [
     {
