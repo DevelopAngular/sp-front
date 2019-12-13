@@ -1,6 +1,7 @@
 import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {StorageService} from './services/storage.service';
+import {DeviceDetection} from './device-detection.helper';
 
 declare const window;
 
@@ -60,22 +61,27 @@ export class DarkThemeSwitch {
   }
 
   private listenSystemThemePreference(predict: boolean) {
+
+    if (DeviceDetection.isSafari()) {
+
+    }
+
     if (predict) {
-      lightMode.addEventListener('change', function () {
+      lightMode.addListener(function () {
         if (lightMode.matches) {
           this.isEnabled$.next(false);
         }
         return this.lightLink;
       }.call(this));
-      darkMode.addEventListener('change', function () {
+      darkMode.addListener(function () {
         if (darkMode.matches) {
           this.isEnabled$.next(true);
         }
         return this.darkLink;
       }.call(this));
     } else {
-      lightMode.removeEventListener('change', this.lightLink);
-      darkMode.removeEventListener('change', this.darkLink);
+      lightMode.removeListener(this.lightLink);
+      darkMode.removeListener(this.darkLink);
     }
   }
 
