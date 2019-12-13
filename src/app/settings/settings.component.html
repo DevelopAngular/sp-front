@@ -35,7 +35,6 @@
            (pointerClickEvent)="hoveredMasterOption = false; switchAction()"
            (pointerDownEvent)="hoveredMasterOption = true"
            (pointerCancelEvent)="hoveredMasterOption = false;"
-
       >
         <img class="switch-icon" [src]="getIcon('Profile Switch', null,  hoveredMasterOption) | resolveAsset">
         <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Admin View</div>

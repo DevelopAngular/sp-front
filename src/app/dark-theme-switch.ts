@@ -61,11 +61,6 @@ export class DarkThemeSwitch {
   }
 
   private listenSystemThemePreference(predict: boolean) {
-
-    if (DeviceDetection.isSafari()) {
-
-    }
-
     if (predict) {
       lightMode.addListener(function () {
         if (lightMode.matches) {

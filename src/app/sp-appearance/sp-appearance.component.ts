@@ -21,15 +21,9 @@ export class SpAppearanceComponent implements OnInit {
   ngOnInit() {
     this.selectedTheme = this.darkTheme.currentTheme();
   }
-  closeWith(evt: SPTheme) {
-    this.dialogRef.close(evt);
-    console.log(evt);
-  }
   setSelectedTheme(evt: SPTheme) {
     this.selectedTheme = evt;
     this.storage.setItem('dark-theme', evt);
     this.darkTheme.switchTheme(evt);
-
-
   }
 }

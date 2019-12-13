@@ -4,10 +4,6 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  //display: flex;
-  //justify-content: center;
-
-
   .disabled {
     position: absolute;
     top: 0;
@@ -22,17 +18,13 @@
 .choices {
   display: flex;
   align-items: center;
-  //height: 100%;
   border-radius: 5.6px;
   padding: 2px;
   box-sizing: border-box;
-  //background-color: rgba(247,247,247,.3);
-
   .choice {
     height: 100%;
     width: 100%;
     display: flex;
-    //padding: 10px;
     white-space: pre-line;
     word-break: break-all;
     text-align: center;
@@ -40,14 +32,12 @@
     justify-content: center;
     border-radius: 5.6px;
     position: relative;
-    //z-index: 2;
   }
   .divider {
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    //z-index: 1;
     &::after {
       content: '';
       display: inline-block;
@@ -60,33 +50,4 @@
       border-radius: .5%;
     }
   }
-  //@keyframes choice {
-  //  0% {
-  //    opacity: .7;
-  //    transform: scale(.98);
-  //  }
-  //  100% {
-  //    opacity: 1;
-  //    transform: scale(1);
-  //  }
-  //}
-  //@keyframes unchoice {
-  //  0% {
-  //    opacity: 1;
-  //    transform: scale(1);
-  //  }
-  //  100% {
-  //    opacity: .7;
-  //    transform: scale(.98);
-  //  }
-  //}
-  //.left-radius {
-  //  border-bottom-left-radius: 5px;
-  //  border-top-left-radius: 5px;
-  //}
-  //
-  //.right-radius {
-  //  border-bottom-right-radius: 5px;
-  //  border-top-right-radius: 5px;
-  //}
 }
