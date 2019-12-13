@@ -9,7 +9,7 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.directive';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
-import { MoovingTilesComponent } from './mooving-tiles/mooving-tiles.component';
+import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
 
 @NgModule({
   declarations: [

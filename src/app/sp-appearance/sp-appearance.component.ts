@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {DarkThemeSwitch, SPTheme} from '../dark-theme-switch';
+import {StorageService} from '../services/storage.service';
 
 @Component({
   selector: 'app-sp-appearance',
@@ -13,17 +14,22 @@ export class SpAppearanceComponent implements OnInit {
 
   constructor(
     private darkTheme: DarkThemeSwitch,
-    private dialogRef: MatDialogRef<SpAppearanceComponent>
+    private dialogRef: MatDialogRef<SpAppearanceComponent>,
+    private storage: StorageService
   ) { }
 
   ngOnInit() {
-    // this.selectedTheme = this.darkTheme.isEnabled$.value;
+    this.selectedTheme = this.darkTheme.currentTheme();
   }
-  closeWith(evt) {
+  closeWith(evt: SPTheme) {
     this.dialogRef.close(evt);
     console.log(evt);
   }
-  setSelectedTheme(evt) {
+  setSelectedTheme(evt: SPTheme) {
     this.selectedTheme = evt;
+    this.storage.setItem('dark-theme', evt);
+    this.darkTheme.switchTheme(evt);
+
+
   }
 }

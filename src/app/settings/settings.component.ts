@@ -11,7 +11,7 @@ import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {combineLatest} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
-import {SpAppearanceComponent} from '../core/sp-appearance/sp-appearance.component';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 
 export interface Setting {
   hidden: boolean;
@@ -188,7 +188,6 @@ export class SettingsComponent implements OnInit {
       'background': '#134482',
       'icon': 'Glasses',
       'action': () => {
-        // this.darkTheme.switchTheme();
         this.dialog.open(SpAppearanceComponent, {
           panelClass: 'form-dialog-container',
         });
@@ -202,13 +201,6 @@ export class SettingsComponent implements OnInit {
       'action': 'intro',
       'title': 'View Intro'
     });
-    // this.settings.push({
-    //   'hidden': false,
-    //   'background': '#07ABC3',
-    //   'icon': 'Team',
-    //   'action': 'about',
-    //   'title': 'About'
-    // });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
       'background': '#6651F1',

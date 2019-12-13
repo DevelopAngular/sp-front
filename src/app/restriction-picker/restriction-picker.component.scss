@@ -4,7 +4,8 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-
+  //display: flex;
+  //justify-content: center;
 
 
   .disabled {
@@ -29,6 +30,7 @@
 
   .choice {
     height: 100%;
+    width: 100%;
     display: flex;
     //padding: 10px;
     white-space: pre-line;

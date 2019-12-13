@@ -53,9 +53,9 @@ import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
-import {MoovingTilesComponent} from '../core/mooving-tiles/mooving-tiles.component';
+import {MoovingTilesComponent} from '../mooving-tiles/mooving-tiles.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
-import {SpAppearanceComponent} from '../core/sp-appearance/sp-appearance.component';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {

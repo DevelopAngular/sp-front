@@ -81,7 +81,7 @@
               [width]="276"
               [height]="32"
               [choices]="['Round-trip', 'One-way' , 'Both']"
-              [selectedChoise]="travelTypes"
+              [selectedChoice]="travelTypes"
               (result)="travelUpdate($event)"
           >
           </app-restriction-picker>
@@ -119,7 +119,7 @@
                   [width]="187"
                   [height]="32"
                   [choices]="['Unrestricted', 'Restricted']"
-                  [selectedChoise]="restricted"
+                  [selectedChoice]="restricted"
                   (result)="restrictedEvent($event)">
           </app-restriction-picker>
         </div>
@@ -141,7 +141,7 @@
                   [width]="187"
                   [height]="32"
                   [choices]="['Unrestricted', 'Restricted']"
-                  [selectedChoise]="schedulingRestricted"
+                  [selectedChoice]="schedulingRestricted"
                   (result)="schedulingRestrictedEvent($event)">
           </app-restriction-picker>
         </div>
