@@ -10,11 +10,11 @@ import {StorageService} from '../services/storage.service';
 })
 export class SpAppearanceComponent implements OnInit {
 
-  private selectedTheme: string;
+  selectedTheme: string;
 
   constructor(
     private darkTheme: DarkThemeSwitch,
-    private dialogRef: MatDialogRef<SpAppearanceComponent>,
+    public dialogRef: MatDialogRef<SpAppearanceComponent>,
     private storage: StorageService
   ) { }
 
