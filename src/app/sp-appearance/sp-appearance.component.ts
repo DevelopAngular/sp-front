@@ -10,7 +10,7 @@ import {StorageService} from '../services/storage.service';
 })
 export class SpAppearanceComponent implements OnInit {
 
-  private selectedTheme: string;
+  public selectedTheme: string;
 
   constructor(
     private darkTheme: DarkThemeSwitch,
@@ -20,6 +20,9 @@ export class SpAppearanceComponent implements OnInit {
 
   ngOnInit() {
     this.selectedTheme = this.darkTheme.currentTheme();
+  }
+  close() {
+    this.dialogRef.close();
   }
   setSelectedTheme(evt: SPTheme) {
     this.selectedTheme = evt;
