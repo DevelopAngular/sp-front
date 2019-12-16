@@ -14,7 +14,7 @@ export class SpAppearanceComponent implements OnInit {
 
   constructor(
     private darkTheme: DarkThemeSwitch,
-    private dialogRef: MatDialogRef<SpAppearanceComponent>,
+    public dialogRef: MatDialogRef<SpAppearanceComponent>,
     private storage: StorageService
   ) { }
 
