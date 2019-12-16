@@ -256,12 +256,13 @@ export class AddUserDialogComponent implements OnInit {
             const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
 
             if (regexpUsername.test(this.newAlternativeAccount.get('username').value)) {
+              const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
               if (role !== 'assistant') {
                 return this.userService
-                            .addAccountToSchool(this.school.id, this.newAlternativeAccount.value, 'username', rolesToDb);
+                            .addAccountToSchool(this.school.id, data, 'username', rolesToDb);
               } else {
                 return this.userService
-                  .addAccountToSchool(this.school.id, this.newAlternativeAccount.value, 'username', rolesToDb)
+                  .addAccountToSchool(this.school.id, data, 'username', rolesToDb)
                   .pipe(
                     switchMap(
                       (assistant: User) => {
@@ -329,9 +330,9 @@ export class AddUserDialogComponent implements OnInit {
       email: control.username,
       password: control.password,
       first_name: control.name.split(' ')[0],
-      last_name: control.name.split(' ')[1],
+      last_name: control.name.split(' ')[1] || '',
       display_name: control.name
-    }
+    };
   }
 
   setSelectedUsers(evt) {

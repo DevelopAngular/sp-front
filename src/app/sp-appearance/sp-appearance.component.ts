@@ -11,7 +11,7 @@ import {ScreenService} from '../services/screen.service';
 })
 export class SpAppearanceComponent implements OnInit {
 
-  private selectedTheme: string;
+  selectedTheme: string;
 
   constructor(
     private darkTheme: DarkThemeSwitch,
