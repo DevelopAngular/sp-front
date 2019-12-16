@@ -73,12 +73,12 @@ function constructTestInvitations(student: User, issuer: User, origin: Location,
     destination, [testDate], issuer,
     'pending', 10, '#F37426,#F52B4F',
     'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way',
-    colorProfile, new Date(), new Date(), new Date(), new Date());
+    colorProfile, new Date(), new Date(), new Date(), new Date(), '');
   const testInvitation2 = new Invitation('testInvitation2', student, null,
     destination, [testDate], issuer,
     'declined', 10, '#F37426,#F52B4F',
     'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way',
-    colorProfile, null, null, new Date(), new Date());
+    colorProfile, null, null, new Date(), new Date(), '');
 
   return [testInvitation1, testInvitation2];
 }

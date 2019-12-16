@@ -170,15 +170,16 @@ export class InvitationCardComponent implements OnInit {
     this.selectedOrigin = location;
   }
 
-  newInvitation(){
+  newInvitation() {
     this.performingAction = true;
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
-      'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+      'default_origin' : this.invitation.default_origin ? this.invitation.default_origin.id : null,
       'destination' : this.invitation.destination.id,
       'date_choices' : this.invitation.date_choices.map(date => date.toISOString()),
-      'duration' : this.selectedDuration*60,
-      'travel_type' : this.selectedTravelType
+      'duration' : this.selectedDuration * 60,
+      'travel_type' : this.selectedTravelType,
+      'issuer_message': this.invitation.issuer_message
     };
 
     this.requestService.createInvitation(body).subscribe((data) => {
