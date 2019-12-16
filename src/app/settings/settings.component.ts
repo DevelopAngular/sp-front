@@ -187,11 +187,7 @@ export class SettingsComponent implements OnInit {
       'hidden': false,
       'background': '#134482',
       'icon': 'Glasses',
-      'action': () => {
-        this.dialog.open(SpAppearanceComponent, {
-          panelClass: 'form-dialog-container',
-        });
-      },
+      'action': 'appearance',
       'title': 'Appearance'
     });
     this.settings.push({

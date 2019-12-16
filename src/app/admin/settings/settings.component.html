@@ -23,7 +23,7 @@
              (mouseenter)="hoveredTheme = true"
              (mouseleave)="hoveredTheme = false"
              appCrossPointerEventTarget
-             (pointerClickEvent)="switchTheme()"
+             (pointerClickEvent)="dialogRef.close('appearance')"
              (pointerDownEvent)="pressedTheme = true"
              (pointerCancelEvent)="pressedTheme = false;"
         >

@@ -30,13 +30,13 @@ export class SettingsComponent implements OnInit {
 
 
     public settings = [
-        {
-          'background': '#139BE6',
-          'icon': 'Team',
-          'hover_icon': './assets/Team (White).svg',
-          'action': 'about',
-          'title': 'About'
-        },
+        // {
+        //   'background': '#139BE6',
+        //   'icon': 'Team',
+        //   'hover_icon': './assets/Team (White).svg',
+        //   'action': 'about',
+        //   'title': 'About'
+        // },
         {
           'background': '#6651F1',
           'icon': 'Launch',

@@ -42,6 +42,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import { filter as _filter } from 'lodash';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 
 declare const window;
 
@@ -501,12 +502,14 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
             entry: true
           }
         });
-      } else if (action === 'switch') {
+      } else if (action === 'appearance') {
+          this.dialog.open(SpAppearanceComponent, {
+            panelClass: 'form-dialog-container',
+          });
+      }  else if (action === 'switch') {
         this.router.navigate(['admin']);
       } else if (action === 'team') {
           window.open('https://smartpass.app/team.html');
-      } else if (action === 'about') {
-          window.open('https://smartpass.app/about');
       } else if (action === 'support') {
           if (this.isStaff) {
               window.open('https://smartpass.app/support');
