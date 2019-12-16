@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {DarkThemeSwitch, SPTheme} from '../dark-theme-switch';
 import {StorageService} from '../services/storage.service';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-sp-appearance',
@@ -15,9 +16,21 @@ export class SpAppearanceComponent implements OnInit {
   constructor(
     private darkTheme: DarkThemeSwitch,
     private dialogRef: MatDialogRef<SpAppearanceComponent>,
-    private storage: StorageService
+    private storage: StorageService,
+    private screenService: ScreenService
   ) { }
 
+  get extraSmallDevice() {
+    return this.screenService.isDeviceSmallExtra;
+  }
+  get extraLargeDevice() {
+    return this.screenService.isDeviceLargeExtra;
+  }
+  get hostWidth() {
+    return this.extraSmallDevice ?
+            300 : this.extraLargeDevice ?
+              335 : 425;
+  }
   ngOnInit() {
     this.selectedTheme = this.darkTheme.currentTheme();
   }
