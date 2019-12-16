@@ -15,7 +15,7 @@ import {filter, switchMap, tap} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
-import {of} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
@@ -47,6 +47,8 @@ export class InvitationCardComponent implements OnInit {
   dateEditOpen: boolean;
 
   locationChangeOpen: boolean;
+
+  frameMotion$: BehaviorSubject<any>;
 
   isModal: boolean;
   isSeen: boolean;
@@ -107,7 +109,7 @@ export class InvitationCardComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.frameMotion$ = this.createFormService.getFrameMotionDirection();
     if (this.data['pass']) {
       this.isModal = true;
       this.invitation = this.data['pass'];
