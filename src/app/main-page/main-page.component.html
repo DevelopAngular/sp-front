@@ -1,4 +1,4 @@
-<mat-sidenav-container (backdropClick)="fadeClick()" [ngClass]="{'over-width': (toggleLeft | async)}">
+<mat-sidenav-container (backdropClick)="fadeClick()" [style.overflow]="!isStaff ? 'auto' : 'hidden'">
 
   <mat-sidenav class="settings-side-nav" mode="over" [fixedInViewport]="true" [opened]="(toggleLeft | async)">
     <ng-container *ngIf="screenService.isDeviceLargeExtra">

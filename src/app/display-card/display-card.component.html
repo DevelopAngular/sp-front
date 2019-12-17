@@ -1,6 +1,11 @@
 ﻿<div class="overlay">
   <div class="display-card">
-    <div class="display-card-wrapper" [ngClass]="{'inbox': inbox}" [style.background-color]="backgroundColor">
+    <div
+      class="display-card-wrapper"
+      [ngClass]="{'inbox': inbox}"
+      [style.height]="inbox ? (!screenService.isDeviceLargeExtra ? 'calc(100vh - 190px)' : 'calc(100vh - 78px)') : ''"
+      [style.background-color]="backgroundColor"
+    >
       <div class="display-card-header justify-content" *ngIf="hasHeader" [style.min-height]="(inbox ? '35px' : '')"  [style.margin-bottom]="headerBottomSpace">
         <div class="flexCls">
           <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
@@ -14,7 +19,7 @@
         <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"  [style.height]="iconSize" [style.width]="iconSize">
         <div *ngIf="!!righttext && !righticon" class="display-card-header-icon righticon" >{{righttext}}</div>
       </div>
-      <!--<div [style.background-color]="(hasDivider? '#B5B7BA':'transparent')" class="display-card-divider"></div>-->
+
       <div *ngIf="subtitle!=null" [style.font-size]="subtitle_fontSize" class="subtitlecls">
         {{subtitle}}
       </div>
