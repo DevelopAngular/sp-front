@@ -1,12 +1,11 @@
 import { Component, ElementRef, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ColorProfile } from '../../models/ColorProfile';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../../build-info';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {combineLatest} from 'rxjs';
-import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
 
 @Component({
   selector: 'app-settings',
@@ -15,54 +14,53 @@ import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component
 })
 export class SettingsComponent implements OnInit {
 
-    triggerElementRef: ElementRef;
+  triggerElementRef: ElementRef;
 
-    isSwitchOption: boolean;
+  isSwitchOption: boolean;
 
-    hoveredProfile: boolean;
-    hoveredTheme: boolean;
-    pressedTheme: boolean;
-    hoveredSignout: boolean;
-    hovered: boolean;
-    hoveredColor: string;
-    version = 'Version 1.5';
-    currentRelease = RELEASE_NAME;
+  hoveredProfile: boolean;
+  hoveredTheme: boolean;
+  pressedTheme: boolean;
+  hoveredSignout: boolean;
+  hovered: boolean;
+  hoveredColor: string;
+  version = 'Version 1.5';
+  currentRelease = RELEASE_NAME;
 
 
-    public settings = [
-        {
-          'background': '#139BE6',
-          'icon': 'Team',
-          'hover_icon': './assets/Team (White).svg',
-          'action': 'about',
-          'title': 'About'
-        },
-        {
-          'background': '#6651F1',
-          'icon': 'Launch',
-          'hover_icon': './assets/Launch (White).svg',
-          'action': 'wishlist',
-          'title': 'Wishlist'
-        },
-        {
-          'background': '#F53D45',
-          'icon': 'Support',
-          'hover_icon': './assets/Support (White).svg',
-          'action': 'support',
-          'title': 'Support'
-        },
-    ];
+  public settings = [
+    {
+      'background': '#139BE6',
+      'icon': 'Team',
+      'hover_icon': './assets/Team (White).svg',
+      'action': 'about',
+      'title': 'About'
+    },
+    {
+      'background': '#6651F1',
+      'icon': 'Launch',
+      'hover_icon': './assets/Launch (White).svg',
+      'action': 'wishlist',
+      'title': 'Wishlist'
+    },
+    {
+      'background': '#F53D45',
+      'icon': 'Support',
+      'hover_icon': './assets/Support (White).svg',
+      'action': 'support',
+      'title': 'Support'
+    },
+  ];
 
-    constructor(
-        private router: Router,
-        public dialogRef: MatDialogRef<SettingsComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        public darkTheme: DarkThemeSwitch,
-        private elemRef: ElementRef,
-        private pwaStorage: LocalStorage,
-        private dialog: MatDialog
-    ) {
-    }
+  constructor(
+    private router: Router,
+    public dialogRef: MatDialogRef<SettingsComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public darkTheme: DarkThemeSwitch,
+    private elemRef: ElementRef,
+    private pwaStorage: LocalStorage,
+  ) {
+  }
 
   get _themeBackground() {
     return this.hoveredTheme
@@ -70,23 +68,16 @@ export class SettingsComponent implements OnInit {
       !this.darkTheme.isEnabled$.value
         ?
         '#134482'
-          : 'rgb(228, 235, 255)'
-            : 'transparent';
+        : 'rgb(228, 235, 255)'
+      : 'transparent';
   }
 
-    ngOnInit() {
-      this.triggerElementRef = this.data['trigger'];
-        this.isSwitchOption = this.data['isSwitch'];
-        this.updateSettingsPosition();
-    }
-
-  switchTheme() {
-    this.pressedTheme = false;
-    // this.data.darkBackground = !this.data.darkBackground;
-    this.dialog.open(SpAppearanceComponent, {
-      panelClass: 'form-dialog-container',
-    });
+  ngOnInit() {
+    this.triggerElementRef = this.data['trigger'];
+    this.isSwitchOption = this.data['isSwitch'];
+    this.updateSettingsPosition();
   }
+
 
 
   getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
@@ -133,8 +124,8 @@ export class SettingsComponent implements OnInit {
   }
 
   onHover(color) {
-      this.hovered = true;
-      this.hoveredColor = color;
+    this.hovered = true;
+    this.hoveredColor = color;
   }
 
   signOut() {

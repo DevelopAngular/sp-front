@@ -312,8 +312,11 @@ export class UserService {
     } else if (userType === 'username') {
         return this.http.post(`v1/schools/${id}/add_user`, {
             type:  'username',
-            username: user.username,
+            username: user.email,
             password: user.password,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            display_name: user.display_name,
             profiles: roles
         });
     }
