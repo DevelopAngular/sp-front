@@ -5,7 +5,7 @@ variables:
   # AUTO_DEVOPS_DOMAIN: notify-messenger-notify-server-staging.lavanote.com
   # AUTO_DEVOPS_DOMAIN: smartpass.app
 
-  KUBERNETES_VERSION: 1.10.3
+  KUBERNETES_VERSION: 1.16.3
   HELM_VERSION: 2.9.1
   SENTRY_ORG: "smartpass"
   SENTRY_PROJECT: "hall-pass-web"
