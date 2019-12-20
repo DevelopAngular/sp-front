@@ -5,15 +5,18 @@
        [style.background-color]="'rgba(247,247,247,1)'"
        [style.height.px]="height">
 <!--  <div class="choices" [style.border]="'1px solid ' + selectedColor">-->
-    <div *ngFor="let choice of choices; let i=index;" [style.height.%]="100" [class.divider]="choices.length >2 && i < choices.length - 1 && selectedChoise !== choice ">
+    <div *ngFor="let choice of choices; let i=index;"
+         [style.flex]="'1 1 auto'" [style.height.%]="100"
+         [class.divider]="choices.length > 1 && i < choices.length - 1 && selectedChoice !== choice ">
       <div class="choice"
            [style.opacity]="isDisabled(choice) ? 0.5 : 1"
            [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
-           [style.width]="width / choices.length + 'px'"
-           [style.color]="selectedChoise === choice ? selectedColor : color"
+           [style.color]="selectedChoice === choice ? selectedColor : color"
            [style.font-size]="fontSize + 'px'"
-           (click)="onClick(choice)"
-           [@Select]="{ value: selectedChoise === choice ? 'selected' : 'unselected', params: {background: backgroundColor}}"
+           [style.width]="width ? (width / choices.length + 'px') : 'auto' "
+           appCrossPointerEventTarget
+           (pointerClickEvent)="onClick(choice)"
+           [@Select]="{ value: selectedChoice === choice ? 'selected' : 'unselected', params: {background: backgroundColor}}"
       >
 <!--        <div class="option-background"-->
 <!--             -->

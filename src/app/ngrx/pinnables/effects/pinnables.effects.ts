@@ -71,6 +71,22 @@ export class PinnablesEffects {
       );
   });
 
+  arrangedPinnable$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(pinnablesActions.arrangedPinnable),
+        concatMap(action => {
+          return this.passesService.createArrangedPinnable(action.order)
+            .pipe(
+              map(() => {
+                return pinnablesActions.arrangedPinnableSuccess();
+              }),
+              catchError(error => of(pinnablesActions.arrangedPinnableFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private passesService: HallPassesService

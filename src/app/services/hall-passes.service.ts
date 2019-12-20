@@ -1,19 +1,22 @@
 import { Injectable } from '@angular/core';
-import {Observable, of, Subject} from 'rxjs';
+import {from, Observable, of, Subject} from 'rxjs';
 import { Pinnable } from '../models/Pinnable';
 import { HttpService } from './http-service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
+  getArrangedLoading,
   getCurrentPinnable,
   getIsLoadedPinnables,
   getIsLoadingPinnables,
   getPinnableCollection,
   getPinnablesIds
 } from '../ngrx/pinnables/states';
-import {getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
+import {arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
 import {getPassStats} from '../ngrx/pass-stats/actions';
 import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
+import {bufferCount, mergeMap, reduce} from 'rxjs/operators';
+import {constructUrl} from '../live-data/helpers';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +27,7 @@ export class HallPassesService {
   loadedPinnables$: Observable<boolean>;
   isLoadingPinnables$: Observable<boolean>;
   pinnablesCollectionIds$: Observable<number[] | string[]>;
+  isLoadingArranged$: Observable<boolean> = this.store.select(getArrangedLoading);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
@@ -41,8 +45,19 @@ export class HallPassesService {
         return this.http.get('v1/hall_passes?active=true');
     }
 
-    getAggregatedPasses() {
-      return this.http.get('v1/hall_passes/aggregated');
+    getAggregatedPasses(locationsIds: number[] | string[]) {
+      return from(locationsIds)
+        .pipe(
+          bufferCount(20),
+          mergeMap(ids => {
+            const url = constructUrl('v1/hall_passes/aggregated', {
+              location: ids
+            });
+            return this.http.get(url);
+          }),
+          reduce((acc, curr) => acc.concat(curr), [])
+        );
+      // return this.http.get('v1/hall_passes/aggregated');
     }
 
     getActivePassesKioskMode(locId) {
@@ -117,6 +132,11 @@ export class HallPassesService {
     getArrangedPinnables() {
         return this.http.get('v1/pinnables?arranged=true');
     }
+
+  createArrangedPinnableRequest(order) {
+    this.store.dispatch(arrangedPinnable({order}));
+    return of(null);
+  }
 
     createArrangedPinnable(body) {
         return this.http.post(`v1/pinnables/arranged`, body);

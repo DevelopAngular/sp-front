@@ -44,6 +44,10 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
       return NotificationService.hasPermission;
   }
 
+  get isSafari() {
+    return DeviceDetection.isSafari();
+  }
+
   ngOnInit() {
       this.dataService.currentUser
       .subscribe(user => {

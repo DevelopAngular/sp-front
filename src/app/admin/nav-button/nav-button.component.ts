@@ -45,7 +45,6 @@ export class NavButtonComponent implements OnInit, OnChanges {
   ngOnChanges() {
     if (this.selected) {
       this.selectedButton.emit(this.selected);
-      // console.log(true);
     }
   }
 

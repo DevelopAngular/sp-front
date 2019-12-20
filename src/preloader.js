@@ -92,6 +92,8 @@ window.appLoaded = function(timeout = 100) {
     if (window.preloader) {
       window.preloader.visibility = false;
       clearInterval(timerId);
+    } else {
+      clearInterval(timerId);
     }
   }, timeout);
 };

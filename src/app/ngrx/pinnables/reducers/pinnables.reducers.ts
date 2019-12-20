@@ -9,6 +9,7 @@ export const adapter: EntityAdapter<Pinnable> = createEntityAdapter<Pinnable>();
 export const pinnablesInitialState: IPinnablesState = adapter.getInitialState({
   loading: false,
   loaded: false,
+  arrangedLoading: false,
   currentPinnableId: null
 });
 
@@ -29,7 +30,9 @@ const reducer = createReducer(
   on(pinnablesActions.removeSuccessPinnable, (state, { id }) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true, currentPinnableId: id});
   }),
-  on(pinnablesActions.getPinnablesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false}))
+  on(pinnablesActions.getPinnablesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false})),
+  on(pinnablesActions.arrangedPinnable, (state) => ({...state, arrangedLoading: true})),
+  on(pinnablesActions.arrangedPinnableSuccess, (state) => ({...state, arrangedLoading: false}))
 );
 
 export function pinnablesReducer(state: any | undefined, action: Action) {

@@ -54,6 +54,7 @@
 
     <app-restricted-message
       [formState]="FORM_STATE"
+      [isStaff]="isStaff"
       (backButton)="back($event)"
       [gradient]="FORM_STATE.data.gradient"
       [teacher]="data.requestTarget"
@@ -64,6 +65,6 @@
 
 </div>
 
-<div *ngIf="pwaBackBtnVisibility" [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
+<div *ngIf="pwaBackBtnVisibility" appCrossPointerEventTarget [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
   <app-icon-button (clickEvent)="stepBack()" [srcString]="'Back Button'" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
 </div>

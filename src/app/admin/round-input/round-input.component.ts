@@ -2,18 +2,18 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
+  Input, OnChanges, OnDestroy,
   OnInit,
-  Output,
+  Output, SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable, of, Subject} from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {constructUrl} from '../../live-data/helpers';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
 
@@ -25,7 +25,7 @@ export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates';
   styleUrls: ['./round-input.component.scss'],
   exportAs: 'roundInputRef'
 })
-export class RoundInputComponent implements OnInit {
+export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
 
   @ViewChild('input') input: ElementRef;
 
@@ -67,6 +67,7 @@ export class RoundInputComponent implements OnInit {
   value: string;
 
   public e: Observable<Event>;
+  private destroyer$ = new Subject<any>();
 
   constructor (
     public httpService: HttpService,
@@ -106,25 +107,27 @@ export class RoundInputComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.handleError();
     if (this.focused) {
-      this.input.nativeElement.focus();
+      setTimeout(() => {
+        this.input.nativeElement.focus();
+      }, 100);
     }
 
-    if (this.selfSearch) {
-      this.pending$ = new Subject<boolean>();
-    }
-
-    if (this.isSearch) {
       fromEvent(this.input.nativeElement, 'input')
         .pipe(
-          distinctUntilChanged(),
-          debounceTime(300)
+          (this.isSearch ? (distinctUntilChanged(), debounceTime(300)) : tap()),
+          takeUntil(this.destroyer$)
         )
         .subscribe((event: any) => {
-            this.ontextupdate.emit(event.target.value);
+          if ( event.target.value.length > 0) {
+            this.showCloseIcon.next(true);
+          } else {
+            setTimeout(() => {
+              this.showCloseIcon.next(false);
+            }, 220);
+          }
+          this.ontextupdate.emit(event.target.value);
         });
-    }
 
     if (!this.type.includes('multi') && this.type !== 'text') {
       this.initialValue = '';
@@ -141,10 +144,16 @@ export class RoundInputComponent implements OnInit {
 
   }
 
-  handleError() {
-    if (this.selfSearch && !this.endpoint) {
-      throw Error('\n \n SP Error => \n ------ \n Please provide an api endpoint for search! \n');
+  ngOnChanges(sc: SimpleChanges) {
+    console.log(sc);
+    if ('focused' in sc && !sc.focused.isFirstChange() && sc.focused.currentValue) {
+      this.input.nativeElement.focus();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyer$.next();
+    this.destroyer$.complete();
   }
 
   focusAction(selected: boolean) {
@@ -153,32 +162,10 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
-  changeAction(inp: HTMLInputElement, reset?: boolean) {
-    if (reset) {
-      inp.value = '';
-      inp.focus();
-    }
-    if (this.type === 'text') {
-      if (this.selfSearch) {
-        this.handleError();
-        this.pending$.next(true);
-        this.httpService.get(constructUrl(this.endpoint, {search: inp.value})).subscribe((res: any) => {
-          this.pending$.next(false);
-          this.selfSearchCompletedEvent.emit(res);
-        });
-      } else {
-        if (!this.isSearch) {
-          this.ontextupdate.emit(inp.value);
-        }
-      }
-    }
-    if ( inp.value.length > 0) {
-        this.showCloseIcon.next(true);
-    } else {
-      setTimeout(() => {
-        this.showCloseIcon.next(false);
-      }, 220);
-    }
+  reset() {
+      this.input.nativeElement.value = '';
+      this.input.nativeElement.focus();
+      this.ontextupdate.emit('');
   }
 
 }
