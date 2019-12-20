@@ -1,11 +1,24 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import { environment } from '../../environments/environment';
 import {constructUrl, QueryParams} from '../live-data/helpers';
-import {catchError, debounceTime, delay, distinctUntilChanged, filter, map, mapTo, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  delay,
+  distinctUntilChanged,
+  filter,
+  map,
+  mapTo,
+  pluck,
+  switchMap,
+  take,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {BehaviorSubject, from, Observable, of, Subject, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleAuthService} from '../services/google-auth.service';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -119,12 +132,18 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
-    this.route.queryParams.subscribe((qp: QueryParams) => {
-      if (!qp.key) {
-          this.router.navigate(['']);
-      } else {
-        this.AuthToken = qp.key as string;
-      }
+    this.route.queryParams
+      .pipe(
+        switchMap((qp: QueryParams) => {
+          this.AuthToken = qp.key as string;
+          return this.http.get(environment.schoolOnboardApiRoot + `/onboard/schools/check_auth`, {
+            headers: new HttpHeaders({
+              'Authorization': 'Bearer ' + this.AuthToken
+            })
+          });
+        })
+      )
+      .subscribe((qp) => {
       console.log(this.AuthToken);
     });
 
@@ -139,20 +158,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
           return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
         }
       ], [
-          (fc: FormControl) => {
-            return fc.valueChanges
-                .pipe(
-                  debounceTime(250),
-                  distinctUntilChanged(),
-                  switchMap(() => {
-                    return this.httpService
-                      .post('check-email', {email: fc.value})
-                  }),
-                  map((res: any) => {
-                    return res.exists ? {email_in_use: true} : null;
-                  })
-                );
-          }
+          this.checkEmailValidatorAsync.bind(this)
       ]),
       password: new FormControl('',
         [
@@ -161,19 +167,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       ])
     });
     this.schoolForm.markAsTouched();
-    this.schoolForm.valueChanges
-      .pipe(
-        // filter(f => !!f),
-        // map((f) => {
-        //   return f.schoolEmail;
-        // }),
-        // filter(f => !!f),
-      )
-      .subscribe((f) => {
-        // if (f.indexOf('@') >= 0) {
-          console.log(f, this.schoolForm);
-        // }
-    });
+
     this.shortcutsService.onPressKeyEvent$
       .pipe(
         tap((s) => {
@@ -197,6 +191,29 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     window.appLoaded();
   }
+
+  checkEmailValidatorAsync(control: FormControl) {
+    return control.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        take(1),
+        debounceTime(300),
+        switchMap((value) => {
+          return this.http
+            .get(constructUrl(environment.schoolOnboardApiRoot + '/onboard/schools/check_email', {email: value}), {
+              headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + this.AuthToken
+              })
+            }).pipe(
+              take(1),
+              map(({exists}: {exists: boolean}) => {
+                return (exists ? { uniqEmail: true } : null);
+              })
+            );
+        })
+      );
+  }
+
   test(event) {
     // console.log(event[0]._d);
   }
@@ -217,14 +234,14 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             // google_place_id: this.school.place_id,
             ...this.schoolForm.value
           }, {
-            headers: {
-              'Authorization': 'Bearer ' + this.AuthToken // it's temporary
-            }
+            headers: new HttpHeaders({
+              'Authorization': 'Bearer ' + this.AuthToken
+            })
           }).pipe(
             // tap(() => this.gsProgress.updateProgress('create_school:end')),
             map((res: any) => {
               this._zone.run(() => {
-                // this.loginService.updateAuth(auth);
+                this.loginService.signInDemoMode(this.schoolForm.value.email, this.schoolForm.value.password);
                 this.storage.setItem('last_school_id', res.school.id);
               });
               return true;
@@ -242,6 +259,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             })
           )
           .subscribe((res) => {
+            debugger;
             this.pending.next(false);
             if (res) {
               this._zone.run(() => {

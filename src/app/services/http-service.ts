@@ -90,12 +90,13 @@ function makeUrl(server: LoginServer, endpoint: string) {
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
     return endpoint;
   } else {
-    if (!environment.production) {
-      const proxyPath = new URL(server.api_root).pathname;
-      return (proxyPath + endpoint) as string;
-    } else {
-      return server.api_root + endpoint;
-    }
+    // if (!environment.production) {
+    //   const proxyPath = new URL(server.api_root).pathname;
+    //   return (proxyPath + endpoint) as string;
+    // } else {
+    //   return server.api_root + endpoint;
+    // }
+    return server.api_root + endpoint;
   }
 }
 
