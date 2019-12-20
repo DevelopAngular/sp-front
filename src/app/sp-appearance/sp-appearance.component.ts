@@ -11,11 +11,11 @@ import {ScreenService} from '../services/screen.service';
 })
 export class SpAppearanceComponent implements OnInit {
 
-  private selectedTheme: string;
+  selectedTheme: string;
 
   constructor(
     private darkTheme: DarkThemeSwitch,
-    private dialogRef: MatDialogRef<SpAppearanceComponent>,
+    public dialogRef: MatDialogRef<SpAppearanceComponent>,
     private storage: StorageService,
     private screenService: ScreenService
   ) { }

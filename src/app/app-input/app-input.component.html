@@ -44,7 +44,7 @@
              [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
              spellcheck="false" #inp />
       <div class="tooltip-container tooltip-container__inline"
-           *ngIf='controlName.invalid
+           *ngIf="controlName.invalid
             &&
             controlName.touched
             &&
@@ -55,7 +55,8 @@
             controlName.errors.folder_name ||
             controlName.errors.room_number ||
             controlName.errors.minlength ||
-            controlName.errors.uniqEmail)'
+            controlName.errors.uniqEmail
+            )"
       >
         <img
           [matTooltip]="
