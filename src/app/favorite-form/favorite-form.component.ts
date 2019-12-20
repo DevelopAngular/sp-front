@@ -3,6 +3,9 @@ import { Location } from '../models/Location';
 import { MatDialogRef } from '@angular/material';
 import { LocationsService } from '../services/locations.service';
 import { DeviceDetection } from '../device-detection.helper';
+import {DragulaService} from 'ng2-dragula';
+import {merge, Observable, of, Subject, timer} from 'rxjs';
+import {mapTo, publish, refCount, skipUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-favorite-form',
@@ -13,13 +16,21 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
 
   starChanges: any[] = [];
   starChangesIds: number[];
+  overflow$: Observable<boolean>;
 
   constructor(
       private dialogRef: MatDialogRef<FavoriteFormComponent>,
-      private locationService: LocationsService
+      private locationService: LocationsService,
+      private dragulaService: DragulaService
   ) { }
 
   ngOnInit() {
+    this.overflow$ = merge(
+      of(true),
+      this.dragulaService.drag('locations').pipe(mapTo(false)),
+      this.dragulaService.drop('locations').pipe(mapTo(true))
+    ).pipe(publish(), refCount());
+
       this.locationService.getFavoriteLocationsRequest().subscribe((stars: any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));
         this.starChangesIds = stars.map(star => star.id);

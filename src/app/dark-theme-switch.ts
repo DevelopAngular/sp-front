@@ -31,7 +31,12 @@ export class DarkThemeSwitch {
   constructor(
     private storage: StorageService
   ) {
-    const isDarkTheme = JSON.parse(this.storage.getItem('dark-theme'));
+    /**
+     * spa1259FallBack variable is a temporary solution to avoid app crashing during initialization
+     * As soon as SPA-1259 merged into dev and next-release branch, should be rewrite into ${ const isDarkTheme = this.storage.getItem(theme: string) }
+    */
+    const spa1259FallBack = (this.storage.getItem('dark-theme') !== 'true' && this.storage.getItem('dark-theme') !== 'false') ? 'false' : this.storage.getItem('dark-theme');
+    const isDarkTheme = JSON.parse(spa1259FallBack);
     this.isEnabled$ = new BehaviorSubject<boolean>(isDarkTheme);
   }
 
@@ -62,7 +67,7 @@ export class DarkThemeSwitch {
       if (this.isEnabled$.value) {
         fill = 'White';
       } else {
-        fill = config.hover && config.hoveredColor === config.setting.gradient ? 'White' : 'Blue-Gray';
+        fill = config.hover && config.hoveredColor === config.setting.background ? 'White' : 'Blue-Gray';
       }
     }
 
@@ -104,7 +109,7 @@ export class DarkThemeSwitch {
       if (this.isEnabled$.value) {
         return '#EFEFEF';
       } else {
-        if (config.hover && config.hoveredColor === config.setting.gradient) {
+        if (config.hover && config.hoveredColor === config.setting.background) {
           return '#EFEFEF';
         } else {
           return '#7F879D';
@@ -128,8 +133,8 @@ export class DarkThemeSwitch {
     if (this.isEnabled$.value) {
       switch (tone) {
         case 'low':
-          case 'extra':
-            return '#0F171E';
+        case 'extra':
+          return '#0F171E';
         case 'default':
           return '#0F171E';
         case 'middle':
@@ -151,9 +156,5 @@ export class DarkThemeSwitch {
           return reverse ? '#7F879D' : '#FBFEFF';
       }
     }
-  }
-
-  get isColorSwitched() {
-    return this.isEnabled$.asObservable();
   }
 }

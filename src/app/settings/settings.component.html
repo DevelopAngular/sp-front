@@ -50,17 +50,24 @@
         <div class="content"
              appCrossPointerEventTarget
              (pointerClickEvent)="handleAction(setting); hovered = false"
-             (pointerDownEvent)="onHover(setting.gradient)"
+             (pointerDownEvent)="onHover(setting.background)"
              (pointerCancelEvent)="hovered = false;"
-             (mouseenter)="onHover(setting.gradient)"
+             (mouseenter)="onHover(setting.background)"
              (mouseleave)="hovered = false"
-             [style.background]="hovered && hoveredColor === setting.gradient ?
-           i === 2 ? (darkTheme.isEnabled$.value ? 'rgb(228, 235, 255)' : 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')') : 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
+             [style.background]="
+              hovered && hoveredColor === setting.background
+              ?
+                i === 2
+                  ?
+                  (darkTheme.isEnabled$.value
+                    ?
+                      'rgb(228, 235, 255)' : setting.background)
+                        : setting.background: 'none'"
         >
           <img class="setting-icon"
-               [src]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.gradient) ? './assets/Moon (Navy).svg' : getIcon(setting.icon, setting, hovered, hoveredColor)) : (getIcon(setting.icon, setting, hovered, hoveredColor)) | resolveAsset" alt="SET">
+               [src]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background) ? './assets/Moon (Navy).svg' : getIcon(setting.icon, setting, hovered, hoveredColor)) : (getIcon(setting.icon, setting, hovered, hoveredColor)) | resolveAsset" alt="SET">
           <div class="setting-title"
-               [style.color]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.gradient) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
+               [style.color]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
           > {{(i === 2 ? (darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode') : setting.title)}} </div>
         </div>
         <mat-divider class="divider"

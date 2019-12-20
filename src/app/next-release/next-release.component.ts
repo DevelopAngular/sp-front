@@ -22,7 +22,7 @@ export class NextReleaseComponent implements OnInit {
 
   ngOnInit() {
     this.userService
-      .getUserWithTimeout()
+      .user$
       .subscribe((user) => {
         this.releaseIndex = '1.2'
         this.whatsNewItems = [

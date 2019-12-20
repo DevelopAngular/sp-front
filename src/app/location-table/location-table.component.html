@@ -25,7 +25,8 @@
            class="choices"
            dragula="locations"
            [(dragulaModel)]="starredChoices"
-           (dragulaModelChange)="updateOrderLocation($event)">
+           (dragulaModelChange)="updateOrderLocation($event)"
+      >
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
             (onSelect)="choiceSelected($event)"

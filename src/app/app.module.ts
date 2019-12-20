@@ -64,6 +64,7 @@ import {ProcessEffects} from './ngrx/onboard-process/effects';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
+import {NextReleaseComponent} from './next-release/next-release.component';
 
 
 const appRoutes: Routes = [
@@ -127,7 +128,8 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    ScrollHolderDirective
+    ScrollHolderDirective,
+    NextReleaseComponent
   ],
   imports: [
     BrowserModule,
@@ -176,6 +178,7 @@ const appRoutes: Routes = [
     ]),
     StoreDevtoolsModule.instrument({})
   ],
+  entryComponents: [NextReleaseComponent],
   providers: [
     DataService,
     HttpService,

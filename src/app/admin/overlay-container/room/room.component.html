@@ -4,7 +4,7 @@
       <div class="room-inputs" *ngIf="currentPage !== 9 && currentPage !== 10">
           <app-input
                   [width]="'222px'"
-                  [maxLength]="15"
+                  [maxLength]="'15'"
                   [input_label]="'Room Name'"
                   [input_value]="data && data.roomName && data.roomName !== 'New Room' ? data.roomName : ''"
                   [formGroup]="form"
@@ -17,7 +17,7 @@
 
           <app-input
                   [width]="'103px'"
-                  [maxLength]="5"
+                  [maxLength]="'5'"
                   [isFocus]="form.touched"
                   [input_label]="'Room Number'"
                   [input_value]="data && data.roomNumber ? data.roomNumber : ''"
@@ -81,7 +81,7 @@
               [width]="276"
               [height]="32"
               [choices]="['Round-trip', 'One-way' , 'Both']"
-              [selectedChoise]="travelTypes"
+              [selectedChoice]="travelTypes"
               (result)="travelUpdate($event)"
           >
           </app-restriction-picker>
@@ -89,7 +89,7 @@
         <div class="time-limit">
           <app-input
                   [width]="'103px'"
-                  [maxLength]="3"
+                  [maxLength]="'3'"
                   [tooltipText]="tooltipText.timeLimit"
                   [input_label]="'Time Limit'"
                   [isFocus]="form.touched"
@@ -119,7 +119,7 @@
                   [width]="187"
                   [height]="32"
                   [choices]="['Unrestricted', 'Restricted']"
-                  [selectedChoise]="restricted"
+                  [selectedChoice]="restricted"
                   (result)="restrictedEvent($event)">
           </app-restriction-picker>
         </div>
@@ -141,7 +141,7 @@
                   [width]="187"
                   [height]="32"
                   [choices]="['Unrestricted', 'Restricted']"
-                  [selectedChoise]="schedulingRestricted"
+                  [selectedChoice]="schedulingRestricted"
                   (result)="schedulingRestrictedEvent($event)">
           </app-restriction-picker>
         </div>

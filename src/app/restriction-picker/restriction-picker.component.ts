@@ -16,7 +16,7 @@ export class RestrictionPickerComponent implements OnInit {
   @Input() color: string = '#7F879D';
   @Input() selectedColor: string = '#FFFFFF';
   @Input() backgroundColor: string = '#1E194F';
-  @Input() selectedChoise: any;
+  @Input() selectedChoice: any;
   @Input() fontSize: number = 13;  // px
   @Input() disabled: boolean;
   @Input() disabledOptions: string[];
@@ -27,8 +27,8 @@ export class RestrictionPickerComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if (this.selectedChoise) {
-      this.result.emit(this.selectedChoise);
+    if (this.selectedChoice) {
+      this.result.emit(this.selectedChoice);
     }
   }
 
@@ -40,7 +40,7 @@ export class RestrictionPickerComponent implements OnInit {
 
   onClick(choice) {
     if (!this.isDisabled(choice)) {
-        this.selectedChoise = choice;
+        this.selectedChoice = choice;
         this.result.emit(choice);
     }
   }

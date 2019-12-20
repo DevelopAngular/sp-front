@@ -14,7 +14,7 @@ import {DeviceDetection} from '../device-detection.helper';
 
 export interface Setting {
   hidden: boolean;
-  gradient: string;
+  background: string;
   icon: string;
   action: string | Function;
   title: string;
@@ -47,17 +47,17 @@ export class SettingsComponent implements OnInit {
   currentRelease = RELEASE_NAME;
 
   constructor(
-      public dialog: MatDialog,
-      @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
-      @Optional() public dialogRef: MatDialogRef<SettingsComponent>,
-      private dataService: DataService,
-      private _zone: NgZone,
-      private sideNavService: SideNavService,
-      public loadingService: LoadingService,
-      public darkTheme: DarkThemeSwitch,
-      public kioskMode: KioskModeService,
-      private router: Router,
-      private pwaStorage: LocalStorage,
+    public dialog: MatDialog,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+    @Optional() public dialogRef: MatDialogRef<SettingsComponent>,
+    private dataService: DataService,
+    private _zone: NgZone,
+    private sideNavService: SideNavService,
+    public loadingService: LoadingService,
+    public darkTheme: DarkThemeSwitch,
+    public kioskMode: KioskModeService,
+    private router: Router,
+    private pwaStorage: LocalStorage,
 
   ) {
     this.initializeSettings();
@@ -65,12 +65,12 @@ export class SettingsComponent implements OnInit {
 
   get _themeBackground() {
     return this.hoveredTheme
-              ?
-              this.pressedTheme
-                ?
-                'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
-                  : 'rgb(228, 235, 255)'
-                    : 'transparent';
+      ?
+      this.pressedTheme
+        ?
+        'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
+        : 'rgb(228, 235, 255)'
+      : 'transparent';
   }
 
   ngOnInit() {
@@ -139,7 +139,7 @@ export class SettingsComponent implements OnInit {
   }
 
   updateDialogPosition() {
-      const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+    const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     if (this.targetElementRef && this.dialogRef) {
       const rect = this.targetElementRef.nativeElement.getBoundingClientRect();
       matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 168 }px`, top: `${rect.bottom + 10}px` };
@@ -149,9 +149,9 @@ export class SettingsComponent implements OnInit {
 
   signOutAction() {
     if (this.dialogRef) {
-        this.dialogRef.close('signout');
+      this.dialogRef.close('signout');
     } else {
-        this.sideNavService.sideNavAction$.next('signout');
+      this.sideNavService.sideNavAction$.next('signout');
     }
     this.removeOfflineAuthData();
     localStorage.removeItem('fcm_sw_registered');
@@ -182,21 +182,21 @@ export class SettingsComponent implements OnInit {
   initializeSettings() {
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
-      'gradient': '#E7A700, #EFCE00',
+      'background': '#EBBB00',
       'icon': 'Star',
       'action': 'favorite',
       'title': 'Favorites'
     });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value || DeviceDetection.isIOSMobile() || DeviceDetection.isIOSTablet(),
-      'gradient': '#DA2370, #FB434A',
+      'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',
       'title': 'Notifications'
     });
     this.settings.push({
       'hidden': false,
-      'gradient': '#022F68, #2F66AB',
+      'background': '#134482',
       'icon': 'Moon',
       'action': () => {
         this.darkTheme.switchTheme();
@@ -212,28 +212,28 @@ export class SettingsComponent implements OnInit {
     });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
-      'gradient': '#03CF31, #00B476',
+      'background': '#04CD33',
       'icon': 'Info',
       'action': 'intro',
       'title': 'View Intro'
     });
     this.settings.push({
       'hidden': false,
-      'gradient': '#0B9FC1, #00C0C7',
+      'background': '#07ABC3',
       'icon': 'Team',
       'action': 'about',
       'title': 'About'
     });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
-      'gradient': '#5E4FED, #7D57FF',
+      'background': '#6651F1',
       'icon': 'Launch',
       'action': 'wishlist',
       'title': 'Wishlist'
     });
     this.settings.push({
       'hidden': false,
-      'gradient': '#F52B4F, #F37426',
+      'background': '#F53D45',
       'icon': 'Support',
       'action': 'support',
       'title': 'Support'

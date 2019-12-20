@@ -98,14 +98,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.dialog.open(NextReleaseComponent, {
+        panelClass: 'main-form-dialog-container',
+        data: {
+          isStudent: false,
+          isTeacher: true,
+        }
+      });
+    }, 200);
 
-    this.dialog.open(NextReleaseComponent, {
-      panelClass: 'main-form-dialog-container',
-      data: {
-        isStudent: false,
-        isTeacher: true,
-      }
-    })
     // this.storageService.removeItem('refresh_token');
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;

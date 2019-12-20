@@ -1,6 +1,6 @@
 <div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('high', true)">
 
-    <div class="title" [ngStyle]="{'color': data.darkBackground ? '#FFFFFF' : '#1F195E'}">Settings</div>
+    <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
     <div class="settings-content">
       <div class="profile-switch">
         <div class="option"  *ngIf="isSwitchOption"
@@ -46,8 +46,8 @@
       <div class="links">
         <div class="link"
              *ngFor="let setting of settings"
-             [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
-             (mouseenter)="onHover(setting.gradient)"
+             [style.background]="hovered && hoveredColor === setting.background ? setting.background : 'none'"
+             (mouseenter)="onHover(setting.background)"
              (mouseleave)="hovered = false"
              appCrossPointerEventTarget
              (pointerClickEvent)="hovered = false; handleAction(setting)"

@@ -40,9 +40,9 @@
           <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
                (mouseenter)="changeColor(true, $event)"
                (mouseleave)="changeColor(false, $event)"
-               (touchstart)="changeColor(true, $event)"
-               (touchend)="changeColor(true, $event)"
-               (click)="addStudent(student)"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="changeColor(true, $event)"
+               (pointerClickEvent)="changeColor(true, $event); addStudent(student)"
                [style.color]="textColor(cell)"
           >
             <span>
@@ -72,9 +72,9 @@
           <div #cell *ngFor="let unit of orgunits | async" class="option-list_item"
                (mouseenter)="changeColor(true, $event)"
                (mouseleave)="changeColor(false, $event)"
-               (touchstart)="changeColor(true, $event)"
-               (touchend)="changeColor(true, $event)"
-               (click)="inputValue$.next(''); addUnit(unit)"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="changeColor(true, $event)"
+               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); addUnit(unit)"
                [style.color]="textColor(cell)"
           >
             <span>
@@ -102,9 +102,9 @@
           <div #cell *ngFor="let teacher of ( teacherCollection$ | async)" tabindex="0" class="option-list_item"
                (mouseenter)="changeColor(true, $event)"
                (mouseleave)="changeColor(false, $event)"
-               (touchstart)="changeColor(true, $event)"
-               (touchend)="changeColor(true, $event)"
-               (click)="inputValue$.next(''); addLocalTeacher(teacher)"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="changeColor(true, $event)"
+               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); addLocalTeacher(teacher)"
                [style.color]="textColor(cell)"
           >
             <span>
@@ -132,9 +132,9 @@
           <div *ngFor="let school of schools | async" class="option-list_item"
                (mouseenter)="changeColor(true, $event)"
                (mouseleave)="changeColor(false, $event)"
-               (touchstart)="changeColor(true, $event)"
-               (touchend)="changeColor(true, $event)"
-               (click)="inputValue$.next(''); selectSchool(school)"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="changeColor(true, $event)"
+               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); selectSchool(school)"
                [style.color]="textColor(cell)"
                #cell
           >
@@ -162,8 +162,6 @@
         </div>
       </ng-template>
     </div>
-
-
 
   </div>
 

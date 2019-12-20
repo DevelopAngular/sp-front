@@ -1,10 +1,10 @@
 <div class="host"
      [style.background]="darkTheme.getColor({dark: '#0F171E', white : '#FFFFFF'})"
-     [style.position]="isStaff || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
+     [style.position]="(isStaff || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
      [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0">
   <div
        class="bar" appNavbarElementSender
-       [ngClass]="{shadow: isStaff || screenService.isDeviceLargeExtra}"
+       [ngClass]="{shadow: (isStaff || isAssistant) || screenService.isDeviceLargeExtra}"
        *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
        #navbar>
     <div [ngClass]="isIOSTablet ? 'ios-heading': 'heading'" class="grow">
@@ -96,7 +96,7 @@
          (pointerClickEvent)="inboxClick()"
 
       >
-        <app-icon-button [srcString]="'Inbox'" [size]="20"></app-icon-button>
+        <app-icon-button [eventBubbling]="true" [srcString]="'Inbox'" [size]="20"></app-icon-button>
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
           <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
           <div class="inbox-number">{{ notificationBadge$ | async }}</div>
@@ -109,9 +109,9 @@
            (pointerClickEvent)="inboxClick()"
       >
 <!--        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
-        <app-icon-button [@inboxAppearance] *ngIf="!isInboxClicked" [srcString]="'Inbox'" [size]="20"></app-icon-button>
+        <app-icon-button [@inboxAppearance] [eventBubbling]="true" *ngIf="!isInboxClicked" [srcString]="'Inbox'" [size]="20"></app-icon-button>
         <div class="inbox-icon inbox-icon-arrow" [@inboxAppearance] *ngIf="isInboxClicked">
-          <app-icon-button [srcString]="'Arrow Down'" [size]="20"></app-icon-button>
+          <app-icon-button [srcString]="'Arrow Down'" [eventBubbling]="true" [size]="20"></app-icon-button>
         </div>
 <!--        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
         <div  [@inboxAppearance] class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 && !isInboxClicked">
