@@ -55,7 +55,7 @@
             <div class="page-2-wrapper">
               <div class="message" [style.height]="(forInput?'70px':'164px')">
                 <span [style.font-weight]="'bold'">{{ 'Message from ' + issuerName }}</span><br>
-                {{ 'Learn one way to build applications with Angular and reuse your code and abilities to build apps for any deployment target. For web, mobile web, native mobile and native desktop.' }}
+                {{ invitation.issuer_message ? invitation.issuer_message : 'No Message' }}
               </div>
             </div>
           </div>
@@ -84,6 +84,7 @@
         </div>
         <ng-template #noLocation>
           <app-card-button (onClick)="changeLocation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
+            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
               <div class="resend-button-content">
                 <div class="resend-button-content-title">Select Origin to Accept</div>
                 <div class="resend-button-content-subtitle">Pass Request from {{ issuerName }}</div>
@@ -122,7 +123,7 @@
             <div class="page-2-wrapper">
               <div class="message" [style.height]="(forInput?'70px':'164px')">
                 <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
-                {{ 'No message' }}
+                {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
               </div>
             </div>
           </div>
