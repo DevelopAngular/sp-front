@@ -267,11 +267,11 @@ export class HttpService {
         map((servers: LoginServer[]) => {
           if (servers.length > 0) {
             const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
-            if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
-              return testEnv.environment.preferEnvironment as LoginServer;
-            } else {
+            // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
+            //   return testEnv.environment.preferEnvironment as LoginServer;
+            // } else {
               return server;
-            }
+            // }
           } else {
             return null;
           }
@@ -286,11 +286,11 @@ export class HttpService {
       map((servers: LoginServer[]) => {
         if (servers.length > 0) {
           const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
-          if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
-            return testEnv.environment.preferEnvironment as LoginServer;
-          } else {
+          // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
+          //   return testEnv.environment.preferEnvironment as LoginServer;
+          // } else {
             return server;
-          }
+          // }
         } else {
           return null;
         }

@@ -140,7 +140,18 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             headers: new HttpHeaders({
               'Authorization': 'Bearer ' + this.AuthToken
             })
-          });
+          }).pipe(
+            catchError((err) => {
+              if (err.status === 401) {
+                this.httpService.errorToast$.next({
+                  header: 'Key invalid.',
+                  message: 'Please contact us at support@smartpass.app'
+                });
+              }
+              this.pending.next(false);
+              return throwError(err);
+            })
+          );
         })
       )
       .subscribe((qp) => {
@@ -178,13 +189,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         takeUntil(this.destroy$)
       )
       .subscribe(key => {
-        // debugger
         if (key[0] === 'tab') {
-          // this.nextStep();
-          // if () {
             this.inputIndex = this.inputIndex === 3 ? 0 : this.inputIndex + 1;
-          // }
-          console.log(this.inputIndex);
         }
       });
   }
@@ -196,8 +202,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     return control.valueChanges
       .pipe(
         distinctUntilChanged(),
+        debounceTime(400),
         take(1),
-        debounceTime(300),
         switchMap((value) => {
           return this.http
             .get(constructUrl(environment.schoolOnboardApiRoot + '/onboard/schools/check_email', {email: value}), {
@@ -214,9 +220,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       );
   }
 
-  test(event) {
-    // console.log(event[0]._d);
-  }
   initLogin() {
     return this.loginService.GoogleOauth.signIn()
       .then((auth) => {
@@ -259,7 +262,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             })
           )
           .subscribe((res) => {
-            debugger;
             this.pending.next(false);
             if (res) {
               this._zone.run(() => {
@@ -272,7 +274,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   onBlur () {
     if (!this.pending.value) {
       this.enterSchoolName = false;
-      // this.inputIndex = null;
     }
   }
 
