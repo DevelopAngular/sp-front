@@ -188,9 +188,6 @@ export class LocationsGroupContainerComponent implements OnInit {
         if (!this.isStaff && restricted && pinnable.location) {
             this.FORM_STATE.previousState = this.FORM_STATE.state;
             return this.FORM_STATE.state = this.redirectTo;
-        } else if (this.FORM_STATE.forLater && this.isStaff) {
-          this.FORM_STATE.previousState = this.FORM_STATE.state;
-          this.FORM_STATE.state = States.message;
         } else {
            return this.postComposetData();
         }
@@ -230,9 +227,6 @@ export class LocationsGroupContainerComponent implements OnInit {
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
         this.FORM_STATE.previousState = States.from;
         this.FORM_STATE.state = this.redirectTo;
-    } else if (this.FORM_STATE.forLater && this.isStaff) {
-      this.FORM_STATE.previousState = this.FORM_STATE.state;
-      this.FORM_STATE.state = States.message;
     } else {
         this.postComposetData();
     }

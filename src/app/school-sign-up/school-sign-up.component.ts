@@ -1,11 +1,24 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import { environment } from '../../environments/environment';
 import {constructUrl, QueryParams} from '../live-data/helpers';
-import {catchError, delay, filter, map, mapTo, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  delay,
+  distinctUntilChanged,
+  filter,
+  map,
+  mapTo,
+  pluck,
+  switchMap,
+  take,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {BehaviorSubject, from, Observable, of, Subject, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleAuthService} from '../services/google-auth.service';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -119,12 +132,29 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
-    this.route.queryParams.subscribe((qp: QueryParams) => {
-      if (!qp.key) {
-          this.router.navigate(['']);
-      } else {
-        this.AuthToken = qp.key as string;
-      }
+    this.route.queryParams
+      .pipe(
+        switchMap((qp: QueryParams) => {
+          this.AuthToken = qp.key as string;
+          return this.http.get(environment.schoolOnboardApiRoot + `/onboard/schools/check_auth`, {
+            headers: new HttpHeaders({
+              'Authorization': 'Bearer ' + this.AuthToken
+            })
+          }).pipe(
+            catchError((err) => {
+              if (err.status === 401) {
+                this.httpService.errorToast$.next({
+                  header: 'Key invalid.',
+                  message: 'Please contact us at support@smartpass.app'
+                });
+              }
+              this.pending.next(false);
+              return throwError(err);
+            })
+          );
+        })
+      )
+      .subscribe((qp) => {
       console.log(this.AuthToken);
     });
 
@@ -135,9 +165,11 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         [
         Validators.required,
         Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+.[a-zA-Z0-9]+$'),
-        (v) => {
-          return  v.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(v.value.slice(v.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
+        (fc: FormControl) => {
+          return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
         }
+      ], [
+          this.checkEmailValidatorAsync.bind(this)
       ]),
       password: new FormControl('',
         [
@@ -146,19 +178,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       ])
     });
     this.schoolForm.markAsTouched();
-    this.schoolForm.valueChanges
-      .pipe(
-        // filter(f => !!f),
-        // map((f) => {
-        //   return f.schoolEmail;
-        // }),
-        // filter(f => !!f),
-      )
-      .subscribe((f) => {
-        // if (f.indexOf('@') >= 0) {
-          console.log(f, this.schoolForm);
-        // }
-    });
+
     this.shortcutsService.onPressKeyEvent$
       .pipe(
         tap((s) => {
@@ -169,22 +189,37 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         takeUntil(this.destroy$)
       )
       .subscribe(key => {
-        // debugger
         if (key[0] === 'tab') {
-          // this.nextStep();
-          // if () {
             this.inputIndex = this.inputIndex === 3 ? 0 : this.inputIndex + 1;
-          // }
-          console.log(this.inputIndex);
         }
       });
   }
   ngAfterViewInit() {
     window.appLoaded();
   }
-  test(event) {
-    // console.log(event[0]._d);
+
+  checkEmailValidatorAsync(control: FormControl) {
+    return control.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(400),
+        take(1),
+        switchMap((value) => {
+          return this.http
+            .get(constructUrl(environment.schoolOnboardApiRoot + '/onboard/schools/check_email', {email: value}), {
+              headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + this.AuthToken
+              })
+            }).pipe(
+              take(1),
+              map(({exists}: {exists: boolean}) => {
+                return (exists ? { uniqEmail: true } : null);
+              })
+            );
+        })
+      );
   }
+
   initLogin() {
     return this.loginService.GoogleOauth.signIn()
       .then((auth) => {
@@ -202,14 +237,14 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             // google_place_id: this.school.place_id,
             ...this.schoolForm.value
           }, {
-            headers: {
-              'Authorization': 'Bearer ' + this.AuthToken // it's temporary
-            }
+            headers: new HttpHeaders({
+              'Authorization': 'Bearer ' + this.AuthToken
+            })
           }).pipe(
             // tap(() => this.gsProgress.updateProgress('create_school:end')),
             map((res: any) => {
               this._zone.run(() => {
-                // this.loginService.updateAuth(auth);
+                this.loginService.signInDemoMode(this.schoolForm.value.email, this.schoolForm.value.password);
                 this.storage.setItem('last_school_id', res.school.id);
               });
               return true;
@@ -239,7 +274,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   onBlur () {
     if (!this.pending.value) {
       this.enterSchoolName = false;
-      // this.inputIndex = null;
     }
   }
 
@@ -258,6 +292,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
                 message: 'Please contact us at support@smartpass.app'
               });
             }
+            this.pending.next(false);
             return throwError(err);
           })
         )

@@ -21,6 +21,7 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewI
   @Input() ConsentButtonColor: string;
   @Input() display: boolean;
   @Input() appendToBody: boolean;
+  @Input() position: string = 'absolute';
 
   @Input() isSort = false;
   @Input() sortMode;
