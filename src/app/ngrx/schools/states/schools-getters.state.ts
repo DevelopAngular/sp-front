@@ -12,4 +12,9 @@ export const getLoadedSchools = createSelector(
   (state: SchoolsState) => state.loaded
 );
 
+export const getGG4LInfoData = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.gg4lInfo
+);
+
 export const getSchoolsLength = schoolAdapter.getSelectors(getSchoolsState).selectTotal;

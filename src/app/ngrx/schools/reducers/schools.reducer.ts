@@ -10,7 +10,8 @@ export const schoolsInitialState: SchoolsState = {
   ids: [],
   loading: false,
   loaded: false,
-  currentSchoolId: null
+  currentSchoolId: null,
+  gg4lInfo: null
 };
 
 const reducer = createReducer(
@@ -18,6 +19,14 @@ const reducer = createReducer(
   on(schoolsActions.getSchools, state => ({...state, loading: true, loaded: false})),
   on(schoolsActions.getSchoolsSuccess, (state, {schools}) => {
     return schoolAdapter.addAll(schools, {...state, loading: false, loaded: true});
+  }),
+  on(schoolsActions.getSchoolsGG4LInfoSuccess, (state, {gg4lInfo}) => {
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      gg4lInfo
+    };
   })
 );
 

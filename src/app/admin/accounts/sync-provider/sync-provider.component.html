@@ -1,0 +1,19 @@
+<div class="wrapper">
+  <img [src]="'./assets/GG4L.svg' | resolveAsset" width="95" height="95" alt="GG4L"/>
+  <div class="center-content">
+    <div class="title">Sync complete!</div>
+    <div class="info">Here’s the info we found:</div>
+    <div class="info">
+      <div>12 admins</div>
+      <div>26 teachers</div>
+      <div>1,678 students</div>
+    </div>
+  </div>
+  <div class="bottom-content">
+    <div class="help" (click)="redirect()">Need help?</div>
+    <app-gradient-button
+      [size]="'small'"
+      [rightIcon]="'./assets/Chevron Right (White).svg'"
+    >Next</app-gradient-button>
+  </div>
+</div>

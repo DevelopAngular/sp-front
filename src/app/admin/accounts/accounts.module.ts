@@ -6,17 +6,25 @@ import { AccountsComponent } from './accounts.component';
 import { AdminCardButtonComponent } from './admin-card-button/admin-card-button.component';
 import { AdminSharedModule } from '../shared/admin-shared.module';
 import { AccountsSyncComponent } from './accounts-sync/accounts-sync.component';
+import { SyncSettingsComponent } from './sync-settings/sync-settings.component';
+import { SyncProviderComponent } from './sync-provider/sync-provider.component';
 
 @NgModule({
   declarations: [
     AccountsComponent,
     AdminCardButtonComponent,
-    AccountsSyncComponent
+    AccountsSyncComponent,
+    SyncSettingsComponent,
+    SyncProviderComponent
   ],
   imports: [
     CommonModule,
     AccountsRoutingModule,
     AdminSharedModule,
+  ],
+  entryComponents: [
+    SyncSettingsComponent,
+    SyncProviderComponent
   ]
 })
 export class AccountsModule {

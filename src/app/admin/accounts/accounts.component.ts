@@ -25,6 +25,9 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 import { isNull } from 'lodash';
 import {LocationsService} from '../../services/locations.service';
+import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
+import {GG4LSync} from '../../models/GG4LSync';
+import {SyncProviderComponent} from './sync-provider/sync-provider.component';
 declare const window;
 
 @Component({
@@ -53,6 +56,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
   user: User;
 
   openTable: boolean;
+
+  gg4lSettingsData: any;
 
   userList;
   selectedUsers = [];
@@ -126,6 +131,17 @@ export class AccountsComponent implements OnInit, OnDestroy {
       this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
     });
 
+    this.adminService.getGG4LSyncInfoRequest()
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((res) => !!res)
+      )
+      .subscribe((res: GG4LSync) => {
+      this.gg4lSettingsData = res;
+      if (!res.is_enabled) {
+        this.openSyncProvider();
+      }
+    });
 
     this.userService.userData.pipe(
       takeUntil(this.destroy$))
@@ -218,6 +234,25 @@ export class AccountsComponent implements OnInit, OnDestroy {
       data: {
         role: '_all',
       }
+    });
+  }
+
+  openSyncSettings() {
+    const SS = this.matDialog.open(SyncSettingsComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      data: {
+        gg4lInfo: this.gg4lSettingsData
+      }
+    });
+  }
+
+  openSyncProvider() {
+    const SP = this.matDialog.open(SyncProviderComponent, {
+      width: '425px',
+      height: '425px',
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
     });
   }
 

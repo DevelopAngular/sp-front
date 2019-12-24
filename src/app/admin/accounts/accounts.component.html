@@ -41,6 +41,19 @@
                                    (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
                 <span>Delete Account & Data</span>
               </app-gradient-button>
+
+              <app-gradient-button
+                [size]="'medium'"
+                [style.margin-left]="'15px'"
+                [gradient]="'#484CE6, #484CE6'"
+                [hoverColor]="'#5B5FE3'"
+                [cursor]="'pointer'"
+                [leftIcon]="'./assets/GG4L (White).svg'"
+                (buttonClick)="openSyncSettings()"
+              >
+                Settings
+              </app-gradient-button>
+
               <app-gradient-button
                       [style.margin-left]="'15px'"
                       [size]="'medium'"
@@ -88,7 +101,7 @@
           ></app-admin-card-button>
 
           <app-admin-card-button
-                  [title]="'Switch to GG4L'"
+                  [title]="'More Integrations'"
                   [subtitle]="'Easier and more reliable sync'"
                   [leftIcon]="'./assets/GG4L.svg'"
                   [isNew]="true"
