@@ -1,8 +1,9 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
-import * as _ from  'lodash';
+import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import {Moment} from 'moment';
 import {IosDateSingleton, SWIPE_BLOCKER} from './ios-date.singleton';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-ios-calendar',
@@ -24,7 +25,8 @@ export class IosCalendarComponent implements OnInit {
   private _selected: Moment;
 
   constructor(
-    private iosDate: IosDateSingleton
+    private iosDate: IosDateSingleton,
+    private http: HttpClient
   ) { }
 
 
@@ -64,7 +66,7 @@ export class IosCalendarComponent implements OnInit {
         .next(false);
       // this._selected = this._date;
     }
-    this._selected = _.cloneDeep( this._date);
+    this._selected = cloneDeep( this._date);
     return this._selected;
   }
 

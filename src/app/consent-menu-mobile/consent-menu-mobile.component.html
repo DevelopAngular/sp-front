@@ -1,4 +1,4 @@
-<div class="consest-menu"  *ngIf="display" [@menuAppearance] >
+<div #consentMenu class="consent-menu" [style.position]="position"  *ngIf="display" [@menuAppearance] >
 <div class="consent-wrapper" [style.background-color]="darkTheme.getBackground('low')">
   <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('low')"></div></div>
   <div class="rounded-corners-box">
@@ -40,11 +40,13 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-               (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'; sortMode = option.action"
-               (mouseup)="_option.style.background = 'transparent'"
                (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : '#ECF1FF' : '#ECF1FF'"
                (mouseleave)="_option.style.background = 'transparent'"
-               (click) = "sendOptionAction(option.action)">
+               appCrossPointerEventTarget
+               (pointerDownEvent)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'; sortMode = option.action"
+               (pointerClickEvent)="_option.style.background = 'transparent'; sendOptionAction(option.action)"
+               (pointerCancelEvent)="_option.style.background = 'transparent'"
+          >
             <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
               <span>{{ option.display }}</span>
               <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" *ngIf="sortMode === option.action" alt="Check.svg">
@@ -58,7 +60,7 @@
   </div>
 </div>
 
-<div (click)="cancel()" class="option-wrapper option-wrapper__cancel ds-w-100" [style.background-color]="darkTheme.getBackground('low')"  [ngClass]="{
+<div appCrossPointerEventTarget (pointerClickEvent)="cancel()" class="option-wrapper option-wrapper__cancel ds-w-100" [style.background-color]="darkTheme.getBackground('low')"  [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value}">
   <p>Cancel</p>
@@ -66,4 +68,4 @@
 </div>
 
 
-<div (click)="onBackdropClick()" *ngIf="display" class="cdk-overlay-backdrop custom-backdrop cdk-overlay-backdrop-showing z-index-15"></div>
+<div appCrossPointerEventTarget (pointerClickEvent)="onBackdropClick()" *ngIf="display" class="cdk-overlay-backdrop pwa-backdrop cdk-overlay-backdrop-showing z-index-15"></div>

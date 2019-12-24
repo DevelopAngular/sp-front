@@ -11,12 +11,11 @@ import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {delay, filter, map, switchMap, take, takeUntil, tap, toArray} from 'rxjs/operators';
+import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ScrollPositionService} from '../../scroll-position.service';
-
-import * as _ from 'lodash';
+import { takeRight } from 'lodash';
 import * as moment from 'moment';
 
 
@@ -58,7 +57,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
               takeUntil(scrollObserver)
             )
             .subscribe((v) => {
-              console.log(scrollOffset);
+              // console.log(scrollOffset);
               if (v) {
                 this.scrollableArea.scrollTo({top: scrollOffset});
                 scrollObserver.next();
@@ -128,32 +127,32 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
       this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
       this.minDate = this.timeService.nowDate();
     }
-  get calendarIcon() {
-    if (this.inactiveIcon) {
-      return this.darkTheme.getIcon({
-        iconName: 'Calendar',
-        lightFill: 'Navy',
-        darkFill: 'White',
-      });
-
-
-    } else {
-      return './assets/Calendar (Blue).svg';
-    }
-  }
+  // get calendarIcon() {
+  //   if (this.inactiveIcon) {
+  //     return this.darkTheme.getIcon({
+  //       iconName: 'Calendar',
+  //       lightFill: 'Navy',
+  //       darkFill: 'White',
+  //     });
+  //
+  //
+  //   } else {
+  //     return './assets/Calendar (Blue).svg';
+  //   }
+  // }
 
   ngOnInit() {
       merge(this.http.globalReload$, this.changeReports$)
         .pipe(
           switchMap(() => {
-           return this.getReports(this.reportsDate)
+           return this.getReports(this.reportsDate);
         }))
         .subscribe((list: any[]) => {
           this.pending = false;
           if (!this.isSupplementReports) {
             this.studentreport = list;
           } else {
-            this.studentreport.push(..._.takeRight(list, 10));
+            this.studentreport.push(...takeRight(list, 10));
             this.isSupplementReports = false;
           }
         });

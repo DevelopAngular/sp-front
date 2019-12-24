@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {map, tap} from 'rxjs/operators';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {map} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {Observable, Subject} from 'rxjs';
 import { HttpService } from '../../services/http-service';

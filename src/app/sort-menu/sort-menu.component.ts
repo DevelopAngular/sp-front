@@ -1,42 +1,52 @@
-import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {SortByItem} from '../models/SortByItem';
-import {DataService} from '../services/data-service';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-sort-menu',
   templateUrl: './sort-menu.component.html',
   styleUrls: ['./sort-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SortMenuComponent implements OnInit, OnDestroy {
 
-  private animState: string;
+  @ViewChild('_item') item: ElementRef;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {
-      title: string,
-      list: Array<SortByItem>
-    },
-    public dialogRef: MatDialogRef<SortMenuComponent>,
-    public darkTheme: DarkThemeSwitch,
-  ) {}
+  items: any[];
+  selectedItem: any;
 
   onListItemClick = new EventEmitter();
 
-  isSelected: boolean;
+  showAllRooms: boolean;
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<SortMenuComponent>,
+    public darkTheme: DarkThemeSwitch,
+    private renderer: Renderer2
+  ) {}
+
+  changeColor(value, elem) {
+    if (value) {
+      this.renderer.setStyle(elem.target, 'background-color', '#ECF1FF');
+    } else {
+      this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
+    }
+  }
 
   ngOnInit() {
+    this.items = this.data['items'];
+    this.selectedItem = this.data['selectedItem'];
+    this.showAllRooms = this.data['showAll'];
   }
 
   ngOnDestroy(): void {
   }
 
-  selectSortOption(index): void {
-    this.data.list.forEach( (sortByItem, i) => {
-      sortByItem.isSelected = i === index;
-    });
-    this.onListItemClick.emit(index);
+  selectSortOption(location): void {
+    this.selectedItem = location;
+    this.onListItemClick.emit(location);
   }
 }

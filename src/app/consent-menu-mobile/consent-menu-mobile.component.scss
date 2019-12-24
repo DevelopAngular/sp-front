@@ -5,7 +5,7 @@
   overflow: hidden;
 }
 
-.consest-menu {
+.consent-menu {
   width: 95%;
   left: 50%;
   transform: translateX(-50%);
@@ -31,6 +31,7 @@
   flex-direction: column;
   position: relative;
   top: -17px;
+  z-index: 20;
 }
 
 .consent-header {

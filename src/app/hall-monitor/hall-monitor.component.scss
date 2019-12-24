@@ -10,20 +10,22 @@
   &-hall-monitor-wrapper {
     max-width: 100%;
     overflow: auto;
+    display: flex;
+    justify-content: center;
   }
 
   &-hall-monitor-top {
     @extend .hall-monitor-top;
     justify-content: space-between !important;
     margin-bottom: 15px !important;
-    height: 90px;
+    height: 78px;
     padding: 0 !important;
   }
 
   &-hall-monitor-bottom {
     padding-top: 25px;
     width: 68%;
-    margin: auto;
+    margin: 100px auto auto auto;
   }
 
   &-hall-monitor-heading {
@@ -50,19 +52,26 @@
   div.hall-monitor-top {
     justify-content: space-between;
     margin-bottom: 15px;
-    height: 90px;
+    height: 78px;
     padding: 0;
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    background-color: white;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.07);
   }
 
   div.hall-monitor-wrapper {
     max-width: 100%;
     overflow: auto;
+    display: flex;
+    justify-content: center;
   }
 
   div.hall-monitor-bottom {
     padding-top: 25px;
     width: 68%;
-    margin: auto;
+    margin: 0;
     padding-bottom: 68px;
   }
 
@@ -100,9 +109,10 @@
 
 @media all and (max-width: 768px) {
   div.hall-monitor-bottom {
-    padding-top: 25px;
+    padding-top: 100px;
+    max-width: 336px;
     width: 100%;
-    margin: auto;
+    //margin: 100px auto auto auto;
     justify-content: unset;
   }
 }
@@ -113,8 +123,8 @@
   }
 
   div.student-search {
-    width: 76%;
-    margin-right: 10px;
+    //width: 76%;
+    //margin-right: 10px;
   }
 
   div.student-search-wrapper {
@@ -131,8 +141,8 @@
 
 @media all and (max-width: 940px) and (min-width: 768px) {
   div.student-search {
-    width: 379px;
-    margin-right: 10px;
+    //width: 379px;
+    //margin-right: 10px;
   }
 
   div.student-search-wrapper {
@@ -185,7 +195,8 @@
 .hall-monitor-wrapper {
   position: relative;
   min-height: calc(100vh - 78px);
-  //height: 100%;
+  height: 100%;
+  overflow: auto;
 }
 
 .hall-monitor-top {
@@ -204,7 +215,7 @@
   justify-content: center;
   position: relative;
   max-width: 532px;
-  margin: auto;
+  margin: 100px auto auto auto;
 }
 
 .footer-message {
@@ -274,6 +285,7 @@ input {
 }
 
 .cancel {
+  margin-right: 10px;
   color: #007cff;
   border-bottom: 1px solid transparent;
 }
@@ -353,4 +365,18 @@ input {
 ::ng-deep .ios-report-dialog {
   height: 500px;
   width: 335px !important;
+}
+
+.hall-monitor-title {
+  display: flex;
+  align-items: center;
+  height: 39px;
+  color: #1F195E;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  z-index: 10;
+  font-weight: bold;
+  font-size: 22px;
 }

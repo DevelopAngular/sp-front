@@ -8,7 +8,7 @@ import {NextStep} from '../../animations';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
 import {filter, map, takeUntil} from 'rxjs/operators';
-import * as _ from 'lodash';
+import { find, cloneDeep } from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
@@ -28,8 +28,7 @@ export interface FormMode {
 export interface Navigation {
   step: number;
   previousStep?: number;
-  quickNavigator?: boolean;
-  state?: any;
+  state?: number;
   previousState?: number;
   fromState?: number;
   formMode?: FormMode;
@@ -50,6 +49,7 @@ export interface Navigation {
     requestTarget?: User,
     hasClose?: boolean
   };
+  quickNavigator?: boolean;
   forInput?: boolean;
   forLater?: boolean;
   missedRequest?: boolean;
@@ -98,7 +98,6 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private passesService: HallPassesService,
-    private cd: ChangeDetectorRef
   ) {}
 
   get isCompressed() {
@@ -194,7 +193,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       this.dataService.currentUser
         .pipe(takeUntil(this.destroy$))
         .subscribe((user: User) => {
-          this.isStaff = user.isTeacher() || user.isAdmin();
+          this.isStaff = user.isTeacher() || user.isAssistant();
           this.user = user;
       });
 
@@ -205,14 +204,14 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
             filter(([pin, locs]: [Pinnable[], Location[]]) => this.isStaff && !!pin.length && !!locs.length),
               takeUntil(this.destroy$),
               map(([pinnables, locations]) => {
-                  const filterPinnables = _.cloneDeep(pinnables).filter(pin => {
+                  const filterPinnables = cloneDeep(pinnables).filter(pin => {
                       return locations.find(loc => {
                           return (loc.category ? loc.category : loc.title) === pin.title;
                       });
                   });
                   return filterPinnables.map(fpin => {
                       if (fpin.type === 'category') {
-                          const locFromCategory = _.find(locations, ['category', fpin.title]);
+                          const locFromCategory = find(locations, ['category', fpin.title]);
                           fpin.title = locFromCategory.title;
                           fpin.type = 'location';
                           fpin.location = locFromCategory;
@@ -261,8 +260,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         // this.cd.detectChanges();
         break;
       case 'end':
-        this.formSize.containerWidth =  `100vw`;
-        this.formSize.containerHeight =  `100vh`;
+        this.formSize.containerWidth =  `${window.innerWidth}px`;
+        this.formSize.containerHeight =  `${window.innerHeight}px`;
         // this.cd.detectChanges();
         break;
     }

@@ -5,7 +5,6 @@
 <!--  <div class="white-background"-->
 <!--       [style.width]="formSize.width"-->
 <!--       [style.height]="formSize.height">-->
-
 <!--  </div>-->
 
   <div *ngIf="FORM_STATE.step === 1"
@@ -64,7 +63,7 @@
        [@NextStep]="{ value: '', params: frameMotion$ | async}"
        (@NextStep.start)="setFormSize();setContainerSize('end')"
        (@NextStep.done)="setContainerSize('start')">
-    <app-form-factor-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
+    <app-form-factor-container [FORM_STATE]="FORM_STATE" [forStaff]="isStaff" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
   </div>
 
 </div>

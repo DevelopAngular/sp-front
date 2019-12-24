@@ -23,6 +23,7 @@
       [location]="data.fromLocation"
       (backButton)="back($event)"
       (selectedPinnable)="toWhere($event)"
+      (selectedLocation)="toWhereFromLocation($event)"
     ></app-to-where>
   </div>
   <!--<div *ngIf="FORM_STATE.state === 3" style="position: absolute">-->
@@ -38,7 +39,6 @@
       (locFromCategory)="fromCategory($event)"
     ></app-to-category>
   </div>
-  <!--<div *ngIf="FORM_STATE.state === 4" style="position: absolute">-->
   <div *ngIf="FORM_STATE.state === 4" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-restricted-target
@@ -50,11 +50,11 @@
     ></app-restricted-target>
   </div>
 
-  <!--<div *ngIf="FORM_STATE.state === 5" style="position: absolute">-->
   <div *ngIf="FORM_STATE.state === 5" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-restricted-message
       [formState]="FORM_STATE"
+      [isStaff]="isStaff"
       (backButton)="back($event)"
       [gradient]="FORM_STATE.data.gradient"
       [teacher]="data.requestTarget"
@@ -65,6 +65,6 @@
 
 </div>
 
-<div *ngIf="pwaBackBtnVisibility" [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
+<div *ngIf="pwaBackBtnVisibility" appCrossPointerEventTarget [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
   <app-icon-button (clickEvent)="stepBack()" [srcString]="'Back Button'" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
 </div>

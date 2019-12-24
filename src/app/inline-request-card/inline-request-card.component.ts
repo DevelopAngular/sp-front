@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import {Component, OnInit, Input, ElementRef, Renderer2} from '@angular/core';
 import { Util } from '../../Util';
 import { Request } from '../models/Request';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
@@ -7,10 +7,11 @@ import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {tap} from 'rxjs/operators';
-import * as _ from 'lodash';
+import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../device-detection.helper';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -27,12 +28,17 @@ export class InlineRequestCardComponent implements OnInit {
   selectedTravelType: string;
   cancelOpen: boolean = false;
   frameMotion$: BehaviorSubject<any>;
+  cancelEditClick: boolean;
+  header: any;
+  options = [];
 
   constructor(
       private requestService: RequestsService,
       public dialog: MatDialog,
       private dataService: DataService,
-      private formService: CreateFormService
+      private formService: CreateFormService,
+      private screenService: ScreenService,
+      private renderer: Renderer2,
   ) { }
 
   get hasDivider() {
@@ -61,7 +67,7 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.teacherNames, 'id');
+    return uniqBy(this.teacherNames, 'id');
   }
 
   ngOnInit() {
@@ -74,37 +80,42 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   cancelRequest(evt: MouseEvent){
+    if (this.screenService.isDeviceMid) {
+      this.cancelEditClick = !this.cancelEditClick;
+    }
+
     if(!this.cancelOpen){
       const target = new ElementRef(evt.currentTarget);
 
-      let options = [];
-      let header = '';
 
-      options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
-      header = 'Are you sure you want to delete this pass request you sent?';
-      UNANIMATED_CONTAINER.next(true)
-      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': header, 'options': options, 'trigger': target}
-      });
+      this.header = '';
+      this.options = [];
 
-      cancelDialog.afterOpen().subscribe( () => {
-        this.cancelOpen = true;
-      });
+      this.options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
+      this.header = 'Are you sure you want to delete this pass request you sent?';
 
-      cancelDialog.afterClosed()
-        .pipe(
-          tap(() => UNANIMATED_CONTAINER.next(false))
-        )
-        .subscribe(action => {
-        this.cancelOpen = false;
-          if (action === 'delete') {
-              this.requestService.cancelRequest(this.request.id).subscribe((data) => {
-                  console.log('[Request Canceled]: ', data);
-              });
-          }
+      if (!this.screenService.isDeviceMid) {
+        UNANIMATED_CONTAINER.next(true)
+        const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {'header': this.header, 'options': this.options, 'trigger': target}
         });
+
+        cancelDialog.afterOpen().subscribe( () => {
+          this.cancelOpen = true;
+        });
+
+        cancelDialog.afterClosed()
+          .pipe(
+            tap(() => UNANIMATED_CONTAINER.next(false))
+          )
+          .subscribe(action => {
+            this.cancelOpen = false;
+            this.chooseAction(action);
+          });
+      }
+
     }
   }
 
@@ -138,5 +149,23 @@ export class InlineRequestCardComponent implements OnInit {
 
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
+  }
+
+  receiveOption($event: any) {
+    this.chooseAction($event);
+  }
+
+  chooseAction(action) {
+    if (action === 'delete') {
+      this.requestService.cancelRequest(this.request.id).subscribe((data) => {
+        console.log('[Request Canceled]: ', data);
+      });
+    }
+    this.closeMenu();
+  }
+
+  closeMenu() {
+    this.cancelEditClick = false;
+    this.renderer.setStyle(document.body, 'overflow', 'auto');
   }
 }

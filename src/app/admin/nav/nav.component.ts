@@ -106,9 +106,11 @@ export class NavComponent implements OnInit {
             &&
           !button.requiredRoles.every((_role) => user.roles.includes(_role))
       ) {
-
           this.restrictAccess.emit(true);
           this.fakeMenu.next(true);
+        } else {
+          this.restrictAccess.emit(false);
+          this.fakeMenu.next(false);
         }
       });
     });
@@ -156,8 +158,10 @@ export class NavComponent implements OnInit {
   }
 
   openSettings(event) {
+
     if (!this.selectedSettings) {
       this.selectedSettings = true;
+      // debugger
       const target = new ElementRef(event.currentTarget);
       UNANIMATED_CONTAINER.next(true);
       const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
@@ -171,10 +175,12 @@ export class NavComponent implements OnInit {
       });
 
       settingsRef.beforeClose().subscribe(() => {
+        // debugger
         this.selectedSettings = false;
       });
 
       settingsRef.afterClosed().subscribe(action => {
+        // debugger
         UNANIMATED_CONTAINER.next(false);
         if (action === 'signout') {
           this.router.navigate(['sign-out']);
@@ -182,8 +188,8 @@ export class NavComponent implements OnInit {
           this.router.navigate(['main']);
         } else if (action === 'about') {
           window.open('https://smartpass.app/about');
-        } else if (action === 'feedback') {
-          window.location.href = 'mailto:address@dmail.com';
+        } else if (action === 'wishlist') {
+          window.open('https://wishlist.smartpass.app');
         } else if (action === 'support') {
           window.open('https://www.smartpass.app/support');
         } else if (action === 'privacy') {

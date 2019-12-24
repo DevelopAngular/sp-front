@@ -24,6 +24,18 @@
   font-size: 15px;
   color: $navy;
 
+  .switch-locs-view {
+    position: absolute;
+    left: 10px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer;
+  }
+
   .footer-from-teacher-text {
     width: 100%;
   }

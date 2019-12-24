@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import * as _ from 'lodash';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import { findIndex } from 'lodash';
 import {Select} from '../animations';
 
 @Component({
@@ -17,7 +16,7 @@ export class RestrictionPickerComponent implements OnInit {
   @Input() color: string = '#7F879D';
   @Input() selectedColor: string = '#FFFFFF';
   @Input() backgroundColor: string = '#1E194F';
-  @Input() selectedChoise: any;
+  @Input() selectedChoice: any;
   @Input() fontSize: number = 13;  // px
   @Input() disabled: boolean;
   @Input() disabledOptions: string[];
@@ -28,20 +27,20 @@ export class RestrictionPickerComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if (this.selectedChoise) {
-      this.result.emit(this.selectedChoise);
+    if (this.selectedChoice) {
+      this.result.emit(this.selectedChoice);
     }
   }
 
   isDisabled(option) {
-      return _.findIndex(this.disabledOptions, (opt) => {
+      return findIndex(this.disabledOptions, (opt) => {
           return option === opt;
       }) > -1;
   }
 
   onClick(choice) {
     if (!this.isDisabled(choice)) {
-        this.selectedChoise = choice;
+        this.selectedChoice = choice;
         this.result.emit(choice);
     }
   }

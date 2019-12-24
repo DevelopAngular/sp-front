@@ -8,9 +8,8 @@ import {BehaviorSubject} from 'rxjs';
 import {MessageBoxViewRestrictionSm} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionSm';
 import {MessageBoxViewRestriction} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestriction';
 import {MessageBoxViewRestrictionLg} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionLg';
-import {MessageBoxViewRestrictionMd} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionMd';
 import {ScreenService} from '../../../../services/screen.service';
-import * as _ from 'lodash';
+import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
@@ -21,12 +20,10 @@ import {DeviceDetection} from '../../../../device-detection.helper';
 export class RestrictedMessageComponent implements OnInit {
 
   @Input() formState: Navigation;
-
   @Input() gradient: string;
-
   @Input() teacher: User;
-
   @Input() date: string | boolean;
+  @Input() isStaff: boolean;
 
   @Output() resultMessage: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
@@ -64,7 +61,7 @@ export class RestrictedMessageComponent implements OnInit {
 
   get teachersNames() {
     const to = this.formState.data.direction.to;
-    if (!this.formState.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) {
+    if (!this.formState.forLater && to.request_mode === 'specific_teachers') {
       return to.request_teachers;
     } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || (!this.formState.forLater && this.teachersLength === 1)) {
         if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
@@ -75,7 +72,7 @@ export class RestrictedMessageComponent implements OnInit {
            return this.formState.data.direction.to.teachers;
         }
     }
-    if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) {
+    if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers') {
       return to.scheduling_request_teachers;
     } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || (this.formState.forLater && this.teachersLength === 1)) {
         if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
@@ -113,15 +110,10 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.teachersNames, 'id');
+    return uniqBy(this.teachersNames, '+id');
   }
 
   ngOnInit() {
-    // if (this.formState.previousState > this.formState.state || this.formState.previousStep > this.formState.step) {
-    //   this.headerTransition['rest-mes-header'] = false;
-    //   this.headerTransition['rest-mes-header_animation-back'] = true;
-    // }
-
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.message = new FormControl(this.formState.data.message);
     this.fromLocation = this.formState.data.direction.from;
@@ -148,8 +140,6 @@ export class RestrictedMessageComponent implements OnInit {
   back() {
 
     this.formService.setFrameMotionDirection('back');
-    // this.headerTransition['rest-mes-header'] = true;
-    // this.headerTransition['rest-mes-header_animation-back'] = false;
 
     setTimeout(() => {
 
@@ -180,7 +170,7 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   onChangeAnimationDirection(evt) {
-    console.log(evt);
+    // console.log(evt);
     this.headerTransition['rest-mes-header'] = false;
     this.headerTransition['rest-mes-header_animation-back'] = true;
   }

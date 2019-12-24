@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { User } from '../../../models/User';
 import { Location } from '../../../models/Location';
 import {fromEvent} from 'rxjs';
-import * as _ from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 
 @Component({
   selector: 'app-search-filter-dialog',
@@ -43,26 +43,26 @@ export class SearchFilterDialogComponent implements OnInit {
 
   addButtonVisibility(entity: 'students' | 'rooms' | 'withCategories') {
     if (entity === 'students') {
-      return !_.isEqual(this.selectedStudents, this.data['students']);
+      return !isEqual(this.selectedStudents, this.data['students']);
     }
     if (entity === 'rooms') {
-      return !_.isEqual(this.selectedLocations, this.data['rooms']);
+      return !isEqual(this.selectedLocations, this.data['rooms']);
     }
     if (entity === 'withCategories') {
-      return !_.isEqual(this.roomsWithCategories, this.data['withCategories']);
+      return !isEqual(this.roomsWithCategories, this.data['withCategories']);
     }
   }
 
   ngOnInit() {
     this.state = this.data['state'];
     if (this.data['students']) {
-      this.selectedStudents = _.cloneDeep<User[]>(this.data['students']);
+      this.selectedStudents = cloneDeep<User[]>(this.data['students']);
     }
     if (this.data['rooms']) {
-      this.selectedLocations =  _.cloneDeep<Location[]>(this.data['rooms']);
+      this.selectedLocations =  cloneDeep<Location[]>(this.data['rooms']);
     }
     if (this.data['withCategories']) {
-        this.roomsWithCategories = _.cloneDeep<any[]>(this.data['withCategories']);
+        this.roomsWithCategories = cloneDeep<any[]>(this.data['withCategories']);
     }
   }
 

@@ -1,9 +1,8 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {optionsView} from '../consent-menu/consent-menu.component';
 import {ConsentMenuMobileAnimations} from './consent-menu-mobile.animations';
-
 
 @Component({
   selector: 'app-consent-menu-mobile',
@@ -11,7 +10,7 @@ import {ConsentMenuMobileAnimations} from './consent-menu-mobile.animations';
   styleUrls: ['./consent-menu-mobile.component.scss'],
   animations: [ConsentMenuMobileAnimations.menuAppearance]
 })
-export class ConsentMenuMobileComponent implements OnInit, OnDestroy {
+export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() header: string;
   @Input() options: any[];
@@ -21,6 +20,8 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy {
   @Input() ConsentNoText: string;
   @Input() ConsentButtonColor: string;
   @Input() display: boolean;
+  @Input() appendToBody: boolean;
+  @Input() position: string = 'absolute';
 
   @Input() isSort = false;
   @Input() sortMode;
@@ -29,13 +30,18 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy {
   @Output() backDropClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() receiveOption: EventEmitter<any> = new EventEmitter<any>();
 
+  @ViewChild('consentMenu') consentMenu: ElementRef<HTMLElement>;
+
   constructor(
     private sanitizer: DomSanitizer,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
   ) {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit(): void {
   }
 
   ngOnDestroy() {

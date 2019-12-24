@@ -30,8 +30,6 @@
     overflow: visible;
     font-style: normal;
     font-stretch: normal;
-    /* line-height: 1.08;
-    letter-spacing: 0.3px; */
     transition: box-shadow .3s ease;
     justify-content: center;
     align-items: center;
@@ -41,7 +39,7 @@
 }
 
 .tile-title-container {
-  min-width: 100px;
+  min-width: 143px;
 }
 
 .tile-title {
@@ -73,6 +71,8 @@
   position: relative;
   overflow: hidden;
   z-index: 2;
+  display: flex;
+  justify-content: center;
   flex: 1 1 auto;
   height: 30px;
 }

@@ -14,7 +14,7 @@ import { User } from '../models/User';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import { CalendarComponent } from '../admin/calendar/calendar.component';
-import {bufferCount, delay, filter, map, share, shareReplay, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { LocationsService } from '../services/locations.service';
 import { RepresentedUser } from '../navbar/navbar.component';
@@ -23,19 +23,14 @@ import { ScreenService } from '../services/screen.service';
 import { SortMenuComponent } from '../sort-menu/sort-menu.component';
 import { MyRoomAnimations } from './my-room.animations';
 import { KioskModeService } from '../services/kiosk-mode.service';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { bumpIn } from '../animations';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { StorageService } from '../services/storage.service';
 import { HttpService } from '../services/http-service';
-
-import * as moment from 'moment';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
-import {HallPass} from '../models/HallPass';
 import {HallPassesService} from '../services/hall-passes.service';
-import {Moment} from 'moment';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 /**
@@ -67,7 +62,7 @@ abstract class RoomPassProvider implements PassLikeProvider {
   }
 }
 
-class ActivePassProvider extends RoomPassProvider {
+export class ActivePassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
     return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: locations}, date);
   }
@@ -146,14 +141,11 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   testPasses: PassLikeProvider;
-
-  activePassesKiosk: WrappedProvider;
   activePasses: WrappedProvider;
   originPasses: WrappedProvider;
   destinationPasses: WrappedProvider;
 
   inputValue = '';
-  calendarToggled = false;
   user: User;
   effectiveUser: RepresentedUser;
   isStaff = false;
@@ -192,7 +184,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   currentPassesDates: Map<string, number> = new Map();
   holdScrollPosition: number = 0;
-  // currentPassesDates: {[key: number]: Moment};
 
   constructor(
       private _zone: NgZone,
@@ -209,13 +200,12 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private sanitizer: DomSanitizer,
       private storage: StorageService,
       private http: HttpService,
-      private screenService: ScreenService,
+      public screenService: ScreenService,
       public router: Router,
       private scrollPosition: ScrollPositionService
 
   ) {
     this.setSearchDate(this.timeService.nowDate());
-    console.log(this.kioskMode);
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
     const selectedLocationArray$ = this.selectedLocation$
@@ -223,7 +213,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         map((location) => {
          return location && location.length ? location.map(l => Location.fromJSON(l)) : [];
         })
-      )
+      );
 
     // Construct the providers we need.
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
@@ -256,10 +246,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   get dateDisplay() {
     return Util.formatDateTime(this.searchDate).split(',')[0];
-  }
-
-  get choices() {
-    return this.roomOptions;
   }
 
   get showArrow() {
@@ -310,11 +296,13 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       }),
       switchMap(([cu, eu]) => {
         return combineLatest(
-          this.locationService.getLocationsWithTeacherRequest(this.user.isAssistant() ? this.effectiveUser.user : this.user ),
+          this.locationService.getLocationsWithTeacherRequest(this.user.isAssistant() ? this.effectiveUser.user : this.user)
+            .pipe(filter((res: any[]) => !!res.length)),
           this.locationService.myRoomSelectedLocation$
         );
       }),
-      takeUntil(this.destroy$)
+      takeUntil(this.destroy$),
+      take(1)
     )
     .subscribe(([locations, selected]: [Location[], Location]) => {
       this._zone.run(() => {
@@ -329,12 +317,19 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.passesService.getAggregatedPasses()
-      .subscribe((res: any) => {
+    this.selectedLocation$
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((res: any[]) => !!res.length),
+        switchMap((locations: Location[]) => {
+          return this.passesService.getAggregatedPasses(locations.map(loc => loc.id));
+        })
+      ).subscribe(res => {
+         this.currentPassesDates.clear();
          res.forEach((pass, i) => {
            this.currentPassesDates.set(new Date(pass.pass_date).toDateString(), i);
          });
-      });
+    });
 
     this.hasPasses = combineLatest(
       this.activePasses.length$,
@@ -358,9 +353,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     if (this.scrollableArea && this.scrollableAreaName) {
       this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     }
-    this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
     this.destroy$.next();
     this.destroy$.complete();
+    this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
   }
 
   onPress(press: boolean) {
@@ -426,14 +421,13 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   displayOptionsPopover(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
-      // const target = new ElementRef(evt.currentTarget);
       UNANIMATED_CONTAINER.next(true);
       const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
           'heading': 'CHANGE ROOM',
-          'locations': this.choices,
+          'locations': this.roomOptions,
           'selectedLocation': this.selectedLocation,
           'trigger': target,
           'scrollPosition': this.holdScrollPosition
@@ -454,7 +448,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           filter(res => !!res)
         )
         .subscribe(data => {
-          console.log(data);
+          // console.log(data);
           this.holdScrollPosition = data.scrollPosition;
           this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
           this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
@@ -462,21 +456,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  showMainForm(forLater: boolean): void {
-    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
-      panelClass: 'main-form-dialog-container',
-      backdropClass: 'custom-backdrop',
-      data: {
-        'forLater': forLater,
-        'forStaff': this.isStaff,
-        'forInput': true,
-        'kioskMode': true,
-        'kioskModeRoom': this.kioskMode.currentRoom$.value
-      }
-    });
-  }
-
   showOptions(target: HTMLElement) {
+    // debugger
     this.optionsClick = !this.optionsClick;
     if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
       this.openOptionsMenu();
@@ -496,51 +477,32 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   cleanSearchValue() {
     this.resetValue.next('');
+    this.inputValue = '';
+    this.searchQuery$.next('');
+    this.toggleSearchBar();
   }
 
   onDate(event) {
-    debugger;
     this.setSearchDate(event[0]._d);
   }
 
   openOptionsMenu() {
-    setTimeout(() => {
-      const dialogData = {
-        title: 'change room',
-        list: [{name: 'all rooms', isSelected: true, selectedItem: null}],
-      };
-
-      if (this.selectedLocation) {
-        dialogData.list[0].isSelected = false;
-      }
-
-      this.choices.forEach((choice) => {
-        let isItemSelected: boolean;
-
-        if (this.selectedLocation && (this.selectedLocation.title === choice.title)) {
-          isItemSelected = true;
-        }
-
-        dialogData.list.push({
-          name: choice.title,
-          isSelected: isItemSelected,
-          selectedItem: choice,
-        });
-      });
-
+    // debugger
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: {bottom: '0'},
         panelClass: 'options-dialog',
-        data: dialogData
+        data: {
+          title: 'change room',
+          selectedItem: this.selectedLocation,
+          items: this.roomOptions,
+          showAll: true
+        }
       });
 
-      dialogRef.componentInstance.onListItemClick.subscribe((index) => {
-        this.selectedLocation = dialogData.list.find((option, i) => {
-          return i === index;
-        }).selectedItem;
+      dialogRef.componentInstance.onListItemClick.subscribe((location) => {
+        this.selectedLocation = location;
         this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
       });
-    }, 100);
   }
 
   calendarSlideState(stateName: string): string {

@@ -59,5 +59,24 @@ export class AdminsEffects {
       );
   });
 
+  updateAdminPermissions$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(adminsActions.updateAdminPermissions),
+        concatMap((action: any) => {
+          return this.userService.createUserRoles(action.profile.id, action.permissions)
+            .pipe(
+              map((roles: any) => {
+                const profile = action.profile;
+                profile.roles = roles.map(role => role.codename);
+                // debugger;
+                return adminsActions.updateAdminPermissionsSuccess({profile});
+              }),
+              catchError(error => of(adminsActions.updateAdminPermissionsFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(private actions$: Actions, private userService: UserService) {}
 }

@@ -6,13 +6,19 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {filter, last, map, share, skip, switchMap, take, tap} from 'rxjs/operators';
+import {exhaust, filter, last, map, share, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getAccounts, postAccounts, removeAccount, updateAccountActivity} from '../ngrx/accounts/actions/accounts.actions';
+import {
+  getAccounts,
+  postAccounts,
+  removeAccount,
+  updateAccountActivity,
+  updateAccountPermissions
+} from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection, getCountAllAccounts,
   getLoadedAllAccounts, getLoadingAllAccounts
@@ -50,6 +56,7 @@ import {
 } from '../ngrx/student-groups/states/groups-getters.state';
 import {getLoadedUser, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getUser} from '../ngrx/user/actions';
+import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 
 @Injectable()
 export class UserService {
@@ -114,6 +121,10 @@ export class UserService {
   ) {
     this.http.globalReload$
         .pipe(
+          tap(() => {
+            this.http.effectiveUserId.next(null);
+            this.effectiveUser.next(null);
+          }),
           switchMap(() => {
             return this.getUserRequest().pipe(filter(res => !!res));
           }),
@@ -126,7 +137,7 @@ export class UserService {
                     const normalizedRU = users.map((raw) => {
                       raw.user = User.fromJSON(raw.user);
                       return raw;
-                    })
+                    });
                     if (users && users.length) {
                       this.representedUsers.next(normalizedRU);
                       this.effectiveUser.next(normalizedRU[0]);
@@ -301,14 +312,22 @@ export class UserService {
     } else if (userType === 'username') {
         return this.http.post(`v1/schools/${id}/add_user`, {
             type:  'username',
-            username: user.username,
+            username: user.email,
             password: user.password,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            display_name: user.display_name,
             profiles: roles
         });
     }
   }
   addUserToProfile(id, role) {
       return this.http.put(`v1/users/${id}/profiles/${role}`);
+  }
+
+  createUserRolesRequest(profile, permissions, role) {
+    this.store.dispatch(updateAccountPermissions({profile, permissions, role}));
+    return of(null);
   }
 
   createUserRoles(id, data) {
@@ -330,9 +349,21 @@ export class UserService {
   getRepresentedUsers(id) {
     return this.http.get(`v1/users/${id}/represented_users`);
   }
+
+  addRepresentedUserRequest(profile, user: User) {
+    this.store.dispatch(addRepresentedUserAction({profile, user}));
+    return of(null);
+  }
+
   addRepresentedUser(id: number, repr_user: User) {
     return this.http.put(`v1/users/${id}/represented_users/${repr_user.id}`);
   }
+
+  deleteRepresentedUserRequest(profile, user: User) {
+    this.store.dispatch(removeRepresentedUserAction({profile, user}));
+    return of(null);
+  }
+
   deleteRepresentedUser(id: number, repr_user: User) {
     return this.http.delete(`v1/users/${id}/represented_users/${repr_user.id}`);
   }
@@ -403,5 +434,9 @@ export class UserService {
   }
   exportUserData(id) {
     return this.http.get(`v1/users/${id}/export_data`);
+  }
+
+  checkUserEmail(email) {
+    return this.http.post('v1/check-email', {email});
   }
 }

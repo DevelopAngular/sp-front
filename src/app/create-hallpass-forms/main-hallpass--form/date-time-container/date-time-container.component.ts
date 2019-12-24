@@ -74,6 +74,7 @@ export class DateTimeContainerComponent implements OnInit {
 
   back(event) {
     this.FORM_STATE = event;
+    this.FORM_STATE.data.date = null;
     this.nextStepEvent.emit(event);
   }
 

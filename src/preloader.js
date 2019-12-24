@@ -71,7 +71,7 @@ window.waitForAppLoaded = function(force = false) {
 
       setTimeout(function() {
         preloaderRef.style.opacity = '0';
-      }, 1000);
+      }, 500);
       setTimeout(function() {
         window.preloader.n = 200;
         window.preloader.percent = 0;
@@ -91,6 +91,8 @@ window.appLoaded = function(timeout = 100) {
   const timerId = setInterval(function() {
     if (window.preloader) {
       window.preloader.visibility = false;
+      clearInterval(timerId);
+    } else {
       clearInterval(timerId);
     }
   }, timeout);

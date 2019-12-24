@@ -1,6 +1,6 @@
-import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {combineLatest, forkJoin, fromEvent, interval, of, Subject, zip} from 'rxjs';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {combineLatest, interval, of, Subject} from 'rxjs';
+import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DataService } from '../../services/data-service';
 import { HttpService } from '../../services/http-service';
 import { HallPassFilter, LiveDataService } from '../../live-data/live-data.service';
@@ -15,8 +15,7 @@ import {HallPassesService} from '../../services/hall-passes.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ThemeService} from 'ng2-charts';
 import {ScrollPositionService} from '../../scroll-position.service';
-
-declare const window;
+import {UserService} from '../../services/user.service';
 
 
 @Component({
@@ -25,8 +24,6 @@ declare const window;
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  // @ViewChild('draggableContainer') draggableContainer: ElementRef;
-
 
   private scrollableAreaName = 'Dashboard';
   private scrollableArea: HTMLElement;
@@ -110,13 +107,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private liveDataService: LiveDataService,
     private pdf: PdfGeneratorService,
     private _zone: NgZone,
-    // private elRef: ElementRef,
     private dialog: MatDialog,
     private timeService: TimeService,
     private host: ElementRef,
     public darkTheme: DarkThemeSwitch,
     private chartTheming: ThemeService,
-    private scrollPosition: ScrollPositionService
+    private scrollPosition: ScrollPositionService,
+    private userService: UserService
 
   ) {
     // this.darkTheme.preloader.next(true);
@@ -243,7 +240,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.adminService.getDashboardDataRequest().pipe(filter(res => !!res))
         );
       }),
-      takeUntil(this.shareChartData$)
+      takeUntil(this.shareChartData$),
       )
       .subscribe(([stats, eventReports, dashboard]: any) => {
         for (const entry of stats) {
@@ -274,8 +271,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     interval(60000)
       .pipe(
-        switchMap(() => this.adminService.getDashboardDataRequest()),
-        takeUntil(this.shareChartData$)
+        takeUntil(this.shareChartData$),
+        switchMap(() => {
+          return this.adminService.getDashboardDataRequest();
+        }),
       )
       .subscribe((result: any) => {
         this.lineChartData = [{

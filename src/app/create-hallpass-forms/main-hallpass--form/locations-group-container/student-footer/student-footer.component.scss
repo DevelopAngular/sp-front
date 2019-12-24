@@ -25,6 +25,18 @@
   border-bottom-right-radius: 14px;
   overflow: hidden;
 
+  .switch-locs-view {
+    position: absolute;
+    left: 10px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer;
+  }
+
   .footer-from-text {
     display: flex;
     align-items: center;

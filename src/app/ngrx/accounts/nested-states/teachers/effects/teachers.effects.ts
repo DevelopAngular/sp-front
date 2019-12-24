@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as teachersActions from '../actions';
-import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
+import {catchError, concatMap, map, pluck, switchMap} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
 
@@ -68,6 +68,24 @@ export class TeachersEffects {
                 return teachersActions.updateTeacherActivitySuccess({profile});
               }),
               catchError(error => of(teachersActions.updateTeacherActivityFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateTeacherPermissions$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.updateTeacherPermissions),
+        concatMap((action: any) => {
+          return this.userService.createUserRoles(action.profile.id, action.permissions)
+            .pipe(
+              map((roles: any[]) => {
+                const profile = action.profile;
+                profile.roles = roles.map(role => role.codename);
+                return teachersActions.updateTeacherPermissionsSuccess({profile});
+              }),
+              catchError(error => of(teachersActions.updateTeacherPermissionsFailure({errorMessage: error.message})))
             );
         })
       );

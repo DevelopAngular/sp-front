@@ -54,8 +54,7 @@ export class EditRoomInFolderComponent implements OnInit {
         return this.roomValidButtons.getValue().cancel;
     }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   goBack() {
     this.back.emit();

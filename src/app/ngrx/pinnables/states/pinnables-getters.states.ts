@@ -15,6 +15,11 @@ export const getCurrentPinnableId = createSelector(
   (state: IPinnablesState) => state.currentPinnableId
 );
 
+export const getArrangedLoading = createSelector(
+  getPinnablesState,
+  (state: IPinnablesState) => state.arrangedLoading
+);
+
 export const getIsLoadedPinnables = createSelector(
   getPinnablesState,
   (state: IPinnablesState) => state.loaded

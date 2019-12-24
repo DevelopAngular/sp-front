@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { httpFactory } from '@angular/http/src/http_module';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import { Observable } from 'rxjs';
 import { GoogleLoginService } from '../services/google-login.service';
 import { HttpService } from '../services/http-service';
-import {filter, map, tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

@@ -8,12 +8,13 @@ import {
   flatMap,
   map,
   switchMap,
-  mapTo
+  mapTo, distinctUntilChanged
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject, Subject} from 'rxjs';
 import { environment } from '../../environments/environment';
+import * as testEnv from '../../environments/environment.test';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
@@ -90,6 +91,12 @@ function makeUrl(server: LoginServer, endpoint: string) {
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
     return endpoint;
   } else {
+    // if (!environment.production) {
+    //   const proxyPath = new URL(server.api_root).pathname;
+    //   return (proxyPath + endpoint) as string;
+    // } else {
+    //   return server.api_root + endpoint;
+    // }
     return server.api_root + endpoint;
   }
 }
@@ -133,7 +140,7 @@ export class HttpService {
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
     switchMap(() => {
-      return this.getSchools();
+      return this.getSchoolsRequest();
     }),
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
@@ -147,7 +154,7 @@ export class HttpService {
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
     map(school => school ? school.id : null),
-    // distinctUntilChanged(),
+    distinctUntilChanged(),
     delay(5)
   );
 
@@ -166,7 +173,6 @@ export class HttpService {
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
     this.schools$.subscribe(schools => {
-
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
         this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
@@ -190,18 +196,21 @@ export class HttpService {
       interval(10000)
         .pipe(
             switchMap(() => of(this.accessTokenSubject.value)),
-            // tap(console.log),
             filter(v => !!v),
             switchMap(({auth, server}) => {
-
               if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
                   const config = new FormData();
+                  const user = JSON.parse(this.storage.getItem('google_auth'));
                   config.append('client_id', server.client_id);
                   config.append('grant_type', 'refresh_token');
                   config.append('token', auth.refresh_token);
+                  // config.append('username', user.username);
+                  // config.append('password', user.password);
+                  // console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
                   map((data: any) => {
+                    // console.log('Auth data : ', data);
                     // don't use TimeService for auth because auth is required for time service
                     // to be useful
                     data['expires'] = new Date(new Date() + data['expires_in']);
@@ -214,7 +223,7 @@ export class HttpService {
                     this.loginService.isAuthenticated$.next(false);
                     return of(null);
                   })
-                );
+                );                    // return this.fetchServerAuth();
               } else {
                 return of(null);
               }
@@ -228,18 +237,8 @@ export class HttpService {
         return { auth: newToken, server: this.accessTokenSubject.value.server};
 
       })).subscribe(res => {
-        // console.log(res);
         this.accessTokenSubject.next(res as AuthContext);
       });
-
-    // this.accessTokenSubject.pipe(withLatestFrom(this.kioskTokenSubject$),
-    //     map(([{auth, server}, newToken]) => {ы
-    //       return {auth: newToken, server};
-    //     }))
-    //     .subscribe((updatedContext: AuthContext) => {
-    //       debugger;
-    //       this.accessTokenSubject.next(updatedContext);
-    //     });
 
   }
 
@@ -266,8 +265,13 @@ export class HttpService {
     if (!navigator.onLine) {
       return  this.pwaStorage.getItem('servers').pipe(
         map((servers: LoginServer[]) => {
-          if (servers) {
-            return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          if (servers.length > 0) {
+            const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+            // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
+            //   return testEnv.environment.preferEnvironment as LoginServer;
+            // } else {
+              return server;
+            // }
           } else {
             return null;
           }
@@ -281,7 +285,12 @@ export class HttpService {
       }),
       map((servers: LoginServer[]) => {
         if (servers.length > 0) {
-          return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
+          //   return testEnv.environment.preferEnvironment as LoginServer;
+          // } else {
+            return server;
+          // }
         } else {
           return null;
         }
@@ -474,7 +483,7 @@ export class HttpService {
   }
 
   setSchool(school: School) {
-    if (school !== null) {
+    if (!!school && school.id) {
       this.storage.setItem('last_school_id', school.id);
     } else {
       this.storage.removeItem('last_school_id');

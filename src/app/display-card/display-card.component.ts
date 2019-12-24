@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, Input } from '@angular/core';
 import { NavbarDataService } from '../main/navbar-data.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-display-card',
@@ -20,12 +21,14 @@ export class DisplayCardComponent implements OnInit {
   @Input() righticon: string;
   @Input() subtitle: string;
   @Input() subtitle_fontSize: string;
-  @Input() righttext:string;
+  @Input() righttext: string;
+  @Input() hasHeader: boolean = true;
 
 
   constructor(
     private navbarData: NavbarDataService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    public screenService: ScreenService
   ) { }
 
   get notificationBadge$() {

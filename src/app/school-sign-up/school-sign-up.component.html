@@ -1,106 +1,169 @@
 <div class="host">
-<!--  <div style="width: 100vw;height: 100vh;display: flex;align-items: center;justify-content: center;">-->
-<!--    <div style="width: 100px; height: 15px; background-color: red;" contenteditable></div>-->
-<!--&lt;!&ndash;    <app-ios-calendar (selectedEvent)="test($event)"></app-ios-calendar>&ndash;&gt;-->
-<!--  </div>-->
-  <div class="school-signin" *ngIf="true">
-    <div [style.margin-right]="'80px'">
-      <img [src]="'./assets/School-sign-in.svg'" alt="School-sign-in.svg">
+<!--  <app-ios-calendar (selectedEvent)="test($event)"></app-ios-calendar>-->
+<!--  <app-date-time style="border: 1px solid green; border-radius: 14px" [isStaff]="true" [mock]="true"></app-date-time>-->
+
+  <div class="moving-tiles">
+    <app-mooving-tiles></app-mooving-tiles>
+  </div>
+
+  <div class="background" [style.background-image]="trustedBackgroundUrl | resolveAsset"></div>
+
+  <div class="school-signin">
+    <div class="logo">
+      <div class="logo__sticky-inner">
+        <app-smartpass-logo [logoAsset]="'./assets/Logo (White-Gray).svg'"></app-smartpass-logo>
+      </div>
     </div>
-    <div [style.width]="'550px'" [style.height]="'550px'" [style.padding-right]="'100px'">
-      <div>
-        <div *ngIf="!school" class="school-signin_big-title">
-          Sign up your school <br>
-          in minutes
-        </div>
-        <div *ngIf="school" class="school-signin_big-title">
-          Let’s get started,<br>
-          {{school.structured_formatting.main_text}}
-        </div>
-        <div class="school-input" *ngIf="!school">
-          <div *ngIf="!(pending$ | async)" class="school-input_step-number">
-            1
-          </div>
-          <div *ngIf="(pending$ | async)" class="loading-theme_blue-gray spinner">
-            <mat-spinner [diameter]="50" [color]="'accent'"></mat-spinner>
-          </div>
-          <div class="ds-w-100 ds-ml-15 school-input_field">
-            <div>
-              <span class="school-input_title">
-                Select your school
-              </span>
+
+    <div class="sides-container">
+
+      <div style="flex: 1 1 auto; display: flex;" class="sides">
+
+        <div class="left-side">
+
+          <div>
+            <div class="school-signin_big-title">
+              <span>Get started&nbsp;</span>
+              <span>with SmartPass</span>
             </div>
-            <app-sp-search
-              [style.transform]="'scale(1.1)'"
-              [searchTarget]="'schools'"
-              [selectedOptions]="[]"
-              [chipsMode]="false"
-              [focused]="true"
-              [role]="'_profile_teacher'"
-              [dummyRoleText]="'teachers'"
-              [rollUpAfterSelection]="true"
-              [cancelButton]="false"
-              [placeholder]="'Search schools'"
-              (onUpdate)="checkSchool($event)"
-            ></app-sp-search>
+            <div class="school-signin_sub-title">Sign up and start using in minutes.</div>
           </div>
+          <!--        <div style="text-align: center; color: #ABB4CD; font-size: 13px; max-width: 465px; margin-left: 25px; margin-top: 290px;">-->
+          <!--          By proceeding to sign up your school and use SmartPass, you and your school users are agreeing to our-->
+          <!--          <a class="ds-link-text" href="https://www.smartpass.app/terms"><strong>Terms of Service</strong></a> and-->
+          <!--          <a class="ds-link-text" href="https://www.smartpass.app/privacy"><strong>Privacy Policy</strong></a>.-->
+          <!--        </div>-->
+
         </div>
-        <div class="school-input" [style.opacity]="school ? 1 : .4">
-          <div class="school-input_step-number">
-            2
-          </div>
-          <div class="ds-w-100 ds-ml-15 school-input_field">
-            <div>
-              <span class="school-input_title">
-                Sign up with Google
-              </span>
-            </div>
-            <div class="ds-mt-15" style="white-space: nowrap">
-              This just creates your individual administrator account. We’ll add <br>
-              the rest of your school’s accounts through G Suite Sync later.
-            </div>
-          </div>
-        </div>
-        <div *ngIf="school" class="ds-flex-center-center ds-flex-column">
-          <div class="login-button" [style.margin]="'50px auto 100px auto'">
-            <div style="border-radius: 6px; box-shadow: 0 0 5px 2px rgba(0, 0, 0, .05)">
-              <app-gradient-button
-                [size]="'xl'"
-                [gradient]="'#FFFFFF, #FFFFFF'"
-                [withShadow]="true"
-                [cursor]="'pointer'"
-                [hoverColor]="'#F1F1F1'"
-                [minWidth]="'300px'"
-                [minHeight]="'100px'"
-                [fontSize]="'22px'"
-                (buttonClick)="createSchool()"
-                [leftIcon]="(pending$ | async) ? null : './assets/google/google_logo.svg'"
-                [textColor]="'#666666'"
-                [leftImageWidth]="'40px'"
-                [leftImageHeight]="'40px'"
+        <div class="right-side">
+
+          <div class="ds-flex-start-center ds-flex-column sign-up-form">
+            <div class="create-account-form">
+              <div class="school-input">
+                <div *ngIf="(pending$ | async)" class="loading-theme_blue-gray spinner">
+                  <mat-spinner [diameter]="20" [color]="'accent'"></mat-spinner>
+                </div>
+                <div class="ds-w-100 school-input_field">
+                  <div>
+                    <span class="school-input_title" [ngClass]="{'ds-navy' : school, 'ds-blue-gray': !school}">
+                      School name
+                    </span>
+                  </div>
+                  <div
+                    appCrossPointerEventTarget
+                    (pointerClickEvent)="inputIndex = 0"
+                  >
+                    <app-sp-search
+                      *ngIf="!school || school && enterSchoolName"
+                      [width]="'276px'"
+                      [searchTarget]="'schools'"
+                      [selectedOptions]="[]"
+                      [chipsMode]="false"
+                      [focused]="inputIndex === 0"
+                      [role]="'_profile_teacher'"
+                      [dummyRoleText]="'teachers'"
+                      [rollUpAfterSelection]="true"
+                      [cancelButton]="false"
+                      [placeholder]="'Search schools'"
+                      (blurEvent)="onBlur()"
+                      (onUpdate)="checkSchool($event)"
+                    ></app-sp-search>
+                  </div>
+                  <div class="selected-school" *ngIf="school && !enterSchoolName"
+                       appCrossPointerEventTarget
+                       (pointerClickEvent)="enterSchoolName = true; inputIndex = 0"
+                  >
+                    <div>
+                      <img [width]="20" [height]="20" [src]="'./assets/School (Blue-Gray).svg' | resolveAsset" alt="School (Blue-Gray).svg">
+                    </div>
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                      <span> {{school.structured_formatting.main_text}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ds-mt-20"
+                   appCrossPointerEventTarget
+                   (pointerClickEvent)="inputIndex = 1"
               >
-                <div *ngIf="!(pending$ | async)">
-                  <span>Sign in with Google</span>
-                </div>
-                <div style="width: 240px; display: flex; justify-content: center" *ngIf="(pending$ | async)" class="loading-theme_white">
-                  <mat-spinner [diameter]="35"></mat-spinner>
-                </div>
-              </app-gradient-button>
+                <app-input
+                  [width]="'260px'"
+                  [fieldSpace]="'0px'"
+                  [height]="'35px'"
+                  [formGroup]="schoolForm"
+                  [forcedFocus]="inputIndex === 1"
+                  [controlName]="schoolForm.get('full_name')"
+                  [input_value]="schoolForm.get('full_name').value"
+                  [input_label]="'Full name'"
+                ></app-input>
+              </div>
+              <div class="ds-mt-25"
+                   appCrossPointerEventTarget
+                   (pointerClickEvent)="inputIndex = 2"
+              >
+                <app-input
+                  [width]="'260px'"
+                  [fieldSpace]="'0px'"
+                  [height]="'35px'"
+                  [formGroup]="schoolForm"
+                  [forcedFocus]="inputIndex === 2"
+                  [controlName]="schoolForm.get('email')"
+                  [input_value]="schoolForm.get('email').value"
+                  [input_label]="'School email'"
+                ></app-input>
+              </div>
+              <div class="ds-mt-25"
+                   appCrossPointerEventTarget
+                   (pointerClickEvent)="inputIndex = 3"
+              >
+                <app-input
+                  [input_type]="'password'"
+                  [width]="'260px'"
+                  [fieldSpace]="'0px'"
+                  [height]="'35px'"
+                  [formGroup]="schoolForm"
+                  [forcedFocus]="inputIndex === 3"
+                  [controlName]="schoolForm.get('password')"
+                  [input_value]="schoolForm.get('password').value"
+                  [input_label]="'Password'"
+                  [placeholder]="'8+ characters'"
+                ></app-input>
+              </div>
+
+              <div class="ds-w-100 ds-flex-center-center ds-mt-25 ds-pt-10">
+                <app-gradient-button
+                  [size]="'small'"
+                  [gradient]="'#FFFFFF, #00B476'"
+                  [fontWeight]="'normal'"
+                  [rightIcon]="'./assets/Chevron Right (White).svg'"
+                  [disabled]="schoolForm.invalid"
+                  (buttonClick)="createSchool()"
+                >
+              <span style="font-weight: normal;">
+                Sign up
+              </span>
+                </app-gradient-button>
+              </div>
             </div>
-          </div>
-          <div class="ds-flex-center-center ds-my-15" style="color: #E32C66;" *ngIf="showError.error">
-            <div style="text-align: center;">
-              <span>Oops! Please make sure to you are a G Suite</span><br>
-              <span><strong>administrator</strong> to be able to sync users.</span>
+
+            <div class="ds-flex-center-center ds-my-15" style="color: #E32C66;" *ngIf="showError.error">
+              <div style="text-align: center;">
+                <span>Oops! Please make sure to you are a G Suite</span><br>
+                <span><strong>administrator</strong> to be able to sync users.</span>
+              </div>
             </div>
-          </div>
-          <div style="text-align: center; color: #ABB4CD;">
-            By proceeding to sign up your school and use SmartPass, you and your school users are agreeing to our
-            <a class="ds-link-text" href="https://www.smartpass.app/terms"><strong>Terms of Service</strong></a> and
-            <a class="ds-link-text" href="https://www.smartpass.app/privacy"><strong>Privacy Policy</strong></a>.
+
           </div>
         </div>
       </div>
+
+      <div class="links">
+        By proceeding to sign up your school and use SmartPass, you and your school users are agreeing to our
+        <a style="text-decoration: none; font-weight: bold; color: inherit;" href="https://www.smartpass.app/terms"><strong>Terms of Service</strong></a> and
+        <a style="text-decoration: none; font-weight: bold; color: inherit;" href="https://www.smartpass.app/privacy"><strong>Privacy Policy</strong></a>.
+      </div>
+
     </div>
   </div>
+
 </div>

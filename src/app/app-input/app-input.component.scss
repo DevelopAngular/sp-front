@@ -11,12 +11,7 @@
 
 .input-container {
   position: relative;
-  //input {
-  //  cursor: default;
-  //  &:focus {
-  //    cursor: text;
-  //  }
-  //}
+
   .success-icon {
     width: 26px;
     height: 26px;
@@ -36,17 +31,7 @@
 }
 
 .tooltip-container {
-  //position: relative;
   &__inline {
-    //position: absolute;
-    //top: 35px;
-    //right: 1px;
-    //.success-icon {
-    //  top: 0;
-    //  left: 0;
-    //  position: unset;
-    //  margin-left: 5px;
-    //}
     .success-icon:hover + .arrow-down-container {
       opacity: 1;
     }
@@ -89,7 +74,6 @@
   background-clip: padding-box;
   border-radius: .5rem;
   transition: border-color .25s ease-in-out, box-shadow .25s ease-in-out, background-color .25s ease-in-out;
-  margin-top: 0.5rem;
 }
 
 .InputWrapper input:focus {

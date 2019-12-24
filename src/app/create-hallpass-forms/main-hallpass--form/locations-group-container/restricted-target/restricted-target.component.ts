@@ -5,9 +5,9 @@ import { CreateFormService } from '../../../create-form.service';
 import {BehaviorSubject, fromEvent} from 'rxjs';
 import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Location } from '../../../../models/Location';
 
-import * as _ from 'lodash';
-import {User} from '../../../../models/User';
+import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
@@ -122,7 +122,7 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return _.uniqBy(this.quickSelectedTeachers, 'id');
+    return uniqBy(this.quickSelectedTeachers, '+id');
   }
 
   ngOnInit() {
@@ -167,7 +167,6 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   back() {
-
     this.formService.setFrameMotionDirection('back');
 
     setTimeout(() => {

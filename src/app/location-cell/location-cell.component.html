@@ -1,10 +1,10 @@
 <div class="wrapper"
-     (click)="cellSelected()"
-     (mouseenter)="hovered = true"
-     (mouseleave)="hovered = false"
-     (mousedown)="pressed = true"
-     (mouseup)="pressed = false"
-     [style.background-color]="bgColor"
+     #cell
+     appCrossPointerEventTarget
+     (pointerClickEvent)="cellSelected(); changeColor(true, false)"
+     (pointerDownEvent)="changeColor(true, true)"
+     (mouseenter)="changeColor(true)"
+     (mouseleave)="changeColor(false)"
      [style.color]="textColor"
      [style.cursor]="cursor"
      tabindex="0"
@@ -16,7 +16,7 @@
     </div>
     <div class="room" [style.color]="roomColor">
       {{value.room}}
-      <img *ngIf="showLock && !showStar && hasLocks" class="lock" [src]="'./assets/Lock (Navy).svg' | resolveAsset">
+      <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Lock (Navy).svg' | resolveAsset">
     </div>
   </div>
 

@@ -25,6 +25,21 @@ export class LocationsEffects {
       );
   });
 
+  getLocationsFromCategory$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(locationsActions.getLocationsFromCategory),
+      concatMap((action: any) => {
+        return this.locService.getLocationsWithConfig(action.url)
+          .pipe(
+            map((locations: any) => {
+              return locationsActions.getLocationsFromCategorySuccess({locations: locations.results});
+            }),
+            catchError(error => of(locationsActions.getLocationsFromCategoryFailure({errorMessage: error.message})))
+          );
+      })
+    );
+  });
+
   searchLocations$ = createEffect(() => {
     return this.actions$
       .pipe(

@@ -1,17 +1,17 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import {BehaviorSubject, forkJoin, merge, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip} from 'rxjs';
 import {
-  delay,
   map,
   switchMap,
   filter,
   take,
   debounceTime,
-  distinctUntilChanged, tap,
+  distinctUntilChanged,
+  tap
 } from 'rxjs/operators';
 
 import { NextStep } from '../../animations';
@@ -24,8 +24,7 @@ import { LocationsService } from '../../services/locations.service';
 import {OptionState, ValidButtons} from './advanced-options/advanced-options.component';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
 import { FolderData, OverlayDataService, Pages, RoomData } from './overlay-data.service';
-
-import * as _ from 'lodash';
+import { cloneDeep, filter as _filter, pullAll, isString, isNull, differenceBy } from 'lodash';
 import {ColorProfile} from '../../models/ColorProfile';
 
 @Component({
@@ -122,8 +121,8 @@ export class OverlayContainerComponent implements OnInit {
                 this.selectedIcon = this.pinnable.icon;
                 this.titleIcon = this.pinnable.icon;
                 this.initialSettings = {
-                  icon: _.cloneDeep(this.selectedIcon),
-                  color: _.cloneDeep(this.color_profile)
+                  icon: cloneDeep(this.selectedIcon),
+                  color: cloneDeep(this.color_profile)
                 };
                 break;
             }
@@ -141,8 +140,8 @@ export class OverlayContainerComponent implements OnInit {
             this.titleIcon = this.pinnable.icon;
             this.color_profile = this.pinnable.color_profile;
             this.initialSettings = {
-              icon: _.cloneDeep(this.selectedIcon),
-              color: _.cloneDeep(this.color_profile)
+              icon: cloneDeep(this.selectedIcon),
+              color: cloneDeep(this.color_profile)
             };
             break;
         case 'edit':
@@ -188,8 +187,12 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showIncompleteButton() {
+    if (this.currentPage === Pages.BulkEditRooms) {
+      return this.roomValidButtons.getValue().incomplete;
+    } else {
       return (this.roomValidButtons.getValue().incomplete ||
         !this.selectedIcon || !this.color_profile) && this.showCancelButton;
+    }
   }
 
   get showCancelButton() {
@@ -222,7 +225,7 @@ export class OverlayContainerComponent implements OnInit {
           this.pinnables$ = this.dialogData['pinnables$'];
 
           this.pinnables$ = this.pinnables$.pipe(map(pinnables => {
-              const filterLocations = _.filter<Pinnable>(pinnables, {type: 'location'});
+              const filterLocations = _filter<Pinnable>(pinnables, {type: 'location'});
               const locationsIds = filterLocations.map(item => item.location.id);
               const currentLocationsIds = this.selectedRooms.map(room => {
                   if (room.type && room.type === 'location') {
@@ -233,7 +236,7 @@ export class OverlayContainerComponent implements OnInit {
                   }
               });
               return filterLocations.filter(item => {
-                  return item.location.id === _.pullAll(locationsIds, currentLocationsIds).find(id => item.location.id === id);
+                  return item.location.id === pullAll(locationsIds, currentLocationsIds).find(id => item.location.id === id);
               });
           }));
 
@@ -537,7 +540,7 @@ export class OverlayContainerComponent implements OnInit {
         locationsToDb$ = touchedRooms.map(location => {
           let id;
           let data;
-          if (_.isString(location.id)) {
+          if (isString(location.id)) {
             location.category = this.folderData.folderName;
             location.teachers = location.teachers.map(t => t.id);
             return this.locationService.createLocationRequest(location)
@@ -615,7 +618,9 @@ export class OverlayContainerComponent implements OnInit {
         this.locationService.updateLocationRequest(this.pinnable.location.id, mergedData)
             .pipe(
               filter(res => !!res),
+              take(1),
               switchMap((loc: Location) => {
+                // debugger;
                 const pinnable = {
                     title: this.roomData.roomName,
                     color_profile: this.color_profile.id,
@@ -623,7 +628,10 @@ export class OverlayContainerComponent implements OnInit {
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
-            })).subscribe(response => this.dialogRef.close());
+            })).subscribe(response => {
+              // debugger;
+              this.dialogRef.close();
+        });
     }
 
     if (this.currentPage === Pages.BulkEditRooms) {
@@ -670,7 +678,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   newRoomInFolder(room: RoomData) {
-      this.oldFolderData = _.cloneDeep(this.folderData);
+      this.oldFolderData = cloneDeep(this.folderData);
       this.folderData.roomsInFolder.push({
         ...this.normalizeRoomData(room),
         ...this.normalizeAdvOptData(room),
@@ -680,7 +688,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   editRoomFolder(room: RoomData) {
-    this.oldFolderData = _.cloneDeep(this.folderData);
+    this.oldFolderData = cloneDeep(this.folderData);
     this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
     this.folderData.roomsInFolder.push({
       ...this.normalizeRoomData(room),
@@ -691,7 +699,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   addToFolder(rooms: any[]) {
-    this.oldFolderData = _.cloneDeep(this.folderData);
+    this.oldFolderData = cloneDeep(this.folderData);
     this.pinnableToDeleteIds = rooms.map(pin => +pin.id);
     const locationsToAdd = rooms.map(room => {
       return {
@@ -704,8 +712,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   bulkEditInFolder({roomData, rooms}) {
-    this.oldFolderData = _.cloneDeep(this.folderData);
-    this.folderData.roomsInFolder = _.differenceBy(this.folderData.roomsInFolder, rooms, 'id');
+    this.oldFolderData = cloneDeep(this.folderData);
+    this.folderData.roomsInFolder = differenceBy(this.folderData.roomsInFolder, rooms, 'id');
     const editingRooms = this.editRooms(roomData, rooms);
     this.folderData.roomsInFolder = [...editingRooms, ...this.folderData.roomsInFolder];
     if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
@@ -726,7 +734,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   deleteRoomInFolder(room) {
-    this.oldFolderData = _.cloneDeep(this.folderData);
+    this.oldFolderData = cloneDeep(this.folderData);
     this.folderData.roomsToDelete.push(room);
     this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
     this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
@@ -734,10 +742,10 @@ export class OverlayContainerComponent implements OnInit {
 
   editRooms(roomData, rooms) {
     return rooms.map(room => {
-      if (!_.isNull(roomData.restricted)) {
+      if (!isNull(roomData.restricted)) {
         room.restricted = roomData.restricted;
       }
-      if (!_.isNull(roomData.scheduling_restricted)) {
+      if (!isNull(roomData.scheduling_restricted)) {
         room.scheduling_restricted = roomData.scheduling_restricted;
       }
       if (roomData.travelType.length) {
@@ -773,10 +781,11 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   setToEditRoom(_room) {
-    this.overlayService.changePage(Pages.EditRoomInFolder, this.currentPage, {
-      selectedRoomsInFolder: [_room]
-    });
-
-    this.formService.setFrameMotionDirection('forward');
+    // this.formService.setFrameMotionDirection('forward');
+    setTimeout(() => {
+      this.overlayService.changePage(Pages.EditRoomInFolder, 1, {
+        selectedRoomsInFolder: [_room]
+      });
+    }, 10);
   }
 }

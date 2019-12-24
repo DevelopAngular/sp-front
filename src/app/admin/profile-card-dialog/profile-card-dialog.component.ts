@@ -3,15 +3,15 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {Router} from '@angular/router';
-import {map, mapTo, switchMap, tap} from 'rxjs/operators';
+import {map, mapTo, switchMap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {fromEvent, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
-import {HttpService} from '../../services/http-service';
 
-import * as _ from 'lodash';
+import { cloneDeep, isEqual, differenceBy } from 'lodash';
 import {GSuiteSelector} from '../../sp-search/sp-search.component';
+import {LocationsService} from '../../services/locations.service';
 
 @Component({
   selector: 'app-profile-card-dialog',
@@ -52,10 +52,8 @@ export class ProfileCardDialogComponent implements OnInit {
   private permissionsFormInitialState;
 
   public controlsIteratable: any[];
-  public profileTouched: boolean = false;
   public disabledState: boolean = false;
   public headerText: string = '';
-  public consentMenuOpened: boolean = false;
   public headerIcon: string;
   public layout: string = 'viewProfile';
 
@@ -69,6 +67,9 @@ export class ProfileCardDialogComponent implements OnInit {
     initialValue: boolean
   };
 
+  assistantToAdd: User[];
+  assistantToRemove: User[];
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ProfileCardDialogComponent>,
@@ -76,22 +77,20 @@ export class ProfileCardDialogComponent implements OnInit {
     private router: Router,
     private dataService: DataService,
     private userService: UserService,
-    private http: HttpService
+    private locationService: LocationsService
   ) {}
 
   ngOnInit() {
-
-    console.log(this.data);
 
     if (this.data.orgUnit) {
       this.layout = 'gSuiteSettings';
       this.headerIcon = `./assets/${this.data.orgUnit.title} (Navy).svg`;
 
-      this.orgUnitSelector = _.cloneDeep(this.data.orgUnit.selector);
+      this.orgUnitSelector = cloneDeep(this.data.orgUnit.selector);
 
       this.checkSelectorForUpdating$.subscribe((updatedSelector: GSuiteSelector[]) => {
         this.orgUnitSelector = updatedSelector;
-        this.orgUnitSelectorEditState = !_.isEqual(this.orgUnitSelectorInitialState, updatedSelector);
+        this.orgUnitSelectorEditState = !isEqual(this.orgUnitSelectorInitialState, updatedSelector);
       });
     }
     if (this.data.bulkPermissions) {
@@ -108,16 +107,25 @@ export class ProfileCardDialogComponent implements OnInit {
       };
 
       if (this.data.role === '_profile_assistant') {
-        this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
-        this.assistantForInitialState = _.cloneDeep(this.assistantFor);
+        if (this.data.allAccounts) {
+          this.userService.getRepresentedUsers(this.profile._originalUserProfile.id)
+            .subscribe((res: any[]) => {
+              this.assistantFor = res.map(ru => ru.user);
+              this.assistantForInitialState = cloneDeep(this.assistantFor);
+            });
+        } else {
+          this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
+          this.assistantForInitialState = cloneDeep(this.assistantFor);
+        }
         this.assistantForUpdate$.subscribe((users: User[]) => {
-          this.assistantFor = users;
-          if (!_.isEqual(this.assistantFor, this.assistantForInitialState)) {
+          this.assistantToAdd = differenceBy(users, this.assistantForInitialState, 'id');
+          this.assistantToRemove = differenceBy(this.assistantForInitialState, users, 'id');
+
+          if (!isEqual(this.assistantFor, this.assistantForInitialState)) {
             this.assistantForEditState = true;
           } else {
             this.assistantForEditState = false;
           }
-          console.log(users, this.assistantForEditState);
         });
       }
 
@@ -151,42 +159,40 @@ export class ProfileCardDialogComponent implements OnInit {
                       `${this.data.orgUnit.title}s Group Syncing`
                       : '';
 
-    if (this.data.role === '_profile_teacher') {console.log(this.profile);
-       this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo;
+    if (this.data.role === '_profile_teacher') {
+      if (this.data.allAccounts) {
+        this.locationService.getLocationsWithTeacher(this.profile._originalUserProfile)
+          .subscribe(res => {
+            this.teacherAssignedTo = res;
+          });
+      } else {
+        this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo;
+      }
     }
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
       this.controlsIteratable = permissions ? Object.values(permissions) : [];
-      // console.log(permissions);
       const group: any = {};
       for (const key in permissions) {
         const value = (this.profile._originalUserProfile as User).roles.includes(key);
         group[key] = new FormControl(value);
       }
       this.permissionsForm = new FormGroup(group);
-      this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
+      this.permissionsFormInitialState = cloneDeep(this.permissionsForm.value);
       this.permissionsForm.valueChanges.subscribe((formValue) => {
-        this.permissionsFormEditState = !_.isEqual(Object.values(this.permissionsFormInitialState), Object.values(formValue));
+        this.permissionsFormEditState = !isEqual(Object.values(this.permissionsFormInitialState), Object.values(formValue));
 
       });
     }
 
     this.dialogRef.backdropClick().subscribe((evt) => {
-      console.log(evt);
       this.back();
     });
   }
 
   goToSearch() {
     window.open(`admin/search?profileId=${this.profile.id}&profileName=${this.profile['Name']}&role=${this.data.role}`, '_blank');
-    // this.router.navigate(['admin/search'], {
-    //   queryParams: {
-    //     profileId: this.profile.id,
-    //     profileName: this.profile['Name'],
-    //     role: this.data.role
-    //   }
-    // });
   }
   goToPassConfig(location?: Location) {
     if (location) {
@@ -201,43 +207,25 @@ export class ProfileCardDialogComponent implements OnInit {
 
     this.disabledState = true;
 
-    const assistantForRemove = [];
-    const assistantForAdd = [];
-
-    if (this.assistantForEditState) {
-      this.assistantForInitialState.forEach((iuser: User) => {
-        if (this.assistantFor.findIndex((user) => user.id === iuser.id) < 0) {
-          assistantForRemove.push(iuser);
-        }
-      });
-      this.assistantFor.forEach((user: User) => {
-        if (this.assistantForInitialState.findIndex((iuser) => iuser.id === user.id)) {
-          assistantForAdd.push(user);
-        }
-      });
-    }
-
-
     if ( this.data.bulkPermissions) {
       return zip(
-        ...this.data.bulkPermissions.map((userId) => this.userService.createUserRoles(userId, this.permissionsForm.value))
+        ...this.data.bulkPermissions.map((user) => this.userService.createUserRolesRequest(user, this.permissionsForm.value, this.data.role))
       );
     } else if (this.permissionsFormEditState && this.assistantForEditState) {
       return zip(
-        this.userService.createUserRoles(this.profile.id, this.permissionsForm.value),
-        ...assistantForRemove.map((user) => this.userService.deleteRepresentedUser(this.profile.id, user)),
-        ...assistantForAdd.map((user) => this.userService.addRepresentedUser(this.profile.id, user))
+        this.userService.createUserRolesRequest(this.profile, this.permissionsForm.value, this.data.role),
+        ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile.id, user)),
+        ...this.assistantToAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile.id, user))
       );
     } else {
       if (this.permissionsFormEditState) {
         return this.userService
-          .createUserRoles(this.profile.id, this.permissionsForm.value);
+          .createUserRolesRequest(this.profile._originalUserProfile, this.permissionsForm.value, this.data.role);
       }
       if (this.assistantForEditState) {
-
         return zip(
-          ...assistantForRemove.map((user) => this.userService.deleteRepresentedUser(this.profile.id, user)),
-          ...assistantForAdd.map((user) => this.userService.addRepresentedUser(this.profile.id, user))
+          ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile, user)),
+          ...this.assistantToAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile, user))
         );
       }
     }

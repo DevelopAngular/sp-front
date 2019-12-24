@@ -121,7 +121,6 @@
                       [width]="'215px'"
                       [hoverColor]="'#F4F4F4'"
                       [fontSize]="'14px'"
-                      [fontWeight]="700"
                       [gradient]="'#F4F4F4, #F4F4F4'"
                       [textColor]="'#1F195E'"
                       (buttonClick)="showProfileCard(selectedUsers[0], true)">
@@ -138,7 +137,6 @@
                       [minHeight]="'32px'"
                       [width]="'215px'"
                       [fontSize]="'14px'"
-                      [fontWeight]="700"
                       (buttonClick)="promptConfirmation($event.target, 'enable_sign_in')">
                 <span>Enable sign-in</span>
               </app-gradient-button>
@@ -150,7 +148,6 @@
                       [minHeight]="'32px'"
                       [width]="'215px'"
                       [fontSize]="'14px'"
-                      [fontWeight]="700"
                       [gradient]="'#001115, #033294'"
                       [hoverColor]="'#022F68'"
                       (buttonClick)="promptConfirmation($event.target, 'disable_sign_in')">
@@ -166,7 +163,6 @@
                       [minHeight]="'32px'"
                       [width]="'280px'"
                       [fontSize]="'14px'"
-                      [fontWeight]="700"
                       [gradient]="'#DA2370, #FB434A'"
                       [hoverColor]="'#DA2370'"
                       (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
@@ -367,25 +363,6 @@
           ></app-account-groups>
         </div>
       </div>
-
-<!--      <div class="footer">-->
-<!--        <div class="text">-->
-<!--          <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Disconnect G Suite</div>-->
-<!--          <div class="info" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">-->
-<!--            When you disconnect your account, we’ll stop syncing your accounts with G Suite.-->
-<!--            No account data will be erased, but users will no longer be able to sign in to SmartPass.<br/>-->
-<!--            <strong>Only origindaladmin@example.com is able to perform this action since their account will not lose access.</strong>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="button">-->
-<!--          <app-gradient-button-->
-<!--                  [gradient]="'#DA2370, #FB434A'"-->
-<!--                  [hoverColor]="'#DA2370'"-->
-<!--                  [size]="'small'"-->
-<!--          >Disconnect G Suite-->
-<!--          </app-gradient-button>-->
-<!--        </div>-->
-<!--      </div>-->
     </div>
   </div>
 </div>

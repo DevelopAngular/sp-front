@@ -1,8 +1,7 @@
-import { AfterContentInit, AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { MatDialog } from '@angular/material';
-import {ActivePassProvider} from '../hall-monitor/hall-monitor.component';
 import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {combineLatest, of} from 'rxjs';
@@ -10,11 +9,13 @@ import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {switchMap} from 'rxjs/operators';
+import {filter, switchMap} from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {DataService} from '../services/data-service';
 import {LocationsService} from '../services/locations.service';
+import {TimeService} from '../services/time.service';
+import {ActivePassProvider} from '../my-room/my-room.component';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -39,8 +40,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       user_id: number
   };
 
-
-
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
   @HostListener('window:keyup', ['$event'])
@@ -59,21 +58,32 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       private userService: UserService,
       private passesService: HallPassesService,
       private storage: StorageService,
+      private timeService: TimeService
   ) { }
 
   ngOnInit() {
-      this.activePassesKiosk = new WrappedProvider(new ActivePassProvider(this.liveDataService, of('')));
       this.dataService.currentUser.pipe(
           switchMap(user => {
               return this.locationService.getLocationsWithTeacherRequest(user);
-          }))
+          }),
+        filter((res: any[]) => !!res.length)
+      )
           .subscribe(locations => {
           const kioskJwtToken = this.storage.getItem('kioskToken');
           const jwtHelper = new JwtHelperService();
           this.userData = jwtHelper.decodeToken(kioskJwtToken);
           const kioskLocation = locations.find(loc => +loc.id === this.userData.kiosk_location_id);
-          this.kioskMode.currentRoom$.next(kioskLocation);
+            this.activePassesKiosk = new WrappedProvider(
+              new ActivePassProvider(
+                this.liveDataService,
+                of([kioskLocation]),
+                of(this.timeService.nowDate()),
+                of('')
+              )
+            );
+            this.kioskMode.currentRoom$.next(kioskLocation);
       });
+
   }
 
   ngAfterViewInit() {
@@ -86,16 +96,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   cardReader(event: KeyboardEvent) {
-      // this.cardReaderValue = ';236=7';
-      // if (event.keyCode === 37) {
-      //     this.cardReaderValue = ';236=7';
-      // } else if (event.keyCode === 38) {
-      //     this.cardReaderValue = ';234=7';
-      // } else if (event.keyCode === 39) {
-      //     this.cardReaderValue = ';654=7';
-      // } else if (event.keyCode === 40) {
-      //     this.cardReaderValue = '%234=2?';
-      // }
       if (event.keyCode === 13 && this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
           combineLatest(
               this.userService.searchUserByCardId(this.cardReaderValue),
@@ -126,6 +126,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   showMainForm(forLater: boolean, student?): void {
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',
+          maxWidth: '100vw',
           backdropClass: 'custom-backdrop',
           data: {
               'forLater': forLater,

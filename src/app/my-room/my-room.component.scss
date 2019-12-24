@@ -17,6 +17,7 @@
     display: block;
   }
 
+  left: 50%;
   &-my-room-header {
     @extend .my-room-header;
     flex-direction: column !important;
@@ -33,12 +34,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 90px;
+    height: 78px;
     position: relative;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.07);
   }
 
   &-search-wrapper {
-    width: 46%;
+    //width: 46%;
   }
 
   &-calendar-card {
@@ -56,6 +58,8 @@
     //margin: 0;
     width: 100%;
     //height: calc(100vh - 78px);
+    margin-top: 100px
+  ;
   }
 
   @media all and (max-width: 1024px) and (min-width: 768px) {
@@ -103,20 +107,21 @@
 
   div.my-room-options-mobile {
     &-wrapper {
-      position: sticky;
-      top: 0;
+      position: fixed;
+      width: 100%;
       z-index: 1;
     }
 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 90px;
+    height: 78px;
     position: relative;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.07);
   }
 
   div.search-wrapper {
-    width: 46%;
+    //width: 46%;
   }
 
   div.calendar-card {
@@ -128,6 +133,7 @@
   }
 
   div.my-room-left {
+    margin-top: 100px;
     max-width: unset;
   }
 }
@@ -139,7 +145,7 @@
   }
 
   div.search-wrapper {
-    width: 65%;
+    //width: 65%;
   }
 
   ::ng-deep div.options-dialog {
@@ -154,7 +160,7 @@
 
 @media all and (max-width: 375px) {
   div.search-wrapper {
-    width: 50%;
+    //width: 50%;
   }
 }
 
@@ -185,7 +191,7 @@
   display: flex;
   justify-content: center;
   //height: 100vh;
-  min-height: calc(100vh - 78px);
+  height: calc(100vh - 78px);
   overflow: auto;
 }
 
@@ -214,23 +220,16 @@
 }
 
 .my-room-left {
-  //display: flex;
-  //flex-direction: column;
   width: 100%;
   max-width: 533px;
   min-height: calc(100% - 78px);
-  //margin: 0 auto;
-  //height: 10000px;
 }
 
 .no-content-info {
   display: flex;
   justify-content: center;
   color: #7f879d;
-  //margin-top: 50px;
   font-size: 16pt;
-  //height: 650px;
-  //height: 100%;
   flex: 1 1 auto;
 }
 
@@ -285,7 +284,7 @@ input {
 
 .selected-teacher {
   color: #1F195E;
-  font-size: 29px;
+  font-size: 22px;
   white-space: nowrap;
   font-weight: bold;
   display: flex;
@@ -351,10 +350,10 @@ input {
   justify-content: center;
   align-items: center;
 
-  &-calendar {
-    position: absolute;
-    right: 0;
-  }
+  //&-calendar {
+  //  position: absolute;
+  //  right: 0;
+  //}
 }
 
 .my-room-options-mobile {
@@ -375,6 +374,7 @@ input {
   margin: auto;
   border-radius: 14px;
   z-index: 0;
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
 }
 
 .display-block {
@@ -414,12 +414,14 @@ input {
 
 .cancel {
   &-wrapper {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 99;
+    position: absolute;
+    right: 10px;
+    //width: 60px;
+    //height: 60px;
+    //display: flex;
+    //align-items: center;
+    //position: relative;
+    //z-index: 99;
   }
 
   color: #007cff;
@@ -500,4 +502,18 @@ input {
     width: 400px;
     //margin-bottom: 40px;
   }
+}
+
+.my-room-title {
+  display: flex;
+  align-items: center;
+  height: 39px;
+  color: #1F195E;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  z-index: 10;
+  font-weight: bold;
+  font-size: 22px;
 }

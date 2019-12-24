@@ -1,8 +1,16 @@
-<div *ngIf="!mock" mat-raised-button class="clickRipple" [style.cursor]="disabled ? 'default' : 'pointer'" (click)="onSelect()"
-     [@pressState]="buttonState" [style.box-shadow]="shadow"
-     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
-     (mouseenter)="hovered = true" (mouseleave)="onPress(false); hovered = false"
+<div *ngIf="!mock" mat-raised-button class="clickRipple"
+     [@pressState]="buttonState"
+     [style.box-shadow]="shadow"
+     [style.cursor]="disabled ? 'default' : 'pointer'"
      [style.width]="width"
+
+     appCrossPointerEventTarget
+     (pointerClickEvent)="onPress(false); onSelect()"
+     (pointerDownEvent)="onPress(true)"
+     (pointerCancelEvent)="onPress(false);"
+
+     (mouseenter)="hovered = true"
+     (mouseleave)="onPress(false); hovered = false"
 >
      <div *ngIf="selected" class="selected-overlay"></div>
   <div class="pinnable-card" [style.background]="getGradient()" [style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'" [style.opacity]="valid ? 1 : 0.5" [style.height]="height">
@@ -11,7 +19,7 @@
       <img class="selected-icon" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="ICON">
     </div>
     <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
-      <div *ngIf="pinnable.title.length > 14 && pinnable.type === 'location' || pinnable.title.length > 10 && pinnable.type === 'category'; else old" class="title-bar" #title>
+      <div *ngIf="pinnable && pinnable.title.length > 14 && pinnable.type === 'location' || pinnable.title.length > 10 && pinnable.type === 'category'; else old" class="title-bar" #title>
         <div class="title"
              (mouseover)="onHover($event, title)"
              (mouseleave)="onLeave($event)"

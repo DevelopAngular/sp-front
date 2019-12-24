@@ -1,9 +1,8 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import * as moment from 'moment';
-import * as _ from 'lodash';
+import { sortBy, findIndex, range } from 'lodash';
 import {bumpIn} from '../../animations';
-import {BehaviorSubject, Subject} from 'rxjs';
-import {Moment} from 'moment';
+import {BehaviorSubject} from 'rxjs';
 
 export interface CalendarDate {
     mDate: moment.Moment;
@@ -82,7 +81,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             changes.dotsDates &&
             changes.selectedDates.currentValue &&
             changes.selectedDates.currentValue.length  > 1) {
-            this.sortedDates = _.sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m);
+            this.sortedDates = sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m);
             this.generateCalendar();
         }
     }
@@ -107,7 +106,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     isSelected(date: moment.Moment): boolean {
-        return _.findIndex(this.selectedDates, (selectedDate) => {
+        return findIndex(this.selectedDates, (selectedDate) => {
             return moment(date).isSame(selectedDate, 'day');
         }) > -1;
     }
@@ -145,7 +144,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     isRangeHovered(date: moment.Moment): boolean {
-        return (this.range || this.rangeWeeks) && _.findIndex(this.hoveredDates, (hoveredDate) => {
+        return (this.range || this.rangeWeeks) && findIndex(this.hoveredDates, (hoveredDate) => {
             return moment(date).isSame(hoveredDate, 'day');
         }) > -1;
     }
@@ -279,7 +278,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         const firstDayOfGrid = moment(currentMoment).startOf('month').subtract(firstOfMonth, 'days');
         const start = firstDayOfGrid.date();
 
-        return _.range(start, start + 42)
+        return range(start, start + 42)
             .map((date: number): CalendarDate => {
                 const d = moment(firstDayOfGrid).date(date);
               return {

@@ -14,6 +14,9 @@
   div.inbox-content {
     width: 100%;
     min-height: calc(100vh - 78px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   div.current-pass,
@@ -42,6 +45,8 @@
     transform: translateX(-50%) scale(1);
     margin: 0;
     z-index: 10;
+    top: 69.5px;
+    font-size: 22px;
   }
 
   .passes {
@@ -52,12 +57,16 @@
     width: 100%;
   }
 
+  .requests-or-invitations {
+    width: 328px;
+  }
+
 }
 
 @media all and (max-width: 768px) {
   div.main-page-left {
     margin-right: 0;
-    width: 100%;
+    //width: 100%;
     margin-top: 15px;
   }
 
@@ -86,9 +95,24 @@
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
-  min-height: calc(100vh - 78px);
+  //height: calc(100vh - 128px);
   overflow: auto;
   padding-top: 50px;
+  //padding-bottom: 78px;
+  //-webkit-box-sizing: border-box;
+  //-moz-box-sizing: border-box;
+  //box-sizing: border-box;
+}
+
+.mobile-pass-wrapper {
+  position: relative;
+  height: calc(100vh - 127px);
+  overflow: auto;
+
+  .passes-mobile-height {
+    position: absolute;
+    width: 100%;
+  }
 }
 
 .main-page-left{
@@ -96,7 +120,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
 }
 
 .current-pass{

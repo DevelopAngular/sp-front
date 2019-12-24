@@ -45,6 +45,9 @@ export function getInnerPassContent(pass: PassLike, now?: boolean) {
 }
 
 export function getInnerPassName(pass: PassLike) {
+  if (pass.student.first_name === '') {
+    return pass.student.display_name;
+  }
   return pass.student.first_name.substr(0, 1) + '. ' + pass.student.last_name;
 }
 

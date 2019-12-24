@@ -76,10 +76,9 @@ function deploy() {
 
     echo "Using helm verb: ${helm_command}"
 
-    # Intentionally unquoted so helm and verbs are separate args
-    $helm_command \
-      --wait \
-      --debug \
+    template_f=$(mktemp)
+
+    helm template \
       --set service.enabled="$service_enabled" \
       --set web.repository="$CI_APPLICATION_REPOSITORY" \
       --set web.tag="$CI_APPLICATION_TAG" \
@@ -91,11 +90,30 @@ function deploy() {
       --set service.domain="$AUTO_DEVOPS_DOMAIN" \
       --set web.replicaCount="1" \
       --namespace="$KUBE_NAMESPACE" \
-      --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
-      $name_arg "$name" \
-      chart/
+      chart/ | tee "$template_f"
 
-    sleep 20
+    kubectl apply --namespace "$KUBE_NAMESPACE" -f "$template_f"
+
+    # Intentionally unquoted so helm and verbs are separate args
+#    $helm_command \
+#      --wait \
+#      --debug \
+#      --set service.enabled="$service_enabled" \
+#      --set web.repository="$CI_APPLICATION_REPOSITORY" \
+#      --set web.tag="$CI_APPLICATION_TAG" \
+#      --set web.pullPolicy=IfNotPresent \
+#      --set web.secrets[0].name="$secret_name" \
+#      --set application.name="$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG" \
+#      --set application.track="$track" \
+#      --set service.url="$AUTO_DEVOPS_DOMAIN" \
+#      --set service.domain="$AUTO_DEVOPS_DOMAIN" \
+#      --set web.replicaCount="1" \
+#      --namespace="$KUBE_NAMESPACE" \
+#      --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
+#      $name_arg "$name" \
+#      chart/
+
+    sleep 10
 }
 
 function install_dependencies() {
@@ -163,12 +181,12 @@ function check_kube_domain() {
 
 function install_tiller() {
     echo "Checking Tiller..."
-    helm init --upgrade
-    kubectl rollout status -n "$TILLER_NAMESPACE" -w "deployment/tiller-deploy"
-    if ! helm version --debug; then
-      echo "Failed to init Tiller."
-      return 1
-    fi
+#    helm init --upgrade
+#    kubectl rollout status -n "$TILLER_NAMESPACE" -w "deployment/tiller-deploy"
+#    if ! helm version --debug; then
+#      echo "Failed to init Tiller."
+#      return 1
+#    fi
     echo ""
 }
 

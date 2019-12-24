@@ -5,12 +5,28 @@ import {MatDialog} from '@angular/material';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {NotificationButtonService} from '../services/notification-button.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {animate, group, query, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-notification-turn-on-btn',
   templateUrl: './notification-turn-on-btn.component.html',
   styleUrls: ['./notification-turn-on-btn.component.scss'],
-  animations: [bumpIn]
+  animations: [bumpIn,
+    trigger('HideNotificationBtn', [
+      transition(':leave', group([
+          animate('.5s ease', style(
+              {
+                'height': '0px',
+                'margin': '0px 0px',
+                'opacity': 0,
+                'transform': 'scaleY(0.1)'
+              }
+            )
+          )
+        ])
+      )
+    ])
+  ]
 })
 
 export class NotificationTurnOnBtnComponent implements OnInit {
@@ -70,6 +86,6 @@ export class NotificationTurnOnBtnComponent implements OnInit {
   }
 
   get isSafari() {
-    return DeviceDetection.isSafari();
+    return DeviceDetection.isSafari() || DeviceDetection.isIOSMobile() || DeviceDetection.isIOSTablet();
   }
 }

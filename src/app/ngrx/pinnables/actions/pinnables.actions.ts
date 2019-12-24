@@ -18,3 +18,8 @@ export const updatePinnableFailure = createAction(`[${COMPONENT}] Update Pinnabl
 export const removePinnable = createAction(`[${COMPONENT}] Remove Pinnable`, props<{ id: string | number}>());
 export const removeSuccessPinnable = createAction(`[${COMPONENT}] Remove Success Pinnable`, props<{ id: string | number }>());
 export const removePinnableFailure = createAction(`[${COMPONENT}] Remove Pinnable Failure`, props<{ errorMessage: string }>());
+
+export const arrangedPinnable = createAction(`[${COMPONENT}] Arranged Pinnable`, props<{order: any}>());
+export const arrangedPinnableSuccess = createAction(`[${COMPONENT}] Arranged Pinnable Success`);
+export const arrangedPinnableFailure = createAction(`[${COMPONENT}] Arranged Pinnable Failure`, props<{errorMessage: string}>());
+

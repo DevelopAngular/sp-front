@@ -1,9 +1,9 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 
-import { merge, Subject, zip } from 'rxjs';
-import {debounceTime, delay, distinctUntilChanged} from 'rxjs/operators';
+import { merge, Subject } from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 
 import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
@@ -13,7 +13,7 @@ import { HallPassesService } from '../../../services/hall-passes.service';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 
-import * as _ from 'lodash';
+import { isNull, isEqual, cloneDeep, omit } from 'lodash';
 
 @Component({
   selector: 'app-room',
@@ -77,7 +77,7 @@ export class RoomComponent implements OnInit {
   }
 
   get restricted() {
-      if (!_.isNull(this.data.restricted)) {
+      if (!isNull(this.data.restricted)) {
           if (this.data.restricted) {
               return 'Restricted';
           } else {
@@ -87,7 +87,7 @@ export class RoomComponent implements OnInit {
   }
 
   get schedulingRestricted() {
-      if (!_.isNull(this.data.scheduling_restricted)) {
+      if (!isNull(this.data.scheduling_restricted)) {
           if (this.data.scheduling_restricted) {
               return 'Restricted';
           } else {
@@ -107,7 +107,7 @@ export class RoomComponent implements OnInit {
   }
 
   get isValidRestrictions() {
-      return !_.isNull(this.data.restricted) && !_.isNull(this.data.scheduling_restricted);
+      return !isNull(this.data.restricted) && !isNull(this.data.scheduling_restricted);
   }
 
   ngOnInit() {
@@ -143,7 +143,7 @@ export class RoomComponent implements OnInit {
           }
       }
 
-      this.initialData = _.cloneDeep(this.data);
+      this.initialData = cloneDeep(this.data);
 
       merge(this.form.valueChanges, this.change$).pipe(
         debounceTime(450)
@@ -153,7 +153,7 @@ export class RoomComponent implements OnInit {
   }
 
   checkValidRoomOptions() {
-      if ( _.isEqual(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState'))) {
+      if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
           if (this.validForm && this.isValidRestrictions) {
               this.roomValidButtons = {
                   publish: false,

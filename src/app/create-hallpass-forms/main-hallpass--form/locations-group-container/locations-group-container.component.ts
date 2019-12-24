@@ -8,9 +8,6 @@ import { FormFactor, Navigation } from '../main-hall-pass-form.component';
 import { CreateFormService } from '../../create-form.service';
 import { NextStep } from '../../../animations';
 import { LocationsService } from '../../../services/locations.service';
-import {filter, map} from 'rxjs/operators';
-
-import *as _ from 'lodash';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {FromWhereComponent} from './from-where/from-where.component';
 import {ToCategoryComponent} from './to-category/to-category.component';
@@ -19,6 +16,8 @@ import {RestrictedMessageComponent} from './restricted-message/restricted-messag
 import {ToWhereComponent} from './to-where/to-where.component';
 import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
+import {map} from 'rxjs/operators';
+import {Location} from '../../../models/Location';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -121,7 +120,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.formService.compressableBoxController.next(false);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
 
@@ -137,7 +135,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromWhere(location) {
-
     if (this.FORM_STATE.data.hasClose) {
        return  this.nextStepEvent.emit(
             {
@@ -190,23 +187,46 @@ export class LocationsGroupContainerComponent implements OnInit {
         const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
         if (!this.isStaff && restricted && pinnable.location) {
             this.FORM_STATE.previousState = this.FORM_STATE.state;
-            // return this.FORM_STATE.state = States.restrictedTarget;
             return this.FORM_STATE.state = this.redirectTo;
         } else {
            return this.postComposetData();
         }
     }
+  }
 
+  toWhereFromLocation(location: Location) {
+    this.pinnables.pipe(
+      map(pins => {
+        return pins.find(pinnable => {
+          if (pinnable.type === 'category') {
+            return pinnable.title === location.category;
+          } else if (pinnable.type === 'location') {
+            return pinnable.location.id === location.id;
+          }
+        });
+      })
+    ).subscribe(pinnable =>  {
+      if (pinnable.type === 'location') {
+          this.toWhere(pinnable);
+      } else if (pinnable.type === 'category') {
+        this.pinnable = pinnable;
+        this.FORM_STATE.data.direction = {
+          from: this.data.fromLocation,
+          pinnable: pinnable
+        };
+        this.FORM_STATE.data.gradient = pinnable.color_profile.gradient_color;
+        this.FORM_STATE.data.icon = pinnable.icon;
+        this.fromCategory(location);
+      }
+    });
   }
 
   fromCategory(location) {
-
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
-    // const restricted = ((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && !!this.FORM_STATE.forLater));
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
         this.FORM_STATE.previousState = States.from;
-        this.FORM_STATE.state = States.restrictedTarget;
+        this.FORM_STATE.state = this.redirectTo;
     } else {
         this.postComposetData();
     }
@@ -245,7 +265,6 @@ export class LocationsGroupContainerComponent implements OnInit {
       }
     }
     this.FORM_STATE.previousStep = 3;
-    // this.FORM_STATE.step =  close ? 0 : 4;
     setTimeout(() => {
       this.FORM_STATE.step =  close ? 0 : 4;
       this.nextStepEvent.emit(this.FORM_STATE);
@@ -257,10 +276,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.data.message = null;
     this.FORM_STATE.data.message = null;
 
-    // setTimeout(() => {
-
-      this.nextStepEvent.emit(this.FORM_STATE);
-    // }, 100);
+    this.nextStepEvent.emit(this.FORM_STATE);
   }
 
   stepBack() {

@@ -1,7 +1,5 @@
 <div class="travel-view-wrapper" [style.height]="height">
   <div *ngIf="(!(type==='invitation') || forStaff); else originButton;">
-    <!--{{ showRoomNumber ? ((type==='invitation')?(pass?.default_origin?pass?.default_origin.nameRoom:"Origin") : pass?.origin.nameRoom) :-->
-    <!--((type==='invitation')?(pass?.default_origin?pass?.default_origin.title:"Origin"):pass?.origin.title)}}-->
     {{ originRoomName }}
   </div>
   <ng-template #originButton>
@@ -22,8 +20,7 @@
     </app-card-button>
   </ng-template>
   <img class="arrow" [src]="'./assets/' +(pass?.travel_type==='one_way'?'SP Arrow':'SP Arrow Double') +' (White).svg' | resolveAsset"
-      [style.height]="'55px'" [style.width]="(pass?.travel_type==='one_way'?'56px':'125px')"
-      >
+      [style.height]="'55px'" [style.width]="(pass?.travel_type==='one_way'?'56px':'125px')">
   <div>
     {{ destinationRoomName }}
   </div>
