@@ -11,3 +11,7 @@ export const getSchoolsFailure = createAction(`[${COMPONENT}] Get Schools Failur
 export const getSchoolsGG4LInfo = createAction(`[${COMPONENT}] Get GG4L Info`);
 export const getSchoolsGG4LInfoSuccess = createAction(`[${COMPONENT}] Get GG4L Info Success`, props<{gg4lInfo: GG4LSync}>());
 export const getSchoolsGG4LInfoFailure = createAction(`[${COMPONENT}] Get GG4L Info Failure`, props<{errorMessage: string}>());
+
+export const updateSchoolsGG4LInfo = createAction(`[${COMPONENT}] Update GG4L Info`, props<{data: any}>());
+export const updateSchoolsGG4LInfoSuccess = createAction(`[${COMPONENT}] Update GG4L Info Success`, props<{gg4lInfo: GG4LSync}>());
+export const updateSchoolsGG4LInfoFailure = createAction(`[${COMPONENT}] Update GG4L Info Failure`, props<{errorMessage: string}>());

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material';
+import {GG4LSync} from '../../../models/GG4LSync';
 
 declare const window;
 
@@ -9,9 +11,21 @@ declare const window;
 })
 export class SyncProviderComponent implements OnInit {
 
-  constructor() { }
+  page: number = 1;
+  gg4lInfo: GG4LSync;
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
+    this.gg4lInfo = this.data['gg4lInfo'];
+  }
+
+  save() {
+    if (this.page > 1) {
+
+    } else {
+      this.page += 1;
+    }
   }
 
   redirect() {

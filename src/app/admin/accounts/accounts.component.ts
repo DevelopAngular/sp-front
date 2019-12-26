@@ -241,9 +241,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     const SS = this.matDialog.open(SyncSettingsComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
-      data: {
-        gg4lInfo: this.gg4lSettingsData
-      }
+      data: {gg4lInfo: this.gg4lSettingsData}
     });
   }
 
@@ -253,6 +251,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       height: '425px',
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
+      data: {gg4lInfo: this.gg4lSettingsData}
     });
   }
 

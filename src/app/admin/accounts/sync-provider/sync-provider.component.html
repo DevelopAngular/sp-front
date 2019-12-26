@@ -1,19 +1,41 @@
 <div class="wrapper">
-  <img [src]="'./assets/GG4L.svg' | resolveAsset" width="95" height="95" alt="GG4L"/>
-  <div class="center-content">
-    <div class="title">Sync complete!</div>
-    <div class="info">Here’s the info we found:</div>
-    <div class="info">
-      <div>12 admins</div>
-      <div>26 teachers</div>
-      <div>1,678 students</div>
+  <div class="page" *ngIf="page === 1; else page2">
+    <img [src]="'./assets/GG4L.svg' | resolveAsset" width="95" height="95" alt="GG4L"/>
+    <div class="center-content">
+      <div class="title">Sync complete!</div>
+      <div class="info">Here’s the info we found:</div>
+      <div class="info">
+        <div>{{ gg4lInfo.num_admins }} admins</div>
+        <div>{{ gg4lInfo.num_teachers }} teachers</div>
+        <div>{{ gg4lInfo.num_students }} students</div>
+      </div>
     </div>
   </div>
+
+  <ng-template #page2>
+    <div class="page">
+      <img [src]="'./assets/GG4L.svg' | resolveAsset" width="62" height="62" alt="GG4L"/>
+      <div class="title">Choose a sign-in provider</div>
+      <div class="info">
+        This is the method of authentication accounts will use when signing into SmartPass.
+      </div>
+      <app-restriction-picker
+        [style.margin-top]="'35px'"
+        [choices]="['Sign in with Google', 'GG4L \n Passport']"
+        [padding]="15"
+        [width]="228"
+        [height]="48"
+      ></app-restriction-picker>
+    </div>
+  </ng-template>
+
   <div class="bottom-content">
     <div class="help" (click)="redirect()">Need help?</div>
     <app-gradient-button
       [size]="'small'"
-      [rightIcon]="'./assets/Chevron Right (White).svg'"
-    >Next</app-gradient-button>
+      [rightIcon]="page === 1 ? './assets/Chevron Right (White).svg' : ''"
+      (buttonClick)="save()">
+      {{ page === 1 ? 'Next' : 'Save' }}
+    </app-gradient-button>
   </div>
 </div>

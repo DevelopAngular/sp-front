@@ -27,6 +27,9 @@ const reducer = createReducer(
       loaded: true,
       gg4lInfo
     };
+  }),
+  on(schoolsActions.updateSchoolsGG4LInfoSuccess, (state, {gg4lInfo}) => {
+    return {...state};
   })
 );
 

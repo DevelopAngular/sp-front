@@ -41,6 +41,21 @@ export class SchoolsEffects {
     );
   });
 
+  updateGG4LInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateSchoolsGG4LInfo),
+        concatMap((action: any) => {
+          return of('').pipe(
+            map((gg4lInfo: any) => {
+              return schoolsActions.updateSchoolsGG4LInfoSuccess({gg4lInfo});
+            }),
+            catchError(error => of(schoolsActions.updateSchoolsGG4LInfoFailure({errorMessage: error.message})))
+          );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private http: HttpService,

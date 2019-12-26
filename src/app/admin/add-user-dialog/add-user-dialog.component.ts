@@ -37,7 +37,7 @@ export class AddUserDialogComponent implements OnInit {
       });
     }
   }
-  public accountTypes: string[] = ['G Suite', 'Standard'];
+  public accountTypes: string[] = ['GG4L', 'Standard'];
   public typeChoosen: string = this.accountTypes[0];
   public newAlternativeAccount: FormGroup;
   public selectedUsers: User[] = [];
