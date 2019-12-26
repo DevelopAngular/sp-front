@@ -195,6 +195,8 @@ export class NavComponent implements OnInit {
           window.open('https://wishlist.smartpass.app');
         } else if (action === 'support') {
           window.open('https://www.smartpass.app/support');
+        } else if (action === 'bug') {
+          window.open('https://www.smartpass.app/bugreport');
         } else if (action === 'privacy') {
           window.open('https://www.smartpass.app/legal');
         }

@@ -51,6 +51,13 @@ export class SettingsComponent implements OnInit {
           'action': 'support',
           'title': 'Support'
         },
+        {
+          'background': '#fc7303',
+          'icon': 'Bug',
+          'hover_icon': './assets/Bug (White).svg',
+          'action': 'bug',
+          'title': 'Bug Report'
+        },
     ];
 
     constructor(

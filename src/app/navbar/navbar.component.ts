@@ -516,6 +516,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           } else {
               window.open('https://smartpass.app/studentdocs');
           }
+      } else if (action === 'bug') {
+        window.open('https://www.smartpass.app/bugreport');
       } else if (action === 'wishlist') {
           window.open('https://wishlist.smartpass.app');
       } else if (action === 'privacy') {

@@ -15,15 +15,35 @@
     </div>
   </div>
   <div class="appearance-content">
-    <div class="ds-my-5 ds-navy">
-      <span>Theme</span>
+    <div class="top-content">
+      <div class="theme">
+        <span>Theme</span>
+      </div>
+      <app-restriction-picker
+        [width]="255"
+        [height]="32"
+        [choices]="['Light', 'Dark' , 'Auto']"
+        [selectedChoice]="selectedTheme"
+        (result)="setSelectedTheme($event)"
+      >
+      </app-restriction-picker>
     </div>
-    <app-restriction-picker
-      [width]="365"
-      [height]="32"
-      [choices]="['Light', 'Dark' , 'Auto']"
-      [selectedChoice]="selectedTheme"
-      (result)="setSelectedTheme($event)"
-    >
-    </app-restriction-picker>  </div>
+
+
+    <div class="page-layout" *ngIf="!hideLayoutSettings">
+      <div class="header">
+        <div class="header-title">Destination Page Layout</div>
+        <div class="header-info">Switch the layout of the “To where?” page during pass creation.</div>
+      </div>
+      <div class="picker">
+        <app-restriction-picker
+          [width]="141"
+          [height]="32"
+          [selectedChoice]="isList ? 'List' : 'Grid'"
+          [choices]="['Grid', 'List']"
+          (result)="selectedLayout($event)"
+        ></app-restriction-picker>
+      </div>
+    </div>
+  </div>
 </div>

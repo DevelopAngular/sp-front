@@ -11,7 +11,6 @@ import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {combineLatest} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
-import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 
 export interface Setting {
   hidden: boolean;
@@ -198,6 +197,13 @@ export class SettingsComponent implements OnInit {
       'title': 'View Intro'
     });
     this.settings.push({
+      'hidden': false,
+      'background': '#F53D45',
+      'icon': 'Support',
+      'action': 'support',
+      'title': 'Support'
+    });
+    this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
       'background': '#6651F1',
       'icon': 'Launch',
@@ -206,10 +212,10 @@ export class SettingsComponent implements OnInit {
     });
     this.settings.push({
       'hidden': false,
-      'background': '#F53D45',
-      'icon': 'Support',
-      'action': 'support',
-      'title': 'Support'
+      'background': '#fc7303',
+      'icon': 'Bug',
+      'action': 'bug',
+      'title': 'Bug Report'
     });
   }
 }

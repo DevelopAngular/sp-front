@@ -27,6 +27,43 @@
     .appearance-content {
       padding: 30px;
       box-sizing: border-box;
+
+      .theme {
+        display: flex;
+        font-size: 16px;
+        font-weight: 500;
+        color: $navy;
+      }
+
+      .top-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .page-layout {
+        width: 100%;
+        margin-top: 48px;
+        display: flex;
+        justify-content: space-between;
+
+        .header {
+          .header-title {
+            color: $navy;
+            font-size: 16px;
+            margin-bottom: 6px;
+            font-weight: 500;
+          }
+
+          .header-info {
+            font-size: 14px;
+            color: $blue-gray;
+            font-weight: normal;
+          }
+
+        }
+
+      }
     }
   }
 }
