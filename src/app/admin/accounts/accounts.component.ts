@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, mapTo, mergeAll, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -114,6 +114,18 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
+      concatMap(() => this.adminService.getGG4LSyncInfoRequest()
+        .pipe(
+          filter(res => !!res),
+          take(1),
+          map(res => {
+          this.gg4lSettingsData = res;
+          if (!res.is_enabled) {
+            this.openSyncProvider();
+          }
+          return res;
+        }))
+      ),
       tap(() => this.querySubscriber$.next(this.getUserList())),
       switchMap(() => {
         return this.adminService.getCountAccountsRequest()
@@ -129,18 +141,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
     )
     .subscribe((op: any) => {
       this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-    });
-
-    this.adminService.getGG4LSyncInfoRequest()
-      .pipe(
-        takeUntil(this.destroy$),
-        filter((res) => !!res)
-      )
-      .subscribe((res: GG4LSync) => {
-      this.gg4lSettingsData = res;
-      if (!res.is_enabled) {
-        this.openSyncProvider();
-      }
     });
 
     this.userService.userData.pipe(
@@ -249,7 +249,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     const SP = this.matDialog.open(SyncProviderComponent, {
       width: '425px',
       height: '425px',
-      panelClass: 'overlay-dialog',
+      panelClass: 'accounts-profiles-dialog',
+      disableClose: true,
       backdropClass: 'custom-bd',
       data: {gg4lInfo: this.gg4lSettingsData}
     });

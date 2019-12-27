@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {GG4LSync} from '../../../models/GG4LSync';
 
 declare const window;
@@ -14,7 +14,10 @@ export class SyncProviderComponent implements OnInit {
   page: number = 1;
   gg4lInfo: GG4LSync;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<SyncProviderComponent>
+  ) { }
 
   ngOnInit() {
     this.gg4lInfo = this.data['gg4lInfo'];
@@ -22,7 +25,8 @@ export class SyncProviderComponent implements OnInit {
 
   save() {
     if (this.page > 1) {
-
+      // Todo request to server
+      this.dialogRef.close();
     } else {
       this.page += 1;
     }
