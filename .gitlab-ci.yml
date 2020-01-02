@@ -17,7 +17,8 @@ stages:
 testing:
   stage: deploy_staging
   script:
-    - apk add --no-cache bash tree nodejs yarn npm git python make g++
+    - apk add --no-cache bash tree git python make g++
+    - apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.10/main/ nodejs npm yarn
     - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.37.4/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
     - chmod +x /usr/local/bin/sentry-cli
     - ls -l / ; pwd
@@ -47,7 +48,8 @@ testing:
 feature_testing:
   stage: deploy_staging
   script:
-    - apk add --no-cache bash tree nodejs yarn npm git python make g++
+    - apk add --no-cache bash tree git python make g++
+    - apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.10/main/ nodejs npm yarn
     - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.49.0/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
     - chmod +x /usr/local/bin/sentry-cli
     - ls -l / ; pwd
@@ -77,7 +79,8 @@ feature_testing:
 staging:
   stage: deploy_staging
   script:
-    - apk add --no-cache bash tree nodejs yarn npm git python make g++
+    - apk add --no-cache bash tree git python make g++
+    - apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.10/main/ nodejs npm yarn
     - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.37.4/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
     - chmod +x /usr/local/bin/sentry-cli
     - ls -l / ; pwd
@@ -107,7 +110,8 @@ staging:
 production:
   stage: deploy_prod
   script:
-  - apk add --no-cache bash tree nodejs yarn python make g++
+    - apk add --no-cache bash tree git python make g++
+    - apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.10/main/ nodejs npm yarn
   - source scripts/auto_devops.sh
   # no build command. This causes it to reuse the pre-built images from staging because IMAGE_TAG_SUFFIX is shared.
   - install_dependencies
@@ -134,7 +138,8 @@ production:
 staging_local:
   stage: deploy_staging
   script:
-    - apk add --no-cache bash tree nodejs yarn python make g++
+    - apk add --no-cache bash tree git python make g++
+    - apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.10/main/ nodejs npm yarn
     - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.37.4/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
     - chmod +x /usr/local/bin/sentry-cli
     - ls -l / ; pwd
