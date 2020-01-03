@@ -244,16 +244,18 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             // tap(() => this.gsProgress.updateProgress('create_school:end')),
             map((res: any) => {
               this._zone.run(() => {
+                console.log('Sign in start ===>>>>>');
                 this.loginService.signInDemoMode(this.schoolForm.value.email, this.schoolForm.value.password);
                 this.storage.setItem('last_school_id', res.school.id);
               });
               return true;
             }),
-            delay(1000),
             switchMap(() => {
               return this.loginService.isAuthenticated$;
             }),
+            delay(500),
             catchError((err) => {
+              console.log('Error ======>>>>>');
               if (err && err.error !== 'popup_closed_by_user') {
                 this.loginService.showLoginError$.next(true);
               }
@@ -262,6 +264,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             })
           )
           .subscribe((res) => {
+            console.log('Sign in end ===>>>>>', res);
             this.pending.next(false);
             if (res) {
               this._zone.run(() => {
