@@ -62,6 +62,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   querySubscriber$ = new Subject();
 
+  currentSchool = this.http.getSchool();
+
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
