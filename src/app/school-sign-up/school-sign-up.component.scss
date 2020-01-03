@@ -217,5 +217,29 @@
         }
       }
     }
+
+    @media all and (max-width: 450px) {
+      .school-signin {
+
+        .left-side {
+          padding-top: 70px;
+          align-items: center;
+        }
+
+        .right-side {
+          padding-top: 15px;
+        }
+
+        &_big-title {
+          flex-direction: column;
+          align-items: center;
+        }
+        .links {
+          top: 25px;
+          width: 355px;
+        }
+
+      }
+    }
   }
 }

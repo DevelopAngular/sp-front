@@ -285,7 +285,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       this.pending.next(true);
       this.http.get(constructUrl(environment.schoolOnboardApiRoot + '/onboard/schools/check_school', {place_id: school.place_id}), {
         headers: {
-          'Authorization': 'Bearer ' + this.AuthToken // it's temporary
+          'Authorization': 'Bearer ' + this.AuthToken
         }})
         .pipe(
           catchError((err) => {
