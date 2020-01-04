@@ -2,7 +2,8 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService, ProgressInterface} from '../getting-started-progress.service';
-import {fromEvent} from 'rxjs';
+import {fromEvent, of} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
 declare const window;
 
@@ -38,16 +39,21 @@ export class GettingStartedComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.gsProgress.onboardProgress$.subscribe((op: any) => {
-      if (op.create_school && !op.create_school.start.value) {
-        this.gsProgress.updateProgress('create_school:start');
-      }
-      if (op.create_school && !op.create_school.end.value) {
-        this.gsProgress.updateProgress('create_school:end');
-      }
-      this.bannerVissible = op.create_school && (!op.create_school.start.value || !op.create_school.end.value);
-      this.OnboardProgres = op;
-    });
+    this.gsProgress.onboardProgress$
+      .pipe(
+        switchMap((op: any) => {
+          if (op.create_school && !op.create_school.start.value) {
+            return this.gsProgress.updateProgress('create_school:start');
+          }
+          if (op.create_school && !op.create_school.end.value) {
+            return this.gsProgress.updateProgress('create_school:end');
+          }
+          this.bannerVissible = op.create_school && (!op.create_school.start.value || !op.create_school.end.value);
+          this.OnboardProgres = op;
+          return of(null);
+        })
+      )
+      .subscribe();
 
   }
 
@@ -57,7 +63,7 @@ export class GettingStartedComponent implements OnInit {
   }
 
   markItem(route: string[], ticket: keyof ProgressInterface) {
-    this.gsProgress.updateProgress(ticket);
+    this.gsProgress.updateProgress(ticket).subscribe();
     this.router.navigate(route);
   }
 }

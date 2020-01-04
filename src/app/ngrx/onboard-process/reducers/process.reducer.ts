@@ -18,6 +18,14 @@ const reducer = createReducer(
       loading: false,
       loaded: true
     };
+  }),
+  on(processActions.updateOnboardProcessSuccess, (state, {process}) => {
+    state.data.forEach(proc => {
+      if (proc.name === process) {
+        proc.done = new Date().toISOString();
+      }
+    });
+    return {...state};
   })
 );
 

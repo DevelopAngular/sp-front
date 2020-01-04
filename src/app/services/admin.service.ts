@@ -23,7 +23,7 @@ import {ColorProfile} from '../models/ColorProfile';
 import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
 import {getColorProfiles} from '../ngrx/color-profiles/actions';
 import {getLoadedProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
-import {getOnboardProcess} from '../ngrx/onboard-process/actions';
+import {getOnboardProcess, updateOnboardProcess} from '../ngrx/onboard-process/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -122,6 +122,11 @@ export class AdminService {
   updateGSuiteOrgs(body) {
     return this.http.currentSchool$.pipe(
           switchMap(school => this.http.patch(`v1/schools/${school.id}/syncing`, body)));
+  }
+
+  updateOnboardProgressRequest(data) {
+    this.store.dispatch(updateOnboardProcess({data}));
+    return this.onboardProcessData$;
   }
 
   updateOnboardProgress(name) {

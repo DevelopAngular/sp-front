@@ -24,6 +24,22 @@ export class ProcessEffects {
       );
   });
 
+  updateOnboardProcess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(processActions.updateOnboardProcess),
+        concatMap((action: any) => {
+          return this.adminService.updateOnboardProgress(action.data)
+            .pipe(
+              map(process => {
+                return processActions.updateOnboardProcessSuccess({process: action.data});
+              }),
+              catchError(error => of(processActions.updateOnboardProcessFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private adminService: AdminService
