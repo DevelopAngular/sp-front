@@ -1,14 +1,14 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "SmartPass",
+    "short_name": "SmartPass",
     "icons": [
         {
-            "src": "/icons/android-chrome-192x192.png",
+            "src": "/app/android-chrome-192x192.png?v=2bBxdz87Xl",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/icons/android-chrome-512x512.png",
+            "src": "/app/android-chrome-512x512.png?v=2bBxdz87Xl",
             "sizes": "512x512",
             "type": "image/png"
         }
