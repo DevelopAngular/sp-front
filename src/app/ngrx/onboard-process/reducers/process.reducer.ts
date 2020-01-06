@@ -1,4 +1,4 @@
-import {ProcessState} from '../states';
+import { ProcessState } from '../states';
 import {Action, createReducer, on} from '@ngrx/store';
 import * as processActions from '../actions';
 

@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {GettingStartedProgressService} from '../../getting-started-progress.service';
-import {filter, mapTo, switchMap, take} from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import {of} from 'rxjs';
 
 declare const window;
@@ -33,13 +33,16 @@ export class TakeTourComponent implements OnInit {
             if (!op.take_a_tour.create_accounts.value) {
               return this.gsProgress.updateProgress('take_a_tour:create_accounts');
             }
-            if (!op.take_a_tour.end.value) {
-              return this.gsProgress.updateProgress('take_a_tour:end');
-            }
           return of(op);
         }),
+        switchMap((op) => {
+          if (!op.take_a_tour.end.value) {
+            return this.gsProgress.updateProgress('take_a_tour:end');
+          }
+          return of(op);
+        })
       )
-      .subscribe((op: any) => {
+      .subscribe(op => {
         this.student = {
           name: op.take_a_tour.create_accounts.data.student.display_name,
           username: op.take_a_tour.create_accounts.data.student.username,
