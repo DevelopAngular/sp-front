@@ -37,7 +37,7 @@
                     [padding]="14"
                     [fontSize]="13"
                     [disabledOptions]="disabledOptions"
-                    [selectedChoise]="optionState.now.state || 'Any teacher (default)'"
+                    [selectedChoice]="optionState.now.state || 'Any teacher (default)'"
                     [choices]="toggleChoices"
                     (result)="changeOptions('now', $event)"
             >
@@ -58,7 +58,7 @@
                       [width]="240"
                       [height]="32"
                       [fontSize]="13"
-                      [selectedChoise]="selectedOpt.anyNow"
+                      [selectedChoice]="selectedOpt.anyNow"
                       [choices]="['This Room', 'Origin', 'Both']"
                       (result)="changeState('now_any', $event)"
               ></app-restriction-picker>
@@ -70,7 +70,7 @@
                     [width]="240"
                     [height]="32"
                     [fontSize]="13"
-                    [selectedChoise]="selectedOpt.allNow"
+                    [selectedChoice]="selectedOpt.allNow"
                     [choices]="['This Room', 'Origin', 'Both']"
                     (result)="changeState('now_all', $event)"
             ></app-restriction-picker>
@@ -106,7 +106,7 @@
                   [fontSize]="13"
                   [padding]="14"
                   [disabledOptions]="disabledOptions"
-                  [selectedChoise]="optionState.future.state || 'Any teacher (default)'"
+                  [selectedChoice]="optionState.future.state || 'Any teacher (default)'"
                   [choices]="toggleChoices"
                   (result)="changeOptions('future', $event)"
           >
@@ -128,7 +128,7 @@
                     [width]="240"
                     [height]="32"
                     [fontSize]="13"
-                    [selectedChoise]="selectedOpt.anyFut"
+                    [selectedChoice]="selectedOpt.anyFut"
                     [choices]="['This Room', 'Origin',  'Both']"
                     (result)="changeState('future_any', $event)"
             ></app-restriction-picker>
@@ -140,7 +140,7 @@
                   [width]="240"
                   [height]="32"
                   [fontSize]="13"
-                  [selectedChoise]="selectedOpt.allFut"
+                  [selectedChoice]="selectedOpt.allFut"
                   [choices]="['This Room', 'Origin',  'Both']"
                   (result)="changeState('future_all', $event)"
           ></app-restriction-picker>

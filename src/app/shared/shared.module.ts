@@ -22,7 +22,6 @@ import {DragulaModule} from 'ng2-dragula';
 import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SafariScrollDirective} from '../safari-scroll.directive';
 import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
 import {CalendarPickerComponent} from '../calendar-components/calendar-picker/calendar-picker.component';
@@ -54,7 +53,7 @@ import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
-
+import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -93,7 +92,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RoundInputComponent,
     AppInputComponent,
     CalendarComponent,
-    RestrictionPickerComponent,
     SafariScrollDirective,
     ToggleInputComponent,
     CalendarPickerComponent,
@@ -118,7 +116,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
-    ReportSuccessToastComponent
+    ReportSuccessToastComponent,
+    RestrictionPickerComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -154,7 +153,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassCardComponent,
     InputTextareaModule,
     CalendarComponent,
-    RestrictionPickerComponent,
     SafariScrollDirective,
     ToggleInputComponent,
     CalendarPickerComponent,
@@ -177,7 +175,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
-    ReportSuccessToastComponent
+    ReportSuccessToastComponent,
+    RestrictionPickerComponent
   ],
   providers: [
     {

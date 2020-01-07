@@ -15,7 +15,7 @@ import {filter, switchMap, tap} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
-import {of} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
@@ -45,6 +45,10 @@ export class InvitationCardComponent implements OnInit {
   fromHistory;
   fromHistoryIndex;
   dateEditOpen: boolean;
+
+  locationChangeOpen: boolean;
+
+  frameMotion$: BehaviorSubject<any>;
 
   isModal: boolean;
   isSeen: boolean;
@@ -105,7 +109,7 @@ export class InvitationCardComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.frameMotion$ = this.createFormService.getFrameMotionDirection();
     if (this.data['pass']) {
       this.isModal = true;
       this.invitation = this.data['pass'];
@@ -134,20 +138,21 @@ export class InvitationCardComponent implements OnInit {
     return Util.formatDateTime(date);
   }
 
-  setLocation(location: Location){
+  setLocation(location: Location) {
     this.invitation.default_origin = location;
     this.selectedOrigin = location;
   }
 
-  newInvitation(){
+  newInvitation() {
     this.performingAction = true;
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
-      'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+      'default_origin' : this.invitation.default_origin ? this.invitation.default_origin.id : null,
       'destination' : this.invitation.destination.id,
       'date_choices' : this.invitation.date_choices.map(date => date.toISOString()),
-      'duration' : this.selectedDuration*60,
-      'travel_type' : this.selectedTravelType
+      'duration' : this.selectedDuration * 60,
+      'travel_type' : this.selectedTravelType,
+      'issuer_message': this.invitation.issuer_message
     };
 
     this.requestService.createInvitation(body).subscribe((data) => {
@@ -196,7 +201,8 @@ export class InvitationCardComponent implements OnInit {
             this.dateEditOpen = true;
         });
 
-        dateDialog.afterClosed().pipe(filter(() => resend_request && this.forStaff),
+        dateDialog.afterClosed().pipe(
+          filter((res) => res.data.date && resend_request && this.forStaff),
             switchMap((state) => {
                 const body = {
                     'students' : this.invitation.student.id,
@@ -226,38 +232,6 @@ export class InvitationCardComponent implements OnInit {
             this.formState.previousStep = 4;
             this.createFormService.setFrameMotionDirection('disable');
             this.cardEvent.emit(this.formState);
-        } else {
-          this.dialogRef.close();
-          const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-          const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-              width: '750px',
-              panelClass: 'form-dialog-container',
-              backdropClass: 'custom-backdrop',
-              data: {
-                  'toIcon': isCategory ? this.invitation.icon : null,
-                  'toProfile': this.invitation.color_profile,
-                  'toCategory': isCategory ? this.invitation.destination.category : null,
-                  'fromLocation': this.selectedOrigin,
-                  'fromHistory': this.fromHistory,
-                  'fromHistoryIndex': this.fromHistoryIndex,
-                  'colorProfile': this.invitation.color_profile,
-                  'forLater': this.forFuture,
-                  'forStaff': this.forStaff,
-                  'selectedStudents': this.selectedStudents || true,
-                  'requestTime': this.invitation.date_choices[0]
-              }
-          });
-          dialogRef.afterClosed().pipe(filter(res => !!res))
-              .subscribe((result: Object) => {
-                  this.openInputCard(result['templatePass'],
-                      result['forLater'],
-                      result['forStaff'],
-                      result['selectedStudents'],
-                      (result['type'] === 'invitation' ? InvitationCardComponent : RequestCardComponent),
-                      result['fromHistory'],
-                      result['fromHistoryIndex']
-                  );
-              });
         }
           return false;
       } else if (!this.forStaff) {
@@ -324,24 +298,24 @@ export class InvitationCardComponent implements OnInit {
     return {display: display, color: color, action: action}
   }
 
-    openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-        const data = {
-            'pass': templatePass,
-            'fromPast': false,
-            'fromHistory': fromHistory,
-            'fromHistoryIndex': fromHistoryIndex,
-            'forFuture': forLater,
-            'forInput': true,
-            'forStaff': forStaff,
-            'selectedStudents': selectedStudents,
-        };
-        this.dialog.open(component, {
-            panelClass: (forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-            backdropClass: 'custom-backdrop',
-            disableClose: true,
-            data: data
-        });
-    }
+    // openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
+    //     const data = {
+    //         'pass': templatePass,
+    //         'fromPast': false,
+    //         'fromHistory': fromHistory,
+    //         'fromHistoryIndex': fromHistoryIndex,
+    //         'forFuture': forLater,
+    //         'forInput': true,
+    //         'forStaff': forStaff,
+    //         'selectedStudents': selectedStudents,
+    //     };
+    //     this.dialog.open(component, {
+    //         panelClass: (forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
+    //         backdropClass: 'custom-backdrop',
+    //         disableClose: true,
+    //         data: data
+    //     });
+    // }
 
   cancelClick() {
     this.cancelEditClick = false;

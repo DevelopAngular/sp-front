@@ -1,12 +1,10 @@
-<mat-sidenav-container (backdropClick)="fadeClick()">
+<mat-sidenav-container (backdropClick)="fadeClick()" [style.overflow]="!isStaff ? 'auto' : 'hidden'">
 
-
-    <mat-sidenav class="settings-side-nav" mode="over" [opened]="(toggleLeft | async)">
-      <ng-container *ngIf="screenService.isDeviceLargeExtra && (toggleLeft | async)">
-        <app-settings [dataSideNav]="data"></app-settings>
-      </ng-container>
-    </mat-sidenav>
-
+  <mat-sidenav class="settings-side-nav" mode="over" [fixedInViewport]="true" [opened]="(toggleLeft | async)">
+    <ng-container *ngIf="screenService.isDeviceLargeExtra">
+      <app-settings [dataSideNav]="data"></app-settings>
+    </ng-container>
+  </mat-sidenav>
 
   <mat-sidenav class="requests-side-nav" position="end" mode="push" [opened]="(toggleRight | async)">
     <mat-card class="request-card"  [style.background-color]="darkTheme.getBackground('high', true)">
@@ -28,14 +26,14 @@
     </mat-card>
   </mat-sidenav>
 
-  <mat-sidenav-content [style.overflow]="isStaff ? 'hidden' : 'auto'">
+  <mat-sidenav-content [style.padding-top]="topPadding">
     <div class="sticky" [style.height]="navbarHeight">
       <app-navbar (settingsClick)="onSettingClick($event)"></app-navbar>
     </div>
-    <ng-container *ngIf="!(shouldShowRouter() | async)">
-      <app-restriction-dummy></app-restriction-dummy>
-    </ng-container>
-    <ng-container *ngIf="shouldShowRouter() | async">
+<!--    <ng-container *ngIf="!(shouldShowRouter() | async)">-->
+<!--      <app-restriction-dummy></app-restriction-dummy>-->
+<!--    </ng-container>-->
+    <ng-container>
       <router-outlet></router-outlet>
     </ng-container>
   </mat-sidenav-content>

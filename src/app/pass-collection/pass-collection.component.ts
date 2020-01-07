@@ -57,7 +57,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() grid_template_columns: string = '143px';
   @Input() grid_gap: string = '10px';
   @Input() isAdminPage: boolean;
-
+  @Input() headerWidth: string = '100%';
   @Input() passProvider: PassLikeProvider;
 
   @Output() sortMode = new EventEmitter<string>();
@@ -99,7 +99,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public darkTheme: DarkThemeSwitch,
       private kioskMode: KioskModeService,
       private sanitizer: DomSanitizer,
-      private screenService: ScreenService,
+      public screenService: ScreenService,
   ) {}
 
   get gridTemplate() {
@@ -165,7 +165,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     return this.emptyMessage;
   }
 
-  showPass(pass) {
+  showPass({time$, pass}) {
+    this.activePassTime$ = time$;
     this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }

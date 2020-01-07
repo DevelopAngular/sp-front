@@ -1,19 +1,21 @@
-import {AfterViewInit, Component, HostListener, NgZone, OnInit} from '@angular/core';
+import {AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '../services/user.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {map, switchMap} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 import {SideNavService} from '../services/side-nav.service';
-import {BehaviorSubject, combineLatest, empty, Observable, of, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {Request} from '../models/Request';
-import {User} from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {InboxInvitationProvider, InboxRequestProvider} from '../passes/passes.component';
 import {NavigationEnd, Router} from '@angular/router';
+import {filter as _filter} from 'lodash';
+import {HttpService} from '../services/http-service';
+import {useAnimation} from '@angular/animations';
 
 declare const window;
 
@@ -23,7 +25,21 @@ declare const window;
   styleUrls: ['./main-page.component.scss']
 })
 
-export class MainPageComponent implements OnInit, AfterViewInit {
+export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  public topPadding = '0px';
+
+  inboxHasItems: Observable<boolean> = of(null);
+  currentRequest$ = new BehaviorSubject<Request>(null);
+  toggleLeft: Observable<boolean> = new Observable<boolean>();
+  toggleRight: Observable<boolean> = new Observable<boolean>();
+  sentRequests: WrappedProvider;
+  receivedRequests: WrappedProvider;
+  isStaff: boolean;
+  data: any;
+  navbarHeight: string = '78px';
+
+  private destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     public userService: UserService,
@@ -36,30 +52,39 @@ export class MainPageComponent implements OnInit, AfterViewInit {
     private liveDataService: LiveDataService,
     private _zone: NgZone,
     private router: Router,
+    private http: HttpService
   ) {
 
     const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
 
+    this.http.schoolsCollection$
+      .pipe(
+        takeUntil(this.destroy$),
+        map(schools => _filter(schools, (school => school.my_roles.length > 0)))
+      )
+      .subscribe((schools) => {
+        this.topPadding = schools.length > 1 ? '50px' : '0px';
+      });
+
     this.dataService.currentUser
       .pipe(
-        map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
-      ).subscribe(isStudent => {
-
-      if (isStudent) {
-        this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
-        this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-          excludedRequests, this.dataService));
-      } else {
-        this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-          excludedRequests, this.dataService));
-        this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
-      }
-    });
-
-    this.dataService.currentUser.pipe(
-      switchMap((user: User) =>
-        user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
-    )
+        takeUntil(this.destroy$),
+        tap(user => {
+          this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
+          if (user.roles.includes('hallpass_student')) {
+            this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
+            this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
+              excludedRequests, this.dataService));
+          } else {
+            this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
+              excludedRequests, this.dataService));
+            this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
+          }
+        }),
+        switchMap(user => {
+          return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+        })
+      )
       .subscribe(passLike => {
         this._zone.run(() => {
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
@@ -67,25 +92,36 @@ export class MainPageComponent implements OnInit, AfterViewInit {
       });
   }
 
-  inboxHasItems: Observable<boolean> = of(null);
-  currentRequest$ = new BehaviorSubject<Request>(null);
-  toggleLeft: Observable<boolean> = new Observable<boolean>();
-  toggleRight: Observable<boolean> = new Observable<boolean>();
-  sentRequests: WrappedProvider;
-  receivedRequests: WrappedProvider;
-  isStaff: boolean;
-  data: any;
-  navbarHeight: string = '78px';
-
   ngOnInit() {
     this.toggleLeft = this.sideNavService.toggleLeft;
     this.toggleRight = this.sideNavService.toggleRight;
 
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
-      .subscribe(user => {
-        this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.isAssistant();
-      });
+    this.toggleLeft.pipe(takeUntil(this.destroy$)).subscribe(res => {
+      if (res) {
+        document.documentElement.style.position = 'fixed';
+      } else {
+        document.documentElement.style.position = 'static';
+
+      }
+    });
+
+    this.userService.userData
+      .pipe(
+        filter(user => !user.isTeacher() && user.isAdmin()),
+        takeUntil(this.destroy$)
+      ).subscribe(user => {
+        window.waitForAppLoaded();
+        this.goHome(user);
+    });
+
+    // this.dataService.currentUser
+    //   .pipe(
+    //     this.loadingService.watchFirst,
+    //     takeUntil(this.destroy$)
+    //   )
+    //   .subscribe(user => {
+    //     this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.isAssistant();
+    //   });
 
     this.inboxHasItems = combineLatest(
       this.receivedRequests.length$,
@@ -105,8 +141,14 @@ export class MainPageComponent implements OnInit, AfterViewInit {
         if ( event instanceof NavigationEnd) this.navbarHeight = this.currentNavbarHeight;
     });
   }
+
   ngAfterViewInit(): void {
     window.appLoaded(1000);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   get showInbox() {
@@ -119,14 +161,26 @@ export class MainPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  isTeacher() {
-    return true;
-    // TODO when the roles of teachers will be ready
-    //   return this.currentUser.roles.includes('_profile_teacher');
+  shouldShowRouter() {
+    // return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
   }
 
-  shouldShowRouter() {
-    return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
+  goHome(user) {
+    const availableAccessTo = user.roles.filter((_role) => _role.match('admin_'));
+    let tab;
+    if (availableAccessTo.includes('admin_dashboard')) {
+      tab = 'dasboard';
+    } else if (availableAccessTo.includes('admin_hallmonitor')) {
+      tab = 'hallmonitor';
+    } else if (availableAccessTo.includes('admin_search')) {
+      tab = 'search';
+    } else if (availableAccessTo.includes('admin_pass_config')) {
+      tab = 'passconfig';
+    } else if (availableAccessTo.includes('admin_accounts')) {
+      tab = 'accounts';
+    }
+    this.router.navigate(['/admin', tab]);
+    return;
   }
 
   onSettingClick($event) {

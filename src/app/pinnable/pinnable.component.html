@@ -1,8 +1,16 @@
-<div *ngIf="!mock" mat-raised-button class="clickRipple" [style.cursor]="disabled ? 'default' : 'pointer'" (click)="onSelect()"
-     [@pressState]="buttonState" [style.box-shadow]="shadow"
-     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
-     (mouseenter)="hovered = true" (mouseleave)="onPress(false); hovered = false"
+<div *ngIf="!mock" mat-raised-button class="clickRipple"
+     [@pressState]="buttonState"
+     [style.box-shadow]="shadow"
+     [style.cursor]="disabled ? 'default' : 'pointer'"
      [style.width]="width"
+
+     appCrossPointerEventTarget
+     (pointerClickEvent)="onPress(false); onSelect()"
+     (pointerDownEvent)="onPress(true)"
+     (pointerCancelEvent)="onPress(false);"
+
+     (mouseenter)="hovered = true"
+     (mouseleave)="onPress(false); hovered = false"
 >
      <div *ngIf="selected" class="selected-overlay"></div>
   <div class="pinnable-card" [style.background]="getGradient()" [style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'" [style.opacity]="valid ? 1 : 0.5" [style.height]="height">

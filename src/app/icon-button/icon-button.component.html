@@ -2,16 +2,21 @@
      [style.width]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.height]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.background-color]="bgc"
+
      (mouseover)="hovered = true;"
      (mouseleave)="hovered = false;"
-     (mousedown)="down = true"
-     (mouseup)="down = false"
-     (click)="onClick($event)" #iconButtonRef >
+
+     appCrossPointerEventTarget
+     (pointerDownEvent)="down = true"
+     (pointerClickEvent)="down = false; onClick($event)"
+
+     #iconButtonRef
+>
     <img [src]="src | resolveAsset"
          [attr.width]="size"
          [attr.height]="size"
          [style.opacity]="opacity"
          draggable="false"
          class="icon"
-         alt="img" #imgRef>
+         alt="img">
 </div>

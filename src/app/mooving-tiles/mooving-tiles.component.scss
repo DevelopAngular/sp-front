@@ -1,0 +1,18 @@
+:host {
+  .frames {
+    display: flex;
+    .frame {
+      transform: translateX(0px);
+      display: flex;
+      animation: moving 75s cubic-bezier(0, 0, 0, 0) infinite;
+    }
+    @keyframes moving {
+      0% {
+        transform: translateX(0px);
+      }
+      100%  {
+        transform: translateX(-1364px);
+      }
+    }
+  }
+}

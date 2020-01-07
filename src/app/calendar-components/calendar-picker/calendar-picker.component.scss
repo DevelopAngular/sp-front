@@ -140,11 +140,15 @@ $base:5px;
       color: $navy;
       .pass-dot {
         position: absolute;
-        bottom: -3px;
+        bottom: 1px;
         color: inherit;
         font-size: 21px;
         font-weight: bold;
         z-index: 2;
+        width: 5px;
+        height: 5px;
+        background: currentColor;
+        border-radius: 50%;
       }
       //height: 30px;
       //width: $dayBase;

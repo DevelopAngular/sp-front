@@ -121,7 +121,6 @@
                       [width]="'215px'"
                       [hoverColor]="'#F4F4F4'"
                       [fontSize]="'14px'"
-                      [fontWeight]="700"
                       [gradient]="'#F4F4F4, #F4F4F4'"
                       [textColor]="'#1F195E'"
                       (buttonClick)="showProfileCard(selectedUsers[0], true)">
@@ -138,7 +137,6 @@
                       [minHeight]="'32px'"
                       [width]="'215px'"
                       [fontSize]="'14px'"
-                      [fontWeight]="700"
                       (buttonClick)="promptConfirmation($event.target, 'enable_sign_in')">
                 <span>Enable sign-in</span>
               </app-gradient-button>
@@ -150,7 +148,6 @@
                       [minHeight]="'32px'"
                       [width]="'215px'"
                       [fontSize]="'14px'"
-                      [fontWeight]="700"
                       [gradient]="'#001115, #033294'"
                       [hoverColor]="'#022F68'"
                       (buttonClick)="promptConfirmation($event.target, 'disable_sign_in')">
@@ -166,7 +163,6 @@
                       [minHeight]="'32px'"
                       [width]="'280px'"
                       [fontSize]="'14px'"
-                      [fontWeight]="700"
                       [gradient]="'#DA2370, #FB434A'"
                       [hoverColor]="'#DA2370'"
                       (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
@@ -203,7 +199,22 @@
               </app-round-input>
             </div>
 
-            <div class="ds-mx-10" *ngIf="role !== '_all'">
+            <div class="ds-mx-10">
+
+              <app-gradient-button
+                [size]="'medium'"
+                [cursor]="'pointer'"
+                [gradient]="'#F4F4F4, #F4F4F4'"
+                [hoverColor]="'#F4F4F4'"
+                [textColor]="'#1F194E'"
+                (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
+                <div class="ds-flex-center-center">
+                  <span *ngIf="!dataTableEditState.value">Edit</span>
+                </div>
+              </app-gradient-button>
+            </div>
+
+            <div class="ds-mx-10">
 
               <app-gradient-button
                       [size]="'medium'"
@@ -215,20 +226,7 @@
                 </div>
               </app-gradient-button>
             </div>
-            <div class="ds-mx-10">
 
-              <app-gradient-button
-                      [size]="'medium'"
-                      [cursor]="'pointer'"
-                      [gradient]="'#F4F4F4, #F4F4F4'"
-                      [hoverColor]="'#F4F4F4'"
-                      [textColor]="'#1F194E'"
-                      (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
-                <div class="ds-flex-center-center">
-                  <span *ngIf="!dataTableEditState.value">Edit</span>
-                </div>
-              </app-gradient-button>
-            </div>
           </div>
         </div>
       </div>

@@ -6,8 +6,10 @@ import {ErrorToastComponent} from '../error-toast/error-toast.component';
 import {SchoolToggleBarComponent} from '../school-toggle-bar/school-toggle-bar.component';
 import {ToastConnectionComponent} from '../toast-connection/toast-connection.component';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.directive';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
+import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import {GradientButtonComponent} from '../gradient-button/gradient-button.compon
     ToastConnectionComponent,
     DropdownComponent,
     SignedOutToastComponent,
-    GradientButtonComponent
+    GradientButtonComponent,
+    CrossPointerEventTargetDirective,
+    MoovingTilesComponent
   ],
   imports: [
     CommonModule,
@@ -30,14 +34,16 @@ import {GradientButtonComponent} from '../gradient-button/gradient-button.compon
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    CrossPointerEventTargetDirective,
     SignedOutToastComponent,
-    GradientButtonComponent
+    GradientButtonComponent,
+    MoovingTilesComponent
   ],
   entryComponents: [
     ErrorToastComponent,
     ToastConnectionComponent,
     DropdownComponent,
-    SignedOutToastComponent
+    SignedOutToastComponent,
   ],
 })
 export class CoreModule { }

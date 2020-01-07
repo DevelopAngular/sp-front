@@ -1,13 +1,16 @@
-<div *ngIf="!mock" class="tile-wrapper" [style.background]="backgroundGradient()"
+<div *ngIf="!mock" class="tile-wrapper"
+      [style.background]="backgroundGradient()"
       [style.justify-content]="forStaff?'unset':'center'"
       [style.box-shadow]="boxShadow"
-      [@pressState]="buttonState" (click)="onClick($event)"
+      [@pressState]="buttonState"
       (mouseenter)="hovered = true"
       (mouseleave)="buttonDown = false; hovered = false"
-      (mousedown)="onPress(true, $event)"
-      (mouseup)="onPress(false, $event)"
-      (touchstart)="onTap(true)"
-      >
+
+      appCrossPointerEventTarget
+      (pointerClickEvent)="buttonDown = false; onClick($event)"
+      (pointerDownEvent)="buttonDown = true;"
+      (pointerCancelEvent)="buttonDown = false;"
+  >
 
   <div class="tile-title-container" [style.margin-top]="forStaff ? '0' : '-6px'" >
     <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">

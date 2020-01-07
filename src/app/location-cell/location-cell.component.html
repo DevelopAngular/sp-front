@@ -1,10 +1,10 @@
 <div class="wrapper"
-     (click)="cellSelected()"
-     (mouseenter)="hovered = true"
-     (mouseleave)="hovered = false"
-     (mousedown)="pressed = true"
-     (mouseup)="pressed = false"
-     [style.background-color]="bgColor"
+     #cell
+     appCrossPointerEventTarget
+     (pointerClickEvent)="cellSelected(); changeColor(true, false)"
+     (pointerDownEvent)="changeColor(true, true)"
+     (mouseenter)="changeColor(true)"
+     (mouseleave)="changeColor(false)"
      [style.color]="textColor"
      [style.cursor]="cursor"
      tabindex="0"

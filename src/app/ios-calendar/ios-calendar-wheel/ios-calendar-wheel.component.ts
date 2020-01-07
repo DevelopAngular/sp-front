@@ -53,7 +53,7 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
 
   wheelSectorAmount = 24;
   dataSize = 365;
-  dataItemHeight = 30;
+  dataItemHeight = 25;
   dataItemAngle = 360 / this.wheelSectorAmount;
   l = this.dataItemHeight * this.wheelSectorAmount;
   dataRadius = (this.l / Math.PI) / 2;

@@ -1,5 +1,5 @@
 <ng-container *ngIf="userLoaded">
-  <div [ngClass]="isIOSTablet ? 'ios-my-room-options-mobile-wrapper' : 'my-room-options-mobile-wrapper'"  [style.background-color]="darkTheme.getBackground('default', false)">
+  <div [ngClass]="isIOSTablet ? 'ios-my-room-options-mobile-wrapper' : 'my-room-options-mobile-wrapper'"  [style.background-color]="darkTheme.getBackground('low', false)">
     <div [ngClass]="isIOSTablet ? 'ios-my-room-options-mobile' : 'my-room-options-mobile' ">
       <div class="option-wrapper">
         <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"></app-icon-button>
@@ -7,9 +7,10 @@
       <div  *ngIf="isSearchBarClicked" [ngClass]="isIOSTablet ? 'ios-search-wrapper' : 'search-wrapper' ">
         <app-round-input
           [minWidth]="'100%'"
-          [width]="'100%'"
+          [width]="'90%'"
           [type]="'text'"
           [focused]="true"
+          [backgroundColor]="'#F4F4F4'"
           [placeholder]="'Search'"
           [fieldIconPosition]="'left'"
           [closeIcon]="true"
@@ -18,7 +19,10 @@
           (ontextupdate)="onSearch($event)"
         ></app-round-input>
       </div>
-      <div class="cancel-wrapper" *ngIf="isSearchBarClicked" (click)="cleanSearchValue()">
+      <div class="cancel-wrapper" *ngIf="isSearchBarClicked"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="cleanSearchValue()"
+      >
         <span class="cancel">Cancel</span>
       </div>
 
@@ -26,9 +30,11 @@
            style="display: flex; flex-direction: column; align-items: center"
       >
         <div class="selected-teacher"
-             [style.font-size]="selectedLocation && selectedLocation.title.length > 13 ? 29 - (selectedLocation.title.length - 13) * 2 + 'px' : '29px'"
-             [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'" #target (click)="showOptions(target)"
              [style.color]="myRoomHeaderColor"
+             [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="showOptions(target)"
+             #target
         >
           {{ selectedLocation ? selectedLocation.title : (roomOptions.length > 1 ? 'All Rooms' : roomOptions[0].title)}}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="getIcon('./assets/Chevron Down (Navy).svg') | resolveAsset">
@@ -55,12 +61,10 @@
         <div [ngClass]="isIOSTablet ? 'ios-date-display-mobile' : 'date-display-mobile'" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
       </div>
 
-      <div class="option-wrapper option-wrapper-calendar" (click)="calendarClick()">
-
+      <div class="option-wrapper option-wrapper-calendar">
         <app-icon-button [@calendarIconTrigger]='calendarIconState' [srcString]="'Calendar'" [size]="20" (clickEvent)="calendarClick()"></app-icon-button>
-
       </div>
-<!--      <p *ngIf="screenService.isDeviceMid && !isSearchBarClicked" class="my-room-title">My Room</p>-->
+
     </div>
   </div>
   <div *ngIf="UI" class="my-room-wrapper" #scrollableArea>
@@ -111,10 +115,13 @@
       <div class="kiosk-mode-button"
            *ngIf="showKioskModeButton"
            [style.background-color]="(darkTheme.isEnabled$ | async) ? '#134482' : '#F4F4F4'"
-           (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
-           (mousedown)="onPress(true)" (mouseup)="onPress(false)"
            [@pressState]="buttonState"
-           (click)="setRoomToKioskMode()"
+           (mouseenter)="onHover(true)"
+           (mouseleave)="onHover(false)"
+
+           appCrossPointerEventTarget
+           (pointerDownEvent)="onPress(true)"
+           (pointerClickEvent)="onPress(false); setRoomToKioskMode()"
       >
         <div class="ds-flex-center-center" [style.color]="darkTheme.getColor()">
           <img width="20" height="20" class="ds-mr-10" [src]="darkTheme.getIcon({iconName: 'Tablet', darkFill: 'White', lightFill: 'Navy'})" alt="Tablet.svg">

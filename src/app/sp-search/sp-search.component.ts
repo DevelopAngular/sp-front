@@ -1,4 +1,16 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
 import {BehaviorSubject, of, Subject} from 'rxjs';
@@ -10,6 +22,7 @@ import {School} from '../models/School';
 import {map, pluck, switchMap, takeUntil } from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {ScreenService} from '../services/screen.service';
 
 declare const window;
 
@@ -105,7 +118,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() searchTarget: SearchEntity = 'users';
 
   @Input() disabled: boolean = false;
-  @Input() focused: boolean = false;
+  @Input() focused: boolean = true;
   @Input() showOptions: boolean = true;
   @Input() selectedOptions: Array<User | School | GSuiteSelector> = [];
   @Input() selectedOrgUnits: any[] = [];
@@ -128,6 +141,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() searchingTeachers: User[];
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
+  @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
@@ -162,7 +176,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private http: HttpClient,
     private mapsApi: MapsAPILoader,
-    private shortcutsService: KeyboardShortcutsService
+    private shortcutsService: KeyboardShortcutsService,
+    private renderer: Renderer2,
+    public screenService: ScreenService
   ) {
 
 
@@ -184,15 +200,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  getBackground(item) {
-    if (item.hovered) {
-      if (item.pressed) {
-        return '#E2E7F4';
-      } else {
-        return '#ECF1FF';
-      }
+  changeColor(value, elem) {
+    if (value) {
+      this.renderer.setStyle(elem.target, 'background-color', '#ECF1FF');
     } else {
-      return '#FFFFFF';
+      this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
   }
 
@@ -255,6 +267,13 @@ export class SPSearchComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  // ngOnChanges(sc: SimpleChanges) {
+  //   console.log(sc);
+  //   if (!sc.isFocus.isFirstChange() && sc.isFocus.currentValue) {
+  //     this.input.nativeElement.focus();
+  //   }
+  // }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -370,8 +389,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   onBlur(event) {
-    // console.log(event);
-    // this.students = null;
+    setTimeout(() => {
+      this.blurEvent.emit(null);
+    }, 500);
   }
 
   addStudent(student: User) {

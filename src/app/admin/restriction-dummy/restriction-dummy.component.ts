@@ -43,7 +43,6 @@ export class RestrictionDummyComponent implements OnInit {
             tab = 'accounts';
           }
           this.reloadPage.emit(true);
-          //   console.log(availableAccessTo);
           this.router.navigate(['/admin', tab]);
           return;
         }
@@ -51,7 +50,5 @@ export class RestrictionDummyComponent implements OnInit {
 
       this.router.navigate(['/sign-out']);
     });
-
-
   }
 }

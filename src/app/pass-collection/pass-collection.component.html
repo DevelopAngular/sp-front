@@ -1,27 +1,22 @@
 <div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length> 0 || showEmptyHeader; else emptyMessage">
   <!--<pre>{{test | json}}</pre>-->
-  <div class="collection-header">
+  <div class="collection-header" [style.width]="headerWidth">
       <img draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
       <div class="collection-title" [style.color]="_color">
         {{title}}
       </div>
 
       <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
-        <!--<img width="20" height="20" [src]="'./assets/Sort (Navy).svg' | resolveAsset">-->
         <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
 
       </div>
-      <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
-    <!--(click)="displayState=(displayState==='list'?'grid':'list')"-->
-      <!--<img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">-->
   </div>
-  <!--<div class="collection-divider"></div>-->
   <div *ngIf="(currentPasses$ | async)">
     <div *ngIf="currentPasses.length > 0; else emptyMessage">
       <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">
-          <app-pass-tile (click)="showPass(pass)"
-                         (tileSelected)="activePassTime$ = $event"
+          <app-pass-tile
+                         (tileSelected)="showPass($event)"
                          [timerEvent]="timerEvent"
                          [fromPast]="fromPast"
                          [forFuture]="forFuture"

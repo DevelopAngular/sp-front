@@ -1,5 +1,12 @@
-<div class="host" [style.background]="darkTheme.getColor({dark: '#0F171E', white : '#FFFFFF'})" [style.position]="isStaff || screenService.isDeviceLargeExtra ? 'fixed' : 'static'" [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0">
-  <div #navbar [ngClass]="{shadow: isStaff}" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar" appNavbarElementSender>
+<div class="host"
+     [style.background]="darkTheme.getColor({dark: '#0F171E', white : '#FFFFFF'})"
+     [style.position]="(isStaff || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
+     [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0">
+  <div
+       class="bar" appNavbarElementSender
+       [ngClass]="{shadow: (isStaff || isAssistant) || screenService.isDeviceLargeExtra}"
+       *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
+       #navbar>
     <div [ngClass]="isIOSTablet ? 'ios-heading': 'heading'" class="grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
@@ -11,10 +18,13 @@
             <div
                  #tabRef
                  [style.transition]="'transform .4s ease'"
-                 (mousedown)="tabRef.style.transform = 'scale(.96)'"
-                 (mouseup)="tabRef.style.transform = 'unset'">
-              <div>
-              </div>
+
+                 appCrossPointerEventTarget
+                 (pointerClickEvent)="tabRef.style.transform = 'unset'"
+                 (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
+                 (pointerCancelEvent)="tabRef.style.transform = 'unset'"
+
+            >
               <app-nav-button
                       [selected]="tab === button.route"
                       [content]="button.title"
@@ -34,8 +44,13 @@
             <div
               #tabRef
               [style.transition]="'transform .4s ease'"
-              (mousedown)="tabRef.style.transform = 'scale(.96)'"
-              (mouseup)="tabRef.style.transform = 'unset'">
+
+              appCrossPointerEventTarget
+              (pointerClickEvent)="tabRef.style.transform = 'unset'"
+              (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
+              (pointerCancelEvent)="tabRef.style.transform = 'unset'"
+
+            >
               <div>
               </div>
               <app-nav-button
@@ -52,7 +67,11 @@
 
     </div>
     <div [ngClass]="isIOSTablet ? 'ios-user-info' : 'user-info'" [style.flexDirection]="flexDirection">
-      <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant" #target (click)="showTeaches(target)">
+      <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="showTeaches(target)"
+           #target
+      >
         <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>
         <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
           <span>
@@ -69,12 +88,15 @@
         </div>
       </ng-template>
 
-      <div *ngIf="user && islargeDeviceWidth && !isKioskMode" class="inbox-wrapper" (click)="inboxClick()"
-           [style.background-color]="(inboxVisibility && !islargeDeviceWidth?'#E4EBFF':'transparent')"
-           [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
+      <div class="inbox-wrapper"
+          *ngIf="user && islargeDeviceWidth && !isKioskMode"
+          [style.background-color]="(inboxVisibility && !islargeDeviceWidth?'#E4EBFF':'transparent')"
+          [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
+          appCrossPointerEventTarget
+         (pointerClickEvent)="inboxClick()"
 
       >
-        <app-icon-button [srcString]="'Inbox'" [size]="20" (clickEvent)="inboxClick()"></app-icon-button>
+        <app-icon-button [eventBubbling]="true" [srcString]="'Inbox'" [size]="20"></app-icon-button>
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
           <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
           <div class="inbox-number">{{ notificationBadge$ | async }}</div>
@@ -82,10 +104,16 @@
         </div>
       </div>
 
-      <div *ngIf="user && !isStaff && !isKioskMode || islargeDeviceWidth && !isKioskMode" class="inbox-wrapper-sm" (click)="inboxClick()">
+      <div *ngIf="user && !isStaff && !isKioskMode || islargeDeviceWidth && !isKioskMode" class="inbox-wrapper-sm"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="inboxClick()"
+      >
 <!--        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
-        <app-icon-button  [@inboxAppearance] *ngIf="!isInboxClicked" [srcString]="'Inbox'" [size]="20" (clickEvent)="inboxClick()"></app-icon-button>
-        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">
+        <app-icon-button [@inboxAppearance] [eventBubbling]="true" *ngIf="!isInboxClicked" [srcString]="'Inbox'" [size]="20"></app-icon-button>
+        <div class="inbox-icon inbox-icon-arrow" [@inboxAppearance] *ngIf="isInboxClicked">
+          <app-icon-button [srcString]="'Arrow Down'" [eventBubbling]="true" [size]="20"></app-icon-button>
+        </div>
+<!--        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
         <div  [@inboxAppearance] class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 && !isInboxClicked">
           <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
           <div class="inbox-number">{{ notificationBadge$ | async }}</div>
@@ -93,7 +121,10 @@
         </div>
       </div>
 
-      <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant() && this.screenService.isDeviceLargeExtra;" #target (click)="showTeaches(target)">
+      <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant() && this.screenService.isDeviceLargeExtra;" #target
+           appCrossPointerEventTarget
+           (pointerClickEvent)="showTeaches(target)"
+      >
         <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>
         <div class="'assistant-name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
           <span>
@@ -110,38 +141,41 @@
   </div>
 </div>
 
-  <div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
-        user.isAssistant() && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
-    <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
-      <div *ngFor="let button of buttons" class="teacherNav_tab">
-        <ng-container *ngIf="isStaff && buttonVisibility(button) || user.isAssistant() && buttonVisibility(button)">
-          <div
-            #tabRefMobile
-            [style.transition]="'transform .4s ease'"
-            (touchstart)="changeTabOpacity(tabRefMobile, true)"
-            (touchend)="changeTabOpacity(tabRefMobile, false)">
-            <div>
-            </div>
-            <app-nav-button
-              [selected]="tab === button.route"
-              [content]="button.title"
-              [icon]="button.imgUrl"
-              (onClick)="updateTab(button.route); selectTab(tabRefMobile, navButtonsContainerMobile)">
-            </app-nav-button>
+<div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
+      user.isAssistant() && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
+  <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
+    <div *ngFor="let button of buttons" class="teacherNav_tab">
+      <ng-container *ngIf="isStaff && buttonVisibility(button) || user.isAssistant() && buttonVisibility(button)">
+        <div
+          #tabRefMobile
+          [style.transition]="'transform .4s ease'"
+
+          appCrossPointerEventTarget
+          (pointerClickEvent)="changeTabOpacity(tabRefMobile, false)"
+          (pointerDownEvent)="changeTabOpacity(tabRefMobile, true)"
+        >
+          <div>
           </div>
-        </ng-container>
-      </div>
-      <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
+          <app-nav-button
+            [selected]="tab === button.route"
+            [content]="button.title"
+            [icon]="button.imgUrl"
+            (onClick)="updateTab(button.route); selectTab(tabRefMobile, navButtonsContainerMobile)">
+          </app-nav-button>
+        </div>
+      </ng-container>
     </div>
+    <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
   </div>
+</div>
 
 <svg style="display: none;">
   <defs>
     <symbol id="SP Arrow">
-        <g id="Group-2" transform="translate(14.000000, 0.000000)" fill="currentColor">
-            <rect id="Rectangle" x="27" y="32" width="96" height="118" rx="16.969697"></rect>
-            <path d="M96,23.6238095 L42.2459627,23.6238095 C28.9911287,23.6238095 18.2459627,34.3689755 18.2459627,47.6238095 L18.2459627,123 L16.969697,123 C7.59759212,123 -6.28010944e-14,115.402408 -6.39488462e-14,106.030303 L-6.39488462e-14,16.969697 C-6.5096598e-14,7.59759212 7.59759212,-1.2489227e-14 16.969697,-1.42108547e-14 L79.030303,-1.42108547e-14 C88.4024079,-1.59324824e-14 96,7.59759212 96,16.969697 L96,23.6238095 Z" id="Combined-Shape"></path>
-        </g>
+      <g id="Group-2" transform="translate(14.000000, 0.000000)" fill="currentColor">
+        <rect id="Rectangle" x="27" y="32" width="96" height="118" rx="16.969697"></rect>
+        <path d="M96,23.6238095 L42.2459627,23.6238095 C28.9911287,23.6238095 18.2459627,34.3689755 18.2459627,47.6238095 L18.2459627,123 L16.969697,123 C7.59759212,123 -6.28010944e-14,115.402408 -6.39488462e-14,106.030303 L-6.39488462e-14,16.969697 C-6.5096598e-14,7.59759212 7.59759212,-1.2489227e-14 16.969697,-1.42108547e-14 L79.030303,-1.42108547e-14 C88.4024079,-1.59324824e-14 96,7.59759212 96,16.969697 L96,23.6238095 Z" id="Combined-Shape"></path>
+      </g>
     </symbol>
     <symbol id="Walking">
       <g stroke="none" stroke-width="1" fill="currentColor" fill-rule="evenodd">

@@ -14,7 +14,7 @@ import { User } from '../models/User';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import { CalendarComponent } from '../admin/calendar/calendar.component';
-import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { LocationsService } from '../services/locations.service';
 import { RepresentedUser } from '../navbar/navbar.component';
@@ -206,7 +206,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   ) {
     this.setSearchDate(this.timeService.nowDate());
-    // console.log(this.kioskMode);
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
     const selectedLocationArray$ = this.selectedLocation$
@@ -297,11 +296,13 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       }),
       switchMap(([cu, eu]) => {
         return combineLatest(
-          this.locationService.getLocationsWithTeacherRequest(this.user.isAssistant() ? this.effectiveUser.user : this.user ),
+          this.locationService.getLocationsWithTeacherRequest(this.user.isAssistant() ? this.effectiveUser.user : this.user)
+            .pipe(filter((res: any[]) => !!res.length)),
           this.locationService.myRoomSelectedLocation$
         );
       }),
-      takeUntil(this.destroy$)
+      takeUntil(this.destroy$),
+      take(1)
     )
     .subscribe(([locations, selected]: [Location[], Location]) => {
       this._zone.run(() => {
@@ -316,12 +317,19 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.passesService.getAggregatedPasses()
-      .subscribe((res: any) => {
+    this.selectedLocation$
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((res: any[]) => !!res.length),
+        switchMap((locations: Location[]) => {
+          return this.passesService.getAggregatedPasses(locations.map(loc => loc.id));
+        })
+      ).subscribe(res => {
+         this.currentPassesDates.clear();
          res.forEach((pass, i) => {
            this.currentPassesDates.set(new Date(pass.pass_date).toDateString(), i);
          });
-      });
+    });
 
     this.hasPasses = combineLatest(
       this.activePasses.length$,
@@ -345,9 +353,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     if (this.scrollableArea && this.scrollableAreaName) {
       this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     }
-    this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
     this.destroy$.next();
     this.destroy$.complete();
+    this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
   }
 
   onPress(press: boolean) {
@@ -449,6 +457,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   showOptions(target: HTMLElement) {
+    // debugger
     this.optionsClick = !this.optionsClick;
     if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
       this.openOptionsMenu();
@@ -468,6 +477,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   cleanSearchValue() {
     this.resetValue.next('');
+    this.inputValue = '';
+    this.searchQuery$.next('');
+    this.toggleSearchBar();
   }
 
   onDate(event) {
@@ -475,43 +487,22 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   openOptionsMenu() {
-    setTimeout(() => {
-      const dialogData = {
-        title: 'change room',
-        list: [{name: 'all rooms', isSelected: true, selectedItem: null}],
-      };
-
-      if (this.selectedLocation) {
-        dialogData.list[0].isSelected = false;
-      }
-
-      this.roomOptions.forEach((choice) => {
-        let isItemSelected: boolean;
-
-        if (this.selectedLocation && (this.selectedLocation.title === choice.title)) {
-          isItemSelected = true;
-        }
-
-        dialogData.list.push({
-          name: choice.title,
-          isSelected: isItemSelected,
-          selectedItem: choice,
-        });
-      });
-
+    // debugger
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: {bottom: '0'},
         panelClass: 'options-dialog',
-        data: dialogData
+        data: {
+          title: 'change room',
+          selectedItem: this.selectedLocation,
+          items: this.roomOptions,
+          showAll: true
+        }
       });
 
-      dialogRef.componentInstance.onListItemClick.subscribe((index) => {
-        this.selectedLocation = dialogData.list.find((option, i) => {
-          return i === index;
-        }).selectedItem;
+      dialogRef.componentInstance.onListItemClick.subscribe((location) => {
+        this.selectedLocation = location;
         this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
       });
-    }, 10);
   }
 
   calendarSlideState(stateName: string): string {

@@ -39,9 +39,9 @@
                 >
                   <mat-list-item
                     class="group"
-                    (click)="selectGroup(group, $event)"
-                    (mouseenter)="_item.hovered = true"
-                    (mouseleave)="_item.hovered = false"
+                    appCrossPointerEventTarget
+                    (pointerDownEvent)="_item.hovered = true"
+                    (pointerClickEvent)="_item.hovered = false; selectGroup(group, $event)"
                     (mousedown)="_item.pressed = true"
                     (mouseup)="_item.pressed = false"
                     [style.background-color]="getBackground(_item, group)"
@@ -133,9 +133,9 @@
     </div>
   </div>
 
-  <div [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'">
-    <app-icon-button (clickEvent)="back()" [srcString]="'Back Button'" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
-  </div>
+<!--  <div [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'">-->
+<!--    <app-icon-button (clickEvent)="back()" [srcString]="'Back Button'" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>-->
+<!--  </div>-->
 
   <div class="button-shadow next-btn-mobile" *ngIf="selectedStudents.length">
     <app-gradient-button
@@ -143,7 +143,7 @@
       [minHeight]="'35px'"
       [fontSize]="'14px'"
       [cursor]="'pointer'"
-      (click)="nextStep()"
+      (buttonClick)="nextStep()"
     >Next ({{selectedStudents.length}})
     </app-gradient-button>
   </div>

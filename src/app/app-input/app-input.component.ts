@@ -1,8 +1,6 @@
-﻿import {Component, OnInit, Input, Output, EventEmitter, ViewChild, Renderer2} from '@angular/core';
+﻿import {Component, OnInit, Input, Output, EventEmitter, ViewChild, SimpleChanges, OnChanges} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
-import {debounceTime, delay, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
-import {of} from 'rxjs';
 
 
 @Component({
@@ -10,24 +8,26 @@ import {of} from 'rxjs';
   templateUrl: './app-input.component.html',
   styleUrls: ['./app-input.component.scss']
 })
-export class AppInputComponent implements OnInit {
+export class AppInputComponent implements OnInit, OnChanges {
 
     @Input() input_type: string = 'text';
-    @Input() input_class: string;
     @Input() input_value: string | number;
     @Input() input_label: string;
     @Input() placeholder: string = '';
-    @Input() maxLength: number = 100;
+    @Input() maxLength: string = '100';
     @Input() width: string = '0px';
     @Input() height: string = '40px';
     @Input() padding: string = '8px';
+    @Input() fieldSpace: string = '0px';
     @Input() rightIcon: string;
     @Input() tooltipText: string;
     @Input() textAlign: string;
     @Input() isErrorIcon: boolean = true;
     @Input() isFocus: boolean;
+    @Input() forcedFocus: boolean;
     @Input() errorIconTop: number = 8;
     @Input() disabled: boolean = false;
+    @Input() isSuccessIcon: boolean;
 
     @Input() formGroup;
     @Input() controlName;
@@ -56,19 +56,13 @@ export class AppInputComponent implements OnInit {
     }
 
     ngOnInit() {
-      // console.log('right_icon ===> ', this.isFocus);
-      of(null).pipe(
-        delay(1000),
-        switchMap(() => {
-          return  this.formGroup.valueChanges;
-        }),
-      ).subscribe();
-
-      if (this.isFocus) {
-        setTimeout(() => {
+      setTimeout(() => {
+        if (this.isFocus) {
           this.input.nativeElement.focus();
-        }, 50);
-      }
+        } else {
+          this.input.nativeElement.blur();
+        }
+      }, 50);
 
       setTimeout(() => {
             this.controlName.setValue(this.input_value);
@@ -79,6 +73,12 @@ export class AppInputComponent implements OnInit {
         });
     }
 
+    ngOnChanges(sc: SimpleChanges) {
+      if ('forcedFocus' in sc && !sc.forcedFocus.isFirstChange() && sc.forcedFocus.currentValue) {
+        this.input.nativeElement.focus();
+      }
+    }
+
     updateFocus(el) {
 
       this.initialValue = this.input_value;
@@ -86,10 +86,11 @@ export class AppInputComponent implements OnInit {
       if (this.isFocus) {
         el.focus();
         this.focusEvent.emit();
-      } else {
+      } else if (!this.forcedFocus) {
         el.blur();
       }
     }
+
     onBlur(value) {
       this.hovered = false;
       this.isFocus = false;
@@ -97,4 +98,4 @@ export class AppInputComponent implements OnInit {
         this.blurEvent.emit(value);
       }
     }
- }
+}

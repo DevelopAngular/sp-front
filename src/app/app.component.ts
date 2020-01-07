@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter, find } from 'lodash';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent, interval, Observable, ReplaySubject, Subject} from 'rxjs';
 
 import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
@@ -62,6 +62,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private subscriber$ = new Subject();
 
+  @HostListener('window:orientationchange', ['$event'])
+  change(event) {
+    if (DeviceDetection.isAndroid()) {
+      switch (window.screen.orientation.angle) {
+        case 90: {
+          // document.querySelector('body').style.transform = 'rotate(-90deg)';
+          // document.querySelector('body').style.width = '100%';
+        }
+      }
+    }
+  }
+
   constructor(
     public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
@@ -85,6 +97,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    // this.storageService.removeItem('refresh_token');
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
@@ -99,8 +112,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
-      this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
-      this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
+      // this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
+      // this.meta.updateTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
+      document.documentElement.style.background = val ? '#0F171E' : '#FBFEFF';
+      document.body.style.boxShadow = `0px 0px 100px 100px ${val ? '#0F171E' : '#FBFEFF'}`;
+      // box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
     });
 
     if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
@@ -174,8 +190,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
-
-        // console.log(data);
         const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
         let newHub: any;
 
@@ -213,11 +227,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
 
-        if (data.hideSchoolToggleBar) {
-          this.hideSchoolToggleBar = true;
-        } else {
-          this.hideSchoolToggleBar = false;
-        }
+        this.hideSchoolToggleBar = data.hideSchoolToggleBar;
         this.hideScroll = data.hideScroll;
       });
   }
@@ -227,7 +237,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const myPush = function (a) {
       if (!BUILD_INFO_REAL) {
-        console.log('Pushed:', a);
+        // console.log('Pushed:', a);
       }
       _hsq.push(a);
     };
@@ -263,6 +273,5 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
   }
-
 
 }
