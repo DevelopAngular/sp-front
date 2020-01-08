@@ -154,6 +154,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
               const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
               const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
               if (!start.done) {
+                // debugger;
                   return 'setup_rooms:start';
               }
               if (!end.done) {
@@ -164,6 +165,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         }),
       switchMap((action) => {
         this.onboardLoaded = true;
+        // debugger;
         if (action) {
           return this.gsProgress.updateProgress(action);
         } else {
@@ -411,6 +413,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           filter(() => navigator.onLine),
           takeUntil(this.destroy$),
           switchMap((res) => {
+            // debugger;
             return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
           })
         )

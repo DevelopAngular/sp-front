@@ -31,18 +31,21 @@ export class TakeTourComponent implements OnInit {
         filter((op) => op.take_a_tour),
         switchMap((op: any) => {
             if (!op.take_a_tour.create_accounts.value) {
+            // debugger;
               return this.gsProgress.updateProgress('take_a_tour:create_accounts');
             }
           return of(op);
         }),
         switchMap((op) => {
           if (!op.take_a_tour.end.value) {
+          // debugger;
             return this.gsProgress.updateProgress('take_a_tour:end');
           }
           return of(op);
         })
       )
       .subscribe(op => {
+        // debugger;
         this.student = {
           name: op.take_a_tour.create_accounts.data.student.display_name,
           username: op.take_a_tour.create_accounts.data.student.username,
