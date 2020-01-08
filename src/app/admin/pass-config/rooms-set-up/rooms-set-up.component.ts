@@ -31,7 +31,7 @@ export class RoomsSetUpComponent implements OnInit {
     this.mockPinnables = [
         {
           title: 'Bathroom',
-          icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/toilet/1F195E.png',
+          icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/toilet/FFFFFF.png',
           gradient: '#5C4AE3,#336DE4',
           color_profile_id: 12,
           room: 'BR',
@@ -64,7 +64,7 @@ export class RoomsSetUpComponent implements OnInit {
         },
         {
           title: 'Guidance',
-          icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/counselor/1F195E.png',
+          icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/counselor/FFFFFF.png',
           gradient: '#E38314,#EAB219',
           color_profile_id: 3,
           room: '102',
@@ -86,7 +86,7 @@ export class RoomsSetUpComponent implements OnInit {
         },
         {
             title: 'Library',
-            icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/library/1F195E.png',
+            icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/library/FFFFFF.png',
             gradient: '#13BF9E,#00D99B',
             color_profile_id: 7,
             room: '104',

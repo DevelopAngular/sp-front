@@ -52,7 +52,7 @@ export class GettingStartedComponent implements OnInit {
           return of(op);
         })
       )
-      .subscribe(op => {
+      .subscribe((op: any) => {
         this.bannerVissible = op.create_school && (!op.create_school.start.value || !op.create_school.end.value);
         this.OnboardProgres = op;
       });

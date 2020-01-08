@@ -318,4 +318,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     }
   }
 
+  openLink(link) {
+    window.open(link);
+  }
+
 }
