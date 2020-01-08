@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {AdminService} from '../../../services/admin.service';
 import * as processActions from '../actions';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 
 @Injectable()
@@ -31,8 +31,9 @@ export class ProcessEffects {
         concatMap((action: any) => {
           return this.adminService.updateOnboardProgress(action.data)
             .pipe(
+              switchMap(() => this.adminService.getOnboardProgress()),
               map(process => {
-                return processActions.updateOnboardProcessSuccess({process: action.data});
+                return processActions.updateOnboardProcessSuccess({process});
               }),
               catchError(error => of(processActions.updateOnboardProcessFailure({errorMessage: error.message})))
             );

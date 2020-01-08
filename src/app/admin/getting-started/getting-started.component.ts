@@ -34,6 +34,7 @@ export class GettingStartedComponent implements OnInit {
     private gsProgress: GettingStartedProgressService
   ) { }
   public OnboardProgres: any = {};
+
   get bannerVisibility() {
     return this.bannerVissible;
   }
@@ -48,12 +49,13 @@ export class GettingStartedComponent implements OnInit {
           if (op.create_school && !op.create_school.end.value) {
             return this.gsProgress.updateProgress('create_school:end');
           }
-          this.bannerVissible = op.create_school && (!op.create_school.start.value || !op.create_school.end.value);
-          this.OnboardProgres = op;
-          return of(null);
+          return of(op);
         })
       )
-      .subscribe();
+      .subscribe(op => {
+        this.bannerVissible = op.create_school && (!op.create_school.start.value || !op.create_school.end.value);
+        this.OnboardProgres = op;
+      });
 
   }
 

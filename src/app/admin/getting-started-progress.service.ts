@@ -112,13 +112,10 @@ export class GettingStartedProgressService {
   }
 
   updateProgress(ticket) {
-    this.adminService.updateOnboardProgressRequest(ticket);
-    return this.adminService.getOnboardProcessRequest()
+    return this.adminService.updateOnboardProgressRequest(ticket)
       .pipe(
         filter(res => !!res.length),
-        map((data) => {
-          return this.buildProcessData(data);
-        })
+        map(data => this.buildProcessData(data))
       );
   }
 

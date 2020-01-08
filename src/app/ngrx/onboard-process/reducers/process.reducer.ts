@@ -11,7 +11,9 @@ const onboardProcessInitialState: ProcessState = {
 const reducer = createReducer(
   onboardProcessInitialState,
   on(processActions.getOnboardProcess, state => ({...state, loading: true, loaded: false})),
-  on(processActions.getOnboardProcessSuccess, (state, {process}) => {
+  on(processActions.getOnboardProcessSuccess,
+    processActions.updateOnboardProcessSuccess,
+    (state, {process}) => {
     return {
       ...state,
       data: process,
@@ -19,14 +21,6 @@ const reducer = createReducer(
       loaded: true
     };
   }),
-  on(processActions.updateOnboardProcessSuccess, (state, {process}) => {
-    state.data.forEach(proc => {
-      if (proc.name === process) {
-        proc.done = new Date().toISOString();
-      }
-    });
-    return {...state};
-  })
 );
 
 export function onboardProcessReducer(state: any | undefined, action: Action) {
