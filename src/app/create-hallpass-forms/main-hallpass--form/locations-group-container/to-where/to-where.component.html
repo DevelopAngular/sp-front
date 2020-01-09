@@ -14,7 +14,7 @@
   <div class="content-background"
        [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
   <div class="to-content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-    <div class="to-content_scrollable" #rc>
+    <div class="to-content_scrollable" [ngClass]="{'flex': !(isLocationList$ | async)}" #rc>
 
       <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length && !(isLocationList$ | async)">
         <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
@@ -59,6 +59,7 @@
       [forStaff]="isStaff"
       [height]="'107px'"
       [rightHeaderText]="true"
+      [searchTeacherLocations]="true"
       [hasLocks]="true"
       [inputWidth]="'240px'"
       [forLater]="formState.forLater"
