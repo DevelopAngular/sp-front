@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
 import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
@@ -405,14 +405,20 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           }));
       });
 
-      zip(...requests$)
+      forkJoin(requests$)
         .pipe(
-          take(1),
+          // take(1),
           filter(() => navigator.onLine),
           takeUntil(this.destroy$),
           switchMap((res) => {
             return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
-          })
+          }),
+          switchMap((res) => {
+            return this.hallPassService.createArrangedPinnable(res.map((v: any) => v.id).join(','));
+          }),
+          switchMap((res) => {
+            return this.hallPassService.getPinnables();
+          }),
         )
         .subscribe((res: Pinnable[]) => {
           this.pinnables.push(...res);
