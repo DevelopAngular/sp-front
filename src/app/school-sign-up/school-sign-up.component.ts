@@ -6,17 +6,14 @@ import {
   debounceTime,
   delay,
   distinctUntilChanged,
-  filter,
   map,
-  mapTo,
   pluck,
   switchMap,
   take,
   takeUntil,
   tap
 } from 'rxjs/operators';
-import {BehaviorSubject, from, Observable, of, Subject, throwError} from 'rxjs';
-import {LoginMethod} from '../google-signin/google-signin.component';
+import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
@@ -229,9 +226,9 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   }
   createSchool() {
+    window.waitForAppLoaded(true);
     this.pending.next(true);
     this.gsProgress.updateProgress('create_school:start');
-
           this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
             // user_token: auth.id_token,
             // google_place_id: this.school.place_id,
