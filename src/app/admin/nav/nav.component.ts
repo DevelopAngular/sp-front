@@ -28,8 +28,9 @@ export class NavComponent implements OnInit {
 
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
-  gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
+  // gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
+    {title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']},
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
     {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
     {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
@@ -68,6 +69,11 @@ export class NavComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.gsProgress.onboardProgress$.subscribe(res => {
+      if (res.progress === 70 && this.buttons.find(button => button.title === 'Get Started')) {
+        this.buttons.splice(0, 1);
+      }
+    });
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
