@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService, ProgressInterface} from '../getting-started-progress.service';
 import {fromEvent, of} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {switchMap, take} from 'rxjs/operators';
 
 declare const window;
 
@@ -44,16 +44,18 @@ export class GettingStartedComponent implements OnInit {
       .pipe(
         switchMap((op: any) => {
           if (op.create_school && !op.create_school.start.value) {
-            return this.gsProgress.updateProgress('create_school:start');
+            return this.gsProgress.updateProgress('create_school:start').pipe(take(1));
           }
           if (op.create_school && !op.create_school.end.value) {
-            return this.gsProgress.updateProgress('create_school:end');
+            return this.gsProgress.updateProgress('create_school:end').pipe(take(1));
           }
           return of(op);
         })
       )
       .subscribe((op: any) => {
-        this.bannerVissible = op.create_school && (!op.create_school.start.value || !op.create_school.end.value);
+        if (op.create_school && (!op.create_school.start.value || !op.create_school.end.value)) {
+          this.bannerVissible = true;
+        }
         this.OnboardProgres = op;
       });
 

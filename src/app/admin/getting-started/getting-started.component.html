@@ -84,7 +84,7 @@
         <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Set-Up</div>
         <div class="card card__tour-item">
           <div class="image">
-            <img class="tour-item_image" [src]="'./assets/Room (Purple).svg' | resolveAsset" alt="">
+            <img class="tour-item_image" [src]="OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value ? './assets/Room (Jade).svg' : './assets/Room (Purple).svg' | resolveAsset" alt="">
           </div>
           <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value}">
             <div class="card_header">
@@ -112,7 +112,7 @@
         </div>
         <div class="card card__tour-item">
           <div class="image">
-            <img class="tour-item_image" [src]="'./assets/Users (Blue).svg' | resolveAsset" alt="">
+            <img class="tour-item_image" [src]="OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value ? './assets/Users (Jade).svg' : './assets/Users (Blue).svg' | resolveAsset" alt="">
           </div>
           <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value}">
             <div class="card_header">
@@ -140,7 +140,7 @@
         </div>
         <div class="card card__tour-item">
           <div class="image">
-            <img class="tour-item_image" [src]="'./assets/Launch (Pink).svg' | resolveAsset" alt="">
+            <img class="tour-item_image" [src]="OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value ? './assets/Launch (Jade).svg' : './assets/Launch (Pink).svg' | resolveAsset" alt="">
           </div>
           <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value}">
             <div class="card_header">

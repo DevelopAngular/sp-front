@@ -69,8 +69,10 @@ export class NavComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.gsProgress.onboardProgress$.subscribe(res => {
-      if (res.progress === 70 && this.buttons.find(button => button.title === 'Get Started')) {
+    this.gsProgress.onboardProgress$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+      if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
         this.buttons.splice(0, 1);
       }
     });
@@ -167,7 +169,6 @@ export class NavComponent implements OnInit {
 
     if (!this.selectedSettings) {
       this.selectedSettings = true;
-      // debugger
       const target = new ElementRef(event.currentTarget);
       UNANIMATED_CONTAINER.next(true);
       const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
@@ -181,17 +182,17 @@ export class NavComponent implements OnInit {
       });
 
       settingsRef.beforeClose().subscribe(() => {
-        // debugger
         this.selectedSettings = false;
       });
 
       settingsRef.afterClosed().subscribe(action => {
-        // debugger
         UNANIMATED_CONTAINER.next(false);
         if (action === 'signout') {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
+        } else if (action === 'getStarted') {
+          this.router.navigate(['admin/gettingstarted']);
         } else if (action === 'about') {
           window.open('https://smartpass.app/about');
         } else if (action === 'wishlist') {
