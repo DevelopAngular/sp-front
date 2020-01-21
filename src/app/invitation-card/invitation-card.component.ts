@@ -15,7 +15,7 @@ import {filter, switchMap, tap} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
-import {of} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
@@ -47,6 +47,8 @@ export class InvitationCardComponent implements OnInit {
   dateEditOpen: boolean;
 
   locationChangeOpen: boolean;
+
+  frameMotion$: BehaviorSubject<any>;
 
   isModal: boolean;
   isSeen: boolean;
@@ -107,7 +109,7 @@ export class InvitationCardComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.frameMotion$ = this.createFormService.getFrameMotionDirection();
     if (this.data['pass']) {
       this.isModal = true;
       this.invitation = this.data['pass'];
@@ -136,49 +138,21 @@ export class InvitationCardComponent implements OnInit {
     return Util.formatDateTime(date);
   }
 
-  changeLocation(){
-    if(!this.locationChangeOpen){
-      const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
-        panelClass: 'form-dialog-container',
-        maxWidth: '100vw',
-        backdropClass: 'invis-backdrop',
-        data: {
-          'forInput': false,
-          'hasClose': true,
-          'entryState': { step: 3, state: 1 },
-          'originalToLocation': this.invitation.destination,
-          'colorProfile': this.invitation.color_profile,
-          'originalFromLocation': this.invitation['default_origin']}
-      });
-
-      locationDialog.afterOpen().subscribe(() => {
-        this.locationChangeOpen = true;
-      });
-
-      locationDialog.beforeClose().subscribe(() => {
-        this.locationChangeOpen = false;
-      });
-
-      locationDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
-        this.setLocation((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.invitation['default_origin']);
-      });
-    }
-  }
-
   setLocation(location: Location) {
     this.invitation.default_origin = location;
     this.selectedOrigin = location;
   }
 
-  newInvitation(){
+  newInvitation() {
     this.performingAction = true;
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
-      'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+      'default_origin' : this.invitation.default_origin ? this.invitation.default_origin.id : null,
       'destination' : this.invitation.destination.id,
       'date_choices' : this.invitation.date_choices.map(date => date.toISOString()),
-      'duration' : this.selectedDuration*60,
-      'travel_type' : this.selectedTravelType
+      'duration' : this.selectedDuration * 60,
+      'travel_type' : this.selectedTravelType,
+      'issuer_message': this.invitation.issuer_message
     };
 
     this.requestService.createInvitation(body).subscribe((data) => {

@@ -14,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject, Subject} from 'rxjs';
 import { environment } from '../../environments/environment';
+import * as testEnv from '../../environments/environment.test';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
@@ -90,12 +91,13 @@ function makeUrl(server: LoginServer, endpoint: string) {
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
     return endpoint;
   } else {
-    if (!environment.production) {
-      const proxyPath = new URL(server.api_root).pathname;
-      return (proxyPath + endpoint) as string;
-    } else {
-      return server.api_root + endpoint;
-    }
+    // if (!environment.production) {
+    //   const proxyPath = new URL(server.api_root).pathname;
+    //   return (proxyPath + endpoint) as string;
+    // } else {
+    //   return server.api_root + endpoint;
+    // }
+    return server.api_root + endpoint;
   }
 }
 
@@ -235,7 +237,6 @@ export class HttpService {
         return { auth: newToken, server: this.accessTokenSubject.value.server};
 
       })).subscribe(res => {
-        // console.log(res);
         this.accessTokenSubject.next(res as AuthContext);
       });
 
@@ -264,8 +265,13 @@ export class HttpService {
     if (!navigator.onLine) {
       return  this.pwaStorage.getItem('servers').pipe(
         map((servers: LoginServer[]) => {
-          if (servers) {
-            return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          if (servers.length > 0) {
+            const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+            // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
+            //   return testEnv.environment.preferEnvironment as LoginServer;
+            // } else {
+              return server;
+            // }
           } else {
             return null;
           }
@@ -279,7 +285,12 @@ export class HttpService {
       }),
       map((servers: LoginServer[]) => {
         if (servers.length > 0) {
-          return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
+          //   return testEnv.environment.preferEnvironment as LoginServer;
+          // } else {
+            return server;
+          // }
         } else {
           return null;
         }

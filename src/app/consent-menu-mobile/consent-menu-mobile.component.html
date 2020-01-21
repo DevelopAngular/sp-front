@@ -1,4 +1,4 @@
-<div #consentMenu class="consent-menu"  *ngIf="display" [@menuAppearance] >
+<div #consentMenu class="consent-menu" [style.position]="position"  *ngIf="display" [@menuAppearance] >
 <div class="consent-wrapper" [style.background-color]="darkTheme.getBackground('low')">
   <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('low')"></div></div>
   <div class="rounded-corners-box">

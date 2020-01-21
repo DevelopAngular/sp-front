@@ -45,6 +45,7 @@
             align-items: center;
             padding: 20px;
             width: 291px;
+            height: 65px;
 
             .header-info {
                 display: flex;
@@ -274,14 +275,14 @@
     background: white;
     border-radius: 2px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #D6D6D6; 
+    background: #D6D6D6;
     border-radius: 2px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #B6B6B6; 
+    background: #B6B6B6;
 }
