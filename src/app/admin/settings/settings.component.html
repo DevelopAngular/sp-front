@@ -23,21 +23,15 @@
              (mouseenter)="hoveredTheme = true"
              (mouseleave)="hoveredTheme = false"
              appCrossPointerEventTarget
-             (pointerClickEvent)="pressedTheme = false; darkTheme.switchTheme(); data.darkBackground = !data.darkBackground;"
+             (pointerClickEvent)="dialogRef.close('appearance')"
              (pointerDownEvent)="pressedTheme = true"
              (pointerCancelEvent)="pressedTheme = false;"
         >
-
-          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Moon (White).svg' : getIcon('Moon', null, hoveredTheme) | resolveAsset">
+          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Glasses (White).svg' : getIcon('Glasses', null, hoveredTheme) | resolveAsset">
           <div class="option-title" [style.color]="!darkTheme.isEnabled$.value && hoveredTheme ? 'white' : getColor(null, hoveredTheme)">
             <div>
-              <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Mode</span>
+              <span>Appearance</span>
             </div>
-            <ng-template #dark>
-              <div>
-                <span>Dark Mode</span>
-              </div>
-            </ng-template>
           </div>
 
         </div>

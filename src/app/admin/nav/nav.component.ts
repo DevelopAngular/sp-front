@@ -12,6 +12,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
+import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
 
 declare const window;
 
@@ -186,12 +187,16 @@ export class NavComponent implements OnInit {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
-        } else if (action === 'about') {
-          window.open('https://smartpass.app/about');
+        } else if (action === 'appearance') {
+          this.dialog.open(SpAppearanceComponent, {
+            panelClass: 'form-dialog-container',
+          });
         } else if (action === 'wishlist') {
           window.open('https://wishlist.smartpass.app');
         } else if (action === 'support') {
           window.open('https://www.smartpass.app/support');
+        } else if (action === 'bug') {
+          window.open('https://www.smartpass.app/bugreport');
         } else if (action === 'privacy') {
           window.open('https://www.smartpass.app/legal');
         }
