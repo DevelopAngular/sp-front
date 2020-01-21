@@ -33,6 +33,7 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -150,7 +151,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     private locService: LocationsService,
     private domSanitizer: DomSanitizer,
-
+    private gsProgress: GettingStartedProgressService,
   ) {
 
   }
@@ -777,16 +778,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     evt.forEach((item: OrgUnit) => {
       syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
     });
-    console.log(syncBody);
+    // console.log(syncBody);
 
     this.adminService.updateGSuiteOrgs(syncBody)
       .pipe(
         switchMap(() => {
-          return this.adminService.updateOnboardProgress('setup_accounts:end');
+          return this.gsProgress.updateProgress('setup_accounts:end');
         })
       )
       .subscribe((res) => {
-        console.log(res);
+        // console.log(res);
       });
 
 

@@ -46,7 +46,7 @@
     <div class="tour-items">
         <div class="card card__tour-item">
           <div class="image">
-            <img class="tour-item_image" [src]="'./assets/Take_a_tour (Red).svg' | resolveAsset" alt="">
+            <img class="tour-item_image" [src]="'./assets/Tour.svg' | resolveAsset" alt="">
           </div>
 
           <div class="card-container">
@@ -54,7 +54,7 @@
               <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Take a Tour</span>
             </div>
             <div class="ds-mt-10">
-              Explore features with tutorial videos and just playing around. Who said that software products had to be complicated?
+              Explore features with tutorial videos and learn the best way how SmartPass can work for your school.
             </div>
             <div class="ds-mt-5">
             <span>
@@ -81,17 +81,19 @@
           </div>
         </div>
       <div class="bottom-block">
+
         <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Set-Up</div>
+
         <div class="card card__tour-item">
           <div class="image">
-            <img class="tour-item_image" [src]="OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value ? './assets/Room (Jade).svg' : './assets/Room (Purple).svg' | resolveAsset" alt="">
+            <img class="tour-item_image" [src]="OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value ? './assets/Room (Jade).svg' : './assets/Room (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
           <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value}">
             <div class="card_header">
-              <span [style.color]="OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value ? '#00B476' : darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</span>
+              <span [style.color]="OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value ? '#00B476' : darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">Rooms</span>
             </div>
             <div class="ds-mt-10">
-              Set up the rooms in your school with all of the options your heart desires.
+              Add rooms with lots of customized options.
             </div>
           </div>
 
@@ -112,14 +114,14 @@
         </div>
         <div class="card card__tour-item">
           <div class="image">
-            <img class="tour-item_image" [src]="OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value ? './assets/Users (Jade).svg' : './assets/Users (Blue).svg' | resolveAsset" alt="">
+            <img class="tour-item_image" [src]="OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value ? './assets/Users (Jade).svg' : './assets/Users (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
           <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value}">
             <div class="card_header">
-              <span [style.color]="OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value ? '#00B476' : darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Accounts</span>
+              <span [style.color]="OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value ? '#00B476' : darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">Accounts</span>
             </div>
             <div class="ds-mt-10">
-              Set up your admin, teacher, and student accounts with G Suite syncing.
+              Add all user accounts with an integration sync.
             </div>
           </div>
 
@@ -140,14 +142,14 @@
         </div>
         <div class="card card__tour-item">
           <div class="image">
-            <img class="tour-item_image" [src]="OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value ? './assets/Launch (Jade).svg' : './assets/Launch (Pink).svg' | resolveAsset" alt="">
+            <img class="tour-item_image" [src]="OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value ? './assets/Launch (Jade).svg' : './assets/Launch (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
           <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value}">
             <div class="card_header">
-              <span [style.color]="OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value ? '#00B476' : darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Prepare for Launch</span>
+              <span [style.color]="OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value ? '#00B476' : darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">Prepare for Launch</span>
             </div>
             <div class="ds-mt-10">
-              Launch checklists, poster print-outs, community letters, and more.
+              Launch checklists, poster print-outs, and more.
             </div>
           </div>
 

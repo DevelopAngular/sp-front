@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {School} from '../../../models/School';
+import {GettingStartedProgressService} from '../../getting-started-progress.service';
 
 declare const window;
 
@@ -12,9 +13,10 @@ export class AccountsSyncComponent implements OnInit {
 
   @Input() currentSchool: School;
 
-  constructor() { }
+  constructor(private process: GettingStartedProgressService) { }
 
   ngOnInit() {
+    this.process.updateProgress('setup_accounts:end').subscribe();
   }
 
   openMail() {
