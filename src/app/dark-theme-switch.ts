@@ -1,8 +1,12 @@
 import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {StorageService} from './services/storage.service';
+import {DeviceDetection} from './device-detection.helper';
+
+declare const window;
 
 export type Tone = 'low' | 'middle' | 'high' | 'default' | 'extra';
+
 export interface ColorConfig {
   setting?: any;
   hover?: boolean;
@@ -10,6 +14,7 @@ export interface ColorConfig {
   dark?: string;
   white?: string;
 }
+
 export interface IconConfig {
   iconName?: string;
   darkFill?: string;
@@ -20,41 +25,86 @@ export interface IconConfig {
   static?: boolean;
 }
 
+export type SPTheme = 'Light' | 'Dark' | 'Auto';
+
+const lightMode: MediaQueryList = window.matchMedia('(prefers-color-scheme: light)');
+const darkMode: MediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
+
+function listenSysLight(evt: MediaQueryListEvent) {
+  if (evt.matches) {
+    this.isEnabled$.next(false);
+  }
+}
+function listenSysDark(evt: MediaQueryListEvent) {
+  if (evt.matches) {
+    this.isEnabled$.next(true);
+  }
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class DarkThemeSwitch {
 
   public preloader: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
-  public isEnabled$: BehaviorSubject<boolean>;
+  public isEnabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
+
+  private lightLink = listenSysLight.bind(this);
+  private darkLink = listenSysDark.bind(this);
 
   constructor(
     private storage: StorageService
   ) {
-    /**
-     * spa1259FallBack variable is a temporary solution to avoid app crashing during initialization
-     * As soon as SPA-1259 merged into dev and next-release branch, should be rewrite into ${ const isDarkTheme = this.storage.getItem(theme: string) }
-    */
-    const spa1259FallBack = (this.storage.getItem('dark-theme') !== 'true' && this.storage.getItem('dark-theme') !== 'false') ? 'false' : this.storage.getItem('dark-theme');
-    const isDarkTheme = JSON.parse(spa1259FallBack);
-    this.isEnabled$ = new BehaviorSubject<boolean>(isDarkTheme);
+    const currentTheme: SPTheme = this.storage.getItem('appearance');
+    this.switchTheme(currentTheme ? currentTheme : 'Auto');
   }
 
-  isDarkNow() {
-    return this.isEnabled$.value;
+  private listenSystemThemePreference(predict: boolean) {
+    if (predict) {
+      lightMode.addListener(function () {
+        if (lightMode.matches) {
+          this.isEnabled$.next(false);
+        }
+        return this.lightLink;
+      }.call(this));
+      darkMode.addListener(function () {
+        if (darkMode.matches) {
+          this.isEnabled$.next(true);
+        }
+        return this.darkLink;
+      }.call(this));
+    } else {
+      lightMode.removeListener(this.lightLink);
+      darkMode.removeListener(this.darkLink);
+    }
   }
 
-  switchTheme() {
-    const isDarkTheme = this.isEnabled$.value;
-    this.storage.setItem('dark-theme', !isDarkTheme);
-    this.isEnabled$.next(!isDarkTheme);
+  switchTheme(theme: SPTheme = 'Auto') {
+    this.storage.setItem('appearance', theme);
+    switch (theme) {
+      case 'Light':
+        this.listenSystemThemePreference(false);
+        this.isEnabled$.next(false);
+        break;
+      case 'Dark':
+        this.listenSystemThemePreference(false);
+        this.isEnabled$.next(true);
+        break;
+      case 'Auto':
+        this.listenSystemThemePreference(true);
+        break;
+    }
+  }
+
+  currentTheme() {
+    return this.storage.getItem('appearance') ? this.storage.getItem('appearance') : 'Auto';
   }
 
   getIcon(config: IconConfig  = {
     darkFill: 'White',
     lightFill: 'Navy'
   }) {
-
     const iconName = /[A-Z]{1}[\w\s]+[^( \()]/;
 
     if (config.iconName.match(iconName)) {
@@ -78,13 +128,15 @@ export class DarkThemeSwitch {
         fill = config.hover ? 'Navy' : 'Blue-Gray';
       }
     }
+
     if (this.isEnabled$.value && config.darkFill) {
       fill = config.darkFill;
     }
+
     if (!this.isEnabled$.value && config.lightFill) {
       fill = config.lightFill;
-
     }
+
     if (config.static) {
       fill = config.lightFill || config.darkFill;
     }
