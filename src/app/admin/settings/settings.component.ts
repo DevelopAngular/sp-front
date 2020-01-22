@@ -1,23 +1,25 @@
-import { Component, ElementRef, Inject, OnInit } from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { ColorProfile } from '../../models/ColorProfile';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../../build-info';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
 
   triggerElementRef: ElementRef;
 
   isSwitchOption: boolean;
-
+  showGetStarted: boolean;
   hoveredProfile: boolean;
   hoveredTheme: boolean;
   pressedTheme: boolean;
@@ -27,6 +29,7 @@ export class SettingsComponent implements OnInit {
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
 
+  destroy$ = new Subject();
 
   public settings = [
     {
@@ -59,6 +62,7 @@ export class SettingsComponent implements OnInit {
     public darkTheme: DarkThemeSwitch,
     private elemRef: ElementRef,
     private pwaStorage: LocalStorage,
+    public gsProgress: GettingStartedProgressService,
   ) {
   }
 
@@ -73,12 +77,20 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.gsProgress.onboardProgress$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+        this.showGetStarted = res.progress === 100;
+      });
     this.triggerElementRef = this.data['trigger'];
     this.isSwitchOption = this.data['isSwitch'];
     this.updateSettingsPosition();
   }
 
-
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
 
@@ -99,18 +111,11 @@ export class SettingsComponent implements OnInit {
   }
 
   handleAction(setting) {
-    // debugger
     if ( typeof setting.action === 'string' ) {
       this.dialogRef.close(setting.action);
     } else {
       setting.action();
     }
-  }
-
-  test(evt) {
-    console.log(evt);
-    // debugger
-    // this.dialogRef.close();
   }
 
   updateSettingsPosition() {

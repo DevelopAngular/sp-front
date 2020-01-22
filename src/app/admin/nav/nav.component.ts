@@ -28,8 +28,9 @@ export class NavComponent implements OnInit {
 
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
-  gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
+  // gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
+    {title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']},
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
     {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
     {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
@@ -68,6 +69,13 @@ export class NavComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.gsProgress.onboardProgress$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+      if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
+        this.buttons.splice(0, 1);
+      }
+    });
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
@@ -161,7 +169,6 @@ export class NavComponent implements OnInit {
 
     if (!this.selectedSettings) {
       this.selectedSettings = true;
-      // debugger
       const target = new ElementRef(event.currentTarget);
       UNANIMATED_CONTAINER.next(true);
       const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
@@ -175,17 +182,17 @@ export class NavComponent implements OnInit {
       });
 
       settingsRef.beforeClose().subscribe(() => {
-        // debugger
         this.selectedSettings = false;
       });
 
       settingsRef.afterClosed().subscribe(action => {
-        // debugger
         UNANIMATED_CONTAINER.next(false);
         if (action === 'signout') {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
+        } else if (action === 'getStarted') {
+          this.router.navigate(['admin/gettingstarted']);
         } else if (action === 'about') {
           window.open('https://smartpass.app/about');
         } else if (action === 'wishlist') {

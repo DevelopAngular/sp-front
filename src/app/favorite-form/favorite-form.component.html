@@ -7,7 +7,6 @@
         <div class="ds-dialog-title-white">Favorites</div>
       </div>
     </div>
-<!--    <div class="content-wrapper" style="height: 100%; overflow: hidden; position: relative">-->
       <div class="content" [style.overflow]="(overflow$ | async) ? 'auto' : 'hidden'">
         <app-location-table class="locations"
                             [rightHeaderText]="true"
@@ -24,7 +23,6 @@
         </app-location-table>
         <div class="bottom-shadow-hint"></div>
       </div>
-<!--    </div>-->
   </div>
 
 <div [ngClass]="isIOSTablet ? 'ios-back-button-wrapper' : 'back-button-wrapper'" (click)="back()">

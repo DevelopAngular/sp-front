@@ -5,6 +5,7 @@ import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
 import {filter, mapTo, switchMap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
 
 declare const window;
 
@@ -31,6 +32,7 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
       private http: HttpService,
       private adminService: AdminService,
       public darkTheme: DarkThemeSwitch,
+      private gsProgress: GettingStartedProgressService
   ) { }
 
   ngOnInit() {
@@ -40,7 +42,7 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
         switchMap((res: any[]) => {
         const start = res.find(setting => setting.name === 'launch_day_prep:start');
         if (!start.done) {
-          return this.adminService.updateOnboardProgress(start.name).pipe(mapTo(res));
+          return this.gsProgress.updateProgress(start.name).pipe(mapTo(res));
         } else {
           return of(res);
         }
@@ -48,7 +50,7 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
         switchMap((res: any[]) => {
             const end = res.find(setting => setting.name === 'launch_day_prep:end');
             if (!end.done) {
-              return this.adminService.updateOnboardProgress(end.name);
+              return this.gsProgress.updateProgress(end.name);
             } else {
               return of(null);
             }

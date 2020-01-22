@@ -82,17 +82,6 @@
                   </div>
                 </div>
               </div>
-              <!--          <div class="ds-mt-25">-->
-              <!--            <app-input-->
-              <!--              [width]="'260px'"-->
-              <!--              [fieldSpace]="'0px'"-->
-              <!--              [height]="'35px'"-->
-              <!--              [formGroup]="schoolForm"-->
-              <!--              [controlName]="schoolForm.get('firstName')"-->
-              <!--              [input_value]="schoolForm.get('firstName').value"-->
-              <!--              [input_label]="'First name'"-->
-              <!--            ></app-input>-->
-              <!--          </div>-->
               <div class="ds-mt-20"
                    appCrossPointerEventTarget
                    (pointerClickEvent)="inputIndex = 1"
@@ -170,8 +159,8 @@
 
       <div class="links">
         By proceeding to sign up your school and use SmartPass, you and your school users are agreeing to our
-        <a style="text-decoration: none; font-weight: bold; color: inherit;" href="https://www.smartpass.app/terms"><strong>Terms of Service</strong></a> and
-        <a style="text-decoration: none; font-weight: bold; color: inherit;" href="https://www.smartpass.app/privacy"><strong>Privacy Policy</strong></a>.
+        <a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/terms')"><strong>Terms of Service</strong></a> and
+        <a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/privacy')"><strong>Privacy Policy</strong></a>.
       </div>
 
     </div>

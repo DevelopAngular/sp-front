@@ -4,6 +4,7 @@
   <div class="choices"
        [style.background-color]="'rgba(247,247,247,1)'"
        [style.height.px]="height">
+
     <div *ngFor="let choice of choices; let i=index;"
          [style.flex]="'1 1 auto'" [style.height.%]="100"
          [class.divider]="choices.length > 1 && i < choices.length - 1 && selectedChoice !== choice ">
