@@ -103,7 +103,9 @@ export class GoogleSigninComponent implements OnInit {
           this.loginData.authType = auth_types[auth_types.length - 1];
           switch (this.loginData.authType) {
             case 'google':
-              this.initLogin();
+              // this.initLogin();
+              this.loginSSO();
+
               break;
             case 'gg4l':
               this.loginSSO();
@@ -138,15 +140,12 @@ export class GoogleSigninComponent implements OnInit {
   }
 
   initLogin() {
-    debugger
-
     this.loggedWith = LoginMethod.OAuth;
     this.showSpinner = true;
     this.loginService.showLoginError$.next(false);
     this.loginService
       .signIn()
       .then(() => {
-        debugger
         this.showSpinner = false;
         // window.waitForAppLoaded();
       })
