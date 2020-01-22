@@ -98,7 +98,7 @@ export class GoogleSigninComponent implements OnInit {
 
   checkUserAuthType() {
     if (!this.loginData.demoLoginEnabled) {
-      this.http.get<any>(`https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(this.loginData.demoUsername)}`)
+      this.http.get<any>(`/api/discovery/email_info?email=${encodeURIComponent(this.loginData.demoUsername)}`)
         .subscribe(({auth_types}) => {
           this.loginData.authType = auth_types[auth_types.length - 1];
           switch (this.loginData.authType) {
