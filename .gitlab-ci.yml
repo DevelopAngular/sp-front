@@ -101,29 +101,29 @@ staging:
     AUTO_DEVOPS_DOMAIN: "notify-messenger-notify-server-staging.lavanote.com"
     IMAGE_TAG_SUFFIX: "production"
   environment:
-      name: staging
-      url: "https://notify-messenger-notify-server-staging.lavanote.com"
+    name: staging
+    url: "https://notify-messenger-notify-server-staging.lavanote.com"
   only:
     refs:
       - master
     kubernetes: active
   tags:
-      - "docker-passthrough"
+    - "docker-passthrough"
 
 production:
   stage: deploy_prod
   script:
-  - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-  - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-  - apk add --no-cache bash tree git python make g++ nodejs@old npm@old yarn@old
-  - source scripts/auto_devops.sh
-  # no build command. This causes it to reuse the pre-built images from staging because IMAGE_TAG_SUFFIX is shared.
-  - install_dependencies
-  - download_chart
-  - ensure_namespace
-  - install_tiller
-  - create_secret
-  - deploy
+    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
+    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
+    - apk add --no-cache bash tree git python make g++ nodejs@old npm@old yarn@old
+    - source scripts/auto_devops.sh
+    # no build command. This causes it to reuse the pre-built images from staging because IMAGE_TAG_SUFFIX is shared.
+    - install_dependencies
+    - download_chart
+    - ensure_namespace
+    - install_tiller
+    - create_secret
+    - deploy
   variables:
     AUTO_DEVOPS_DOMAIN: "smartpass.app"
     IMAGE_TAG_SUFFIX: "production"
@@ -133,10 +133,10 @@ production:
   when: manual
   only:
     refs:
-    - master
+      - master
     kubernetes: active
   tags:
-  - "docker-passthrough"
+    - "docker-passthrough"
 
 
 staging_local:
