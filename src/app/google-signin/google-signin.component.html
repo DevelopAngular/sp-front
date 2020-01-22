@@ -47,7 +47,7 @@
     [style.margin-bottom]="'15px'"
     (ontextupdate)="updateDemoUsername($event)">
   </app-round-input>
-  <app-round-input  *ngIf="demoLoginEnabled"
+  <app-round-input  *ngIf="loginData.demoLoginEnabled"
     [minWidth]="'260px'"
     [width]="'260px'"
     [placeholder]="'Password'"
@@ -56,9 +56,10 @@
     [fieldIcon]="'./assets/Lock (Search-Gray).svg'"
     [html5type]="'password'"
     [style.margin-bottom]="'15px'"
-    (ontextupdate)="demoPassword = $event">
+    (ontextupdate)="loginData.demoPassword = $event">
   </app-round-input>
   <app-gradient-button
+    [disabled]="!loginData.demoUsername"
     [size]="'medium'"
     [style.margin-tom]="'15px'"
     [gradient]="'#FFFFFF, #FFFFFF'"
@@ -68,14 +69,14 @@
     [minHeight]="'30px'"
     [fontSize]="'14px'"
     [textColor]="'#04CD33'"
-    (buttonClick)="demoLogin()"
+    (buttonClick)="checkUserAuthType()"
     [style.width]="'90px'"
     [style.margin]="'0 auto'"
      #button
   >
     <div *ngIf="!showSpinner">
-      <span *ngIf="!demoLoginEnabled">Next</span>
-      <span *ngIf="demoLoginEnabled">Sign in</span>
+      <span *ngIf="!loginData.demoLoginEnabled">Next</span>
+      <span *ngIf="loginData.demoLoginEnabled">Sign in</span>
     </div>
     <div  *ngIf="showSpinner" class="loading-theme_white">
       <mat-spinner [diameter]="25"></mat-spinner>

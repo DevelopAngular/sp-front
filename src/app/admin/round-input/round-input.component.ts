@@ -145,7 +145,6 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(sc: SimpleChanges) {
-    console.log(sc);
     if ('focused' in sc && !sc.focused.isFirstChange() && sc.focused.currentValue) {
       this.input.nativeElement.focus();
     }
