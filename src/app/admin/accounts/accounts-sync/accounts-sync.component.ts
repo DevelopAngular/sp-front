@@ -16,7 +16,7 @@ export class AccountsSyncComponent implements OnInit {
   constructor(private process: GettingStartedProgressService) { }
 
   ngOnInit() {
-    this.process.updateProgress('setup_accounts:end').subscribe();
+    // this.process.updateProgress('setup_accounts:end').subscribe();
   }
 
   openMail() {

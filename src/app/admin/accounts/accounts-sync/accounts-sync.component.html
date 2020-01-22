@@ -17,7 +17,10 @@
         <div class="content">
           <div class="header">
             <div class="title">Request G Suite Authorization Link</div>
-            <div class="subtitle">This link allows us to sync students, teachers, and admins by organizational units or by Google groups.</div>
+            <div class="subtitle">
+              Send us an email at support@smartpass.app with the subject "Requesting Onboarding Link." <br/>
+              This link allows us to sync students, teachers, and admins by organizational units or by Google groups.
+            </div>
           </div>
           <div class="buttons">
             <app-gradient-button
@@ -26,9 +29,10 @@
               [fontWeight]="'normal'"
               [width]="'176px'"
               [minHeight]="'50px'"
+              [rightIcon]="'./assets/Chevron Right (White).svg'"
               (buttonClick)="openMail()"
             >
-              Request Link
+              Send an email
             </app-gradient-button>
           </div>
         </div>
