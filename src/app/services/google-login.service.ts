@@ -181,7 +181,6 @@ export class GoogleLoginService {
    */
 
   public signIn() {
-    debugger
     const auth = this.GoogleOauth;
 
     if (!auth) {
