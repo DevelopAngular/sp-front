@@ -4,7 +4,7 @@ import {HttpService} from '../../services/http-service';
 import {Observable, of, Subject} from 'rxjs';
 import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
-import {filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SchoolSettingsComponent} from './school-settings/school-settings.component';
 
@@ -57,12 +57,18 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.currentSchool = this.http.currentSchoolSubject.value;
-    this.buildLaunchDay();
-    this.process$ = this.adminService.onboardProcessData$;
+    // this.currentSchool = this.http.currentSchoolSubject.value;
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
-      switchMap(() => this.process$),
+      switchMap(() => {
+        return this.http.currentSchoolSubject;
+      }),
+      tap((school: School) => {
+        this.currentSchool = school;
+        this.selectedDate = moment(this.currentSchool.launch_date);
+        this.buildLaunchDay();
+      }),
+      switchMap(() => this.adminService.onboardProcessData$),
       filter((res: any[]) => !!res.length),
       switchMap((res: any[]) => {
         const start = res.find(setting => setting.name === 'launch_day_prep:start');
@@ -84,7 +90,7 @@ export class MySchoolComponent implements OnInit, OnDestroy {
       .pipe(
         filter(res => !!res),
         switchMap(isOpen => {
-          return this.process$;
+          return this.adminService.onboardProcessData$;
         }),
         switchMap((res: any[]) => {
           const end = res.find(setting => setting.name === 'launch_day_prep:end');

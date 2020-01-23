@@ -72,7 +72,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       { title: 'Admins', param: '_profile_admin', banner: false,  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin' },
       { title: 'Teachers', param: '_profile_teacher', banner: false, leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher' },
       { title: 'Assistants', param: '_profile_assistant', banner: false, leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant' },
-      { title: 'Students', param: '_profile_student', banner: true, leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student' }
+      { title: 'Students', param: '_profile_student', banner: !this.http.getSchool().launch_date, leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student' }
   ];
 
   constructor(

@@ -10,7 +10,7 @@
     <div class="school-name">
       <app-input
         [width]="'360px'"
-        [input_value]="(school$ | async)?.name"
+        [input_value]="school.name"
         [input_label]="'School Name'"
         [formGroup]="form"
         [controlName]="form.get('schoolName')"
@@ -23,7 +23,7 @@
     </div>
     <div class="block">
       <div class="label">Launch day</div>
-      <div class="value">Not launched</div>
+      <div class="value">{{ school.launch_date }}</div>
     </div>
     <div class="block">
       <div class="label">Address</div>

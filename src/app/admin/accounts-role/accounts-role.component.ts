@@ -33,6 +33,7 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
+import {School} from '../../models/School';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -62,6 +63,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private limitCounter: number = 20;
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Subject<boolean> = new Subject<boolean>();
+  public currentSchool: School = this.http.getSchool();
 
   public syncingDots: string;
 
