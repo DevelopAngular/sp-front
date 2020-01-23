@@ -67,7 +67,7 @@
                 }) | resolveAsset" alt="Settings.svg">
                 <div class="student-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">
                   Students
-                  <app-disabled-chip *ngIf="!currentSchool.launch_date" [style.margin-left]="'21px'"></app-disabled-chip>
+                  <app-disabled-chip *ngIf="showDisabledChip" [style.margin-left]="'21px'"></app-disabled-chip>
                 </div>
               </div>
               <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">

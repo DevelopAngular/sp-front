@@ -25,6 +25,7 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 import { isNull } from 'lodash';
 import {LocationsService} from '../../services/locations.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-accounts',
@@ -61,6 +62,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   gSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
 
   querySubscriber$ = new Subject();
+  showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -69,10 +71,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
 
   public accountsButtons = [
-      { title: 'Admins', param: '_profile_admin', banner: false,  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin' },
-      { title: 'Teachers', param: '_profile_teacher', banner: false, leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher' },
-      { title: 'Assistants', param: '_profile_assistant', banner: false, leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant' },
-      { title: 'Students', param: '_profile_student', banner: !this.http.getSchool().launch_date, leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student' }
+      { title: 'Admins', param: '_profile_admin', banner: of(false),  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin' },
+      { title: 'Teachers', param: '_profile_teacher', banner: of(false), leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher' },
+      { title: 'Assistants', param: '_profile_assistant', banner: of(false), leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant' },
+      { title: 'Students', param: '_profile_student', banner: this.showDisabledBanner$, leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student' }
   ];
 
   constructor(
@@ -93,7 +95,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.querySubscriber$.pipe(
       mergeAll(),
       filter((res: any[]) => !!res.length),
@@ -109,6 +110,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
       tap(() => this.querySubscriber$.next(this.getUserList())),
+      tap(() => {
+        this.showDisabledBanner$.next(!this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day'));
+      }),
       switchMap(() => {
         return this.adminService.getCountAccountsRequest()
             .pipe(
@@ -122,7 +126,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
       }),
     )
     .subscribe((op: any) => {
-      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+      // this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+      this.splash = false;
     });
 
 

@@ -34,7 +34,6 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   ];
 
   buttonDown: boolean;
-  process$: Observable<any>;
 
   openSchoolPage: boolean;
   updateProgress$: Subject<boolean> = new Subject<boolean>();
@@ -57,7 +56,6 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.currentSchool = this.http.currentSchoolSubject.value;
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
       switchMap(() => {
@@ -65,7 +63,7 @@ export class MySchoolComponent implements OnInit, OnDestroy {
       }),
       tap((school: School) => {
         this.currentSchool = school;
-        this.selectedDate = moment(this.currentSchool.launch_date);
+        this.selectedDate = this.currentSchool.launch_date ? moment(this.currentSchool.launch_date) : null;
         this.buildLaunchDay();
       }),
       switchMap(() => this.adminService.onboardProcessData$),
@@ -75,7 +73,7 @@ export class MySchoolComponent implements OnInit, OnDestroy {
         const end = res.find(setting => setting.name === 'launch_day_prep:end');
         if (!start.done) {
           return this.adminService.updateOnboardProgress(start.name);
-        } else if (!!start.done && !!end.done) {
+        } else if (!!start.done && !!end.done && !!this.currentSchool.launch_date) {
           this.openSchoolPage = true;
           return of(true);
         }

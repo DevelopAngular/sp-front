@@ -22,9 +22,7 @@ import {StorageService} from '../../services/storage.service';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {User} from '../../models/User';
-import {DataService} from '../../services/data-service';
 import {Location} from '../../models/Location';
-import {DataTableComponent} from '../data-table/data-table.component';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
 import {LocationsService} from '../../services/locations.service';
@@ -34,6 +32,8 @@ import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
 import {School} from '../../models/School';
+
+import * as moment from 'moment';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -63,7 +63,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private limitCounter: number = 20;
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Subject<boolean> = new Subject<boolean>();
-  public currentSchool: School = this.http.getSchool();
 
   public syncingDots: string;
 
@@ -138,6 +137,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   isLoaded$: Observable<boolean>;
 
   tableHeaders;
+  showDisabledChip: boolean;
 
 
   constructor(
@@ -216,6 +216,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.role = null;
         this.selectedUsers = [];
         this.userList = [];
+      }),
+      tap(() => {
+        this.showDisabledChip = !this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day')
       }),
       switchMap(() => {
         return this.route.params.pipe(takeUntil(this.destroy$));
@@ -617,7 +620,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       bulkPermissions: null,
       gSuiteSettings: gSuite,
       role: this.role,
-      permissions: this.profilePermissions
+      permissions: this.profilePermissions,
+      disabledSignIn: this.showDisabledChip
     };
 
     if (this.selectedUsers.length && !bulk || this.role === '_all' && !gSuite)  {
@@ -640,22 +644,21 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed()
-      .pipe(
-        filter(userListReloadTrigger => !!userListReloadTrigger)
-      )
-      .subscribe(() => {
-        if (data.profile.id === +this.user.id) {
-          this.userService.getUserRequest()
-            .pipe(
-              filter(res => !!res),
-              map(raw => User.fromJSON(raw))
-            )
-            .subscribe((user) => {
-            this.userService.userData.next(user);
-          });
+      .subscribe((userListReloadTrigger) => {
+        if (userListReloadTrigger) {
+          if (data.profile.id === +this.user.id) {
+            this.userService.getUserRequest()
+              .pipe(
+                filter(res => !!res),
+                map(raw => User.fromJSON(raw))
+              )
+              .subscribe((user) => {
+                this.userService.userData.next(user);
+              });
 
+          }
+          this.selectedUsers = [];
         }
-        this.selectedUsers = [];
         this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
     });
   }
@@ -692,6 +695,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
         if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
+        const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
+
         const rawObj = {
           'Name': raw.display_name,
           'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
@@ -700,7 +705,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : '',
-          'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
+          'Sign-in status': raw.active && !disabledSignIn ? 'Enabled' : 'Disabled',
           'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
           'Group(s)': partOf.length ? partOf : [{title: 'No profile'}],
           'Permissions': (function() {
