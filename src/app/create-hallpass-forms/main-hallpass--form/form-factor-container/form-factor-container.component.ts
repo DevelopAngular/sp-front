@@ -34,12 +34,6 @@ export class FormFactorContainerComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
   ) { }
 
-  get requestTeachers() {
-    const to = this.FORM_STATE.data.direction.to;
-    return;
-  }
-
-
   ngOnInit() {
       const now = this.timeService.nowDate();
 
@@ -126,7 +120,8 @@ export class FormFactorContainerComponent implements OnInit {
               null,
               null,
               null,
-              null
+              null,
+              this.FORM_STATE.data.message
             );
             break;
         }

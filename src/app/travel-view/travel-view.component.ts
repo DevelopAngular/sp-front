@@ -57,7 +57,6 @@ export class TravelViewComponent implements OnInit {
   }
 
   ngOnInit() {
-    // console.log(this.destinationRoomName);
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
     (this.pass instanceof Invitation) ? 'invitation' :
       'request';
@@ -66,14 +65,11 @@ export class TravelViewComponent implements OnInit {
     this.http.currentSchool$.pipe(filter(res => !!res)).subscribe(res => {
       this.showRoomNumber = res.display_card_room;
     });
-      console.log(this.pass);
   }
 
   changeLocation(){
     if(!this.locationChangeOpen){
-      console.log('Opening from location in travel view');
       const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
-        // width: '750px',
         panelClass: 'form-dialog-container',
         maxWidth: '100vw',
         backdropClass: 'invis-backdrop',
@@ -95,7 +91,6 @@ export class TravelViewComponent implements OnInit {
       });
 
       locationDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
-        console.log('Emiting with: ', data);
         this.locationSelected.emit((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.pass['default_origin']);
       });
     }

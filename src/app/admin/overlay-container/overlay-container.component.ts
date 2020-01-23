@@ -367,12 +367,13 @@ export class OverlayContainerComponent implements OnInit {
       if (control.dirty) {
         return this.locationService.checkLocationName(control.value)
           .pipe(
+            filter(() => this.currentPage !== Pages.NewFolder && this.currentPage !== Pages.EditFolder),
             map((res: any) => {
               if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
                 return res.title_used ? { room_name: true } : null;
               } else {
                 let currentRoomName: string;
-                if (this.currentPage === Pages.EditRoomInFolder) {
+                if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewRoomInFolder) {
                   currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
                 } else {
                   currentRoomName = this.pinnable.location.title;
@@ -516,13 +517,15 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
+      const salt = ' ' + this.generateRandomString();
       if (!this.folderData.roomsInFolder.length) {
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
           icon: this.selectedIcon.inactive_icon,
-          category: this.folderData.folderName
+          category: this.folderData.folderName + salt
         };
+
         this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
           .subscribe(res => this.dialogRef.close());
       }
@@ -541,14 +544,14 @@ export class OverlayContainerComponent implements OnInit {
           let id;
           let data;
           if (isString(location.id)) {
-            location.category = this.folderData.folderName;
+            location.category = this.folderData.folderName + salt;
             location.teachers = location.teachers.map(t => t.id);
             return this.locationService.createLocationRequest(location)
               .pipe(filter(res => !!res));
           } else {
             id = location.id;
             data = location;
-            data.category = this.folderData.folderName;
+            data.category = this.folderData.folderName + salt;
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
@@ -569,7 +572,7 @@ export class OverlayContainerComponent implements OnInit {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
           icon: this.selectedIcon.inactive_icon,
-          category: this.folderData.folderName
+          category: this.folderData.folderName + salt
         };
         return this.currentPage === Pages.EditFolder
           ?
@@ -773,6 +776,15 @@ export class OverlayContainerComponent implements OnInit {
       travel_types: room.travelType,
       max_allowed_time: +room.timeLimit,
     };
+  }
+
+  generateRandomString() {
+    let random: string = '';
+    const characters = 'qwertyu';
+    for (let i = 0; i < characters.length; i++) {
+      random += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return random;
   }
 
   catchFile(evt: DragEvent) {

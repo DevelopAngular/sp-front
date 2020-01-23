@@ -20,12 +20,10 @@ import {DeviceDetection} from '../../../../device-detection.helper';
 export class RestrictedMessageComponent implements OnInit {
 
   @Input() formState: Navigation;
-
   @Input() gradient: string;
-
   @Input() teacher: User;
-
   @Input() date: string | boolean;
+  @Input() isStaff: boolean;
 
   @Output() resultMessage: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();

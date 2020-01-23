@@ -122,16 +122,7 @@
                                    (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
                 <span>Delete Account & Data</span>
               </app-gradient-button>
-              <app-gradient-button
-                      [style.margin-left]="'15px'"
-                      [size]="'medium'"
-                      [hoverColor]="'#00B476'"
-                      [cursor]="'pointer'"
-                      [leftIcon]="'./assets/Plus (White).svg'"
-                      (buttonClick)="addUser()"
-              >
-                Add
-              </app-gradient-button>
+
               <app-gradient-button *ngIf="openTable"
                                    [style.margin-left]="'15px'"
                                    [size]="'medium'"
@@ -144,6 +135,18 @@
                   <span>{{(!dataTableEditState.value ? 'Edit' : 'Done' )}}</span>
                 </div>
               </app-gradient-button>
+
+              <app-gradient-button
+                      [style.margin-left]="'15px'"
+                      [size]="'medium'"
+                      [hoverColor]="'#00B476'"
+                      [cursor]="'pointer'"
+                      [leftIcon]="'./assets/Plus (White).svg'"
+                      (buttonClick)="addUser()"
+              >
+                Add
+              </app-gradient-button>
+
               <div class="go-accounts" (click)="openTable = !openTable">
                 <img
                   draggable="false"

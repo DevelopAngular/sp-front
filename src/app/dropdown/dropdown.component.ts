@@ -1,14 +1,9 @@
 import {
   Component,
   OnInit,
-  Input,
-  Output,
-  EventEmitter,
   ElementRef,
   Inject,
-  HostListener,
   ViewChild,
-  OnChanges,
   Renderer2
 } from '@angular/core';
 import { Location } from '../models/Location';
@@ -16,7 +11,6 @@ import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { School } from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
-import {UserService} from '../services/user.service';
 import {RepresentedUser} from '../navbar/navbar.component';
 
 @Component({
@@ -80,39 +74,22 @@ export class DropdownComponent implements OnInit {
   changeColor(hovered, elem, pressed?: boolean) {
       if (hovered) {
         if (pressed) {
-          this.renderer.setStyle(elem.target, 'background-color', this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4');
+          this.renderer.setStyle(elem, 'background-color', this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4');
         } else {
-          this.renderer.setStyle(elem.target, 'background-color', this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#ECF1FF');
+          this.renderer.setStyle(elem, 'background-color', this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#ECF1FF');
         }
       } else {
-        this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
+        this.renderer.setStyle(elem, 'background-color', this.darkTheme.isEnabled$.value ? '#0F171E' : 'white');
       }
   }
 
   closeDropdown(location) {
-    // this.scrollPosition = this.scrollableArea()
     this.scrollPosition = this.options.scrollTop;
 
-    // debugger
     const dataAfterClosing = {
       selectedRoom: location,
       scrollPosition: this.scrollPosition
     };
     this._matDialogRef.close(dataAfterClosing);
-  }
-
-  partOfProfile(school) {
-
-    const roles = [];
-      if (school.my_roles.includes('_profile_admin')) {
-        roles.push('Administrator');
-      }
-      if (school.my_roles.includes('_profile_teacher')) {
-        roles.push('Teacher');
-      }
-      if (school.my_roles.includes('_profile_student')) {
-        roles.push('Student');
-      }
-    return roles.join(', ');
   }
 }

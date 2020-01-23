@@ -92,7 +92,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     // // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
 
-    private onboardUpdate$ = new Subject();
+    private isLoadingArranged$: Observable<boolean>;
 
     public loading$: Observable<boolean>;
     public loaded$: Observable<boolean>;
@@ -129,6 +129,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loading$ = this.hallPassService.isLoadingPinnables$;
     this.loaded$ = this.hallPassService.loadedPinnables$;
+    this.isLoadingArranged$ = this.hallPassService.isLoadingArranged$;
     this.httpService.globalReload$
       .pipe(
         map((res) => {
@@ -197,20 +198,27 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
-    if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
-      return this.updatePinnablesOrder().pipe(takeUntil(this.destroy$)).subscribe();
-    }
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   setNewArrangedOrder(newOrder) {
     this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
+    this.updatePinnablesOrder().subscribe();
   }
 
   private updatePinnablesOrder() {
-    return this.hallPassService
-      .createArrangedPinnable({order: this.arrangedOrderForUpdating.join(',')});
+    return this.isLoadingArranged$.pipe(
+      take(1),
+      switchMap(value => {
+        if (!value) {
+          return this.hallPassService
+            .createArrangedPinnableRequest({order: this.arrangedOrderForUpdating.join(',')});
+        } else {
+          return of(null);
+        }
+      })
+    );
   }
 
   openSettings() {
@@ -365,15 +373,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
      this.forceSelectedLocation = null;
     });
     overlayDialog.afterClosed()
-     .pipe(
-       switchMap(() => {
-         this.pendingSubject.next(true);
-         if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
-           return this.updatePinnablesOrder();
-         }
-         return of(null);
-       })
-     )
      .subscribe(res => {
        this.selectedPinnables = [];
        this.bulkSelect = false;

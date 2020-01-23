@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, Output, OnDestroy, EventEmitter, ViewChild, ElementRef} from '@angular/core';
-import {interval, BehaviorSubject, Subject} from 'rxjs';
+import {interval, BehaviorSubject, Subject, Observable} from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { TimeService } from '../services/time.service';
@@ -28,7 +28,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
 
-  @Output() tileSelected = new EventEmitter();
+  @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
 
   buttonDown = false;
   timeLeft = '--:--';
@@ -123,7 +123,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   onClick(event) {
-    this.tileSelected.emit(this.activePassTime$);
+    this.tileSelected.emit({time$: this.activePassTime$, pass: this.pass});
   }
 
   onHover(evt: Event, container: HTMLElement) {

@@ -1,6 +1,6 @@
 <div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('high', true)">
 
-    <div class="title" [ngStyle]="{'color': data.darkBackground ? '#FFFFFF' : '#1F195E'}">Settings</div>
+    <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
     <div class="settings-content">
       <div class="profile-switch">
         <div class="option"  *ngIf="isSwitchOption"
@@ -23,21 +23,15 @@
              (mouseenter)="hoveredTheme = true"
              (mouseleave)="hoveredTheme = false"
              appCrossPointerEventTarget
-             (pointerClickEvent)="pressedTheme = false; darkTheme.switchTheme(); data.darkBackground = !data.darkBackground;"
+             (pointerClickEvent)="dialogRef.close('appearance')"
              (pointerDownEvent)="pressedTheme = true"
              (pointerCancelEvent)="pressedTheme = false;"
         >
-
-          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Moon (White).svg' : getIcon('Moon', null, hoveredTheme) | resolveAsset">
+          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Glasses (White).svg' : getIcon('Glasses', null, hoveredTheme) | resolveAsset">
           <div class="option-title" [style.color]="!darkTheme.isEnabled$.value && hoveredTheme ? 'white' : getColor(null, hoveredTheme)">
             <div>
-              <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Mode</span>
+              <span>Appearance</span>
             </div>
-            <ng-template #dark>
-              <div>
-                <span>Dark Mode</span>
-              </div>
-            </ng-template>
           </div>
 
         </div>
@@ -46,8 +40,8 @@
       <div class="links">
         <div class="link"
              *ngFor="let setting of settings"
-             [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
-             (mouseenter)="onHover(setting.gradient)"
+             [style.background]="hovered && hoveredColor === setting.background ? setting.background : 'none'"
+             (mouseenter)="onHover(setting.background)"
              (mouseleave)="hovered = false"
              appCrossPointerEventTarget
              (pointerClickEvent)="hovered = false; handleAction(setting)"
