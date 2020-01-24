@@ -10,7 +10,8 @@ const onboardProcessInitialState: ProcessState = {
 
 const reducer = createReducer(
   onboardProcessInitialState,
-  on(processActions.getOnboardProcess, state => ({...state, loading: true, loaded: false})),
+  on(processActions.getOnboardProcess,
+    processActions.updateOnboardProcess, state => ({...state, loading: true, loaded: false})),
   on(processActions.getOnboardProcessSuccess,
     processActions.updateOnboardProcessSuccess,
     (state, {process}) => {

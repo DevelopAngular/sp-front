@@ -26,7 +26,8 @@
       .set-day-content {
         overflow: auto;
         display: flex;
-        height: calc(100vh - 214px);
+        height: calc(100vh - 124px);
+        max-width: 1106px;
         .left-block {
           margin-top: 65px;
           flex: 1 1;
@@ -50,9 +51,10 @@
           }
 
           .button {
-            flex: 1;
+            flex: 1 1 auto;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            margin-top: 81px;
             width: 357px;
           }
 
@@ -65,7 +67,7 @@
 
         .image {
           display: flex;
-          align-items: center;
+          align-items: flex-end;
           //position: relative;
         }
       }

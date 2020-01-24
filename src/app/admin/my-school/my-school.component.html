@@ -21,17 +21,18 @@
           </div>
         </div>
 
-        <div class="button" *ngIf="selectedDate">
+        <div class="button">
           <app-gradient-button
                   [cursor]="'pointer'"
                   [rightIcon]="'./assets/Chevron Right (White).svg'"
                   [size]="'medium'"
+                  [disabled]="!selectedDate"
                   (buttonClick)="saveRequest()"
           >
             Continue
           </app-gradient-button>
         </div>
-        <div class="footer-text" *ngIf="!selectedDate" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
+        <div class="footer-text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
           Don’t know your launch date yet? <span style="text-decoration: underline; cursor: pointer" (click)="openSchoolPage = true; updateProgress$.next(true);">Skip for now.</span>
           Launch dates can always be changed later.
         </div>
@@ -99,7 +100,9 @@
             <div class="start-day">
               <div class="start-day-content">
                 <div class="start-day-header">Launched!</div>
-                <div class="start-day-info" [style.width]="'200px'">Launch day: {{ launchDay.format('MMMM DD, YYYY') }}</div>
+                <div class="start-day-info" [style.width]="'200px'">Launch day: {{ launchDay.format('MMMM') }} <br/>
+                  {{ launchDay.format(' DD, YYYY') }}
+                </div>
               </div>
               <div class="image-launched">
                 <img [src]="'./assets/admin-images/Launched.svg' | resolveAsset" alt="My-School">

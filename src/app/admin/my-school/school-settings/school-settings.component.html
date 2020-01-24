@@ -1,8 +1,26 @@
 <div class="wrapper">
-  <div class="header">
-    <div class="title">
-      <img [src]="'./assets/Settings (Navy).svg' | resolveAsset" width="20" height="20" alt="Settings">
-      <div class="ds-dialog-title" style="margin-left: 12px">Settings</div>
+<!--  <div class="header">-->
+<!--    <div class="title">-->
+<!--      <img [src]="'./assets/Settings (Navy).svg' | resolveAsset" width="20" height="20" alt="Settings">-->
+<!--      <div class="ds-dialog-title" style="margin-left: 12px">Settings</div>-->
+<!--    </div>-->
+<!--  </div>-->
+  <div class="settings-header">
+    <img class="back-button" *ngIf="!changeForm" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
+    <div class="back-button" *ngIf="changeForm" (click)="close()">Cancel</div>
+    <img width="21" height="21" [src]="'./assets/Settings (Navy).svg' | resolveAsset" alt="Options">
+    <div class="ds-dialog-title" [style.margin-left]="'12px'">Settings</div>
+    <div class="save-button" *ngIf="changeForm && schoolForm.valid">
+      <app-gradient-button
+        [width]="'85px'"
+        [minHeight]="'30px'"
+        [fontSize]="'14px'"
+        [cursor]="'pointer'"
+        (buttonClick)="save()"
+      >
+        <span *ngIf="!showSpinner">Save</span>
+        <mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+      </app-gradient-button>
     </div>
   </div>
 
@@ -12,8 +30,8 @@
         [width]="'360px'"
         [input_value]="school.name"
         [input_label]="'School Name'"
-        [formGroup]="form"
-        [controlName]="form.get('schoolName')"
+        [formGroup]="schoolForm"
+        [controlName]="schoolForm.get('name')"
       ></app-input>
     </div>
 
@@ -25,9 +43,9 @@
       <div class="label">Launch day</div>
       <div class="value">{{ school.launch_date }}</div>
     </div>
-    <div class="block">
+    <div class="block" *ngIf="school.address">
       <div class="label">Address</div>
-      <div class="value">4004 Redwing Lane Audubon, PA 19403</div>
+      <div class="value">{{ school.address.address }}, <br> {{school.address.city ? school.address.city + ',' : '' }} {{ school.address.state }}</div>
     </div>
   </div>
 </div>

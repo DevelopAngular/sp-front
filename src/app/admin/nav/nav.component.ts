@@ -84,13 +84,6 @@ export class NavComponent implements OnInit {
           this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
         }
       });
-    // this.gsProgress.onboardProgress$
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe(res => {
-    //   if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
-    //     this.buttons.splice(0, 1);
-    //   }
-    // });
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );

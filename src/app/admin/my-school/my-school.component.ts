@@ -4,7 +4,7 @@ import {HttpService} from '../../services/http-service';
 import {Observable, of, Subject} from 'rxjs';
 import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
-import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, mapTo, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SchoolSettingsComponent} from './school-settings/school-settings.component';
 
@@ -51,7 +51,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
       public darkTheme: DarkThemeSwitch,
       private gsProgress: GettingStartedProgressService,
       private dialog: MatDialog
-  ) { }
+  ) {
+  }
 
   get isLaunched() {
     return this.selectedDate && moment().isSameOrAfter(this.selectedDate, 'day');
@@ -75,11 +76,11 @@ export class MySchoolComponent implements OnInit, OnDestroy {
         const end = res.find(setting => setting.name === 'launch_day_prep:end');
         if (!start.done) {
           return this.gsProgress.updateProgress(start.name);
-        } else if (!!start.done && !!end.done && !!this.currentSchool.launch_date) {
+        } else if (!!start.done && !!end.done) {
           this.openSchoolPage = true;
           return of(true);
         }
-        this.openSchoolPage = false;
+        // this.openSchoolPage = false;
         return of(null);
       })
     ).subscribe(() => {
@@ -95,7 +96,7 @@ export class MySchoolComponent implements OnInit, OnDestroy {
         switchMap((res: any[]) => {
           const end = res.find(setting => setting.name === 'launch_day_prep:end');
           if (!end.done) {
-            return this.adminService.updateOnboardProgress(end.name);
+            return this.gsProgress.updateProgress(end.name);
           } else {
             return of(null);
           }
@@ -117,8 +118,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   }
 
   buildLaunchDay() {
-    this.launchDay = moment(this.currentSchool.launch_date);
-    this.countLaunchDay = this.launchDay.diff(moment(), 'days');
+    this.launchDay = this.currentSchool.launch_date ? moment(this.currentSchool.launch_date) : null;
+    this.countLaunchDay = this.launchDay ? this.launchDay.diff(moment(), 'days') : null;
   }
 
   ngOnDestroy(): void {

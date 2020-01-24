@@ -22,7 +22,7 @@ import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters
 import {ColorProfile} from '../models/ColorProfile';
 import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
 import {getColorProfiles} from '../ngrx/color-profiles/actions';
-import {getLoadedProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
+import {getLoadedProcess, getLoadingProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
 import {updateSchool} from '../ngrx/schools/actions';
 import {getOnboardProcess, updateOnboardProcess} from '../ngrx/onboard-process/actions';
 
@@ -44,6 +44,7 @@ export class AdminService {
 
   onboardProcessData$ = this.store.select(getProcessData);
   loadedOnboardProcess$: Observable<boolean> = this.store.select(getLoadedProcess);
+  loadingOnboardProcess$: Observable<boolean> = this.store.select(getLoadingProcess);
 
   countAccounts$ = this.store.select(getCountAccountsResult);
   dashboardData$ = this.store.select(getDashboardDataResult);
