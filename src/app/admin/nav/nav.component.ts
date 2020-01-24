@@ -7,12 +7,13 @@ import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
-import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
+import {HttpService} from '../../services/http-service';
 
 declare const window;
 
@@ -31,7 +32,6 @@ export class NavComponent implements OnInit {
 
   // gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
-    {title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']},
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
     {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
     {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
@@ -57,7 +57,8 @@ export class NavComponent implements OnInit {
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
         public gsProgress: GettingStartedProgressService,
-        private shortcutsService: KeyboardShortcutsService
+        private shortcutsService: KeyboardShortcutsService,
+        private http: HttpService
     ) { }
 
   console = console;
@@ -70,13 +71,26 @@ export class NavComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.gsProgress.onboardProgress$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(res => {
-      if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
-        this.buttons.splice(0, 1);
-      }
-    });
+    this.http.globalReload$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() => {
+          return this.gsProgress.onboardProgress$;
+        }),
+      ).subscribe(res => {
+        if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
+          this.buttons.splice(0, 1);
+        } else if (res.progress < 100 && !this.buttons.find(button => button.title === 'Get Started')) {
+          this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
+        }
+      });
+    // this.gsProgress.onboardProgress$
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(res => {
+    //   if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
+    //     this.buttons.splice(0, 1);
+    //   }
+    // });
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
