@@ -10,6 +10,7 @@ import {SchoolSettingsComponent} from './school-settings/school-settings.compone
 
 import {bumpIn} from '../../animations';
 import * as moment from 'moment';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
 
 declare const window;
 
@@ -48,7 +49,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
       private http: HttpService,
       private adminService: AdminService,
       public darkTheme: DarkThemeSwitch,
-      private dialog: MatDialog,
+      private gsProgress: GettingStartedProgressService,
+      private dialog: MatDialog
   ) { }
 
   get isLaunched() {
@@ -72,7 +74,7 @@ export class MySchoolComponent implements OnInit, OnDestroy {
         const start = res.find(setting => setting.name === 'launch_day_prep:start');
         const end = res.find(setting => setting.name === 'launch_day_prep:end');
         if (!start.done) {
-          return this.adminService.updateOnboardProgress(start.name);
+          return this.gsProgress.updateProgress(start.name);
         } else if (!!start.done && !!end.done && !!this.currentSchool.launch_date) {
           this.openSchoolPage = true;
           return of(true);

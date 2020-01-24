@@ -43,23 +43,27 @@
         <img [src]="'./assets/SP Hero.svg' | resolveAsset" alt="SP Hero.svg">
       </div>
     </div>
-    <div class="tour-items ds-flex-start-center ds-mt-25">
-      <div class="ds-flex-start-start ds-flex-column ds-mr-10">
-
+    <div class="tour-items">
         <div class="card card__tour-item">
-          <div class="card_header">
-            <img class="tour-item_image" [src]="'./assets/Video (Red).svg' | resolveAsset" alt="">
-            <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Take a tour</span>
+          <div class="image">
+            <img class="tour-item_image" [src]="'./assets/Tour.svg' | resolveAsset" alt="">
           </div>
-          <div class="ds-mt-15 ds-mr-25 ds-pr-5">
-            Explore features with tutorial videos and just playing around. Who said that software products had to be complicated?
-          </div>
-          <div class="ds-mt-15 ds-mr-25 ds-pr-5">
+
+          <div class="card-container">
+            <div class="card_header">
+              <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Take a Tour</span>
+            </div>
+            <div class="ds-mt-10">
+              Explore features with tutorial videos and learn the best way how SmartPass can work for your school.
+            </div>
+            <div class="ds-mt-5">
             <span>
               <a style="color: #7f879d; margin-right: 5px; text-decoration: underline; cursor: pointer" (click)="goMeetting($event)" >Schedule a call with us to walk you through set-up</a>
             </span>
-            <img width="12" height="15" [src]="'./assets/External Link (Blue-Gray).svg' | resolveAsset" alt="">
+              <img width="12" height="15" [src]="'./assets/External Link (Blue-Gray).svg' | resolveAsset" alt="">
+            </div>
           </div>
+
           <div class="card_explore-item" (click)="markItem(['admin', 'gettingstarted', 'takeTour'], 'take_a_tour:start')">
             <div class="go">
               <app-icon-button
@@ -76,15 +80,23 @@
             </div>
           </div>
         </div>
+      <div class="bottom-block">
+
+        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Set-Up</div>
 
         <div class="card card__tour-item">
-          <div class="card_header">
-            <img class="tour-item_image" [src]="'./assets/Room (Purple).svg' | resolveAsset" alt="">
-            <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms Set-up</span>
+          <div class="image">
+            <img class="tour-item_image" [src]="OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value ? './assets/Room (Jade).svg' : './assets/Room (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
-          <div class="ds-mt-15 ds-mr-25 ds-pr-15">
-            Set up the rooms in your school with all of the options your heart desires.
+          <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value}">
+            <div class="card_header">
+              <span [style.color]="OnboardProgres?.setup_rooms?.start.value && OnboardProgres?.setup_rooms?.end.value ? '#00B476' : darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">Rooms</span>
+            </div>
+            <div class="ds-mt-10">
+              Add rooms with lots of customized options.
+            </div>
           </div>
+
           <div class="card_explore-item" (click)="markItem(['admin', 'passconfig'], 'setup_rooms:start')">
             <div class="go">
               <app-icon-button
@@ -100,17 +112,19 @@
           </div>
 
         </div>
-
-      </div>
-      <div class="ds-flex-start-start ds-flex-column  ds-ml-10">
         <div class="card card__tour-item">
-          <div class="card_header">
-            <img class="tour-item_image" [src]="'./assets/Users (Blue).svg' | resolveAsset" alt="">
-            <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Accounts Set-up</span>
+          <div class="image">
+            <img class="tour-item_image" [src]="OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value ? './assets/Users (Jade).svg' : './assets/Users (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
-          <div class="ds-mt-15 ds-mr-25 ds-pr-15">
-            Set up your admin, teacher, and student accounts with G Suite syncing.
+          <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value}">
+            <div class="card_header">
+              <span [style.color]="OnboardProgres?.setup_accounts?.start.value && OnboardProgres?.setup_accounts?.end.value ? '#00B476' : darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">Accounts</span>
+            </div>
+            <div class="ds-mt-10">
+              Add all user accounts with an integration sync.
+            </div>
           </div>
+
           <div class="card_explore-item" (click)="markItem(['admin', 'accounts'], 'setup_accounts:start')">
             <div class="go">
               <app-icon-button
@@ -127,13 +141,18 @@
 
         </div>
         <div class="card card__tour-item">
-          <div class="card_header">
-            <img class="tour-item_image" [src]="'./assets/Launch (Pink).svg' | resolveAsset" alt="">
-            <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Launch Day Prep</span>
+          <div class="image">
+            <img class="tour-item_image" [src]="OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value ? './assets/Launch (Jade).svg' : './assets/Launch (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
-          <div class="ds-mt-15 ds-mr-25 ds-pr-10">
-            Launch checklists, poster print-outs, community letters, and more.
+          <div class="card-container" [ngClass]="{'ds-jade': OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value}">
+            <div class="card_header">
+              <span [style.color]="OnboardProgres?.launch_day_prep?.start.value && OnboardProgres?.launch_day_prep?.end.value ? '#00B476' : darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">Prepare for Launch</span>
+            </div>
+            <div class="ds-mt-10">
+              Launch checklists, poster print-outs, and more.
+            </div>
           </div>
+
           <div class="card_explore-item" (click)="markItem(['admin', 'myschool'], 'launch_day_prep:start')">
             <div class="go">
               <app-icon-button
@@ -149,32 +168,8 @@
           </div>
 
         </div>
-
-<!--        <div class="card card__tour-item">-->
-<!--          <div class="card_header">-->
-<!--            <img class="tour-item_image" [src]="'./assets/Billing (Jade).svg' | resolveAsset" alt="">-->
-<!--            <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Billing</span>-->
-<!--          </div>-->
-<!--          <div class="ds-mt-15 ds-mr-25 ds-pr-10">-->
-<!--            Pay with any major credit card or with an ACH credit or domestic wire transfer.-->
-<!--          </div>-->
-<!--          <div class="card_explore-item" (click)="markItem(['admin', 'myschool'], 'launch_day_prep:start')">-->
-<!--            <div class="go">-->
-<!--              <app-icon-button-->
-<!--                      [size]="20"-->
-<!--                      [srcString]="'Chevron Right'"-->
-<!--                      [eventBubbling]="true"-->
-<!--              >-->
-<!--              </app-icon-button>-->
-<!--            </div>-->
-<!--            &lt;!&ndash;<div class="passed">&ndash;&gt;-->
-<!--              &lt;!&ndash;<img width="35" *ngIf="gsProgress.onboardProgress?.launch_day_prep?.start && gsProgress.onboardProgress?.launch_day_prep?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">&ndash;&gt;-->
-<!--            &lt;!&ndash;</div>&ndash;&gt;-->
-<!--          </div>-->
-
-<!--        </div>-->
-
       </div>
+
     </div>
   </div>
 </div>

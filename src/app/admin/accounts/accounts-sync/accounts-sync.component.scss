@@ -1,0 +1,84 @@
+@import "../../../../sp-colors";
+
+.accounts-setup {
+  width: 100%;
+  display: flex;
+  margin-top: 51px;
+  align-items: center;
+  flex-direction: column;
+  .g-header {
+    display: flex;
+    align-items: center;
+
+    .g-header-title {
+      margin-left: 46px;
+
+      .g-title {
+        font-size: 55px;
+        color: $navy;
+        font-weight: bold;
+      }
+      .g-subtitle {
+        font-size: 17px;
+        margin-top: 8px;
+        color: $blue-gray;
+      }
+    }
+  }
+
+  .g-content {
+    display: flex;
+    margin-top: 76px;
+    .left-side {
+      width: 450px;
+      margin-right: 81px;
+      margin-top: 25px;
+      .option {
+        display: flex;
+        &-number {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #D6DAE2;
+          color: #FFFFFF;
+          font-size: 20px;
+          margin-right: 17px;
+        }
+      }
+      .content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        .header {
+          .title {
+            font-size: 17px;
+            color: $navy;
+            font-weight: bold;
+          }
+          .subtitle {
+            font-size: 14px;
+            color: $blue-gray;
+            margin-top: 6px;
+          }
+        }
+
+        .buttons {
+          display: flex;
+          margin-top: 21px;
+          justify-content: center;
+          width: 100%;
+        }
+      }
+      .first-block {
+        margin-bottom: 56px;
+        display: flex;
+      }
+      .second-block{
+        display: flex;
+      }
+    }
+  }
+}

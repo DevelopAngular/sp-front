@@ -1,11 +1,13 @@
-import { Component, ElementRef, Inject, OnInit } from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { ColorProfile } from '../../models/ColorProfile';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../../build-info';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {takeUntil} from 'rxjs/operators';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
 
 @Component({
@@ -13,21 +15,22 @@ import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
 
     triggerElementRef: ElementRef;
 
-    isSwitchOption: boolean;
+  isSwitchOption: boolean;
+  showGetStarted: boolean;
+  hoveredProfile: boolean;
+  hoveredTheme: boolean;
+  pressedTheme: boolean;
+  hoveredSignout: boolean;
+  hovered: boolean;
+  hoveredColor: string;
+  version = 'Version 1.5';
+  currentRelease = RELEASE_NAME;
 
-    hoveredProfile: boolean;
-    hoveredTheme: boolean;
-    pressedTheme: boolean;
-    hoveredSignout: boolean;
-    hovered: boolean;
-    hoveredColor: string;
-    version = 'Version 1.5';
-    currentRelease = RELEASE_NAME;
-
+  destroy$ = new Subject();
 
     public settings = [
         // {
@@ -60,16 +63,17 @@ export class SettingsComponent implements OnInit {
         },
     ];
 
-    constructor(
-        private router: Router,
-        public dialogRef: MatDialogRef<SettingsComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        public darkTheme: DarkThemeSwitch,
-        private elemRef: ElementRef,
-        private pwaStorage: LocalStorage,
-        private dialog: MatDialog
-    ) {
-    }
+  constructor(
+    private router: Router,
+    public dialogRef: MatDialogRef<SettingsComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public darkTheme: DarkThemeSwitch,
+    private elemRef: ElementRef,
+    private pwaStorage: LocalStorage,
+    private dialog: MatDialog,
+    public gsProgress: GettingStartedProgressService,
+  ) {
+  }
 
   get _themeBackground() {
     return this.hoveredTheme
@@ -81,11 +85,16 @@ export class SettingsComponent implements OnInit {
             : 'transparent';
   }
 
-    ngOnInit() {
-      this.triggerElementRef = this.data['trigger'];
-        this.isSwitchOption = this.data['isSwitch'];
-        this.updateSettingsPosition();
-    }
+  ngOnInit() {
+    this.gsProgress.onboardProgress$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+        this.showGetStarted = res.progress === 100;
+      });
+    this.triggerElementRef = this.data['trigger'];
+    this.isSwitchOption = this.data['isSwitch'];
+    this.updateSettingsPosition();
+  }
 
   switchTheme() {
     this.pressedTheme = false;
@@ -95,6 +104,10 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
 
@@ -115,18 +128,11 @@ export class SettingsComponent implements OnInit {
   }
 
   handleAction(setting) {
-    // debugger
     if ( typeof setting.action === 'string' ) {
       this.dialogRef.close(setting.action);
     } else {
       setting.action();
     }
-  }
-
-  test(evt) {
-    console.log(evt);
-    // debugger
-    // this.dialogRef.close();
   }
 
   updateSettingsPosition() {
@@ -140,8 +146,8 @@ export class SettingsComponent implements OnInit {
   }
 
   onHover(color) {
-      this.hovered = true;
-      this.hoveredColor = color;
+    this.hovered = true;
+    this.hoveredColor = color;
   }
 
   signOut() {
