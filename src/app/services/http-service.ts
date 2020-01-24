@@ -450,6 +450,7 @@ export class HttpService {
     // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
+
         // console.log('performRequest');
         return predicate(ctx);
       }),

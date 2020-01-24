@@ -1,32 +1,41 @@
-<div class="wrapper" *ngIf="!demoLoginEnabled" >
+<!--<div class="wrapper" *ngIf="!demoLoginEnabled" >-->
 
-  <app-gradient-button
-    class="login-button"
-    [size]="'xl'"
-    [gradient]="'#FFFFFF, #FFFFFF'"
-    [cursor]="'pointer'"
-    [hoverColor]="'#F1F1F1'"
-    [minWidth]="'300px'"
-    [minHeight]="'100px'"
-    [fontSize]="'22px'"
-    (buttonClick)="initLogin()"
-    [style.margin]="'0 auto'"
-    [disabled]="!isLoaded"
-    [leftIcon]="showSpinner ? null : './assets/google/google_logo.svg'"
-    [textColor]="'#666666'"
-    [leftImageWidth]="'40px'"
-    [leftImageHeight]="'40px'"
-    >
-    <div *ngIf="!showSpinner">
-      <span>Sign in with Google</span>
-    </div>
-    <div style="width: 240px; display: flex; justify-content: center" *ngIf="showSpinner" class="loading-theme_white">
-      <mat-spinner [diameter]="35"></mat-spinner>
-    </div>
-  </app-gradient-button>
-</div>
+<!--  <app-gradient-button-->
+<!--    class="login-button"-->
+<!--    [size]="'xl'"-->
+<!--    [gradient]="'#FFFFFF, #FFFFFF'"-->
+<!--    [cursor]="'pointer'"-->
+<!--    [hoverColor]="'#F1F1F1'"-->
+<!--    [minWidth]="'300px'"-->
+<!--    [minHeight]="'100px'"-->
+<!--    [fontSize]="'22px'"-->
+<!--    (buttonClick)="initLogin()"-->
+<!--    [style.margin]="'0 auto'"-->
+<!--    [disabled]="!isLoaded"-->
+<!--    [leftIcon]="showSpinner ? null : './assets/google/google_logo.svg'"-->
+<!--    [textColor]="'#666666'"-->
+<!--    [leftImageWidth]="'40px'"-->
+<!--    [leftImageHeight]="'40px'"-->
+<!--    >-->
+<!--    <div *ngIf="!showSpinner">-->
+<!--      <span>Sign in with Google</span>-->
+<!--    </div>-->
+<!--    <div style="width: 240px; display: flex; justify-content: center" *ngIf="showSpinner" class="loading-theme_white">-->
+<!--      <mat-spinner [diameter]="35"></mat-spinner>-->
+<!--    </div>-->
+<!--  </app-gradient-button>-->
+<!--</div>-->
 
-<form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;">
+<!--<div class="ds-w-100 ds-flex-center-center">-->
+<!--  <app-gradient-button-->
+<!--    [textColor]="'#FFFFFF'"-->
+<!--    [buttonLink]="gg4lLink"-->
+<!--    [linkType]="'_self'"-->
+<!--    [text]="'GG4L'"-->
+<!--  >-->
+<!--  </app-gradient-button>-->
+<!--</div>-->
+<form class="login-form" onsubmit="return false;">
   <app-round-input
     [focused]="true"
     [minWidth]="'260px'"
@@ -38,7 +47,7 @@
     [style.margin-bottom]="'15px'"
     (ontextupdate)="updateDemoUsername($event)">
   </app-round-input>
-  <app-round-input *ngIf="!false"
+  <app-round-input  *ngIf="loginData.demoLoginEnabled"
     [minWidth]="'260px'"
     [width]="'260px'"
     [placeholder]="'Password'"
@@ -47,9 +56,10 @@
     [fieldIcon]="'./assets/Lock (Search-Gray).svg'"
     [html5type]="'password'"
     [style.margin-bottom]="'15px'"
-    (ontextupdate)="demoPassword = $event">
+    (ontextupdate)="loginData.demoPassword = $event">
   </app-round-input>
   <app-gradient-button
+    [disabled]="!loginData.demoUsername"
     [size]="'medium'"
     [style.margin-tom]="'15px'"
     [gradient]="'#FFFFFF, #FFFFFF'"
@@ -59,14 +69,14 @@
     [minHeight]="'30px'"
     [fontSize]="'14px'"
     [textColor]="'#04CD33'"
-    (buttonClick)="demoLogin()"
+    (buttonClick)="checkUserAuthType()"
     [style.width]="'90px'"
     [style.margin]="'0 auto'"
      #button
   >
     <div *ngIf="!showSpinner">
-      <span *ngIf="!true">Next</span>
-      <span *ngIf="!false">Sign in</span>
+      <span *ngIf="!loginData.demoLoginEnabled">Next</span>
+      <span *ngIf="loginData.demoLoginEnabled">Sign in</span>
     </div>
     <div  *ngIf="showSpinner" class="loading-theme_white">
       <mat-spinner [diameter]="25"></mat-spinner>
@@ -74,5 +84,6 @@
   </app-gradient-button>
 </form>
 
-<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Standard sign-in'}}</div></div>
+<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">Don’t have an account?</div></div>
+<!--<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Standard sign-in'}}</div></div>-->
 

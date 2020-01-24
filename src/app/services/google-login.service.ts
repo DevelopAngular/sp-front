@@ -1,12 +1,12 @@
 import { Injectable, NgZone } from '@angular/core';
-
-
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
+import {delay, filter, map, take, tap} from 'rxjs/operators';
 import { GoogleAuthService } from './google-auth.service';
 import { StorageService } from './storage.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../environments/environment';
 
 declare const window;
 
@@ -20,6 +20,13 @@ export interface DemoLogin {
   invalid?: boolean;
   type: 'demo-login';
 }
+
+export interface GG4LResponse {
+  code: string;
+}
+
+
+
 
 export function isDemoLogin(d: any): d is DemoLogin {
   return (<DemoLogin>d).type === 'demo-login';
@@ -42,8 +49,9 @@ export class GoogleLoginService {
     private googleAuth: GoogleAuthService,
     private _zone: NgZone,
     private storage: StorageService,
+    private http: HttpClient
   ) {
-
+    // this.configure();
     this.authToken$.subscribe(auth => {
       // window.waitForAppLoaded();
       if (auth) {
@@ -157,6 +165,10 @@ export class GoogleLoginService {
     this.storage.removeItem(STORAGE_KEY);
     this.storage.removeItem('refresh_token');
     this.logout();
+  }
+
+  simpleSignOn() {
+    window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
   }
 
   /**

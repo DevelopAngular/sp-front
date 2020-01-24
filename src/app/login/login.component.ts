@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
@@ -50,6 +50,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private loginService: GoogleLoginService,
     private storage: StorageService,
     private router: Router,
+    private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private titleService: Title,
     private metaService: Meta,
@@ -60,6 +61,16 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    // this.route.queryParams
+    //   .pipe(
+    //     filter(qp => !!qp && !!qp.code)
+    //   )
+    //   .subscribe((qp) => {
+    //     console.log(qp);
+    //
+    //   });
+
     this.titleService.setTitle('SmartPass Sign-in');
     this.metaService.addTag({
       name: 'description',

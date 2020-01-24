@@ -83,6 +83,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
 
     return fromEvent(window, 'message')
             .pipe(
+              filter((message: any) => message.origin === 'https://smartpass.app'),
               map((message: any) => {
 
                 console.log(message);
