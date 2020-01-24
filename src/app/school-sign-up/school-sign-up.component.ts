@@ -26,6 +26,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -119,7 +120,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private _zone: NgZone,
     private gsProgress: GettingStartedProgressService,
     private fb: FormBuilder,
-    private shortcutsService: KeyboardShortcutsService
+    private shortcutsService: KeyboardShortcutsService,
+    private darkSwitch: DarkThemeSwitch
   ) {
     this.jwt = new JwtHelperService();
     this.errorToast = this.httpService.errorToast$;
@@ -128,6 +130,9 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    if (this.darkSwitch.isEnabled$.value) {
+      this.darkSwitch.switchTheme();
+    }
 
     this.route.queryParams
       .pipe(

@@ -107,7 +107,6 @@ export class GoogleSigninComponent implements OnInit {
               break;
             case 'google':
               this.initLogin();
-
               break;
             // case 'gg4l':
               // this.loginSSO();
