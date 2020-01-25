@@ -128,7 +128,7 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   }
 
   selected(date) {
-    this.selectedDate = date;
+    this.selectedDate = date.startOf('day');
     this.updateLaunchDate$.next(true);
   }
 
