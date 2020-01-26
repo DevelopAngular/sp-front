@@ -103,7 +103,7 @@ export class GoogleSigninComponent implements OnInit {
           if (!auth_types.length) {
             this.loginService.showLoginError$.next(true);
           }
-          this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[0];
+          this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
           switch (this.loginData.authType) {
             case 'google':
               this.initLogin();
@@ -146,10 +146,10 @@ export class GoogleSigninComponent implements OnInit {
     this.loginService.showLoginError$.next(false);
     this.loginService
       .signIn()
-      .then(() => {
-        this.showSpinner = false;
-        // window.waitForAppLoaded();
-      })
+      // .then(() => {
+      //   this.showSpinner = false;
+      //   // window.waitForAppLoaded();
+      // })
       .catch((err) => {
         if (err && err.error !== 'popup_closed_by_user') {
           this.loginService.showLoginError$.next(true);
