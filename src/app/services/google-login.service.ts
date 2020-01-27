@@ -5,6 +5,7 @@ import { GoogleAuthService } from './google-auth.service';
 import { StorageService } from './storage.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
+import GoogleApi = gapi.auth2;
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 
@@ -63,7 +64,9 @@ export class GoogleLoginService {
       }
     });
 
-    this.googleAuth.getAuth().subscribe(auth => this.googleAuthTool.next(auth as any));
+    this.googleAuth.getAuth().subscribe(auth => {
+      this.googleAuthTool.next(auth as any);
+    });
 
     // this.googleAuthTool.subscribe(tool =>
     //   console.log('google auth tool: ', tool, 'user currently signed in: ', tool ? tool.isSignedIn.get() : null));
@@ -180,17 +183,15 @@ export class GoogleLoginService {
    * method.
    */
 
-  public signIn() {
-    const auth = this.GoogleOauth;
+  public signIn(userEmail?: string) {
+    const auth: any = this.GoogleOauth;
 
     if (!auth) {
       console.error('Auth not loaded!');
       return;
     }
 
-    // console.log('logging in...');
-
-    return auth.signIn().then(user => {
+    return auth.signIn({ login_hint: userEmail }).then(user => {
       this._zone.run(() => {
         console.log(user.getAuthResponse());
         this.updateAuth(user.getAuthResponse());

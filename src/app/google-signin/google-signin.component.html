@@ -35,19 +35,20 @@
 <!--  >-->
 <!--  </app-gradient-button>-->
 <!--</div>-->
-<form class="login-form" onsubmit="return false;">
+<form class="login-form">
   <app-round-input
     [focused]="true"
     [minWidth]="'260px'"
     [width]="'260px'"
     [placeholder]="'Email or Username'"
     [type]="'text'"
-    (keyup.enter)="demoLogin()"
     [fieldIcon]="'./assets/Username (Search-Gray).svg'"
     [style.margin-bottom]="'15px'"
     (ontextupdate)="updateDemoUsername($event)">
   </app-round-input>
-  <app-round-input  *ngIf="loginData.demoLoginEnabled"
+  <app-round-input
+    [style.opacity]="loginData.demoLoginEnabled ? 1 : 0"
+    [style.position]="loginData.demoLoginEnabled ? 'static' : 'absolute'"
     [minWidth]="'260px'"
     [width]="'260px'"
     [placeholder]="'Password'"
@@ -58,7 +59,7 @@
     [style.margin-bottom]="'15px'"
     (ontextupdate)="loginData.demoPassword = $event">
   </app-round-input>
-  <app-gradient-button
+  <app-gradient-button *ngIf="isGoogleLogin && loginData.demoUsername !== '' && !loginData.demoLoginEnabled"
     [disabled]="!loginData.demoUsername"
     [size]="'medium'"
     [style.margin-tom]="'15px'"
@@ -72,11 +73,32 @@
     (buttonClick)="checkUserAuthType()"
     [style.width]="'90px'"
     [style.margin]="'0 auto'"
-     #button
   >
     <div *ngIf="!showSpinner">
-      <span *ngIf="!loginData.demoLoginEnabled">Next</span>
-      <span *ngIf="loginData.demoLoginEnabled">Sign in</span>
+      <span>Next</span>
+    </div>
+    <div  *ngIf="showSpinner" class="loading-theme_white">
+      <mat-spinner [diameter]="25"></mat-spinner>
+    </div>
+  </app-gradient-button>
+  <app-gradient-button
+    *ngIf="loginData.demoLoginEnabled"
+   [disabled]="!loginData.demoUsername"
+   [size]="'medium'"
+   [style.margin-tom]="'15px'"
+   [gradient]="'#FFFFFF, #FFFFFF'"
+   [cursor]="'pointer'"
+   [hoverColor]="'#FFFFFF'"
+   [minWidth]="'90px'"
+   [minHeight]="'30px'"
+   [fontSize]="'14px'"
+   [textColor]="'#04CD33'"
+   (buttonClick)="demoLogin()"
+   [style.width]="'90px'"
+   [style.margin]="'0 auto'"
+  >
+    <div *ngIf="!showSpinner">
+      <span>Sign in</span>
     </div>
     <div  *ngIf="showSpinner" class="loading-theme_white">
       <mat-spinner [diameter]="25"></mat-spinner>

@@ -17,7 +17,7 @@ import {debounceTime, distinctUntilChanged, switchMap, takeUntil, tap} from 'rxj
 
 //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
 
-export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates';
+export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates' | 'email';
 
 @Component({
   selector: 'app-round-input',
