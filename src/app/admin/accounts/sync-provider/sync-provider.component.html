@@ -25,6 +25,7 @@
         [padding]="15"
         [width]="228"
         [height]="48"
+        (result)="selectProvider($event)"
       ></app-restriction-picker>
     </div>
   </ng-template>
@@ -34,7 +35,9 @@
     <app-gradient-button
       [size]="'small'"
       [rightIcon]="page === 1 ? './assets/Chevron Right (White).svg' : ''"
-      (buttonClick)="save()">
+      (buttonClick)="save()"
+      [disabled]="!selectedProvider && page === 2"
+    >
       {{ page === 1 ? 'Next' : 'Save' }}
     </app-gradient-button>
   </div>

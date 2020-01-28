@@ -2,8 +2,8 @@ import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
-import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {concatMap, filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable, of, Subject, zip} from 'rxjs';
+import {filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -26,8 +26,9 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import { isNull } from 'lodash';
 import {LocationsService} from '../../services/locations.service';
 import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
-import {GG4LSync} from '../../models/GG4LSync';
 import {SyncProviderComponent} from './sync-provider/sync-provider.component';
+import {GG4LSync} from '../../models/GG4LSync';
+import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 declare const window;
 
 @Component({
@@ -114,34 +115,38 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
-      concatMap(() => this.adminService.getGG4LSyncInfoRequest()
-        .pipe(
-          filter(res => !!res),
-          take(1),
-          map(res => {
-          this.gg4lSettingsData = res;
-          if (!res.is_enabled) {
-            this.openSyncProvider();
-          }
-          return res;
-        }))
-      ),
       tap(() => this.querySubscriber$.next(this.getUserList())),
       switchMap(() => {
         return this.adminService.getCountAccountsRequest()
             .pipe(
-              filter(list => !isNull(list.profile_count) && !isNull(list.student_count))
+              filter(list => !isNull(list.profile_count) && !isNull(list.student_count)),
+              take(1)
             );
         }
       ),
       switchMap((u_list: any) => {
         this.buildCountData(u_list);
-        return this.gsProgress.onboardProgress$;
+        return this.gsProgress.onboardProgress$.pipe(take(1));
       }),
+      switchMap((op: any) => {
+        this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+          return zip(
+            this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
+            this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
+            .pipe(
+              take(1),
+              map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
+                this.gg4lSettingsData = gg4l;
+                if (!!gg4l.last_successful_sync && !sync.login_provider && this.splash) {
+                  this.openSyncProvider();
+                }
+                return gg4l;
+              }));
+        }
+      ),
+      takeUntil(this.destroy$)
     )
-    .subscribe((op: any) => {
-      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-    });
+    .subscribe();
 
     this.userService.userData.pipe(
       takeUntil(this.destroy$))
@@ -250,7 +255,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       width: '425px',
       height: '425px',
       panelClass: 'accounts-profiles-dialog',
-      disableClose: true,
+      // disableClose: true,
       backdropClass: 'custom-bd',
       data: {gg4lInfo: this.gg4lSettingsData}
     });

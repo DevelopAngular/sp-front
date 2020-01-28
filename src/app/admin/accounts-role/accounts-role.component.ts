@@ -779,7 +779,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
     console.log(syncBody);
 
-    this.adminService.updateGSuiteOrgs(syncBody)
+    this.adminService.updateSpSyncing(syncBody)
       .pipe(
         switchMap(() => {
           return this.adminService.updateOnboardProgress('setup_accounts:end');

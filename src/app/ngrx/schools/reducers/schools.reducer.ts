@@ -11,7 +11,8 @@ export const schoolsInitialState: SchoolsState = {
   loading: false,
   loaded: false,
   currentSchoolId: null,
-  gg4lInfo: null
+  gg4lInfo: null,
+  syncInfo: null
 };
 
 const reducer = createReducer(
@@ -30,6 +31,16 @@ const reducer = createReducer(
   }),
   on(schoolsActions.updateSchoolsGG4LInfoSuccess, (state, {gg4lInfo}) => {
     return {...state};
+  }),
+  on(schoolsActions.getSchoolSyncInfoSuccess,
+    schoolsActions.updateSchoolSyncInfoSuccess,
+    (state, {syncInfo}) => {
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      syncInfo
+    };
   })
 );
 

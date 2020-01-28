@@ -7,6 +7,7 @@ import { School } from '../../../models/School';
 import { of } from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
 import {GG4LSync} from '../../../models/GG4LSync';
+import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 
 @Injectable()
 export class SchoolsEffects {
@@ -24,6 +25,39 @@ export class SchoolsEffects {
           );
       })
     );
+  });
+
+  getSchoolSyncInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.getSchoolSyncInfo),
+        concatMap((action: any) => {
+          return this.adminService.getSpSyncing()
+            .pipe(
+              map((syncInfo: SchoolSyncInfo) => {
+                return schoolsActions.getSchoolSyncInfoSuccess({syncInfo});
+              }),
+              catchError(error => of(schoolsActions.getSchoolSyncInfoFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateSchoolSyncInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateSchoolSyncInfo),
+        concatMap((action) => {
+          return this.adminService.updateSpSyncing(action.data)
+            .pipe(
+              map((syncInfo: any) => {
+                debugger;
+                return schoolsActions.updateSchoolSyncInfoSuccess({syncInfo});
+              }),
+              catchError(error => of(schoolsActions.updateSchoolSyncInfoFailure({errorMessage: error.message})))
+            );
+        })
+      );
   });
 
   getGG4LInfo$ = createEffect(() => {

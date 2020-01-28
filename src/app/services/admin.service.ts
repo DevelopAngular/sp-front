@@ -24,9 +24,10 @@ import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../
 import {getColorProfiles} from '../ngrx/color-profiles/actions';
 import {getLoadedProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
 import {getOnboardProcess} from '../ngrx/onboard-process/actions';
-import {getSchoolsGG4LInfo} from '../ngrx/schools/actions';
-import {getGG4LInfoData} from '../ngrx/schools/states';
+import {getSchoolsGG4LInfo, getSchoolSyncInfo, updateSchoolSyncInfo} from '../ngrx/schools/actions';
+import {getGG4LInfoData, getSchoolSyncInfoData} from '../ngrx/schools/states';
 import {GG4LSync} from '../models/GG4LSync';
+import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,7 @@ export class AdminService {
   countAccounts$ = this.store.select(getCountAccountsResult);
   dashboardData$ = this.store.select(getDashboardDataResult);
   gg4lInfo$: Observable<GG4LSync> = this.store.select(getGG4LInfoData);
+  schoolSyncInfo$: Observable<SchoolSyncInfo> = this.store.select(getSchoolSyncInfoData);
 
   constructor(private http: HttpService,  private store: Store<AppState>) {}
 
@@ -123,7 +125,23 @@ export class AdminService {
     return this.http.currentSchool$.pipe(
           switchMap(school => this.http.post(`v1/schools/${school.id}/syncing/manual_sync`)));
   }
-  updateGSuiteOrgs(body) {
+
+  getSpSyncingRequest() {
+    this.store.dispatch(getSchoolSyncInfo());
+    return this.schoolSyncInfo$;
+  }
+
+  updateSpSyncingRequest(data) {
+    this.store.dispatch(updateSchoolSyncInfo({data}));
+    return this.schoolSyncInfo$;
+  }
+
+  getSpSyncing() {
+    return this.http.currentSchool$.pipe(
+      switchMap(school => this.http.get(`v1/schools/${school.id}/syncing`)));
+  }
+
+  updateSpSyncing(body) {
     return this.http.currentSchool$.pipe(
           switchMap(school => this.http.patch(`v1/schools/${school.id}/syncing`, body)));
   }

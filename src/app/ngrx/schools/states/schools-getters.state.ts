@@ -17,4 +17,9 @@ export const getGG4LInfoData = createSelector(
   (state: SchoolsState) => state.gg4lInfo
 );
 
+export const getSchoolSyncInfoData = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.syncInfo
+);
+
 export const getSchoolsLength = schoolAdapter.getSelectors(getSchoolsState).selectTotal;

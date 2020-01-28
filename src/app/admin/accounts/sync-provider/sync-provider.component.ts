@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {GG4LSync} from '../../../models/GG4LSync';
+import {AdminService} from '../../../services/admin.service';
 
 declare const window;
 
@@ -13,20 +14,31 @@ export class SyncProviderComponent implements OnInit {
 
   page: number = 1;
   gg4lInfo: GG4LSync;
+  selectedProvider: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<SyncProviderComponent>
+    public dialogRef: MatDialogRef<SyncProviderComponent>,
+    private adminService: AdminService
   ) { }
 
   ngOnInit() {
     this.gg4lInfo = this.data['gg4lInfo'];
   }
 
+  selectProvider(provider) {
+    if (provider === 'Sign in with Google') {
+      this.selectedProvider = 'google-auth-token';
+    } else if (provider === 'GG4L \n Passport') {
+      this.selectedProvider = 'gg4l-sso';
+    }
+  }
+
   save() {
     if (this.page > 1) {
-      // Todo request to server
-      this.dialogRef.close();
+      this.adminService.updateSpSyncingRequest({ login_provider: this.selectedProvider }).subscribe(res => {
+        this.dialogRef.close();
+      });
     } else {
       this.page += 1;
     }

@@ -120,7 +120,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
 
   connectGSuite() {
     if (this.gSuiteConnected && this.usersForSyncSelected) {
-      this.adminService.updateGSuiteOrgs(this.syncBody)
+      this.adminService.updateSpSyncing(this.syncBody)
         .pipe(
           switchMap(() => {
             return this.adminService.updateOnboardProgress('setup_accounts:end');
