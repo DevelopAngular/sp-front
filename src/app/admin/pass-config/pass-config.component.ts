@@ -414,10 +414,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
           }),
           switchMap((res) => {
-            return this.hallPassService.createArrangedPinnable(res.map((v: any) => v.id).join(','));
+            return this.hallPassService.createArrangedPinnableRequest(res.map((v: any) => v.id).join(','));
           }),
           switchMap((res) => {
-            return this.hallPassService.getPinnables();
+            return this.hallPassService.getPinnablesRequest().pipe(filter((pin: Pinnable[]) => !!pin.length));
           }),
         )
         .subscribe((res: Pinnable[]) => {

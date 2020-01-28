@@ -513,7 +513,9 @@ export class OverlayContainerComponent implements OnInit {
                    location: loc.id,
                };
                return this.hallPassService.postPinnableRequest(pinnable);
-           })).subscribe(response => this.dialogRef.close());
+              })
+           )
+         .subscribe(response => this.dialogRef.close());
     }
 
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
@@ -579,14 +581,14 @@ export class OverlayContainerComponent implements OnInit {
           this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
           :
           zip(
-            this.hallPassService.getArrangedPinnables(),
+            this.hallPassService.pinnables$,
             this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
           ).pipe(
             take(1),
             switchMap((result: any[]) => {
               const arrengedSequence = result[0].map(item => item.id);
               arrengedSequence.push(result[1].id);
-              return this.hallPassService.createArrangedPinnable( { order: arrengedSequence.join(',')});
+              return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
             })
           );
       }),
