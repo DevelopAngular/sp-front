@@ -13,11 +13,12 @@
            [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
            [style.color]="selectedChoice === choice ? selectedColor : color"
            [style.font-size]="fontSize + 'px'"
-           [style.width]="width ? (width / choices.length + 'px') : 'auto'"
+           [style.width]="width ? (width / choices.length + 'px') : 'auto' "
            appCrossPointerEventTarget
            (pointerClickEvent)="onClick(choice)"
            [@Select]="{ value: selectedChoice === choice ? 'selected' : 'unselected', params: {background: backgroundColor}}"
       >
+
         <div [style.padding-left]="padding + 'px'" [style.padding-right]="padding + 'px'">
           <span style="line-height: 1">{{ choice }}</span>
         </div>

@@ -3,3 +3,4 @@ export interface ProcessState {
   loading: boolean;
   loaded: boolean;
 }
+

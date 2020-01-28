@@ -65,6 +65,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 import {OAuthModule} from 'angular-oauth2-oidc';
+import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 
 
 const appRoutes: Routes = [
@@ -76,6 +77,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'school_signup',
+    canActivate: [SchoolSignUpGuard],
     loadChildren: 'app/school-sign-up/school-sign-up.module#SchoolSignUpModule',
     data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: true, authFree: true},
   },

@@ -1,14 +1,9 @@
 import {
   Component,
   OnInit,
-  Input,
-  Output,
-  EventEmitter,
   ElementRef,
   Inject,
-  HostListener,
   ViewChild,
-  OnChanges,
   Renderer2
 } from '@angular/core';
 import { Location } from '../models/Location';
@@ -16,7 +11,6 @@ import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { School } from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
-import {UserService} from '../services/user.service';
 import {RepresentedUser} from '../navbar/navbar.component';
 
 @Component({

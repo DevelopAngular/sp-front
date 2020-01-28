@@ -10,7 +10,8 @@
         <img *ngIf="leftIcon" width="50" height="50" [src]="getCardIcon(leftIcon) | resolveAsset" alt="Icon">
         <div class="text">
             <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
-              {{ title }}  <span class="new" *ngIf="isNew">New</span>
+              {{ title }} <span class="new" *ngIf="isNew">New</span>
+              <app-disabled-chip [style.margin-left]="'10px'" *ngIf="isBanner"></app-disabled-chip>
             </div>
             <div class="subtitle" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
                 {{ subtitle }}

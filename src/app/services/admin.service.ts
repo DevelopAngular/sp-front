@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { HttpService } from './http-service';
 import { School } from '../models/School';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {GSuiteOrgs} from '../models/GSuiteOrgs';
 import {switchMap} from 'rxjs/operators';
 import {AppState} from '../ngrx/app-state/app-state';
@@ -22,9 +22,9 @@ import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters
 import {ColorProfile} from '../models/ColorProfile';
 import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
 import {getColorProfiles} from '../ngrx/color-profiles/actions';
-import {getLoadedProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
-import {getOnboardProcess} from '../ngrx/onboard-process/actions';
-import {getSchoolsGG4LInfo, getSchoolSyncInfo, updateSchoolSyncInfo} from '../ngrx/schools/actions';
+import {getLoadedProcess, getLoadingProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
+import {getOnboardProcess, updateOnboardProcess} from '../ngrx/onboard-process/actions';
+import {getSchoolsGG4LInfo, getSchoolSyncInfo, updateSchool, updateSchoolSyncInfo} from '../ngrx/schools/actions';
 import {getGG4LInfoData, getSchoolSyncInfoData} from '../ngrx/schools/states';
 import {GG4LSync} from '../models/GG4LSync';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
@@ -47,6 +47,7 @@ export class AdminService {
 
   onboardProcessData$ = this.store.select(getProcessData);
   loadedOnboardProcess$: Observable<boolean> = this.store.select(getLoadedProcess);
+  loadingOnboardProcess$: Observable<boolean> = this.store.select(getLoadingProcess);
 
   countAccounts$ = this.store.select(getCountAccountsResult);
   dashboardData$ = this.store.select(getDashboardDataResult);
@@ -146,6 +147,11 @@ export class AdminService {
           switchMap(school => this.http.patch(`v1/schools/${school.id}/syncing`, body)));
   }
 
+  updateOnboardProgressRequest(data) {
+    this.store.dispatch(updateOnboardProcess({data}));
+    return this.onboardProcessData$;
+  }
+
   updateOnboardProgress(name) {
     return this.http.put(`v1/admin/onboard_progress/${name}`);
   }
@@ -170,6 +176,11 @@ export class AdminService {
 
   getSchoolById(id: number): Observable<School> {
     return this.http.get(`v1/schools/${id}`);
+  }
+
+  updateSchoolSettingsRequest(school, fieldsToUpdate) {
+    this.store.dispatch(updateSchool({school, fields: fieldsToUpdate}));
+    return this.http.currentUpdateSchool$;
   }
 
   updateSchoolSettings(id, settings) {

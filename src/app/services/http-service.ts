@@ -21,7 +21,7 @@ import {StorageService} from './storage.service';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
+import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
 import { getSchools } from '../ngrx/schools/actions';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
@@ -145,6 +145,7 @@ export class HttpService {
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
   public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
+  public currentUpdateSchool$: Observable<School> = this.store.select(getCurrentSchool);
   public schoolsLength$: Observable<number> = this.store.select(getSchoolsLength);
 
   public currentSchoolSubject = new BehaviorSubject<School>(null);
@@ -370,10 +371,6 @@ export class HttpService {
     }));
   }
 
-  gg4l(code: string) {
-    return this.loginGoogleAuth(code);
-  }
-
   private loginGoogleAuth(googleToken: string): Observable<AuthContext> {
     // console.log('loginGoogleAuth()');
 
@@ -453,6 +450,7 @@ export class HttpService {
     // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
+
         // console.log('performRequest');
         return predicate(ctx);
       }),

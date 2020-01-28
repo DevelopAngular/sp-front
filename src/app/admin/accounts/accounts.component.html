@@ -41,7 +41,6 @@
                                    (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
                 <span>Delete Account & Data</span>
               </app-gradient-button>
-
               <app-gradient-button
                 [size]="'medium'"
                 [style.margin-left]="'15px'"
@@ -52,17 +51,6 @@
                 (buttonClick)="openSyncSettings()"
               >
                 Settings
-              </app-gradient-button>
-
-              <app-gradient-button
-                      [style.margin-left]="'15px'"
-                      [size]="'medium'"
-                      [hoverColor]="'#00B476'"
-                      [cursor]="'pointer'"
-                      [leftIcon]="'./assets/Plus (White).svg'"
-                      (buttonClick)="addUser()"
-              >
-                Add
               </app-gradient-button>
               <app-gradient-button *ngIf="openTable"
                                    [style.margin-left]="'15px'"
@@ -76,6 +64,18 @@
                   <span>{{(!dataTableEditState.value ? 'Edit' : 'Done' )}}</span>
                 </div>
               </app-gradient-button>
+
+              <app-gradient-button
+                      [style.margin-left]="'15px'"
+                      [size]="'medium'"
+                      [hoverColor]="'#00B476'"
+                      [cursor]="'pointer'"
+                      [leftIcon]="'./assets/Plus (White).svg'"
+                      (buttonClick)="addUser()"
+              >
+                Add
+              </app-gradient-button>
+
               <div class="go-accounts" (click)="openTable = !openTable">
                 <img
                   draggable="false"
@@ -118,6 +118,7 @@
                     [leftIcon]="button.leftIcon"
                     [subtitle]="getCountRole(button.role) + (getCountRole(button.role) > 1 || getCountRole(button.role) === 0 ? ' users' : ' user')"
                     [subtitleIcon]="button.subIcon"
+                    [isBanner]="button.banner | async"
                     (onClick)="router.navigate(['/admin/accounts', button.param])"
             >
             </app-admin-card-button>

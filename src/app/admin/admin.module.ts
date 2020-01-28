@@ -54,7 +54,7 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
     BulkEditRoomsComponent,
     BulkEditRoomsInFolderComponent,
     ImportRoomsComponent,
-    OverlayContainerComponent,
+    OverlayContainerComponent
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,

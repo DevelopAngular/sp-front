@@ -9,6 +9,12 @@ export const getSchools = createAction(`[${COMPONENT}] Get Schools`);
 export const getSchoolsSuccess = createAction(`[${COMPONENT}] Get Schools Success`, props<{schools: School[]}>());
 export const getSchoolsFailure = createAction(`[${COMPONENT}] Get Schools Failure`, props<{errorMessage: string}>());
 
+export const updateSchool = createAction(`[${COMPONENT}] Update School`, props<{school: School, fields: any}>());
+export const updateSchoolSuccess = createAction(`[${COMPONENT}] Update School Success`, props<{school: School}>());
+export const updateSchoolFailure = createAction(`[${COMPONENT}] Update School Failure`, props<{errorMessage: string}>());
+
+export const errorToastSuccess = createAction(`[${COMPONENT}] Error school Toast`);
+
 export const getSchoolSyncInfo = createAction(`[${COMPONENT}] Get School Sync info`);
 export const getSchoolSyncInfoSuccess = createAction(`[${COMPONENT}] Get School Sync info Success`, props<{syncInfo: SchoolSyncInfo}>());
 export const getSchoolSyncInfoFailure = createAction(`[${COMPONENT}] Get School Sync info Failure`, props<{errorMessage: string}>());

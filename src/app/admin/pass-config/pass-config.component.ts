@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
 import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
@@ -19,6 +19,7 @@ import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {ScrollPositionService} from '../../scroll-position.service';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -113,9 +114,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       private router: Router,
       public darkTheme: DarkThemeSwitch,
       private adminService: AdminService,
-      private scrollPosition: ScrollPositionService
-
-
+      private scrollPosition: ScrollPositionService,
+      private gsProgress: GettingStartedProgressService
   ) { }
 
   get headerButtonText() {
@@ -138,7 +138,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         }),
         switchMap((res) => {
           return combineLatest(
-            this.adminService.getOnboardProcessRequest().pipe(filter((r: any[]) => !!r.length)),
+            this.adminService.onboardProcessData$.pipe(filter((r: any[]) => !!r.length)),
             this.pinnables$
           ).pipe(
               filter(() => navigator.onLine)
@@ -165,7 +165,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       switchMap((action) => {
         this.onboardLoaded = true;
         if (action) {
-          return this.adminService.updateOnboardProgress(action);
+          return this.gsProgress.updateProgress(action);
         } else {
           return of(null);
         }
@@ -405,21 +405,27 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           }));
       });
 
-      zip(...requests$)
+      forkJoin(requests$)
         .pipe(
-          take(1),
+          // take(1),
           filter(() => navigator.onLine),
           takeUntil(this.destroy$),
           switchMap((res) => {
-            return this.adminService.updateOnboardProgress('setup_rooms:end').pipe(mapTo(res));
-          })
+            return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
+          }),
+          switchMap((res) => {
+            return this.hallPassService.createArrangedPinnable(res.map((v: any) => v.id).join(','));
+          }),
+          switchMap((res) => {
+            return this.hallPassService.getPinnables();
+          }),
         )
         .subscribe((res: Pinnable[]) => {
           this.pinnables.push(...res);
           this.showRooms = true;
         });
       } else {
-        this.adminService.updateOnboardProgress('setup_rooms:end').pipe(filter(() => navigator.onLine))
+        this.gsProgress.updateProgress('setup_rooms:end').pipe(filter(() => navigator.onLine))
           .subscribe(() => {
             this.showRooms = true;
           });

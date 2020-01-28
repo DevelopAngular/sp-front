@@ -6,17 +6,14 @@ import {
   debounceTime,
   delay,
   distinctUntilChanged,
-  filter,
   map,
-  mapTo,
   pluck,
   switchMap,
   take,
   takeUntil,
   tap
 } from 'rxjs/operators';
-import {BehaviorSubject, from, Observable, of, Subject, throwError} from 'rxjs';
-import {LoginMethod} from '../google-signin/google-signin.component';
+import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
@@ -29,6 +26,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -122,7 +120,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private _zone: NgZone,
     private gsProgress: GettingStartedProgressService,
     private fb: FormBuilder,
-    private shortcutsService: KeyboardShortcutsService
+    private shortcutsService: KeyboardShortcutsService,
+    private darkSwitch: DarkThemeSwitch
   ) {
     this.jwt = new JwtHelperService();
     this.errorToast = this.httpService.errorToast$;
@@ -131,6 +130,9 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    if (this.darkSwitch.isEnabled$.value) {
+      this.darkSwitch.switchTheme();
+    }
 
     this.route.queryParams
       .pipe(
@@ -229,9 +231,9 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   }
   createSchool() {
+    window.waitForAppLoaded(true);
     this.pending.next(true);
     this.gsProgress.updateProgress('create_school:start');
-
           this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
             // user_token: auth.id_token,
             // google_place_id: this.school.place_id,
@@ -244,16 +246,18 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             // tap(() => this.gsProgress.updateProgress('create_school:end')),
             map((res: any) => {
               this._zone.run(() => {
+                console.log('Sign in start ===>>>>>');
                 this.loginService.signInDemoMode(this.schoolForm.value.email, this.schoolForm.value.password);
                 this.storage.setItem('last_school_id', res.school.id);
               });
               return true;
             }),
-            delay(1000),
             switchMap(() => {
               return this.loginService.isAuthenticated$;
             }),
+            delay(500),
             catchError((err) => {
+              console.log('Error ======>>>>>');
               if (err && err.error !== 'popup_closed_by_user') {
                 this.loginService.showLoginError$.next(true);
               }
@@ -262,6 +266,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             })
           )
           .subscribe((res) => {
+            console.log('Sign in end ===>>>>>', res);
             this.pending.next(false);
             if (res) {
               this._zone.run(() => {
@@ -282,7 +287,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       this.pending.next(true);
       this.http.get(constructUrl(environment.schoolOnboardApiRoot + '/onboard/schools/check_school', {place_id: school.place_id}), {
         headers: {
-          'Authorization': 'Bearer ' + this.AuthToken // it's temporary
+          'Authorization': 'Bearer ' + this.AuthToken
         }})
         .pipe(
           catchError((err) => {
@@ -313,6 +318,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         this.enterSchoolName = false;
       }
     }
+  }
+
+  openLink(link) {
+    window.open(link);
   }
 
 }

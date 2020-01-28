@@ -31,7 +31,7 @@ export class RoomsSetUpComponent implements OnInit {
     this.mockPinnables = [
         {
           title: 'Bathroom',
-          icon: 'https://png.icons8.com/ios-glyphs/toilet/FFFFFF/50',
+          icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/toilet/FFFFFF.png',
           gradient: '#5C4AE3,#336DE4',
           color_profile_id: 12,
           room: 'BR',
@@ -64,7 +64,7 @@ export class RoomsSetUpComponent implements OnInit {
         },
         {
           title: 'Guidance',
-          icon: 'https://png.icons8.com/ios-glyphs/counselor/FFFFFF/50',
+          icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/counselor/FFFFFF.png',
           gradient: '#E38314,#EAB219',
           color_profile_id: 3,
           room: '102',
@@ -75,7 +75,7 @@ export class RoomsSetUpComponent implements OnInit {
         },
         {
             title: 'Main Office',
-            icon: 'https://img.icons8.com/ios-glyphs/50/FFFFFF/front-desk.png',
+            icon: 'https://cdn.smartpass.app/icons8/front-desk/FFFFFF',
             gradient: '#F52B4F,#F37426',
             color_profile_id: 2,
             room: '103',
@@ -86,7 +86,7 @@ export class RoomsSetUpComponent implements OnInit {
         },
         {
             title: 'Library',
-            icon: 'https://png.icons8.com/ios-glyphs/library/FFFFFF/50',
+            icon: 'https://storage.googleapis.com/sp-img-cdn/icons8-ios/library/FFFFFF.png',
             gradient: '#13BF9E,#00D99B',
             color_profile_id: 7,
             room: '104',

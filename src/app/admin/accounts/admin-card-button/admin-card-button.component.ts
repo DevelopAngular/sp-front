@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {DarkThemeSwitch} from '../../../dark-theme-switch';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { DarkThemeSwitch } from '../../../dark-theme-switch';
 
 @Component({
   selector: 'app-admin-card-button',
@@ -14,6 +14,7 @@ export class AdminCardButtonComponent implements OnInit {
   @Input() subtitleIcon: string;
   @Input() integrations: boolean;
   @Input() isNew: boolean;
+  @Input() isBanner: boolean;
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 

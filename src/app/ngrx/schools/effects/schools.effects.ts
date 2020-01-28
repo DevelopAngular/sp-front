@@ -21,10 +21,46 @@ export class SchoolsEffects {
             map((schools: School[]) => {
               return schoolsActions.getSchoolsSuccess({schools});
             }),
-            catchError(error => of(schoolsActions.getSchoolsFailure({errorMessage: error.message})))
+            catchError(error => {
+              return of(schoolsActions.getSchoolsFailure({errorMessage: error.message}));
+            })
           );
       })
     );
+  });
+
+  patchSchool$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateSchool),
+        concatMap((action: any) => {
+          return this.adminService.updateSchoolSettings(action.school.id, action.fields)
+            .pipe(
+              map((school: any) => {
+                const updatedSchool = {
+                  ...action.school,
+                  ...action.fields
+                };
+                return schoolsActions.updateSchoolSuccess({school: updatedSchool});
+              }),
+              catchError(error => of(schoolsActions.updateSchoolFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  showErrorToast$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.getSchoolsFailure, schoolsActions.getSchoolsFailure),
+        map((action: any) => {
+          this.http.errorToast$.next({
+            header: 'Oops! Sign in error',
+            message: 'School has not been yet launched'
+          });
+          return schoolsActions.errorToastSuccess();
+        })
+      );
   });
 
   getSchoolSyncInfo$ = createEffect(() => {
@@ -51,7 +87,6 @@ export class SchoolsEffects {
           return this.adminService.updateSpSyncing(action.data)
             .pipe(
               map((syncInfo: any) => {
-                debugger;
                 return schoolsActions.updateSchoolSyncInfoSuccess({syncInfo});
               }),
               catchError(error => of(schoolsActions.updateSchoolSyncInfoFailure({errorMessage: error.message})))
