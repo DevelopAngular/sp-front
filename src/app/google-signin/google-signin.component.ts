@@ -87,7 +87,7 @@ export class GoogleSigninComponent implements OnInit {
         return this.http.get<any>(`https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`);
       })
     ).subscribe(({auth_types}) => {
-      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
+      this.loginData.authType = auth_types[auth_types.length - 1];
       switch (this.loginData.authType) {
         case 'google':
           this.loginData.demoLoginEnabled = false;
@@ -96,10 +96,9 @@ export class GoogleSigninComponent implements OnInit {
         case 'password':
           this.loginData.demoLoginEnabled = true;
           break;
-        // case 'gg4l':
-        //   this.loginSSO();
-        //   this.isGoogleLogin = true;
-        //   break;
+        case 'gg4l':
+          this.isGoogleLogin = true;
+          break;
         default:
           this.isGoogleLogin = false;
           this.loginData.demoLoginEnabled = false;
@@ -129,7 +128,12 @@ export class GoogleSigninComponent implements OnInit {
   }
 
   checkUserAuthType() {
-    this.initLogin();
+    if (this.loginData.authType === 'google') {
+      this.initLogin();
+    } else if (this.loginData.authType === 'gg4l') {
+      this.loginSSO();
+    }
+
     // if (!this.loginData.demoLoginEnabled) {
       // this.http.get<any>(`https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(this.loginData.demoUsername)}`)
       //   .subscribe(({auth_types}) => {
