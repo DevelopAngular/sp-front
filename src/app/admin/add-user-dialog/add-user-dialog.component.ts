@@ -12,6 +12,7 @@ import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, 
 import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -37,8 +38,7 @@ export class AddUserDialogComponent implements OnInit {
       });
     }
   }
-  public accountTypes: string[] = ['GG4L', 'Standard'];
-  public typeChoosen: string = this.accountTypes[0];
+  public typeChoosen: string;
   public newAlternativeAccount: FormGroup;
   public selectedUsers: User[] = [];
   public permissionsForm: FormGroup;
@@ -49,6 +49,8 @@ export class AddUserDialogComponent implements OnInit {
     behalfOf: User[]
   };
   public school: School;
+  public syncInfo: SchoolSyncInfo;
+  public accountTypes: string[];
   public state: string;
   public accounts = [
       { title: 'Admin', icon: 'Admin', selected: false, role: '_profile_admin', disabled: false},
@@ -70,6 +72,9 @@ export class AddUserDialogComponent implements OnInit {
     private router: Router
 
   ) {
+    this.syncInfo = this.data['syncInfo'];
+    this.accountTypes = this.syncInfo.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G_Suite', 'Standard'];
+    this.typeChoosen = this.accountTypes[0];
     if (this.data.role === '_profile_assistant' || this.data.role === '_all') {
       this.assistantLike = {
         user: null,

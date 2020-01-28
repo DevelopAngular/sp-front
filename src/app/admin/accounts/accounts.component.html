@@ -13,7 +13,7 @@
           <div class="header-content">
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
-              <div class="count">
+              <div class="count" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">
                 <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(countAccounts$ | async)}} accounts</div>
               </div>
             </div>
@@ -92,7 +92,7 @@
 
     <div class="accounts-content" *ngIf="!openTable">
       <div class="content-wrapper">
-        <div class="top-buttons">
+        <div class="top-buttons" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">
           <app-admin-card-button
                   [leftIcon]="'./assets/google/google_logo.svg'"
                   [title]="'G Suite'"

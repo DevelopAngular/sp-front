@@ -2,7 +2,7 @@ import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
-import {BehaviorSubject, combineLatest, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
@@ -59,7 +59,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   openTable: boolean;
 
-  gg4lSettingsData: any;
+  gg4lSettingsData: GG4LSync;
+  schoolSyncInfoData: SchoolSyncInfo;
+  isOpenModal: boolean;
 
   userList;
   selectedUsers = [];
@@ -70,8 +72,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   querySubscriber$ = new Subject();
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
-  currentSchool = this.http.getSchool();
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -126,7 +126,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
         return this.adminService.getCountAccountsRequest()
             .pipe(
               filter(list => !isNull(list.profile_count) && !isNull(list.student_count)),
-              take(1)
             );
         }
       ),
@@ -135,14 +134,15 @@ export class AccountsComponent implements OnInit, OnDestroy {
         return this.gsProgress.onboardProgress$.pipe(take(1));
       }),
       switchMap((op: any) => {
-        this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
           return zip(
             this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
             this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
             .pipe(
-              take(1),
               map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
+                this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+                // this.splash = false;
                 this.gg4lSettingsData = gg4l;
+                this.schoolSyncInfoData = sync;
                 if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
                   this.openSyncProvider();
                 }
@@ -244,6 +244,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       data: {
         role: '_all',
+        syncInfo: this.schoolSyncInfoData
       }
     });
   }
@@ -257,14 +258,21 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   openSyncProvider() {
-    const SP = this.matDialog.open(SyncProviderComponent, {
-      width: '425px',
-      height: '425px',
-      panelClass: 'accounts-profiles-dialog',
-      // disableClose: true,
-      backdropClass: 'custom-bd',
-      data: {gg4lInfo: this.gg4lSettingsData}
-    });
+    if (!this.isOpenModal) {
+      this.isOpenModal = true;
+      const SP = this.matDialog.open(SyncProviderComponent, {
+        width: '425px',
+        height: '425px',
+        panelClass: 'accounts-profiles-dialog',
+        disableClose: true,
+        backdropClass: 'custom-bd',
+        data: {gg4lInfo: this.gg4lSettingsData}
+      });
+
+      SP.afterClosed().subscribe(res => {
+        this.isOpenModal = false;
+      });
+    }
   }
 
   getCountRole(role: string) {
