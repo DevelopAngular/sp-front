@@ -143,7 +143,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
               take(1),
               map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
                 this.gg4lSettingsData = gg4l;
-                if (!!gg4l.last_successful_sync && !sync.login_provider && this.splash) {
+                if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
                   this.openSyncProvider();
                 }
                 return gg4l;
