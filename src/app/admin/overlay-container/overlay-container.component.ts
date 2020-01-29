@@ -539,7 +539,7 @@ export class OverlayContainerComponent implements OnInit {
         forkJoin(deleteRequest$).subscribe();
       }
       let locationsToDb$;
-      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || room.category !== this.folderData.folderName);
+      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || !room.category);
 
       if (touchedRooms.length) {
         locationsToDb$ = touchedRooms.map(location => {
@@ -625,7 +625,6 @@ export class OverlayContainerComponent implements OnInit {
               filter(res => !!res),
               take(1),
               switchMap((loc: Location) => {
-                // debugger;
                 const pinnable = {
                     title: this.roomData.roomName,
                     color_profile: this.color_profile.id,
@@ -634,7 +633,6 @@ export class OverlayContainerComponent implements OnInit {
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
             })).subscribe(response => {
-              // debugger;
               this.dialogRef.close();
         });
     }
@@ -740,7 +738,9 @@ export class OverlayContainerComponent implements OnInit {
 
   deleteRoomInFolder(room) {
     this.oldFolderData = cloneDeep(this.folderData);
-    this.folderData.roomsToDelete.push(room);
+    if (!isString(room.id)) {
+      this.folderData.roomsToDelete.push(room);
+    }
     this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
     this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
