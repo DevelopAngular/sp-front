@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 
 import { merge, Subject } from 'rxjs';
-import {debounceTime} from 'rxjs/operators';
+import {debounceTime, pluck, takeUntil} from 'rxjs/operators';
 
 import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
@@ -14,13 +14,14 @@ import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 
 import { isNull, isEqual, cloneDeep, omit } from 'lodash';
+import {KeyboardShortcutsService} from '../../../services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss']
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
 
@@ -48,6 +49,8 @@ export class RoomComponent implements OnInit {
 
   currentPage: number;
   tooltipText;
+  inputFocusNumber: number = 1;
+  forceFocus$: Subject<any> = new Subject<any>();
 
   advOptionsValidButtons: ValidButtons;
 
@@ -57,11 +60,14 @@ export class RoomComponent implements OnInit {
 
   resetadvOpt$ = new Subject();
 
+  destroy$ = new Subject();
+
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
       public overlayService: OverlayDataService,
       private hallPassService: HallPassesService,
       private locationService: LocationsService,
+      private shortcuts: KeyboardShortcutsService
   ) {
   }
 
@@ -143,6 +149,22 @@ export class RoomComponent implements OnInit {
           }
       }
 
+      this.shortcuts.onPressKeyEvent$
+        .pipe(
+          takeUntil(this.destroy$),
+          pluck('key')
+        )
+        .subscribe(key => {
+          if (key[0] === 'tab') {
+            if (this.inputFocusNumber < 3) {
+              this.inputFocusNumber += 1;
+            } else if (this.inputFocusNumber === 3) {
+              this.inputFocusNumber = 1;
+            }
+            this.forceFocus$.next();
+          }
+        });
+
       this.initialData = cloneDeep(this.data);
 
       merge(this.form.valueChanges, this.change$).pipe(
@@ -150,6 +172,11 @@ export class RoomComponent implements OnInit {
       ).subscribe(() => {
           this.checkValidRoomOptions();
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   checkValidRoomOptions() {
