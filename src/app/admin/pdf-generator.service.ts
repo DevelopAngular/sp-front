@@ -419,7 +419,7 @@ export class PdfGeneratorService {
                             doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
                           } catch (e) {
                             console.log(e);
-                            doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), 'error Блядь!!!');
+                            doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), 'error');
                           }
                         }
                       }
@@ -458,7 +458,7 @@ export class PdfGeneratorService {
             doc.setFontSize(12);
             doc.text(table.left, table.top + table.lh * (2 + 1), `Reported by ${__data.issuer}:`);
             doc.setFontStyle('normal');
-            doc.text(table.left, table.top + table.lh * (3 + 1) - 16, __data.message);
+            doc.text(table.left, table.top + table.lh * (3 + 1) - 16, doc.splitTextToSize(__data.message, 550));
           }
         };
 
