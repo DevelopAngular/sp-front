@@ -199,7 +199,18 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                     const teachersRoom = locations.filter((location: Location) => {
                       return location.teachers.find(teacher => teacher.display_name.toLowerCase().includes(this.search));
                     });
-                    return [...locs, ...teachersRoom];
+
+                    // deduplicate rooms when searching
+                    const locMap: { [id: string]: Location; } = {};
+                    const outLocations: Location[] = [];
+                    for (const obj of [...locs, ...teachersRoom]) {
+                      if (typeof locMap[obj.id] === 'undefined') {
+                        outLocations.push(obj);
+                      }
+                      locMap[obj.id] = obj;
+                    }
+
+                    return outLocations;
                   })
                 );
               }
