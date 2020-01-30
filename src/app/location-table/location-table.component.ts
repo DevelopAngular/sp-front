@@ -258,20 +258,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 
   isValidLocation(location) {
-    if (!this.forStaff &&
-      (!this.forLater &&
-        location.request_mode === 'all_teachers_in_room' &&
-        location.request_send_origin_teachers &&
-        this.originLocation &&
-        !this.originLocation.teachers.length) ||
-      (this.forLater &&
-        location.scheduling_request_mode === 'all_teachers_in_room' &&
-        location.scheduling_request_send_origin_teachers &&
-        this.originLocation &&
-        !this.originLocation.teachers.length)
-    ) {
-      return false;
-    }
     return !this.invalidLocation || +location.id !== +this.invalidLocation;
   }
 
