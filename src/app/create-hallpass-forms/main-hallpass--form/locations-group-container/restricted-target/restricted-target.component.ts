@@ -104,7 +104,6 @@ export class RestrictedTargetComponent implements OnInit {
       } else if (to.request_send_destination_teachers) {
         return to.teachers;
       } else if (to.request_send_origin_teachers) {
-        debugger;
         return this.formState.data.direction.from.teachers;
       }
     } else if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers') {
@@ -123,7 +122,7 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return uniqBy(this.quickSelectedTeachers, '+id');
+    return uniqBy(this.quickSelectedTeachers, 'id');
   }
 
   ngOnInit() {
