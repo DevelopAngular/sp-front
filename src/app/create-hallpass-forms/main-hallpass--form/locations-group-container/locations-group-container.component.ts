@@ -223,9 +223,17 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
   }
 
+  debugLog(...msgs: any[]) {
+    if (location.host !== 'smartpass.app') {
+      console.log(...msgs);
+    }
+  }
+
   toWhereFromLocation(location: Location) {
+    this.debugLog('location:', location);
     this.pinnables.pipe(
       map(pins => {
+        this.debugLog('pins:', pins);
         return pins.find(pinnable => {
           if (pinnable.type === 'category') {
             return pinnable.category === location.category;
@@ -235,6 +243,7 @@ export class LocationsGroupContainerComponent implements OnInit {
         });
       })
     ).subscribe(pinnable =>  {
+      this.debugLog('resulting pin:', pinnable);
       if (pinnable.type === 'location') {
           this.toWhere(pinnable);
       } else if (pinnable.type === 'category') {
