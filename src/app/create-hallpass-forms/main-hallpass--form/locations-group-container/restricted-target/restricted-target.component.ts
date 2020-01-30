@@ -122,7 +122,7 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return uniqBy(this.quickSelectedTeachers, '+id');
+    return uniqBy(this.quickSelectedTeachers, 'id');
   }
 
   ngOnInit() {

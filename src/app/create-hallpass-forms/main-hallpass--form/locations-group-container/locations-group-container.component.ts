@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import { Request } from '../../../models/Request';
 import { User } from '../../../models/User';
 import { DataService } from '../../../services/data-service';
 import { Pinnable } from '../../../models/Pinnable';
@@ -80,43 +81,44 @@ export class LocationsGroupContainerComponent implements OnInit {
    }
   }
 
-  get redirectTo() {
+  // return true if there is only one possible teacher to select for a request.
+  shouldSkipTeacherSelect() {
       const to = this.FORM_STATE.data.direction.to;
-      if (
-        (!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) ||
+      return (!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) ||
         (!this.FORM_STATE.forLater && to.request_mode === 'all_teachers_in_room') ||
         (!this.FORM_STATE.forLater && this.teachersLength === 1) ||
-          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) ||
-          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room') ||
-          (this.FORM_STATE.forLater && this.teachersLength === 1)
-      ) {
-          return States.message;
-      } else {
-          return States.restrictedTarget;
-      }
+        (this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) ||
+        (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room') ||
+        (this.FORM_STATE.forLater && this.teachersLength === 1);
   }
 
-  get teachersLength() {
+  getTeacherChoicesForTeacherInRoom(): User[] {
     const to = this.FORM_STATE.data.direction.to;
     const from = this.FORM_STATE.data.direction.from;
     if (to.request_mode === 'teacher_in_room') {
       if (to.request_send_origin_teachers && !to.request_send_destination_teachers) {
-        return from.teachers.length;
+        return from.teachers;
       } else if (!to.request_send_origin_teachers && to.request_send_destination_teachers) {
-        return to.teachers.length;
+        return to.teachers;
       } else if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
-        return to.teachers.length + from.teachers.length;
+        return to.teachers.concat(from.teachers); // TODO does not handle teacher being in origin and destination
       }
     }
     if (to.scheduling_request_mode === 'teacher_in_room') {
       if (to.scheduling_request_send_origin_teachers && !to.scheduling_request_send_destination_teachers) {
-        return from.teachers.length;
+        return from.teachers;
       } else if (!to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
-        return to.teachers.length;
+        return to.teachers;
       } else if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
-        return to.teachers.length + from.teachers.length;
+        return to.teachers.concat(from.teachers);
       }
     }
+
+    return [];
+}
+
+  get teachersLength() {
+    return this.getTeacherChoicesForTeacherInRoom().length;
   }
 
   ngOnInit() {
@@ -170,6 +172,32 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
   }
 
+  maybeSkipTeacherSelect(): States {
+    if (!this.shouldSkipTeacherSelect()) {
+      return States.restrictedTarget;
+    }
+
+    const to = this.FORM_STATE.data.direction.to;
+    const requestMode = this.FORM_STATE.forLater ? to.scheduling_request_mode : to.request_mode;
+
+    let teacher: User;
+
+    if (requestMode === 'teacher_in_room') {
+      teacher = this.getTeacherChoicesForTeacherInRoom()[0];
+    } else {
+      teacher = this.user;
+    }
+
+    if (location.host !== 'smartpass.app') {
+      console.log('setting teacher to:', teacher);
+    }
+
+    this.data.requestTarget = teacher;
+    this.FORM_STATE.data.requestTarget = teacher;
+
+    return States.message;
+  }
+
   toWhere(pinnable) {
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
@@ -187,16 +215,25 @@ export class LocationsGroupContainerComponent implements OnInit {
         const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
         if (!this.isStaff && restricted && pinnable.location) {
             this.FORM_STATE.previousState = this.FORM_STATE.state;
-            return this.FORM_STATE.state = this.redirectTo;
+            this.FORM_STATE.state = this.maybeSkipTeacherSelect();
+            return;
         } else {
            return this.postComposetData();
         }
     }
   }
 
+  debugLog(...msgs: any[]) {
+    if (location.host !== 'smartpass.app') {
+      console.log(...msgs);
+    }
+  }
+
   toWhereFromLocation(location: Location) {
+    // this.debugLog('location:', location);
     this.pinnables.pipe(
       map(pins => {
+        // this.debugLog('pins:', pins);
         return pins.find(pinnable => {
           if (pinnable.type === 'category' && location.category) {
             return pinnable.title === location.category.substring(0, location.category.length - 8);
@@ -226,7 +263,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.FORM_STATE.data.direction.to = location;
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
         this.FORM_STATE.previousState = States.from;
-        this.FORM_STATE.state = this.redirectTo;
+        this.FORM_STATE.state = this.maybeSkipTeacherSelect();
     } else {
         this.postComposetData();
     }
