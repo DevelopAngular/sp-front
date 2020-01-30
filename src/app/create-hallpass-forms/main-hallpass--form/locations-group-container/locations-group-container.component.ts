@@ -198,10 +198,10 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.pinnables.pipe(
       map(pins => {
         return pins.find(pinnable => {
-          if (pinnable.type === 'category') {
-            return pinnable.title === location.category;
+          if (pinnable.type === 'category' && location.category) {
+            return pinnable.title === location.category.substring(0, location.category.length - 8);
           } else if (pinnable.type === 'location') {
-            return pinnable.location.id === location.id;
+            return (pinnable.location.id + '') === (location.id + '');
           }
         });
       })
