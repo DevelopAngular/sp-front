@@ -230,20 +230,20 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   toWhereFromLocation(location: Location) {
-    this.debugLog('location:', location);
+    // this.debugLog('location:', location);
     this.pinnables.pipe(
       map(pins => {
-        this.debugLog('pins:', pins);
+        // this.debugLog('pins:', pins);
         return pins.find(pinnable => {
           if (pinnable.type === 'category') {
             return pinnable.category === location.category;
           } else if (pinnable.type === 'location') {
-            return pinnable.location.id === location.id;
+            return (pinnable.location.id + '') === (location.id + '');
           }
         });
       })
     ).subscribe(pinnable =>  {
-      this.debugLog('resulting pin:', pinnable);
+      // this.debugLog('resulting pin:', pinnable);
       if (pinnable.type === 'location') {
           this.toWhere(pinnable);
       } else if (pinnable.type === 'category') {
