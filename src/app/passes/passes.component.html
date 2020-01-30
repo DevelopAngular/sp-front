@@ -51,7 +51,7 @@
       #scrollableArea
     >
       <div class="main-page-left">
-        <div class="current-pass">
+        <div class="current-pass" [style.margin-bottom]="'15px'">
           <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
             <app-inline-request-card *ngIf="(isActiveRequest$ | async) && !(isActivePass$ | async)" [request]="currentRequest$ | async"></app-inline-request-card>
             <app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
