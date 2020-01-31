@@ -4,7 +4,7 @@ import {
   ElementRef,
   Inject,
   ViewChild,
-  Renderer2
+  Renderer2, ViewChildren, QueryList
 } from '@angular/core';
 import { Location } from '../models/Location';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -12,6 +12,7 @@ import { School } from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
+import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-dropdown',
@@ -24,6 +25,8 @@ export class DropdownComponent implements OnInit {
     this.options = content.nativeElement;
     this.options.scrollTop = this.scrollPosition;
   }
+
+  @ViewChildren('schoolList') schoolList: QueryList<School>;
 
   user: User;
   heading: string = '';
@@ -58,7 +61,6 @@ export class DropdownComponent implements OnInit {
   }
 
   ngOnInit() {
-
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.width = this.teachers ? '305px' : '350px';
@@ -81,6 +83,10 @@ export class DropdownComponent implements OnInit {
       } else {
         this.renderer.setStyle(elem, 'background-color', this.darkTheme.isEnabled$.value ? '#0F171E' : 'white');
       }
+  }
+
+  search(value) {
+    debugger;
   }
 
   closeDropdown(location) {
