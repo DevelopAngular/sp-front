@@ -4,13 +4,20 @@
   height: 100%;
 }
 
-@media screen and (max-width: 425px){
+@media screen and (max-width: 550px){
   .container {
-    overflow: hidden;
-  }
 
-  .login {
-    height: 90%;
+    .brand {
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+
+    }
+
+    .moving-tiles {
+      top: 550px !important;
+      width: 100% !important;
+    }
   }
 }
 
@@ -20,14 +27,40 @@
   flex-direction: column;
   align-items: center;
   position: relative;
+
+  .brand {
+    position: absolute;
+    left: 200px;
+    top: 50px;
+
+  }
   .background {
     position: absolute;
     z-index: auto;
     width: 100%;
-    height: 65%;
+    height: 35%;
     background-repeat: no-repeat;
     background-position: 50% 100%;
     background-size: cover;
+  }
+
+  .moving-tiles {
+    position: absolute;
+    z-index: 0;
+    top: 400px;
+    display: flex;
+    width: 70%;
+    overflow: hidden;
+  }
+
+  .login-form {
+    width: 325px;
+    margin-top: 70px;
+    background: #FFFFFF;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
+    border-radius: 12px;
+    z-index: 10;
+    box-sizing: border-box;
   }
   .spinner {
     position: absolute;

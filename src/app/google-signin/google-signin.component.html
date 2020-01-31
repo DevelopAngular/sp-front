@@ -1,111 +1,108 @@
-<!--<div class="wrapper" *ngIf="!demoLoginEnabled" >-->
+<div class="wrapper">
+  <form class="login-form" [formGroup]="loginForm" autocomplete="on">
+    <div class="title">
+      <img [src]="'./assets/Username (Navy).svg' | resolveAsset" width="34" height="34" alt="username" style="margin-right: 12px">
+      <div>Sign In</div>
+    </div>
+    <div class="content">
+      <app-input
+        [formGroup]="loginForm"
+        [controlName]="loginForm.get('username')"
+        [isFocus]="true"
+        [placeholder]="'Username or email'"
+        [input_label]="'Username or email'"
+        [input_type]="'text'"
+        [width]="'250px'"
+        (onUpdate)="updateDemoUsername($event)"
+      ></app-input>
+      <div style="z-index: 10"
+        [style.opacity]="loginData.demoLoginEnabled ? 1 : 0" [style.position]="loginData.demoLoginEnabled ? 'static' : 'absolute'"
+        [style.margin-top]="'20px'"
+      >
+        <app-input
+          (keyup.enter)="demoLogin()"
+          [formGroup]="loginForm"
+          [controlName]="loginForm.get('password')"
+          [placeholder]="'Password'"
+          [input_label]="'Password'"
+          [input_type]="'password'"
+          [width]="loginData.demoLoginEnabled ? '250px' : '0'"
+          (onUpdate)="loginData.demoPassword ? loginData.demoPassword = $event : null"
+        ></app-input>
+      </div>
+      <div class="error" *ngIf="error$ | async; let errorMessage"> {{ errorMessage }}</div>
+      <div class="button" style="margin-top: 90px;" *ngIf="!loginData.demoLoginEnabled">
+        <app-gradient-button
+          [disabled]="!isGoogleLogin"
+          [size]="'medium'"
+          [rightIcon]="'./assets/Chevron Right (White).svg'"
+          [cursor]="'pointer'"
+          [hoverColor]="'#FFFFFF'"
+          [minWidth]="'90px'"
+          [minHeight]="'30px'"
+          [fontSize]="'14px'"
+          (buttonClick)="checkUserAuthType()"
+          [style.width]="'90px'"
+        >
+          <div *ngIf="!showSpinner">
+            <span>Next</span>
+          </div>
+          <div  *ngIf="showSpinner" class="loading-theme_white">
+            <mat-spinner [diameter]="25"></mat-spinner>
+          </div>
+        </app-gradient-button>
+      </div>
 
-<!--  <app-gradient-button-->
-<!--    class="login-button"-->
-<!--    [size]="'xl'"-->
-<!--    [gradient]="'#FFFFFF, #FFFFFF'"-->
-<!--    [cursor]="'pointer'"-->
-<!--    [hoverColor]="'#F1F1F1'"-->
-<!--    [minWidth]="'300px'"-->
-<!--    [minHeight]="'100px'"-->
-<!--    [fontSize]="'22px'"-->
-<!--    (buttonClick)="initLogin()"-->
-<!--    [style.margin]="'0 auto'"-->
-<!--    [disabled]="!isLoaded"-->
-<!--    [leftIcon]="showSpinner ? null : './assets/google/google_logo.svg'"-->
-<!--    [textColor]="'#666666'"-->
-<!--    [leftImageWidth]="'40px'"-->
-<!--    [leftImageHeight]="'40px'"-->
-<!--    >-->
-<!--    <div *ngIf="!showSpinner">-->
-<!--      <span>Sign in with Google</span>-->
-<!--    </div>-->
-<!--    <div style="width: 240px; display: flex; justify-content: center" *ngIf="showSpinner" class="loading-theme_white">-->
-<!--      <mat-spinner [diameter]="35"></mat-spinner>-->
-<!--    </div>-->
-<!--  </app-gradient-button>-->
-<!--</div>-->
 
-<!--<div class="ds-w-100 ds-flex-center-center">-->
-<!--  <app-gradient-button-->
-<!--    [textColor]="'#FFFFFF'"-->
-<!--    [buttonLink]="gg4lLink"-->
-<!--    [linkType]="'_self'"-->
-<!--    [text]="'GG4L'"-->
-<!--  >-->
-<!--  </app-gradient-button>-->
-<!--</div>-->
-<form class="login-form">
-  <app-round-input
-    [focused]="true"
-    [minWidth]="'260px'"
-    [width]="'260px'"
-    [placeholder]="'Email or Username'"
-    [type]="'text'"
-    [fieldIcon]="'./assets/Username (Search-Gray).svg'"
-    [style.margin-bottom]="'15px'"
-    (ontextupdate)="updateDemoUsername($event)">
-  </app-round-input>
-  <app-round-input
-    [style.opacity]="loginData.demoLoginEnabled ? 1 : 0"
-    [style.position]="loginData.demoLoginEnabled ? 'static' : 'absolute'"
-    [minWidth]="'260px'"
-    [width]="'260px'"
-    [placeholder]="'Password'"
-    [type]="'text'"
-    (keyup.enter)="demoLogin()"
-    [fieldIcon]="'./assets/Lock (Search-Gray).svg'"
-    [html5type]="'password'"
-    [style.margin-bottom]="'15px'"
-    (ontextupdate)="loginData.demoPassword = $event">
-  </app-round-input>
-  <app-gradient-button *ngIf="isGoogleLogin && loginData.demoUsername !== '' && !loginData.demoLoginEnabled"
-    [disabled]="!loginData.demoUsername"
-    [size]="'medium'"
-    [style.margin-tom]="'15px'"
-    [gradient]="'#FFFFFF, #FFFFFF'"
-    [cursor]="'pointer'"
-    [hoverColor]="'#FFFFFF'"
-    [minWidth]="'90px'"
-    [minHeight]="'30px'"
-    [fontSize]="'14px'"
-    [textColor]="'#04CD33'"
-    (buttonClick)="checkUserAuthType()"
-    [style.width]="'90px'"
-    [style.margin]="'0 auto'"
-  >
-    <div *ngIf="!showSpinner">
-      <span>Next</span>
-    </div>
-    <div  *ngIf="showSpinner" class="loading-theme_white">
-      <mat-spinner [diameter]="25"></mat-spinner>
-    </div>
-  </app-gradient-button>
-  <app-gradient-button
-    *ngIf="loginData.demoLoginEnabled"
-   [disabled]="!loginData.demoUsername"
-   [size]="'medium'"
-   [style.margin-tom]="'15px'"
-   [gradient]="'#FFFFFF, #FFFFFF'"
-   [cursor]="'pointer'"
-   [hoverColor]="'#FFFFFF'"
-   [minWidth]="'90px'"
-   [minHeight]="'30px'"
-   [fontSize]="'14px'"
-   [textColor]="'#04CD33'"
-   (buttonClick)="demoLogin()"
-   [style.width]="'90px'"
-   [style.margin]="'0 auto'"
-  >
-    <div *ngIf="!showSpinner">
-      <span>Sign in</span>
-    </div>
-    <div  *ngIf="showSpinner" class="loading-theme_white">
-      <mat-spinner [diameter]="25"></mat-spinner>
-    </div>
-  </app-gradient-button>
-</form>
+      <!--    <app-round-input-->
+      <!--      [focused]="true"-->
+      <!--      [minWidth]="'260px'"-->
+      <!--      [width]="'260px'"-->
+      <!--      [placeholder]="'Email or Username'"-->
+      <!--      [type]="'text'"-->
+      <!--      [fieldIcon]="'./assets/Username (Search-Gray).svg'"-->
+      <!--      [style.margin-bottom]="'15px'"-->
+      <!--      (ontextupdate)="updateDemoUsername($event)">-->
+      <!--    </app-round-input>-->
+      <!--    <app-round-input-->
+      <!--      [style.opacity]="loginData.demoLoginEnabled ? 1 : 0"-->
+      <!--      [style.position]="loginData.demoLoginEnabled ? 'static' : 'absolute'"-->
+      <!--      [minWidth]="'260px'"-->
+      <!--      [width]="'260px'"-->
+      <!--      [placeholder]="'Password'"-->
+      <!--      [type]="'text'"-->
+      <!--      (keyup.enter)="demoLogin()"-->
+      <!--      [fieldIcon]="'./assets/Lock (Search-Gray).svg'"-->
+      <!--      [html5type]="'password'"-->
+      <!--      [style.margin-bottom]="'15px'"-->
+      <!--      (ontextupdate)="loginData.demoPassword = $event">-->
+      <!--    </app-round-input>-->
+      <div class="button" style="margin-top: 32px;">
+          <app-gradient-button
+            *ngIf="loginData.demoLoginEnabled"
+            [disabled]="!loginData.demoUsername"
+            [size]="'medium'"
+            [cursor]="'pointer'"
+            [hoverColor]="'#FFFFFF'"
+            [minWidth]="'90px'"
+            [minHeight]="'30px'"
+            [fontSize]="'14px'"
+            (buttonClick)="demoLogin()"
+            [style.width]="'90px'"
+          >
+            <div *ngIf="!showSpinner">
+              <span>Sign in</span>
+            </div>
+            <div  *ngIf="showSpinner" class="loading-theme_white">
+              <mat-spinner [diameter]="25"></mat-spinner>
+            </div>
+          </app-gradient-button>
+        </div>
+      </div>
 
-<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">Don’t have an account?</div></div>
+  </form>
+</div>
+
+<!--<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">Don’t have an account?</div></div>-->
 <!--<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Standard sign-in'}}</div></div>-->
 

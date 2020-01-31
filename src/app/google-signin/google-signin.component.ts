@@ -1,6 +1,6 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
-import {of, Subject} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, finalize, switchMap, tap} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {Meta, Title} from '@angular/platform-browser';
@@ -10,6 +10,7 @@ import {NoAccountComponent} from '../no-account/no-account.component';
 import {MatDialog} from '@angular/material';
 import {UserService} from '../services/user.service';
 import {HttpClient} from '@angular/common/http';
+import {FormControl, FormGroup} from '@angular/forms';
 
 declare const window;
 
@@ -34,6 +35,9 @@ export class GoogleSigninComponent implements OnInit {
     authType: '',
   };
   public isGoogleLogin: boolean;
+
+  public loginForm: FormGroup;
+  public error$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   private changeUserName$: Subject<string> = new Subject<string>();
 
 
@@ -59,8 +63,8 @@ export class GoogleSigninComponent implements OnInit {
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
         const errMessage = this.loggedWith === 1
-          ? 'Please sign in with your school account or contact your school administrator.'
-          : 'Please check your username and password or contact your school administrator.';
+          ? 'G Suite authentication failed. Please check your password or contact your school admin.'
+          : 'Standard sign-in authentication failed. Please check your password or contact your school admin.';
 
         this.httpService.errorToast$.next({
           header: 'Oops! Sign in error.',
@@ -71,14 +75,10 @@ export class GoogleSigninComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.route.queryParams
-    //   .pipe(
-    //     filter(qp => !!qp && !!qp.code),
-    //     // switchMap((qp) => this.httpService.gg4l(qp.code))
-    //   )
-    //   .subscribe((qp) => {
-    //     console.log(qp);
-    //   });
+    this.loginForm = new FormGroup({
+      username: new FormControl(),
+      password: new FormControl()
+    });
     this.changeUserName$.pipe(
       filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
       distinctUntilChanged(),
@@ -87,7 +87,12 @@ export class GoogleSigninComponent implements OnInit {
         return this.http.get<any>(`https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`);
       })
     ).subscribe(({auth_types}) => {
-      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[0];
+      if (!auth_types.length) {
+        this.error$.next('Couldn’t find that username or email');
+      } else {
+        this.error$.next(null);
+      }
+      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
       switch (this.loginData.authType) {
         case 'google':
           this.loginData.demoLoginEnabled = false;
@@ -117,10 +122,12 @@ export class GoogleSigninComponent implements OnInit {
       // });
   }
   updateDemoUsername(event) {
-    this.loginData.demoUsername = event;
     if (!event) {
       this.loginData.demoLoginEnabled = false;
+      this.isGoogleLogin = false;
+      return false;
     }
+    this.loginData.demoUsername = event;
     this.changeUserName$.next(event);
   }
 
@@ -155,17 +162,15 @@ export class GoogleSigninComponent implements OnInit {
   }
 
   demoLogin() {
-
     this.showSpinner = true;
-    if (this.loginData.demoUsername && this.loginData.demoPassword) {
+    if (this.loginForm.get('username').value && this.loginForm.get('password').value) {
       this.titleService.setTitle('SmartPass');
       this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
       window.waitForAppLoaded(true);
-      of(this.loginService.signInDemoMode(this.loginData.demoUsername, this.loginData.demoPassword))
+      of(this.loginService.signInDemoMode(this.loginForm.get('username').value, this.loginForm.get('password').value))
       .pipe(
-        // tap((res) => { console.log(res); }),
         finalize(() => {
           this.showSpinner = false;
         }),
