@@ -131,7 +131,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     if (this.darkSwitch.isEnabled$.value) {
-      this.darkSwitch.switchTheme();
+      this.darkSwitch.switchTheme('Light');
     }
 
     this.route.queryParams

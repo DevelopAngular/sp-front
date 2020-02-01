@@ -16,6 +16,7 @@ import {INITIAL_LOCATION_PATHNAME} from '../app.component';
 import {NotificationService} from '../services/notification-service';
 import {environment} from '../../environments/environment.prod';
 import {ScreenService} from '../services/screen.service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -56,13 +57,15 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private titleService: Title,
     private metaService: Meta,
     private notifService: NotificationService,
-    public screen: ScreenService
+    public screen: ScreenService,
+    private darkSwitch: DarkThemeSwitch
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
   }
 
   ngOnInit() {
+    this.darkSwitch.switchTheme('Light');
 
     // this.route.queryParams
     //   .pipe(
