@@ -144,7 +144,9 @@ export class GoogleLoginService {
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
       take(1),
-      map(a => isDemoLogin(a) ? a : a.id_token)
+      map(a => {
+        return isDemoLogin(a) ? a : a.id_token;
+      })
     );
   }
 

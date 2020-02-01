@@ -103,7 +103,11 @@ input {
     .content {
       margin-top: 30px;
 
-
+      .input-password {
+        z-index: 10;
+        margin-top: 12px;
+        transition: opacity .25s ease;
+      }
       .button {
         display: flex;
         justify-content: center;

@@ -26,6 +26,8 @@ import { getSchools } from '../ngrx/schools/actions';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
+declare const window;
+
 export interface Config {
   [key: string]: any;
 }
@@ -427,6 +429,7 @@ export class HttpService {
             if (!res) {
              throw new LoginServerError('Incorrect Login or password');
             }
+            window.waitForAppLoaded(true);
             this.loginService.setAuthenticated();
           }),
           catchError(err => {

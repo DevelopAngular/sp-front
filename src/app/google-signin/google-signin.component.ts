@@ -1,16 +1,15 @@
-import {Component, NgZone, OnInit} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
 import {BehaviorSubject, of, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, finalize, switchMap, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
 import {ActivatedRoute} from '@angular/router';
-import {NoAccountComponent} from '../no-account/no-account.component';
 import {MatDialog} from '@angular/material';
-import {UserService} from '../services/user.service';
 import {HttpClient} from '@angular/common/http';
 import {FormControl, FormGroup} from '@angular/forms';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 declare const window;
 
@@ -22,7 +21,7 @@ export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
   styleUrls: ['./google-signin.component.scss']
 })
 
-export class GoogleSigninComponent implements OnInit {
+export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   public isLoaded = false;
   public showSpinner: boolean = false;
@@ -36,10 +35,14 @@ export class GoogleSigninComponent implements OnInit {
   };
   public isGoogleLogin: boolean;
 
+  inputFocusNumber: number = 1;
+  forceFocus$ = new Subject();
+
   public loginForm: FormGroup;
   public error$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  showError: boolean;
   private changeUserName$: Subject<string> = new Subject<string>();
-
+  destroy$ = new Subject();
 
   constructor(
     private httpService: HttpService,
@@ -49,8 +52,8 @@ export class GoogleSigninComponent implements OnInit {
     private metaService: Meta,
     private route: ActivatedRoute,
     private http: HttpClient,
-    private dialog: MatDialog
-
+    private dialog: MatDialog,
+    private shortcuts: KeyboardShortcutsService
   ) {
     this.loginService.isAuthLoaded().subscribe(isLoaded => {
       this._ngZone.run(() => {
@@ -79,6 +82,23 @@ export class GoogleSigninComponent implements OnInit {
       username: new FormControl(),
       password: new FormControl()
     });
+
+    this.shortcuts.onPressKeyEvent$
+      .pipe(
+        takeUntil(this.destroy$),
+        pluck('key')
+      )
+      .subscribe(key => {
+        if (key[0] === 'tab') {
+          if (this.inputFocusNumber < 2) {
+            this.inputFocusNumber += 1;
+          } else if (this.inputFocusNumber === 2) {
+            this.inputFocusNumber = 1;
+          }
+          this.forceFocus$.next();
+        }
+      });
+
     this.changeUserName$.pipe(
       filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
       distinctUntilChanged(),
@@ -88,17 +108,21 @@ export class GoogleSigninComponent implements OnInit {
       })
     ).subscribe(({auth_types}) => {
       if (!auth_types.length) {
-        this.error$.next('Couldn’t find that username or email');
+        this.showError = true;
+        this.isGoogleLogin = true;
       } else {
+        this.showError = false;
         this.error$.next(null);
       }
-      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[0];
+      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
       switch (this.loginData.authType) {
         case 'google':
           this.loginData.demoLoginEnabled = false;
           this.isGoogleLogin = true;
           break;
         case 'password':
+          this.inputFocusNumber = 2;
+          this.forceFocus$.next();
           this.loginData.demoLoginEnabled = true;
           break;
         // case 'gg4l':
@@ -106,10 +130,15 @@ export class GoogleSigninComponent implements OnInit {
         //   this.isGoogleLogin = true;
         //   break;
         default:
-          this.isGoogleLogin = false;
+          // this.isGoogleLogin = false;
           this.loginData.demoLoginEnabled = false;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loginSSO() {
@@ -128,6 +157,7 @@ export class GoogleSigninComponent implements OnInit {
       return false;
     }
     this.loginData.demoUsername = event;
+    this.error$.next(null);
     this.changeUserName$.next(event);
   }
 
@@ -136,6 +166,10 @@ export class GoogleSigninComponent implements OnInit {
   }
 
   checkUserAuthType() {
+    if (this.showError) {
+      this.error$.next('Couldn’t find that username or email');
+      return false;
+    }
     this.initLogin();
     // if (!this.loginData.demoLoginEnabled) {
       // this.http.get<any>(`https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(this.loginData.demoUsername)}`)
@@ -168,7 +202,7 @@ export class GoogleSigninComponent implements OnInit {
       this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
-      window.waitForAppLoaded(true);
+      // window.waitForAppLoaded(true);
       of(this.loginService.signInDemoMode(this.loginForm.get('username').value, this.loginForm.get('password').value))
       .pipe(
         finalize(() => {

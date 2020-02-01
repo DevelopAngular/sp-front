@@ -8,20 +8,22 @@
       <app-input
         [formGroup]="loginForm"
         [controlName]="loginForm.get('username')"
-        [isFocus]="true"
+        [isFocus]="inputFocusNumber === 1"
+        [forceFocus$]="forceFocus$"
         [placeholder]="'Username or email'"
         [input_label]="'Username or email'"
         [input_type]="'text'"
         [width]="'250px'"
         (onUpdate)="updateDemoUsername($event)"
       ></app-input>
-      <div style="z-index: 10"
+      <div class="input-password"
         [style.opacity]="loginData.demoLoginEnabled ? 1 : 0" [style.position]="loginData.demoLoginEnabled ? 'static' : 'absolute'"
-        [style.margin-top]="'20px'"
       >
         <app-input
           (keyup.enter)="demoLogin()"
           [formGroup]="loginForm"
+          [isFocus]="inputFocusNumber === 2"
+          [forceFocus$]="forceFocus$"
           [controlName]="loginForm.get('password')"
           [placeholder]="'Password'"
           [input_label]="'Password'"
@@ -35,7 +37,7 @@
         <app-gradient-button
           [disabled]="!isGoogleLogin"
           [size]="'medium'"
-          [rightIcon]="'./assets/Chevron Right (White).svg'"
+          [rightIcon]="!showSpinner ?'./assets/Chevron Right (White).svg' : ''"
           [cursor]="'pointer'"
           [hoverColor]="'#FFFFFF'"
           [minWidth]="'90px'"
@@ -52,34 +54,8 @@
           </div>
         </app-gradient-button>
       </div>
-
-
-      <!--    <app-round-input-->
-      <!--      [focused]="true"-->
-      <!--      [minWidth]="'260px'"-->
-      <!--      [width]="'260px'"-->
-      <!--      [placeholder]="'Email or Username'"-->
-      <!--      [type]="'text'"-->
-      <!--      [fieldIcon]="'./assets/Username (Search-Gray).svg'"-->
-      <!--      [style.margin-bottom]="'15px'"-->
-      <!--      (ontextupdate)="updateDemoUsername($event)">-->
-      <!--    </app-round-input>-->
-      <!--    <app-round-input-->
-      <!--      [style.opacity]="loginData.demoLoginEnabled ? 1 : 0"-->
-      <!--      [style.position]="loginData.demoLoginEnabled ? 'static' : 'absolute'"-->
-      <!--      [minWidth]="'260px'"-->
-      <!--      [width]="'260px'"-->
-      <!--      [placeholder]="'Password'"-->
-      <!--      [type]="'text'"-->
-      <!--      (keyup.enter)="demoLogin()"-->
-      <!--      [fieldIcon]="'./assets/Lock (Search-Gray).svg'"-->
-      <!--      [html5type]="'password'"-->
-      <!--      [style.margin-bottom]="'15px'"-->
-      <!--      (ontextupdate)="loginData.demoPassword = $event">-->
-      <!--    </app-round-input>-->
-      <div class="button" style="margin-top: 32px;">
+      <div class="button" style="margin-top: 12px;" *ngIf="loginData.demoLoginEnabled">
           <app-gradient-button
-            *ngIf="loginData.demoLoginEnabled"
             [disabled]="!loginData.demoUsername"
             [size]="'medium'"
             [cursor]="'pointer'"
@@ -103,6 +79,4 @@
   </form>
 </div>
 
-<!--<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">Don’t have an account?</div></div>-->
-<!--<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Standard sign-in'}}</div></div>-->
 
