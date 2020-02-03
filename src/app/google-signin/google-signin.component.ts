@@ -171,28 +171,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       return false;
     }
     this.initLogin();
-    // if (!this.loginData.demoLoginEnabled) {
-      // this.http.get<any>(`https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(this.loginData.demoUsername)}`)
-      //   .subscribe(({auth_types}) => {
-      //     if (!auth_types.length) {
-      //       this.loginService.showLoginError$.next(true);
-      //     }
-      //     this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
-      //     switch (this.loginData.authType) {
-      //       case 'google':
-      //         this.initLogin();
-      //         break;
-      //       case 'password':
-      //         this.loginData.demoLoginEnabled = true;
-      //         break;
-      //       // case 'gg4l':
-      //       //   this.loginSSO();
-      //       //   break;
-      //     }
-      //   });
-    // } else {
-    //   this.demoLogin();
-    // }
   }
 
   demoLogin() {
