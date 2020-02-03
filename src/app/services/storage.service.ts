@@ -15,7 +15,7 @@ export class StorageService {
 
   constructor(
     private router: Router,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
   ) {
 
   }
@@ -23,11 +23,9 @@ export class StorageService {
   detectChanges() {
     fromEvent(window, 'storage')
       .pipe(
-        filter((evt: StorageEvent) => evt.key === 'google_auth' && evt.newValue === null),
-        // take(1)
+        filter((evt: StorageEvent) => evt.key === 'google_auth' && evt.newValue === null && this.router.url !== ''),
       )
       .subscribe((evt) => {
-        // console.log(evt);
         this.matDialog.open(SignedOutToastComponent, {
                 panelClass: 'form-dialog-container-white',
                 backdropClass: 'white-backdrop',

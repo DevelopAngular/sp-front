@@ -128,8 +128,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
       }),
     )
     .subscribe((op: any) => {
-      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-      // this.splash = false;
+      // this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+      this.splash = false;
     });
 
 

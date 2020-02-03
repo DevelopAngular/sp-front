@@ -49,12 +49,9 @@ export class GoogleLoginService {
   constructor(
     private googleAuth: GoogleAuthService,
     private _zone: NgZone,
-    private storage: StorageService,
-    private http: HttpClient
+    private storage: StorageService
   ) {
-    // this.configure();
     this.authToken$.subscribe(auth => {
-      // window.waitForAppLoaded();
       if (auth) {
         const storageKey = isDemoLogin(auth)
                            ? JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type})
@@ -203,7 +200,6 @@ export class GoogleLoginService {
   }
 
   signInDemoMode(username: string, password: string) {
-    // window.waitForAppLoaded();
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
   }
 

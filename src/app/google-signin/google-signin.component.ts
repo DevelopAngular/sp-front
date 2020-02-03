@@ -130,7 +130,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         //   this.isGoogleLogin = true;
         //   break;
         default:
-          // this.isGoogleLogin = false;
           this.loginData.demoLoginEnabled = false;
       }
     });
@@ -168,26 +167,25 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   checkUserAuthType() {
     if (this.showError) {
       this.error$.next('Couldn’t find that username or email');
+      this.showError = false;
       return false;
     }
     this.initLogin();
   }
 
   demoLogin() {
-    this.showSpinner = true;
-    if (this.loginForm.get('username').value && this.loginForm.get('password').value) {
+      this.showSpinner = true;
       this.titleService.setTitle('SmartPass');
       this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
-      // window.waitForAppLoaded(true);
+
       of(this.loginService.signInDemoMode(this.loginForm.get('username').value, this.loginForm.get('password').value))
       .pipe(
         finalize(() => {
           this.showSpinner = false;
         }),
       );
-    }
   }
 
   initLogin() {

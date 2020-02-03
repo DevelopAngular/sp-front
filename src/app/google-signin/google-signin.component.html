@@ -8,9 +8,6 @@
       <app-input
         [formGroup]="loginForm"
         [controlName]="loginForm.get('username')"
-        [isFocus]="inputFocusNumber === 1"
-        [forceFocus$]="forceFocus$"
-        [placeholder]="'Username or email'"
         [input_label]="'Username or email'"
         [input_type]="'text'"
         [width]="'250px'"
@@ -25,7 +22,6 @@
           [isFocus]="inputFocusNumber === 2"
           [forceFocus$]="forceFocus$"
           [controlName]="loginForm.get('password')"
-          [placeholder]="'Password'"
           [input_label]="'Password'"
           [input_type]="'password'"
           [width]="loginData.demoLoginEnabled ? '250px' : '0'"
@@ -56,7 +52,7 @@
       </div>
       <div class="button" style="margin-top: 12px;" *ngIf="loginData.demoLoginEnabled">
           <app-gradient-button
-            [disabled]="!loginData.demoUsername"
+            [disabled]="!loginData.demoUsername || !this.loginForm.get('password').value"
             [size]="'medium'"
             [cursor]="'pointer'"
             [hoverColor]="'#FFFFFF'"
