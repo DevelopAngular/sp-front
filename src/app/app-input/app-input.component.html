@@ -23,6 +23,7 @@
     </div>
     <div class="input-container">
       <input
+             [autocomplete]="autocomplete"
              [attr.disabled]="disabled ? '' : null"
              [style.background-color]="isFocus && inp.focused ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
              tabindex="1"

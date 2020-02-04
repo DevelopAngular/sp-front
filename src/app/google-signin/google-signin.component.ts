@@ -56,7 +56,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private shortcuts: KeyboardShortcutsService
   ) {
-    this.loginService.isAuthLoaded().subscribe(isLoaded => {
+    this.loginService.isAuthLoaded()
+      .subscribe(isLoaded => {
       this._ngZone.run(() => {
         this.isLoaded = isLoaded;
       });

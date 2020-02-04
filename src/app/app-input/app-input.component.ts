@@ -30,6 +30,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
     @Input() disabled: boolean = false;
     @Input() isSuccessIcon: boolean;
     @Input() forceFocus$: Subject<boolean> = new Subject<boolean>();
+    @Input() autocomplete: string = 'off';
 
     @Input() formGroup;
     @Input() controlName;
@@ -63,7 +64,6 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
         .subscribe(() => {
           setTimeout(() => {
             if (this.isFocus) {
-              debugger;
               this.input.nativeElement.focus();
             } else {
               this.input.nativeElement.blur();
