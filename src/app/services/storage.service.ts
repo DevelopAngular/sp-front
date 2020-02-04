@@ -24,10 +24,11 @@ export class StorageService {
     fromEvent(window, 'storage')
       .pipe(
         filter((evt: StorageEvent) => {
-          return evt.key === 'google_auth' && evt.newValue === null && this.router.url !== '';
+          return evt.key === 'google_auth' && evt.newValue === null && this.router.url !== '/';
         }),
       )
       .subscribe((evt) => {
+        console.log('Current Url ===>>>', this.router.url);
         this.matDialog.open(SignedOutToastComponent, {
                 panelClass: 'form-dialog-container-white',
                 backdropClass: 'white-backdrop',
