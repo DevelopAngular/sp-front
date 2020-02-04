@@ -30,6 +30,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
     @Input() disabled: boolean = false;
     @Input() isSuccessIcon: boolean;
     @Input() forceFocus$: Subject<boolean> = new Subject<boolean>();
+    @Input() autocomplete: string = 'off';
 
     @Input() formGroup;
     @Input() controlName;

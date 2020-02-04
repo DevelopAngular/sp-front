@@ -34,6 +34,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     authType: '',
   };
   public isGoogleLogin: boolean;
+  public isStandardLogin: boolean;
 
   inputFocusNumber: number = 1;
   forceFocus$ = new Subject();
@@ -55,13 +56,17 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private shortcuts: KeyboardShortcutsService
   ) {
-    this.loginService.isAuthLoaded().subscribe(isLoaded => {
+    this.loginService.isAuthLoaded()
+      .subscribe(isLoaded => {
       this._ngZone.run(() => {
         this.isLoaded = isLoaded;
       });
     });
     this.httpService.errorToast$.subscribe(v => {
       this.showSpinner = !!v;
+      if (!v) {
+        this.loginForm.get('password').setValue('');
+      }
     });
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
@@ -118,12 +123,12 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       switch (this.loginData.authType) {
         case 'google':
           this.loginData.demoLoginEnabled = false;
+          this.isStandardLogin = false;
           this.isGoogleLogin = true;
           break;
         case 'password':
-          this.inputFocusNumber = 2;
-          this.forceFocus$.next();
-          this.loginData.demoLoginEnabled = true;
+          this.isGoogleLogin = false;
+          this.isStandardLogin = true;
           break;
         // case 'gg4l':
         //   this.loginSSO();
@@ -160,6 +165,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.changeUserName$.next(event);
   }
 
+  updateDemoPassword(event) {
+    this.loginData.demoPassword = event;
+  }
+
   toggleDemoLogin() {
     window.open('https://www.smartpass.app/get-started', '_self');
   }
@@ -169,8 +178,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.error$.next('Couldn’t find that username or email');
       this.showError = false;
       return false;
+    } else if (this.isGoogleLogin) {
+      this.initLogin();
+    } else if (this.isStandardLogin) {
+      this.inputFocusNumber = 2;
+      this.forceFocus$.next();
+      this.loginData.demoLoginEnabled = true;
     }
-    this.initLogin();
   }
 
   demoLogin() {

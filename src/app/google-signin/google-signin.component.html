@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <form class="login-form" [formGroup]="loginForm" autocomplete="on">
+  <form class="login-form" [formGroup]="loginForm">
     <div class="title">
       <img [src]="'./assets/Username (Navy).svg' | resolveAsset" width="34" height="34" alt="username" style="margin-right: 12px">
       <div>Sign In</div>
@@ -7,6 +7,7 @@
     <div class="content">
       <app-input
         [formGroup]="loginForm"
+        [autocomplete]="'username'"
         [controlName]="loginForm.get('username')"
         [input_label]="'Username or email'"
         [input_type]="'text'"
@@ -18,6 +19,7 @@
       >
         <app-input
           (keyup.enter)="demoLogin()"
+          [autocomplete]="'password'"
           [formGroup]="loginForm"
           [isFocus]="inputFocusNumber === 2"
           [forceFocus$]="forceFocus$"
@@ -25,13 +27,13 @@
           [input_label]="'Password'"
           [input_type]="'password'"
           [width]="loginData.demoLoginEnabled ? '250px' : '0'"
-          (onUpdate)="loginData.demoPassword ? loginData.demoPassword = $event : null"
+          (onUpdate)="loginData.demoPassword ? updateDemoPassword($event) : null"
         ></app-input>
       </div>
       <div class="error" *ngIf="error$ | async; let errorMessage"> {{ errorMessage }}</div>
-      <div class="button" style="margin-top: 90px;" *ngIf="!loginData.demoLoginEnabled">
+      <div class="button" style="margin-top: 97px;" *ngIf="!loginData.demoLoginEnabled">
         <app-gradient-button
-          [disabled]="!isGoogleLogin"
+          [disabled]="!loginForm.get('username').value"
           [size]="'medium'"
           [rightIcon]="!showSpinner ?'./assets/Chevron Right (White).svg' : ''"
           [cursor]="'pointer'"
@@ -50,7 +52,7 @@
           </div>
         </app-gradient-button>
       </div>
-      <div class="button" style="margin-top: 12px;" *ngIf="loginData.demoLoginEnabled">
+      <div class="button" style="margin-top: 21px;" *ngIf="loginData.demoLoginEnabled">
           <app-gradient-button
             [disabled]="!loginData.demoUsername || !this.loginForm.get('password').value"
             [size]="'medium'"
