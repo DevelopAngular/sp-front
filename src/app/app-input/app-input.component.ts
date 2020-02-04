@@ -63,6 +63,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
         .subscribe(() => {
           setTimeout(() => {
             if (this.isFocus) {
+              debugger;
               this.input.nativeElement.focus();
             } else {
               this.input.nativeElement.blur();

@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <form class="login-form" [formGroup]="loginForm" autocomplete="on">
+  <form class="login-form" [formGroup]="loginForm">
     <div class="title">
       <img [src]="'./assets/Username (Navy).svg' | resolveAsset" width="34" height="34" alt="username" style="margin-right: 12px">
       <div>Sign In</div>
@@ -25,7 +25,7 @@
           [input_label]="'Password'"
           [input_type]="'password'"
           [width]="loginData.demoLoginEnabled ? '250px' : '0'"
-          (onUpdate)="loginData.demoPassword ? loginData.demoPassword = $event : null"
+          (onUpdate)="loginData.demoPassword ? updateDemoPassword($event) : null"
         ></app-input>
       </div>
       <div class="error" *ngIf="error$ | async; let errorMessage"> {{ errorMessage }}</div>

@@ -63,6 +63,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     });
     this.httpService.errorToast$.subscribe(v => {
       this.showSpinner = !!v;
+      if (!v) {
+        this.loginForm.get('password').setValue('');
+      }
     });
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
@@ -159,6 +162,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.loginData.demoUsername = event;
     this.error$.next(null);
     this.changeUserName$.next(event);
+  }
+
+  updateDemoPassword(event) {
+    this.loginData.demoPassword = event;
   }
 
   toggleDemoLogin() {
