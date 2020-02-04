@@ -49,7 +49,7 @@
               (selectedButton)="selectTab(tabRef, navButtonsContainter);"
               (onClick)="route(button); selectTab(tabRef, navButtonsContainter);">
             </app-nav-button>
-            <mat-divider style="margin: 7px 0" *ngIf="i === 3"></mat-divider>
+            <mat-divider style="margin: 7px 0" *ngIf="button.route === 'search'"></mat-divider>
           </ng-container>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {fromEvent} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
+import {filter, take, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
@@ -23,9 +23,12 @@ export class StorageService {
   detectChanges() {
     fromEvent(window, 'storage')
       .pipe(
-        filter((evt: StorageEvent) => evt.key === 'google_auth' && evt.newValue === null && this.router.url !== ''),
+        filter((evt: StorageEvent) => {
+          return evt.key === 'google_auth' && evt.newValue === null && this.router.url !== '/';
+        }),
       )
       .subscribe((evt) => {
+        console.log('Current Url ===>>>', this.router.url);
         this.matDialog.open(SignedOutToastComponent, {
                 panelClass: 'form-dialog-container-white',
                 backdropClass: 'white-backdrop',

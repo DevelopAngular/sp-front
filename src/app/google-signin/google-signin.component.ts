@@ -34,6 +34,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     authType: '',
   };
   public isGoogleLogin: boolean;
+  public isStandardLogin: boolean;
 
   inputFocusNumber: number = 1;
   forceFocus$ = new Subject();
@@ -114,16 +115,16 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.showError = false;
         this.error$.next(null);
       }
-      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
+      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[0];
       switch (this.loginData.authType) {
         case 'google':
           this.loginData.demoLoginEnabled = false;
+          this.isStandardLogin = false;
           this.isGoogleLogin = true;
           break;
         case 'password':
-          this.inputFocusNumber = 2;
-          this.forceFocus$.next();
-          this.loginData.demoLoginEnabled = true;
+          this.isGoogleLogin = false;
+          this.isStandardLogin = true;
           break;
         // case 'gg4l':
         //   this.loginSSO();
@@ -169,8 +170,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.error$.next('Couldn’t find that username or email');
       this.showError = false;
       return false;
+    } else if (this.isGoogleLogin) {
+      this.initLogin();
+    } else if (this.isStandardLogin) {
+      this.inputFocusNumber = 2;
+      this.forceFocus$.next();
+      this.loginData.demoLoginEnabled = true;
     }
-    this.initLogin();
   }
 
   demoLogin() {

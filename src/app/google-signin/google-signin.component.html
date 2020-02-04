@@ -29,9 +29,9 @@
         ></app-input>
       </div>
       <div class="error" *ngIf="error$ | async; let errorMessage"> {{ errorMessage }}</div>
-      <div class="button" style="margin-top: 90px;" *ngIf="!loginData.demoLoginEnabled">
+      <div class="button" style="margin-top: 97px;" *ngIf="!loginData.demoLoginEnabled">
         <app-gradient-button
-          [disabled]="!isGoogleLogin"
+          [disabled]="!loginForm.get('username').value"
           [size]="'medium'"
           [rightIcon]="!showSpinner ?'./assets/Chevron Right (White).svg' : ''"
           [cursor]="'pointer'"
@@ -50,7 +50,7 @@
           </div>
         </app-gradient-button>
       </div>
-      <div class="button" style="margin-top: 12px;" *ngIf="loginData.demoLoginEnabled">
+      <div class="button" style="margin-top: 21px;" *ngIf="loginData.demoLoginEnabled">
           <app-gradient-button
             [disabled]="!loginData.demoUsername || !this.loginForm.get('password').value"
             [size]="'medium'"
