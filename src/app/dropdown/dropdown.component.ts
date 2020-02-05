@@ -86,7 +86,6 @@ export class DropdownComponent implements OnInit {
   }
 
   search(value) {
-    debugger;
   }
 
   closeDropdown(location) {
