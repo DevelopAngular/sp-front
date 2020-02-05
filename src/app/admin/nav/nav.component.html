@@ -1,7 +1,7 @@
 <div class="nav-wrapper">
 
   <div class="nav-main" #navButtonsContainter>
-    <div class="selected-tab-pointer" [style.margin-top]="pointerTopSpace">
+    <div class="selected-tab-pointer" [style.opacity]="hidePointer ? '0' : '1'" [style.margin-top]="pointerTopSpace">
       <!-- Just a shape -->
     </div>
     <div class="nav-header ds-pr-10">
