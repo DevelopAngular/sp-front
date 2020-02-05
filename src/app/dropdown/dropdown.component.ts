@@ -12,7 +12,6 @@ import { School } from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
-import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-dropdown',
@@ -86,7 +85,13 @@ export class DropdownComponent implements OnInit {
   }
 
   search(value) {
-    debugger;
+    const currentElem = (this.schoolList as any)._results.find(elem => {
+      return elem.nativeElement.innerText.toLowerCase().includes(value);
+    });
+    if (currentElem) {
+      currentElem.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+      // this.renderer.setStyle(currentElem.nativeElement, 'background-color', '#ECF1FF');
+    }
   }
 
   closeDropdown(location) {
