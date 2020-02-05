@@ -38,6 +38,7 @@ export class DropdownComponent implements OnInit {
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
   scrollPosition: number;
+  findElement: ElementRef;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -85,12 +86,17 @@ export class DropdownComponent implements OnInit {
   }
 
   search(value) {
-    const currentElem = (this.schoolList as any)._results.find(elem => {
-      return elem.nativeElement.innerText.toLowerCase().includes(value);
-    });
-    if (currentElem) {
-      currentElem.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
-      // this.renderer.setStyle(currentElem.nativeElement, 'background-color', '#ECF1FF');
+    if (this.findElement) {
+      this.renderer.setStyle(this.findElement.nativeElement, 'background-color', 'transparent');
+    }
+    if (value) {
+      this.findElement = (this.schoolList as any)._results.find(elem => {
+        return elem.nativeElement.innerText.toLowerCase().includes(value);
+      });
+      if (this.findElement) {
+        this.findElement.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+        this.renderer.setStyle(this.findElement.nativeElement, 'background-color', '#ECF1FF');
+      }
     }
   }
 
