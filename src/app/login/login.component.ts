@@ -16,6 +16,7 @@ import {INITIAL_LOCATION_PATHNAME} from '../app.component';
 import {NotificationService} from '../services/notification-service';
 import {environment} from '../../environments/environment.prod';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {ScreenService} from '../services/screen.service';
 
 declare const window;
 
@@ -54,7 +55,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private titleService: Title,
     private metaService: Meta,
     private notifService: NotificationService,
-    private darkSwitch: DarkThemeSwitch
+    private darkSwitch: DarkThemeSwitch,
+    public screen: ScreenService
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
