@@ -362,7 +362,7 @@ export class PdfGeneratorService {
 
             __headers.forEach((header, n) => {
               if (n === 1) {
-                doc.text(table.left + (table.sp * n) + 25, table.top - 6, header);
+                doc.text(table.left + (table.sp * n) + 45, table.top - 6, header);
               } else {
                 doc.text(table.left + (table.sp * n), table.top - 6, header);
               }
@@ -376,7 +376,7 @@ export class PdfGeneratorService {
             const i = headerIndex;
             const n = rowIndex;
 
-            if (cell['TT'] === 'one_way') {
+            if (cell['TT'] === 'OW') {
               doc.addImage(this.ARROW_IMG, 'PNG', table.left + (table.sp * i), table.top - 14 + table.lh * (n + 1), 15, 15);
             } else {
               doc.addImage(this.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i), table.top - 11 + table.lh * (n + 1), 23, 11);
@@ -409,7 +409,7 @@ export class PdfGeneratorService {
                         if (header === 'TT') {
                           table.drawCellWithImg(cell, i, n);
                         } else {
-                          doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
+                          doc.text(table.left + (table.sp * i) + 45, table.top + table.lh * (n + 1), cell[_headers[i]]);
                         }
                       } else {
                         if (header === 'TT') {
