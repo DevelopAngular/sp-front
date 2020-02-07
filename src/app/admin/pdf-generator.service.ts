@@ -332,7 +332,7 @@ export class PdfGeneratorService {
           top: page === 'hallmonitor' ? 70 : 153,
           left: 29,
           right: 29,
-          lh: 30,
+          lh: 35,
           sp: Math.round((this.A4.width - (29 * 2)) / _headers.length),
           col: 11,
 
@@ -362,7 +362,9 @@ export class PdfGeneratorService {
 
             __headers.forEach((header, n) => {
               if (n === 1) {
-                doc.text(table.left + (table.sp * n) + 25, table.top - 6, header);
+                doc.text(table.left + (table.sp * n) + 55, table.top - 6, header);
+              } else if (n === 2) {
+                doc.text(table.left + (table.sp * n) + 45, table.top - 6, header);
               } else {
                 doc.text(table.left + (table.sp * n), table.top - 6, header);
               }
@@ -376,10 +378,10 @@ export class PdfGeneratorService {
             const i = headerIndex;
             const n = rowIndex;
 
-            if (cell['TT'] === 'one_way') {
-              doc.addImage(this.ARROW_IMG, 'PNG', table.left + (table.sp * i), table.top - 14 + table.lh * (n + 1), 15, 15);
+            if (cell['TT'] === 'OW') {
+              doc.addImage(this.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 45, table.top - 14 + table.lh * (n + 1) - 3, 15, 15);
             } else {
-              doc.addImage(this.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i), table.top - 11 + table.lh * (n + 1), 23, 11);
+              doc.addImage(this.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 45, table.top - 11 + table.lh * (n + 1) - 3, 23, 11);
             }
           },
           drawRows: (__data) => {
@@ -404,19 +406,24 @@ export class PdfGeneratorService {
                   n = j;
                   if ((table.top + table.lh * (n + 1)) < (ctx.A4.height - 50)) {
                     _headers.forEach((header, i) => {
-                      // console.log(header);
                       if (i === 1) {
                         if (header === 'TT') {
                           table.drawCellWithImg(cell, i, n);
                         } else {
-                          doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
+                          doc.text(table.left + (table.sp * i) + 55, table.top + table.lh * (n + 1) - 5, cell[_headers[i]]);
                         }
                       } else {
                         if (header === 'TT') {
                           table.drawCellWithImg(cell, i, n);
                         } else {
                           try {
-                            doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
+                            if (header === 'Student Name' && cell['Student Name'].length > 28) {
+                              const rowTextArray = cell[_headers[i]].split(' (');
+                              const rowText = [rowTextArray[0], '(' + rowTextArray[1]];
+                              doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1) - 13, rowText);
+                            } else {
+                              doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1) - 5, cell[_headers[i]]);
+                            }
                           } catch (e) {
                             console.log(e);
                             doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), 'error');
@@ -424,7 +431,7 @@ export class PdfGeneratorService {
                         }
                       }
                     });
-                    doc.line(table.left, table.top + table.lh * (n + 1) + 8, ctx.A4.width - table.right, table.top + table.lh * (n + 1) + 8);
+                    doc.line(table.left, (table.top + table.lh * (n + 1)) + 8, ctx.A4.width - table.right, table.top + table.lh * (n + 1) + 8);
                   } else {
                     doc.addPage();
                     table.top = 29;
