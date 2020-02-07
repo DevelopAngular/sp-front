@@ -12,9 +12,8 @@ import {
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject, Subject} from 'rxjs';
+import {of, throwError, BehaviorSubject, Observable, interval, ReplaySubject} from 'rxjs';
 import { environment } from '../../environments/environment';
-import * as testEnv from '../../environments/environment.test';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
@@ -25,6 +24,8 @@ import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLeng
 import { getSchools } from '../ngrx/schools/actions';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
+
+declare const window;
 
 export interface Config {
   [key: string]: any;
@@ -427,6 +428,7 @@ export class HttpService {
             if (!res) {
              throw new LoginServerError('Incorrect Login or password');
             }
+            window.waitForAppLoaded(true);
             this.loginService.setAuthenticated();
           }),
           catchError(err => {

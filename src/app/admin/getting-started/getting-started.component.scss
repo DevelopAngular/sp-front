@@ -11,6 +11,22 @@
     box-sizing: border-box;
      background-color: #FBFEFF;
      overflow-y: scroll;
+
+    .header-container {
+      padding-top: 25px;
+      background-color: #FBFEFF;
+      position: sticky;
+      top: 0;
+      background-clip: padding-box;
+      z-index: 10;
+      width: 100%;
+      box-sizing: border-box;
+
+      .get-started-header {
+        padding: 0 25px;
+        z-index: 11;
+      }
+    }
      .getting-started-wrapper{
        min-width: 830px;
        max-width: 100%;

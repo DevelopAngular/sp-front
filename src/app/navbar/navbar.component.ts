@@ -197,7 +197,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         if (key[0] === ',') {
           const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
           (settingButton as HTMLElement).click();
-        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3') {
+        } else if (
+          (key[0] === '1' || key[0] === '2' || key[0] === '3') &&
+          !this.dialog.openDialogs || !this.dialog.openDialogs.length && key[0] !== 'r') {
           const route = {
             '1': 'passes',
             '2': 'hallmonitor',

@@ -186,9 +186,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       this.forceSelectedLocation = location;
       this.pinnable = pinnables.find((pnbl: Pinnable) => {
         if (pnbl.type === 'location') {
-          return pnbl.location.id === location.id;
+          return (pnbl.location.id + '') === (location.id + '');
         } else {
-          return pnbl.category === location.category;
+          return pnbl.category === location.category.substring(0, location.category.length - 8);
         }
       });
 
@@ -414,10 +414,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
           }),
           switchMap((res) => {
-            return this.hallPassService.createArrangedPinnable(res.map((v: any) => v.id).join(','));
+            return this.hallPassService.createArrangedPinnableRequest(res.map((v: any) => v.id).join(','));
           }),
           switchMap((res) => {
-            return this.hallPassService.getPinnables();
+            return this.hallPassService.getPinnablesRequest().pipe(filter((pin: Pinnable[]) => !!pin.length));
           }),
         )
         .subscribe((res: Pinnable[]) => {

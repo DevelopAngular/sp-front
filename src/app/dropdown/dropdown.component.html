@@ -1,5 +1,11 @@
-<div class="pointer-wrapper"><div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div></div>
-<div class="consent-wrapper"  [style.background-color]="darkTheme.getBackground('low')">
+<div class="pointer-wrapper">
+  <div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div>
+</div>
+<div class="consent-wrapper"
+     [style.background-color]="darkTheme.getBackground('low')"
+     appCheckUserInput
+     (inputValueEmit)="search($event)"
+>
   <div class="consent-header" [style.color]="'#7F879D'" *ngIf="heading">
     {{heading}}
   </div>
@@ -61,7 +67,7 @@
   </div>
 
   <div class="options-wrapper" *ngIf="schools" #optionsWrapper>
-    <div class="option" *ngFor="let school of schools">
+    <div class="option" *ngFor="let school of schools" #schoolList>
       <div #_option class="option-data"
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
@@ -111,7 +117,6 @@
       <div class="option-divider"></div>
     </div>
     <div class="assistant-greeting ds-w-100 ds-pt-10 ds-pb-15"
-         [style.background-color]="'#FCFDFF'"
          [style.color]="darkTheme.getColor()">
       <div style="font-weight: bold;">Hi {{user.display_name}}!</div>
       <div>Create and manage passes for this teacher.</div>

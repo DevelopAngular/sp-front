@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { HttpService } from '../../../services/http-service';
+import {HttpService} from '../../../services/http-service';
 import * as schoolsActions from '../actions';
 import { catchError, concatMap, map } from 'rxjs/operators';
 import { School } from '../../../models/School';
@@ -8,6 +8,11 @@ import { of } from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
 import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
+import {GoogleLoginService} from '../../../services/google-login.service';
+import {environment} from '../../../../environments/environment';
+import {Router} from '@angular/router';
+
+declare const window;
 
 @Injectable()
 export class SchoolsEffects {
@@ -54,10 +59,14 @@ export class SchoolsEffects {
       .pipe(
         ofType(schoolsActions.getSchoolsFailure, schoolsActions.getSchoolsFailure),
         map((action: any) => {
+          window.appLoaded();
           this.http.errorToast$.next({
             header: 'Oops! Sign in error',
             message: 'School has not been yet launched'
           });
+          setTimeout(() => {
+            this.router.navigate(['sign-out']);
+          }, 2500);
           return schoolsActions.errorToastSuccess();
         })
       );
@@ -128,6 +137,7 @@ export class SchoolsEffects {
   constructor(
     private actions$: Actions,
     private http: HttpService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private router: Router
   ) {}
 }

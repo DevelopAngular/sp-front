@@ -11,6 +11,7 @@ import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.comp
 import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
 import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
 import {NoAccountComponent} from '../no-account/no-account.component';
+import { CheckUserInputDirective } from './directives/check-user-input.directive';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import {NoAccountComponent} from '../no-account/no-account.component';
     GradientButtonComponent,
     CrossPointerEventTargetDirective,
     MoovingTilesComponent,
-    NoAccountComponent
+    NoAccountComponent,
+    CheckUserInputDirective
   ],
   imports: [
     CommonModule,

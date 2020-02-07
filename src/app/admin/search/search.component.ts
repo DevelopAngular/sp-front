@@ -238,6 +238,7 @@ export class SearchComponent implements OnInit {
             Object.defineProperty(rawObj, 'id', { enumerable: false, value: hallPass.id});
             Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(hallPass.created) });
             Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+            Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: hallPass.travel_type });
 
             Object.defineProperty(record, '_data', {enumerable: false, value: rawObj });
             return record;
@@ -315,14 +316,17 @@ export class SearchComponent implements OnInit {
     this.tableData = [];
     this.selectedReport = [];
     this.hasSearched = false;
-    // this.b.map((b: XsButtonComponent) => b.resetEmit());
-    // this.selectedDate = null;
   }
 
   previewPDF(event) {
     const data = this.selectedReport.length ? this.selectedReport : this.tableData.map(pass => pass._data);
     if (data.length > 0) {
       const _selectedReport = data.map((row) => {
+        if (row.travelType === 'round_trip') {
+          row.TT = 'RT';
+        } else if (row.travelType === 'one_way') {
+          row.TT = 'OW';
+        }
         const _copy = {};
         for (const key in row) {
           if (row.hasOwnProperty(key) && key !== 'hovered' && key !== 'pressed') {

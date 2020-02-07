@@ -139,7 +139,10 @@ export class NavComponent implements OnInit {
         if (key[0] === ',') {
           const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
           (settingButton as HTMLElement).click();
-        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3' || key[0] === '4' || key[0] === '5' || key[0] === '6') {
+        } else if
+        (
+          (key[0] === '1' || key[0] === '2' || key[0] === '3' || key[0] === '4' || key[0] === '5' || key[0] === '6') &&
+          !this.dialog.openDialogs || !this.dialog.openDialogs.length) {
           const route = {
             '1': 'dashboard',
             '2': 'hallmonitor',

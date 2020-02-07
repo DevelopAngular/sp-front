@@ -3,27 +3,29 @@
     <form [formGroup]="form">
       <div class="room-inputs" *ngIf="currentPage !== 9 && currentPage !== 10">
           <app-input
-                  [width]="'222px'"
-                  [maxLength]="'15'"
-                  [input_label]="'Room Name'"
-                  [input_value]="data && data.roomName && data.roomName !== 'New Room' ? data.roomName : ''"
-                  [formGroup]="form"
-                  [controlName]="form.get('roomName')"
-                  (onUpdate)="data.roomName = $event === '' ? 'New Room': $event;"
-                  [isFocus]="currentPage === 1 || currentPage === 5"
-                  (blurEvent)="overlayService.roomNameBlur$.next($event)"
+            [width]="'222px'"
+            [maxLength]="'15'"
+            [input_label]="'Room Name'"
+            [input_value]="data && data.roomName && data.roomName !== 'New Room' ? data.roomName : ''"
+            [formGroup]="form"
+            [controlName]="form.get('roomName')"
+            (onUpdate)="data.roomName = $event === '' ? 'New Room': $event;"
+            [isFocus]="currentPage === 1 || currentPage === 5 && inputFocusNumber === 1"
+            [forceFocus$]="forceFocus$"
+            (blurEvent)="overlayService.roomNameBlur$.next($event)"
           >
           </app-input>
 
           <app-input
-                  [width]="'103px'"
-                  [maxLength]="'5'"
-                  [isFocus]="form.touched"
-                  [input_label]="'Room Number'"
-                  [input_value]="data && data.roomNumber ? data.roomNumber : ''"
-                  (onUpdate)="data.roomNumber = $event"
-                  [formGroup]="form"
-                  [controlName]="form.get('roomNumber')"
+            [width]="'103px'"
+            [maxLength]="'5'"
+            [isFocus]="inputFocusNumber === 2"
+            [forceFocus$]="forceFocus$"
+            [input_label]="'Room Number'"
+            [input_value]="data && data.roomNumber ? data.roomNumber : ''"
+            (onUpdate)="data.roomNumber = $event"
+            [formGroup]="form"
+            [controlName]="form.get('roomNumber')"
           >
           </app-input>
       </div>
@@ -88,17 +90,19 @@
         </div>
         <div class="time-limit">
           <app-input
-                  [width]="'103px'"
-                  [maxLength]="'3'"
-                  [tooltipText]="tooltipText.timeLimit"
-                  [input_label]="'Time Limit'"
-                  [isFocus]="form.touched"
-                  [input_value]="data && data.timeLimit ? data.timeLimit : ''"
-                  [placeholder]="'minutes'"
-                  (onUpdate)="data.timeLimit = +$event"
-                  [rightIcon]="'./assets/Support (Gray).svg'"
-                  [formGroup]="form"
-                  [controlName]="form.get('timeLimit')">
+            [width]="'103px'"
+            [maxLength]="'3'"
+            [tooltipText]="tooltipText.timeLimit"
+            [isFocus]="inputFocusNumber === 3"
+            [forceFocus$]="forceFocus$"
+            [input_label]="'Time Limit'"
+            [input_value]="data && data.timeLimit ? data.timeLimit : ''"
+            [placeholder]="'minutes'"
+            (onUpdate)="data.timeLimit = +$event"
+            [rightIcon]="'./assets/Support (Gray).svg'"
+            [formGroup]="form"
+            [controlName]="form.get('timeLimit')"
+          >
           </app-input>
         </div>
       </div>

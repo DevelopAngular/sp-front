@@ -22,7 +22,7 @@ export class SignOutComponent implements AfterContentInit {
     this.http.setSchool(null);
     this.userService.clearUser();
     if (this.darkSwitch.isEnabled$.value) {
-      this.darkSwitch.switchTheme();
+      this.darkSwitch.switchTheme('Light');
     }
   }
 

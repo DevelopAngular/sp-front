@@ -24,16 +24,18 @@
       }
 
       .set-day-content {
-        overflow: auto;
+        overflow: hidden;
         display: flex;
-        height: calc(100vh - 124px);
-        max-width: 1106px;
+        height: calc(100vh - 164px);
+        max-width: 1147px;
+        margin-top: 10px;
         .left-block {
           margin-top: 65px;
+          margin-right: 40px;
           flex: 1 1;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          //justify-content: space-between;
 
           .selected-date {
 
@@ -51,7 +53,7 @@
           }
 
           .button {
-            flex: 1 1 auto;
+            //flex: 1 1 auto;
             display: flex;
             align-items: flex-start;
             margin-top: 81px;
@@ -68,7 +70,7 @@
 
         .image {
           display: flex;
-          align-items: flex-end;
+          //align-items: flex-end;
           //position: relative;
         }
       }

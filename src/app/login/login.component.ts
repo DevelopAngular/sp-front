@@ -11,10 +11,11 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {StorageService} from '../services/storage.service';
 import {User} from '../models/User';
-import {forkJoin, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import {Observable, ReplaySubject, Subject, zip} from 'rxjs';
 import {INITIAL_LOCATION_PATHNAME} from '../app.component';
 import {NotificationService} from '../services/notification-service';
 import {environment} from '../../environments/environment.prod';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -43,9 +44,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private googleAuth: GoogleAuthService,
-    private http: HttpClient,
     private httpService: HttpService,
-    private googleLogin: GoogleLoginService,
     private userService: UserService,
     private loginService: GoogleLoginService,
     private storage: StorageService,
@@ -55,21 +54,14 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private titleService: Title,
     private metaService: Meta,
     private notifService: NotificationService,
+    private darkSwitch: DarkThemeSwitch
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
   }
 
   ngOnInit() {
-
-    // this.route.queryParams
-    //   .pipe(
-    //     filter(qp => !!qp && !!qp.code)
-    //   )
-    //   .subscribe((qp) => {
-    //     console.log(qp);
-    //
-    //   });
+    this.darkSwitch.switchTheme('Light');
 
     this.titleService.setTitle('SmartPass Sign-in');
     this.metaService.addTag({
@@ -96,7 +88,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         this.notifService.initNotifications(true);
       }
 
-      console.log(path);
+      // console.log(path);
 
       const loadView = currentUser.isAdmin() ? 'admin' : 'main';
 
