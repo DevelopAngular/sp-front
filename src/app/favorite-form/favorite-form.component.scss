@@ -1,7 +1,7 @@
 .ios {
   &-favorite-form-wrapper {
     @extend  .favorite-form-wrapper;
-    width: 335px !important;
+    width: 289px !important;
   }
 
   &-back-button-wrapper {
@@ -35,7 +35,7 @@
 
 @media all and (max-width: 940px){
   div.favorite-form-wrapper {
-    width: 335px;
+    width: 289px;
   }
 
   div.back-button-wrapper {

@@ -8,7 +8,7 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, filter, map, switchMap, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
@@ -101,8 +101,14 @@ export class AddUserDialogComponent implements OnInit {
       name: new FormControl('', [
           Validators.required,
       ]),
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required]),
+      username: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6)
+      ], [this.uniqueEmailValidator.bind(this)]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8)
+      ]),
     });
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
@@ -126,6 +132,24 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe(() => {
         this.pendingSubject.next(false);
       });
+  }
+
+  uniqueEmailValidator(control: FormControl) {
+    return control.valueChanges
+      .pipe(
+        take(1),
+        distinctUntilChanged(),
+        debounceTime(300),
+        switchMap(value => {
+          return this.userService.checkUserEmail(value)
+            .pipe(
+              take(1),
+              map(({exists}: {exists: boolean}) => {
+                return (exists ? { uniqEmail: true } : null);
+              })
+            );
+        })
+      );
   }
 
   textColor(item) {
@@ -232,12 +256,13 @@ export class AddUserDialogComponent implements OnInit {
             const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
 
             if (regexpUsername.test(this.newAlternativeAccount.get('username').value)) {
+              const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
               if (role !== 'assistant') {
                 return this.userService
-                            .addAccountToSchool(this.school.id, this.newAlternativeAccount.value, 'username', rolesToDb);
+                            .addAccountToSchool(this.school.id, data, 'username', rolesToDb);
               } else {
                 return this.userService
-                  .addAccountToSchool(this.school.id, this.newAlternativeAccount.value, 'username', rolesToDb)
+                  .addAccountToSchool(this.school.id, data, 'username', rolesToDb)
                   .pipe(
                     switchMap(
                       (assistant: User) => {
@@ -305,9 +330,9 @@ export class AddUserDialogComponent implements OnInit {
       email: control.username,
       password: control.password,
       first_name: control.name.split(' ')[0],
-      last_name: control.name.split(' ')[1],
+      last_name: control.name.split(' ')[1] || '',
       display_name: control.name
-    }
+    };
   }
 
   setSelectedUsers(evt) {

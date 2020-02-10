@@ -5,6 +5,7 @@ import {AdminService} from '../../../services/admin.service';
 import { cloneDeep, isEqual } from 'lodash';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
+import {GettingStartedProgressService} from '../../getting-started-progress.service';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class AccountGroupsComponent implements OnInit {
 
   constructor(
     public darkTheme: DarkThemeSwitch,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private gsProgress: GettingStartedProgressService,
   ) { }
 
   ngOnInit() {
@@ -92,17 +94,15 @@ export class AccountGroupsComponent implements OnInit {
       this.orgUnits.forEach((item: OrgUnit) => {
         syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
       });
-      // console.log(syncBody);
 
       this.pending = true;
       this.adminService.updateGSuiteOrgs(syncBody)
         .pipe(
           switchMap(() => {
-            return this.adminService.updateOnboardProgress('setup_accounts:end');
+            return this.gsProgress.updateProgress('setup_accounts:end');
           })
         )
         .subscribe((res) => {
-          // console.log(res);
           this.pending = false;
           this.orgUnitsEditState = false;
           this.updater.next(true);

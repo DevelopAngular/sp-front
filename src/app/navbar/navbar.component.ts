@@ -43,6 +43,7 @@ import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import { filter as _filter } from 'lodash';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 
 declare const window;
 
@@ -197,7 +198,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         if (key[0] === ',') {
           const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
           (settingButton as HTMLElement).click();
-        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3') {
+        } else if (
+          (key[0] === '1' || key[0] === '2' || key[0] === '3') &&
+          !this.dialog.openDialogs || !this.dialog.openDialogs.length && key[0] !== 'r') {
           const route = {
             '1': 'passes',
             '2': 'hallmonitor',
@@ -507,18 +510,22 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
             entry: true
           }
         });
-      } else if (action === 'switch') {
+      } else if (action === 'appearance') {
+          this.dialog.open(SpAppearanceComponent, {
+            panelClass: 'form-dialog-container',
+          });
+      }  else if (action === 'switch') {
         this.router.navigate(['admin']);
       } else if (action === 'team') {
           window.open('https://smartpass.app/team.html');
-      } else if (action === 'about') {
-          window.open('https://smartpass.app/about');
       } else if (action === 'support') {
           if (this.isStaff) {
               window.open('https://smartpass.app/support');
           } else {
               window.open('https://smartpass.app/studentdocs');
           }
+      } else if (action === 'bug') {
+        window.open('https://www.smartpass.app/bugreport');
       } else if (action === 'wishlist') {
           window.open('https://wishlist.smartpass.app');
       } else if (action === 'privacy') {

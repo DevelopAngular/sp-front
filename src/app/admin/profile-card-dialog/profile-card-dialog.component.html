@@ -208,7 +208,7 @@
         </div>
         <!--<div style="flex: 1 1 132px; display: flex;">-->
         <div class="card-footer">
-          <div class="button" *ngIf="profile._originalUserProfile.active">
+          <div class="button" *ngIf="profile._originalUserProfile.active && !data.disabledSignIn">
             <app-gradient-button
               [size]="'editable'"
               [width]="'155px'"
@@ -227,7 +227,7 @@
               <span>Disable sign-in to prevent this user from being able to sign in with the {{data.profileTitle}} group.</span>
             </div>
           </div>
-          <div class="button" *ngIf="!profile._originalUserProfile.active">
+          <div class="button" *ngIf="!profile._originalUserProfile.active || data.disabledSignIn">
             <app-gradient-button
               [size]="'editable'"
               [width]="'155px'"
@@ -235,6 +235,7 @@
               [fontSize]="'13px'"
               [fontWeight]="'bold'"
               [textColor]="'#FFFFFF'"
+              [disabled]="data.disabledSignIn"
               [cursor]="'pointer'"
               (buttonClick)="promptConfirmation($event.target, 'enable_sign_in')"
             >

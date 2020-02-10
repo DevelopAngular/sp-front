@@ -40,11 +40,12 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-               (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'; sortMode = option.action"
-               (mouseup)="_option.style.background = 'transparent'"
-               (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : '#ECF1FF' : '#ECF1FF'"
+               appCrossPointerEventTarget
+               (pointerClickEvent)="_matDialogRef.close(option.action); _option.style.background = 'transparent'"
+               (pointerDownEvent)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'; sortMode = option.action"
+               (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : 'rgba(226, 231, 244, .2)' : '#ECF1FF'"
                (mouseleave)="_option.style.background = 'transparent'"
-               (click)="_matDialogRef.close(option.action)">
+               >
             <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
               <span>{{ option.display }}</span>
               <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" *ngIf="sortMode === option.action" alt="Check.svg">

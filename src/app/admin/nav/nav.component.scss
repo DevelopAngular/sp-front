@@ -19,7 +19,7 @@
 }
 .nav-main {
   overflow: auto  ;
-  padding: 0 0px 85px 29px;
+  padding: 0 0 85px 0;
   position: relative;
 }
 .nav-header{
@@ -27,13 +27,13 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin: 16px 0px;
+    margin: 26px 0 20px 29px;
 }
 
 .nav-buttons{
     display: flex;
     flex-direction: column;
-  margin-top: 3px;
+    margin-top: 3px;
   //position: relative;
 }
 

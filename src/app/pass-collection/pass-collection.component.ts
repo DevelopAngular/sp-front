@@ -166,7 +166,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     return this.emptyMessage;
   }
 
-  showPass(pass) {
+  showPass({time$, pass}) {
+    this.activePassTime$ = time$;
     this.passClick.emit(true);
     this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);

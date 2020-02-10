@@ -9,6 +9,9 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.directive';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
+import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
+import {NoAccountComponent} from '../no-account/no-account.component';
+import { CheckUserInputDirective } from './directives/check-user-input.directive';
 
 @NgModule({
   declarations: [
@@ -19,7 +22,10 @@ import {GradientButtonComponent} from '../gradient-button/gradient-button.compon
     DropdownComponent,
     SignedOutToastComponent,
     GradientButtonComponent,
-    CrossPointerEventTargetDirective
+    CrossPointerEventTargetDirective,
+    MoovingTilesComponent,
+    NoAccountComponent,
+    CheckUserInputDirective
   ],
   imports: [
     CommonModule,
@@ -34,13 +40,16 @@ import {GradientButtonComponent} from '../gradient-button/gradient-button.compon
     DropdownComponent,
     CrossPointerEventTargetDirective,
     SignedOutToastComponent,
-    GradientButtonComponent
+    GradientButtonComponent,
+    MoovingTilesComponent,
+    NoAccountComponent
   ],
   entryComponents: [
     ErrorToastComponent,
     ToastConnectionComponent,
     DropdownComponent,
-    SignedOutToastComponent
+    SignedOutToastComponent,
+    NoAccountComponent
   ],
 })
 export class CoreModule { }

@@ -35,7 +35,6 @@
            (pointerClickEvent)="hoveredMasterOption = false; switchAction()"
            (pointerDownEvent)="hoveredMasterOption = true"
            (pointerCancelEvent)="hoveredMasterOption = false;"
-
       >
         <img class="switch-icon" [src]="getIcon('Profile Switch', null,  hoveredMasterOption) | resolveAsset">
         <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Admin View</div>
@@ -50,22 +49,33 @@
         <div class="content"
              appCrossPointerEventTarget
              (pointerClickEvent)="handleAction(setting); hovered = false"
-             (pointerDownEvent)="onHover({color: setting.gradient, id: setting.id})"
+             (pointerDownEvent)="onHover(setting.background)"
              (pointerCancelEvent)="hovered = false;"
-             (mouseenter)="onHover({color: setting.gradient, id: setting.id})"
+             (mouseenter)="onHover(setting.background)"
              (mouseleave)="hovered = false"
-             [style.background]="hovered && hoverId === setting.id ?
-           (isStaff ? i === 3 : i === 2) ? (darkTheme.isEnabled$.value ? 'rgb(228, 235, 255)' : 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')') : 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
+             [style.background]="
+              hovered && hoveredColor === setting.background
+              ?
+                i === 2
+                  ?
+                  (darkTheme.isEnabled$.value
+                    ?
+                      'rgb(228, 235, 255)' : setting.background)
+                        : setting.background: 'none'"
         >
           <img class="setting-icon"
-               [src]="(isStaff ? i === 3 : i === 2) ? (darkTheme.isEnabled$.value && (hovered && hoverId === setting.id) ? './assets/Moon (Navy).svg' : getIcon(setting.icon, setting, hovered, hoverId)) : (getIcon(setting.icon, setting, hovered, hoverId)) | resolveAsset" alt="SET">
+               [src]="i === 2
+                ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background)
+                  ? './assets/Glasses (Navy).svg'
+                    : getIcon(setting.icon, setting, hovered, hoveredColor))
+                      : (getIcon(setting.icon, setting, hovered, hoveredColor)) | resolveAsset" alt="SET">
           <div class="setting-title"
-               [style.color]="(isStaff ? i === 3 : i === 2) ? (darkTheme.isEnabled$.value && (hovered && hoverId === setting.id) ? '#1F195E' : getColor(setting, hovered, hoverId)) : (getColor(setting, hovered, hoverId))"
-          > {{((isStaff ? i === 3 : i === 2) ? (darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode') : setting.title)}} </div>
+               [style.color]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
+          > {{setting.title}} </div>
         </div>
         <mat-divider class="divider"
                      [style.border-top-color]="darkTheme.isEnabled$.value ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)'"
-                     *ngIf="i === 4 || (isStaff ? i === 7 : i === 6) || (i === 2 && !!this.kioskMode.currentRoom$.value)">
+                     *ngIf="i === 2 || i === 6 || (i === 2 && !!this.kioskMode.currentRoom$.value)">
         </mat-divider>
       </div>
     </div>

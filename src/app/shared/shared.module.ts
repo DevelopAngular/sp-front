@@ -22,7 +22,6 @@ import {DragulaModule} from 'ng2-dragula';
 import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SafariScrollDirective} from '../safari-scroll.directive';
 import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
 import {CalendarPickerComponent} from '../calendar-components/calendar-picker/calendar-picker.component';
@@ -41,7 +40,6 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {IosCalendarWheelComponent} from '../ios-calendar/ios-calendar-wheel/ios-calendar-wheel.component';
 import {IosCalendarComponent} from '../ios-calendar/ios-calendar.component';
 import {NavbarElementSenderDirective} from '../core/directives/navbar-element-sender.directive';
-import {DomElementCheckerDirective} from '../core/directives/dom-element-checker.directive';
 import { ChartsModule } from 'ng2-charts';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {GoogleSigninComponent} from '../google-signin/google-signin.component';
@@ -55,7 +53,8 @@ import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
 import {TeacherPinStudentComponent} from '../teacher-pin-student/teacher-pin-student.component';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
-
+import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -94,7 +93,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RoundInputComponent,
     AppInputComponent,
     CalendarComponent,
-    RestrictionPickerComponent,
     SafariScrollDirective,
     ToggleInputComponent,
     CalendarPickerComponent,
@@ -109,7 +107,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IosCalendarWheelComponent,
     IosCalendarComponent,
     NavbarElementSenderDirective,
-    DomElementCheckerDirective,
     ConsentMenuComponent,
     IntroDialogComponent,
     IntroComponent,
@@ -120,6 +117,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileComponent,
     AccountGroupsComponent,
     ReportSuccessToastComponent,
+    RestrictionPickerComponent,
+    SpAppearanceComponent,
     TeacherPinStudentComponent
   ],
   entryComponents: [
@@ -131,7 +130,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SortMenuComponent,
     NextReleaseComponent,
     ConsentMenuMobileComponent,
-    ReportSuccessToastComponent
+    ReportSuccessToastComponent,
+    SpAppearanceComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -156,7 +156,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassCardComponent,
     InputTextareaModule,
     CalendarComponent,
-    RestrictionPickerComponent,
     SafariScrollDirective,
     ToggleInputComponent,
     CalendarPickerComponent,
@@ -180,6 +179,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileComponent,
     AccountGroupsComponent,
     ReportSuccessToastComponent,
+    RestrictionPickerComponent,
     TeacherPinStudentComponent
   ],
   providers: [

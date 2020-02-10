@@ -26,10 +26,6 @@ import {HallMonitorCollectionRestriction} from '../models/collection-restriction
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
 
-function isUserStaff(user: User): boolean {
-  return user.roles.includes('_profile_teacher');
-}
-
 export class ActivePassProvider implements PassLikeProvider {
 
   constructor(private liveDataService: LiveDataService, private searchQueries: Observable<string>) {
@@ -152,11 +148,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     private scrollPosition: ScrollPositionService
   ) {
     this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
-    // this.activePassProvider = new BasicPassLikeProvider(testPasses);
-  }
-
-  get isStaff$(): Observable<boolean> {
-    return this.dataService.currentUser.pipe(map(isUserStaff));
   }
 
   ngOnInit() {

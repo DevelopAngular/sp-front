@@ -1,24 +1,46 @@
 import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {StorageService} from './services/storage.service';
+import {DeviceDetection} from './device-detection.helper';
+
+declare const window;
 
 export type Tone = 'low' | 'middle' | 'high' | 'default' | 'extra';
+
 export interface ColorConfig {
   setting?: any;
   hover?: boolean;
-  hoverId?: number;
+  hoveredColor?: string;
   dark?: string;
   white?: string;
 }
+
 export interface IconConfig {
   iconName?: string;
   darkFill?: string;
   lightFill?: string;
   setting?: any;
   hover?: boolean;
-  hoverId?: number;
+  hoveredColor?: string;
   static?: boolean;
 }
+
+export type SPTheme = 'Light' | 'Dark' | 'Auto';
+
+const lightMode: MediaQueryList = window.matchMedia('(prefers-color-scheme: light)');
+const darkMode: MediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
+
+function listenSysLight(evt: MediaQueryListEvent) {
+  if (evt.matches) {
+    this.isEnabled$.next(false);
+  }
+}
+function listenSysDark(evt: MediaQueryListEvent) {
+  if (evt.matches) {
+    this.isEnabled$.next(true);
+  }
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -26,30 +48,63 @@ export interface IconConfig {
 export class DarkThemeSwitch {
 
   public preloader: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
-  public isEnabled$: BehaviorSubject<boolean>;
+  public isEnabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
+
+  private lightLink = listenSysLight.bind(this);
+  private darkLink = listenSysDark.bind(this);
 
   constructor(
     private storage: StorageService
   ) {
-    const isDarkTheme = JSON.parse(this.storage.getItem('dark-theme'));
-    this.isEnabled$ = new BehaviorSubject<boolean>(isDarkTheme);
+    const currentTheme: SPTheme = this.storage.getItem('appearance');
+    this.switchTheme(currentTheme ? currentTheme : 'Auto');
   }
 
-  isDarkNow() {
-    return this.isEnabled$.value;
+  private listenSystemThemePreference(predict: boolean) {
+    if (predict) {
+      lightMode.addListener(function () {
+        if (lightMode.matches) {
+          this.isEnabled$.next(false);
+        }
+        return this.lightLink;
+      }.call(this));
+      darkMode.addListener(function () {
+        if (darkMode.matches) {
+          this.isEnabled$.next(true);
+        }
+        return this.darkLink;
+      }.call(this));
+    } else {
+      lightMode.removeListener(this.lightLink);
+      darkMode.removeListener(this.darkLink);
+    }
   }
 
-  switchTheme() {
-    const isDarkTheme = this.isEnabled$.value;
-    this.storage.setItem('dark-theme', !isDarkTheme);
-    this.isEnabled$.next(!isDarkTheme);
+  switchTheme(theme: SPTheme = 'Auto') {
+    this.storage.setItem('appearance', theme);
+    switch (theme) {
+      case 'Light':
+        this.listenSystemThemePreference(false);
+        this.isEnabled$.next(false);
+        break;
+      case 'Dark':
+        this.listenSystemThemePreference(false);
+        this.isEnabled$.next(true);
+        break;
+      case 'Auto':
+        this.listenSystemThemePreference(true);
+        break;
+    }
+  }
+
+  currentTheme() {
+    return this.storage.getItem('appearance') ? this.storage.getItem('appearance') : 'Auto';
   }
 
   getIcon(config: IconConfig  = {
     darkFill: 'White',
     lightFill: 'Navy'
   }) {
-
     const iconName = /[A-Z]{1}[\w\s]+[^( \()]/;
 
     if (config.iconName.match(iconName)) {
@@ -62,7 +117,7 @@ export class DarkThemeSwitch {
       if (this.isEnabled$.value) {
         fill = 'White';
       } else {
-        fill = config.hover && config.hoverId === config.setting.id ? 'White' : 'Blue-Gray';
+        fill = config.hover && config.hoveredColor === config.setting.background ? 'White' : 'Blue-Gray';
       }
     }
 
@@ -73,13 +128,15 @@ export class DarkThemeSwitch {
         fill = config.hover ? 'Navy' : 'Blue-Gray';
       }
     }
+
     if (this.isEnabled$.value && config.darkFill) {
       fill = config.darkFill;
     }
+
     if (!this.isEnabled$.value && config.lightFill) {
       fill = config.lightFill;
-
     }
+
     if (config.static) {
       fill = config.lightFill || config.darkFill;
     }
@@ -104,7 +161,7 @@ export class DarkThemeSwitch {
       if (this.isEnabled$.value) {
         return '#EFEFEF';
       } else {
-        if (config.hover && config.hoverId === config.setting.id) {
+        if (config.hover && config.hoveredColor === config.setting.background) {
           return '#EFEFEF';
         } else {
           return '#7F879D';
@@ -128,8 +185,8 @@ export class DarkThemeSwitch {
     if (this.isEnabled$.value) {
       switch (tone) {
         case 'low':
-          case 'extra':
-            return '#0F171E';
+        case 'extra':
+          return '#0F171E';
         case 'default':
           return '#0F171E';
         case 'middle':
@@ -151,9 +208,5 @@ export class DarkThemeSwitch {
           return reverse ? '#7F879D' : '#FBFEFF';
       }
     }
-  }
-
-  get isColorSwitched() {
-    return this.isEnabled$.asObservable();
   }
 }

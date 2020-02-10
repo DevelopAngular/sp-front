@@ -13,3 +13,8 @@ export const getLoadedProcess = createSelector(
   getProcessState,
   (state: ProcessState) => state.loaded
 );
+
+export const getLoadingProcess = createSelector(
+  getProcessState,
+  (state: ProcessState) => state.loading
+);

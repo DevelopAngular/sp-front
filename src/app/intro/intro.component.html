@@ -274,13 +274,7 @@
             </div>
           </div>
           <div class="tiles-wrapper">
-            <div class="tiles">
-              <div class="tile" *ngFor="let mockTile of slides['#1']; let idx = index">
-                <div [style.transform]="idx % 2 === 0 ? 'rotate(-3deg)' : 'rotate(3deg)'">
-                  <app-pass-tile [mock]="mockTile"></app-pass-tile>
-                </div>
-              </div>
-            </div>
+            <app-mooving-tiles></app-mooving-tiles>
           </div>
         </div>
       </div>

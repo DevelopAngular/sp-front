@@ -54,6 +54,7 @@
 
     <app-restricted-message
       [formState]="FORM_STATE"
+      [isStaff]="isStaff"
       (backButton)="back($event)"
       [gradient]="FORM_STATE.data.gradient"
       [teacher]="data.requestTarget"
