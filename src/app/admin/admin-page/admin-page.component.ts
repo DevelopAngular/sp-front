@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {delay, filter, map, skip, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
 import {HttpService} from '../../services/http-service';
+import {AdminService} from '../../services/admin.service';
 
 declare const window;
 
@@ -29,6 +30,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private httpService: HttpService,
+    private adminService: AdminService
   ) {
 
     this.userService.userData
@@ -57,6 +59,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.schoolsLength$ = this.httpService.schoolsLength$;
+    this.httpService.globalReload$
+      .pipe(
+        switchMap(() => {
+          return this.adminService.getOnboardProcessRequest();
+        })
+      ).subscribe();
 
     this.adminPageReload$.pipe(
       takeUntil(this.destroy$),

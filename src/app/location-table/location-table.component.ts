@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
-import {map, pluck, takeUntil} from 'rxjs/operators';
+import {map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
-import {combineLatest, Observable, Subject, zip} from 'rxjs';
-import { sortBy, filter as _filter } from 'lodash';
+import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
+import { sortBy, differenceBy, some, filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 
@@ -47,6 +47,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() allowOnStar: boolean = false;
   @Input() isFavoriteForm: boolean;
   @Input() originLocation: any;
+  @Input() searchTeacherLocations: boolean;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -190,6 +191,30 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           .pipe(
             map((locs: any) => {
               return this.kioskModeFilter(locs);
+            }),
+            switchMap(locs => {
+              if (this.searchTeacherLocations) {
+                return this.locationService.locations$.pipe(
+                  map((locations) => {
+                    const teachersRoom = locations.filter((location: Location) => {
+                      return location.teachers.find(teacher => teacher.display_name.toLowerCase().includes(this.search));
+                    });
+
+                    // deduplicate rooms when searching
+                    const locMap: { [id: string]: Location; } = {};
+                    const outLocations: Location[] = [];
+                    for (const obj of [...locs, ...teachersRoom]) {
+                      if (typeof locMap[obj.id] === 'undefined') {
+                        outLocations.push(obj);
+                      }
+                      locMap[obj.id] = obj;
+                    }
+
+                    return outLocations;
+                  })
+                );
+              }
+              return of(locs);
             })
           )
           .subscribe(p => {
@@ -233,20 +258,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 
   isValidLocation(location) {
-    if (!this.forStaff &&
-      (!this.forLater &&
-        location.request_mode === 'all_teachers_in_room' &&
-        location.request_send_origin_teachers &&
-        this.originLocation &&
-        !this.originLocation.teachers.length) ||
-      (this.forLater &&
-        location.scheduling_request_mode === 'all_teachers_in_room' &&
-        location.scheduling_request_send_origin_teachers &&
-        this.originLocation &&
-        !this.originLocation.teachers.length)
-    ) {
-      return false;
-    }
     return !this.invalidLocation || +location.id !== +this.invalidLocation;
   }
 

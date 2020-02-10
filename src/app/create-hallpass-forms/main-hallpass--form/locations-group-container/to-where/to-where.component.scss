@@ -119,9 +119,11 @@
       overflow: auto;
       width: 100%;
       display: flex;
-      flex: 1 1 auto;
       flex-direction: column;
       align-items: center;
+      &.flex {
+        flex: 1 1 auto;
+      }
       .all-rooms {
         height: 100%;
       }

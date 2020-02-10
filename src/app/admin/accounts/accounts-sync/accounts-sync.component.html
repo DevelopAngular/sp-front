@@ -1,0 +1,66 @@
+<div class="accounts-setup">
+  <div class="g-header">
+    <img [src]="'./assets/google/Accounts-sync.svg' | resolveAsset">
+    <div class="g-header-title">
+      <div class="g-title">Accounts sync</div>
+      <div class="g-subtitle">Set up your admin, teacher, and student accounts.</div>
+    </div>
+  </div>
+  <div class="g-content">
+    <div class="left-side">
+      <div class="first-block">
+        <div class="option">
+          <div class="option-number">
+            <span>1</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="header">
+            <div class="title">Request G Suite Authorization Link</div>
+            <div class="subtitle">
+              Send us an email at support@smartpass.app with the subject "Requesting Onboarding Link." <br/>
+              This link allows us to sync students, teachers, and admins by organizational units or by Google groups.
+            </div>
+          </div>
+          <div class="buttons">
+            <app-gradient-button
+              [size]="'editable'"
+              [fontSize]="'15px'"
+              [fontWeight]="'normal'"
+              [width]="'176px'"
+              [minHeight]="'50px'"
+              [rightIcon]="'./assets/Chevron Right (White).svg'"
+              (buttonClick)="openMail()"
+            >
+              Send an email
+            </app-gradient-button>
+          </div>
+        </div>
+      </div>
+      <div class="second-block">
+        <div class="option">
+          <div class="option-number">
+            <span>2</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="header">
+            <div class="title">Sit Back and Relax</div>
+            <div class="subtitle">We’ll handle the account syncing on our end. It may take a few days for all the accounts to get entered properly.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right-side">
+      <div class="privacy">
+        <app-privacy-card
+          [title]="'Note on Privacy'"
+          [infoText]="'We take student privacy very seriously, continuously working with schools to make sure student data is kept safe and secure.'"
+          [leftIcon]="'./assets/Shield (Blue-Gray).svg'"
+          [buttonColor]="'#FFFFFF, #7F879D'"
+          [buttonLink]="'https://www.smartpass.app/privacy'"
+        ></app-privacy-card>
+      </div>
+    </div>
+  </div>
+</div>

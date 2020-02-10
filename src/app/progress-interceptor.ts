@@ -21,6 +21,7 @@ export class ProgressInterceptor implements HttpInterceptor {
                         const exeptedUrls = [
                           'onboard/schools/check_school',
                           'discovery/find',
+                          'discovery/email_info',
                           'auth/by-token',
                           'o/token'
                         ].every(_url => error.url.search(_url) < 0);

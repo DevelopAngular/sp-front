@@ -62,8 +62,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-      this.dataService.currentUser.pipe(
-          switchMap(user => {
+      combineLatest(this.dataService.currentUser, this.userService.effectiveUser).pipe(
+          switchMap(([user, effectiveUser]) => {
+            if (effectiveUser) {
+              return this.locationService.getLocationsWithTeacherRequest(effectiveUser.user);
+            }
               return this.locationService.getLocationsWithTeacherRequest(user);
           }),
         filter((res: any[]) => !!res.length)

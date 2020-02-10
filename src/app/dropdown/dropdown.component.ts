@@ -1,22 +1,16 @@
 import {
   Component,
   OnInit,
-  Input,
-  Output,
-  EventEmitter,
   ElementRef,
   Inject,
-  HostListener,
   ViewChild,
-  OnChanges,
-  Renderer2
+  Renderer2, ViewChildren, QueryList
 } from '@angular/core';
 import { Location } from '../models/Location';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { School } from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
-import {UserService} from '../services/user.service';
 import {RepresentedUser} from '../navbar/navbar.component';
 
 @Component({
@@ -31,6 +25,8 @@ export class DropdownComponent implements OnInit {
     this.options.scrollTop = this.scrollPosition;
   }
 
+  @ViewChildren('schoolList') schoolList: QueryList<School>;
+
   user: User;
   heading: string = '';
   locations: Location[];
@@ -42,6 +38,7 @@ export class DropdownComponent implements OnInit {
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
   scrollPosition: number;
+  findElement: ElementRef;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -64,7 +61,6 @@ export class DropdownComponent implements OnInit {
   }
 
   ngOnInit() {
-
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.width = this.teachers ? '305px' : '350px';
@@ -87,6 +83,21 @@ export class DropdownComponent implements OnInit {
       } else {
         this.renderer.setStyle(elem, 'background-color', this.darkTheme.isEnabled$.value ? '#0F171E' : 'white');
       }
+  }
+
+  search(value) {
+    if (this.findElement) {
+      this.renderer.setStyle(this.findElement.nativeElement, 'background-color', 'transparent');
+    }
+    if (value) {
+      this.findElement = (this.schoolList as any)._results.find(elem => {
+        return elem.nativeElement.innerText.toLowerCase().includes(value);
+      });
+      if (this.findElement) {
+        this.findElement.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+        this.renderer.setStyle(this.findElement.nativeElement, 'background-color', '#ECF1FF');
+      }
+    }
   }
 
   closeDropdown(location) {

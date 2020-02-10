@@ -12,6 +12,7 @@ import {AdminService} from '../services/admin.service';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
 import {GSuiteSelector, OrgUnit} from '../sp-search/sp-search.component';
+import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 
 declare const window;
 
@@ -40,7 +41,8 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private adminService: AdminService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private gsProgress: GettingStartedProgressService,
   ) {
     this.jwt = new JwtHelperService();
   }
@@ -81,6 +83,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
 
     return fromEvent(window, 'message')
             .pipe(
+              filter((message: any) => message.origin === 'https://smartpass.app'),
               map((message: any) => {
 
                 console.log(message);
@@ -122,11 +125,11 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
       this.adminService.updateGSuiteOrgs(this.syncBody)
         .pipe(
           switchMap(() => {
-            return this.adminService.updateOnboardProgress('setup_accounts:end');
+            return this.gsProgress.updateProgress('setup_accounts:end');
           })
         )
         .subscribe((res) => {
-          console.log(res);
+          // console.log(res);
           this.destroyer$.next();
           this.destroyer$.complete();
           this.router.navigate(['admin', 'accounts']);

@@ -110,7 +110,7 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   get filteredTeachers() {
-    return uniqBy(this.teachersNames, '+id');
+    return uniqBy(this.teachersNames, 'id');
   }
 
   ngOnInit() {

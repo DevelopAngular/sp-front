@@ -86,12 +86,12 @@ export class GridTableDataSource extends DataSource<any> {
     }
 
     this._fixedColumnsPlaceholder = wrapToHtml.call(this, this._fixedColumnsPlaceholder, 'span') as {[key: string]: SafeHtml; _data: any};
-    console.log(this._fixedColumnsPlaceholder);
+    // console.log(this._fixedColumnsPlaceholder);
     this.viewport.elementScrolled().subscribe((ev: any) => {
       const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
       const prevExtraData = start > 0 && start <= 12 && this.stickySpace ? 1 : start > 12 ? 12 : 0;
       const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData)).concat(this._fixedColumnsPlaceholder);
-      console.log(start - prevExtraData, '-', start + (PAGESIZE - prevExtraData));
+      // console.log(start - prevExtraData, '-', start + (PAGESIZE - prevExtraData));
 
       this.offset = ROW_HEIGHT * (start - prevExtraData);
       this.viewport.setRenderedContentOffset(this.offset);

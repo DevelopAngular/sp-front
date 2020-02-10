@@ -1,9 +1,7 @@
-import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { TimeService } from '../../services/time.service';
-import {Moment} from 'moment';
+import { Moment } from 'moment';
 import * as moment from 'moment';
-import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-calendar',
@@ -16,6 +14,7 @@ export class CalendarComponent implements OnInit {
   previousSelectedDate: moment.Moment;
   default: Date;
   elementPosition;
+  minDate: moment.Moment;
   passDates: Map<string, number>;
 
   @HostListener('window:resize', ['$event.target'])
@@ -35,6 +34,9 @@ export class CalendarComponent implements OnInit {
     }
     if (this.data['dotsDates']) {
       this.passDates = this.data['dotsDates'];
+    }
+    if (this.data['minDate']) {
+      this.minDate = this.data['minDate'];
     }
     this.updateCalendarPosition();
     this._matDialogRef

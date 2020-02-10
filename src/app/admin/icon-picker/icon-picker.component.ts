@@ -120,7 +120,7 @@ export class IconPickerComponent implements OnInit {
       } else {
           icon.active = true;
       }
-    console.log(icon);
+
     this.selectedIconPicker = icon.inactive_icon;
     this.selectedIconLocalUrl = icon.active_icon;
     this.selectedIconId = icon.id;

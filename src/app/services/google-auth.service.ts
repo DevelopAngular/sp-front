@@ -37,6 +37,7 @@ export class GoogleAuthService {
     this.auth$ = new ReplaySubject(1);
 
     gapi.load('auth2', () => {
+
       gapi.auth2.init(this.googleApi.getConfig().getClientConfig()).then(auth => {
         this.GoogleAuth = auth;
         this._zone.run(() => {
