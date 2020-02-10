@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import {BehaviorSubject, combineLatest, concat, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
 import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
@@ -358,26 +358,29 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   dialogContainer(data, component) {
-    const overlayDialog =  this.dialog.open(component, {
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-bd',
-      disableClose: true,
-      minWidth: '800px',
-      maxWidth: '100vw',
-      width: '800px',
-      height: '500px',
-      data: data
-    });
+      const overlayDialog =  this.dialog.open(component, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        disableClose: true,
+        minWidth: '800px',
+        maxWidth: '100vw',
+        width: '800px',
+        height: '500px',
+        data: data
+      });
 
-    overlayDialog.afterOpen().subscribe(() => {
-     this.forceSelectedLocation = null;
-    });
-    overlayDialog.afterClosed()
-     .subscribe(res => {
-       this.selectedPinnables = [];
-       this.bulkSelect = false;
-       this.pendingSubject.next(false);
-     });
+      overlayDialog.afterOpen().subscribe(() => {
+        this.forceSelectedLocation = null;
+      });
+      overlayDialog.afterClosed()
+        .pipe(
+          switchMap(() => this.hallPassService.getPinnablesRequest()),
+        )
+        .subscribe(res => {
+          this.selectedPinnables = [];
+          this.bulkSelect = false;
+          this.pendingSubject.next(false);
+        });
   }
 
   onboard({createPack, pinnables}) {

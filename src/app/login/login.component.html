@@ -12,9 +12,9 @@
 <!--    <div class="grow" *ngIf="!isMobileDevice || true"></div>-->
 
     <div class="moving-tiles">
-      <div class="shadow"></div>
+      <div class="shadow" *ngIf="!isMobileDevice"></div>
       <app-mooving-tiles></app-mooving-tiles>
-      <div class="right-shadow"></div>
+      <div class="right-shadow" *ngIf="!isMobileDevice"></div>
     </div>
 
     <div class="login-form">

@@ -12,7 +12,6 @@ import { School } from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
-import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-dropdown',
@@ -39,6 +38,7 @@ export class DropdownComponent implements OnInit {
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
   scrollPosition: number;
+  findElement: ElementRef;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -86,6 +86,18 @@ export class DropdownComponent implements OnInit {
   }
 
   search(value) {
+    if (this.findElement) {
+      this.renderer.setStyle(this.findElement.nativeElement, 'background-color', 'transparent');
+    }
+    if (value) {
+      this.findElement = (this.schoolList as any)._results.find(elem => {
+        return elem.nativeElement.innerText.toLowerCase().includes(value);
+      });
+      if (this.findElement) {
+        this.findElement.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+        this.renderer.setStyle(this.findElement.nativeElement, 'background-color', '#ECF1FF');
+      }
+    }
   }
 
   closeDropdown(location) {
