@@ -65,7 +65,10 @@
                   darkFill: 'White',
                   lightFill: 'Navy'
                 }) | resolveAsset" alt="Settings.svg">
-                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Students</span>
+                <div class="student-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">
+                  Students
+                  <app-disabled-chip *ngIf="showDisabledChip" [style.margin-left]="'21px'"></app-disabled-chip>
+                </div>
               </div>
               <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
                 <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
@@ -199,7 +202,22 @@
               </app-round-input>
             </div>
 
-            <div class="ds-mx-10" *ngIf="role !== '_all'">
+            <div class="ds-mx-10">
+
+              <app-gradient-button
+                [size]="'medium'"
+                [cursor]="'pointer'"
+                [gradient]="'#F4F4F4, #F4F4F4'"
+                [hoverColor]="'#F4F4F4'"
+                [textColor]="'#1F194E'"
+                (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
+                <div class="ds-flex-center-center">
+                  <span *ngIf="!dataTableEditState.value">Edit</span>
+                </div>
+              </app-gradient-button>
+            </div>
+
+            <div class="ds-mx-10">
 
               <app-gradient-button
                       [size]="'medium'"
@@ -211,20 +229,7 @@
                 </div>
               </app-gradient-button>
             </div>
-            <div class="ds-mx-10">
 
-              <app-gradient-button
-                      [size]="'medium'"
-                      [cursor]="'pointer'"
-                      [gradient]="'#F4F4F4, #F4F4F4'"
-                      [hoverColor]="'#F4F4F4'"
-                      [textColor]="'#1F194E'"
-                      (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
-                <div class="ds-flex-center-center">
-                  <span *ngIf="!dataTableEditState.value">Edit</span>
-                </div>
-              </app-gradient-button>
-            </div>
           </div>
         </div>
       </div>

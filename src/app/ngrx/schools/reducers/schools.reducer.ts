@@ -15,9 +15,14 @@ export const schoolsInitialState: SchoolsState = {
 
 const reducer = createReducer(
   schoolsInitialState,
-  on(schoolsActions.getSchools, state => ({...state, loading: true, loaded: false})),
+  on(schoolsActions.getSchools,
+      schoolsActions.updateSchool,
+      state => ({...state, loading: true, loaded: false, currentSchoolId: null})),
   on(schoolsActions.getSchoolsSuccess, (state, {schools}) => {
     return schoolAdapter.addAll(schools, {...state, loading: false, loaded: true});
+  }),
+  on(schoolsActions.updateSchoolSuccess, (state, {school}) => {
+    return schoolAdapter.upsertOne(school, { ...state, loading: false, loaded: true, currentSchoolId: school.id });
   })
 );
 

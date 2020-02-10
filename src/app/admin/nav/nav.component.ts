@@ -7,11 +7,13 @@ import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
-import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
+import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
+import {HttpService} from '../../services/http-service';
 
 declare const window;
 
@@ -28,7 +30,7 @@ export class NavComponent implements OnInit {
 
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
-  gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
+  // gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
     {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
@@ -55,19 +57,38 @@ export class NavComponent implements OnInit {
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
         public gsProgress: GettingStartedProgressService,
-        private shortcutsService: KeyboardShortcutsService
+        private shortcutsService: KeyboardShortcutsService,
+        private http: HttpService
     ) { }
 
-  console = console;
-    user: User;
+  user: User;
   showButton: boolean;
   selectedSettings: boolean;
+  process: number;
+  hidePointer: boolean;
 
   get pointerTopSpace() {
     return this.pts;
   }
 
   ngOnInit() {
+    this.http.globalReload$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() => {
+          return this.gsProgress.onboardProgress$;
+        }),
+      ).subscribe(res => {
+        this.process = res.progress;
+        setTimeout(() => {
+          this.hidePointer = this.router.url === '/admin/gettingstarted' && this.process === 100;
+        }, 100);
+      if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
+          this.buttons.splice(0, 1);
+        } else if (res.progress < 100 && !this.buttons.find(button => button.title === 'Get Started')) {
+          this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
+        }
+      });
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
@@ -78,6 +99,7 @@ export class NavComponent implements OnInit {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
+        this.hidePointer = this.process === 100 && this.tab.indexOf('gettingstarted') !== -1;
       }
     });
 
@@ -123,7 +145,10 @@ export class NavComponent implements OnInit {
         if (key[0] === ',') {
           const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
           (settingButton as HTMLElement).click();
-        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3' || key[0] === '4' || key[0] === '5' || key[0] === '6') {
+        } else if
+        (
+          (key[0] === '1' || key[0] === '2' || key[0] === '3' || key[0] === '4' || key[0] === '5' || key[0] === '6') &&
+          !this.dialog.openDialogs || !this.dialog.openDialogs.length) {
           const route = {
             '1': 'dashboard',
             '2': 'hallmonitor',
@@ -161,7 +186,6 @@ export class NavComponent implements OnInit {
 
     if (!this.selectedSettings) {
       this.selectedSettings = true;
-      // debugger
       const target = new ElementRef(event.currentTarget);
       UNANIMATED_CONTAINER.next(true);
       const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
@@ -175,23 +199,29 @@ export class NavComponent implements OnInit {
       });
 
       settingsRef.beforeClose().subscribe(() => {
-        // debugger
         this.selectedSettings = false;
       });
 
       settingsRef.afterClosed().subscribe(action => {
-        // debugger
         UNANIMATED_CONTAINER.next(false);
         if (action === 'signout') {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
+        } else if (action === 'getStarted') {
+          this.router.navigate(['admin/gettingstarted']);
         } else if (action === 'about') {
           window.open('https://smartpass.app/about');
+        } else if (action === 'appearance') {
+          this.dialog.open(SpAppearanceComponent, {
+            panelClass: 'form-dialog-container',
+          });
         } else if (action === 'wishlist') {
           window.open('https://wishlist.smartpass.app');
         } else if (action === 'support') {
           window.open('https://www.smartpass.app/support');
+        } else if (action === 'bug') {
+          window.open('https://www.smartpass.app/bugreport');
         } else if (action === 'privacy') {
           window.open('https://www.smartpass.app/legal');
         }

@@ -1,23 +1,26 @@
-import { Component, ElementRef, Inject, OnInit } from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { ColorProfile } from '../../models/ColorProfile';
-import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../../build-info';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {takeUntil} from 'rxjs/operators';
+import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
 
-  triggerElementRef: ElementRef;
+    triggerElementRef: ElementRef;
 
   isSwitchOption: boolean;
-
+  showGetStarted: boolean;
   hoveredProfile: boolean;
   hoveredTheme: boolean;
   pressedTheme: boolean;
@@ -27,30 +30,38 @@ export class SettingsComponent implements OnInit {
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
 
+  destroy$ = new Subject();
 
-  public settings = [
-    {
-      'background': '#139BE6',
-      'icon': 'Team',
-      'hover_icon': './assets/Team (White).svg',
-      'action': 'about',
-      'title': 'About'
-    },
-    {
-      'background': '#6651F1',
-      'icon': 'Launch',
-      'hover_icon': './assets/Launch (White).svg',
-      'action': 'wishlist',
-      'title': 'Wishlist'
-    },
-    {
-      'background': '#F53D45',
-      'icon': 'Support',
-      'hover_icon': './assets/Support (White).svg',
-      'action': 'support',
-      'title': 'Support'
-    },
-  ];
+    public settings = [
+        // {
+        //   'background': '#139BE6',
+        //   'icon': 'Team',
+        //   'hover_icon': './assets/Team (White).svg',
+        //   'action': 'about',
+        //   'title': 'About'
+        // },
+        {
+          'background': '#6651F1',
+          'icon': 'Launch',
+          'hover_icon': './assets/Launch (White).svg',
+          'action': 'wishlist',
+          'title': 'Wishlist'
+        },
+        {
+          'background': '#F53D45',
+          'icon': 'Support',
+          'hover_icon': './assets/Support (White).svg',
+          'action': 'support',
+          'title': 'Support'
+        },
+        {
+          'background': '#fc7303',
+          'icon': 'Bug',
+          'hover_icon': './assets/Bug (White).svg',
+          'action': 'bug',
+          'title': 'Bug Report'
+        },
+    ];
 
   constructor(
     private router: Router,
@@ -59,6 +70,8 @@ export class SettingsComponent implements OnInit {
     public darkTheme: DarkThemeSwitch,
     private elemRef: ElementRef,
     private pwaStorage: LocalStorage,
+    private dialog: MatDialog,
+    public gsProgress: GettingStartedProgressService,
   ) {
   }
 
@@ -68,17 +81,33 @@ export class SettingsComponent implements OnInit {
       !this.darkTheme.isEnabled$.value
         ?
         '#134482'
-        : 'rgb(228, 235, 255)'
-      : 'transparent';
+          : 'rgb(228, 235, 255)'
+            : 'transparent';
   }
 
   ngOnInit() {
+    this.gsProgress.onboardProgress$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+        this.showGetStarted = res.progress === 100;
+      });
     this.triggerElementRef = this.data['trigger'];
     this.isSwitchOption = this.data['isSwitch'];
     this.updateSettingsPosition();
   }
 
+  switchTheme() {
+    this.pressedTheme = false;
+    // this.data.darkBackground = !this.data.darkBackground;
+    this.dialog.open(SpAppearanceComponent, {
+      panelClass: 'form-dialog-container',
+    });
+  }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
 
@@ -99,18 +128,11 @@ export class SettingsComponent implements OnInit {
   }
 
   handleAction(setting) {
-    // debugger
     if ( typeof setting.action === 'string' ) {
       this.dialogRef.close(setting.action);
     } else {
       setting.action();
     }
-  }
-
-  test(evt) {
-    console.log(evt);
-    // debugger
-    // this.dialogRef.close();
   }
 
   updateSettingsPosition() {

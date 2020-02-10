@@ -10,6 +10,72 @@
     min-width: 1030px;
     background-color: #FBFEFF;
     -webkit-overflow-scrolling: touch;
+
+    .set-day-wrapper {
+      padding: 70px 0 0 70px;
+
+      .set-day-header {
+
+        .title {
+          font-size: 55px;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+      }
+
+      .set-day-content {
+        overflow: hidden;
+        display: flex;
+        height: calc(100vh - 164px);
+        max-width: 1147px;
+        margin-top: 10px;
+        .left-block {
+          margin-top: 65px;
+          margin-right: 40px;
+          flex: 1 1;
+          display: flex;
+          flex-direction: column;
+          //justify-content: space-between;
+
+          .selected-date {
+
+            .label {
+              font-size: 17px;
+              font-weight: bold;
+              margin-bottom: 10px;
+            }
+          }
+
+          .info-text {
+            font-size: 14px;
+            width: 280px;
+            margin-top: 25px;
+          }
+
+          .button {
+            //flex: 1 1 auto;
+            display: flex;
+            align-items: flex-start;
+            margin-top: 81px;
+            width: 357px;
+          }
+
+          .footer-text {
+            margin-bottom: 165px;
+            font-size: 14px;
+            width: 357px;
+            margin-top: 70px;
+          }
+        }
+
+        .image {
+          display: flex;
+          //align-items: flex-end;
+          //position: relative;
+        }
+      }
+    }
+
     .wrapper {
       display: flex;
       flex-direction: column;
@@ -23,7 +89,7 @@
           padding: 0 25px;
           .school-header {
             height: 99px;
-            padding: 0 0 0 40px;
+            padding: 0 25px 0 40px;
             box-sizing: border-box;
             border-radius: 12px;
             width: 100%;
@@ -31,6 +97,7 @@
             background-color: #FFFFFF;
             display: flex;
             align-items: center;
+            justify-content: space-between;
 
             .school-title {
               font-weight: bold;
@@ -42,20 +109,17 @@
         }
       }
 
-
-
       .content {
-        width: 100%;
+        padding: 60px;
         display: flex;
+        width: 950px;
         justify-content: space-between;
         height: calc(100vh - 190px);
         .left-block {
           min-width: 355px;
           width: 355px;
-          margin-left: 77px;
           display: flex;
           flex-direction: column;
-          justify-content: center;
           .title {
             color: $navy;
             font-weight: bold;
@@ -102,7 +166,45 @@
 
         .right-block {
           display: flex;
-          align-items: flex-end;
+          //align-items: flex-end;
+
+          .start-day {
+            width: 475px;
+            height: 227px;
+            position: relative;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+
+            .start-day-content {
+              padding: 35px 0 0 35px;
+              .start-day-header {
+                font-size: 24px;
+                color: $navy;
+                font-weight: bold;
+              }
+
+              .start-day-info {
+                font-size: 17px;
+                width: 345px;
+                color: #7f879d;
+                margin-top: 12px;
+                margin-bottom: 18px;
+              }
+            }
+
+            .image {
+              position: absolute;
+              right: -79px;
+              bottom: -26px;
+
+              &-launched {
+                position: absolute;
+                right: -23px;
+                bottom: -55px;
+              }
+            }
+          }
         }
       }
     }

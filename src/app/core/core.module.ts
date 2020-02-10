@@ -10,6 +10,8 @@ import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.di
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
 import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
+import {NoAccountComponent} from '../no-account/no-account.component';
+import { CheckUserInputDirective } from './directives/check-user-input.directive';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component'
     SignedOutToastComponent,
     GradientButtonComponent,
     CrossPointerEventTargetDirective,
-    MoovingTilesComponent
+    MoovingTilesComponent,
+    NoAccountComponent,
+    CheckUserInputDirective
   ],
   imports: [
     CommonModule,
@@ -37,13 +41,15 @@ import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component'
     CrossPointerEventTargetDirective,
     SignedOutToastComponent,
     GradientButtonComponent,
-    MoovingTilesComponent
+    MoovingTilesComponent,
+    NoAccountComponent
   ],
   entryComponents: [
     ErrorToastComponent,
     ToastConnectionComponent,
     DropdownComponent,
     SignedOutToastComponent,
+    NoAccountComponent
   ],
 })
 export class CoreModule { }

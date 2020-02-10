@@ -38,8 +38,6 @@ export class SettingsComponent implements OnInit {
   isSwitch: boolean;
 
   hoveredMasterOption: boolean;
-  hoveredTheme: boolean;
-  pressedTheme: boolean;
   hoveredSignout: boolean;
   hovered: boolean;
   hoveredColor: string;
@@ -47,30 +45,20 @@ export class SettingsComponent implements OnInit {
   currentRelease = RELEASE_NAME;
 
   constructor(
-    public dialog: MatDialog,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
-    @Optional() public dialogRef: MatDialogRef<SettingsComponent>,
-    private dataService: DataService,
-    private _zone: NgZone,
-    private sideNavService: SideNavService,
-    public loadingService: LoadingService,
-    public darkTheme: DarkThemeSwitch,
-    public kioskMode: KioskModeService,
-    private router: Router,
-    private pwaStorage: LocalStorage,
+      public dialog: MatDialog,
+      @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+      @Optional() public dialogRef: MatDialogRef<SettingsComponent>,
+      private dataService: DataService,
+      private _zone: NgZone,
+      private sideNavService: SideNavService,
+      public loadingService: LoadingService,
+      public darkTheme: DarkThemeSwitch,
+      public kioskMode: KioskModeService,
+      private router: Router,
+      private pwaStorage: LocalStorage,
 
   ) {
     this.initializeSettings();
-  }
-
-  get _themeBackground() {
-    return this.hoveredTheme
-      ?
-      this.pressedTheme
-        ?
-        'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
-        : 'rgb(228, 235, 255)'
-      : 'transparent';
   }
 
   ngOnInit() {
@@ -139,7 +127,7 @@ export class SettingsComponent implements OnInit {
   }
 
   updateDialogPosition() {
-    const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+      const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     if (this.targetElementRef && this.dialogRef) {
       const rect = this.targetElementRef.nativeElement.getBoundingClientRect();
       matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 168 }px`, top: `${rect.bottom + 10}px` };
@@ -149,9 +137,9 @@ export class SettingsComponent implements OnInit {
 
   signOutAction() {
     if (this.dialogRef) {
-      this.dialogRef.close('signout');
+        this.dialogRef.close('signout');
     } else {
-      this.sideNavService.sideNavAction$.next('signout');
+        this.sideNavService.sideNavAction$.next('signout');
     }
     this.removeOfflineAuthData();
     localStorage.removeItem('fcm_sw_registered');
@@ -197,18 +185,9 @@ export class SettingsComponent implements OnInit {
     this.settings.push({
       'hidden': false,
       'background': '#134482',
-      'icon': 'Moon',
-      'action': () => {
-        this.darkTheme.switchTheme();
-        if (this.data) {
-          this.data.darkBackground = !this.data.darkBackground;
-        }
-
-        if (this.dataSideNav) {
-          this.dataSideNav.darkBackground = !this.dataSideNav.darkBackground;
-        }
-      },
-      'title': (this.darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode')
+      'icon': 'Glasses',
+      'action': 'appearance',
+      'title': 'Appearance'
     });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
@@ -219,10 +198,10 @@ export class SettingsComponent implements OnInit {
     });
     this.settings.push({
       'hidden': false,
-      'background': '#07ABC3',
-      'icon': 'Team',
-      'action': 'about',
-      'title': 'About'
+      'background': '#F53D45',
+      'icon': 'Support',
+      'action': 'support',
+      'title': 'Support'
     });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
@@ -233,10 +212,10 @@ export class SettingsComponent implements OnInit {
     });
     this.settings.push({
       'hidden': false,
-      'background': '#F53D45',
-      'icon': 'Support',
-      'action': 'support',
-      'title': 'Support'
+      'background': '#fc7303',
+      'icon': 'Bug',
+      'action': 'bug',
+      'title': 'Bug Report'
     });
   }
 }

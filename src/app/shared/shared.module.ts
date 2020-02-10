@@ -40,7 +40,6 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {IosCalendarWheelComponent} from '../ios-calendar/ios-calendar-wheel/ios-calendar-wheel.component';
 import {IosCalendarComponent} from '../ios-calendar/ios-calendar.component';
 import {NavbarElementSenderDirective} from '../core/directives/navbar-element-sender.directive';
-import {DomElementCheckerDirective} from '../core/directives/dom-element-checker.directive';
 import { ChartsModule } from 'ng2-charts';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {GoogleSigninComponent} from '../google-signin/google-signin.component';
@@ -54,6 +53,7 @@ import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -106,7 +106,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IosCalendarWheelComponent,
     IosCalendarComponent,
     NavbarElementSenderDirective,
-    DomElementCheckerDirective,
     ConsentMenuComponent,
     IntroDialogComponent,
     IntroComponent,
@@ -117,7 +116,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileComponent,
     AccountGroupsComponent,
     ReportSuccessToastComponent,
-    RestrictionPickerComponent
+    RestrictionPickerComponent,
+    SpAppearanceComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -128,7 +128,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SortMenuComponent,
     NextReleaseComponent,
     ConsentMenuMobileComponent,
-    ReportSuccessToastComponent
+    ReportSuccessToastComponent,
+    SpAppearanceComponent
   ],
   exports: [
     ReactiveFormsModule,

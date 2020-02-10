@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="160" width="192.00009849092112">
+  <defs>
+    <rect id="rect-1" opacity="1" x="101.00009849092089" y="0" width="91.00000000000011" height="101.9377777777778" rx="0" ry="0"/>
+    <linearGradient id="linearGradient-2" x1="0.5" y1="1" x2="0.5" y2="0">
+      <stop offset="1" stop-color="rgb(128,128,128)" stop-opacity="0.1"/>
+      <stop offset="0.54" stop-color="rgb(128,128,128)" stop-opacity="0.12"/>
+      <stop offset="0" stop-color="rgb(128,128,128)" stop-opacity="0.25"/>
+    </linearGradient>
+    <rect id="rect-3" opacity="1" x="102.00009849092089" y="69" width="88" height="32" rx="0" ry="0"/>
+    <rect id="rect-4" opacity="1" x="110.00009849092089" y="76" width="3" height="16" rx="0" ry="0"/>
+    <rect id="rect-5" opacity="1" x="115.19068672621495" y="76.01378378378378" width="3.623529411764707" height="16.77027027027033" rx="0" ry="0"/>
+    <rect id="rect-6" opacity="1" x="123.04134849092088" y="76.01378378378378" width="2.887500000000004" height="16.77027027027033" rx="0" ry="0"/>
+    <rect id="rect-7" opacity="1" x="129.14598084386205" y="76.01378378378378" width="3.623529411764709" height="16.77027027027033" rx="0" ry="0"/>
+    <rect id="rect-8" opacity="1" x="137.00384849092086" y="76.01378378378378" width="2.887499999999999" height="16.77027027027033" rx="0" ry="0"/>
+    <rect id="rect-9" opacity="1" x="143.0788484909209" y="76.01378378378378" width="2.887500000000001" height="16.77027027027033" rx="0" ry="0"/>
+    <rect id="rect-10" opacity="1" x="150.195392608568" y="76.01378378378378" width="3.623529411764711" height="16.77027027027033" rx="0" ry="0"/>
+    <ellipse id="ellipse-11" opacity="1" rx="8.5" ry="8.5" cx="178.5000984909209" cy="83.5"/>
+    <rect id="rect-12" opacity="1" x="102.00009849092089" y="36" width="88" height="32" rx="0" ry="0"/>
+    <rect id="rect-13" opacity="1" x="110.00009849092089" y="44" width="3" height="16" rx="0" ry="0"/>
+    <rect id="rect-14" opacity="1" x="115.19068672621495" y="43.01148648648649" width="3.623529411764707" height="16.77027027027027" rx="0" ry="0"/>
+    <rect id="rect-15" opacity="1" x="123.04134849092088" y="43.01148648648649" width="2.887500000000004" height="16.77027027027027" rx="0" ry="0"/>
+    <rect id="rect-16" opacity="1" x="129.14598084386205" y="43.01148648648649" width="3.623529411764709" height="16.77027027027027" rx="0" ry="0"/>
+    <rect id="rect-17" opacity="1" x="137.00384849092086" y="43.01148648648649" width="2.887499999999999" height="16.77027027027027" rx="0" ry="0"/>
+    <rect id="rect-18" opacity="1" x="143.0788484909209" y="43.01148648648649" width="2.887500000000001" height="16.77027027027027" rx="0" ry="0"/>
+    <rect id="rect-19" opacity="1" x="150.195392608568" y="43.01148648648649" width="3.623529411764711" height="16.77027027027027" rx="0" ry="0"/>
+    <ellipse id="ellipse-20" opacity="1" rx="8.5" ry="8.5" cx="178.5000984909209" cy="51.5"/>
+    <rect id="rect-21" opacity="1" x="102.00009849092089" y="3" width="88" height="32" rx="0" ry="0"/>
+    <rect id="rect-22" opacity="1" x="110.00009849092089" y="11" width="3" height="16" rx="0" ry="0"/>
+    <rect id="rect-23" opacity="1" x="115.19068672621495" y="10.011486486486483" width="3.623529411764707" height="16.77027027027028" rx="0" ry="0"/>
+    <rect id="rect-24" opacity="1" x="123.04134849092088" y="10.011486486486483" width="2.887500000000004" height="16.77027027027028" rx="0" ry="0"/>
+    <rect id="rect-25" opacity="1" x="129.14598084386205" y="10.011486486486483" width="3.623529411764709" height="16.77027027027028" rx="0" ry="0"/>
+    <rect id="rect-26" opacity="1" x="137.00384849092086" y="10.011486486486483" width="2.887499999999999" height="16.77027027027028" rx="0" ry="0"/>
+    <rect id="rect-27" opacity="1" x="143.0788484909209" y="10.011486486486483" width="2.887500000000001" height="16.77027027027028" rx="0" ry="0"/>
+    <rect id="rect-28" opacity="1" x="150.195392608568" y="10.011486486486483" width="3.623529411764711" height="16.77027027027028" rx="0" ry="0"/>
+    <ellipse id="ellipse-29" opacity="1" rx="9" ry="9" cx="178.0000984909209" cy="19"/>
+    <linearGradient id="linearGradient-30" x1="0.4999999999999993" y1="1" x2="0.4999999999999993" y2="8.868481474789068e-17">
+      <stop offset="1" stop-color="rgb(128,128,128)" stop-opacity="0.1"/>
+      <stop offset="0.54" stop-color="rgb(128,128,128)" stop-opacity="0.12"/>
+      <stop offset="0" stop-color="rgb(128,128,128)" stop-opacity="0.25"/>
+    </linearGradient>
+    <ellipse id="ellipse-31" opacity="1" rx="9" ry="9" cx="178.0000984909209" cy="52"/>
+    <linearGradient id="linearGradient-32" x1="0.4999999999999993" y1="0.9999999999999997" x2="0.4999999999999993" y2="0">
+      <stop offset="1" stop-color="rgb(128,128,128)" stop-opacity="0.1"/>
+      <stop offset="0.54" stop-color="rgb(128,128,128)" stop-opacity="0.12"/>
+      <stop offset="0" stop-color="rgb(128,128,128)" stop-opacity="0.25"/>
+    </linearGradient>
+    <ellipse id="ellipse-33" opacity="1" rx="9" ry="9" cx="178.0000984909209" cy="84"/>
+    <linearGradient id="linearGradient-34" x1="0.4999999999999993" y1="1" x2="0.4999999999999993" y2="0">
+      <stop offset="1" stop-color="rgb(128,128,128)" stop-opacity="0.1"/>
+      <stop offset="0.54" stop-color="rgb(128,128,128)" stop-opacity="0.12"/>
+      <stop offset="0" stop-color="rgb(128,128,128)" stop-opacity="0.25"/>
+    </linearGradient>
+    <ellipse id="ellipse-35" opacity="1" rx="8.5" ry="8.5" cx="178.5000984909209" cy="18.5"/>
+    <path id="path-36" opacity="1" fill-rule="evenodd" d="M129.80746691197305,154.85961956521743 L8.01559758347986,154.85961956521743 L8.01559758347986,76.6075543478261 C8.015597583479847,75.67381933631489 8.384174435545873,74.77832767992386 9.040245439350647,74.118077321453 C9.696316443155427,73.45782696298215 10.586139678189998,73.08690217391303 11.513964189650443,73.08690217391303 L126.30688614972263,73.08690217391303 C128.238980675628,73.08690217391303 129.8052527558932,74.66315184271527 129.8052527558932,76.60755434782608 L129.80746691197305,154.85961956521743Z"/>
+    <linearGradient id="linearGradient-37" x1="0.5000000000000001" y1="1" x2="0.5000000000000001" y2="0.00002724944138658169">
+      <stop offset="1" stop-color="rgb(128,128,128)" stop-opacity="0.1"/>
+      <stop offset="0.54" stop-color="rgb(128,128,128)" stop-opacity="0.12"/>
+      <stop offset="0" stop-color="rgb(128,128,128)" stop-opacity="0.25"/>
+    </linearGradient>
+    <path id="path-38" opacity="1" fill-rule="evenodd" d="M13.485609801446225,75.00000000000001 L124.5145871803956,75.00000000000001 C126.43958192256146,75.00000000000001 128.0000984909209,76.56971062968456 128.0000984909209,78.50604682125818 L128.0000984909209,155 L10.000098490920891,155 L10.000098490920891,78.50604682125818 C10.000098490920898,76.56971062968455 11.560615059280344,75 13.485609801446225,75.00000000000001Z"/>
+    <rect id="rect-39" opacity="1" x="13.000098490920891" y="80" width="111" height="73" rx="0" ry="0"/>
+    <rect id="rect-40" opacity="1" x="14.000098490920891" y="84" width="110" height="66" rx="0" ry="0"/>
+    <rect id="rect-41" opacity="1" x="14.000098490920891" y="80" width="110" height="3" rx="0" ry="0"/>
+    <ellipse id="ellipse-42" opacity="1" rx="1" ry="1" cx="16.00009849092089" cy="81"/>
+    <ellipse id="ellipse-43" opacity="1" rx="1" ry="1" cx="19.00009849092089" cy="81"/>
+    <ellipse id="ellipse-44" opacity="1" rx="1" ry="1" cx="21.00009849092089" cy="81"/>
+    <path id="path-45" opacity="1" fill-rule="evenodd" d="M132.6817166138984,159.5652459016393 C125.89378781130941,160.0596721311475 9.324079073445187,159.861475409836 5.249548329108613,159.5652459016393 C-0.09079147671662413,157.09098360655733 0.00009849092091567786,147.49229508196723 0.00009849092091567786,147.49229508196723 L53.45891726114751,147.14918032786886 L53.63848036794363,150.07098360655738 L76.52501758477214,150.07098360655738 L77.41174897635791,147.49229508196723 L136.66314056211849,147.49229508196723 C136.66314056211849,147.49229508196723 137.84027648444857,156.30032786885243 132.6817166138984,159.5652459016393Z"/>
+    <linearGradient id="linearGradient-46" x1="0.49999919692428607" y1="1.0001263000031282" x2="0.49999919692428607" y2="-0.00016758148458482198">
+      <stop offset="1" stop-color="rgb(128,128,128)" stop-opacity="0.1"/>
+      <stop offset="0.54" stop-color="rgb(128,128,128)" stop-opacity="0.12"/>
+      <stop offset="0" stop-color="rgb(128,128,128)" stop-opacity="0.25"/>
+    </linearGradient>
+    <path id="path-47" opacity="1" fill-rule="evenodd" d="M135.8857828137639,149 L77.8362239859142,149 C78.30275707445537,149.51758797533512 78.41466728151956,150.257782658221 78.12148707992858,150.88678254604545 C77.82830687833763,151.51578243386993 77.18543458875307,151.91473387521756 76.48278277230601,151.90372394492132 L54.33153541374319,151.90372394492132 C53.62888359729612,151.9147338752176 52.98601130771155,151.51578243386993 52.692831106120586,150.88678254604545 C52.399650904529636,150.257782658221 52.511561111593814,149.51758797533512 52.978094200135,149 L1.0001922732673378,149 C1.0001922732673378,149 0.9115872838330853,157.53446136178235 6.181369030435179,159.73352502555448 C10.201820426014331,159.99749992963825 125.25761433112547,160.16984718106482 131.95615153235485,159.73352502555448 C137.04872330008845,156.82980108063313 135.8857828137639,149 135.8857828137639,149Z"/>
+    <ellipse id="ellipse-48" opacity="1" rx="1" ry="1" cx="13.000098490920891" cy="150"/>
+    <ellipse id="ellipse-49" opacity="1" rx="1" ry="1" cx="15.000098490920891" cy="150"/>
+    <ellipse id="ellipse-50" opacity="1" rx="1" ry="1" cx="18.00009849092089" cy="150"/>
+    <path id="path-51" opacity="1" fill-rule="evenodd" d="M65.51112413194657,85.08254980079681 L44.10814977297218,98.40876494023901 C44.10814977297218,98.40876494023901 44.10814977297218,125.89561752988041 65.51112413194657,140.88621513944213 C86.91409849092096,125.89338645418317 86.91409849092096,98.40876494023901 86.91409849092096,98.40876494023901 L65.51112413194657,85.08254980079681Z"/>
+    <linearGradient id="linearGradient-52" x1="0.5" y1="1.0000399808092115" x2="0.5" y2="0">
+      <stop offset="1" stop-color="rgb(128,128,128)" stop-opacity="0.1"/>
+      <stop offset="0.54" stop-color="rgb(128,128,128)" stop-opacity="0.12"/>
+      <stop offset="0" stop-color="rgb(128,128,128)" stop-opacity="0.25"/>
+    </linearGradient>
+    <path id="path-53" opacity="1" fill-rule="evenodd" d="M65.35396776214553,87 L65.00009849092089,87.22024565861923 L65.00009849092089,138.75772977551884 L65.35396776214553,139 C86.00009849092089,125.03422278695469 86.00009849092089,99.42846251588311 86.00009849092089,99.42846251588311 L65.35396776214553,87Z"/>
+    <path id="path-54" opacity="1" fill-rule="evenodd" d="M53.00009849092089,69 L53.00009849092089,23 L91.00009849092089,23 "/>
+    <path id="path-55" opacity="1" fill-rule="evenodd" d="M41.00009849092089,55 L41.00009849092089,9 L79.00009849092089,9 "/>
+    <path id="path-56" opacity="1" fill-rule="evenodd" d="M159.0000984909209,107 L159.0000984909209,142 L139.0000984909209,142 "/>
+    <path id="path-57" opacity="1" fill-rule="evenodd" d="M171.0000984909209,116 L171.0000984909209,151 L151.0000984909209,151 "/>
+  </defs>
+  <g opacity="1">
+    <g opacity="0.8">
+      <g opacity="1">
+        <use xlink:href="#rect-1" fill="url(#linearGradient-2)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#rect-3" fill="rgb(255,255,255)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#rect-4" fill="rgb(100,255,218)" fill-opacity="1"/>
+    </g>
+    <g opacity="0.7">
+      <g opacity="1">
+        <use xlink:href="#rect-5" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.6">
+      <g opacity="1">
+        <use xlink:href="#rect-6" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.5">
+      <g opacity="1">
+        <use xlink:href="#rect-7" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.5">
+      <g opacity="1">
+        <use xlink:href="#rect-8" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.4">
+      <g opacity="1">
+        <use xlink:href="#rect-9" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.3">
+      <g opacity="1">
+        <use xlink:href="#rect-10" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-11" fill="rgb(18,194,158)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#rect-12" fill="rgb(255,255,255)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#rect-13" fill="rgb(100,255,218)" fill-opacity="1"/>
+    </g>
+    <g opacity="0.7">
+      <g opacity="1">
+        <use xlink:href="#rect-14" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.6">
+      <g opacity="1">
+        <use xlink:href="#rect-15" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.5">
+      <g opacity="1">
+        <use xlink:href="#rect-16" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.5">
+      <g opacity="1">
+        <use xlink:href="#rect-17" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.4">
+      <g opacity="1">
+        <use xlink:href="#rect-18" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.3">
+      <g opacity="1">
+        <use xlink:href="#rect-19" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-20" fill="rgb(18,194,158)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#rect-21" fill="rgb(255,255,255)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#rect-22" fill="rgb(100,255,218)" fill-opacity="1"/>
+    </g>
+    <g opacity="0.7">
+      <g opacity="1">
+        <use xlink:href="#rect-23" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.6">
+      <g opacity="1">
+        <use xlink:href="#rect-24" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.5">
+      <g opacity="1">
+        <use xlink:href="#rect-25" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.5">
+      <g opacity="1">
+        <use xlink:href="#rect-26" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.4">
+      <g opacity="1">
+        <use xlink:href="#rect-27" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.3">
+      <g opacity="1">
+        <use xlink:href="#rect-28" fill="rgb(100,255,218)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-29" fill="url(#linearGradient-30)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-31" fill="url(#linearGradient-32)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-33" fill="url(#linearGradient-34)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-35" fill="rgb(18,194,158)" fill-opacity="1"/>
+    </g>
+    <g opacity="0.8">
+      <g opacity="1">
+        <use xlink:href="#path-36" fill="url(#linearGradient-37)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#path-38" fill="rgb(255,255,255)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#rect-39" fill="rgb(245,245,245)" fill-opacity="1"/>
+    </g>
+    <g opacity="0.8">
+      <use xlink:href="#rect-40" fill="rgb(224,224,224)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#rect-41" fill="rgb(245,245,245)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-42" fill="rgb(255,82,82)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-43" fill="rgb(255,255,0)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-44" fill="rgb(105,240,174)" fill-opacity="1"/>
+    </g>
+    <g opacity="0.8">
+      <g opacity="1">
+        <use xlink:href="#path-45" fill="url(#linearGradient-46)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#path-47" fill="rgb(245,245,245)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-48" fill="rgb(224,224,224)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-49" fill="rgb(224,224,224)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#ellipse-50" fill="rgb(224,224,224)" fill-opacity="1"/>
+    </g>
+    <g opacity="0.7">
+      <g opacity="1">
+        <use xlink:href="#path-51" fill="url(#linearGradient-52)" fill-opacity="1"/>
+      </g>
+    </g>
+    <g opacity="0.05">
+      <use xlink:href="#path-53" fill="rgb(0,0,0)" fill-opacity="1"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#path-54" fill-opacity="0" stroke="rgb(58,210,159)" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#path-55" fill-opacity="0" stroke="rgb(58,210,159)" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#path-56" fill-opacity="0" stroke="rgb(58,210,159)" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </g>
+    <g opacity="1">
+      <use xlink:href="#path-57" fill-opacity="0" stroke="rgb(58,210,159)" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </g>
+  </g>
+</svg>
