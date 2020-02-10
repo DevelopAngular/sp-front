@@ -28,7 +28,7 @@
               [minHeight]="'50px'"
               [gradient]="'#FFFFFF, #7F879D'"
               [linkType]="'_blank'"
-              [buttonLink]="'https://www.smartpass.app/what-is-gg4l'"
+              [buttonLink]="'https://www.smartpass.app/gg4l'"
               [text]="'We don’t use GG4L'">
             </app-gradient-button>
             <app-gradient-button
@@ -37,9 +37,10 @@
               [fontSize]="'15px'"
               [fontWeight]="'normal'"
               [minHeight]="'50px'"
-              [gradient]="'#022F68, #2F66AB'"
+              [gradient]="'#484CE6, #484CE6'"
+              [rightIcon]="'./assets/Chevron Right (White).svg'"
               [linkType]="'_blank'"
-              [buttonLink]="'https://www.smartpass.app/goto-gg4l'"
+              [buttonLink]="'https://www.smartpass.app/gg4l-goto'"
               [text]="'Go to GG4L'">
             </app-gradient-button>
           </div>
@@ -62,11 +63,13 @@
     <div class="right-side">
       <div class="privacy">
         <app-privacy-card
-          [title]="'GG4L'"
-          [infoText]="'GG4L is a platform that manages the sync and sign-in of accounts with your SIS such as PowerSchool, Infinite Campus, and more.'"
-          [leftIcon]="'./assets/GG4L.svg'"
-          [buttonColor]="'#022F68, #2F66AB'"
+          [title]="'What is GG4L?'"
+          [infoText]="'GG4L syncs all of your accounts to SmartPass from your existing SIS.'"
+          [leftIcon]="'./assets/GG4L Icon.svg'"
+          [buttonColor]="'#484CE6, #484CE6'"
           [buttonLink]="'https://www.smartpass.app/gg4l'"
+          [buttonText]="'More info'"
+          [rightLogo]="true"
         ></app-privacy-card>
       </div>
       <div class="privacy" style="margin-top: 25px">
