@@ -5,6 +5,7 @@
   <div class="date-container">
     <app-calendar-picker
         [selectedDates]="previousSelectedDate ? [previousSelectedDate] : []"
+        [min]="minDate"
         [showYear]="false"
         [showTime]="false"
         [dotsDates]="passDates"

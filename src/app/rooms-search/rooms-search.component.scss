@@ -5,9 +5,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 20px;
 
   .content {
     width: 205px;
+    margin-top: 15px;
     .header {
       .title {
         text-align: center;

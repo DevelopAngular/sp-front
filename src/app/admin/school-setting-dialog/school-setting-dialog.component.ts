@@ -42,13 +42,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
     this.changeSettings$.pipe(
         takeUntil(this.destroy$),
         switchMap(() => {
-          return this.adminService.updateSchoolSettings(this.currentSchool.id, this.schoolForm.value);
-        }),
-        switchMap(() => {
-          return this.http.schoolsCollection$;
-        }),
-        map(schools => {
-          return schools.find(school => school.id === this.currentSchool.id);
+          return this.adminService.updateSchoolSettingsRequest(this.currentSchool, this.schoolForm.value);
         }))
         .subscribe((res) => {
           this.http.currentSchoolSubject.next(res);

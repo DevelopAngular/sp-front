@@ -5,6 +5,7 @@ import { CreateFormService } from '../../../create-form.service';
 import {BehaviorSubject, fromEvent} from 'rxjs';
 import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Location } from '../../../../models/Location';
 
 import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
@@ -166,7 +167,6 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   back() {
-
     this.formService.setFrameMotionDirection('back');
 
     setTimeout(() => {

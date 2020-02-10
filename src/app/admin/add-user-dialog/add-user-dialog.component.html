@@ -51,17 +51,14 @@
   <div class="content" *ngIf="!state" #rc>
     <div class="content_top">
       <div class="content_top-header">
-        <span class="ds-dialog-heading">Account Type</span>
-        <span class="ds-mt-5 ds-blue-gray">
-          Learn more <span class="ds-link-text"> here</span>.
-        </span>
+        <span class="ds-dialog-heading" style="padding-bottom: 0">Account Type</span>
       </div>
       <div class="content_top-body">
 
         <div class="account-type-picker">
           <app-restriction-picker
             [choices]="accountTypes"
-            [selectedChoise]="typeChoosen"
+            [selectedChoice]="typeChoosen"
             [height]="32"
             [width]="167"
             [fontSize]="13"
@@ -95,7 +92,7 @@
 
         <div style="width: 238px">
           <app-input
-            [input_label]="'Full Name'"
+            [input_label]="'Full name'"
             [controlName]="newAlternativeAccount.get('name')"
             [formGroup]="newAlternativeAccount"
             [input_value]="newAlternativeAccount.get('name').value"
@@ -110,7 +107,7 @@
             <div style="padding-bottom: 0px;">
 
               <app-input
-                [input_label]="'Username or Email'"
+                [input_label]="'Email or username'"
                 [controlName]="newAlternativeAccount.get('username')"
                 [formGroup]="newAlternativeAccount"
                 [input_value]="newAlternativeAccount.get('username').value"
@@ -125,6 +122,8 @@
               <app-input
                 [input_label]="'Password'"
                 [input_type]="'password'"
+                [placeholder]="'8+ characters'"
+                [isSuccessIcon]="true"
                 [controlName]="newAlternativeAccount.get('password')"
                 [formGroup]="newAlternativeAccount"
                 [input_value]="newAlternativeAccount.get('password').value"
@@ -139,7 +138,6 @@
 
       </form>
       <div class="info-text" *ngIf="typeChoosen === accountTypes[1]">
-        Password must be at least 6 characters long and contain either a number or symbol. <br/>
         <div style="margin-top: 7px">New users aren’t emailed this, you will need to share their password with them.</div>
       </div>
 

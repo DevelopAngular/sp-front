@@ -1,13 +1,16 @@
 <div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('high', true)">
 
-    <div class="title" [ngStyle]="{'color': data.darkBackground ? '#FFFFFF' : '#1F195E'}">Settings</div>
+    <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
     <div class="settings-content">
       <div class="profile-switch">
         <div class="option"  *ngIf="isSwitchOption"
-             (pointerenter)="hoveredProfile = true"
-             (pointerleave)="hoveredProfile = false"
-             (pointerup)="dialogRef.close('switch')"
              [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
+             (mouseenter)="hoveredProfile = true"
+             (mouseleave)="hoveredProfile = false"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="hoveredProfile = false; dialogRef.close('switch')"
+             (pointerDownEvent)="hoveredProfile = true; dialogRef.close('switch')"
+             (pointerCancelEvent)="hoveredProfile = false"
         >
           <img class="switch-icon" [src]="getIcon('Profile Switch', null, hoveredProfile) | resolveAsset">
           <div class="option-title" [style.color]="getColor(null, hoveredProfile)">Teacher View</div>
@@ -16,24 +19,40 @@
         </div>
 
         <div class="option"
-             [style.background]="_themeBackground"
-             (pointerenter)="hoveredTheme = true"
-             (pointerleave)="hoveredTheme = false"
-             (pointerdown)="pressedTheme = true"
-             (pointerup)="pressedTheme = false; darkTheme.switchTheme(); data.darkBackground = !data.darkBackground;"
-
+             *ngIf="showGetStarted"
+             [style.background]="started.hovered ? '#00B476' : 'transparent'"
+             #started
+             (mouseenter)="started.hovered = true"
+             (mouseleave)="started.hovered = false"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="started.pressed = false; handleAction({action: 'getStarted'})"
+             (pointerDownEvent)="started.pressed = true"
+             (pointerCancelEvent)="started.pressed = false;"
         >
 
-          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Moon (White).svg' : getIcon('Moon', null, hoveredTheme) | resolveAsset">
+          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && started.hovered ? './assets/lamp (White).svg' : getIcon('lamp', null, started.hovered) | resolveAsset">
+          <div class="option-title" [style.color]="!darkTheme.isEnabled$.value && started.hovered ? 'white' : getColor(null, started.hovered)">
+            <div>
+              <span>Get Started</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="option"
+             [style.background]="_themeBackground"
+             (mouseenter)="hoveredTheme = true"
+             (mouseleave)="hoveredTheme = false"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="dialogRef.close('appearance')"
+             (pointerDownEvent)="pressedTheme = true"
+             (pointerCancelEvent)="pressedTheme = false;"
+        >
+          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Glasses (White).svg' : getIcon('Glasses', null, hoveredTheme) | resolveAsset">
           <div class="option-title" [style.color]="!darkTheme.isEnabled$.value && hoveredTheme ? 'white' : getColor(null, hoveredTheme)">
             <div>
-              <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Mode</span>
+              <span>Appearance</span>
             </div>
-            <ng-template #dark>
-              <div>
-                <span>Dark Mode</span>
-              </div>
-            </ng-template>
           </div>
 
         </div>
@@ -42,10 +61,13 @@
       <div class="links">
         <div class="link"
              *ngFor="let setting of settings"
-             (pointerup)="handleAction(setting)"
-             (pointerenter)="onHover(setting.gradient)"
-             (pointerleave)="hovered = false"
-             [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
+             [style.background]="hovered && hoveredColor === setting.background ? setting.background : 'none'"
+             (mouseenter)="onHover(setting.background)"
+             (mouseleave)="hovered = false"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="hovered = false; handleAction(setting)"
+             (pointerDownEvent)="hovered = true"
+             (pointerCancelEvent)="hovered = false"
         >
           <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">
           <div class="setting-name"
@@ -59,17 +81,24 @@
       <div class="sign-out"
            [style.background-color]="hoveredSignout ? 'rgb(228, 235, 255)' : 'transparent'"
            [style.color]="getColor(null, hoveredSignout)"
-           (pointerenter)="hoveredSignout = true"
-           (pointerleave)="hoveredSignout = false"
-           (pointerup)="signOut()">
+           (mouseenter)="hoveredSignout = true"
+           (mouseleave)="hoveredSignout = false"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="hoveredSignout = false; signOut()"
+           (pointerDownEvent)="hoveredSignout = true"
+           (pointerCancelEvent)="hoveredSignout = false"
+      >
         <span>Sign out</span>
       </div>
       <div class="versions" [style.color]="getColor(null, null)">
           <div class="privacy"
-               (pointerup)="dialogRef.close('privacy')">Privacy & Terms</div>
+               (mouseup)="dialogRef.close('privacy')">Privacy & Terms</div>
       </div>
     </div>
-    <div class="bottom-arrow-container" (pointerup)="dialogRef.close(); test($event)">
+    <div class="bottom-arrow-container"
+         appCrossPointerEventTarget
+         (pointerClickEvent)="dialogRef.close()"
+    >
       <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
     </div>
 </div>

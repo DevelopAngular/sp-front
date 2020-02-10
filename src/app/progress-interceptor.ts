@@ -21,12 +21,13 @@ export class ProgressInterceptor implements HttpInterceptor {
                         const exeptedUrls = [
                           'onboard/schools/check_school',
                           'discovery/find',
+                          'discovery/email_info',
                           'auth/by-token',
                           'o/token'
                         ].every(_url => error.url.search(_url) < 0);
 
-                        if ( error.status === 0 || ( error.status >= 400 && error.status < 600 && exeptedUrls) ) {
-                          console.log(error);
+                        if ( error.status === 0 || (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
+                          // console.log(error);
                           this.http.errorToast$.next({
                             header: 'Something went wrong.',
                             message: `Please try refreshing the page. If the issue keeps occurring, contact us below. Error status code:${error.status}`

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {filter, map, switchMap, take} from 'rxjs/operators';
+import {filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {BehaviorSubject} from 'rxjs';
@@ -75,32 +75,13 @@ export class GettingStartedProgressService {
       .pipe(
 
         switchMap(() => {
-          return this.adminService.getOnboardProcessRequest();
+          return this.adminService.onboardProcessData$;
         })
       )
       .pipe(
         filter((res: any[]) => !!res.length),
         map((data: Array<OnboardItem>) => {
-          this.onboardProgress.progress = 0;
-          this.onboardProgress.offset = 130;
-          data.forEach((item: OnboardItem ) => {
-            const ticket = item.name.split(':');
-            if (!this.onboardProgress[ticket[0]]) {
-              this.onboardProgress[ticket[0]] = {};
-            }
-            this.onboardProgress[ticket[0]][ticket[1]] = {
-              value: !!item.done,
-              data: item.extras
-            };
-            if (item.done) {
-              this.onboardProgress.progress += Progress[item.name];
-              this.onboardProgress.offset -= Progress[item.name];
-            }
-          });
-          if (this.onboardProgress.progress === 100) {
-            this.onboardProgress.offset = 0;
-          }
-          return this.onboardProgress;
+          return this.buildProcessData(data);
         })
       )
       .subscribe((op) => {
@@ -108,9 +89,35 @@ export class GettingStartedProgressService {
       });
   }
 
-  updateProgress(ticket: keyof ProgressInterface ) {
-    this.adminService.updateOnboardProgress(ticket)
-      .subscribe(() => this.httpService.setSchool(this.httpService.getSchool()));
+  buildProcessData(data: Array<OnboardItem>) {
+    this.onboardProgress.progress = 0;
+    this.onboardProgress.offset = 130;
+    data.forEach((item: OnboardItem ) => {
+      const ticket = item.name.split(':');
+      if (!this.onboardProgress[ticket[0]]) {
+        this.onboardProgress[ticket[0]] = {};
+      }
+      this.onboardProgress[ticket[0]][ticket[1]] = {
+        value: !!item.done,
+        data: item.extras
+      };
+      if (item.done) {
+        this.onboardProgress.progress += Progress[item.name];
+        this.onboardProgress.offset -= Progress[item.name];
+      }
+    });
+    if (this.onboardProgress.progress === 100) {
+      this.onboardProgress.offset = 0;
+    }
+    return this.onboardProgress;
+  }
+
+  updateProgress(ticket) {
+    return this.adminService.updateOnboardProgressRequest(ticket)
+      .pipe(
+        filter(res => !!res.length),
+        map(data => this.buildProcessData(data))
+      );
   }
 
 }

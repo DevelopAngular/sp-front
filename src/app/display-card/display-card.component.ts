@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, Input } from '@angular/core';
 import { NavbarDataService } from '../main/navbar-data.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-display-card',
@@ -26,7 +27,8 @@ export class DisplayCardComponent implements OnInit {
 
   constructor(
     private navbarData: NavbarDataService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    public screenService: ScreenService
   ) { }
 
   get notificationBadge$() {

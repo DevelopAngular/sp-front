@@ -1,0 +1,69 @@
+@import "../../design-system";
+@import "../../sp-colors";
+:host {
+  .host {
+    //max-width: 425px;
+    //min-width: 300px;
+    height: 500px;
+    border-radius: 17px;
+    font-weight: bold;
+    background: #FFFFFF;
+    .appearance-header {
+      @extend .ds-flex-center-center;
+      height: 70px;
+      background-color: $navy;
+      color: #FFFFFF;
+      font-size: 14px;
+      padding-left: 10px;
+      position: relative;
+      .back-button {
+        position: absolute;
+        left: 20px;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+      }
+    }
+    .appearance-content {
+      padding: 30px;
+      box-sizing: border-box;
+
+      .theme {
+        display: flex;
+        font-size: 16px;
+        font-weight: 500;
+        color: $navy;
+      }
+
+      .top-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .page-layout {
+        width: 100%;
+        margin-top: 48px;
+        display: flex;
+        justify-content: space-between;
+
+        .header {
+          .header-title {
+            color: $navy;
+            font-size: 16px;
+            margin-bottom: 6px;
+            font-weight: 500;
+          }
+
+          .header-info {
+            font-size: 14px;
+            color: $blue-gray;
+            font-weight: normal;
+          }
+
+        }
+
+      }
+    }
+  }
+}

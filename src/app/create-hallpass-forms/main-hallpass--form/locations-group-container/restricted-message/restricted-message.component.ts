@@ -20,12 +20,10 @@ import {DeviceDetection} from '../../../../device-detection.helper';
 export class RestrictedMessageComponent implements OnInit {
 
   @Input() formState: Navigation;
-
   @Input() gradient: string;
-
   @Input() teacher: User;
-
   @Input() date: string | boolean;
+  @Input() isStaff: boolean;
 
   @Output() resultMessage: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
@@ -116,7 +114,6 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   ngOnInit() {
-
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.message = new FormControl(this.formState.data.message);
     this.fromLocation = this.formState.data.direction.from;

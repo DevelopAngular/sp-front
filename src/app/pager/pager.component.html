@@ -42,9 +42,11 @@
     <ng-content select=".page-7"></ng-content>
     <ng-content select=".page-8"></ng-content>
   </swiper>
-  <div class="paginator-container">
-    <div *ngIf="pages > 1" class="paginator-wrapper">
-      <div *ngFor="let $page of $pages" class="pager-page-selector" (click)="DotPagination($page)" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
+  <div class="dots-wrapper" [style.bottom]="isStaff ? '0px' : '-16px'">
+    <div class="paginator-container">
+      <div *ngIf="pages > 1" class="paginator-wrapper">
+        <div *ngFor="let $page of $pages" class="pager-page-selector" (click)="DotPagination($page)" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
+      </div>
     </div>
   </div>
 </div>

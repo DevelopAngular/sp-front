@@ -19,7 +19,7 @@
     <div class="location-tables">
       <app-location-table
         class="locations"
-        [forStaff]="true"
+        [forStaff]="isStaff"
         [height]="'107px'"
         [heightLeftTable]="'153px'"
         [rightHeaderText]="true"
@@ -29,6 +29,7 @@
         [noRightStar]="true"
         [showFavorites]="true"
         [type]="'location'"
+        [searchTeacherLocations]="true"
         [placeholder]="'Search rooms'"
         [dummyString]="'No rooms found'"
         (onSelect)="locationChosen($event)"

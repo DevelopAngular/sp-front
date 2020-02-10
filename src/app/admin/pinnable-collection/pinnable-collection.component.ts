@@ -62,12 +62,11 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   onPinablesOrderChanged(newOrder) {
-    // console.log(newOrder.map(i => i.id));
     this.pinnables = newOrder;
     this.orderChangedEvent.emit(newOrder);
   }
 
-  toggleBulk(){
+  toggleBulk() {
     this.bulkSelect = !this.bulkSelect;
     this.selectedPinnables = [];
     this.bulkSelectEmit.emit(this.bulkSelect);
@@ -78,7 +77,6 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   updatePinnables(pinnable: Pinnable) {
-    // console.log(pinnable);
     if (!!this.selectedPinnables.find(pin => pin.id === pinnable.id)) {
      return this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
     } else {

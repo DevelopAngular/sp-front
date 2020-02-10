@@ -97,7 +97,7 @@ $sp-blue-grey: (
 
 
 $loading-theme-white-primary: mat-palette($mat-white);
-$loading-theme-white-accent: mat-palette($mat-blue-grey);
+$loading-theme-white-accent: mat-palette($mat-white);
 $loading-theme-white: mat-light-theme($loading-theme-white-accent, $loading-theme-white-primary);
 
 $loading-theme-blue-gray-primary: mat-palette($mat-blue-grey);

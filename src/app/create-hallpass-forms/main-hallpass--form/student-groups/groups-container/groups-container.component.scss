@@ -1,7 +1,44 @@
 :host {
+  @media all and (max-width: 940px) {
+    div.back-btn-top {
+      display: none;
+    }
+
+    div.back-btn-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      width: 50px;
+      height: 46px;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -45px;
+    }
+  }
+
+  @media all and (max-width: 335px) {
+    div.back-btn-bottom {
+      bottom: -35px;
+    }
+  }
   .groups-container {
     background-color: #fff;
     border-radius: 14px;
     //overflow: hidden;
+    .back-btn-bottom {
+      //display: none;
+    }
+    div.ios-back-btn-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      //position: absolute;
+      width: 50px;
+      height: 46px;
+      //left: 50%;
+      transform: translateX(-50%);
+      //bottom: -45px;
+    }
   }
 }
