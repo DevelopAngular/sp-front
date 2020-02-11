@@ -155,7 +155,7 @@ export class UserService {
           }),
           switchMap(user => {
             if (user.isTeacher() && !user.isAssistant()) {
-              return this.getUserPinRequest().pipe(filter(res => !!res), mapTo(user));
+              return this.getUserPinRequest().pipe(mapTo(user));
             } else {
               return of(user);
             }

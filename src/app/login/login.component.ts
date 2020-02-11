@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.loginService.isAuthenticated$.pipe(
       filter(v => v),
-      switchMap((): Observable<[User, Array<string>]> => {
+      switchMap((v): Observable<[User, Array<string>]> => {
         return zip(
           this.userService.userData.asObservable(),
           INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').filter(v => v && v !== 'app')))
