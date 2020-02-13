@@ -52,11 +52,13 @@ export class GridTableDataSource extends DataSource<any> {
   constructor(
     initialData: any[],
     private viewport: CdkVirtualScrollViewport,
-    private itemSize: number, sorting: MatSort,
-    stickySpace: boolean, private domSanitizer: DomSanitizer
+    private itemSize: number,
+    sorting: MatSort,
+    stickySpace: boolean,
+    private domSanitizer: DomSanitizer,
   ) {
     super();
-// debugger
+
     this.domSanitizer = domSanitizer;
 
     this._data = initialData;
@@ -172,20 +174,30 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() marginTopStickyHeader: string = '-40px';
   @Input() displayedColumns: string[];
   @Input() scrollableAreaName: string;
+  @Input() numberOfAccounts: number;
+  @Input() numberOfAccountsLoaded: number;
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
   @Output() selectedCell: EventEmitter<any> = new EventEmitter<any>();
+  @Output() loadMoreAccounts: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
 
 
   @Input() set data(value: any[]) {
-    console.log(value);
+    // console.log(value);
     this._data = [...value];
     if (!this.dataSource) {
-      this.dataSource = new GridTableDataSource(this._data, this.viewport, ROW_HEIGHT, this.sort, this.stickySpace, this.domSanitizer);
+      this.dataSource = new GridTableDataSource(
+        this._data,
+        this.viewport,
+        ROW_HEIGHT,
+        this.sort,
+        this.stickySpace,
+        this.domSanitizer
+      );
       this.dataSource.offsetChange
         .subscribe(offset => {
           this.placeholderHeight = offset;

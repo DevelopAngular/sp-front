@@ -5,6 +5,7 @@ import * as roleActions from '../actions';
 import {concatMap, map} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/User';
+import {createAction} from '@ngrx/store';
 
 @Injectable()
 export class AccountsEffects {
@@ -17,6 +18,27 @@ export class AccountsEffects {
             return roleActions.getAllAccounts({role: action.role, search: action.search, limit: action.limit})
           } else if (action.role === '_profile_admin') {
             return roleActions.getAdmins({role: action.role, search: action.search, limit: action.limit});
+          } else if (action.role === '_profile_teacher') {
+            return roleActions.getTeachers({role: action.role, search: action.search, limit: action.limit});
+          } else if (action.role === '_profile_assistant') {
+            return roleActions.getAssistants({role: action.role, search: action.search, limit: action.limit});
+          } else if (action.role === '_profile_student') {
+            return roleActions.getStudents({role: action.role, search: action.search, limit: action.limit});
+          }
+          return action;
+        })
+      );
+  });
+
+  getMoreAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.getMoreAccounts),
+        map((action: any) => {
+          if (action.role === '' || action.role === '_all') {
+            return roleActions.getMoreAccounts({role: action.role});
+          } else if (action.role === '_profile_admin') {
+            return roleActions.getMoreAccounts({role: action.role});
           } else if (action.role === '_profile_teacher') {
             return roleActions.getTeachers({role: action.role, search: action.search, limit: action.limit});
           } else if (action.role === '_profile_assistant') {

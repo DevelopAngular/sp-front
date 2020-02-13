@@ -13,7 +13,7 @@ import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
-  getAccounts,
+  getAccounts, getMoreAccounts,
   postAccounts,
   removeAccount,
   updateAccountActivity,
@@ -21,7 +21,7 @@ import {
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection, getCountAllAccounts,
-  getLoadedAllAccounts, getLoadingAllAccounts
+  getLoadedAllAccounts, getLoadingAllAccounts, getNextRequestAllAccounts
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
   getAdminsCollections, getCountAdmins,
@@ -102,6 +102,10 @@ export class UserService {
     teacher: this.store.select(getLoadingTeachers),
     student: this.store.select(getLoadingStudents),
     assistant: this.store.select(getLoadingAssistants)
+  };
+
+  nextRequests$ = {
+    all: this.store.select(getNextRequestAllAccounts)
   };
 
   user$: Observable<User> = this.store.select(getUserData);
@@ -432,6 +436,12 @@ export class UserService {
 
     return this.http.get<any>(constructUrl('v1/users', params));
   }
+
+  getMoreUserListRequest(role) {
+    this.store.dispatch(getMoreAccounts({role}));
+    return this.getAccountsRole(role);
+  }
+
   exportUserData(id) {
     return this.http.get(`v1/users/${id}/export_data`);
   }

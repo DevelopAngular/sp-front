@@ -39,7 +39,15 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   countAccounts$: Observable<number> = this.userService.countAccounts$.all;
 
-  public accounts$ =
+  public accounts$: BehaviorSubject<{
+    total_count: string | number,
+    gsuite_count: string | number,
+    alternative_count: string | number,
+    admin_count: string | number,
+    student_count: string | number,
+    teacher_count: string | number,
+    assistant_count: string | number
+  }> =
     new BehaviorSubject<any>({
       total_count: '-',
       gsuite_count: '-',
@@ -65,6 +73,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   currentSchool = this.http.getSchool();
+  loadingAccountsLimit: number = 50;
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -131,7 +140,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
       this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
       // this.splash = false;
     });
-
 
     this.userService.userData.pipe(
       takeUntil(this.destroy$))
@@ -409,9 +417,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private getUserList(search = '') {
       this.userList = [];
       this.pending$.next(true);
-      return this.userService.getAccountsRoles('', search)
+      return this.userService.getAccountsRoles('', search, 10000)
         .pipe(
           filter(res => !!res.length));
+    }
+
+    loadMore(limit) {
+      this.loadingAccountsLimit = limit;
+      this.querySubscriber$.next(this.userService.getMoreUserListRequest('_all'));
     }
 
     private wrapToHtml(data, htmlTag, dataSet?) {

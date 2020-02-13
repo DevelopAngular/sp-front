@@ -263,6 +263,7 @@
           class="ds-my-10"
           [scrollableAreaName]="'Table' + role"
           [data]="userList"
+          [numberOfAccounts]="(noUsersDummyVisibility | async)"
           [isCheckbox]="dataTableEditState"
           [marginTopStickyHeader]="'147px'"
           [textColor]="'#7E879D'"

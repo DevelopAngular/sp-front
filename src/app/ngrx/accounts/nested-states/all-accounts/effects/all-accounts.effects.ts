@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as allAccountsActions from '../actions';
-import { catchError, concatMap, map } from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../../../services/user.service';
-import {User} from '../../../../../models/User';
 import {of} from 'rxjs';
+import {HttpService} from '../../../../../services/http-service';
 
 @Injectable()
 export class AllAccountsEffects {
@@ -16,11 +16,27 @@ export class AllAccountsEffects {
         concatMap((action: any) => {
           return this.userService.getUsersList(action.role, action.search, action.limit)
             .pipe(
-              map((users: User[]) => {
-                return allAccountsActions.getAllAccountsSuccess({accounts: users});
+              map((users: any) => {
+                const nextUrl = users.next ? users.next.substring(users.next.search('v1')) : null;
+                return allAccountsActions.getAllAccountsSuccess({accounts: users.results, next: nextUrl});
               }),
               catchError(error => of(allAccountsActions.getAllAccountsFailure({ errorMessage: error.message })))
             );
+        })
+      );
+  });
+
+  getMoreAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(allAccountsActions.getMoreAccounts),
+        concatMap((action: any) => {
+          return this.userService.nextRequests$.all.pipe(take(1));
+        }),
+        switchMap(next => this.http.get(next)),
+        map((moreAccounts: any) => {
+          const nextUrl = moreAccounts.next ? moreAccounts.next.substring(moreAccounts.next.search('v1')) : null;
+          return allAccountsActions.getMoreAccountsSuccess({moreAccounts: moreAccounts.results, next: nextUrl});
         })
       );
   });
@@ -43,6 +59,7 @@ export class AllAccountsEffects {
 
   constructor(
     private actions$: Actions,
-    private userService: UserService
+    private userService: UserService,
+    private http: HttpService
   ) {}
 }

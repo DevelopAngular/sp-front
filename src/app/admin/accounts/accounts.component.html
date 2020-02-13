@@ -5,88 +5,6 @@
 
   <div class="accounts-wrapper ds-h-100" *ngIf="splash !== undefined && splash">
     <app-accounts-sync [currentSchool]="currentSchool"></app-accounts-sync>
-<!--    <div class="accounts-setup">-->
-<!--      <div class="left-side">-->
-<!--        <div class="left-side_header">Accounts set-up</div>-->
-<!--        <div class="left-side_title">Set up all of your SmartPass accounts with G Suite syncing.</div>-->
-<!--        <div class="accounts-setup_options">-->
-<!--          <div class="option">-->
-<!--            <div class="option-number">-->
-<!--              <span>1</span>-->
-<!--            </div>-->
-<!--            <div class="option-content">-->
-<!--              <div class="option-content_header">-->
-<!--                Connect G Suite-->
-<!--              </div>-->
-<!--              <div class="option-content_description">-->
-<!--                <div class="ds-py-10">You’ll need to be a G Suite administrator to sync users.</div>-->
-<!--                <div>-->
-<!--                  This lets SmartPass see: <br>-->
-<!--                  a) Your email address and domain <br>-->
-<!--                  b) Organizational units on your domain <br>-->
-<!--                  c) Users on your domain-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-
-<!--          <div class="option">-->
-<!--            <div class="option-number">-->
-<!--              <span>2</span>-->
-<!--            </div>-->
-<!--            <div class="option-content">-->
-<!--              <div class="option-content_header">-->
-<!--                Select Users for Sync-->
-<!--              </div>-->
-<!--              <div class="option-content_description ds-pt-10">-->
-<!--                Choose which G Suite users you want to sync to SmartPass  <br>-->
-<!--                Groups. When new accounts are created in your G Suite we’ll  <br>-->
-<!--                automatically sync them to a specific SmartPass Group. <br>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="accounts-setup_buttons">-->
-<!--          <app-gradient-button-->
-<!--            [size]="'medium'"-->
-<!--            [gradient]="'#FFFFFF, #139BE6'"-->
-<!--            [fontWeight]="'normal'"-->
-<!--            (buttonClick)="goToAccountsSetup()"-->
-<!--          >-->
-<!--              <span style="font-weight: normal;">-->
-<!--                I’m a G Suite Admin-->
-<!--              </span>-->
-<!--          </app-gradient-button>-->
-
-<!--          <div class="ds-mx-25" style="font-size: 17px;">-->
-<!--            <span>OR</span>-->
-<!--          </div>-->
-
-<!--          <app-gradient-button-->
-<!--            [size]="'medium'"-->
-<!--            [gradient]="'#FFFFFF, #00B476'"-->
-<!--            [fontWeight]="'normal'"-->
-<!--            [rightIcon]="'./assets/Chevron Right (White).svg'"-->
-<!--            (buttonClick)="showAccountsSetupLink()"-->
-<!--          >-->
-<!--            <div style="width: 140px;">-->
-<!--              <span *ngIf="!(pending$ | async)" style="font-weight: normal;">-->
-<!--                Send them the link-->
-<!--              </span>-->
-<!--              <div *ngIf="(pending$ | async)" class="loading-theme_white spinner ds-w-100 ds-h-100 ds-flex-center-center">-->
-<!--                <mat-spinner [diameter]="25" [color]="'accent'"></mat-spinner>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </app-gradient-button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="right-side">-->
-<!--        <app-privacy-card></app-privacy-card>-->
-<!--        <div class="setup-guy">-->
-<!--          <img [src]="'./assets/accounts-setup-guy.svg' | resolveAsset" alt="accounts-setup-guy.svg">-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
   </div>
 
   <div class="accounts-wrapper" *ngIf="splash !== undefined && !splash">
@@ -96,7 +14,7 @@
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
               <div class="count">
-                <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(countAccounts$ | async)}} accounts</div>
+                <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async).total_count}} accounts</div>
               </div>
             </div>
 
@@ -205,6 +123,9 @@
               class="ds-my-10"
               [data]="userList"
               [isCheckbox]="dataTableEditState"
+              [numberOfAccounts]="(accounts$ | async).total_count"
+              [numberOfAccountsLoaded]="loadingAccountsLimit"
+              (loadMoreAccounts)="loadMore($event)"
               [textColor]="'#7E879D'"
               [marginTopStickyHeader]="'147px'"
               [disallowHover]="!(dataTableEditState | async) || true"

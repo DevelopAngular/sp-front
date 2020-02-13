@@ -34,6 +34,7 @@ import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
 import {School} from '../../models/School';
+import { uniqBy } from 'lodash';
 
 import * as moment from 'moment';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
@@ -703,7 +704,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         const rawObj = {
           'Name': raw.display_name,
           'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-          'Rooms': raw.assignedTo && raw.assignedTo.length ? raw.assignedTo.map(room => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
+          'Rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
           'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
