@@ -5,6 +5,7 @@ import * as teachersActions from '../actions';
 import {catchError, concatMap, map, pluck, switchMap} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
+import {HttpService} from '../../../../../services/http-service';
 
 @Injectable()
 export class TeachersEffects {
@@ -18,22 +19,55 @@ export class TeachersEffects {
             .pipe(
               switchMap((users => {
                 return forkJoin({
-                  users: of(users),
-                  userLocations: this.locationService.getLocationsWithManyTeachers(users)
+                  userList: of(users),
+                  userLocations: this.locationService.getLocationsWithManyTeachers(users.results)
                 });
               })),
-              map(({users, userLocations}: {users: any[], userLocations: any[]}) => {
-                return users.map(user => {
+              map(({userList, userLocations}: {userList: any, userLocations: any[]}) => {
+                const users = userList.results.map(user => {
                   const assignedTo = userLocations.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
                   return {...user, assignedTo};
                 });
+                const nextUrl = userList.next ? userList.next.substring(userList.next.search('v1')) : null;
+                return { users, next: nextUrl };
               }),
-              map((users) => {
-                return teachersActions.getTeachersSuccess({teachers: users});
+              map(({users, next}) => {
+                return teachersActions.getTeachersSuccess({teachers: users, next});
               }),
               catchError(error => of(teachersActions.getTeachersFailure({errorMessage: error.message})))
             );
         })
+      );
+  });
+
+  getMoreTeachers$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        concatMap(action => {
+          return this.userService.nextRequests$._profile_teacher;
+        }),
+        switchMap(next => this.http.get(next)
+          .pipe(
+            switchMap((moreTeachers: any) => {
+              return forkJoin({
+                users: of(moreTeachers),
+                userLocations: this.locationService.getLocationsWithManyTeachers(moreTeachers.results)
+              });
+            }),
+            map(({users, userLocations}: {users: any, userLocations: any[]}) => {
+              const moreTeachers = users.results.map(user => {
+                const assignedTo = userLocations.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
+                return {...user, assignedTo};
+              });
+              const nextUrl = users.next ? users.next.substring(users.next.search('v1')) : null;
+              return {moreTeachers, nextRequest: nextUrl};
+            }),
+            map(({moreTeachers, nextRequest}) => {
+              return teachersActions.getMoreTeachersSuccess({moreTeachers, next: nextRequest});
+            }),
+            catchError(error => of(teachersActions.getMoreTeachersFailure({errorMessage: error.message})))
+          )
+        )
       );
   });
 
@@ -94,6 +128,7 @@ export class TeachersEffects {
   constructor(
     private actions$: Actions,
     private userService: UserService,
-    private locationService: LocationsService
+    private locationService: LocationsService,
+    private http: HttpService
   ) {}
 }

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, mapTo, mergeAll, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -26,6 +26,7 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import { isNull } from 'lodash';
 import {LocationsService} from '../../services/locations.service';
 import * as moment from 'moment';
+import {TotalAccounts} from '../../models/TotalAccounts';
 
 @Component({
   selector: 'app-accounts',
@@ -39,23 +40,17 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   countAccounts$: Observable<number> = this.userService.countAccounts$.all;
 
-  public accounts$: BehaviorSubject<{
-    total_count: string | number,
-    gsuite_count: string | number,
-    alternative_count: string | number,
-    admin_count: string | number,
-    student_count: string | number,
-    teacher_count: string | number,
-    assistant_count: string | number
-  }> =
-    new BehaviorSubject<any>({
+  public accounts$: BehaviorSubject<TotalAccounts> =
+    new BehaviorSubject<TotalAccounts>({
+      active_students: '-',
       total_count: '-',
       gsuite_count: '-',
       alternative_count: '-',
       admin_count: '-',
       student_count: '-',
       teacher_count: '-',
-      assistant_count: '-'
+      assistant_count: '-',
+      profile_count: '-'
     });
 
   user: User;
@@ -63,6 +58,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   openTable: boolean;
 
   userList;
+  lazyUserList;
   selectedUsers = [];
 
   destroy$ = new Subject();
@@ -108,19 +104,21 @@ export class AccountsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.querySubscriber$.pipe(
       mergeAll(),
-      filter((res: any[]) => !!res.length),
+      filter((res: any[]) => !!res.length && !this.userList || this.userList.length === 0),
       takeUntil(this.destroy$)
     ).subscribe(users => {
-      this.dataTableHeadersToDisplay = [];
-      this.userList = this.buildUserListData(users);
-      this.pending$.next(false);
+        this.dataTableHeadersToDisplay = [];
+        this.userList = this.buildUserListData(users);
+        this.pending$.next(false);
     });
 
    this.adminService.getGSuiteOrgs().pipe(takeUntil(this.destroy$)).subscribe(res => this.gSuiteOrgs = res);
 
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
-      tap(() => this.querySubscriber$.next(this.getUserList())),
+      tap(() => {
+        this.querySubscriber$.next(this.getUserList());
+      }),
       tap(() => {
         this.showDisabledBanner$.next(!this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day'));
       }),
@@ -208,6 +206,16 @@ export class AccountsComponent implements OnInit, OnDestroy {
     TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
       this.querySubscriber$.next(this.userService.accounts.allAccounts);
     });
+
+
+    this.userService.lastAddedAccounts$._all.pipe(filter(res => !!res))
+      .subscribe(res => {
+        setTimeout(() => {
+          this.dataTableHeadersToDisplay = [];
+          this.lazyUserList = this.buildUserListData(res);
+        }, 50);
+    });
+
   }
 
   ngOnDestroy(): void {
@@ -417,15 +425,19 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private getUserList(search = '') {
       this.userList = [];
       this.pending$.next(true);
-      return this.userService.getAccountsRoles('', search, 10000)
+      return this.userService.getAccountsRoles('', search, 50)
         .pipe(
-          filter(res => !!res.length));
+          filter(res => !!res.length), take(2));
     }
 
-    loadMore(limit) {
-      this.loadingAccountsLimit = limit;
-      this.querySubscriber$.next(this.userService.getMoreUserListRequest('_all'));
-    }
+  loadMore(limit) {
+      this.userService.getMoreUserListRequest('_all');
+      //   .pipe(filter(res => !!res))
+      //   .subscribe(res => {
+      //   this.dataTableHeadersToDisplay = [];
+      //   this.lazyUserList = this.buildUserListData(res);
+      // });
+  }
 
     private wrapToHtml(data, htmlTag, dataSet?) {
       const wrapper =  wrapToHtml.bind(this);

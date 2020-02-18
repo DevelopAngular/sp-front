@@ -5,8 +5,12 @@ import {User} from '../../../../../models/User';
 const ASSISTANTS = 'Assistant Account';
 
 export const getAssistants = createAction(`[${ASSISTANTS}] Get Assistants`, props<RoleProps>());
-export const getAssistantsSuccess = createAction(`[${ASSISTANTS}] Get Assistants Success`, props<{assistants: User[]}>());
+export const getAssistantsSuccess = createAction(`[${ASSISTANTS}] Get Assistants Success`, props<{assistants: User[], next: string}>());
 export const getAssistantsFailure = createAction(`[${ASSISTANTS}] Get Assistants Failure`, props<{errorMessage: string}>());
+
+export const getMoreAssistants = createAction(`[${ASSISTANTS}] Get More Assistants`);
+export const getMoreAssistantsSuccess = createAction(`[${ASSISTANTS}] Get More Assistants Success`, props<{assistants: User[], next: string}>());
+export const getMoreAssistantsFailure = createAction(`[${ASSISTANTS}] Get More Assistants Failure`, props<{errorMessage: string}>());
 
 export const removeAssistant = createAction(`[${ASSISTANTS}] Remove Assistant`, props<{id: string | number}>());
 export const removeAssistantSuccess = createAction(`[${ASSISTANTS}] Remove Assistant Success`, props<{id: string | number}>());

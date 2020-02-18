@@ -8,7 +8,9 @@ export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
 export const assistantsInitialState: AssistantsStates = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  nextRequest: null,
+  lastAddedAssistants: null
 });
 
 const reducer = createReducer(
@@ -16,8 +18,8 @@ const reducer = createReducer(
   on(assistantsActions.getAssistants,
       assistantsActions.removeAssistant,
       state => ({...state, loading: true, loaded: false })),
-  on(assistantsActions.getAssistantsSuccess, (state, {assistants}) => {
-    return adapter.addAll(assistants, {...state, loading: false, loaded: true });
+  on(assistantsActions.getAssistantsSuccess, (state, {assistants, next}) => {
+    return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next });
   }),
   on(assistantsActions.removeAssistantSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});

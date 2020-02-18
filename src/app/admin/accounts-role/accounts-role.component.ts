@@ -33,11 +33,11 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
-import {School} from '../../models/School';
 import { uniqBy } from 'lodash';
 
 import * as moment from 'moment';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {TotalAccounts} from '../../models/TotalAccounts';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -67,13 +67,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private limitCounter: number = 20;
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Subject<boolean> = new Subject<boolean>();
+  public lazyUserList: User[];
 
   public syncingDots: string;
 
   public countAccount$: any = this.userService.countAccounts$;
 
-  public accounts$ =
-    new BehaviorSubject<any>({
+  public accounts$: BehaviorSubject<TotalAccounts> =
+    new BehaviorSubject<TotalAccounts>({
+      active_students: null,
+      profile_count: null,
+      alternative_count: null,
+      gsuite_count: null,
       total_count: null,
       admin_count: null,
       student_count: null,
@@ -164,13 +169,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   get noUsersDummyVisibility() {
     switch (this.role) {
       case '_profile_admin':
-        return this.countAccount$.admin;
+        return this.accounts$.getValue().admin_count;
       case '_profile_teacher':
-        return this.countAccount$.teacher;
+        return this.accounts$.getValue().teacher_count;
       case '_profile_student':
-        return this.countAccount$.student;
+        return this.accounts$.getValue().student_count;
       case '_profile_assistant':
-        return this.countAccount$.assistant;
+        return this.accounts$.getValue().assistant_count;
     }
   }
 
@@ -188,10 +193,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       mergeAll(),
       takeUntil(this.destroy$))
       .subscribe((userList: any) => {
+        if (!this.userList || this.userList.length === 0) {
           this.dataTableHeadersToDisplay = [];
           this.userList = this.buildUserListData(userList);
           this.pending$.next(false);
           this.placeholder = !!userList.length;
+        }
       });
 
     interval(1758)
@@ -222,7 +229,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.userList = [];
       }),
       tap(() => {
-        this.showDisabledChip = !this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day')
+        this.showDisabledChip = !this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day');
+      }),
+      switchMap(() => {
+        return this.adminService.getAdminAccounts().pipe(
+          tap((res: TotalAccounts) => {
+          this.accounts$.next(res);
+        }));
       }),
       switchMap(() => {
         return this.route.params.pipe(takeUntil(this.destroy$));
@@ -381,6 +394,19 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.userService.userData.subscribe((user) => {
       this.user = user;
     });
+
+    this.route.params.pipe(
+      switchMap(params => {
+        return this.userService.lastAddedAccounts$[params.role];
+      }),
+      filter(res => !!res)
+    ).subscribe(res => {
+      setTimeout(() => {
+        this.dataTableHeadersToDisplay = [];
+        this.lazyUserList = this.buildUserListData(res);
+      }, 50);
+    });
+
   }
 
   buildTableHeaders() {
@@ -468,8 +494,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
 
   setSelected(e) {
-    // console.log(e);
-    // debugger;
     this.selectedUsers = e;
   }
 
@@ -549,6 +573,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.selectedUsers = [];
           this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
         });
+
   }
 
   ngOnDestroy() {
@@ -585,11 +610,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           permissions: this.profilePermissions
         }
       });
-    DR.afterClosed().subscribe((v) => {
-      if (v) {
+    DR.afterClosed()
+      .pipe(
+        filter(v => !!v),
+        switchMap(() => {
+          return this.adminService.getAdminAccounts().pipe(
+            tap((res: TotalAccounts) => this.accounts$.next(res))
+          );
+        })
+      )
+      .subscribe((v) => {
         this.selectedUsers = [];
         this.querySubscriber$.next(this.userService.getAccountsRoles(this.role));
-      }
     });
   }
 
@@ -672,7 +704,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.placeholder = false;
     this.userList = [];
     return this.userService
-      .getAccountsRoles(this.role, query)
+      .getAccountsRoles(this.role, query, 50)
       .pipe(
         take(2),
         tap(() => {
@@ -774,6 +806,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         return record;
     });
 
+  }
+
+  loadMore($event) {
+    this.userService.getMoreUserListRequest(this.role);
   }
 
   syncOrgUnits(evt: OrgUnit[]) {

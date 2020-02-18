@@ -31,13 +31,14 @@ export class AllAccountsEffects {
       .pipe(
         ofType(allAccountsActions.getMoreAccounts),
         concatMap((action: any) => {
-          return this.userService.nextRequests$.all.pipe(take(1));
+          return this.userService.nextRequests$._all.pipe(take(1));
         }),
         switchMap(next => this.http.get(next)),
         map((moreAccounts: any) => {
           const nextUrl = moreAccounts.next ? moreAccounts.next.substring(moreAccounts.next.search('v1')) : null;
           return allAccountsActions.getMoreAccountsSuccess({moreAccounts: moreAccounts.results, next: nextUrl});
-        })
+        }),
+        catchError(error => of(allAccountsActions.getMoreAccountsFailure({errorMessage: error.message})))
       );
   });
 

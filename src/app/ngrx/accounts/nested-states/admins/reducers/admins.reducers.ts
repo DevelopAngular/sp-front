@@ -8,17 +8,18 @@ export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
 export const adminsInitialState: AdminsState = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  nextRequest: null,
+  lastAddedAdmins: null
 });
 
 const reducer = createReducer(
   adminsInitialState,
   on(adminsActions.getAdmins,
-    adminsActions.postAdmin,
     adminsActions.removeAdminAccount,
       state => ({...state, loading: true, loaded: false})),
-  on(adminsActions.getAdminsSuccess, (state, {admins}) => {
-    return adapter.addAll(admins, {...state, loading: false, loaded: true});
+  on(adminsActions.getAdminsSuccess, (state, {admins, next}) => {
+    return adapter.addAll(admins, {...state, loading: false, loaded: true, nextRequest: next});
   }),
   on(adminsActions.removeAdminAccountSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});
@@ -27,6 +28,12 @@ const reducer = createReducer(
     adminsActions.updateAdminPermissionsSuccess,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
+  }),
+  on(adminsActions.postAdminSuccess, (state, {admin}) => {
+    return adapter.addOne(admin, {...state, loading: false, loaded: true});
+  }),
+  on(adminsActions.getMoreAdminsSuccess, (state, {admins, next}) => {
+    return adapter.addMany(admins, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAdmins: admins});
   })
 );
 

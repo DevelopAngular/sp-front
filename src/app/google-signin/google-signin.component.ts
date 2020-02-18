@@ -122,11 +122,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.error$.next(null);
       }
       this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
-      if (auth_types.indexOf('google') !== -1) {
-        this.loginData.demoLoginEnabled = false;
-        this.isStandardLogin = false;
-        this.isGoogleLogin = true;
-      } else
+      // if (auth_types.indexOf('google') !== -1) {
+      //   this.loginData.demoLoginEnabled = false;
+      //   this.isStandardLogin = false;
+      //   this.isGoogleLogin = true;
+      // } else
         if (auth_types.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
         this.isStandardLogin = true;

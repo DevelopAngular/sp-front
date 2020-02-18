@@ -5,7 +5,6 @@ import * as roleActions from '../actions';
 import {concatMap, map} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/User';
-import {createAction} from '@ngrx/store';
 
 @Injectable()
 export class AccountsEffects {
@@ -38,33 +37,33 @@ export class AccountsEffects {
           if (action.role === '' || action.role === '_all') {
             return roleActions.getMoreAccounts({role: action.role});
           } else if (action.role === '_profile_admin') {
-            return roleActions.getMoreAccounts({role: action.role});
+            return roleActions.getMoreAdmins();
           } else if (action.role === '_profile_teacher') {
-            return roleActions.getTeachers({role: action.role, search: action.search, limit: action.limit});
+            return roleActions.getMoreTeachers();
           } else if (action.role === '_profile_assistant') {
-            return roleActions.getAssistants({role: action.role, search: action.search, limit: action.limit});
+            return roleActions.getMoreAssistants();
           } else if (action.role === '_profile_student') {
-            return roleActions.getStudents({role: action.role, search: action.search, limit: action.limit});
+            return roleActions.getMoreStudents({role: action.role});
           }
           return action;
         })
       );
   });
 
-  postAccounts$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.postAccounts),
-        concatMap((action: any) => {
-          return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
-            .pipe(
-              map((user: User) => {
-                    return roleActions.postAdminSuccess({admin: user});
-              })
-            );
-        })
-      );
-  });
+  // postAccounts$ = createEffect(() => {
+  //   return this.actions$
+  //     .pipe(
+  //       ofType(accountsActions.postAccounts),
+  //       concatMap((action: any) => {
+  //         return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
+  //           .pipe(
+  //             map((user: User) => {
+  //               return roleActions.postAdminSuccess({admin: user});
+  //             })
+  //           );
+  //       })
+  //     );
+  // });
 
   removeAccount$ = createEffect(() => {
     return this.actions$

@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as adminsActions from '../actions';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../../../services/user.service';
 import {of} from 'rxjs';
+import {HttpService} from '../../../../../services/http-service';
 
 @Injectable()
 export class AdminsEffects {
@@ -15,11 +16,31 @@ export class AdminsEffects {
           return this.userService.getUsersList(action.role, action.search, action.limit)
             .pipe(
               map((users: any) => {
-                return adminsActions.getAdminsSuccess({admins: users});
+                const nextUrl = users.next ? users.next.substring(users.next.search('v1')) : null;
+                return adminsActions.getAdminsSuccess({admins: users.results, next: nextUrl});
               }),
               catchError(error => of(adminsActions.getAdminsFailure({errorMessage: error.message})))
             );
         })
+      );
+  });
+
+  getMoreAdmins$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(adminsActions.getMoreAdmins),
+        concatMap(action => {
+          return this.userService.nextRequests$._profile_admin.pipe(take(1));
+        }),
+        switchMap(next => this.http.get(next)
+          .pipe(
+            map((users: any) => {
+              const nextUrl = users.next ? users.next.substring(users.next.search('v1')) : null;
+              return adminsActions.getMoreAdminsSuccess({admins: users.results, next: nextUrl});
+            }),
+            catchError(error => of(adminsActions.getMoreAdminsFailure({errorMessage: error.message})))
+          )
+        )
       );
   });
 
@@ -69,7 +90,6 @@ export class AdminsEffects {
               map((roles: any) => {
                 const profile = action.profile;
                 profile.roles = roles.map(role => role.codename);
-                // debugger;
                 return adminsActions.updateAdminPermissionsSuccess({profile});
               }),
               catchError(error => of(adminsActions.updateAdminPermissionsFailure({errorMessage: error.message})))
@@ -78,5 +98,9 @@ export class AdminsEffects {
       );
   });
 
-  constructor(private actions$: Actions, private userService: UserService) {}
+  constructor(
+    private actions$: Actions,
+    private userService: UserService,
+    private http: HttpService
+    ) {}
 }
