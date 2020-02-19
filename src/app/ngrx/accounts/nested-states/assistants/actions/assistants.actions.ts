@@ -1,5 +1,5 @@
 import {createAction, props} from '@ngrx/store';
-import {RoleProps} from '../../../states';
+import {PostRoleProps, RoleProps} from '../../../states';
 import {User} from '../../../../../models/User';
 
 const ASSISTANTS = 'Assistant Account';
@@ -11,6 +11,9 @@ export const getAssistantsFailure = createAction(`[${ASSISTANTS}] Get Assistants
 export const getMoreAssistants = createAction(`[${ASSISTANTS}] Get More Assistants`);
 export const getMoreAssistantsSuccess = createAction(`[${ASSISTANTS}] Get More Assistants Success`, props<{assistants: User[], next: string}>());
 export const getMoreAssistantsFailure = createAction(`[${ASSISTANTS}] Get More Assistants Failure`, props<{errorMessage: string}>());
+
+export const postAssistant = createAction(`[${ASSISTANTS}] Post Assistant`, props<PostRoleProps>());
+export const postAssistantSuccess = createAction(`[${ASSISTANTS}] Post Assistant Success`, props<{assistant: User}>());
 
 export const removeAssistant = createAction(`[${ASSISTANTS}] Remove Assistant`, props<{id: string | number}>());
 export const removeAssistantSuccess = createAction(`[${ASSISTANTS}] Remove Assistant Success`, props<{id: string | number}>());

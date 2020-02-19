@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as studentsActions from '../actions';
-import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, switchMap, take} from 'rxjs/operators';
 import {User} from '../../../../../models/User';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
@@ -34,6 +34,7 @@ export class StudentsEffects {
         concatMap((action: any) => {
           return this.userService.nextRequests$._profile_student.pipe(take(1));
         }),
+        filter(res => !!res),
         switchMap(next => {
           return this.http.get(next)
             .pipe(
@@ -43,6 +44,21 @@ export class StudentsEffects {
               }),
               catchError(error => {
                 return of(studentsActions.getMoreStudentsFailure({errorMessage: error.message}));
+              })
+            );
+        })
+      );
+  });
+
+  postStudent$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(studentsActions.postStudent),
+        concatMap((action: any) => {
+          return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
+            .pipe(
+              map((student: User) => {
+                return studentsActions.postStudentSuccess({student});
               })
             );
         })

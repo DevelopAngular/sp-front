@@ -8,7 +8,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  mergeAll,
+  mergeAll, skip,
   switchMap, take,
   takeUntil,
   tap
@@ -193,12 +193,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       mergeAll(),
       takeUntil(this.destroy$))
       .subscribe((userList: any) => {
-        if (!this.userList || this.userList.length === 0) {
           this.dataTableHeadersToDisplay = [];
           this.userList = this.buildUserListData(userList);
           this.pending$.next(false);
           this.placeholder = !!userList.length;
-        }
       });
 
     interval(1758)
@@ -612,16 +610,17 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       });
     DR.afterClosed()
       .pipe(
-        filter(v => !!v),
         switchMap(() => {
           return this.adminService.getAdminAccounts().pipe(
-            tap((res: TotalAccounts) => this.accounts$.next(res))
+            tap((res: TotalAccounts) => {
+                this.accounts$.next(res);
+            })
           );
         })
       )
       .subscribe((v) => {
         this.selectedUsers = [];
-        this.querySubscriber$.next(this.userService.getAccountsRoles(this.role));
+        this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
     });
   }
 

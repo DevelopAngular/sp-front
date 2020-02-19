@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as adminsActions from '../actions';
-import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../../../services/user.service';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
+import {User} from '../../../../../models/User';
 
 @Injectable()
 export class AdminsEffects {
@@ -32,6 +33,7 @@ export class AdminsEffects {
         concatMap(action => {
           return this.userService.nextRequests$._profile_admin.pipe(take(1));
         }),
+        filter(res => !!res),
         switchMap(next => this.http.get(next)
           .pipe(
             map((users: any) => {
@@ -41,6 +43,21 @@ export class AdminsEffects {
             catchError(error => of(adminsActions.getMoreAdminsFailure({errorMessage: error.message})))
           )
         )
+      );
+  });
+
+  postAdmin$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(adminsActions.postAdmin),
+        concatMap((action: any) => {
+          return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
+            .pipe(
+              map((admin: User) => {
+                return adminsActions.postAdminSuccess({admin});
+              })
+            );
+        })
       );
   });
 

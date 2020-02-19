@@ -2,10 +2,11 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as teachersActions from '../actions';
-import {catchError, concatMap, map, pluck, switchMap} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, pluck, switchMap, take} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
 import {HttpService} from '../../../../../services/http-service';
+import {User} from '../../../../../models/User';
 
 @Injectable()
 export class TeachersEffects {
@@ -43,9 +44,11 @@ export class TeachersEffects {
   getMoreTeachers$ = createEffect(() => {
     return this.actions$
       .pipe(
+        ofType(teachersActions.getMoreTeachers),
         concatMap(action => {
-          return this.userService.nextRequests$._profile_teacher;
+          return this.userService.nextRequests$._profile_teacher.pipe(take(1));
         }),
+        filter(res => !!res),
         switchMap(next => this.http.get(next)
           .pipe(
             switchMap((moreTeachers: any) => {
@@ -68,6 +71,21 @@ export class TeachersEffects {
             catchError(error => of(teachersActions.getMoreTeachersFailure({errorMessage: error.message})))
           )
         )
+      );
+  });
+
+  postTeacher$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.postTeacher),
+        concatMap((action: any) => {
+          return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
+            .pipe(
+              map((teacher: User) => {
+                return teachersActions.postTeacherSuccess({teacher});
+              })
+            );
+        })
       );
   });
 

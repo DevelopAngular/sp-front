@@ -30,6 +30,9 @@ const reducer = createReducer(
   }),
   on(studentsActions.getMoreStudentsSuccess, (state, {moreStudents, next}) => {
     return adapter.addMany(moreStudents, {...state, loading: false, loaded: true, nextRequest: next, lastAddedStudents: moreStudents});
+  }),
+  on(studentsActions.postStudentSuccess, (state, {student}) => {
+    return adapter.addOne(student, {...state, loading: false, loaded: true});
   })
 );
 

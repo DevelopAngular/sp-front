@@ -56,7 +56,7 @@ export class AccountsEffects {
       .pipe(
         ofType(accountsActions.postAccounts),
         map((action: any) => {
-          const props: PostRoleProps = {
+          let props: PostRoleProps = {
             school_id: action.school_id,
             user: action.user,
             userType: action.userType,
@@ -67,11 +67,12 @@ export class AccountsEffects {
           } else if (action.role === '_profile_admin') {
             return roleActions.postAdmin(props);
           } else if (action.role === '_profile_teacher') {
-            return roleActions.removeTeacher({id: action.id});
+            return roleActions.postTeacher(props);
           } else if (action.role === '_profile_student') {
-            return roleActions.removeStudent({id: action.id});
+            return roleActions.postStudent(props);
           } else if (action.role === '_profile_assistant') {
-            return roleActions.removeAssistant({id: action.id});
+            props = {...props, behalf: action.behalf};
+            return roleActions.postAssistant(props);
           }
 
           return action;

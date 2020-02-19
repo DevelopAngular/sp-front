@@ -8,7 +8,7 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, map, mapTo, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
@@ -259,7 +259,7 @@ export class AddUserDialogComponent implements OnInit {
               const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
               if (role !== 'assistant') {
                 return this.userService
-                            .addAccountToSchool(this.school.id, data, 'username', rolesToDb);
+                            .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
               } else {
                 return this.userService
                   .addAccountToSchool(this.school.id, data, 'username', rolesToDb)
@@ -268,9 +268,7 @@ export class AddUserDialogComponent implements OnInit {
                       (assistant: User) => {
                         return zip(
                           ...this.assistantLike.behalfOf.map((teacher: User) => {
-                            return this.userService
-                              .addRepresentedUser(+assistant.id, teacher)
-                              .pipe(tap(console.log));
+                            return this.userService.addRepresentedUser(+assistant.id, teacher);
                           })
                         );
                       }
@@ -280,13 +278,12 @@ export class AddUserDialogComponent implements OnInit {
             } else if (regexpEmail.test(this.newAlternativeAccount.get('addUsername').value)) {
               const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
               if (role !== 'assistant') {
-               return this.userService.addAccountToSchool(this.school.id, data, 'email', rolesToDb);
+               return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
               } else {
                 return this.userService.addAccountToSchool(this.school.id, data, 'email', rolesToDb)
                   .pipe(
                     switchMap(
                       (assistant: User) => {
-                        // console.log(assistant);
                         return zip(
                           ...this.assistantLike.behalfOf.map((teacher: User) => {
                             return this.userService.addRepresentedUser(+assistant.id, teacher).pipe(tap(console.log));

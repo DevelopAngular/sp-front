@@ -303,9 +303,9 @@ export class UserService {
       return this.http.patch(`v1/users/${id}/active`, {active: activity});
   }
 
-  addAccountRequest(school_id, user, userType, roles: string[]) {
-    this.store.dispatch(postAccounts({school_id, user, userType, roles}));
-    return this.accounts.adminAccounts;
+  addAccountRequest(school_id, user, userType, roles: string[], role, behalf?: User[]) {
+    this.store.dispatch(postAccounts({school_id, user, userType, roles, role, behalf}));
+    return this.getAccountsRole(role);
   }
 
   addAccountToSchool(id, user, userType: string, roles: Array<string>) {

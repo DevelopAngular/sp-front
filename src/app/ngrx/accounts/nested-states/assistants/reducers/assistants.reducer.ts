@@ -35,6 +35,12 @@ const reducer = createReducer(
     assistantsActions.updateAssistantPermissionsSuccess,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state});
+  }),
+  on(assistantsActions.getMoreAssistantsSuccess, (state, {assistants, next}) => {
+    return adapter.addMany(assistants, {...state, lastAddedAssistants: assistants, nextRequest: next});
+  }),
+  on(assistantsActions.postAssistantSuccess, (state, {assistant}) => {
+    return adapter.addOne(assistant, {...state, loading: false, loaded: true});
   })
 );
 

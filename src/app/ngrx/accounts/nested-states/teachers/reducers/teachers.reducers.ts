@@ -31,6 +31,9 @@ const reducer = createReducer(
   }),
   on(teachersActions.getMoreTeachersSuccess, (state, {moreTeachers, next}) => {
     return adapter.addMany(moreTeachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: moreTeachers});
+  }),
+  on(teachersActions.postTeacherSuccess, (state, {teacher}) => {
+    return adapter.addOne(teacher, {...state, loading: false, loaded: true});
   })
 );
 
