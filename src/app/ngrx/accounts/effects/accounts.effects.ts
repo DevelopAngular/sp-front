@@ -5,6 +5,7 @@ import * as roleActions from '../actions';
 import {concatMap, map} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/User';
+import {PostRoleProps, RoleProps} from '../states';
 
 @Injectable()
 export class AccountsEffects {
@@ -50,20 +51,33 @@ export class AccountsEffects {
       );
   });
 
-  // postAccounts$ = createEffect(() => {
-  //   return this.actions$
-  //     .pipe(
-  //       ofType(accountsActions.postAccounts),
-  //       concatMap((action: any) => {
-  //         return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
-  //           .pipe(
-  //             map((user: User) => {
-  //               return roleActions.postAdminSuccess({admin: user});
-  //             })
-  //           );
-  //       })
-  //     );
-  // });
+  postAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.postAccounts),
+        map((action: any) => {
+          const props: PostRoleProps = {
+            school_id: action.school_id,
+            user: action.user,
+            userType: action.userType,
+            roles: action.roles
+          };
+          if (action.role === '' || action.role === '_all') {
+            return roleActions.removeAllAccount({id: action.id});
+          } else if (action.role === '_profile_admin') {
+            return roleActions.postAdmin(props);
+          } else if (action.role === '_profile_teacher') {
+            return roleActions.removeTeacher({id: action.id});
+          } else if (action.role === '_profile_student') {
+            return roleActions.removeStudent({id: action.id});
+          } else if (action.role === '_profile_assistant') {
+            return roleActions.removeAssistant({id: action.id});
+          }
+
+          return action;
+        })
+      );
+  });
 
   removeAccount$ = createEffect(() => {
     return this.actions$

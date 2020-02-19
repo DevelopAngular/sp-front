@@ -222,9 +222,8 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         .subscribe(offset => {
           this.placeholderHeight = offset;
           const isFirst = this.dataSource.last === 1;
-
-          // console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ))), (this.dataSource.last * 50) - 20);
-
+          const isThree = this.dataSource.last === 3;
+          console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ))), (this.dataSource.last * 50) - 20, this.dataSource.last % 2);
           const allowLoadMore = ((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ))) === (this.dataSource.last * 50) - 20;
           if (allowLoadMore) {
             this.loadMoreAccounts.emit(null);

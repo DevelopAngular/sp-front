@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { RoleProps } from '../../../states';
+import {PostRoleProps, RoleProps} from '../../../states';
 import { User } from '../../../../../models/User';
 
 const ADMIN = 'Admin Accounts';
@@ -12,7 +12,7 @@ export const getMoreAdmins = createAction(`[${ADMIN}] Get More Admins`);
 export const getMoreAdminsSuccess = createAction(`[${ADMIN}] Get More Admins Success`, props<{admins: User[], next: string}>());
 export const getMoreAdminsFailure = createAction(`[${ADMIN} Get More Admins Failure`, props<{errorMessage: string}>());
 
-export const postAdmin = createAction(`[${ADMIN}] Post Admin Success`, props<{admin: User}>());
+export const postAdmin = createAction(`[${ADMIN}] Post Admin Success`, props<PostRoleProps>());
 export const postAdminSuccess = createAction(`[${ADMIN}] PostAdminSuccess`, props<{admin: User}>());
 
 export const removeAdminAccount = createAction(`[${ADMIN}] Remove Admin Account`, props<{id: number | string}>());
