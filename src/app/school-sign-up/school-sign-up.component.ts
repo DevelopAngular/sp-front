@@ -166,7 +166,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       email: new FormControl('',
         [
         Validators.required,
-        Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+.[a-zA-Z0-9]+$'),
+        // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+.[a-zA-Z0-9]+$'),
+          Validators.email,
         (fc: FormControl) => {
           return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
         }
