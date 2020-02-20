@@ -239,7 +239,7 @@
       <div class="loading-theme_blue-gray spinner ds-flex-center-center" *ngIf="(isLoading$ | async) && !userList.length">
         <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
       </div>
-      <div *ngIf="!userList.length && noUsersDummyVisibility" class="loading-theme_blue-gray spinner ds-flex-center-center">
+      <div *ngIf="!userList.length && (noUsersDummyVisibility | async)" class="loading-theme_blue-gray spinner ds-flex-center-center">
         <!--<h1 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" *ngIf="placeholder">No matches found.</h1>-->
         <div *ngIf="placeholder" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <img [src]="'./assets/emptyStates/no-matches-found.svg'" class="ds-py-25 ds-mt-25 ds-mb-10" alt="no-users.svg">

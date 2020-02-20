@@ -6,6 +6,7 @@ import {UserService} from '../../../../../services/user.service';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
+import {getCountAccounts} from '../../count-accounts/actions';
 
 @Injectable()
 export class AdminsEffects {
@@ -57,6 +58,16 @@ export class AdminsEffects {
                 return adminsActions.postAdminSuccess({admin});
               })
             );
+        })
+      );
+  });
+
+  postAdminSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(adminsActions.postAdminSuccess),
+        map(() => {
+          return getCountAccounts();
         })
       );
   });

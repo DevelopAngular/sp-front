@@ -10,7 +10,7 @@ export const teachersInitialState: TeachersStates = adapter.getInitialState({
   loading: false,
   loaded: false,
   nextRequest: null,
-  lastAddedTeachers: null
+  lastAddedTeachers: []
 });
 
 const reducer = createReducer(
@@ -19,7 +19,7 @@ const reducer = createReducer(
     teachersActions.removeTeacher,
     (state) => ({...state, loading: true, loaded: false})),
   on(teachersActions.getTeachersSuccess, (state, {teachers, next}) => {
-    return adapter.addAll(teachers, {...state, loading: false, loaded: true, nextRequest: next});
+    return adapter.addAll(teachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: []});
   }),
   on(teachersActions.removeTeacherSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});

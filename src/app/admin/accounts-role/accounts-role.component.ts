@@ -67,24 +67,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private limitCounter: number = 20;
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Subject<boolean> = new Subject<boolean>();
-  public lazyUserList: User[];
+  public lazyUserList: User[] = [];
 
   public syncingDots: string;
 
-  public countAccount$: any = this.userService.countAccounts$;
-
-  public accounts$: BehaviorSubject<TotalAccounts> =
-    new BehaviorSubject<TotalAccounts>({
-      active_students: null,
-      profile_count: null,
-      alternative_count: null,
-      gsuite_count: null,
-      total_count: null,
-      admin_count: null,
-      student_count: null,
-      teacher_count: null,
-      assistant_count: null
-    });
+  public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
     ////// G_Suite
 
@@ -167,16 +154,17 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   get noUsersDummyVisibility() {
-    switch (this.role) {
-      case '_profile_admin':
-        return this.accounts$.getValue().admin_count;
-      case '_profile_teacher':
-        return this.accounts$.getValue().teacher_count;
-      case '_profile_student':
-        return this.accounts$.getValue().student_count;
-      case '_profile_assistant':
-        return this.accounts$.getValue().assistant_count;
-    }
+    return this.userService.countAccounts$[this.role];
+    // switch (this.role) {
+    //   case '_profile_admin':
+    //     return this.accounts$.admin_count;
+    //   case '_profile_teacher':
+    //     return this.accounts$.teacher_count;
+    //   case '_profile_student':
+    //     return this.accounts$.student_count;
+    //   case '_profile_assistant':
+    //     return this.accounts$.assistant_count;
+    // }
   }
 
   get bulkSignInStatus() {
@@ -188,7 +176,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.querySubscriber$.pipe(
       mergeAll(),
       takeUntil(this.destroy$))
@@ -230,10 +217,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.showDisabledChip = !this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day');
       }),
       switchMap(() => {
-        return this.adminService.getAdminAccounts().pipe(
-          tap((res: TotalAccounts) => {
-          this.accounts$.next(res);
-        }));
+        return this.adminService.getCountAccountsRequest().pipe(take(1));
       }),
       switchMap(() => {
         return this.route.params.pipe(takeUntil(this.destroy$));
@@ -397,8 +381,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       switchMap(params => {
         return this.userService.lastAddedAccounts$[params.role];
       }),
-      filter(res => !!res)
+      filter((res: any) => !!res && res.length)
     ).subscribe(res => {
+      // debugger;
       setTimeout(() => {
         this.dataTableHeadersToDisplay = [];
         this.lazyUserList = this.buildUserListData(res);
@@ -609,15 +594,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
       });
     DR.afterClosed()
-      .pipe(
-        switchMap(() => {
-          return this.adminService.getAdminAccounts().pipe(
-            tap((res: TotalAccounts) => {
-                this.accounts$.next(res);
-            })
-          );
-        })
-      )
       .subscribe((v) => {
         this.selectedUsers = [];
         this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
@@ -760,6 +736,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             }
           }())
         };
+
         for (const key in rawObj) {
           if (!this.dataTableHeaders[key]) {
             delete rawObj[key];

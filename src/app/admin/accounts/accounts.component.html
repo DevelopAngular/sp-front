@@ -104,7 +104,7 @@
                     *ngFor="let button of accountsButtons"
                     [title]="button.title"
                     [leftIcon]="button.leftIcon"
-                    [subtitle]="getCountRole(button.role) + (getCountRole(button.role) > 1 || getCountRole(button.role) === 0 ? ' users' : ' user')"
+                    [subtitle]="(accounts$ | async)[button.role] + ((accounts$ | async)[button.role] > 1 || (accounts$ | async)[button.role] === 0 ? ' users' : ' user')"
                     [subtitleIcon]="button.subIcon"
                     [isBanner]="button.banner | async"
                     (onClick)="router.navigate(['/admin/accounts', button.param])"

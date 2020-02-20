@@ -10,7 +10,7 @@ export const studentsAccountsInitialState: StudentsStates = adapter.getInitialSt
   loading: false,
   loaded: false,
   nextRequest: null,
-  lastAddedStudents: null
+  lastAddedStudents: []
 });
 
 const reducer = createReducer(
@@ -18,7 +18,7 @@ const reducer = createReducer(
   on(studentsActions.getStudents,
       studentsActions.removeStudent,
     studentsActions.getMoreStudents,
-      state => ({ ...state, loading: true, loaded: false, lastAddedStudents: null })),
+      state => ({ ...state, loading: true, loaded: false, lastAddedStudents: [] })),
   on(studentsActions.getStudentsSuccess, (state, { students, next }) => {
     return adapter.addAll(students, { ...state, loading: false, loaded: true, nextRequest: next });
   }),

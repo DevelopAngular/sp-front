@@ -12,6 +12,7 @@ import {catchError, debounceTime, distinctUntilChanged, filter, map, mapTo, skip
 import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {AdminService} from '../../services/admin.service';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -67,6 +68,7 @@ export class AddUserDialogComponent implements OnInit {
     private userService: UserService,
     private sanitizer: DomSanitizer,
     private http: HttpService,
+    private adminService: AdminService,
     private router: Router
 
   ) {
@@ -248,7 +250,7 @@ export class AddUserDialogComponent implements OnInit {
           if (this.typeChoosen === this.accountTypes[0]) {
             return zip(
               ...this.selectedUsers
-                .map((user) => this.userService.addAccountToSchool(this.school.id, user, 'gsuite', rolesToDb))
+                .map((user) => this.userService.addAccountRequest(this.school.id, user, 'gsuite', rolesToDb, this.data.role))
             );
           } else if (this.typeChoosen === this.accountTypes[1]) {
 
@@ -262,36 +264,14 @@ export class AddUserDialogComponent implements OnInit {
                             .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
               } else {
                 return this.userService
-                  .addAccountToSchool(this.school.id, data, 'username', rolesToDb)
-                  .pipe(
-                    switchMap(
-                      (assistant: User) => {
-                        return zip(
-                          ...this.assistantLike.behalfOf.map((teacher: User) => {
-                            return this.userService.addRepresentedUser(+assistant.id, teacher);
-                          })
-                        );
-                      }
-                    ),
-                  );
+                  .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role, this.assistantLike.behalfOf);
               }
             } else if (regexpEmail.test(this.newAlternativeAccount.get('addUsername').value)) {
               const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
               if (role !== 'assistant') {
                return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
               } else {
-                return this.userService.addAccountToSchool(this.school.id, data, 'email', rolesToDb)
-                  .pipe(
-                    switchMap(
-                      (assistant: User) => {
-                        return zip(
-                          ...this.assistantLike.behalfOf.map((teacher: User) => {
-                            return this.userService.addRepresentedUser(+assistant.id, teacher).pipe(tap(console.log));
-                          })
-                        );
-                      }
-                    ),
-                  );
+                return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role, this.assistantLike.behalfOf);
               }
             } else {
               throw new Error('Format Error');
@@ -315,7 +295,7 @@ export class AddUserDialogComponent implements OnInit {
       )
       .subscribe((res) => {
         this.pendingSubject.next(false);
-        this.dialogRef.close(true);
+        this.dialogRef.close(res);
         if (this.selectedRoles.length) {
           this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
         }

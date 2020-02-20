@@ -19,7 +19,7 @@ import {wrapToHtml} from '../helpers';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
 import { findIndex } from 'lodash';
-import {distinctUntilChanged, take} from 'rxjs/operators';
+import {distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -198,7 +198,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
 
   @Input() set lazyData(value: any[]) {
-    if (value) {
+    if (value.length) {
       this.dataSource.add(value);
       this._data = this.dataSource.allData;
     }
@@ -218,13 +218,13 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.domSanitizer
       );
       this.dataSource.offsetChange
-        .pipe(distinctUntilChanged())
+        .pipe(distinctUntilChanged(), takeUntil(this.destroyOffset$))
         .subscribe(offset => {
           this.placeholderHeight = offset;
           const isFirst = this.dataSource.last === 1;
-          const isThree = this.dataSource.last === 3;
-          console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ))), (this.dataSource.last * 50) - 20, this.dataSource.last % 2);
-          const allowLoadMore = ((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ))) === (this.dataSource.last * 50) - 20;
+          const isThree = this.dataSource.last >= 3;
+          console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))), (this.dataSource.last * 50) - 20, this.dataSource.last);
+          const allowLoadMore = ((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) === (this.dataSource.last * 50) - 20;
           if (allowLoadMore) {
             this.loadMoreAccounts.emit(null);
             this.dataSource.last = this.dataSource.last + 1;
@@ -265,6 +265,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   placeholderHeight = 0;
 
   private _data: any[] = [];
+  private destroyOffset$ = new Subject();
 
   constructor(
     private _ngZone: NgZone,

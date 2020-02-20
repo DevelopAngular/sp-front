@@ -10,7 +10,7 @@ export const adminsInitialState: AdminsState = adapter.getInitialState({
   loading: false,
   loaded: false,
   nextRequest: null,
-  lastAddedAdmins: null
+  lastAddedAdmins: []
 });
 
 const reducer = createReducer(
@@ -19,7 +19,7 @@ const reducer = createReducer(
     adminsActions.removeAdminAccount,
       state => ({...state, loading: true, loaded: false})),
   on(adminsActions.getAdminsSuccess, (state, {admins, next}) => {
-    return adapter.addAll(admins, {...state, loading: false, loaded: true, nextRequest: next});
+    return adapter.addAll(admins, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAdmins: []});
   }),
   on(adminsActions.removeAdminAccountSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});

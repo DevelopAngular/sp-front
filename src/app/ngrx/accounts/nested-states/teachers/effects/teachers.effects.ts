@@ -7,6 +7,7 @@ import {forkJoin, of} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
+import {getCountAccounts} from '../../count-accounts/actions';
 
 @Injectable()
 export class TeachersEffects {
@@ -85,6 +86,16 @@ export class TeachersEffects {
                 return teachersActions.postTeacherSuccess({teacher});
               })
             );
+        })
+      );
+  });
+
+  postTeacherSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.postTeacherSuccess),
+        map(() => {
+          return getCountAccounts();
         })
       );
   });

@@ -6,6 +6,7 @@ import {catchError, concatMap, filter, map, switchMap, take} from 'rxjs/operator
 import {User} from '../../../../../models/User';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
+import {getCountAccounts} from '../../count-accounts/actions';
 
 @Injectable()
 export class StudentsEffects {
@@ -61,6 +62,16 @@ export class StudentsEffects {
                 return studentsActions.postStudentSuccess({student});
               })
             );
+        })
+      );
+  });
+
+  postStudentSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(studentsActions.postStudentSuccess),
+        map(() => {
+          return getCountAccounts();
         })
       );
   });

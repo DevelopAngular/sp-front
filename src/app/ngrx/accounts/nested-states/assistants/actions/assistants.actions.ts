@@ -13,7 +13,7 @@ export const getMoreAssistantsSuccess = createAction(`[${ASSISTANTS}] Get More A
 export const getMoreAssistantsFailure = createAction(`[${ASSISTANTS}] Get More Assistants Failure`, props<{errorMessage: string}>());
 
 export const postAssistant = createAction(`[${ASSISTANTS}] Post Assistant`, props<PostRoleProps>());
-export const postAssistantSuccess = createAction(`[${ASSISTANTS}] Post Assistant Success`, props<{assistant: User}>());
+export const postAssistantSuccess = createAction(`[${ASSISTANTS}] Post Assistant Success`, props<{assistant: any}>());
 
 export const removeAssistant = createAction(`[${ASSISTANTS}] Remove Assistant`, props<{id: string | number}>());
 export const removeAssistantSuccess = createAction(`[${ASSISTANTS}] Remove Assistant Success`, props<{id: string | number}>());

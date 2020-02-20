@@ -6,6 +6,7 @@ import {catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
+import {getCountAccounts} from '../../count-accounts/actions';
 
 @Injectable()
 export class AssistantsEffects {
@@ -103,7 +104,6 @@ export class AssistantsEffects {
           return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
             .pipe(
               switchMap((user: User) => {
-                debugger;
                 return forkJoin({
                   user: of(user),
                   representedUsers: zip(...action.behalf.map((teacher: User) => {
@@ -113,10 +113,25 @@ export class AssistantsEffects {
                 );
               }),
               map(({user, representedUsers}) => {
-                debugger;
-                return assistantsActions.postAssistantSuccess({assistant: user});
+                const assistant = {
+                  ...user,
+                  canActingOnBehalfOf: representedUsers.map((u: any) => {
+                    return { user: u.represented_user, roles: u.roles };
+                  })
+                };
+                return assistantsActions.postAssistantSuccess({assistant});
               })
             );
+        })
+      );
+  });
+
+  postAssistantSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.postAssistantSuccess),
+        map(() => {
+          return getCountAccounts();
         })
       );
   });

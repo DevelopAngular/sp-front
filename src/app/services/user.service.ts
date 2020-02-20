@@ -81,11 +81,11 @@ export class UserService {
   };
 
   countAccounts$ = {
-    all: this.store.select(getCountAllAccounts),
-    admin: this.store.select(getCountAdmins),
-    student: this.store.select(getCountStudents),
-    teacher: this.store.select(getCountTeachers),
-    assistant: this.store.select(getCountAssistants)
+    _all: this.store.select(getCountAllAccounts),
+    _profile_admin: this.store.select(getCountAdmins),
+    _profile_student: this.store.select(getCountStudents),
+    _profile_teacher: this.store.select(getCountTeachers),
+    _profile_assistant: this.store.select(getCountAssistants)
   };
 
   isLoadedAccounts$ = {
@@ -305,7 +305,7 @@ export class UserService {
 
   addAccountRequest(school_id, user, userType, roles: string[], role, behalf?: User[]) {
     this.store.dispatch(postAccounts({school_id, user, userType, roles, role, behalf}));
-    return this.getAccountsRole(role);
+    return of(null);
   }
 
   addAccountToSchool(id, user, userType: string, roles: Array<string>) {

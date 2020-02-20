@@ -9,7 +9,7 @@ export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 export const allAccountsInitialState: AllAccountsState = adapter.getInitialState({
   loading: false,
   loaded: false,
-  lastAddedAccounts: null,
+  lastAddedAccounts: [],
   nextRequest: null
 });
 
@@ -17,7 +17,7 @@ const reducer = createReducer(
     allAccountsInitialState,
     on(allAccountsActions.getAllAccounts,
       allAccountsActions.removeAllAccount,
-        state => ({...state, loading: true, loaded: false, nextRequest: null, lastAddedAccounts: null})),
+        state => ({...state, loading: true, loaded: false, nextRequest: null, lastAddedAccounts: []})),
     on(allAccountsActions.getAllAccountsSuccess, (state, { accounts, next }) => {
       return adapter.addAll(accounts, {...state, loading: false, loaded: true, nextRequest: next });
     }),

@@ -10,7 +10,7 @@ export const assistantsInitialState: AssistantsStates = adapter.getInitialState(
   loading: false,
   loaded: false,
   nextRequest: null,
-  lastAddedAssistants: null
+  lastAddedAssistants: []
 });
 
 const reducer = createReducer(
@@ -19,7 +19,7 @@ const reducer = createReducer(
       assistantsActions.removeAssistant,
       state => ({...state, loading: true, loaded: false })),
   on(assistantsActions.getAssistantsSuccess, (state, {assistants, next}) => {
-    return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next });
+    return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAssistants: [] });
   }),
   on(assistantsActions.removeAssistantSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});

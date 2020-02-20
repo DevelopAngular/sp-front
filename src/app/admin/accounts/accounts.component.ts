@@ -22,8 +22,6 @@ import {environment} from '../../../environments/environment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
-
-import { isNull } from 'lodash';
 import {LocationsService} from '../../services/locations.service';
 import * as moment from 'moment';
 import {TotalAccounts} from '../../models/TotalAccounts';
@@ -38,27 +36,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   splash: boolean;
 
-  countAccounts$: Observable<number> = this.userService.countAccounts$.all;
-
-  public accounts$: BehaviorSubject<TotalAccounts> =
-    new BehaviorSubject<TotalAccounts>({
-      active_students: '-',
-      total_count: '-',
-      gsuite_count: '-',
-      alternative_count: '-',
-      admin_count: '-',
-      student_count: '-',
-      teacher_count: '-',
-      assistant_count: '-',
-      profile_count: '-'
-    });
+  public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
   user: User;
 
   openTable: boolean;
 
   userList;
-  lazyUserList;
+  lazyUserList: User[] = [];
   selectedUsers = [];
 
   destroy$ = new Subject();
@@ -78,10 +63,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
 
   public accountsButtons = [
-      { title: 'Admins', param: '_profile_admin', banner: of(false),  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin' },
-      { title: 'Teachers', param: '_profile_teacher', banner: of(false), leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher' },
-      { title: 'Assistants', param: '_profile_assistant', banner: of(false), leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant' },
-      { title: 'Students', param: '_profile_student', banner: this.showDisabledBanner$, leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student' }
+      { title: 'Admins', param: '_profile_admin', banner: of(false),  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin_count' },
+      { title: 'Teachers', param: '_profile_teacher', banner: of(false), leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher_count' },
+      { title: 'Assistants', param: '_profile_assistant', banner: of(false), leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant_count' },
+      { title: 'Students', param: '_profile_student', banner: this.showDisabledBanner$, leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student_count' }
   ];
 
   constructor(
@@ -122,21 +107,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
       tap(() => {
         this.showDisabledBanner$.next(!this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day'));
       }),
-      switchMap(() => {
-        return this.adminService.getCountAccountsRequest()
-            .pipe(
-              filter(list => !isNull(list.profile_count) && !isNull(list.student_count))
-            );
-        }
-      ),
-      switchMap((u_list: any) => {
-        this.buildCountData(u_list);
-        return this.gsProgress.onboardProgress$;
-      }),
+      switchMap(() => this.adminService.getCountAccountsRequest()),
+      switchMap(() => this.gsProgress.onboardProgress$),
     )
     .subscribe((op: any) => {
       this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-      // this.splash = false;
     });
 
     this.userService.userData.pipe(
@@ -208,7 +183,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
 
 
-    this.userService.lastAddedAccounts$._all.pipe(filter(res => !!res))
+    this.userService.lastAddedAccounts$._all.pipe(filter((res: any) => !!res && res.length))
       .subscribe(res => {
         setTimeout(() => {
           this.dataTableHeadersToDisplay = [];
@@ -223,15 +198,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  buildCountData(u_list) {
-    if (u_list.total_count !== undefined) {
-      u_list.total = u_list.total_count;
-    } else {
-      u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
-    }
-    this.accounts$.next(u_list);
-  }
-
   addUser() {
     const DR = this.matDialog.open(AddUserDialogComponent, {
       width: '425px', height: '500px',
@@ -241,18 +207,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
         role: '_all',
       }
     });
-  }
-
-  getCountRole(role: string) {
-    if (role === 'admin') {
-      return this.accounts$.value.admin_count;
-    } else if (role === 'teacher') {
-      return this.accounts$.value.teacher_count;
-    } else if (role === 'assistant') {
-      return this.accounts$.value.assistant_count;
-    } else if (role === 'student') {
-      return this.accounts$.value.student_count;
-    }
   }
 
   findProfileByRole(evt) {

@@ -6,6 +6,7 @@ import {concatMap, map} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/User';
 import {PostRoleProps, RoleProps} from '../states';
+import {getCountAccounts} from '../nested-states/count-accounts/actions';
 
 @Injectable()
 export class AccountsEffects {
@@ -63,7 +64,7 @@ export class AccountsEffects {
             roles: action.roles
           };
           if (action.role === '' || action.role === '_all') {
-            return roleActions.removeAllAccount({id: action.id});
+            return accountsActions.postSelectedAccounts(props);
           } else if (action.role === '_profile_admin') {
             return roleActions.postAdmin(props);
           } else if (action.role === '_profile_teacher') {
@@ -76,6 +77,31 @@ export class AccountsEffects {
           }
 
           return action;
+        })
+      );
+  });
+
+  postSelectedAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.postSelectedAccounts),
+        concatMap((action: any) => {
+          return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
+            .pipe(
+              map(() => {
+                return accountsActions.postSelectedAccountsSuccess();
+              })
+            );
+        })
+      );
+  });
+
+  postSelectedAccountsSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.postSelectedAccountsSuccess),
+        map(() => {
+          return getCountAccounts();
         })
       );
   });
