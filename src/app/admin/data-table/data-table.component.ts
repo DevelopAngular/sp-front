@@ -223,8 +223,9 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
           this.placeholderHeight = offset;
           const isFirst = this.dataSource.last === 1;
           const isThree = this.dataSource.last >= 3;
-          console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))), (this.dataSource.last * 50) - 20, this.dataSource.last);
-          const allowLoadMore = ((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) === (this.dataSource.last * 50) - 20;
+          const isFour = this.dataSource.last >= 4;
+          console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) + (isFour ? 20 : 0), (this.dataSource.last * 50) - 20, this.dataSource.last);
+          const allowLoadMore = ((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) + (isFour ? 20 : 0) === (this.dataSource.last * 50) - 20;
           if (allowLoadMore) {
             this.loadMoreAccounts.emit(null);
             this.dataSource.last = this.dataSource.last + 1;

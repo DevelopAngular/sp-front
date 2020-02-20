@@ -330,6 +330,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
+    console.log(this.selectedUsers.length);
+    debugger;
+    return;
+
       if (!eventTarget.classList.contains('button')) {
         (eventTarget as any) = eventTarget.closest('.button');
       }

@@ -139,9 +139,9 @@ export class AddUserDialogComponent implements OnInit {
   uniqueEmailValidator(control: FormControl) {
     return control.valueChanges
       .pipe(
-        take(1),
         distinctUntilChanged(),
-        debounceTime(300),
+        debounceTime(500),
+        take(1),
         switchMap(value => {
           return this.userService.checkUserEmail(value)
             .pipe(
