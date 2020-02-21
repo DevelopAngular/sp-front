@@ -64,6 +64,7 @@
                         : setting.background: 'none'"
         >
           <img class="setting-icon"
+               [title]="setting.tooltip"
                [src]="i === 2
                 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background)
                   ? './assets/Glasses (Navy).svg'
