@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, mapTo, mergeAll, switchAll, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -42,7 +42,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   openTable: boolean;
 
-  userList;
+  userList: User[] = [];
   lazyUserList: User[] = [];
   selectedUsers = [];
 
@@ -88,13 +88,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.querySubscriber$.pipe(
-      mergeAll(),
-      filter((res: any[]) => !!res.length && !this.userList || this.userList.length === 0),
+      switchAll(),
+      filter((res: any[]) => !!res.length && !this.userList.length),
       takeUntil(this.destroy$)
     ).subscribe(users => {
-        this.dataTableHeadersToDisplay = [];
-        this.userList = this.buildUserListData(users);
-        this.pending$.next(false);
+        this.tableRenderer(users);
     });
 
    this.adminService.getGSuiteOrgs().pipe(takeUntil(this.destroy$)).subscribe(res => this.gSuiteOrgs = res);
@@ -178,8 +176,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
       };
     }
 
-    TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
-      this.querySubscriber$.next(this.userService.accounts.allAccounts);
+    TABLE_RELOADING_TRIGGER.pipe(
+      switchMap(() => this.userService.accounts.allAccounts)
+    ).subscribe((users) => {
+      this.tableRenderer(users);
     });
 
 
@@ -191,6 +191,12 @@ export class AccountsComponent implements OnInit, OnDestroy {
         }, 50);
     });
 
+  }
+
+  tableRenderer(userList: User[]) {
+    this.dataTableHeadersToDisplay = [];
+    this.userList = this.buildUserListData(userList);
+    this.pending$.next(false);
   }
 
   ngOnDestroy(): void {
@@ -325,14 +331,26 @@ export class AccountsComponent implements OnInit, OnDestroy {
     }
 
     findRelevantAccounts(search) {
-      this.querySubscriber$.next(this.getUserList(search));
+      of(search)
+        .pipe(
+          distinctUntilChanged(),
+          debounceTime(200),
+          switchMap(value => {
+            if (value) {
+              return this.userService.getUsersList('', value);
+            } else {
+              return this.userService.getAccountsRole('_all');
+            }
+          })
+        )
+        .subscribe(userList => {
+          this.dataTableHeadersToDisplay = [];
+          this.userList = this.buildUserListData(userList);
+          this.pending$.next(false);
+        });
     }
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-
-    console.log(this.selectedUsers.length);
-    debugger;
-    return;
 
       if (!eventTarget.classList.contains('button')) {
         (eventTarget as any) = eventTarget.closest('.button');
@@ -390,11 +408,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   loadMore(limit) {
       this.userService.getMoreUserListRequest('_all');
-      //   .pipe(filter(res => !!res))
-      //   .subscribe(res => {
-      //   this.dataTableHeadersToDisplay = [];
-      //   this.lazyUserList = this.buildUserListData(res);
-      // });
   }
 
     private wrapToHtml(data, htmlTag, dataSet?) {

@@ -5,10 +5,10 @@ import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
   debounceTime,
-  distinctUntilChanged,
+  distinctUntilChanged, exhaust,
   filter,
   map,
-  mergeAll, skip,
+  mergeAll, skip, switchAll,
   switchMap, take,
   takeUntil,
   tap
@@ -50,7 +50,7 @@ export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   private destroy$: Subject<any> = new Subject();
-  private searchChangeObserver$: Subject<string>;
+  private searchChangeObserver$: Subject<string> = new Subject<string>();
 
   public role: string;
   public dataTableHeadersToDisplay: string[] = [];
@@ -155,16 +155,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   get noUsersDummyVisibility() {
     return this.userService.countAccounts$[this.role];
-    // switch (this.role) {
-    //   case '_profile_admin':
-    //     return this.accounts$.admin_count;
-    //   case '_profile_teacher':
-    //     return this.accounts$.teacher_count;
-    //   case '_profile_student':
-    //     return this.accounts$.student_count;
-    //   case '_profile_assistant':
-    //     return this.accounts$.assistant_count;
-    // }
   }
 
   get bulkSignInStatus() {
@@ -177,13 +167,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.querySubscriber$.pipe(
-      mergeAll(),
+      take(1),
+      switchAll(),
+      filter((res: any) => res.length),
       takeUntil(this.destroy$))
       .subscribe((userList: any) => {
-          this.dataTableHeadersToDisplay = [];
-          this.userList = this.buildUserListData(userList);
-          this.pending$.next(false);
-          this.placeholder = !!userList.length;
+          this.tableRenderer(userList);
       });
 
     interval(1758)
@@ -370,8 +359,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.querySubscriber$.next(this.getUserList(this.initialSearchString));
     });
 
-    TABLE_RELOADING_TRIGGER.subscribe((headers) => {
-      this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
+    TABLE_RELOADING_TRIGGER.pipe(
+      switchMap(() => this.userService.getAccountsRole(this.role))
+    ).subscribe((userList) => {
+      this.tableRenderer(userList);
     });
     this.userService.userData.subscribe((user) => {
       this.user = user;
@@ -383,13 +374,19 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }),
       filter((res: any) => !!res && res.length)
     ).subscribe(res => {
-      // debugger;
       setTimeout(() => {
         this.dataTableHeadersToDisplay = [];
         this.lazyUserList = this.buildUserListData(res);
       }, 50);
     });
 
+  }
+
+  tableRenderer(userList: User[]) {
+    this.dataTableHeadersToDisplay = [];
+    this.userList = this.buildUserListData(userList);
+    this.pending$.next(false);
+    this.placeholder = !!userList.length;
   }
 
   buildTableHeaders() {
@@ -451,28 +448,24 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   findRelevantAccounts(searchValue) {
-    this.placeholder = false;
-    this.userList = [];
-    this.pending$.next(true);
-
-    if (!this.searchChangeObserver$) {
-        const query$ = Observable.create(observer => {
-          this.searchChangeObserver$ = observer;
+    of(searchValue)
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(200),
+        switchMap(value => {
+          if (value) {
+            return this.userService.getUsersList(this.role, value);
+          } else {
+            return this.userService.getAccountsRole(this.role);
+          }
         })
-          .pipe(
-            debounceTime(100),
-            distinctUntilChanged(),
-            tap(() => {
-              this.dataTableHeadersToDisplay = [];
-            }),
-            switchMap((value: string) => {
-              return this.userService.getAccountsRoles(this.role, value); })
-          );
-
-      this.querySubscriber$.next(query$);
-    }
-
-    this.searchChangeObserver$.next(searchValue);
+      )
+      .subscribe(userList => {
+        this.dataTableHeadersToDisplay = [];
+        this.userList = this.buildUserListData(userList);
+        this.pending$.next(false);
+        this.placeholder = !!userList.length;
+      });
   }
 
 
@@ -492,7 +485,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
 
     eventTarget.style.opacity = '0.75';
-      // this.consentMenuOpened = true;
     let header: string;
     let options: any[];
     const profile: string =
@@ -593,10 +585,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           permissions: this.profilePermissions
         }
       });
-    DR.afterClosed()
-      .subscribe((v) => {
+    DR.afterClosed().pipe(
+      switchMap(() => this.userService.nextRequests$[this.role]),
+      take(1),
+      filter(next => !next),
+      switchMap((next) => {
+        return this.userService.getAccountsRole(this.role);
+      }),
+      take(2)
+    )
+      .subscribe((userList) => {
         this.selectedUsers = [];
-        this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
+        this.tableRenderer(userList);
     });
   }
 
