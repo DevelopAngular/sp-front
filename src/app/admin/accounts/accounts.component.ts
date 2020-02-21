@@ -199,6 +199,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.pending$.next(false);
   }
 
+  tableTrigger() {
+    this.openTable = !this.openTable;
+    if (!this.openTable) {
+      this.lazyUserList = [];
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
