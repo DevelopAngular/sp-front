@@ -8,19 +8,25 @@ export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
 export const allAccountsInitialState: AllAccountsState = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  lastAddedAccounts: [],
+  nextRequest: null
 });
 
 const reducer = createReducer(
     allAccountsInitialState,
     on(allAccountsActions.getAllAccounts,
       allAccountsActions.removeAllAccount,
-        state => ({...state, loading: true, loaded: false})),
-    on(allAccountsActions.getAllAccountsSuccess, (state, { accounts }) => {
-      return adapter.addAll(accounts, {...state, loading: false, loaded: true });
+        state => ({...state, loading: true, loaded: false, nextRequest: null, lastAddedAccounts: []})),
+    on(allAccountsActions.getAllAccountsSuccess, (state, { accounts, next }) => {
+      return adapter.addAll(accounts, {...state, loading: false, loaded: true, nextRequest: next });
     }),
     on(allAccountsActions.removeAllAccountSuccess, (state, {id}) => {
       return adapter.removeOne(+id, {...state, loading: false, loaded: true});
+    }),
+    on(allAccountsActions.getMoreAccountsSuccess, (state, { moreAccounts, next}) => {
+      return adapter.addMany(moreAccounts,
+        {...state, loading: false, loaded: true, nextRequest: next, lastAddedAccounts: moreAccounts });
     })
 );
 

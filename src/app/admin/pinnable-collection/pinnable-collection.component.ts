@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import {HallPassesService} from '../../services/hall-passes.service';
+import {DragulaService} from 'ng2-dragula';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -35,16 +36,23 @@ export class PinnableCollectionComponent implements OnInit {
 
   @Output() bulkSelectEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  disabledClick$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
   pinnableIdArranged = [];
 
   constructor(
     public dialog: MatDialog,
     public darkTheme: DarkThemeSwitch,
-    public passesService: HallPassesService
+    public passesService: HallPassesService,
+    private dragula: DragulaService
   ) {}
 
   ngOnInit() {
-
+    this.dragula.drop('pinnables').subscribe(res => {
+      if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        this.disabledClick$.next(true);
+      }
+    });
     setTimeout(() => {
       this.pinnableIdArranged = this.pinnables.map(pin => pin.id);
       // console.log(this.pinnableIdArranged);
@@ -77,6 +85,10 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   updatePinnables(pinnable: Pinnable) {
+    if (this.disabledClick$.getValue()) {
+      this.disabledClick$.next(false);
+      return false;
+    }
     if (!!this.selectedPinnables.find(pin => pin.id === pinnable.id)) {
      return this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
     } else {

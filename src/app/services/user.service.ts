@@ -6,44 +6,44 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {exhaust, filter, last, map, share, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
-  getAccounts,
+  getAccounts, getMoreAccounts,
   postAccounts,
   removeAccount,
   updateAccountActivity,
   updateAccountPermissions
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
-  getAllAccountsCollection, getCountAllAccounts,
-  getLoadedAllAccounts, getLoadingAllAccounts
+  getAllAccountsCollection, getCountAllAccounts, getLastAddedAllAccounts,
+  getLoadedAllAccounts, getLoadingAllAccounts, getNextRequestAllAccounts
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
-  getAdminsCollections, getCountAdmins,
+  getAdminsCollections, getCountAdmins, getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
-  getLoadingAdminsAccounts
+  getLoadingAdminsAccounts, getNextRequestAdminsAccounts
 } from '../ngrx/accounts/nested-states/admins/states/admins.getters.state';
 import {
-  getCountTeachers,
+  getCountTeachers, getLastAddedTeachers,
   getLoadedTeachers,
-  getLoadingTeachers,
+  getLoadingTeachers, getNextRequestTeachers,
   getTeacherAccountsCollection
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
   getAssistantsAccountsCollection,
-  getCountAssistants,
+  getCountAssistants, getLastAddedAssistants,
   getLoadedAssistants,
-  getLoadingAssistants
+  getLoadingAssistants, getNextRequestAssistants
 } from '../ngrx/accounts/nested-states/assistants/states';
 import {
-  getCountStudents,
+  getCountStudents, getLastAddedStudents,
   getLoadedStudents,
-  getLoadingStudents,
+  getLoadingStudents, getNextRequestStudents,
   getStudentsAccountsCollection
 } from '../ngrx/accounts/nested-states/students/states';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
@@ -81,11 +81,11 @@ export class UserService {
   };
 
   countAccounts$ = {
-    all: this.store.select(getCountAllAccounts),
-    admin: this.store.select(getCountAdmins),
-    student: this.store.select(getCountStudents),
-    teacher: this.store.select(getCountTeachers),
-    assistant: this.store.select(getCountAssistants)
+    _all: this.store.select(getCountAllAccounts),
+    _profile_admin: this.store.select(getCountAdmins),
+    _profile_student: this.store.select(getCountStudents),
+    _profile_teacher: this.store.select(getCountTeachers),
+    _profile_assistant: this.store.select(getCountAssistants)
   };
 
   isLoadedAccounts$ = {
@@ -102,6 +102,22 @@ export class UserService {
     teacher: this.store.select(getLoadingTeachers),
     student: this.store.select(getLoadingStudents),
     assistant: this.store.select(getLoadingAssistants)
+  };
+
+  lastAddedAccounts$ = {
+    _all: this.store.select(getLastAddedAllAccounts),
+    _profile_student: this.store.select(getLastAddedStudents),
+    _profile_teacher: this.store.select(getLastAddedTeachers),
+    _profile_admin: this.store.select(getLastAddedAdminsAccounts),
+    _profile_assistant: this.store.select(getLastAddedAssistants)
+  };
+
+  nextRequests$ = {
+    _all: this.store.select(getNextRequestAllAccounts),
+    _profile_student: this.store.select(getNextRequestStudents),
+    _profile_teacher: this.store.select(getNextRequestTeachers),
+    _profile_admin: this.store.select(getNextRequestAdminsAccounts),
+    _profile_assistant: this.store.select(getNextRequestAssistants)
   };
 
   user$: Observable<User> = this.store.select(getUserData);
@@ -287,9 +303,9 @@ export class UserService {
       return this.http.patch(`v1/users/${id}/active`, {active: activity});
   }
 
-  addAccountRequest(school_id, user, userType, roles: string[]) {
-    this.store.dispatch(postAccounts({school_id, user, userType, roles}));
-    return this.accounts.adminAccounts;
+  addAccountRequest(school_id, user, userType, roles: string[], role, behalf?: User[]) {
+    this.store.dispatch(postAccounts({school_id, user, userType, roles, role, behalf}));
+    return of(null);
   }
 
   addAccountToSchool(id, user, userType: string, roles: Array<string>) {
@@ -432,6 +448,12 @@ export class UserService {
 
     return this.http.get<any>(constructUrl('v1/users', params));
   }
+
+  getMoreUserListRequest(role) {
+    this.store.dispatch(getMoreAccounts({role}));
+    return this.lastAddedAccounts$[role];
+  }
+
   exportUserData(id) {
     return this.http.get(`v1/users/${id}/export_data`);
   }
