@@ -13,6 +13,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {of, throwError, BehaviorSubject, Observable, interval, ReplaySubject} from 'rxjs';
+import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
@@ -64,7 +65,9 @@ function isSchoolInArray(id: string|number, schools: School[]) {
 function makeConfig(config: Config, access_token: string, school: School, effectiveUserId): Config & { responseType: 'json' } {
 
   const headers: any = {
-    'Authorization': 'Bearer ' + access_token
+    'Authorization': 'Bearer ' + access_token,
+    'build-release-name': RELEASE_NAME,
+    'build-date': BUILD_DATE,
   };
 
   if (school) {
