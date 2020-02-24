@@ -1,24 +1,28 @@
-<div class="pointer-wrapper"><div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div></div>
-<div class="consent-wrapper"  [style.background-color]="darkTheme.getBackground('low')">
+<div class="pointer-wrapper">
+  <div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div>
+</div>
+<div class="consent-wrapper"
+     [style.background-color]="darkTheme.getBackground('low')"
+     appCheckUserInput
+     (inputValueEmit)="search($event)"
+>
   <div class="consent-header" [style.color]="'#7F879D'" *ngIf="heading">
     {{heading}}
   </div>
 
   <div class="options-wrapper" *ngIf="locations" #optionsWrapper>
-    <div class="option" (click)="closeDropdown('all_rooms')">
+    <div class="option" #_option>
 
       <div class="option-data"
-           #_option
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (touchstart)="changeColor(true, $event)"
-           (touchend)="changeColor(false, $event)"
-           (mousedown)="changeColor(true, $event, true)"
-           (mouseup)="changeColor(true, $event)"
-           (mouseover)="changeColor(true, $event)"
-           (mouseleave)="changeColor(false, $event)"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="closeDropdown('all_rooms'); changeColor(true, _option)"
+           (pointerDownEvent)="changeColor(true, _option, true)"
+           (mouseover)="changeColor(true, _option)"
+           (mouseleave)="changeColor(false, _option)"
       >
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">All Rooms</span>
@@ -33,17 +37,17 @@
       <div class="option-divider"></div>
     </div>
 
-    <div class="option" *ngFor="let location of locations" (click)="closeDropdown(location)">
-      <div #_option class="option-data"
+    <div class="option" *ngFor="let location of locations" #_option>
+      <div class="option-data"
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (touchstart)="changeColor(true, $event)"
-           (mousedown)="changeColor(true, $event, true)"
-           (mouseup)="changeColor(true, $event)"
-           (mouseover)="changeColor(true, $event)"
-           (mouseleave)="changeColor(false, $event)"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="closeDropdown(location); changeColor(true, _option)"
+           (pointerDownEvent)="changeColor(true, _option, true)"
+           (mouseover)="changeColor(true, _option)"
+           (mouseleave)="changeColor(false, _option)"
       >
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">{{ location.title }}</span>
@@ -63,18 +67,17 @@
   </div>
 
   <div class="options-wrapper" *ngIf="schools" #optionsWrapper>
-    <div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">
+    <div class="option" *ngFor="let school of schools" #schoolList>
       <div #_option class="option-data"
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (touchstart)="changeColor(true, $event)"
-           (touchend)="changeColor(false, $event)"
-           (mousedown)="changeColor(true, $event, true)"
-           (mouseup)="changeColor(true, $event)"
-           (mouseover)="changeColor(true, $event)"
-           (mouseleave)="changeColor(false, $event)"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="_matDialogRef.close(school); changeColor(true, _option)"
+           (pointerDownEvent)="changeColor(true, _option, true)"
+           (mouseover)="changeColor(true, _option)"
+           (mouseleave)="changeColor(false, _option)"
       >
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">{{ school.name }}</span>
@@ -90,18 +93,17 @@
   </div>
 
   <div class="options-wrapper" *ngIf="teachers && selectedTeacher"  style="padding: 15px 25px 60px 25px;" #optionsWrapper>
-    <div class="option" style="height: 40px;" *ngFor="let teacher of teachers" (click)="_matDialogRef.close(teacher)">
+    <div class="option" style="height: 40px;" *ngFor="let teacher of teachers">
       <div #_option class="option-data" style="background-clip: border-box; padding: 0;"
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (touchstart)="changeColor(true, $event)"
-           (touchend)="changeColor(false, $event)"
-           (mousedown)="changeColor(true, $event, true)"
-           (mouseup)="changeColor(true, $event)"
-           (mouseover)="changeColor(true, $event)"
-           (mouseleave)="changeColor(false, $event)"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="_matDialogRef.close(teacher); changeColor(true, _option)"
+           (pointerDownEvent)="changeColor(true, _option, true)"
+           (mouseover)="changeColor(true, _option)"
+           (mouseleave)="changeColor(false, _option)"
       >
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">{{ teacher.user.display_name }}</span>
@@ -115,7 +117,6 @@
       <div class="option-divider"></div>
     </div>
     <div class="assistant-greeting ds-w-100 ds-pt-10 ds-pb-15"
-         [style.background-color]="'#FCFDFF'"
          [style.color]="darkTheme.getColor()">
       <div style="font-weight: bold;">Hi {{user.display_name}}!</div>
       <div>Create and manage passes for this teacher.</div>

@@ -367,12 +367,13 @@ export class OverlayContainerComponent implements OnInit {
       if (control.dirty) {
         return this.locationService.checkLocationName(control.value)
           .pipe(
+            filter(() => this.currentPage !== Pages.NewFolder && this.currentPage !== Pages.EditFolder),
             map((res: any) => {
               if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
                 return res.title_used ? { room_name: true } : null;
               } else {
                 let currentRoomName: string;
-                if (this.currentPage === Pages.EditRoomInFolder) {
+                if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewRoomInFolder) {
                   currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
                 } else {
                   currentRoomName = this.pinnable.location.title;
@@ -512,19 +513,23 @@ export class OverlayContainerComponent implements OnInit {
                    location: loc.id,
                };
                return this.hallPassService.postPinnableRequest(pinnable);
-           })).subscribe(response => this.dialogRef.close());
+              })
+           )
+         .subscribe(response => this.dialogRef.close(true));
     }
 
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
+      const salt = ' ' + this.generateRandomString();
       if (!this.folderData.roomsInFolder.length) {
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
           icon: this.selectedIcon.inactive_icon,
-          category: this.folderData.folderName
+          category: this.folderData.folderName + salt
         };
+
         this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
-          .subscribe(res => this.dialogRef.close());
+          .subscribe(res => this.dialogRef.close(true));
       }
       if (this.folderData.roomsToDelete.length) {
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
@@ -534,21 +539,21 @@ export class OverlayContainerComponent implements OnInit {
         forkJoin(deleteRequest$).subscribe();
       }
       let locationsToDb$;
-      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || room.category !== this.folderData.folderName);
+      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || !room.category);
 
       if (touchedRooms.length) {
         locationsToDb$ = touchedRooms.map(location => {
           let id;
           let data;
           if (isString(location.id)) {
-            location.category = this.folderData.folderName;
+            location.category = this.folderData.folderName + salt;
             location.teachers = location.teachers.map(t => t.id);
             return this.locationService.createLocationRequest(location)
               .pipe(filter(res => !!res));
           } else {
             id = location.id;
             data = location;
-            data.category = this.folderData.folderName;
+            data.category = this.folderData.folderName + salt;
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
@@ -569,21 +574,21 @@ export class OverlayContainerComponent implements OnInit {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
           icon: this.selectedIcon.inactive_icon,
-          category: this.folderData.folderName
+          category: this.folderData.folderName + salt
         };
         return this.currentPage === Pages.EditFolder
           ?
           this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
           :
           zip(
-            this.hallPassService.getArrangedPinnables(),
+            this.hallPassService.pinnables$,
             this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
           ).pipe(
             take(1),
             switchMap((result: any[]) => {
               const arrengedSequence = result[0].map(item => item.id);
               arrengedSequence.push(result[1].id);
-              return this.hallPassService.createArrangedPinnable( { order: arrengedSequence.join(',')});
+              return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
             })
           );
       }),
@@ -599,7 +604,7 @@ export class OverlayContainerComponent implements OnInit {
           }
         })
       )
-      .subscribe(() => this.dialogRef.close());
+      .subscribe(() => this.dialogRef.close(true));
     }
 
     if (this.currentPage === Pages.EditRoom) {
@@ -620,7 +625,6 @@ export class OverlayContainerComponent implements OnInit {
               filter(res => !!res),
               take(1),
               switchMap((loc: Location) => {
-                // debugger;
                 const pinnable = {
                     title: this.roomData.roomName,
                     color_profile: this.color_profile.id,
@@ -629,8 +633,7 @@ export class OverlayContainerComponent implements OnInit {
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
             })).subscribe(response => {
-              // debugger;
-              this.dialogRef.close();
+              this.dialogRef.close(true);
         });
     }
 
@@ -641,7 +644,7 @@ export class OverlayContainerComponent implements OnInit {
       });
 
       zip(...patchRequests$).subscribe(res => {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
       });
     }
   }
@@ -735,7 +738,9 @@ export class OverlayContainerComponent implements OnInit {
 
   deleteRoomInFolder(room) {
     this.oldFolderData = cloneDeep(this.folderData);
-    this.folderData.roomsToDelete.push(room);
+    if (!isString(room.id)) {
+      this.folderData.roomsToDelete.push(room);
+    }
     this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
     this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
@@ -773,6 +778,15 @@ export class OverlayContainerComponent implements OnInit {
       travel_types: room.travelType,
       max_allowed_time: +room.timeLimit,
     };
+  }
+
+  generateRandomString() {
+    let random: string = '';
+    const characters = 'qwertyu';
+    for (let i = 0; i < characters.length; i++) {
+      random += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return random;
   }
 
   catchFile(evt: DragEvent) {

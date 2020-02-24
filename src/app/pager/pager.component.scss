@@ -25,10 +25,11 @@
     flex-direction: column;
     color: #FFF;
     align-items: center;
-  justify-content: flex-end;
+    justify-content: flex-end;
     text-align: center;
-  position: relative;
-  overflow: hidden;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
 }
 
 .page-size {
@@ -71,6 +72,12 @@
 
 .button-image {
   width: 25px;
+}
+
+.dots-wrapper {
+  position: absolute;
+  right: 0;
+  left: 0;
 }
 .paginator-container {
     position: relative;
@@ -118,4 +125,5 @@
   color: #FFF;
   flex-direction: column;
   overflow: hidden;
+
 }

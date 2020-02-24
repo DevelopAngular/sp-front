@@ -15,17 +15,18 @@
   <div class="main-content" *ngIf=" type === 'location' ? ( mainContentVisibility && favoritesLoaded ) : mainContentVisibility ">
 
     <div *ngIf="type==='location' && showFavorites && !hideFavorites" class="table-left">
-      <div class="fav-header">
+      <div class="fav-header" *ngIf="!forKioskMode">
         Favorites
       </div>
-      <mat-divider class="divider"></mat-divider>
+      <mat-divider class="divider" *ngIf="!forKioskMode"></mat-divider>
 
       <!-- Favorite Window -->
-      <div *ngIf="favoritesLoaded && isFavoriteForm"
+      <div *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode"
            class="choices"
            dragula="locations"
            [(dragulaModel)]="starredChoices"
-           (dragulaModelChange)="updateOrderLocation($event)">
+           (dragulaModelChange)="updateOrderLocation($event)"
+      >
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
             (onSelect)="choiceSelected($event)"
@@ -41,7 +42,7 @@
       </div>
 
       <!-- Create Pass Form -->
-      <div *ngIf="favoritesLoaded && !isFavoriteForm"
+      <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode"
            class="choices">
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
@@ -61,14 +62,14 @@
         </div>
       </div>
 
-      <div *ngIf="starredChoices.length<1" class="no-favs" ondragstart="return false">
+      <div *ngIf="starredChoices.length < 1 && !forKioskMode" class="no-favs" ondragstart="return false">
         <img class="star-icon" [src]="'./assets/Star (Yellow).svg'">
         <div>
           <span class="ds-dialog-bold-text ds-pb-5">No Favorite Rooms</span> <br>
           <span class="ds-cell-description-text">Add favorites {{ !isFavoriteForm ? 'in settings' : '' }}</span>
         </div>
       </div>
-      <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 25px" class="fav-header">All Rooms</div>
+      <div *ngIf="rightHeaderText && !hideFavorites" [style.margin-top]="forKioskMode ? '' : '25px'" class="fav-header">All Rooms</div>
       <mat-divider class="divider"></mat-divider>
     </div>
     <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices">

@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
+import { DisabledChipComponent } from '../accounts/disabled-chip/disabled-chip.component';
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
       NavButtonComponent,
       PinnableCollectionComponent,
       ColorComponent,
+      DisabledChipComponent
   ],
   exports: [
       ColorPalletPickerComponent,
@@ -33,7 +35,8 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
       NavButtonComponent,
       PinnableCollectionComponent,
       ColorComponent,
-      SharedModule
+      SharedModule,
+      DisabledChipComponent
   ]
 })
 export class AdminSharedModule { }

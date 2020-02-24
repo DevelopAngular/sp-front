@@ -14,5 +14,9 @@ export const environment = {
     projectId: "notifyhallpass",
     storageBucket: "notifyhallpass.appspot.com",
     messagingSenderId: "625620388494"
+  },
+  gg4l: {
+    clientId: 'PTRDNUBGDX',
+    secretKey: 'zSEk2Qi4UdKWdbRj8ZYUkgJ+bslK9J5DDPxvmMbJd+g='
   }
 };

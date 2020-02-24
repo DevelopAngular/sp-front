@@ -4,7 +4,12 @@ import { User } from '../../../models/User';
 
 export const getAccounts = createAction(`[Accounts] Get Accounts`, props<RoleProps>());
 
+export const getMoreAccounts = createAction(`[Accounts] Get More Accounts`, props<{role: string}>());
+
 export const postAccounts = createAction(`[Accounts] Post Accounts`, props<PostRoleProps>());
+
+export const postSelectedAccounts = createAction(`[Accounts] Post Selected Accounts`, props<PostRoleProps>());
+export const postSelectedAccountsSuccess = createAction(`[Accounts] Post Selected Accounts Success`);
 
 export const removeAccount = createAction(`[Accounts] Remove Account`, props<{id: number | string, role: string}>());
 

@@ -4,13 +4,20 @@
   height: 100%;
 }
 
-@media screen and (max-width: 425px){
+@media screen and (max-width: 550px){
   .container {
-    overflow: hidden;
-  }
 
-  .login {
-    height: 90%;
+    .brand {
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+
+    }
+
+    .moving-tiles {
+      top: 550px !important;
+      width: 100% !important;
+    }
   }
 }
 
@@ -20,14 +27,64 @@
   flex-direction: column;
   align-items: center;
   position: relative;
+
+  .brand {
+    position: absolute;
+    left: 200px;
+    top: 50px;
+
+  }
   .background {
     position: absolute;
     z-index: auto;
     width: 100%;
-    height: 65%;
+    height: 35%;
     background-repeat: no-repeat;
     background-position: 50% 100%;
     background-size: cover;
+  }
+
+
+  .moving-tiles {
+    position: absolute;
+    top: 400px;
+    display: flex;
+    width: 70%;
+    overflow: hidden;
+
+    //padding: 1em;
+    //z-index: 10;
+    //box-shadow:
+    //  0 1px 4px #FBFEFF inset,
+    //  -23px 0 20px -23px #FBFEFF inset,
+    //  23px 0 20px -23px #FBFEFF inset,
+    //  0 0 40px #FBFEFF inset;
+
+    .shadow {
+      display: flex;
+      width: 1px;
+      box-shadow: 0px 0px 17px 55px #FBFEFF;
+      z-index: 10;
+    }
+
+    .right-shadow {
+      display: flex;
+      box-shadow: 0px 0px 17px 55px #FBFEFF;
+      z-index: 10;
+      position: absolute;
+      right: 0;
+      height: 100%;
+    }
+  }
+
+  .login-form {
+    width: 325px;
+    margin-top: 70px;
+    background: #FFFFFF;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
+    border-radius: 12px;
+    z-index: 10;
+    box-sizing: border-box;
   }
   .spinner {
     position: absolute;

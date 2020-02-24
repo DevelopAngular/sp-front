@@ -1,4 +1,4 @@
-import {ProcessState} from '../states';
+import { ProcessState } from '../states';
 import {Action, createReducer, on} from '@ngrx/store';
 import * as processActions from '../actions';
 
@@ -10,15 +10,18 @@ const onboardProcessInitialState: ProcessState = {
 
 const reducer = createReducer(
   onboardProcessInitialState,
-  on(processActions.getOnboardProcess, state => ({...state, loading: true, loaded: false})),
-  on(processActions.getOnboardProcessSuccess, (state, {process}) => {
+  on(processActions.getOnboardProcess,
+    processActions.updateOnboardProcess, state => ({...state, loading: true, loaded: false})),
+  on(processActions.getOnboardProcessSuccess,
+    processActions.updateOnboardProcessSuccess,
+    (state, {process}) => {
     return {
       ...state,
       data: process,
       loading: false,
       loaded: true
     };
-  })
+  }),
 );
 
 export function onboardProcessReducer(state: any | undefined, action: Action) {

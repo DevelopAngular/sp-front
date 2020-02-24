@@ -10,7 +10,7 @@
          [attr.data-motion-translate]="(frameMotion$ | async).direction"
     >
       <img class="search-icon" [src]="pinnable.icon | resolveAsset">
-      <div class="text ds-dialog-title-white">{{pinnable.category}}</div>
+      <div class="text ds-dialog-title-white">{{pinnable.title}}</div>
     </div>
   </div>
 
@@ -31,7 +31,7 @@
         [forKioskMode]="!!dialogData.kioskModeRoom"
         [invalidLocation]="(fromLocation ? +fromLocation.id : '')"
         [type]="'location'"
-        [placeholder]="'Search ' + pinnable.category"
+        [placeholder]="'Search ' + pinnable.title"
         [dummyString]="'No rooms found'"
       >
       </app-location-table>

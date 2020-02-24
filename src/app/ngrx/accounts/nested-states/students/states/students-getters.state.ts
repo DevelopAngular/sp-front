@@ -19,6 +19,18 @@ export const getLoadingStudents = createSelector(
   (state: StudentsStates) => state.loading
 );
 
+export const getNextRequestStudents = createSelector(
+  getStudentsAccountsProfiles,
+  (state: StudentsStates) => state.nextRequest
+);
+
+export const getLastAddedStudents = createSelector(
+  getStudentsAccountsProfiles,
+  (state: StudentsStates) => {
+    return state.lastAddedStudents;
+  }
+);
+
 export const getCountStudents = adapter.getSelectors(getStudentsAccountsProfiles).selectTotal;
 
 export const getStudentsAccountsCollection = adapter.getSelectors(getStudentsAccountsProfiles).selectAll;

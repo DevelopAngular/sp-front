@@ -287,11 +287,11 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           this.effectiveUser = eu;
           this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
 
-          if (this.user.isAssistant() && this.effectiveUser) {
-            this.canView = this.effectiveUser.roles.includes('access_teacher_room');
-          } else {
+          // if (this.user.isAssistant() && this.effectiveUser) {
+          //   this.canView = this.effectiveUser.roles.includes('access_teacher_room');
+          // } else {
             this.canView = this.user.roles.includes('access_teacher_room');
-          }
+          // }
         });
       }),
       switchMap(([cu, eu]) => {
@@ -457,6 +457,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   showOptions(target: HTMLElement) {
+    // debugger
     this.optionsClick = !this.optionsClick;
     if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
       this.openOptionsMenu();
@@ -486,6 +487,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   openOptionsMenu() {
+    // debugger
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: {bottom: '0'},
         panelClass: 'options-dialog',

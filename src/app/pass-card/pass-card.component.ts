@@ -242,10 +242,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
 
     if (this.isActive) {
-      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.start_time), (this.pagerPages+1));
       this.activePage = (this.pagerPages);
     } else if (this.fromPast) {
-      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.start_time), (this.pagerPages+1));
       let start: Date = this.pass.start_time;
       let end: Date = this.pass.end_time;
       let diff: number = (end.getTime() - start.getTime()) / 1000;
@@ -331,36 +331,36 @@ export class PassCardComponent implements OnInit, OnDestroy {
               this.formService.setFrameMotionDirection('disable');
               this.cardEvent.emit(this.formState);
           } else {
-            this.dialogRef.close();
-            const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-            const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-                width: '750px',
-                panelClass: 'form-dialog-container',
-                backdropClass: 'custom-backdrop',
-                data: {
-                    'toIcon': isCategory ? this.pass.icon : null,
-                    'toProfile': this.pass.color_profile,
-                    'toCategory': isCategory ? this.pass.destination.category : null,
-                    'fromLocation': this.pass.origin,
-                    'fromHistory': this.fromHistory,
-                    'fromHistoryIndex': this.fromHistoryIndex,
-                    'colorProfile': this.pass.color_profile,
-                    'forLater': this.forFuture,
-                    'forStaff': this.forStaff,
-                    'selectedStudents': this.selectedStudents,
-                    'requestTime': this.pass.start_time
-                }
-            });
-            dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
-                    this.openInputCard(result['templatePass'],
-                        result['forLater'],
-                        result['forStaff'],
-                        result['selectedStudents'],
-                        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-                        result['fromHistory'],
-                        result['fromHistoryIndex']
-                    );
-                });
+            // this.dialogRef.close();
+            // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
+            // const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
+            //     width: '750px',
+            //     panelClass: 'form-dialog-container',
+            //     backdropClass: 'custom-backdrop',
+            //     data: {
+            //         'toIcon': isCategory ? this.pass.icon : null,
+            //         'toProfile': this.pass.color_profile,
+            //         'toCategory': isCategory ? this.pass.destination.category : null,
+            //         'fromLocation': this.pass.origin,
+            //         'fromHistory': this.fromHistory,
+            //         'fromHistoryIndex': this.fromHistoryIndex,
+            //         'colorProfile': this.pass.color_profile,
+            //         'forLater': this.forFuture,
+            //         'forStaff': this.forStaff,
+            //         'selectedStudents': this.selectedStudents,
+            //         'requestTime': this.pass.start_time
+            //     }
+            // });
+            // dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
+            //         this.openInputCard(result['templatePass'],
+            //             result['forLater'],
+            //             result['forStaff'],
+            //             result['selectedStudents'],
+            //             (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+            //             result['fromHistory'],
+            //             result['fromHistoryIndex']
+            //         );
+            //     });
           }
             return false;
         } else if(this.forFuture){

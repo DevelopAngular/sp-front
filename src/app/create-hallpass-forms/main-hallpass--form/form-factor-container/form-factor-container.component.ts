@@ -21,6 +21,7 @@ export class FormFactorContainerComponent implements OnInit {
 
 
   @Input() FORM_STATE: Navigation;
+  @Input() forStaff: boolean;
   @Output() nextStepEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   public states: any = FormFactor;
@@ -32,12 +33,6 @@ export class FormFactorContainerComponent implements OnInit {
     private timeService: TimeService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
   ) { }
-
-  get requestTeachers() {
-    const to = this.FORM_STATE.data.direction.to;
-    return;
-  }
-
 
   ngOnInit() {
       const now = this.timeService.nowDate();
@@ -125,7 +120,8 @@ export class FormFactorContainerComponent implements OnInit {
               null,
               null,
               null,
-              null
+              null,
+              this.FORM_STATE.data.message
             );
             break;
         }

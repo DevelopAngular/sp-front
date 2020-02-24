@@ -42,6 +42,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import { filter as _filter } from 'lodash';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 
 declare const window;
 
@@ -185,6 +186,29 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     return this.pts;
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
+  get isKioskMode() {
+    return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get isSafari() {
+    return DeviceDetection.isSafari();
+  }
+
+  get flexDirection() {
+    let direction = 'row';
+    if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
+    if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
+    return direction;
+  }
+
+  get notificationBadge$() {
+    return this.navbarData.notificationBadge$;
+  }
+
   ngOnInit() {
     this.underlinePosition();
     this.shortcutsService.onPressKeyEvent$
@@ -196,7 +220,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         if (key[0] === ',') {
           const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
           (settingButton as HTMLElement).click();
-        } else if (key[0] === '1' || key[0] === '2' || key[0] === '3') {
+        } else if (
+          (key[0] === '1' || key[0] === '2' || key[0] === '3') &&
+          !this.dialog.openDialogs || !this.dialog.openDialogs.length && key[0] !== 'r') {
           const route = {
             '1': 'passes',
             '2': 'hallmonitor',
@@ -383,11 +409,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   hasRoles(roles: string[]) {
-    if (this.user.isAssistant()) {
-      return roles.every((_role) => this.effectiveUser.roles.includes(_role));
-    } else {
-      return roles.every((_role) => this.user.roles.includes(_role));
-    }
+    const userRoles = roles.reduce((acc, curr, index) => {
+      return {...acc, [curr]: index};
+    }, {});
+      return this.user.roles.find(role => userRoles[role]);
   }
 
   buttonVisibility(button) {
@@ -501,18 +526,22 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
             entry: true
           }
         });
-      } else if (action === 'switch') {
+      } else if (action === 'appearance') {
+          this.dialog.open(SpAppearanceComponent, {
+            panelClass: 'form-dialog-container',
+          });
+      }  else if (action === 'switch') {
         this.router.navigate(['admin']);
       } else if (action === 'team') {
           window.open('https://smartpass.app/team.html');
-      } else if (action === 'about') {
-          window.open('https://smartpass.app/about');
       } else if (action === 'support') {
           if (this.isStaff) {
               window.open('https://smartpass.app/support');
           } else {
               window.open('https://smartpass.app/studentdocs');
           }
+      } else if (action === 'bug') {
+        window.open('https://www.smartpass.app/bugreport');
       } else if (action === 'wishlist') {
           window.open('https://wishlist.smartpass.app');
       } else if (action === 'privacy') {
@@ -546,10 +575,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     // this.navbarElementsService.navbarRef$.next(this.navbar);
   }
 
-  get notificationBadge$() {
-    return this.navbarData.notificationBadge$;
-  }
-
   ngOnDestroy(): void {
     this.destroyer$.next();
     this.destroyer$.complete();
@@ -569,25 +594,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     } else {
       this.rendered.setStyle(tab, 'webkitTransform', 'unset');
     }
-  }
-
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
-  }
-
-  get isKioskMode() {
-    return !!this.kioskMode.currentRoom$.value;
-  }
-
-  get isSafari() {
-    return DeviceDetection.isSafari();
-  }
-
-  get flexDirection() {
-    let direction = 'row';
-    if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
-    if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
-    return direction;
   }
 
   changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {

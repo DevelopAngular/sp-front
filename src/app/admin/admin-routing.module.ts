@@ -5,7 +5,8 @@ import { IosComponentComponent } from './ios-component/ios-component.component';
 
 const routes: Routes = [
   {
-    path: '', component: AdminPageComponent,
+    path: '',
+    component: AdminPageComponent,
     children: [
       {path: 'gettingstarted', loadChildren: 'app/admin/getting-started/getting-started.module#GettingStartedModule'},
       {path: 'dashboard', loadChildren: 'app/admin/dashboard/dashboard.module#DashboardModule'},

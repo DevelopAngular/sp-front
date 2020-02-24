@@ -1,0 +1,26 @@
+<div class="wrapper" (click)="openCalendar($event)">
+  <div class="disabled" *ngIf="disabled"></div>
+  <div class="chip"
+       #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}"
+       (mouseenter)="dchip.hovered = true;"
+       (mouseleave)="dchip.hovered = false"
+       [style.opacity]="dchip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
+       (mousedown)="buttonDown = true"
+       (mouseup)="buttonDown = false"
+       [@pressState]="buttonDown ? 'down' : 'up'"
+  >
+    <div class="overlay">
+      <div class="add-icon" *ngIf="!selectedDate">
+        <img [src]="'./assets/Calendar (Navy).svg'" width="16" #fieldIcon alt="Check.svg">
+      </div>
+      <div class="all-text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})" *ngIf="!selectedDate">
+        Select a date
+      </div>
+      <div class="selected-text" *ngIf="selectedDate">{{ selectedDate.format('MMMM DD') }}</div>
+    </div>
+<!--    <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">-->
+<!--      <img (click)="selectedDate = null; dateEmit.emit(null)" [src]="'./assets/Cancel (Navy).svg'" width="16" #fieldIcon alt="Check.svg">-->
+<!--    </div>-->
+  </div>
+</div>
+

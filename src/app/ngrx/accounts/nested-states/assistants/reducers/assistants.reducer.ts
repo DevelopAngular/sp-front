@@ -8,7 +8,9 @@ export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
 export const assistantsInitialState: AssistantsStates = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  nextRequest: null,
+  lastAddedAssistants: []
 });
 
 const reducer = createReducer(
@@ -16,8 +18,8 @@ const reducer = createReducer(
   on(assistantsActions.getAssistants,
       assistantsActions.removeAssistant,
       state => ({...state, loading: true, loaded: false })),
-  on(assistantsActions.getAssistantsSuccess, (state, {assistants}) => {
-    return adapter.addAll(assistants, {...state, loading: false, loaded: true });
+  on(assistantsActions.getAssistantsSuccess, (state, {assistants, next}) => {
+    return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAssistants: [] });
   }),
   on(assistantsActions.removeAssistantSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});
@@ -33,6 +35,12 @@ const reducer = createReducer(
     assistantsActions.updateAssistantPermissionsSuccess,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state});
+  }),
+  on(assistantsActions.getMoreAssistantsSuccess, (state, {assistants, next}) => {
+    return adapter.addMany(assistants, {...state, lastAddedAssistants: assistants, nextRequest: next});
+  }),
+  on(assistantsActions.postAssistantSuccess, (state, {assistant}) => {
+    return adapter.addOne(assistant, {...state, loading: false, loaded: true});
   })
 );
 

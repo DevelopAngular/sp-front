@@ -6,8 +6,12 @@ import {ErrorToastComponent} from '../error-toast/error-toast.component';
 import {SchoolToggleBarComponent} from '../school-toggle-bar/school-toggle-bar.component';
 import {ToastConnectionComponent} from '../toast-connection/toast-connection.component';
 import {DropdownComponent} from '../dropdown/dropdown.component';
-import {ScrollHolderDirective} from '../scroll-holder.directive';
 import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.directive';
+import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
+import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
+import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
+import {NoAccountComponent} from '../no-account/no-account.component';
+import { CheckUserInputDirective } from './directives/check-user-input.directive';
 import {NextReleaseComponent} from '../next-release/next-release.component';
 
 @NgModule({
@@ -17,6 +21,11 @@ import {NextReleaseComponent} from '../next-release/next-release.component';
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    SignedOutToastComponent,
+    GradientButtonComponent,
+    MoovingTilesComponent,
+    NoAccountComponent,
+    CheckUserInputDirective,
     CrossPointerEventTargetDirective,
     NextReleaseComponent
   ],
@@ -31,6 +40,10 @@ import {NextReleaseComponent} from '../next-release/next-release.component';
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    SignedOutToastComponent,
+    GradientButtonComponent,
+    MoovingTilesComponent,
+    NoAccountComponent,
     CrossPointerEventTargetDirective,
     NextReleaseComponent
 
@@ -39,6 +52,8 @@ import {NextReleaseComponent} from '../next-release/next-release.component';
     ErrorToastComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    SignedOutToastComponent,
+    NoAccountComponent
     NextReleaseComponent
   ],
 })

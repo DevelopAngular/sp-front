@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, mapTo, mergeAll, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, mapTo, mergeAll, switchAll, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -22,9 +22,9 @@ import {environment} from '../../../environments/environment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
-
-import { isNull } from 'lodash';
 import {LocationsService} from '../../services/locations.service';
+import * as moment from 'moment';
+import {TotalAccounts} from '../../models/TotalAccounts';
 
 @Component({
   selector: 'app-accounts',
@@ -36,24 +36,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   splash: boolean;
 
-  countAccounts$: Observable<number> = this.userService.countAccounts$.all;
-
-  public accounts$ =
-    new BehaviorSubject<any>({
-      total_count: '-',
-      gsuite_count: '-',
-      alternative_count: '-',
-      admin_count: '-',
-      student_count: '-',
-      teacher_count: '-',
-      assistant_count: '-'
-    });
+  public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
   user: User;
 
   openTable: boolean;
 
-  userList;
+  userList: User[] = [];
+  lazyUserList: User[] = [];
   selectedUsers = [];
 
   destroy$ = new Subject();
@@ -61,6 +51,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
   gSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
 
   querySubscriber$ = new Subject();
+  showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  currentSchool = this.http.getSchool();
+  loadingAccountsLimit: number = 50;
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -69,10 +63,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
 
   public accountsButtons = [
-      { title: 'Admins', param: '_profile_admin',  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin' },
-      { title: 'Teachers', param: '_profile_teacher', leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher' },
-      { title: 'Assistants', param: '_profile_assistant', leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant' },
-      { title: 'Students', param: '_profile_student', leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student' }
+      { title: 'Admins', param: '_profile_admin', banner: of(false),  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin_count' },
+      { title: 'Teachers', param: '_profile_teacher', banner: of(false), leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher_count' },
+      { title: 'Assistants', param: '_profile_assistant', banner: of(false), leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant_count' },
+      { title: 'Students', param: '_profile_student', banner: this.showDisabledBanner$, leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student_count' }
   ];
 
   constructor(
@@ -93,38 +87,30 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.querySubscriber$.pipe(
-      mergeAll(),
-      filter((res: any[]) => !!res.length),
+      switchAll(),
+      filter((res: any[]) => !!res.length && !this.userList.length),
       takeUntil(this.destroy$)
     ).subscribe(users => {
-      this.dataTableHeadersToDisplay = [];
-      this.userList = this.buildUserListData(users);
-      this.pending$.next(false);
+        this.tableRenderer(users);
     });
 
    this.adminService.getGSuiteOrgs().pipe(takeUntil(this.destroy$)).subscribe(res => this.gSuiteOrgs = res);
 
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
-      tap(() => this.querySubscriber$.next(this.getUserList())),
-      switchMap(() => {
-        return this.adminService.getCountAccountsRequest()
-            .pipe(
-              filter(list => !isNull(list.profile_count) && !isNull(list.student_count))
-            );
-        }
-      ),
-      switchMap((u_list: any) => {
-        this.buildCountData(u_list);
-        return this.gsProgress.onboardProgress$;
+      tap(() => {
+        this.querySubscriber$.next(this.getUserList());
       }),
+      tap(() => {
+        this.showDisabledBanner$.next(!this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day'));
+      }),
+      switchMap(() => this.adminService.getCountAccountsRequest()),
+      switchMap(() => this.gsProgress.onboardProgress$),
     )
     .subscribe((op: any) => {
       this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
     });
-
 
     this.userService.userData.pipe(
       takeUntil(this.destroy$))
@@ -190,23 +176,39 @@ export class AccountsComponent implements OnInit, OnDestroy {
       };
     }
 
-    TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
-      this.querySubscriber$.next(this.userService.accounts.allAccounts);
+    TABLE_RELOADING_TRIGGER.pipe(
+      switchMap(() => this.userService.accounts.allAccounts)
+    ).subscribe((users) => {
+      this.tableRenderer(users);
     });
+
+
+    this.userService.lastAddedAccounts$._all.pipe(filter((res: any) => !!res && res.length))
+      .subscribe(res => {
+        setTimeout(() => {
+          this.dataTableHeadersToDisplay = [];
+          this.lazyUserList = this.buildUserListData(res);
+        }, 50);
+    });
+
+  }
+
+  tableRenderer(userList: User[]) {
+    this.dataTableHeadersToDisplay = [];
+    this.userList = this.buildUserListData(userList);
+    this.pending$.next(false);
+  }
+
+  tableTrigger() {
+    this.openTable = !this.openTable;
+    if (!this.openTable) {
+      this.lazyUserList = [];
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  buildCountData(u_list) {
-    if (u_list.total_count !== undefined) {
-      u_list.total = u_list.total_count;
-    } else {
-      u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
-    }
-    this.accounts$.next(u_list);
   }
 
   addUser() {
@@ -218,18 +220,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
         role: '_all',
       }
     });
-  }
-
-  getCountRole(role: string) {
-    if (role === 'admin') {
-      return this.accounts$.value.admin_count;
-    } else if (role === 'teacher') {
-      return this.accounts$.value.teacher_count;
-    } else if (role === 'assistant') {
-      return this.accounts$.value.assistant_count;
-    } else if (role === 'student') {
-      return this.accounts$.value.student_count;
-    }
   }
 
   findProfileByRole(evt) {
@@ -348,7 +338,23 @@ export class AccountsComponent implements OnInit, OnDestroy {
     }
 
     findRelevantAccounts(search) {
-      this.querySubscriber$.next(this.getUserList(search));
+      of(search)
+        .pipe(
+          distinctUntilChanged(),
+          debounceTime(200),
+          switchMap(value => {
+            if (value) {
+              return this.userService.getUsersList('', value);
+            } else {
+              return this.userService.getAccountsRole('_all');
+            }
+          })
+        )
+        .subscribe(userList => {
+          this.dataTableHeadersToDisplay = [];
+          this.userList = this.buildUserListData(userList);
+          this.pending$.next(false);
+        });
     }
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
@@ -402,10 +408,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private getUserList(search = '') {
       this.userList = [];
       this.pending$.next(true);
-      return this.userService.getAccountsRoles('', search)
+      return this.userService.getAccountsRoles('', search, 50)
         .pipe(
-          filter(res => !!res.length));
+          filter(res => !!res.length), take(2));
     }
+
+  loadMore(limit) {
+      this.userService.getMoreUserListRequest('_all');
+  }
 
     private wrapToHtml(data, htmlTag, dataSet?) {
       const wrapper =  wrapToHtml.bind(this);

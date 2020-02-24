@@ -64,6 +64,7 @@ import {ProcessEffects} from './ngrx/onboard-process/effects';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
+import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 
 
 const appRoutes: Routes = [
@@ -75,6 +76,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'school_signup',
+    canActivate: [SchoolSignUpGuard],
     loadChildren: 'app/school-sign-up/school-sign-up.module#SchoolSignUpModule',
     data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: true, authFree: true},
   },

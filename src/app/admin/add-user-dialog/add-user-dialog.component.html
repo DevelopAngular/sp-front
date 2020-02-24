@@ -58,7 +58,7 @@
         <div class="account-type-picker">
           <app-restriction-picker
             [choices]="accountTypes"
-            [selectedChoise]="typeChoosen"
+            [selectedChoice]="typeChoosen"
             [height]="32"
             [width]="167"
             [fontSize]="13"
@@ -108,10 +108,10 @@
 
               <app-input
                 [input_label]="'Email or username'"
-                [controlName]="newAlternativeAccount.get('username')"
+                [autocomplete]="'addUserName'"
+                [controlName]="newAlternativeAccount.get('addUsername')"
                 [formGroup]="newAlternativeAccount"
-                [input_value]="newAlternativeAccount.get('username').value"
-                [isFocus]="newAlternativeAccount.touched"
+                [input_value]="newAlternativeAccount.get('addUsername').value"
                 [width]="'222px'"
                 [height]="'40px'"
 
@@ -122,10 +122,12 @@
               <app-input
                 [input_label]="'Password'"
                 [input_type]="'password'"
-                [controlName]="newAlternativeAccount.get('password')"
+                [autocomplete]="'new-password'"
+                [placeholder]="'8+ characters'"
+                [isSuccessIcon]="true"
+                [controlName]="newAlternativeAccount.get('addPassword')"
                 [formGroup]="newAlternativeAccount"
-                [input_value]="newAlternativeAccount.get('password').value"
-                [isFocus]="newAlternativeAccount.touched"
+                [input_value]="newAlternativeAccount.get('addPassword').value"
                 [width]="'222px'"
                 [height]="'40px'"
               ></app-input>
@@ -136,7 +138,6 @@
 
       </form>
       <div class="info-text" *ngIf="typeChoosen === accountTypes[1]">
-        Password must be at least 6 characters long and contain either a number or symbol. <br/>
         <div style="margin-top: 7px">New users aren’t emailed this, you will need to share their password with them.</div>
       </div>
 

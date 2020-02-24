@@ -10,6 +10,8 @@
   &-hall-monitor-wrapper {
     max-width: 100%;
     overflow: auto;
+    display: flex;
+    justify-content: center;
   }
 
   &-hall-monitor-top {
@@ -62,12 +64,14 @@
   div.hall-monitor-wrapper {
     max-width: 100%;
     overflow: auto;
+    display: flex;
+    justify-content: center;
   }
 
   div.hall-monitor-bottom {
     padding-top: 25px;
     width: 68%;
-    margin: auto;
+    margin: 0;
     padding-bottom: 68px;
   }
 
@@ -105,9 +109,10 @@
 
 @media all and (max-width: 768px) {
   div.hall-monitor-bottom {
-    padding-top: 25px;
+    padding-top: 100px;
+    max-width: 336px;
     width: 100%;
-    margin: 100px auto auto auto;
+    //margin: 100px auto auto auto;
     justify-content: unset;
   }
 }

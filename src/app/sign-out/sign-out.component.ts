@@ -3,6 +3,7 @@ import { GoogleLoginService } from '../services/google-login.service';
 import { HttpService } from '../services/http-service';
 import {environment} from '../../environments/environment';
 import {UserService} from '../services/user.service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 declare const window;
 
 @Component({
@@ -15,10 +16,14 @@ export class SignOutComponent implements AfterContentInit {
   constructor(
     private http: HttpService,
     private loginService: GoogleLoginService,
-    private userService: UserService
+    private userService: UserService,
+    private darkSwitch: DarkThemeSwitch
   ) {
     this.http.setSchool(null);
     this.userService.clearUser();
+    if (this.darkSwitch.isEnabled$.value) {
+      this.darkSwitch.switchTheme('Light');
+    }
   }
 
   ngAfterContentInit() {

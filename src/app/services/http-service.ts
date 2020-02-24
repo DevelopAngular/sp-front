@@ -12,7 +12,8 @@ import {
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject, Subject} from 'rxjs';
+import {of, throwError, BehaviorSubject, Observable, interval, ReplaySubject} from 'rxjs';
+import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
@@ -20,10 +21,12 @@ import {StorageService} from './storage.service';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
+import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
 import { getSchools } from '../ngrx/schools/actions';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
+
+declare const window;
 
 export interface Config {
   [key: string]: any;
@@ -62,7 +65,9 @@ function isSchoolInArray(id: string|number, schools: School[]) {
 function makeConfig(config: Config, access_token: string, school: School, effectiveUserId): Config & { responseType: 'json' } {
 
   const headers: any = {
-    'Authorization': 'Bearer ' + access_token
+    'Authorization': 'Bearer ' + access_token,
+    'build-release-name': RELEASE_NAME,
+    'build-date': BUILD_DATE,
   };
 
   if (school) {
@@ -90,12 +95,13 @@ function makeUrl(server: LoginServer, endpoint: string) {
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
     return endpoint;
   } else {
-    if (!environment.production) {
-      const proxyPath = new URL(server.api_root).pathname;
-      return (proxyPath + endpoint) as string;
-    } else {
-      return server.api_root + endpoint;
-    }
+    // if (!environment.production) {
+    //   const proxyPath = new URL(server.api_root).pathname;
+    //   return (proxyPath + endpoint) as string;
+    // } else {
+    //   return server.api_root + endpoint;
+    // }
+    return server.api_root + endpoint;
   }
 }
 
@@ -143,6 +149,7 @@ export class HttpService {
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
   public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
+  public currentUpdateSchool$: Observable<School> = this.store.select(getCurrentSchool);
   public schoolsLength$: Observable<number> = this.store.select(getSchoolsLength);
 
   public currentSchoolSubject = new BehaviorSubject<School>(null);
@@ -235,7 +242,6 @@ export class HttpService {
         return { auth: newToken, server: this.accessTokenSubject.value.server};
 
       })).subscribe(res => {
-        // console.log(res);
         this.accessTokenSubject.next(res as AuthContext);
       });
 
@@ -264,8 +270,13 @@ export class HttpService {
     if (!navigator.onLine) {
       return  this.pwaStorage.getItem('servers').pipe(
         map((servers: LoginServer[]) => {
-          if (servers) {
-            return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          if (servers.length > 0) {
+            const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+            // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
+            //   return testEnv.environment.preferEnvironment as LoginServer;
+            // } else {
+              return server;
+            // }
           } else {
             return null;
           }
@@ -279,7 +290,12 @@ export class HttpService {
       }),
       map((servers: LoginServer[]) => {
         if (servers.length > 0) {
-          return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
+          //   return testEnv.environment.preferEnvironment as LoginServer;
+          // } else {
+            return server;
+          // }
         } else {
           return null;
         }
@@ -415,6 +431,7 @@ export class HttpService {
             if (!res) {
              throw new LoginServerError('Incorrect Login or password');
             }
+            window.waitForAppLoaded(true);
             this.loginService.setAuthenticated();
           }),
           catchError(err => {
@@ -438,6 +455,7 @@ export class HttpService {
     // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
+
         // console.log('performRequest');
         return predicate(ctx);
       }),

@@ -19,7 +19,9 @@ export class Invitation extends BaseModel implements ReadableModel {
               public cancelled: Date,
               public last_read: Date,
               public last_updated: Date,
-              public created: Date) {
+              public created: Date,
+              public issuer_message: string
+  ) {
     super();
   }
 
@@ -47,7 +49,8 @@ export class Invitation extends BaseModel implements ReadableModel {
       cancelled: Date = (!!JSON['cancelled'] ? new Date(JSON['cancelled']) : null),
       last_read: Date = (!!JSON['last_read'] ? new Date(JSON['last_read']) : null),
       last_updated: Date = new Date(JSON['last_updated']),
-      created: Date = new Date(JSON['created']);
+      created: Date = new Date(JSON['created']),
+      issuer_message: string = JSON['issuer_message'];
 
     let datesJSON = JSON['date_choices'];
     for (let i = 0; i < datesJSON.length; i++) {
@@ -56,7 +59,25 @@ export class Invitation extends BaseModel implements ReadableModel {
 
 
 
-    const invitation =  new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type, color_profile, cancelled, last_read, last_updated, created);
+    const invitation =  new Invitation(
+      id,
+      student,
+      default_origin,
+      destination,
+      date_choices,
+      issuer,
+      status,
+      duration,
+      gradient_color,
+      icon,
+      travel_type,
+      color_profile,
+      cancelled,
+      last_read,
+      last_updated,
+      created,
+      issuer_message
+    );
 
     if (JSON['school_id']) {
       (invitation as any).school_id = JSON['school_id'];

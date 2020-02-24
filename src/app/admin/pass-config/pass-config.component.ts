@@ -19,6 +19,7 @@ import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {ScrollPositionService} from '../../scroll-position.service';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -92,7 +93,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     // // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
 
-    private onboardUpdate$ = new Subject();
+    private isLoadingArranged$: Observable<boolean>;
 
     public loading$: Observable<boolean>;
     public loaded$: Observable<boolean>;
@@ -113,9 +114,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       private router: Router,
       public darkTheme: DarkThemeSwitch,
       private adminService: AdminService,
-      private scrollPosition: ScrollPositionService
-
-
+      private scrollPosition: ScrollPositionService,
+      private gsProgress: GettingStartedProgressService
   ) { }
 
   get headerButtonText() {
@@ -129,6 +129,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loading$ = this.hallPassService.isLoadingPinnables$;
     this.loaded$ = this.hallPassService.loadedPinnables$;
+    this.isLoadingArranged$ = this.hallPassService.isLoadingArranged$;
     this.httpService.globalReload$
       .pipe(
         map((res) => {
@@ -137,7 +138,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         }),
         switchMap((res) => {
           return combineLatest(
-            this.adminService.getOnboardProcessRequest().pipe(filter((r: any[]) => !!r.length)),
+            this.adminService.onboardProcessData$.pipe(filter((r: any[]) => !!r.length)),
             this.pinnables$
           ).pipe(
               filter(() => navigator.onLine)
@@ -164,7 +165,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       switchMap((action) => {
         this.onboardLoaded = true;
         if (action) {
-          return this.adminService.updateOnboardProgress(action);
+          return this.gsProgress.updateProgress(action);
         } else {
           return of(null);
         }
@@ -185,9 +186,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       this.forceSelectedLocation = location;
       this.pinnable = pinnables.find((pnbl: Pinnable) => {
         if (pnbl.type === 'location') {
-          return pnbl.location.id === location.id;
+          return (pnbl.location.id + '') === (location.id + '');
         } else {
-          return pnbl.category === location.category;
+          return pnbl.category === location.category.substring(0, location.category.length - 8);
         }
       });
 
@@ -197,20 +198,27 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
-    if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
-      return this.updatePinnablesOrder().pipe(takeUntil(this.destroy$)).subscribe();
-    }
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   setNewArrangedOrder(newOrder) {
     this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
+    this.updatePinnablesOrder().subscribe();
   }
 
   private updatePinnablesOrder() {
-    return this.hallPassService
-      .createArrangedPinnable({order: this.arrangedOrderForUpdating.join(',')});
+    return this.isLoadingArranged$.pipe(
+      take(1),
+      switchMap(value => {
+        if (!value) {
+          return this.hallPassService
+            .createArrangedPinnableRequest({order: this.arrangedOrderForUpdating.join(',')});
+        } else {
+          return of(null);
+        }
+      })
+    );
   }
 
   openSettings() {
@@ -350,35 +358,34 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   dialogContainer(data, component) {
-    const overlayDialog =  this.dialog.open(component, {
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-bd',
-      disableClose: true,
-      minWidth: '800px',
-      maxWidth: '100vw',
-      width: '800px',
-      height: '500px',
-      data: data
-    });
+      const overlayDialog =  this.dialog.open(component, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        disableClose: true,
+        minWidth: '800px',
+        maxWidth: '100vw',
+        width: '800px',
+        height: '500px',
+        data: data
+      });
 
-    overlayDialog.afterOpen().subscribe(() => {
-     this.forceSelectedLocation = null;
-    });
-    overlayDialog.afterClosed()
-     .pipe(
-       switchMap(() => {
-         this.pendingSubject.next(true);
-         if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
-           return this.updatePinnablesOrder();
-         }
-         return of(null);
-       })
-     )
-     .subscribe(res => {
-       this.selectedPinnables = [];
-       this.bulkSelect = false;
-       this.pendingSubject.next(false);
-     });
+      overlayDialog.afterOpen().subscribe(() => {
+        this.forceSelectedLocation = null;
+      });
+      overlayDialog.afterClosed()
+        .pipe(
+          switchMap((res) => {
+            if (res) {
+              return this.hallPassService.getPinnablesRequest()
+            }
+            return of(null);
+          }),
+        )
+        .subscribe(res => {
+          this.selectedPinnables = [];
+          this.bulkSelect = false;
+          this.pendingSubject.next(false);
+        });
   }
 
   onboard({createPack, pinnables}) {
@@ -406,21 +413,27 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           }));
       });
 
-      zip(...requests$)
+      forkJoin(requests$)
         .pipe(
-          take(1),
+          // take(1),
           filter(() => navigator.onLine),
           takeUntil(this.destroy$),
           switchMap((res) => {
-            return this.adminService.updateOnboardProgress('setup_rooms:end').pipe(mapTo(res));
-          })
+            return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
+          }),
+          switchMap((res) => {
+            return this.hallPassService.createArrangedPinnableRequest(res.map((v: any) => v.id).join(','));
+          }),
+          switchMap((res) => {
+            return this.hallPassService.getPinnablesRequest().pipe(filter((pin: Pinnable[]) => !!pin.length));
+          }),
         )
         .subscribe((res: Pinnable[]) => {
           this.pinnables.push(...res);
           this.showRooms = true;
         });
       } else {
-        this.adminService.updateOnboardProgress('setup_rooms:end').pipe(filter(() => navigator.onLine))
+        this.gsProgress.updateProgress('setup_rooms:end').pipe(filter(() => navigator.onLine))
           .subscribe(() => {
             this.showRooms = true;
           });

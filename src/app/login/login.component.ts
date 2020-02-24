@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
@@ -11,10 +11,12 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {StorageService} from '../services/storage.service';
 import {User} from '../models/User';
-import {forkJoin, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import {Observable, ReplaySubject, Subject, zip} from 'rxjs';
 import {INITIAL_LOCATION_PATHNAME} from '../app.component';
 import {NotificationService} from '../services/notification-service';
 import {environment} from '../../environments/environment.prod';
+import {DarkThemeSwitch} from '../dark-theme-switch';
+import {ScreenService} from '../services/screen.service';
 
 declare const window;
 
@@ -43,23 +45,26 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private googleAuth: GoogleAuthService,
-    private http: HttpClient,
     private httpService: HttpService,
-    private googleLogin: GoogleLoginService,
     private userService: UserService,
     private loginService: GoogleLoginService,
     private storage: StorageService,
     private router: Router,
+    private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private titleService: Title,
     private metaService: Meta,
     private notifService: NotificationService,
+    private darkSwitch: DarkThemeSwitch,
+    public screen: ScreenService
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
   }
 
   ngOnInit() {
+    this.darkSwitch.switchTheme('Light');
+
     this.titleService.setTitle('SmartPass Sign-in');
     this.metaService.addTag({
       name: 'description',
@@ -85,7 +90,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         this.notifService.initNotifications(true);
       }
 
-      console.log(path);
+      // console.log(path);
 
       const loadView = currentUser.isAdmin() ? 'admin' : 'main';
 

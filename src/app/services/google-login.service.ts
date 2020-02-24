@@ -1,12 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
-
-
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
+import {delay, filter, map, take, tap} from 'rxjs/operators';
 import { GoogleAuthService } from './google-auth.service';
 import { StorageService } from './storage.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
+import GoogleApi = gapi.auth2;
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../environments/environment';
 
 declare const window;
 
@@ -20,6 +21,13 @@ export interface DemoLogin {
   invalid?: boolean;
   type: 'demo-login';
 }
+
+export interface GG4LResponse {
+  code: string;
+}
+
+
+
 
 export function isDemoLogin(d: any): d is DemoLogin {
   return (<DemoLogin>d).type === 'demo-login';
@@ -41,11 +49,9 @@ export class GoogleLoginService {
   constructor(
     private googleAuth: GoogleAuthService,
     private _zone: NgZone,
-    private storage: StorageService,
+    private storage: StorageService
   ) {
-
     this.authToken$.subscribe(auth => {
-      // window.waitForAppLoaded();
       if (auth) {
         const storageKey = isDemoLogin(auth)
                            ? JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type})
@@ -55,7 +61,9 @@ export class GoogleLoginService {
       }
     });
 
-    this.googleAuth.getAuth().subscribe(auth => this.googleAuthTool.next(auth as any));
+    this.googleAuth.getAuth().subscribe(auth => {
+      this.googleAuthTool.next(auth as any);
+    });
 
     // this.googleAuthTool.subscribe(tool =>
     //   console.log('google auth tool: ', tool, 'user currently signed in: ', tool ? tool.isSignedIn.get() : null));
@@ -133,7 +141,9 @@ export class GoogleLoginService {
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
       take(1),
-      map(a => isDemoLogin(a) ? a : a.id_token)
+      map(a => {
+        return isDemoLogin(a) ? a : a.id_token;
+      })
     );
   }
 
@@ -159,6 +169,10 @@ export class GoogleLoginService {
     this.logout();
   }
 
+  simpleSignOn() {
+    window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+  }
+
   /**
    * This method will trigger the Google authentication pop-up.
    *
@@ -168,17 +182,15 @@ export class GoogleLoginService {
    * method.
    */
 
-  public signIn() {
-    const auth = this.GoogleOauth;
+  public signIn(userEmail?: string) {
+    const auth: any = this.GoogleOauth;
 
     if (!auth) {
       console.error('Auth not loaded!');
       return;
     }
 
-    // console.log('logging in...');
-
-    return auth.signIn().then(user => {
+    return auth.signIn({ login_hint: userEmail }).then(user => {
       this._zone.run(() => {
         console.log(user.getAuthResponse());
         this.updateAuth(user.getAuthResponse());
@@ -188,7 +200,6 @@ export class GoogleLoginService {
   }
 
   signInDemoMode(username: string, password: string) {
-    // window.waitForAppLoaded();
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
   }
 

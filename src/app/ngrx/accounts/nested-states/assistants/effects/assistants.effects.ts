@@ -4,6 +4,9 @@ import {UserService} from '../../../../../services/user.service';
 import * as assistantsActions from '../actions';
 import {catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
+import {HttpService} from '../../../../../services/http-service';
+import {User} from '../../../../../models/User';
+import {getCountAccounts} from '../../count-accounts/actions';
 
 @Injectable()
 export class AssistantsEffects {
@@ -14,8 +17,8 @@ export class AssistantsEffects {
         concatMap((action: any) => {
           return this.userService.getUsersList(action.role, action.search, action.limit)
             .pipe(
-              switchMap((userlist: any[]) => {
-                if (!userlist.length) {
+              switchMap((userlist: any) => {
+                if (!userlist.results.length) {
                   return of({
                     users: [],
                     representedUsers: []
@@ -23,26 +26,112 @@ export class AssistantsEffects {
                 }
                 return forkJoin({
                   users: of(userlist),
-                  representedUsers: zip(...userlist.map(user => this.userService.getRepresentedUsers(user.id)))
+                  representedUsers: zip(...userlist.results.map(user => this.userService.getRepresentedUsers(user.id)))
 
                 });
               }),
               map(({users, representedUsers}) => {
-                if (!users.length) {
-                  return [];
+                if (!users.results.length) {
+                  return {moreAssistants: [], next: null};
                 }
-                return users.map((user, index) => {
+                const moreAssistants = users.results.map((user, index) => {
                   return {
                     ...user,
                     canActingOnBehalfOf: representedUsers[index]
                   };
                 });
+                const nextUrl = users.next ? users.next.substring(users.next.search('v1')) : null;
+                return {moreAssistants, next: nextUrl};
               }),
-              map((users) => {
-                return assistantsActions.getAssistantsSuccess({assistants: users});
+              map(({moreAssistants, next}) => {
+                return assistantsActions.getAssistantsSuccess({assistants: moreAssistants, next});
               }),
               catchError(error => of(assistantsActions.getAssistantsFailure({errorMessage: error.message})))
             );
+        })
+      );
+  });
+
+  getMoreAssistants$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.getMoreAssistants),
+        concatMap(action => {
+          return this.userService.nextRequests$._profile_assistant;
+        }),
+        switchMap(next => this.http.get(next)
+          .pipe(
+            switchMap((userlist: any) => {
+              if (!userlist.results.length) {
+                return of({
+                  users: [],
+                  representedUsers: []
+                });
+              }
+              return forkJoin({
+                users: of(userlist),
+                representedUsers: zip(...userlist.results.map(user => this.userService.getRepresentedUsers(user.id)))
+
+              });
+            }),
+            map(({users, representedUsers}) => {
+              if (!users.results.length) {
+                return {moreAssistants: [], next: null};
+              }
+              const moreAssistants = users.results.map((user, index) => {
+                return {
+                  ...user,
+                  canActingOnBehalfOf: representedUsers[index]
+                };
+              });
+              const nextUrl = users.next ? users.next.substring(users.next.search('v1')) : null;
+              return {moreAssistants, nextUrl};
+            }),
+            map(({moreAssistants, nextUrl}) => {
+              return assistantsActions.getMoreAssistantsSuccess({assistants: moreAssistants, next: nextUrl});
+            }),
+            catchError(error => of(assistantsActions.getMoreAssistantsFailure({errorMessage: error.message})))
+          )
+        )
+      );
+  });
+
+  postAssistant$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.postAssistant),
+        concatMap((action: any) => {
+          return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
+            .pipe(
+              switchMap((user: User) => {
+                return forkJoin({
+                  user: of(user),
+                  representedUsers: zip(...action.behalf.map((teacher: User) => {
+                      return this.userService.addRepresentedUser(+user.id, teacher);
+                    }))
+                }
+                );
+              }),
+              map(({user, representedUsers}) => {
+                const assistant = {
+                  ...user,
+                  canActingOnBehalfOf: representedUsers.map((u: any) => {
+                    return { user: u.represented_user, roles: u.roles };
+                  })
+                };
+                return assistantsActions.postAssistantSuccess({assistant});
+              })
+            );
+        })
+      );
+  });
+
+  postAssistantSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.postAssistantSuccess),
+        map(() => {
+          return getCountAccounts();
         })
       );
   });
@@ -143,6 +232,7 @@ export class AssistantsEffects {
 
   constructor(
     private actions$: Actions,
-    private userService: UserService
+    private userService: UserService,
+    private http: HttpService
   ) {}
 }
