@@ -18,6 +18,17 @@ export const getLoadingAssistants = createSelector(
   (state: AssistantsStates) => state.loading
 );
 
+export const getNextRequestAssistants = createSelector(
+  getAssistantsAccountsProfiles,
+  (state: AssistantsStates) => state.nextRequest
+);
+
+
+export const getLastAddedAssistants = createSelector(
+  getAssistantsAccountsProfiles,
+  (state: AssistantsStates) => state.lastAddedAssistants
+);
+
 export const getCountAssistants = adapter.getSelectors(getAssistantsAccountsProfiles).selectTotal;
 
 export const getAssistantsAccountsCollection = adapter.getSelectors(getAssistantsAccountsProfiles).selectAll;

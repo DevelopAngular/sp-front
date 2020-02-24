@@ -10,7 +10,7 @@ import {
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {MatSort, Sort} from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import * as moment from 'moment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
@@ -19,6 +19,7 @@ import {wrapToHtml} from '../helpers';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
 import { findIndex } from 'lodash';
+import {distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -31,13 +32,21 @@ export class GridTableDataSource extends DataSource<any> {
   };
 
   private _data: any[];
+  private lastPage = 1;
+
+  get last() {
+    return this.lastPage;
+  }
+
+  set last(n: number) {
+    this.lastPage = n;
+  }
 
   get allData(): any[] {
     return this._data.slice();
   }
 
   set allData(data: any[]) {
-    // debugger
     this._data = data;
     this.viewport.scrollToOffset(0);
     this.viewport.setTotalContentSize(this.itemSize * data.length);
@@ -104,6 +113,9 @@ export class GridTableDataSource extends DataSource<any> {
 
   private readonly visibleData: BehaviorSubject<any[]> = new BehaviorSubject([]);
 
+  add(data: any[]) {
+    this._data.push(...data);
+  }
 
   compare(a: number | string, b: number | string, isAsc: boolean) {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
@@ -174,8 +186,6 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() marginTopStickyHeader: string = '-40px';
   @Input() displayedColumns: string[];
   @Input() scrollableAreaName: string;
-  @Input() numberOfAccounts: number;
-  @Input() numberOfAccountsLoaded: number;
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
@@ -185,9 +195,16 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
 
+  @Input() set lazyData(value: any[]) {
+    if (value.length) {
+      this.dataSource.add(value);
+      this._data = this.dataSource.allData;
+    }
+
+  }
+
 
   @Input() set data(value: any[]) {
-    // console.log(value);
     this._data = [...value];
     if (!this.dataSource) {
       this.dataSource = new GridTableDataSource(
@@ -199,8 +216,22 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.domSanitizer
       );
       this.dataSource.offsetChange
+        .pipe(distinctUntilChanged())
         .subscribe(offset => {
           this.placeholderHeight = offset;
+          const isFirst = this.dataSource.last === 1;
+          const isThree = this.dataSource.last >= 3;
+          const isFour = this.dataSource.last >= 4;
+          // console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) + (isFour ? 20 : 0), (this.dataSource.last * 50) - 20, this.dataSource.last);
+          const allowLoadMore = (
+            (
+              this.dataSource.last * 50) -
+            (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
+            (isFour ? 20 : 0) === (this.dataSource.last * 50) - 20;
+          if (allowLoadMore) {
+            this.loadMoreAccounts.emit(null);
+            this.dataSource.last = this.dataSource.last + 1;
+          }
         });
     }
     this.dataSource.allData = this._data;
@@ -237,6 +268,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   placeholderHeight = 0;
 
   private _data: any[] = [];
+  private destroyOffset$ = new Subject();
 
   constructor(
     private _ngZone: NgZone,

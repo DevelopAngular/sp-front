@@ -5,7 +5,8 @@ import * as roleActions from '../actions';
 import {concatMap, map} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/User';
-import {createAction} from '@ngrx/store';
+import {PostRoleProps, RoleProps} from '../states';
+import {getCountAccounts} from '../nested-states/count-accounts/actions';
 
 @Injectable()
 export class AccountsEffects {
@@ -38,13 +39,13 @@ export class AccountsEffects {
           if (action.role === '' || action.role === '_all') {
             return roleActions.getMoreAccounts({role: action.role});
           } else if (action.role === '_profile_admin') {
-            return roleActions.getMoreAccounts({role: action.role});
+            return roleActions.getMoreAdmins();
           } else if (action.role === '_profile_teacher') {
-            return roleActions.getTeachers({role: action.role, search: action.search, limit: action.limit});
+            return roleActions.getMoreTeachers();
           } else if (action.role === '_profile_assistant') {
-            return roleActions.getAssistants({role: action.role, search: action.search, limit: action.limit});
+            return roleActions.getMoreAssistants();
           } else if (action.role === '_profile_student') {
-            return roleActions.getStudents({role: action.role, search: action.search, limit: action.limit});
+            return roleActions.getMoreStudents({role: action.role});
           }
           return action;
         })
@@ -55,13 +56,52 @@ export class AccountsEffects {
     return this.actions$
       .pipe(
         ofType(accountsActions.postAccounts),
+        map((action: any) => {
+          let props: PostRoleProps = {
+            school_id: action.school_id,
+            user: action.user,
+            userType: action.userType,
+            roles: action.roles
+          };
+          if (action.role === '' || action.role === '_all') {
+            return accountsActions.postSelectedAccounts(props);
+          } else if (action.role === '_profile_admin') {
+            return roleActions.postAdmin(props);
+          } else if (action.role === '_profile_teacher') {
+            return roleActions.postTeacher(props);
+          } else if (action.role === '_profile_student') {
+            return roleActions.postStudent(props);
+          } else if (action.role === '_profile_assistant') {
+            props = {...props, behalf: action.behalf};
+            return roleActions.postAssistant(props);
+          }
+
+          return action;
+        })
+      );
+  });
+
+  postSelectedAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.postSelectedAccounts),
         concatMap((action: any) => {
           return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
             .pipe(
-              map((user: User) => {
-                    return roleActions.postAdminSuccess({admin: user});
+              map(() => {
+                return accountsActions.postSelectedAccountsSuccess();
               })
             );
+        })
+      );
+  });
+
+  postSelectedAccountsSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.postSelectedAccountsSuccess),
+        map(() => {
+          return getCountAccounts();
         })
       );
   });
