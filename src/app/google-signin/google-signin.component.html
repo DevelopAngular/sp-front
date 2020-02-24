@@ -18,7 +18,6 @@
         [style.opacity]="loginData.demoLoginEnabled ? 1 : 0" [style.position]="loginData.demoLoginEnabled ? 'static' : 'absolute'"
       >
         <app-input
-          (keyup.enter)="demoLogin()"
           [autocomplete]="'password'"
           [formGroup]="loginForm"
           [isFocus]="inputFocusNumber === 2"
