@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog } from '@angular/material';
 
 import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
-import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
@@ -374,7 +374,12 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
       overlayDialog.afterClosed()
         .pipe(
-          switchMap(() => this.hallPassService.getPinnablesRequest()),
+          switchMap((res) => {
+            if (res) {
+              return this.hallPassService.getPinnablesRequest()
+            }
+            return of(null);
+          }),
         )
         .subscribe(res => {
           this.selectedPinnables = [];
@@ -394,33 +399,36 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           travel_types: pin.travel_types,
           max_allowed_time: pin.max_allowed_time
         };
-        return this.locationsService.createLocation(location)
-          .pipe(
-            filter((loc: Location) => navigator.onLine && !!loc),
-            switchMap((loc: Location) => {
-            const pinnable = {
-              title: pin.title,
-              color_profile: pin.color_profile_id,
-              icon: pin.icon,
-              location: loc.id,
-            };
-            return this.hallPassService.postPinnableRequest(pinnable);
-          }));
+        return this.locationsService.createLocation(location);
       });
 
       forkJoin(requests$)
         .pipe(
-          // take(1),
+          switchMap((locations: Location[]) => {
+            const pinnables$ = locations.map((location: Location, index) => {
+              const pinnable = {
+                title: pinnables[index].title,
+                color_profile: pinnables[index].color_profile_id,
+                icon: pinnables[index].icon,
+                location: location.id,
+              };
+              return this.hallPassService.createPinnable(pinnable);
+            });
+            return forkJoin(pinnables$);
+          }),
           filter(() => navigator.onLine),
           takeUntil(this.destroy$),
           switchMap((res) => {
             return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
           }),
+          take(1),
           switchMap((res) => {
-            return this.hallPassService.createArrangedPinnableRequest(res.map((v: any) => v.id).join(','));
+            const order = res.map((v: any) => v.id).join(',');
+            return this.hallPassService.createArrangedPinnable({order});
           }),
+          take(1),
           switchMap((res) => {
-            return this.hallPassService.getPinnablesRequest().pipe(filter((pin: Pinnable[]) => !!pin.length));
+            return this.hallPassService.getPinnables();
           }),
         )
         .subscribe((res: Pinnable[]) => {

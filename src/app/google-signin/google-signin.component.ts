@@ -41,9 +41,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   public loginForm: FormGroup;
   public error$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  public disabledButton: boolean = true;
   showError: boolean;
   private changeUserName$: Subject<string> = new Subject<string>();
-  destroy$ = new Subject();
+  private destroy$ = new Subject();
 
   constructor(
     private httpService: HttpService,
@@ -101,11 +102,18 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
             this.inputFocusNumber = 1;
           }
           this.forceFocus$.next();
+        } else if (key[0] === 'enter') {
+          if (!this.disabledButton && !this.loginData.demoLoginEnabled) {
+            this.checkUserAuthType();
+          } else if (this.loginData.demoLoginEnabled) {
+            this.demoLogin();
+          }
         }
       });
 
     this.changeUserName$.pipe(
       filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
+      tap(() => this.disabledButton = true),
       distinctUntilChanged(),
       debounceTime(500),
       switchMap(userName => {
@@ -124,7 +132,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
         this.isGoogleLogin = true;
-      } else if (auth_types.indexOf('password') !== -1) {
+      } else
+        if (auth_types.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
         this.isStandardLogin = true;
       } else {
@@ -134,7 +143,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         // this.loginSSO();
         //   this.isGoogleLogin = true;
       // }
-
+      this.disabledButton = false;
     });
   }
 

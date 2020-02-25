@@ -515,7 +515,7 @@ export class OverlayContainerComponent implements OnInit {
                return this.hallPassService.postPinnableRequest(pinnable);
               })
            )
-         .subscribe(response => this.dialogRef.close());
+         .subscribe(response => this.dialogRef.close(true));
     }
 
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
@@ -529,7 +529,7 @@ export class OverlayContainerComponent implements OnInit {
         };
 
         this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
-          .subscribe(res => this.dialogRef.close());
+          .subscribe(res => this.dialogRef.close(true));
       }
       if (this.folderData.roomsToDelete.length) {
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
@@ -604,7 +604,7 @@ export class OverlayContainerComponent implements OnInit {
           }
         })
       )
-      .subscribe(() => this.dialogRef.close());
+      .subscribe(() => this.dialogRef.close(true));
     }
 
     if (this.currentPage === Pages.EditRoom) {
@@ -633,7 +633,7 @@ export class OverlayContainerComponent implements OnInit {
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
             })).subscribe(response => {
-              this.dialogRef.close();
+              this.dialogRef.close(true);
         });
     }
 
@@ -644,7 +644,7 @@ export class OverlayContainerComponent implements OnInit {
       });
 
       zip(...patchRequests$).subscribe(res => {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
       });
     }
   }

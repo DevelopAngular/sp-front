@@ -1,12 +1,19 @@
 import {createAction, props} from '@ngrx/store';
-import {RoleProps} from '../../../states';
+import {PostRoleProps, RoleProps} from '../../../states';
 import {User} from '../../../../../models/User';
 
 const STUDENTS = 'Students Accounts';
 
 export const getStudents = createAction(`[${STUDENTS}] Get Students`, props<RoleProps>());
-export const getStudentsSuccess = createAction(`[${STUDENTS}] Get Students Success`, props<{students: User[]}>());
+export const getStudentsSuccess = createAction(`[${STUDENTS}] Get Students Success`, props<{students: User[], next: string}>());
 export const getStudentsFailure = createAction(`[${STUDENTS}] Get Students Failure`, props<{errorMessage: string}>());
+
+export const getMoreStudents = createAction(`[${STUDENTS}] Get More Students`, props<{role: string}>());
+export const getMoreStudentsSuccess = createAction(`[${STUDENTS}] Get More Students Success`, props<{moreStudents: User[], next: string}>());
+export const getMoreStudentsFailure = createAction(`[${STUDENTS}] Get More Students Failure`, props<{errorMessage: string}>());
+
+export const postStudent = createAction(`[${STUDENTS}] Post Student`, props<PostRoleProps>());
+export const postStudentSuccess = createAction(`[${STUDENTS}] Post Students Success`, props<{student: User}>());
 
 export const removeStudent = createAction(`[${STUDENTS}] Remove Student`, props<{id: string | number}>());
 export const removeStudentSuccess = createAction(`[${STUDENTS}] Remove Student Success`, props<{id: string | number}>());

@@ -18,6 +18,16 @@ export const getLoadingTeachers = createSelector(
   (state: TeachersStates) => state.loading
 );
 
+export const getNextRequestTeachers = createSelector(
+  getTeachersAccountsProfiles,
+  (state: TeachersStates) => state.nextRequest
+);
+
+export const getLastAddedTeachers = createSelector(
+  getTeachersAccountsProfiles,
+  (state: TeachersStates) => state.lastAddedTeachers
+);
+
 export const getCountTeachers = adapter.getSelectors(getTeachersAccountsProfiles).selectTotal;
 
 export const getTeacherAccountsCollection = adapter.getSelectors(getTeachersAccountsProfiles).selectAll;
