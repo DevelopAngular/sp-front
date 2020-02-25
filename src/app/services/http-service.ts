@@ -411,21 +411,14 @@ export class HttpService {
   }
 
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
-    // console.log('fetchServerAuth');
     return this.loginService.getIdToken().pipe(
       switchMap((googleToken: any) => {
         let authContext$: Observable<AuthContext>;
-
-        // console.log('getIdToken');
-
         if (isDemoLogin(googleToken)) {
-          // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
         } else {
-          // console.log(googleToken);
           authContext$ = this.loginGoogleAuth(googleToken);
         }
-
         return authContext$.pipe(
           tap((res) => {
             if (!res) {
@@ -439,36 +432,26 @@ export class HttpService {
               if (isDemoLogin(googleToken)) {
                 googleToken.invalid = true;
               }
-
               this.loginService.clearInternal(true);
               this.loginService.showLoginError$.next(true);
               return this.fetchServerAuth(retryNum + 1);
             }
-
             throw err;
           }));
-
       }));
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-    // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
-
-        // console.log('performRequest');
         return predicate(ctx);
       }),
       catchError(err => {
         if (err.status !== 401) {
           throw err;
         }
-
-        // console.log('performRequest');
-
         // invalidate the existing token
         this.accessTokenSubject.next(null);
-
         // const google_token = localStorage.getItem(SESSION_STORAGE_KEY); // TODO something more robust
         return this.fetchServerAuth().pipe(
           switchMap((ctx: AuthContext) => {

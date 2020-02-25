@@ -1,8 +1,7 @@
 @import '../../design-system';
+
 :host {
   .next-release-container {
-    //box-sizing: border-box;
-    //padding: 30px 40px;
     position: relative;
     width: 425px;
     height: 450px;
@@ -14,10 +13,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       position: sticky;
       top: 0px;
       background-color: inherit;
-      //border-bottom: 1px solid rgba(31, 25, 94, .4);
+      height: 70px;
+      min-height: 70px;
+      font-size: 28px;
+      transition: font-size .25s ease-in-out;
+    //cubic-bezier(0, 0, 0, 0)
       &_number {
         display: flex;
         align-items: center;
@@ -34,7 +38,6 @@
       }
       &_heading {
         color: #1F195E;
-        font-size: 28px;
         font-weight: bold;
       }
     }
@@ -51,7 +54,6 @@
         padding-bottom: 20px;
         .right-side {
           flex: 1 1 auto;
-          margin-left: 14px;
           .item_title {
             @extend .ds-flex-start-start;
             @extend .ds-navy;
@@ -71,6 +73,14 @@
           .item_description {
             margin-top: 10px;
             color: #7F879D;
+            .link {
+              white-space: nowrap;
+              padding-left: 10px;
+              text-decoration: none;
+              &:active, &:visited, &:focus {
+                outline: none;
+              }
+            }
           }
           .item_date {
             color: #B1B6C3;
@@ -89,7 +99,7 @@
       cursor: pointer;
       img {
         position: absolute;
-        top: 28px;
+        top: 24px;
         right: 25px;
         width: 25px;
         height: 25px;

@@ -6,7 +6,7 @@
     <img [src]="'./assets/balloons.svg'" alt="balloons.svg">
   </div>
   <div class="release-version" #stickHeader>
-    <h2 class="release-version_heading">What's New</h2>
+    <span class="release-version_heading">What's New</span>
   </div>
   <div class="release-items">
     <div *ngFor="let item of whatsNewItems; let i = index;">
@@ -14,15 +14,15 @@
         <div class="right-side">
           <div class="ds-flex-start-start">
             <div class="item_title">
-              <div><span>{{item.updateName}}</span></div>
+              <div><span>{{item.name}}</span></div>
             </div>
-            <div class="item_type" [style.background]="item.updateColor">{{item.updateType}}</div>
+            <div class="item_type" [style.background]="itemBackgroundColor(item)">{{item.update_type}}</div>
           </div>
           <div class="item_description">
             <span>{{item.description}}</span>
-            <span style="white-space: nowrap; padding-left: 10px;" [style.color]="item.updateColor">{{item.link}}</span>
+            <a class="link" [attr.href]="item.link" [attr.target]="'blank'" [style.color]="itemBackgroundColor(item)">Learn more...</a>
           </div>
-          <div class="item_date"><span>{{item.updateLaunchDate | date}}</span></div>
+          <div class="item_date ds-pt-10"><span>{{item.date_launched | date}}</span></div>
         </div>
       </div>
     </div>
