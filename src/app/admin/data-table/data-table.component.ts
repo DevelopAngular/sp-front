@@ -20,6 +20,7 @@ import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component'
 
 import { findIndex } from 'lodash';
 import {distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
+import {StorageService} from '../../services/storage.service';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -203,7 +204,6 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-
   @Input() set data(value: any[]) {
     this._data = [...value];
     if (!this.dataSource) {
@@ -242,8 +242,10 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         return;
       }
 
+      this.storage.setItem('defaultSortSubject', sort.active);
+
       this.dataSource.allData = data.sort((a, b) => {
-        const isAsc = sort.direction === 'asc';
+        const isAsc = sort.direction === 'desc';
         const {_data: _a} = a;
         const {_data: _b} = b;
 
@@ -276,6 +278,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
     private domSanitizer: DomSanitizer,
     private scrollPosition: ScrollPositionService,
     private cdr: ChangeDetectorRef,
+    private storage: StorageService
   ) {
     this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
   }
@@ -310,8 +313,23 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.selectedUsers.emit([]);
       }
     });
+    console.log(this.columnsToDisplay);
+
+    const defaultSortSubject = this.storage.getItem('defaultSortSubject');
+    let sortSubject: string;
+
+    if (defaultSortSubject && this.columnsToDisplay.includes(defaultSortSubject)) {
+      sortSubject = defaultSortSubject;
+    } else if (this.columnsToDisplay.includes('Last sign-in')) {
+      sortSubject = 'Last sign-in';
+    } else if (this.columnsToDisplay.includes('Group(s)')) {
+      sortSubject = 'Group(s)';
+    } else {
+      sortSubject = 'Name';
+    }
+
     this.dataSource.sort.sort({
-      id: this.columnsToDisplay[0],
+      id: sortSubject,
       start: 'asc',
       disableClear: false
     });
