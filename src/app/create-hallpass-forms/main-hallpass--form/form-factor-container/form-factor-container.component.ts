@@ -69,7 +69,7 @@ export class FormFactorContainerComponent implements OnInit {
               '',
               '',
               this.FORM_STATE.data.date ? this.FORM_STATE.data.date.declinable : false,
-              ''
+              this.forStaff ? this.FORM_STATE.data.message : null
             );
             break;
             case this.states.Request:

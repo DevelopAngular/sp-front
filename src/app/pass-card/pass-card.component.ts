@@ -292,7 +292,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
 
     if (this.forFuture) {
-      if (this.forStaff) {}
+        body['issuer_message'] = this.pass.issuer_message;
         body['start_time'] = this.pass.start_time.toISOString();
     }
     if (this.forKioskMode) {
