@@ -33,7 +33,7 @@
       <div class="error" *ngIf="error$ | async; let errorMessage"> {{ errorMessage }}</div>
       <div class="button" style="margin-top: 97px;" *ngIf="!loginData.demoLoginEnabled">
         <app-gradient-button
-          [disabled]="!loginForm.get('username').value"
+          [disabled]="disabledButton"
           [size]="'medium'"
           [rightIcon]="!showSpinner ?'./assets/Chevron Right (White).svg' : ''"
           [cursor]="'pointer'"

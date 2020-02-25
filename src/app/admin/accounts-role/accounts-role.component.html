@@ -25,7 +25,7 @@
                      [matTooltip]="'An administrator has a high-level look at the school, configures passes, and views/generates reports.'"
                      matTooltipClass="tooltip"
                      alt="">
-                <span [style.font-weight]="'bold'">{{(countAccount$.admin | async)}} user{{(countAccount$.admin | async)> 1 ? 's' : ''}}</span><br>
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
@@ -49,7 +49,7 @@
   '                    A teacher can create passes, view hall monitor activity, and manage passes in his/her room.'"
                      matTooltipClass="tooltip"
                      alt="">
-                <span [style.font-weight]="'bold'">{{(countAccount$.teacher | async)}} user{{(countAccount$.teacher | async)> 1 ? 's' : ''}}</span><br>
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
@@ -76,7 +76,7 @@
   '                and send pass requests to teachers.'"
                      matTooltipClass="tooltip"
                      alt="">
-                <span [style.font-weight]="'bold'">{{(countAccount$.student | async) }} user{{(countAccount$.student | async) > 1 ? 's' : ''}}</span><br>
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
@@ -100,7 +100,7 @@
                       'They can manage passes in his/her room and create passes as that teacher.'"
                      matTooltipClass="tooltip"
                      alt="">
-                <span [style.font-weight]="'bold'">{{(countAccount$.assistant | async)}} user{{(countAccount$.assistant | async) > 1 ? 's' : ''}}</span><br>
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).assistant_count}} user{{(accounts$ | async).assistant_count > 1 ? 's' : ''}}</span><br>
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
@@ -247,9 +247,8 @@
           <p class="ds-my-10 ds-empty-text-info" style="text-align: center;">Spellcheck? Wrong profile?</p>
         </div>
       </div>
-
-      <div *ngIf="!userList.length && (isLoaded$ | async)" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-        <img [src]="'./assets/emptyStates/no-users.svg'" class="ds-py-25 ds-mt-25 ds-mb-10" alt="no-users.svg">
+      <div *ngIf="!userList.length && (isLoaded$ | async)" class="ds-flex-center-center ds-flex-column" style="position: absolute" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+        <img [src]="'./assets/emptyStates/no-users.svg'" class="" alt="no-users.svg">
         <div class="ds-empty-text-title">No Users</div>
         <p class="ds-my-10 ds-empty-text-info" style="text-align: center;">Add users one-by-one above or set up G Suite <br>
           syncing to automatically add users to this profile.</p>
@@ -263,10 +262,12 @@
           class="ds-my-10"
           [scrollableAreaName]="'Table' + role"
           [data]="userList"
+          [lazyData]="lazyUserList"
+          (loadMoreAccounts)="loadMore($event)"
           [isCheckbox]="dataTableEditState"
           [marginTopStickyHeader]="'147px'"
           [textColor]="'#7E879D'"
-          [disallowHover]="role === '_all' && !(dataTableEditState | async)"
+          [disallowHover]="!(dataTableEditState | async)"
           [displayedColumns]="dataTableHeadersToDisplay"
           (selectedCell)="findProfileByRole($event)"
           (selectedRow)="showProfileCard($event)"

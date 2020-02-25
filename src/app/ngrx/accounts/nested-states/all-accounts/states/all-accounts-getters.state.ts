@@ -18,6 +18,16 @@ export const getLoadingAllAccounts = createSelector(
   (state: AllAccountsState) => state.loading
 );
 
+export const getNextRequestAllAccounts = createSelector(
+  getAllAccountsProfiles,
+  (state: AllAccountsState) => state.nextRequest
+);
+
+export const getLastAddedAllAccounts = createSelector(
+  getAllAccountsProfiles,
+  (state: AllAccountsState) => state.lastAddedAccounts
+);
+
 export const getCountAllAccounts = adapter.getSelectors(getAllAccountsProfiles).selectTotal;
 
 export const getAllAccountsCollection = adapter.getSelectors(getAllAccountsProfiles).selectAll;

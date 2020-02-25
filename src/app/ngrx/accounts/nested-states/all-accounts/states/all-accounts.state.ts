@@ -4,6 +4,8 @@ import {User} from '../../../../../models/User';
 export interface AllAccountsState extends EntityState<User> {
   loading: boolean;
   loaded: boolean;
+  lastAddedAccounts: User[];
+  nextRequest: string;
 }
 
 

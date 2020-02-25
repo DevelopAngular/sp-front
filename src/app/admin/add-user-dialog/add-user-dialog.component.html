@@ -108,10 +108,10 @@
 
               <app-input
                 [input_label]="'Email or username'"
-                [controlName]="newAlternativeAccount.get('username')"
+                [autocomplete]="'addUserName'"
+                [controlName]="newAlternativeAccount.get('addUsername')"
                 [formGroup]="newAlternativeAccount"
-                [input_value]="newAlternativeAccount.get('username').value"
-                [isFocus]="newAlternativeAccount.touched"
+                [input_value]="newAlternativeAccount.get('addUsername').value"
                 [width]="'222px'"
                 [height]="'40px'"
 
@@ -122,12 +122,12 @@
               <app-input
                 [input_label]="'Password'"
                 [input_type]="'password'"
+                [autocomplete]="'new-password'"
                 [placeholder]="'8+ characters'"
                 [isSuccessIcon]="true"
-                [controlName]="newAlternativeAccount.get('password')"
+                [controlName]="newAlternativeAccount.get('addPassword')"
                 [formGroup]="newAlternativeAccount"
-                [input_value]="newAlternativeAccount.get('password').value"
-                [isFocus]="newAlternativeAccount.touched"
+                [input_value]="newAlternativeAccount.get('addPassword').value"
                 [width]="'222px'"
                 [height]="'40px'"
               ></app-input>
