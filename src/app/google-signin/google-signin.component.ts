@@ -177,7 +177,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   checkUserAuthType() {
     if (this.showError) {
       this.error$.next('Couldn’t find that username or email');
-      this.showError = false;
       return false;
     } else if (this.isGoogleLogin) {
       this.initLogin();
