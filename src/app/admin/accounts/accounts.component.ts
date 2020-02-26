@@ -103,14 +103,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
         this.querySubscriber$.next(this.getUserList());
       }),
       tap(() => {
-        this.showDisabledBanner$.next(!this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day'));
+        this.showDisabledBanner$.next(!this.http.getSchool().launch_date);
       }),
       switchMap(() => this.adminService.getCountAccountsRequest()),
       switchMap(() => this.gsProgress.onboardProgress$),
     )
     .subscribe((op: any) => {
-      // this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-      this.splash = false;
+      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+      // this.splash = false;
     });
 
     this.userService.userData.pipe(
