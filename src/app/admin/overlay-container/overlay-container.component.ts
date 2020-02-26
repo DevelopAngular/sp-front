@@ -731,6 +731,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   bulkEditResult({roomData, rooms, buttonState}) {
+    debugger;
     const editingRooms = this.editRooms(roomData, rooms);
     this.bulkEditData = {roomData, rooms: editingRooms};
     this.roomValidButtons.next(buttonState);
@@ -778,6 +779,18 @@ export class OverlayContainerComponent implements OnInit {
       travel_types: room.travelType,
       max_allowed_time: +room.timeLimit,
     };
+  }
+
+  checkAllowedAdvOpt(options: OptionState, rooms: Location[]) {
+    rooms.forEach(room => {
+      if (!room.teachers.length) {
+        if (options.now.state === 'Any teachers assigned' || options.now.state === 'All teachers assigned') {
+          if (options.now.data.all_teach_assign === 'This Room') {
+            options.now.data.all_teach_assign = 'Origin';
+          }
+        }
+      }
+    });
   }
 
   generateRandomString() {
