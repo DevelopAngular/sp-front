@@ -102,6 +102,12 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
             this.inputFocusNumber = 1;
           }
           this.forceFocus$.next();
+        } else if (key[0] === 'enter') {
+          if (!this.disabledButton && !this.loginData.demoLoginEnabled) {
+            this.checkUserAuthType();
+          } else if (this.loginData.demoLoginEnabled) {
+            this.demoLogin();
+          }
         }
       });
 
@@ -177,7 +183,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   checkUserAuthType() {
     if (this.showError) {
       this.error$.next('Couldn’t find that username or email');
-      this.showError = false;
       return false;
     } else if (this.isGoogleLogin) {
       this.initLogin();

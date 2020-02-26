@@ -632,7 +632,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       gSuiteSettings: gSuite,
       role: this.role,
       permissions: this.profilePermissions,
-      disabledSignIn: this.showDisabledChip
+      disabledSignIn: this.showDisabledChip && this.role === '_profile_student'
     };
 
     if (this.selectedUsers.length && !bulk || this.role === '_all' && !gSuite)  {

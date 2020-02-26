@@ -186,6 +186,7 @@ export class ProfileCardDialogComponent implements OnInit {
       });
     }
 
+
     this.dialogRef.backdropClick().subscribe((evt) => {
       this.back();
     });
