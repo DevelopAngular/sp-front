@@ -209,13 +209,9 @@ export class HttpService {
                   config.append('client_id', server.client_id);
                   config.append('grant_type', 'refresh_token');
                   config.append('token', auth.refresh_token);
-                  // config.append('username', user.username);
-                  // config.append('password', user.password);
-                  // console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
                   map((data: any) => {
-                    // console.log('Auth data : ', data);
                     // don't use TimeService for auth because auth is required for time service
                     // to be useful
                     data['expires'] = new Date(new Date() + data['expires_in']);
@@ -260,7 +256,7 @@ export class HttpService {
     return this.accessTokenSubject.pipe(filter(e => !!e));
   }
 
-  private getLoginServers(data: FormData): Observable<LoginServer> {
+  private getLoginServers(data: FormData, gg4l: string = ''): Observable<LoginServer> {
     const preferredEnvironment = environment.preferEnvironment;
 
     if (preferredEnvironment && typeof preferredEnvironment === 'object') {
@@ -283,7 +279,7 @@ export class HttpService {
         }));
     }
 
-    return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
+    return this.http.post('https://smartpass.app/api/discovery/find' + (gg4l ? `/gg4l` : ''), data).pipe(
       switchMap(servers => {
         return this.pwaStorage.setItem('servers', servers)
           .pipe(mapTo(servers));
@@ -393,6 +389,40 @@ export class HttpService {
       config.append('client_id', server.client_id);
       config.append('provider', 'google-auth-token');
       config.append('token', googleToken);
+
+      return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
+        map((data: any) => {
+          // don't use TimeService for auth because auth is required for time service
+          // to be useful
+          data['expires'] = new Date(new Date() + data['expires_in']);
+
+          ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+          const auth = data as ServerAuth;
+
+          return {auth: auth, server: server} as AuthContext;
+        }));
+
+    }));
+  }
+
+  loginGG4L(code: string): Observable<AuthContext> {
+
+    const c = new FormData();
+    c.append('code', code);
+    c.append('provider', 'gg4l-sso');
+    c.append('platform_type', 'web');
+
+    return this.getLoginServers(c, code).pipe(flatMap(server => {
+      if (server === null) {
+        return throwError(new LoginServerError('No login server!'));
+      }
+
+      const config = new FormData();
+
+      config.append('client_id', server.client_id);
+      config.append('provider', 'gg4l-sso');
+      config.append('code', code);
 
       return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
         map((data: any) => {

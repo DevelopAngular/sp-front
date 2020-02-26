@@ -281,12 +281,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   onSearch(search: string) {
-
     switch (this.searchTarget) {
       case 'users':
           if (search !== '') {
             this.pending$.next(true);
-
             if (this.type === 'alternative') {
               this.students = this.userService.searchProfile(this.role, 50, search)
                 .toPromise()
@@ -310,35 +308,30 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                   return this.removeDuplicateStudents(users);
                 });
             }
-
           } else {
-
             this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
             this.showDummy = false;
             this.inputValue$.next('');
           }
         break;
       case 'schools':
-
         if (search !== '') {
-
-          this.pending$.next(true);
-          this.placePredictionService.getPlacePredictions({
-            location: this.currentPosition,
-            input: search,
-            radius: 100000,
-            types: ['establishment']
-          }, (predictions, status) => {
-            this.query.next(predictions ? predictions : []);
-          });
-
+          if (search.length >= 4) {
+            this.pending$.next(true);
+            this.placePredictionService.getPlacePredictions({
+              location: this.currentPosition,
+              input: search,
+              radius: 100000,
+              types: ['establishment']
+            }, (predictions, status) => {
+              this.query.next(predictions ? predictions : []);
+            });
+          }
         } else {
-
           this.query.next(null);
           this.showDummy = false;
           this.inputValue$.next('');
           this.pending$.next(false);
-
         }
           break;
       case 'orgunits':
