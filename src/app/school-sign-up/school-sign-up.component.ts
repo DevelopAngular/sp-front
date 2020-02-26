@@ -169,7 +169,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+.[a-zA-Z0-9]+$'),
           Validators.email,
         (fc: FormControl) => {
-          return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
+          return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1).toLowerCase()) ? {invalid_email: true}  : null;
         }
       ], [
           this.checkEmailValidatorAsync.bind(this)
