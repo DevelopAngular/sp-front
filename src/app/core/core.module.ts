@@ -12,7 +12,6 @@ import {GradientButtonComponent} from '../gradient-button/gradient-button.compon
 import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
 import {NoAccountComponent} from '../no-account/no-account.component';
 import { CheckUserInputDirective } from './directives/check-user-input.directive';
-// import {NextReleaseComponent} from '../next-release/next-release.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +26,6 @@ import { CheckUserInputDirective } from './directives/check-user-input.directive
     NoAccountComponent,
     CheckUserInputDirective,
     CrossPointerEventTargetDirective,
-    // NextReleaseComponent
   ],
   imports: [
     CommonModule,
@@ -44,8 +42,7 @@ import { CheckUserInputDirective } from './directives/check-user-input.directive
     GradientButtonComponent,
     MoovingTilesComponent,
     NoAccountComponent,
-    CrossPointerEventTargetDirective,
-    // NextReleaseComponent
+    CrossPointerEventTargetDirective
 
   ],
   entryComponents: [
@@ -54,7 +51,6 @@ import { CheckUserInputDirective } from './directives/check-user-input.directive
     DropdownComponent,
     SignedOutToastComponent,
     NoAccountComponent,
-    // NextReleaseComponent
   ],
 })
 export class CoreModule { }
