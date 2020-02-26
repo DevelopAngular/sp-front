@@ -3,9 +3,9 @@ import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, O
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter, find } from 'lodash';
-import {BehaviorSubject, fromEvent, interval, Observable, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
-import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import {filter, map, mapTo, mergeMap, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -25,7 +25,10 @@ import {NotificationService} from './services/notification-service';
 import {GoogleAnalyticsService} from './services/google-analytics.service';
 import {ShortcutInput} from 'ng-keyboard-shortcuts';
 import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
-import {NextReleaseComponent} from './next-release/next-release.component';
+import {NextReleaseComponent, Update} from './next-release/next-release.component';
+import {User} from './models/User';
+import {UserService} from './services/user.service';
+import {NextReleaseService} from './next-release/services/next-release.service';
 
 declare const window;
 
@@ -78,6 +81,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
+    private userService: UserService,
+    private nextReleaseService: NextReleaseService,
     private http: HttpService,
     private httpNative: HttpClient,
     private adminService: AdminService,
@@ -99,15 +104,47 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
 
-    setTimeout(() => {
-      this.dialog.open(NextReleaseComponent, {
-        panelClass: 'main-form-dialog-container',
-        data: {
-          isStudent: false,
-          isTeacher: true,
-        }
+    this.userService.loadedUser$
+      .pipe(
+        filter(l => l),
+        switchMap(l => this.userService.user$),
+        switchMap((user: User) => {
+          return this.nextReleaseService
+            .getLastReleasedUpdates(DeviceDetection.platform())
+            .pipe(
+              map((release: Array<Update>): Array<Update> => {
+                console.log(release);
+                return release.filter((update) => {
+                  const allowUpdate: boolean = !!update.groups.find((group) => {
+                    console.log(group, '-', user.roles.includes(`_profile_${group}`));
+                    return user.roles.includes(`_profile_${group}`);
+                  });
+                  return allowUpdate;
+                });
+              })
+            );
+        }),
+        filter((release: Array<Update>) => !!release.length),
+        switchMap((release) => {
+          const dialogRef = this.dialog.open(NextReleaseComponent, {
+            panelClass: 'main-form-dialog-container',
+            data: {
+              isStudent: false,
+              isTeacher: true,
+              releaseUpdates: release
+            }
+          });
+          return dialogRef.afterClosed().pipe(
+            switchMap(() => zip(
+              ...release.map((update: Update) => this.nextReleaseService.dismissUpdate(update.id, DeviceDetection.platform()))
+            ))
+          );
+        })
+      )
+      .subscribe((res) => {
+        console.log(res);
       });
-    }, 6000);
+
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 

@@ -53,30 +53,7 @@ export class NextReleaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userService
-      .getUserWithTimeout()
-      .pipe(
-        switchMap((user: User) => {
-          return this.nextReleaseService
-            .getLastReleasedUpdates(DeviceDetection.platform())
-            .pipe(
-              map((release: Array<Update>): Array<Update> => {
-                console.log(release);
-                return release.filter((update) => {
-                  const allowUpdate: boolean = !!update.groups.find((group) => {
-                    console.log(group, '-', user.roles.includes(`_profile_${group}`));
-                    return user.roles.includes(`_profile_${group}`);
-                  });
-                  return allowUpdate;
-                });
-              })
-            );
-        })
-      )
-      .subscribe((release: Array<Update>) => {
-        console.log(release);
-        this.whatsNewItems = release;
-      });
+    this.whatsNewItems = this.data.releaseUpdates;
   }
 
   onScroll(event) {
@@ -90,12 +67,6 @@ export class NextReleaseComponent implements OnInit {
   }
 
   markAsSeen() {
-    zip(
-      ...this.whatsNewItems.map((update: Update) => this.nextReleaseService.dismissUpdate(update.id, DeviceDetection.platform()))
-    )
-    .subscribe((res) => {
-      console.log(res);
-      this.dialogRef.close();
-    });
+    this.dialogRef.close();
   }
 }
