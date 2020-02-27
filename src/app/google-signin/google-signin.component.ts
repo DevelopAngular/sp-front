@@ -147,7 +147,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.isGoogleLogin = true;
       } else if (auth_types.indexOf('gg4l') !== -1) {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
-      } else if (auth_types.indexOf('password') !== -1) {
+      } else
+        if (auth_types.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
         this.isStandardLogin = true;
       } else {
