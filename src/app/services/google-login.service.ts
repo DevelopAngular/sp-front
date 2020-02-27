@@ -86,7 +86,7 @@ export class GoogleLoginService {
 
     const savedAuth = this.storage.getItem(STORAGE_KEY);
     if (savedAuth) {
-      // console.log('Loading saved auth:', savedAuth);
+      console.log('Loading saved auth:', savedAuth);
       const auth: AuthResponse = JSON.parse(savedAuth);
       if (auth.id_token !== undefined || isDemoLogin(auth)) {
         this.updateAuth(auth);
@@ -131,7 +131,6 @@ export class GoogleLoginService {
   }
 
   getIdToken(): Observable<DemoLogin | string> {
-
     if (this.needNewToken()) {
       this.authToken$.next(null);
       this.isAuthenticated$.next(false);
@@ -140,7 +139,6 @@ export class GoogleLoginService {
 
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
-      take(1),
       map(a => {
         return isDemoLogin(a) ? a : a.id_token;
       })

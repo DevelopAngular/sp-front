@@ -1,7 +1,7 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
 import {BehaviorSubject, of, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
@@ -204,7 +204,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       .pipe(
         finalize(() => {
           this.showSpinner = false;
-        }),
+        })
       );
   }
 

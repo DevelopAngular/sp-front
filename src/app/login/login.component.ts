@@ -79,13 +79,12 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       filter(v => v),
       switchMap((): Observable<[User, Array<string>]> => {
         return zip(
-          this.userService.userData.asObservable(),
+          this.userService.userData.asObservable().pipe(filter(user => !!user)),
           INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').filter(v => v && v !== 'app')))
         );
       }),
       takeUntil(this.destroyer$)
     ).subscribe(([currentUser, path]) => {
-
       if (NotificationService.hasPermission && environment.production) {
         this.notifService.initNotifications(true);
       }

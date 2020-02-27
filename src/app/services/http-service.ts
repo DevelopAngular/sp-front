@@ -419,7 +419,6 @@ export class HttpService {
         // console.log('getIdToken');
 
         if (isDemoLogin(googleToken)) {
-          // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
         } else {
           // console.log(googleToken);
@@ -431,7 +430,6 @@ export class HttpService {
             if (!res) {
              throw new LoginServerError('Incorrect Login or password');
             }
-            window.waitForAppLoaded(true);
             this.loginService.setAuthenticated();
           }),
           catchError(err => {
@@ -452,7 +450,6 @@ export class HttpService {
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-    // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
 
