@@ -203,7 +203,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.userList = [];
       }),
       tap(() => {
-        this.showDisabledChip = !this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day');
+        this.showDisabledChip = !this.http.getSchool().launch_date;
       }),
       switchMap(() => {
         return this.adminService.getCountAccountsRequest().pipe(take(1));

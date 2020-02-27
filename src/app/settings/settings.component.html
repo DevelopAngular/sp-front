@@ -94,11 +94,11 @@
          (pointerCancelEvent)="hoveredSignout = false;"
     >Sign out</div>
     <div class="options" [style.color]="getColor(null, null)">
-      <span class="privacy"
+      <span class="option"
             appCrossPointerEventTarget
             (pointerClickEvent)="dialogRef.close('privacy')"
       >Privacy</span>
-      <span class="privacy"
+      <span class="option"
             appCrossPointerEventTarget
             (pointerClickEvent)="dialogRef.close('terms')"
       >Terms</span>

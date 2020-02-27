@@ -169,8 +169,7 @@ export class GoogleLoginService {
     this.logout();
   }
 
-  simpleSignOn() {
-    window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+  simpleSignOn(code: string) {
   }
 
   /**
