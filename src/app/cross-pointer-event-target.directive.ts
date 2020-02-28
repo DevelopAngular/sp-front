@@ -21,13 +21,14 @@ export class CrossPointerEventTargetDirective implements OnInit {
     if ('ontouchend' in document.documentElement) {
       this.renderer2.listen(target, 'touchend', (evt: TouchEvent) => {
         console.log('touchend', evt);
-        const rect = target.getBoundingClientRect();
+        const rect = (evt.target as HTMLElement).getBoundingClientRect();
         const singleTouch = evt.changedTouches[0];
         const allowTouch = {
           x: singleTouch.clientX >= rect.left && singleTouch.clientX <= rect.right,
           y: singleTouch.clientY >= rect.top && singleTouch.clientY <= rect.bottom,
         };
-        if (Object.values(allowTouch).every(v => !!v)) {
+        if (evt.cancelable) {
+          evt.preventDefault();
           this.pointerClickEvent.emit(evt);
         } else {
           this.pointerCancelEvent.emit(null);
