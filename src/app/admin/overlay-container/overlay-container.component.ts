@@ -639,7 +639,11 @@ export class OverlayContainerComponent implements OnInit {
 
     if (this.currentPage === Pages.BulkEditRooms) {
       const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
-        return this.locationService.updateLocationRequest(room.id, room).pipe(
+        const data = {
+          ...room,
+          teachers: room.teachers.map(t => t.id)
+        };
+        return this.locationService.updateLocationRequest(room.id, data).pipe(
           filter(res => !!res));
       });
 
@@ -717,7 +721,8 @@ export class OverlayContainerComponent implements OnInit {
   bulkEditInFolder({roomData, rooms}) {
     this.oldFolderData = cloneDeep(this.folderData);
     this.folderData.roomsInFolder = differenceBy(this.folderData.roomsInFolder, rooms, 'id');
-    const editingRooms = this.editRooms(roomData, rooms);
+    let editingRooms = this.editRooms(roomData, rooms);
+    editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.folderData.roomsInFolder = [...editingRooms, ...this.folderData.roomsInFolder];
     if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
       if (!!this.pinnable) {
@@ -731,7 +736,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   bulkEditResult({roomData, rooms, buttonState}) {
-    const editingRooms = this.editRooms(roomData, rooms);
+    let editingRooms = this.editRooms(roomData, rooms);
+    editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.bulkEditData = {roomData, rooms: editingRooms};
     this.roomValidButtons.next(buttonState);
   }
@@ -780,15 +786,21 @@ export class OverlayContainerComponent implements OnInit {
     };
   }
 
-  checkAllowedAdvOpt(options: OptionState, rooms: Location[]) {
-    rooms.forEach(room => {
+  checkAllowedAdvOpt(rooms: Location[]) {
+    return rooms.map(room => {
       if (!room.teachers.length) {
-        if (options.now.state === 'Any teachers assigned' || options.now.state === 'All teachers assigned') {
-          if (options.now.data.all_teach_assign === 'This Room') {
-            options.now.data.all_teach_assign = 'Origin';
-          }
+        if ((room.request_mode === 'teacher_in_room' || room.request_mode === 'all_teachers_in_room') && (room.request_send_destination_teachers || room.request_send_origin_teachers)) {
+          room.request_mode = 'any_teacher';
+          room.request_send_destination_teachers = false;
+          room.request_send_origin_teachers = false;
+        }
+        if ((room.scheduling_request_mode === 'teacher_in_room' || room.scheduling_request_mode === 'all_teachers_in_room') && (room.scheduling_request_send_destination_teachers || room.scheduling_request_send_origin_teachers)) {
+          room.scheduling_request_mode = 'any_teacher';
+          room.scheduling_request_send_destination_teachers = false;
+          room.scheduling_request_send_origin_teachers = false;
         }
       }
+      return room;
     });
   }
 
