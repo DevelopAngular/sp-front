@@ -27,7 +27,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isLoaded = false;
   public showSpinner: boolean = false;
   public loggedWith: number;
-  public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+  // public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
   public loginData = {
     demoLoginEnabled: false,
     demoUsername: '',
@@ -147,7 +147,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.isGoogleLogin = true;
       } else if (auth_types.indexOf('gg4l') !== -1) {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
-      } else if (auth_types.indexOf('password') !== -1) {
+      } else
+        if (auth_types.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
         this.isStandardLogin = true;
       } else {
@@ -215,7 +216,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       .pipe(
         finalize(() => {
           this.showSpinner = false;
-        }),
+        })
       );
   }
 
