@@ -27,7 +27,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isLoaded = false;
   public showSpinner: boolean = false;
   public loggedWith: number;
-  public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+  // public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
   public loginData = {
     demoLoginEnabled: false,
     demoUsername: '',
