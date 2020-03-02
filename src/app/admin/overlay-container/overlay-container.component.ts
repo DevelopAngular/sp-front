@@ -722,7 +722,7 @@ export class OverlayContainerComponent implements OnInit {
     this.oldFolderData = cloneDeep(this.folderData);
     this.folderData.roomsInFolder = differenceBy(this.folderData.roomsInFolder, rooms, 'id');
     let editingRooms = this.editRooms(roomData, rooms);
-    editingRooms = this.checkAllowedAdvOpt(editingRooms);
+    // editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.folderData.roomsInFolder = [...editingRooms, ...this.folderData.roomsInFolder];
     if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
       if (!!this.pinnable) {
@@ -737,7 +737,7 @@ export class OverlayContainerComponent implements OnInit {
 
   bulkEditResult({roomData, rooms, buttonState}) {
     let editingRooms = this.editRooms(roomData, rooms);
-    editingRooms = this.checkAllowedAdvOpt(editingRooms);
+    // editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.bulkEditData = {roomData, rooms: editingRooms};
     this.roomValidButtons.next(buttonState);
   }
