@@ -35,6 +35,7 @@ function listenSysLight(evt: MediaQueryListEvent) {
     this.isEnabled$.next(false);
   }
 }
+
 function listenSysDark(evt: MediaQueryListEvent) {
   if (evt.matches) {
     this.isEnabled$.next(true);

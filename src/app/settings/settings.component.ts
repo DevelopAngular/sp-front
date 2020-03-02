@@ -4,7 +4,7 @@ import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {RELEASE_NAME} from '../../build-info';
+import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
@@ -18,6 +18,7 @@ export interface Setting {
   icon: string;
   action: string | Function;
   title: string;
+  tooltip?: string;
 }
 
 @Component({
@@ -43,6 +44,7 @@ export class SettingsComponent implements OnInit {
   hoveredColor: string;
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
+  currentBuildTime = BUILD_DATE;
 
   constructor(
       public dialog: MatDialog,
@@ -224,7 +226,8 @@ export class SettingsComponent implements OnInit {
       'background': '#fc7303',
       'icon': 'Bug',
       'action': 'bug',
-      'title': 'Bug Report'
+      'title': 'Bug Report',
+      'tooltip': BUILD_DATE,
     });
   }
 }

@@ -13,6 +13,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {of, throwError, BehaviorSubject, Observable, interval, ReplaySubject} from 'rxjs';
+import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
@@ -64,7 +65,9 @@ function isSchoolInArray(id: string|number, schools: School[]) {
 function makeConfig(config: Config, access_token: string, school: School, effectiveUserId): Config & { responseType: 'json' } {
 
   const headers: any = {
-    'Authorization': 'Bearer ' + access_token
+    'Authorization': 'Bearer ' + access_token,
+    'build-release-name': RELEASE_NAME,
+    'build-date': BUILD_DATE,
   };
 
   if (school) {
@@ -206,13 +209,9 @@ export class HttpService {
                   config.append('client_id', server.client_id);
                   config.append('grant_type', 'refresh_token');
                   config.append('token', auth.refresh_token);
-                  // config.append('username', user.username);
-                  // config.append('password', user.password);
-                  // console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
                   map((data: any) => {
-                    // console.log('Auth data : ', data);
                     // don't use TimeService for auth because auth is required for time service
                     // to be useful
                     data['expires'] = new Date(new Date() + data['expires_in']);
@@ -257,7 +256,7 @@ export class HttpService {
     return this.accessTokenSubject.pipe(filter(e => !!e));
   }
 
-  private getLoginServers(data: FormData): Observable<LoginServer> {
+  private getLoginServers(data: FormData, gg4l: string = ''): Observable<LoginServer> {
     const preferredEnvironment = environment.preferEnvironment;
 
     if (preferredEnvironment && typeof preferredEnvironment === 'object') {
@@ -280,7 +279,7 @@ export class HttpService {
         }));
     }
 
-    return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
+    return this.http.post('https://smartpass.app/api/discovery/find' + (gg4l ? `/gg4l` : ''), data).pipe(
       switchMap(servers => {
         return this.pwaStorage.setItem('servers', servers)
           .pipe(mapTo(servers));
@@ -407,6 +406,40 @@ export class HttpService {
     }));
   }
 
+  loginGG4L(code: string): Observable<AuthContext> {
+
+    const c = new FormData();
+    c.append('code', code);
+    c.append('provider', 'gg4l-sso');
+    c.append('platform_type', 'web');
+
+    return this.getLoginServers(c, code).pipe(flatMap(server => {
+      if (server === null) {
+        return throwError(new LoginServerError('No login server!'));
+      }
+
+      const config = new FormData();
+
+      config.append('client_id', server.client_id);
+      config.append('provider', 'gg4l-sso');
+      config.append('code', code);
+
+      return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
+        map((data: any) => {
+          // don't use TimeService for auth because auth is required for time service
+          // to be useful
+          data['expires'] = new Date(new Date() + data['expires_in']);
+
+          ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+          const auth = data as ServerAuth;
+
+          return {auth: auth, server: server} as AuthContext;
+        }));
+
+    }));
+  }
+
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
     // console.log('fetchServerAuth');
     return this.loginService.getIdToken().pipe(
@@ -416,7 +449,6 @@ export class HttpService {
         // console.log('getIdToken');
 
         if (isDemoLogin(googleToken)) {
-          // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
         } else {
           // console.log(googleToken);
@@ -428,7 +460,6 @@ export class HttpService {
             if (!res) {
              throw new LoginServerError('Incorrect Login or password');
             }
-            window.waitForAppLoaded(true);
             this.loginService.setAuthenticated();
           }),
           catchError(err => {
@@ -449,7 +480,6 @@ export class HttpService {
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-    // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
 

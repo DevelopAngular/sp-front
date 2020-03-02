@@ -3,9 +3,11 @@
   *ngIf="!dismiss && !hasNotifyPermission && !isSafari"
   [@HideNotificationBtn]
   [@pressState]="buttonState"
-  (mousedown)="buttonDown = true"
-  (mouseup)="buttonDown = false"
-  (click)="onClick()"
+  appCrossPointerEventTarget
+  (pointerClickEvent)="buttonDown = false; onClick()"
+  (pointerDownEvent)="buttonDown = true"
+  (pointerCancelEvent)="buttonDown = false"
+  (mouseleave)="buttonDown = false"
 >
     <img class="notifications-btn__cancel" src="./assets/Close.svg" alt="remove notification btn" (click)="dismissClick()">
     <div class="notifications-btn__content">

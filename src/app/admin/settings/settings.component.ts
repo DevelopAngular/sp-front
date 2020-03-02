@@ -9,6 +9,7 @@ import {combineLatest, Subject} from 'rxjs';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {takeUntil} from 'rxjs/operators';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
+import {DeviceDetection} from '../../device-detection.helper';
 
 @Component({
   selector: 'app-settings',
@@ -139,7 +140,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (this.dialogRef) {
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
       const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-      const top = rect.top - (!this.isSwitchOption ? 370 : 410);
+      const top = rect.top - (!this.isSwitchOption ? 370 : (DeviceDetection.isSafari() ? 450 : 410));
       matDialogConfig.position = {left: `${rect.left - 130}px`, top: `${top}px`};
       this.dialogRef.updatePosition(matDialogConfig.position);
     }

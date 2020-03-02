@@ -187,6 +187,29 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     return this.pts;
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
+  get isKioskMode() {
+    return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get isSafari() {
+    return DeviceDetection.isSafari();
+  }
+
+  get flexDirection() {
+    let direction = 'row';
+    if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
+    if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
+    return direction;
+  }
+
+  get notificationBadge$() {
+    return this.navbarData.notificationBadge$;
+  }
+
   ngOnInit() {
     this.underlinePosition();
     this.shortcutsService.onPressKeyEvent$
@@ -378,11 +401,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   hasRoles(roles: string[]) {
-    if (this.user.isAssistant()) {
-      return roles.every((_role) => this.effectiveUser.roles.includes(_role));
-    } else {
-      return roles.every((_role) => this.user.roles.includes(_role));
-    }
+    const userRoles = roles.reduce((acc, curr, index) => {
+      return {...acc, [curr]: index};
+    }, {});
+      return this.user.roles.find(role => userRoles[role]);
   }
 
   buttonVisibility(button) {
@@ -558,10 +580,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     // this.navbarElementsService.navbarRef$.next(this.navbar);
   }
 
-  get notificationBadge$() {
-    return this.navbarData.notificationBadge$;
-  }
-
   ngOnDestroy(): void {
     this.destroyer$.next();
     this.destroyer$.complete();
@@ -581,25 +599,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     } else {
       this.rendered.setStyle(tab, 'webkitTransform', 'unset');
     }
-  }
-
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
-  }
-
-  get isKioskMode() {
-    return !!this.kioskMode.currentRoom$.value;
-  }
-
-  get isSafari() {
-    return DeviceDetection.isSafari();
-  }
-
-  get flexDirection() {
-    let direction = 'row';
-    if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
-    if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
-    return direction;
   }
 
   changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {

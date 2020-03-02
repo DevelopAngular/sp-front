@@ -64,6 +64,7 @@
                         : setting.background: 'none'"
         >
           <img class="setting-icon"
+               [title]="setting.tooltip"
                [src]="i === 2
                 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background)
                   ? './assets/Glasses (Navy).svg'
@@ -93,11 +94,11 @@
          (pointerCancelEvent)="hoveredSignout = false;"
     >Sign out</div>
     <div class="options" [style.color]="getColor(null, null)">
-      <span class="privacy"
+      <span class="option"
             appCrossPointerEventTarget
             (pointerClickEvent)="dialogRef.close('privacy')"
       >Privacy</span>
-      <span class="privacy"
+      <span class="option"
             appCrossPointerEventTarget
             (pointerClickEvent)="dialogRef.close('terms')"
       >Terms</span>
