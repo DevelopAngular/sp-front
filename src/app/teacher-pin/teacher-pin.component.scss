@@ -7,7 +7,7 @@
 
   .header {
     height: 70px;
-    background-color: $jade;
+    background-color: #12C29E;
     position: relative;
     display: flex;
     align-items: center;
@@ -39,6 +39,10 @@
         align-items: center;
         font-size: 16px;
         color: $navy;
+
+        .label {
+          font-weight: bold;
+        }
       }
       .info {
         font-size: 14px;
@@ -60,6 +64,7 @@
       .text {
         margin: 10px 0;
         color: $navy;
+        font-weight: bold;
       }
 
       .pinnable-wrapper {

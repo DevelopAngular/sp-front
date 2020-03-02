@@ -47,8 +47,8 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
               const currentElem = this.circles.find(c => c.id === this.pin.length);
               currentElem.pressed = true;
             }
-            if (this.pin.length === 4) {
-              return this.requestService.acceptRequest(this.requestId, {pin: this.pin})
+            if (this.pin.length >= 4) {
+              return this.requestService.acceptRequest(this.requestId, {teacher_pin: this.pin})
                 .pipe(
                   mapTo(true),
                   catchError(error => {

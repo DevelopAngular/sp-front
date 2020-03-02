@@ -56,7 +56,7 @@
              [style.background]="
               hovered && hoveredColor === setting.background
               ?
-                i === 2
+                setting.action === 'appearance'
                   ?
                   (darkTheme.isEnabled$.value
                     ?
@@ -65,18 +65,18 @@
         >
           <img class="setting-icon"
                [title]="setting.tooltip"
-               [src]="i === 2
+               [src]="setting.action === 'appearance'
                 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background)
                   ? './assets/Glasses (Navy).svg'
                     : getIcon(setting.icon, setting, hovered, hoveredColor))
                       : (getIcon(setting.icon, setting, hovered, hoveredColor)) | resolveAsset" alt="SET">
           <div class="setting-title"
-               [style.color]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
+               [style.color]="setting.action === 'appearance' ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
           > {{setting.title}} </div>
         </div>
         <mat-divider class="divider"
                      [style.border-top-color]="darkTheme.isEnabled$.value ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)'"
-                     *ngIf="i === 2 || i === 6 || (i === 2 && !!this.kioskMode.currentRoom$.value)">
+                     *ngIf="setting.action === 'appearance' || setting.action === 'bug' || (setting.action === 'appearance' && !!this.kioskMode.currentRoom$.value)">
         </mat-divider>
       </div>
     </div>

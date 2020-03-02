@@ -115,14 +115,15 @@
                     <img style="margin-right: 10px" width="18" height="18" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="Lock">
                     Enter Teacher Pin
                   </div>
-                    <div class="description-container" #title>
-                      <div class="description-title" #desc>
-                        Pass Request sent to:
-                        <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                  <div class="description-container" #title>
+                    <div class="description-title" #desc>
+                      Pass Request sent to:
+                      <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
                         {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
                       </span>
-                      </div>
                     </div>
+                    <div class="shadow"></div>
+                  </div>
                 </div>
               </app-card-button>
             </div>

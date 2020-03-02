@@ -6,7 +6,7 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';

@@ -14,10 +14,6 @@
   }
 }
 
-mat-divider {
-  margin-top: 7px;
-}
-
 .request-card-wrapper {
     width: 335px;
     border-radius: 14px;
@@ -297,14 +293,25 @@ mat-divider {
   overflow: hidden;
   z-index: 2;
   height: 30px;
-  width: 75%;
+  width: 92%;
+  //box-shadow: -5px 0px 5px 0px rgba(54, 50, 50, 0.1) inset;
 
   .description-title {
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
+    margin-left: 15px;
+
+    //text-overflow: ellipsis;
     position: absolute;
+
+
+  }
+  .shadow {
+    position: absolute;
+    width: 1px;
+    right: 0;
+    box-shadow: -35px 0px 24px 0px white;
   }
 }
 

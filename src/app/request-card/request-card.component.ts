@@ -260,7 +260,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               'duration' : this.request.duration,
               'travel_type' : this.request.travel_type
           };
-         // console.log('this invitation =>', invitation);
+
           this.requestService.createInvitation(invitation).pipe(
             takeUntil(this.destroy$),
             switchMap(() => {
@@ -580,7 +580,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     const targetWidth = target.getBoundingClientRect().width;
     const containerWidth = container.getBoundingClientRect().width;
 
-    let margin = 0;
+    let margin = 15;
     interval(35)
       .pipe(
         takeUntil(this.hoverDestroyer$)
@@ -594,7 +594,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   onLeave(target: HTMLElement) {
-    target.style.marginLeft = '0px';
+    target.style.marginLeft = '15px';
     target.style.transition = `margin-left .4s ease`;
     target.style.width = `100%`;
 

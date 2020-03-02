@@ -173,7 +173,7 @@ export class SettingsComponent implements OnInit {
     if (this.isStaff) {
       this.settings.push({
         'hidden': !!this.kioskMode.currentRoom$.value,
-        'background': '#00B476',
+        'background': '#12C29E',
         'icon': 'Lock',
         'action': 'myPin',
         'title': 'My Pin'
