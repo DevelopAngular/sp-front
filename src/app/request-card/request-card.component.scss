@@ -291,27 +291,25 @@
 .description-container {
   position: relative;
   overflow: hidden;
+  display: flex;
   z-index: 2;
   height: 30px;
   width: 92%;
   //box-shadow: -5px 0px 5px 0px rgba(54, 50, 50, 0.1) inset;
 
   .description-title {
-    width: 100%;
+    width: auto;
     overflow: hidden;
     white-space: nowrap;
-    margin-left: 15px;
-
-    //text-overflow: ellipsis;
+    display: flex;
     position: absolute;
-
-
   }
   .shadow {
     position: absolute;
-    width: 1px;
+    width: 100%;
     right: 0;
-    box-shadow: -35px 0px 24px 0px white;
+    z-index: 100;
+    //box-shadow: -10px 0px 10px 0px white;
   }
 }
 
@@ -328,7 +326,6 @@
     padding-top: 20px;
     overflow: auto;
     overflow-wrap: break-word;
-
 }
 
 .student-with-edit{

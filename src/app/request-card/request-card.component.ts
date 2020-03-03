@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy} from '@angular/core';
+import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy, Renderer2} from '@angular/core';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { Util } from '../../Util';
@@ -68,6 +68,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   hoverDestroyer$: Subject<any>;
 
   activeTeacherPin: boolean;
+  solidColorRgba: string;
+  removeShadow: boolean;
   destroy$: Subject<any> = new Subject<any>();
 
 
@@ -81,7 +83,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
       public screenService: ScreenService,
-      private shortcutsService: KeyboardShortcutsService
+      private shortcutsService: KeyboardShortcutsService,
+      private renderer: Renderer2
   ) {}
 
   get invalidDate() {
@@ -147,6 +150,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       });
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
+    this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[1], 60);
   }
 
   ngOnDestroy(): void {
@@ -580,7 +584,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     const targetWidth = target.getBoundingClientRect().width;
     const containerWidth = container.getBoundingClientRect().width;
 
-    let margin = 15;
+    let margin = 0;
     interval(35)
       .pipe(
         takeUntil(this.hoverDestroyer$)
@@ -589,15 +593,17 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         if ((targetWidth - margin) > containerWidth) {
           target.style.marginLeft = `-${margin}px`;
           margin++;
+        } else {
+          this.removeShadow = true;
         }
       });
   }
 
   onLeave(target: HTMLElement) {
-    target.style.marginLeft = '15px';
+    target.style.marginLeft = this.filteredTeachers.length > 1 ? '0px' : '15px';
     target.style.transition = `margin-left .4s ease`;
-    target.style.width = `100%`;
-
+    target.style.width = `auto`;
+    this.removeShadow = false;
     this.hoverDestroyer$.next();
     this.hoverDestroyer$.complete();
   }

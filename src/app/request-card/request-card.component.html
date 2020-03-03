@@ -115,15 +115,16 @@
                     <img style="margin-right: 10px" width="18" height="18" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="Lock">
                     Enter Teacher Pin
                   </div>
-                  <div class="description-container" #title>
-                    <div class="description-title" #desc>
-                      Pass Request sent to:
-                      <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
-                        {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
-                      </span>
+                    <div class="description-container" #title>
+<!--                      <span style="position: absolute; left: 0;" [ngStyle]="{'box-shadow': '0px 0px 17px 20px ' + solidColorRgba}"></span>-->
+                        <div class="description-title" #desc [style.margin-left]="filteredTeachers.length > 1 ? '0px' : '15px'">
+                          Pass Request sent to:
+                          <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                            {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
+                          </span>
+                        </div>
+                      <span *ngIf="!removeShadow" style="position: absolute; right: 0;" [ngStyle]="{'box-shadow': '0px 0px 17px 20px ' + solidColorRgba}"></span>
                     </div>
-                    <div class="shadow"></div>
-                  </div>
                 </div>
               </app-card-button>
             </div>
@@ -133,8 +134,8 @@
               <div class="request-description-text">
                 Pass Request sent to: <br>
                 <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
-                {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
-              </span>
+                  {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
+                </span>
               </div>
             </div>
           </ng-template>
