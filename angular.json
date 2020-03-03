@@ -47,6 +47,14 @@
                 }
               ]
             },
+            "proxy": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.proxy.ts"
+                }
+              ]
+            },
             "staging": {
               "optimization": true,
               "outputHashing": "all",
@@ -95,6 +103,9 @@
           "configurations": {
             "local": {
               "browserTarget": "hallpass:build:local"
+            },
+            "proxy": {
+              "browserTarget": "hallpass:build:proxy"
             },
             "staging": {
               "browserTarget": "hallpass:build:staging"

@@ -27,7 +27,7 @@ export class CrossPointerEventTargetDirective implements OnInit {
           x: singleTouch.clientX >= rect.left && singleTouch.clientX <= rect.right,
           y: singleTouch.clientY >= rect.top && singleTouch.clientY <= rect.bottom,
         };
-        if (evt.cancelable) {
+        if (evt.cancelable && Object.values(allowTouch).every(v => !!v)) {
           evt.preventDefault();
           this.pointerClickEvent.emit(evt);
         } else {
