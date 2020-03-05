@@ -2,6 +2,7 @@
   "name": "SmartPass",
   "short_name": "SmartPass",
   "display": "standalone",
+  "orientation":  "portrait",
   "scope": "/app/",
   "start_url": "/app/",
   "icons": [

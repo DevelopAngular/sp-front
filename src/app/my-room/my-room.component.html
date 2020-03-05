@@ -6,15 +6,15 @@
       </div>
       <div  *ngIf="isSearchBarClicked" [ngClass]="isIOSTablet ? 'ios-search-wrapper' : 'search-wrapper' ">
         <app-round-input
-          [minWidth]="'100%'"
-          [width]="'90%'"
+          [minWidth]="'95%'"
+          [width]="'95%'"
           [type]="'text'"
           [focused]="true"
           [backgroundColor]="'#F4F4F4'"
           [placeholder]="'Search'"
           [fieldIconPosition]="'left'"
           [closeIcon]="true"
-          [selectReset$] = "resetValue"
+          [selectReset$]="resetValue"
           [pending$]="searchPending$"
           (ontextupdate)="onSearch($event)"
         ></app-round-input>
@@ -61,7 +61,7 @@
         <div [ngClass]="isIOSTablet ? 'ios-date-display-mobile' : 'date-display-mobile'" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
       </div>
 
-      <div class="option-wrapper option-wrapper-calendar">
+      <div class="option-wrapper option-wrapper-calendar" *ngIf="!isSearchBarClicked">
         <app-icon-button [@calendarIconTrigger]='calendarIconState' [srcString]="'Calendar'" [size]="20" (clickEvent)="calendarClick()"></app-icon-button>
       </div>
 
