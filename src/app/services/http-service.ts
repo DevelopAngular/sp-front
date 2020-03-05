@@ -11,7 +11,7 @@ import {
   mapTo, distinctUntilChanged
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {Injectable, isDevMode} from '@angular/core';
 import {of, throwError, BehaviorSubject, Observable, interval, ReplaySubject} from 'rxjs';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
@@ -92,17 +92,19 @@ function makeConfig(config: Config, access_token: string, school: School, effect
 }
 
 function makeUrl(server: LoginServer, endpoint: string) {
+  let url: string;
+
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
-    return endpoint;
+    url = endpoint;
   } else {
-    // if (!environment.production) {
-    //   const proxyPath = new URL(server.api_root).pathname;
-    //   return (proxyPath + endpoint) as string;
-    // } else {
-    //   return server.api_root + endpoint;
-    // }
-    return server.api_root + endpoint;
+    if (/(proxy)/.test(environment.buildType)) {
+      const proxyPath = new URL(server.api_root).pathname;
+      url = proxyPath + endpoint;
+    } else {
+      url =  server.api_root + endpoint;
+    }
   }
+  return url;
 }
 
 export interface LoginServer {
@@ -279,7 +281,9 @@ export class HttpService {
         }));
     }
 
-    return this.http.post('https://smartpass.app/api/discovery/find' + (gg4l ? `/gg4l` : ''), data).pipe(
+    const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/find' : 'https://smartpass.app/api/discovery/find';
+
+    return this.http.post( discovery + (gg4l ? `/gg4l` : ''), data).pipe(
       switchMap(servers => {
         return this.pwaStorage.setItem('servers', servers)
           .pipe(mapTo(servers));
