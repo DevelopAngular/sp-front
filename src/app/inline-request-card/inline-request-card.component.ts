@@ -13,6 +13,7 @@ import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
+import {StorageService} from '../services/storage.service';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -32,6 +33,8 @@ export class InlineRequestCardComponent implements OnInit {
   cancelEditClick: boolean;
   header: any;
   options = [];
+  solidColorRgba: string;
+  removeShadow: boolean;
 
   hoverDestroyer$: Subject<any>;
 
@@ -44,7 +47,8 @@ export class InlineRequestCardComponent implements OnInit {
       private formService: CreateFormService,
       private screenService: ScreenService,
       private renderer: Renderer2,
-      private passesService: HallPassesService
+      private passesService: HallPassesService,
+      private storage: StorageService
   ) { }
 
   get hasDivider() {
@@ -77,6 +81,9 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.request) {
+      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[1], 60);
+    }
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.passesService.isOpenPassModal$.subscribe(res => {
       this.activeTeacherPin = !res;
@@ -170,20 +177,23 @@ export class InlineRequestCardComponent implements OnInit {
         if ((targetWidth - margin) > containerWidth) {
           target.style.marginLeft = `-${margin}px`;
           margin++;
+        } else {
+          this.removeShadow = true;
         }
       });
   }
 
   onLeave(target: HTMLElement) {
-    target.style.marginLeft = '0px';
+    target.style.marginLeft = this.filteredTeachers.length > 1 ? '0px' : '15px';
     target.style.transition = `margin-left .4s ease`;
-    target.style.width = `100%`;
+    target.style.width = `auto`;
+    this.removeShadow = false;
 
     this.hoverDestroyer$.next();
     this.hoverDestroyer$.complete();
   }
 
-  genOption(display, color, action){
+  genOption(display, color, action) {
     return {display: display, color: color, action: action}
   }
 
@@ -199,6 +209,11 @@ export class InlineRequestCardComponent implements OnInit {
     if (action === 'delete') {
       this.requestService.cancelRequest(this.request.id).subscribe((data) => {
         console.log('[Request Canceled]: ', data);
+        const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
+        if (storageData && storageData[this.request.id]) {
+          delete storageData[this.request.id];
+          this.storage.setItem('pinAttempts', JSON.stringify({...storageData}));
+        }
       });
     }
     this.closeMenu();

@@ -123,7 +123,7 @@
                             {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
                           </span>
                         </div>
-                      <span *ngIf="!removeShadow" style="position: absolute; right: 0;" [ngStyle]="{'box-shadow': '0px 0px 17px 20px ' + solidColorRgba}"></span>
+                      <span *ngIf="!removeShadow && filteredTeachers.length > 1" style="position: absolute; right: 0;" [ngStyle]="{'box-shadow': '0px 0px 17px 20px ' + solidColorRgba}"></span>
                     </div>
                 </div>
               </app-card-button>

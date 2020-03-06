@@ -16,6 +16,10 @@
     .back-button {
       position: absolute;
       left: 20px;
+
+      .cancel {
+        color: #ffffFF;
+      }
     }
 
     .title {
@@ -24,6 +28,11 @@
       font-weight: bold;
       display: flex;
       align-items: center;
+    }
+
+    .save-button {
+      position: absolute;
+      right: 20px;
     }
   }
 
@@ -60,6 +69,7 @@
 
     .bottom-block {
       padding: 0 30px;
+      margin-top: 12px;
 
       .text {
         margin: 10px 0;
@@ -97,7 +107,6 @@
 
   mat-divider {
     background-color: white;
-    width: 291px;
     opacity: 0.4;
   }
 

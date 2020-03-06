@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="header">
     <div class="back-button">
-      <app-icon-button
+      <app-icon-button *ngIf="!(pinData$ | async)"
         [srcString]="'Back Button'"
         (clickEvent)="close()"
         [size]="28"
@@ -9,11 +9,20 @@
         [blueWhite]="true"
         [hasShadow]="false"
       ></app-icon-button>
+      <div class="cancel" appCrossPointerEventTarget (pointerClickEvent)="close()" *ngIf="!!(pinData$ | async)">Cancel</div>
     </div>
     <div class="title">
       <img [src]="'./assets/Lock (White).svg' | resolveAsset" [width]="23" height="23" alt="Lock">
       <span style="margin-left: 12px">My Pin</span>
     </div>
+    <app-gradient-button
+      *ngIf="!!(pinData$ | async) && form.valid"
+      class="save-button"
+      appCrossPointerEventTarget
+      (pointerClickEvent)="save()"
+    >
+      Save
+    </app-gradient-button>
   </div>
   <div class="content">
     <div class="top-block">
@@ -23,6 +32,7 @@
           [width]="'65px'"
           [input_value]="userPin$ | async"
           [controlName]="form.get('pin')"
+          [input_type]="'number'"
           [formGroup]="form"
           [isErrorIcon]="false"
         ></app-input>

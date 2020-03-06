@@ -476,15 +476,14 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           backdropClass: 'custom-backdrop',
         });
 
-        teachPinDialog.afterClosed()
-          .pipe(
-            mergeAll(),
-            filter(res => !!res),
-            switchMap(data => {
-              debugger;
-              return this.userService.updateUserRequest(this.user, data);
-            })
-          ).subscribe();
+        // teachPinDialog.afterClosed()
+        //   .pipe(
+        //     mergeAll(),
+        //     filter(res => !!res),
+        //     switchMap(data => {
+        //       return this.userService.updateUserRequest(this.user, data);
+        //     })
+        //   ).subscribe();
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
               panelClass: 'form-dialog-container',

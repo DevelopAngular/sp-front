@@ -26,7 +26,7 @@ export class TeacherPinComponent implements OnInit {
     return this.userPin$.pipe(
       take(1),
       switchMap(pin => {
-        if (this.form.valid && pin !== this.form.get('pin').value) {
+        if (pin !== this.form.get('pin').value) {
           return of(this.form.value);
         } else {
           return of(null);
@@ -41,17 +41,25 @@ export class TeacherPinComponent implements OnInit {
     this.form = new FormGroup({
       pin: new FormControl('', [
         Validators.required,
-        Validators.minLength(4)
+        Validators.minLength(4),
+        Validators.pattern('^[0-9]*?[0-9]+$'),
       ])
     });
+  }
 
-    this.dialogRef.backdropClick().subscribe(res => {
+  save() {
+    this.user$.pipe(
+      take(1),
+      switchMap(user => {
+        return this.userService.updateUserRequest(user, this.form.value);
+      })
+    ).subscribe(() => {
       this.close();
     });
   }
 
   close() {
-    this.dialogRef.close(this.pinData$);
+    this.dialogRef.close();
   }
 
 }

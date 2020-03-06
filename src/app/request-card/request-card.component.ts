@@ -24,6 +24,7 @@ import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {StorageService} from '../services/storage.service';
 
 @Component({
   selector: 'app-request-card',
@@ -84,7 +85,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       private createFormService: CreateFormService,
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
-      private renderer: Renderer2
+      private storage: StorageService
   ) {}
 
   get invalidDate() {
@@ -150,7 +151,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       });
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
-    this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[1], 60);
+    if (this.isModal) {
+      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[1], 60);
+    }
   }
 
   ngOnDestroy(): void {
@@ -506,6 +509,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       this.requestService.cancelRequest(this.request.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => {
+          const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
+          if (storageData && storageData[this.request.id]) {
+            delete storageData[this.request.id];
+            this.storage.setItem('pinAttempts', JSON.stringify({...storageData}));
+          }
         this.dialogRef.close();
       });
     } else if (action === 'change_date') {
