@@ -282,7 +282,7 @@ export class HttpService {
     return servers$.pipe(
       map((servers: LoginResponse) => {
         if (servers.servers.length > 0) {
-          const server: LoginServer = servers.servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          const server: LoginServer = servers.servers.find(s => s.name === (preferredEnvironment as any)) || servers.servers[0];
 
           let gg4l_token: string;
 
