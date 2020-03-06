@@ -205,13 +205,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.error$.next('Couldn’t find that username or email');
       return false;
     } else if (this.isGoogleLogin) {
-
-      if (this.loginData.authType === 'google') {
-        this.initLogin();
-      } else if (this.loginData.authType === 'gg4l') {
-        this.loginSSO();
-      }
-
+      this.initLogin();
     } else if (this.isStandardLogin) {
       this.inputFocusNumber = 2;
       this.forceFocus$.next();

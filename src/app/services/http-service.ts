@@ -418,7 +418,7 @@ export class HttpService {
     c.append('provider', 'gg4l-sso');
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c, code).pipe(flatMap((response: LoginChoice) => {
+    return this.getLoginServers(c).pipe(flatMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
