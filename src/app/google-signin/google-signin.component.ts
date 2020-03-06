@@ -130,7 +130,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       debounceTime(500),
       switchMap(userName => {
-        return this.http.get<any>(`https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`);
+        const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
+        return this.http.get<any>(discovery);
       })
     ).subscribe(({auth_types}) => {
       if (!auth_types.length) {
