@@ -10,7 +10,7 @@ import { School } from '../models/School';
 import { AppState } from '../ngrx/app-state/app-state';
 import { getSchools } from '../ngrx/schools/actions';
 import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
-import { GoogleLoginService, isDemoLogin } from './google-login.service';
+import { GoogleLoginService, isDemoLogin, isGg4lLogin } from './google-login.service';
 import { StorageService } from './storage.service';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
@@ -120,6 +120,7 @@ export interface LoginChoice {
 export interface AuthContext {
   server: LoginServer;
   auth: ServerAuth;
+  gg4l_token?: string;
 }
 
 export interface SPError {
@@ -437,7 +438,7 @@ export class HttpService {
 
           const auth = data as ServerAuth;
 
-          return {auth: auth, server: server} as AuthContext;
+          return {auth: auth, server: server, gg4l_token: response.gg4l_token} as AuthContext;
         }));
 
     }));
@@ -454,6 +455,8 @@ export class HttpService {
         if (isDemoLogin(googleToken)) {
           // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
+        } else if (isGg4lLogin(googleToken)) {
+          authContext$ = this.loginGG4L(googleToken.gg4l_token);
         } else {
           // console.log(googleToken);
           authContext$ = this.loginGoogleAuth(googleToken);

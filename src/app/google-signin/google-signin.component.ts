@@ -2,7 +2,7 @@ import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
 import {BehaviorSubject, of, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {HttpService} from '../services/http-service';
+import {AuthContext, HttpService} from '../services/http-service';
 import {Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
 import {ActivatedRoute} from '@angular/router';
@@ -145,8 +145,15 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loginSSO() {
-    this.loginService.simpleSignOn();
+  loginSSO(code: string) {
+    // this.loginService.simpleSignOn(code);
+    return this.httpService.loginGG4L(code).pipe(
+      tap((auth: AuthContext) => {
+        if (auth.gg4l_token) {
+          this.loginService.updateAuth({ gg4l_token: auth.gg4l_token, type: 'gg4l-login'});
+        }
+      })
+    );
       // .then((res) => {
       //   console.log(res);
       // })
