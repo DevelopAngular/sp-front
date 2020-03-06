@@ -54,7 +54,9 @@ function isSchoolInArray(id: string | number, schools: School[]) {
 function makeConfig(config: Config, access_token: string, school: School, effectiveUserId): Config & { responseType: 'json' } {
 
   const headers: any = {
-    'Authorization': 'Bearer ' + access_token
+    'Authorization': 'Bearer ' + access_token,
+    'build-release-name': RELEASE_NAME,
+    'build-date': BUILD_DATE,
   };
 
   if (school) {
@@ -82,7 +84,7 @@ function makeUrl(server: LoginServer, endpoint: string) {
   let url: string;
 
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
-    return endpoint;
+    url = endpoint;
   } else {
     if (/(proxy)/.test(environment.buildType)) {
       const proxyPath = new URL(server.api_root).pathname;
@@ -453,7 +455,6 @@ export class HttpService {
         // console.log('getIdToken');
 
         if (isDemoLogin(googleToken)) {
-          // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
         } else if (isGg4lLogin(googleToken)) {
           authContext$ = this.loginGG4L(googleToken.gg4l_token);
@@ -467,7 +468,6 @@ export class HttpService {
             if (!res) {
               throw new LoginServerError('Incorrect Login or password');
             }
-            window.waitForAppLoaded(true);
             this.loginService.setAuthenticated();
           }),
           catchError(err => {
@@ -488,7 +488,6 @@ export class HttpService {
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-    // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
 

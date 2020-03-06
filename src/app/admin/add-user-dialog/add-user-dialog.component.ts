@@ -8,11 +8,12 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, map, mapTo, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
+import {AdminService} from '../../services/admin.service';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -69,6 +70,7 @@ export class AddUserDialogComponent implements OnInit {
     private userService: UserService,
     private sanitizer: DomSanitizer,
     private http: HttpService,
+    private adminService: AdminService,
     private router: Router
 
   ) {
@@ -106,11 +108,11 @@ export class AddUserDialogComponent implements OnInit {
       name: new FormControl('', [
           Validators.required,
       ]),
-      username: new FormControl('', [
+      addUsername: new FormControl('', [
         Validators.required,
         Validators.minLength(6)
       ], [this.uniqueEmailValidator.bind(this)]),
-      password: new FormControl('', [
+      addPassword: new FormControl('', [
         Validators.required,
         Validators.minLength(8)
       ]),
@@ -125,7 +127,7 @@ export class AddUserDialogComponent implements OnInit {
       }
       this.permissionsForm = new FormGroup(group);
       this.permissionsForm.valueChanges.subscribe((formValue) => {
-        console.log(formValue);
+        // console.log(formValue);
         this.permissionsFormEditState = true;
 
       });
@@ -142,9 +144,9 @@ export class AddUserDialogComponent implements OnInit {
   uniqueEmailValidator(control: FormControl) {
     return control.valueChanges
       .pipe(
-        take(1),
         distinctUntilChanged(),
-        debounceTime(300),
+        debounceTime(500),
+        take(1),
         switchMap(value => {
           return this.userService.checkUserEmail(value)
             .pipe(
@@ -253,53 +255,28 @@ export class AddUserDialogComponent implements OnInit {
           if (this.typeChoosen === this.accountTypes[0]) {
             return zip(
               ...this.selectedUsers
-                .map((user) => this.userService.addAccountToSchool(this.school.id, user, 'gsuite', rolesToDb))
+                .map((user) => this.userService.addAccountRequest(this.school.id, user, 'gsuite', rolesToDb, this.data.role))
             );
           } else if (this.typeChoosen === this.accountTypes[1]) {
 
             const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
             const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
 
-            if (regexpUsername.test(this.newAlternativeAccount.get('username').value)) {
+            if (regexpUsername.test(this.newAlternativeAccount.get('addUsername').value)) {
               const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
               if (role !== 'assistant') {
                 return this.userService
-                            .addAccountToSchool(this.school.id, data, 'username', rolesToDb);
+                            .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
               } else {
                 return this.userService
-                  .addAccountToSchool(this.school.id, data, 'username', rolesToDb)
-                  .pipe(
-                    switchMap(
-                      (assistant: User) => {
-                        return zip(
-                          ...this.assistantLike.behalfOf.map((teacher: User) => {
-                            return this.userService
-                              .addRepresentedUser(+assistant.id, teacher)
-                              .pipe(tap(console.log));
-                          })
-                        );
-                      }
-                    ),
-                  );
+                  .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role, this.assistantLike.behalfOf);
               }
-            } else if (regexpEmail.test(this.newAlternativeAccount.get('username').value)) {
+            } else if (regexpEmail.test(this.newAlternativeAccount.get('addUsername').value)) {
               const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
               if (role !== 'assistant') {
-               return this.userService.addAccountToSchool(this.school.id, data, 'email', rolesToDb);
+               return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
               } else {
-                return this.userService.addAccountToSchool(this.school.id, data, 'email', rolesToDb)
-                  .pipe(
-                    switchMap(
-                      (assistant: User) => {
-                        // console.log(assistant);
-                        return zip(
-                          ...this.assistantLike.behalfOf.map((teacher: User) => {
-                            return this.userService.addRepresentedUser(+assistant.id, teacher).pipe(tap(console.log));
-                          })
-                        );
-                      }
-                    ),
-                  );
+                return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role, this.assistantLike.behalfOf);
               }
             } else {
               throw new Error('Format Error');
@@ -323,7 +300,7 @@ export class AddUserDialogComponent implements OnInit {
       )
       .subscribe((res) => {
         this.pendingSubject.next(false);
-        this.dialogRef.close(true);
+        this.dialogRef.close(res);
         if (this.selectedRoles.length) {
           this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
         }
@@ -332,8 +309,8 @@ export class AddUserDialogComponent implements OnInit {
 
   buildUserDataToDB(control) {
     return {
-      email: control.username,
-      password: control.password,
+      email: control.addUsername,
+      password: control.addPassword,
       first_name: control.name.split(' ')[0],
       last_name: control.name.split(' ')[1] || '',
       display_name: control.name

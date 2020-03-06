@@ -66,12 +66,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:orientationchange', ['$event'])
   change(event) {
     if (DeviceDetection.isAndroid()) {
-      switch (window.screen.orientation.angle) {
-        case 90: {
-          // document.querySelector('body').style.transform = 'rotate(-90deg)';
-          // document.querySelector('body').style.width = '100%';
-        }
-      }
+      console.log('Rotation');
+      screen.orientation.lock('portrait-primary');
+      // switch (window.screen.orientation.angle) {
+      //   case 90: {
+      //
+      //   }
+      // }
     }
   }
 

@@ -4,6 +4,7 @@ import {TeachersStates} from '../nested-states/teachers/states';
 import {AssistantsStates} from '../nested-states/assistants/states';
 import {StudentsStates} from '../nested-states/students/states';
 import {CountAccountsState} from '../nested-states/count-accounts/state';
+import {User} from '../../../models/User';
 
 export interface RoleProps {
   role: string;
@@ -16,6 +17,8 @@ export interface PostRoleProps {
   user: any;
   userType: string;
   roles: string[];
+  role?: string;
+  behalf?: User[];
 }
 
 export interface IAccountsState {

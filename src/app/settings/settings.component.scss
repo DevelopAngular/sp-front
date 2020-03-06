@@ -11,127 +11,119 @@
   }
 }
 .settings-wrapper {
-    width: 244px;
-    //height: 382px;
-    position: relative;
-    border-radius: 10px;
+  width: 244px;
+  position: relative;
+  border-radius: 10px;
 
-    .top-arrow-container {
-        position: absolute;
-        top: -50px;
-        right: 26px;
-        margin: 0 auto;
-        width: 100px;
-        height: 50px;
-        overflow: hidden;
-        cursor: pointer;
-        .top-arrow {
-            position: absolute;
-            left: 0;
-            right: 0;
-            margin: 0 auto;
-            top: 35px;
-            width: 30px;
-            height: 30px;
-            background-color: #fff;
-            transform: rotate(45deg);
-            box-shadow: 0 3px 20px 0 rgba(0, 0, 0, 0.15);
-            cursor: default;
-        }
+  .top-arrow-container {
+    position: absolute;
+    top: -50px;
+    right: 26px;
+    margin: 0 auto;
+    width: 100px;
+    height: 50px;
+    overflow: hidden;
+    cursor: pointer;
+    .top-arrow {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      top: 35px;
+      width: 30px;
+      height: 30px;
+      background-color: #fff;
+      transform: rotate(45deg);
+      box-shadow: 0 3px 20px 0 rgba(0, 0, 0, 0.15);
+      cursor: default;
     }
+  }
 
-    .title {
-        padding: 20px 0 15px 25px;
-        font-size: 24px;
-        font-weight: bold;
-        color: #1F195E;
+  .title {
+    padding: 20px 0 15px 25px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #1F195E;
+  }
+
+  .settings-content {
+    .divider {
+      margin: 7px 0 7px 0;
     }
-
-    .settings-content {
-
-        .divider {
-          margin: 7px 0 7px 0;
-        }
-
-        .profile-switch {
-            .option {
-                display: flex;
-                align-items: center;
-                padding: 12px 0 12px 25px;
-                cursor: pointer;
-                position: relative;
-
-                .option-title {
-                    margin: 0 12px 0 12px;
-                    font-size: 14px;
-                  -webkit-user-select: none;
-                  -moz-user-select: none;
-                  -ms-user-select: none;
-                  user-select: none;
-                }
-
-                .switch-icon {
-                    width: 20px;
-                    height: 20px;
-                }
-                .arrow-icon {
-                    width: 9px;
-                    height: 15px;
-                    position: absolute;
-                    right: 15px;
-                }
-            }
-        }
-        .setting {
-            .content {
-                display: flex;
-                align-items: center;
-                padding: 12px 0 12px 0;
-                cursor: pointer;
-            }
-            .setting-icon {
-                width: 20px;
-                height: 20px;
-                margin-left: 25px;
-            }
-            .setting-title {
-                font-size: 15px;
-                margin-left: 15px;
-            }
-        }
-
-    }
-
-    .footer {
+    .profile-switch {
+      .option {
         display: flex;
-        flex-direction: column;
-        height: 76px;
-        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0 12px 25px;
+        cursor: pointer;
+        position: relative;
 
-        .sign-out {
-            padding: 12px 0 12px 25px;
-            color: #7F879D;
-            font-size: 15px;
-            cursor: pointer;
-
-            &:hover {
-                background-color: rgb(228, 235, 255);
-                color: #1F195E;
-            }
+        .option-title {
+          margin: 0 12px 0 12px;
+          font-size: 14px;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
         }
-        .options {
-            display: flex;
-            color: #7F879D;
-            font-size: 12px;
-            justify-content: center;
-            margin-bottom: 12px;
-            .privacy {
-                margin-left: 10px;
-                cursor: pointer;
-                &:hover {
-                  text-decoration: underline;
-                }
-            }
+        .switch-icon {
+          width: 20px;
+          height: 20px;
         }
+        .arrow-icon {
+          width: 9px;
+          height: 15px;
+          position: absolute;
+          right: 15px;
+        }
+      }
     }
+    .setting {
+      .content {
+        display: flex;
+        align-items: center;
+        padding: 12px 0 12px 0;
+        cursor: pointer;
+      }
+      .setting-icon {
+        width: 20px;
+        height: 20px;
+        margin-left: 25px;
+      }
+      .setting-title {
+        font-size: 15px;
+        margin-left: 15px;
+      }
+    }
+  }
+  .footer {
+    display: flex;
+    flex-direction: column;
+    height: 76px;
+    justify-content: space-between;
+    .sign-out {
+      padding: 12px 0 12px 25px;
+      color: #7F879D;
+      font-size: 15px;
+      cursor: pointer;
+      &:hover {
+        background-color: rgb(228, 235, 255);
+        color: #1F195E;
+      }
+    }
+    .options {
+      display: flex;
+      color: #7F879D;
+      font-size: 12px;
+      justify-content: center;
+      margin-bottom: 12px;
+      .option {
+        margin-left: 10px;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }

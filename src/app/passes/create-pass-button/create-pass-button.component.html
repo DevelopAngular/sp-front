@@ -6,7 +6,7 @@
     [ngClass]="{'disabled': disabled}"
     [@pressState]="buttonState"
     (mouseenter)="hovered = true"
-    (mouseleave)="hovered = false"
+    (mouseleave)="buttonDown = false; hovered = false"
 
     appCrossPointerEventTarget
     (pointerClickEvent)="buttonDown = false; buttonClick()"

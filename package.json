@@ -13,7 +13,8 @@
     "bundle-report": "webpack-bundle-analyzer dist/stats.json",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
     "ng-ci-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
-    "fcm": "concat ./dist/ngsw-worker.js ./dist/firebase-messaging-sw.js -o ./dist/combined-worker.js"
+    "fcm": "concat ./dist/ngsw-worker.js ./dist/firebase-messaging-sw.js -o ./dist/combined-worker.js",
+    "proxy": "ng serve --configuration=proxy --proxyConfig=src/proxy.conf.json"
   },
   "private": true,
   "dependencies": {

@@ -14,7 +14,7 @@
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
               <div class="count" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">
-                <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(countAccounts$ | async)}} accounts</div>
+                <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async).total_count}} accounts</div>
               </div>
             </div>
 
@@ -76,7 +76,7 @@
                 Add
               </app-gradient-button>
 
-              <div class="go-accounts" (click)="openTable = !openTable">
+              <div class="go-accounts" (click)="tableTrigger()">
                 <img
                   draggable="false"
                   width="16"
@@ -116,7 +116,7 @@
                     *ngFor="let button of accountsButtons"
                     [title]="button.title"
                     [leftIcon]="button.leftIcon"
-                    [subtitle]="getCountRole(button.role) + (getCountRole(button.role) > 1 || getCountRole(button.role) === 0 ? ' users' : ' user')"
+                    [subtitle]="(accounts$ | async)[button.role] + ((accounts$ | async)[button.role] > 1 || (accounts$ | async)[button.role] === 0 ? ' users' : ' user')"
                     [subtitleIcon]="button.subIcon"
                     [isBanner]="button.banner | async"
                     (onClick)="router.navigate(['/admin/accounts', button.param])"
@@ -134,7 +134,9 @@
       <app-data-table
               class="ds-my-10"
               [data]="userList"
+              [lazyData]="lazyUserList"
               [isCheckbox]="dataTableEditState"
+              (loadMoreAccounts)="loadMore($event)"
               [textColor]="'#7E879D'"
               [marginTopStickyHeader]="'147px'"
               [disallowHover]="!(dataTableEditState | async)"

@@ -92,7 +92,7 @@ export class AdminService {
 
   getCountAccountsRequest() {
     this.store.dispatch(getCountAccounts());
-    return this.countAccounts$;
+    return of(null);
   }
 
   getAdminAccounts() {

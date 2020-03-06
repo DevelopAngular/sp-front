@@ -93,7 +93,7 @@ export class GoogleLoginService {
 
     const savedAuth = this.storage.getItem(STORAGE_KEY);
     if (savedAuth) {
-      // console.log('Loading saved auth:', savedAuth);
+      console.log('Loading saved auth:', savedAuth);
       const auth: AuthResponse = JSON.parse(savedAuth);
       if (auth.id_token !== undefined || isDemoLogin(auth) || isGg4lLogin(auth)) {
         this.updateAuth(auth);
@@ -150,7 +150,6 @@ export class GoogleLoginService {
 
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
-      take(1),
       map(a => {
         return (isDemoLogin(a) || isGg4lLogin(a)) ? a : a.id_token;
       })
@@ -179,8 +178,7 @@ export class GoogleLoginService {
     this.logout();
   }
 
-  simpleSignOn() {
-    window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+  simpleSignOn(code: string) {
   }
 
   /**
