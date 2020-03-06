@@ -427,7 +427,7 @@ export class HttpService {
 
       config.append('client_id', server.client_id);
       config.append('provider', 'gg4l-sso');
-      config.append('code', response.gg4l_token || '');
+      config.append('token', response.gg4l_token || '');
 
       return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
         map((data: any) => {
