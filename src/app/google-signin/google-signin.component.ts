@@ -166,7 +166,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   loginSSO(code: string) {
     // this.loginService.simpleSignOn(code);
-    return this.httpService.loginGG4L(code);
+    return this.httpService.loginGG4L(code).pipe(
+      tap((auth: AuthContext) => {
+        if (auth.gg4l_token) {
+          this.loginService.updateAuth({ gg4l_token: auth.gg4l_token, type: 'gg4l-login'});
+        }
+      })
+    );
       // .then((res) => {
       //   console.log(res);
       // })
