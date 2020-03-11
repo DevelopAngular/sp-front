@@ -533,7 +533,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         });
       } else if (action === 'appearance') {
           this.dialog.open(SpAppearanceComponent, {
-            panelClass: 'form-dialog-container',
+            panelClass: 'sp-form-dialog',
           });
       }  else if (action === 'switch') {
         this.router.navigate(['admin']);
