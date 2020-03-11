@@ -272,7 +272,7 @@ export class HttpService {
     if (!navigator.onLine) {
       servers$ = this.pwaStorage.getItem('servers');
     } else {
-      const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/find' : 'https://smartpass.app/api/discovery/v2/find';
+      const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
 
       servers$ = this.http.post(discovery, data).pipe(
         switchMap((servers: LoginResponse) => {

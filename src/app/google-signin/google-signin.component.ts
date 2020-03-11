@@ -141,6 +141,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.showError = false;
         this.error$.next(null);
       }
+      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
       if (auth_types.indexOf('google') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
@@ -151,10 +152,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         if (auth_types.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
         this.isStandardLogin = true;
-        this.loginData.authType = 'password';
       } else {
         this.loginData.demoLoginEnabled = false;
-        this.loginData.authType = null;
       }
       this.disabledButton = false;
     });

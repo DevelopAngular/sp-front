@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public appLink: string;
   public titleText: string;
-  public isMobileDevice = false;
+  // public isMobileDevice = false;
   public trustedBackgroundUrl: SafeUrl;
   public pending$: Observable<boolean>;
 
@@ -60,6 +60,10 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
+  }
+
+  get isMobileDevice() {
+    return this.isAndroid || this.isIOSMobile;
   }
 
   ngOnInit() {
@@ -89,26 +93,23 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         this.notifService.initNotifications(true);
       }
 
-      // console.log(path);
-
-      const loadView = currentUser.isAdmin() ? 'admin' : 'main';
-
-      // if (path.length) {
-      //   this.router.navigate(path);
-      // } else {
+      if (this.isMobileDevice && currentUser.isAdmin() && currentUser.isTeacher()) {
+        this.router.navigate(['main']);
+      } else {
+        const loadView = currentUser.isAdmin() ? 'admin' : 'main';
         this.router.navigate([loadView]);
-      // }
+      }
       this.titleService.setTitle('SmartPass');
     });
 
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
 
     if (this.isIOSMobile) {
-      this.isMobileDevice = true;
+      // this.isMobileDevice = true;
       this.appLink = 'https://itunes.apple.com/us/app/smartpass-mobile/id1387337686?mt=8';
       this.titleText = 'Download SmartPass on the App Store to start making passes.';
     } else if (this.isAndroid) {
-      this.isMobileDevice = true;
+      // this.isMobileDevice = true;
       this.appLink = 'https://play.google.com/store/apps/details?id=app.smartpass.smartpass';
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
