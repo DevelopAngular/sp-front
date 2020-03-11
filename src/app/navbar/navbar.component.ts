@@ -472,18 +472,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this.router.navigate(['sign-out']);
       } else if (action === 'myPin') {
         const teachPinDialog = this.dialog.open(TeacherPinComponent, {
-          panelClass: 'form-dialog-container',
+          panelClass: 'sp-form-dialog',
           backdropClass: 'custom-backdrop',
         });
-
-        // teachPinDialog.afterClosed()
-        //   .pipe(
-        //     mergeAll(),
-        //     filter(res => !!res),
-        //     switchMap(data => {
-        //       return this.userService.updateUserRequest(this.user, data);
-        //     })
-        //   ).subscribe();
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
               panelClass: 'form-dialog-container',

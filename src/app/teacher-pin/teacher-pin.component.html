@@ -18,6 +18,8 @@
     <app-gradient-button
       *ngIf="!!(pinData$ | async) && form.valid"
       class="save-button"
+      [gradient]="'#FFFFFF, #FFFFFF'"
+      [textColor]="'#12C29E'"
       appCrossPointerEventTarget
       (pointerClickEvent)="save()"
     >
@@ -32,8 +34,9 @@
           [width]="'65px'"
           [input_value]="userPin$ | async"
           [controlName]="form.get('pin')"
-          [input_type]="'number'"
+          [input_type]="'text'"
           [formGroup]="form"
+          [pattern]="'[0-9]*'"
           [isErrorIcon]="false"
         ></app-input>
       </div>

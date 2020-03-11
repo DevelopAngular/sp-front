@@ -71,6 +71,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   activeTeacherPin: boolean;
   solidColorRgba: string;
   removeShadow: boolean;
+  leftTextShadow: boolean;
   destroy$: Subject<any> = new Subject<any>();
 
 
@@ -152,13 +153,20 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
     if (this.isModal) {
-      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[1], 60);
+      this.solidColorRgba = Util.convertHex(this.request.color_profile.solid_color, 60);
     }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  getGradient() {
+    if (this.request.gradient_color) {
+      const gradient: string[] = this.request.gradient_color.split(',');
+      return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
+    }
   }
 
   get studentName() {
@@ -598,6 +606,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         takeUntil(this.hoverDestroyer$)
       )
       .subscribe(() => {
+        if (margin > 0) {
+          this.leftTextShadow = true;
+        }
         if ((targetWidth - margin) > containerWidth) {
           target.style.marginLeft = `-${margin}px`;
           margin++;
@@ -612,6 +623,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     target.style.transition = `margin-left .4s ease`;
     target.style.width = `auto`;
     this.removeShadow = false;
+    this.leftTextShadow = false;
     this.hoverDestroyer$.next();
     this.hoverDestroyer$.complete();
   }
