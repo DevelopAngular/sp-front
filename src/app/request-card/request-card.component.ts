@@ -153,7 +153,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
     if (this.isModal) {
-      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[1], 60);
+      this.solidColorRgba = Util.convertHex(this.request.color_profile.solid_color, 100);
     }
   }
 
