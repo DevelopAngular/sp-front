@@ -19,13 +19,15 @@ export class GoogleAnalyticsService {
       if (event instanceof NavigationEnd) {
         if (event.urlAfterRedirects.includes('/school_signup?key') || event.urlAfterRedirects === '/' || event.urlAfterRedirects === '/admin/gettingstarted') {
           gtag('event', 'sign_in', {
-            'send_to': 'UA-119610218-1',
+            'send_to': 'public',
             'page_path': event.urlAfterRedirects,
+            'event_callback': function (key) {}
           });
         } else {
           gtag('event', 'other', {
-            'send_to': 'G-5NCCB9C2PJ',
+            'send_to': 'private',
             'page_path': event.urlAfterRedirects,
+            'event_callback': function (key) {}
           });
         }
       }
