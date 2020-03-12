@@ -142,6 +142,7 @@ class LoginServerError extends Error {
 export class HttpService {
 
   public errorToast$: ReplaySubject<SPError> = new ReplaySubject(1);
+  public schoolSignInRegisterText$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);

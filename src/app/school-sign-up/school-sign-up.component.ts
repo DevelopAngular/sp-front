@@ -304,6 +304,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         )
         .subscribe((onboard: any) => {
           if (onboard.school_registered) {
+            this.httpService.schoolSignInRegisterText$.next('Your school is already signed up!');
             this.router.navigate(['']);
           } else {
             this.school = school;
