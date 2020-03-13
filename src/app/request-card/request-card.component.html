@@ -116,8 +116,9 @@
                     Enter Teacher Pin
                   </div>
                     <div class="description-container" #title>
-                      <div class="shadow" [style.left]="0" *ngIf="leftTextShadow"
-                           ></div>
+
+                      <div class="shadow left-radius" [ngStyle]="{'box-shadow': '0px 0px 17px 10px ' + solidColorRgba2}" [style.background]="request.gradient_color.split(',')[1]" [style.left]="0" *ngIf="leftTextShadow"></div>
+
                         <div class="description-title" #desc [style.margin-left]="filteredTeachers.length > 1 ? '0px' : '15px'">
                           Pass Request sent to:
                           <span style="width: 5px"></span>
@@ -125,8 +126,9 @@
                             {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
                           </span>
                         </div>
-                      <div class="shadow" *ngIf="!removeShadow" [style.right]="0"
-                           ></div>
+
+                      <div class="shadow right-radius" [ngStyle]="{'box-shadow': '0px 0px 30px 20px ' + solidColorRgba}" [style.background]="request.gradient_color.split(',')[0]" *ngIf="!removeShadow" [style.right]="0"></div>
+
                     </div>
                 </div>
               </app-card-button>

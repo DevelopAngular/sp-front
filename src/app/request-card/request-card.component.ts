@@ -70,6 +70,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   activeTeacherPin: boolean;
   solidColorRgba: string;
+  solidColorRgba2: string;
   removeShadow: boolean;
   leftTextShadow: boolean;
   destroy$: Subject<any> = new Subject<any>();
@@ -153,7 +154,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
     if (this.isModal) {
-      this.solidColorRgba = Util.convertHex(this.request.color_profile.solid_color, 100);
+      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
+      this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
     }
   }
 

@@ -307,13 +307,25 @@
   .shadow {
     position: absolute;
     top: 2px;
-    //z-index: 1;
-    width: 20px;
-    background-color: rgba(255, 255, 255, 1);
-    mix-blend-mode: multiply;
-    filter: blur(5px);
-    //opacity: .4;
+    //width: 1px;
+    z-index: 100;
+    //background-color: rgba(255, 255, 255, .3);
+    //mix-blend-mode: soft-light;
+    //filter: blur(15px);
+    transform: rotate(45deg);
+    opacity: .6;
     height: 60%;
+  }
+
+  .left-radius {
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+  }
+
+  .right-radius {
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+    filter: blur(20px);
   }
 }
 
