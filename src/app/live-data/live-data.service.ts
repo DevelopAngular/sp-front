@@ -181,13 +181,15 @@ export class LiveDataService {
   private globalReload$ = new Subject();
 
   constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
-    this.http.currentSchool$.subscribe(() => {
+    this.http.currentSchool$.subscribe((value) => {
       setTimeout(() => {
         this.globalReload$.next(null);
       }, 5);
     });
 
-    this.globalReload$.subscribe(() => console.log('Global reload event'));
+    this.globalReload$.subscribe(() => {
+      console.log('Global reload event');
+    });
   }
 
   private watch<ModelType extends BaseModel, ExternalEventType>(config: WatchData<ModelType, ExternalEventType>):

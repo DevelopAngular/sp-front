@@ -43,6 +43,7 @@ import {NavbarElementsRefsService} from '../services/navbar-elements-refs.servic
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import { filter as _filter } from 'lodash';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 
 declare const window;
 
@@ -477,8 +478,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   settingsAction(action: string) {
       if (action === 'signout') {
-        // window.waitForAppLoaded();
         this.router.navigate(['sign-out']);
+      } else if (action === 'profile') {
+        this.dialog.open(MyProfileDialogComponent, {
+          panelClass: 'sp-form-dialog',
+        });
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
               panelClass: 'form-dialog-container',

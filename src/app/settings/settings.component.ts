@@ -171,6 +171,20 @@ export class SettingsComponent implements OnInit {
 
   initializeSettings() {
     this.settings.push({
+      'hidden': false,
+      'background': '#6651FF',
+      'icon': 'Username',
+      'action': 'profile',
+      'title': 'My Profile'
+    });
+    this.settings.push({
+      'hidden': false,
+      'background': '#134482',
+      'icon': 'Glasses',
+      'action': 'appearance',
+      'title': 'Appearance'
+    });
+    this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
       'background': '#EBBB00',
       'icon': 'Star',
@@ -184,20 +198,13 @@ export class SettingsComponent implements OnInit {
       'action': 'notifications',
       'title': 'Notifications'
     });
-    this.settings.push({
-      'hidden': false,
-      'background': '#134482',
-      'icon': 'Glasses',
-      'action': 'appearance',
-      'title': 'Appearance'
-    });
-    this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value,
-      'background': '#04CD33',
-      'icon': 'Info',
-      'action': 'intro',
-      'title': 'View Intro'
-    });
+    // this.settings.push({
+    //   'hidden': !!this.kioskMode.currentRoom$.value,
+    //   'background': '#04CD33',
+    //   'icon': 'Info',
+    //   'action': 'intro',
+    //   'title': 'View Intro'
+    // });
     this.settings.push({
       'hidden': false,
       'background': '#F53D45',
@@ -206,19 +213,19 @@ export class SettingsComponent implements OnInit {
       'title': 'Support'
     });
     this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
-      'background': '#6651F1',
-      'icon': 'Launch',
-      'action': 'wishlist',
-      'title': 'Wishlist'
-    });
-    this.settings.push({
       'hidden': false,
       'background': '#fc7303',
       'icon': 'Bug',
       'action': 'bug',
       'title': 'Bug Report',
       'tooltip': BUILD_DATE,
+    });
+    this.settings.push({
+      'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
+      'background': '#6651F1',
+      'icon': 'Launch',
+      'action': 'wishlist',
+      'title': 'Wishlist'
     });
   }
 }

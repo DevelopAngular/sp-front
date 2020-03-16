@@ -8,7 +8,9 @@ export class User extends BaseModel {
               public last_name: string,
               public display_name: string,
               public primary_email: string,
-              public roles: string[]) {
+              public roles: string[],
+              public sync_types?: string[]
+              ) {
     super();
   }
 
@@ -25,14 +27,15 @@ export class User extends BaseModel {
       last_name: string = JSON['last_name'],
       display_name: string = JSON['display_name'],
       primary_email: string = JSON['primary_email'],
-      roles: string[] = [];
+      roles: string[] = [],
+      sync_types: string[] = [];
 
     const rolesJSON = JSON['roles'];
     for (let i = 0; i < rolesJSON.length; i++) {
       roles.push(rolesJSON[i]);
     }
 
-    return new User(id, created, last_updated, first_name, last_name, display_name, primary_email, roles);
+    return new User(id, created, last_updated, first_name, last_name, display_name, primary_email, roles, sync_types);
   }
 
   isHead() {

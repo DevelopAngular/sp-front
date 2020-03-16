@@ -54,6 +54,7 @@ import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-g
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -117,7 +118,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     AccountGroupsComponent,
     ReportSuccessToastComponent,
     RestrictionPickerComponent,
-    SpAppearanceComponent
+    SpAppearanceComponent,
+    MyProfileDialogComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -129,7 +131,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     NextReleaseComponent,
     ConsentMenuMobileComponent,
     ReportSuccessToastComponent,
-    SpAppearanceComponent
+    SpAppearanceComponent,
+    MyProfileDialogComponent
   ],
   exports: [
     ReactiveFormsModule,

@@ -1,0 +1,54 @@
+@import '../../sp-colors';
+
+.settings-wrapper {
+  background-color: #ffffFF;
+  height: 100%;
+  .settings-header {
+    height: 70px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+
+    .back-button {
+      width: 28px;
+      cursor: pointer;
+      position: absolute;
+      font-size: 15px;
+      font-weight: 500;
+      color: #1F195E;
+      left: 15px;
+
+    }
+
+    .save-button {
+      width: 85px;
+      position: absolute;
+      right: 27px;
+    }
+
+    .settings-header-text {
+      color: #1F195E;
+      font-size: 17px;
+    }
+  }
+
+  .settings-content {
+    height: 370px;
+
+    .block-item {
+      padding: 26px 26px 0 26px;
+      font-size: 15px;
+
+      .label {
+        color: $navy;
+      }
+      .item-content {
+        display: flex;
+        margin-top: 4px;
+        color: $blue-gray;
+      }
+    }
+  }
+}
