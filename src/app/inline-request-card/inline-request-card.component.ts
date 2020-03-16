@@ -34,7 +34,9 @@ export class InlineRequestCardComponent implements OnInit {
   header: any;
   options = [];
   solidColorRgba: string;
+  solidColorRgba2: string;
   removeShadow: boolean;
+  leftTextShadow: boolean;
 
   hoverDestroyer$: Subject<any>;
 
@@ -82,7 +84,8 @@ export class InlineRequestCardComponent implements OnInit {
 
   ngOnInit() {
     if (this.request) {
-      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[1], 60);
+      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
+      this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
     }
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.passesService.isOpenPassModal$.subscribe(res => {
@@ -174,6 +177,9 @@ export class InlineRequestCardComponent implements OnInit {
         takeUntil(this.hoverDestroyer$)
       )
       .subscribe(() => {
+        if (margin > 0) {
+          this.leftTextShadow = true;
+        }
         if ((targetWidth - margin) > containerWidth) {
           target.style.marginLeft = `-${margin}px`;
           margin++;
@@ -188,7 +194,7 @@ export class InlineRequestCardComponent implements OnInit {
     target.style.transition = `margin-left .4s ease`;
     target.style.width = `auto`;
     this.removeShadow = false;
-
+    this.leftTextShadow = false;
     this.hoverDestroyer$.next();
     this.hoverDestroyer$.complete();
   }

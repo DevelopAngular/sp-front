@@ -225,6 +225,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(scrollObserver)
           )
           .subscribe((v) => {
+            console.log('Subscribe ==>>', v);
             if (v) {
               this.scrollableArea.scrollTo({top: scrollOffset});
               scrollObserver.next();
@@ -260,7 +261,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   passesLoaded: Observable<boolean> = of(false);
 
   showEmptyState: Observable<boolean>;
-  openedModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
 
   isOpenedModal: boolean;
@@ -334,8 +334,19 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser
       .pipe(
-        map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
-      ).subscribe(isStudent => {
+        map(user => {
+          this.user = user;
+          this.isStaff =
+            user.roles.includes('_profile_teacher') ||
+            user.roles.includes('_profile_admin') ||
+            user.roles.includes('_profile_assistant');
+          if (this.isStaff) {
+            this.dataService.updateInbox(true);
+          }
+          return user.roles.includes('hallpass_student');
+        }) // TODO filter events to only changes.
+      )
+      .subscribe(isStudent => {
       const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
 
       if (isStudent) {
@@ -394,21 +405,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         } else if (key[0] === 'f') {
           this.showMainForm(true);
         }
-      });
-
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
-      .subscribe(user => {
-        this._zone.run(() => {
-          this.user = user;
-          this.isStaff =
-            user.roles.includes('_profile_teacher') ||
-            user.roles.includes('_profile_admin') ||
-            user.roles.includes('_profile_assistant');
-          if (this.isStaff) {
-            this.dataService.updateInbox(true);
-          }
-        });
       });
 
     this.inboxHasItems = combineLatest(

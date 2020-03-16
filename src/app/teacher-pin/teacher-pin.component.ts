@@ -4,7 +4,7 @@ import {UserService} from '../services/user.service';
 import {Observable, of} from 'rxjs';
 import {User} from '../models/User';
 import {MatDialogRef} from '@angular/material';
-import {switchMap, take} from 'rxjs/operators';
+import {filter, skip, switchMap, take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-teacher-pin',
@@ -26,7 +26,7 @@ export class TeacherPinComponent implements OnInit {
     return this.userPin$.pipe(
       take(1),
       switchMap(pin => {
-        if (pin !== this.form.get('pin').value) {
+        if (pin !== this.form.get('pin').value && this.form.get('pin').dirty) {
           return of(this.form.value);
         } else {
           return of(null);

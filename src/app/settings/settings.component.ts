@@ -176,7 +176,7 @@ export class SettingsComponent implements OnInit {
         'background': '#12C29E',
         'icon': 'Lock',
         'action': 'myPin',
-        'title': 'My Pin'
+        'title': 'Approval Pin'
       });
     }
     this.settings.push({
