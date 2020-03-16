@@ -174,7 +174,7 @@ export class SettingsComponent implements OnInit {
       this.settings.push({
         'hidden': !!this.kioskMode.currentRoom$.value,
         'background': '#12C29E',
-        'icon': 'Lock',
+        'icon': 'Lock dots',
         'action': 'myPin',
         'title': 'Approval Pin'
       });
