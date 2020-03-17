@@ -2,7 +2,6 @@
   <div class="card-header" [style.background-color]="'#00B476'">
     <div class="back-button ds-flex-center-center" (click)="back()">
       <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
-      <!--<span *ngIf="permissionsFormEditState">Cancel</span>-->
     </div>
     <div class="ds-flex-center-center ds-dialog-title-white">
       <img class="role-icon"  [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="'./assets/Chain (White).svg'" alt="header-icon">
@@ -21,7 +20,7 @@
 </div>
 
 <ng-template #profileCard>
-  <div class="profile-card-dialog-container">
+  <div class="profile-card-dialog-container" *ngIf="page === 1">
     <!-- Disables card when some async stuffs occur-->
     <div class="disabled-state loading-theme_light-gray spinner" *ngIf="disabledState">
       <mat-spinner [diameter]="'100'" [color]="'accent'"></mat-spinner>
@@ -37,18 +36,6 @@
         <span>{{headerText}}</span>
 
       </div>
-      <!--<div *ngIf="permissionsFormEditState || assistantForEditState" class="save-button">-->
-      <!--<app-gradient-button-->
-      <!--[minHeight]="'27px'"-->
-      <!--[width]="'72px'"-->
-      <!--[fontSize]="'11px'"-->
-      <!--[fontWeight]="'bold'"-->
-      <!--[cursor]="'pointer'"-->
-      <!--(buttonClick)="updateProfile()"-->
-      <!--&gt;-->
-      <!--Save-->
-      <!--</app-gradient-button>-->
-      <!--</div>-->
     </div>
 
     <ng-container [ngSwitch]="layout">
@@ -84,23 +71,15 @@
                 <span class="ds-dialog-bold-text">Name: </span> <span>{{profile['Name']}}</span><br>
                 <span class="ds-dialog-bold-text">Username/Email: </span> <span>{{profile['Email/Username']}}</span><br>
                 <span class="ds-dialog-bold-text">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
+                <span *ngIf="profile['Account Type'] === 'Standard'" class="ds-dialog-bold-text">Password: </span>
+                <span (click)="goToChangePassword()" class="change-pass-link">Change Password</span>
               </div>
-<!--              <div [style.text-align]="'right'">-->
-<!--                <div>-->
-<!--                  <img [src]="'./assets/google/google_logo.svg'" alt="google_logo.svg">-->
-<!--                </div>-->
-<!--                <div class="learn-more">-->
-<!--                  <a class="ds-small-link-text" target="_blank" href="https://www.smartpass.app/documentation/administrator-accounts-profiles">Learn more</a>-->
-<!--                </div>-->
-<!--              </div>-->
+
             </div>
             <div *ngIf="data.role === '_profile_assistant' && assistantFor">
               <div class="acting-on-behalf-user ds-w-100 ds-mt-15">
                 <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantFor, 'ds-dialog-heading-gray': !assistantFor}">Acting on Behalf Of</div>
-                <!--<app-sp-chips-->
-                <!--[selectedProfiles]="assistantFor"-->
-                <!--(updateSelectedEvent)="assistantForUpdate$.next($event)"-->
-                <!--&gt;</app-sp-chips>-->
+
                 <app-sp-search
                   [preventRemovingLast]="data.role === '_profile_assistant'"
                   [selectedOptions]="assistantFor"
@@ -296,6 +275,9 @@
       </div>
 
     </ng-container>
-    <!--<pre>{{profile | json}}</pre>-->
+  </div>
+
+  <div class="change-password" *ngIf="page === 2">
+    <app-change-password [user]="profile._originalUserProfile"></app-change-password>
   </div>
 </ng-template>

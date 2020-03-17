@@ -31,8 +31,12 @@ export class User extends BaseModel {
       sync_types: string[] = [];
 
     const rolesJSON = JSON['roles'];
+    const sync_types_json = JSON['sync_types'];
     for (let i = 0; i < rolesJSON.length; i++) {
       roles.push(rolesJSON[i]);
+    }
+    for (let i = 0; i < sync_types_json.length; i++) {
+      sync_types.push(sync_types_json[i]);
     }
 
     return new User(id, created, last_updated, first_name, last_name, display_name, primary_email, roles, sync_types);

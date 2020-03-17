@@ -178,4 +178,9 @@
       border-radius: 10px;
     }
   }
+  .change-pass-link {
+    color: $blue-gray;
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }

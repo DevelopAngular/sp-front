@@ -45,8 +45,6 @@ export class ProfileCardDialogComponent implements OnInit {
   public assistantForInitialState: User[];
   public assistantForUpdate$:  Subject<User[]> = new Subject();
 
-
-
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
   private permissionsFormInitialState;
@@ -66,6 +64,8 @@ export class ProfileCardDialogComponent implements OnInit {
     value: boolean,
     initialValue: boolean
   };
+
+  public page: number = 1;
 
   assistantToAdd: User[];
   assistantToRemove: User[];
@@ -267,6 +267,10 @@ export class ProfileCardDialogComponent implements OnInit {
           }
         });
 
+  }
+
+  goToChangePassword() {
+    this.page = 2;
   }
 
   back() {

@@ -6,6 +6,7 @@ import { User } from '../models/User';
 import { School } from '../models/School';
 import { NextStep } from '../animations';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-profile-dialog',
