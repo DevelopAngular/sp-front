@@ -1,0 +1,45 @@
+<div class="profile-wrapper">
+  <div class="header-container">
+    <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <div class="profile-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <img width="21" height="21" [src]="'./assets/Username (Navy).svg' | resolveAsset" alt="Options">
+      <div [style.margin-left]="'12px'">My Profile</div>
+    </div>
+  </div>
+
+  <div class="profile-content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+    <div class="page-1">
+      <div class="block-item">
+        <div class="label">Name</div>
+        <div class="item-content">{{ user.display_name }}</div>
+      </div>
+      <div class="block-item">
+        <div class="label">Email/username</div>
+        <div class="item-content">{{ user.primary_email }}</div>
+      </div>
+      <div class="block-item">
+        <div class="label">School</div>
+        <div class="item-content" *ngFor="let school of schools">
+          {{ school.name + ' (' + checkUserRoles(school.my_roles) + ')' }}
+        </div>
+      </div>
+      <div class="block-item">
+        <div class="label">Account type</div>
+        <div class="item-content">{{ checkAccountType(user) }}</div>
+      </div>
+      <div class="block-item" *ngIf="!user.sync_types.length">
+        <div class="label">Password</div>
+        <div class="item-content">
+          <app-gradient-button
+            [size]="'medium'"
+            [gradient]="'#7F879D, #7F879D'"
+            (buttonClick)="nextPage.emit()"
+          >
+            Change password
+          </app-gradient-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

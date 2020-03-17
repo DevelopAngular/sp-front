@@ -124,76 +124,76 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    ScrollHolderDirective
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    ReactiveFormsModule,
-    FormsModule,
-    HttpClientModule,
-    SwiperModule,
-    CoreModule,
+    declarations: [
+        AppComponent,
+        ScrollHolderDirective
+    ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        FormsModule,
+        HttpClientModule,
+        SwiperModule,
+        CoreModule,
 
-    KeyboardShortcutsModule.forRoot(),
+        KeyboardShortcutsModule.forRoot(),
 
-    RouterModule.forRoot(
-      appRoutes,
-      {
-        enableTracing: false,
-      }
-    ),
-    AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
-    AngularFireMessagingModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
-      libraries: ['places']
-    }),
-    StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([
-      ReportsEffects,
-      PinnablesEffects,
-      AccountsEffects,
-      AllAccountsEffects,
-      AdminsEffects,
-      TeachersEffects,
-      AssistantsEffects,
-      StudentsEffects,
-      CountAccountsEffects,
-      TeacherLocationsEffects,
-      DashboardEffects,
-      PassStatsEffects,
-      StudentGroupsEffects,
-      LocationsEffects,
-      FavoriteLocationsEffects,
-      ColorsEffects,
-      SchoolsEffects,
-      UserEffects,
-      ProcessEffects
-    ]),
-    StoreDevtoolsModule.instrument({})
-  ],
-  providers: [
-    DataService,
-    HttpService,
-    UserService,
-    KioskModeService,
-    NotificationService,
-    GoogleLoginService,
-    LoadingService,
-    CurrentUserResolver,
-    GoogleApiService,
-    GoogleAuthService,
-    {provide: OverlayContainer, useFactory: InitOverlay},
-    {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
-    {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
-    {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
-    {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
-    provideErrorHandler()
-  ],
-  bootstrap: [AppComponent]
+        RouterModule.forRoot(
+            appRoutes,
+            {
+                enableTracing: false,
+            }
+        ),
+        AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
+        AngularFireMessagingModule,
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
+            libraries: ['places']
+        }),
+        StoreModule.forRoot(reducers),
+        EffectsModule.forRoot([
+            ReportsEffects,
+            PinnablesEffects,
+            AccountsEffects,
+            AllAccountsEffects,
+            AdminsEffects,
+            TeachersEffects,
+            AssistantsEffects,
+            StudentsEffects,
+            CountAccountsEffects,
+            TeacherLocationsEffects,
+            DashboardEffects,
+            PassStatsEffects,
+            StudentGroupsEffects,
+            LocationsEffects,
+            FavoriteLocationsEffects,
+            ColorsEffects,
+            SchoolsEffects,
+            UserEffects,
+            ProcessEffects
+        ]),
+        StoreDevtoolsModule.instrument({})
+    ],
+    providers: [
+        DataService,
+        HttpService,
+        UserService,
+        KioskModeService,
+        NotificationService,
+        GoogleLoginService,
+        LoadingService,
+        CurrentUserResolver,
+        GoogleApiService,
+        GoogleAuthService,
+        {provide: OverlayContainer, useFactory: InitOverlay},
+        {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
+        {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
+        {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
+        {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
+        provideErrorHandler()
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor() {}

@@ -1,52 +1,8 @@
 <div class="settings-wrapper">
-  <div class="settings-header">
-    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-    <div class="back-button" *ngIf="false">Cancel</div>
-    <img width="21" height="21" [src]="'./assets/Username (Navy).svg' | resolveAsset" alt="Options">
-    <div class="ds-dialog-title" [style.margin-left]="'12px'">My Profile</div>
-    <div class="save-button">
-      <app-gradient-button
-        [width]="'85px'"
-        [minHeight]="'30px'"
-        [fontSize]="'14px'"
-        [cursor]="'pointer'"
-      >
-        <span>Save</span>
-        <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
-      </app-gradient-button>
-    </div>
+  <div *ngIf="page === 1" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <app-profile-info [schools]="schools$ | async" [user]="user$ | async" (nextPage)="nextStep()"></app-profile-info>
   </div>
-  <div class="settings-content">
-    <div class="page-1">
-      <div class="block-item">
-        <div class="label">Name</div>
-        <div class="item-content">{{ (user$ | async).display_name }}</div>
-      </div>
-      <div class="block-item">
-        <div class="label">Email/username</div>
-        <div class="item-content">{{ (user$ | async).primary_email }}</div>
-      </div>
-      <div class="block-item">
-        <div class="label">School</div>
-        <div class="item-content" *ngFor="let school of schools$ | async">
-          {{ school.name + ' (' + checkUserRoles(school.my_roles) + ')' }}
-        </div>
-      </div>
-      <div class="block-item">
-        <div class="label">Account type</div>
-        <div class="item-content">{{ checkAccountType(user$ | async) }}</div>
-      </div>
-      <div class="block-item" *ngIf="!(user$ | async).sync_types.length">
-        <div class="label">Password</div>
-        <div class="item-content">
-          <app-gradient-button
-            [size]="'medium'"
-            [gradient]="'#7F879D, #7F879D'"
-          >
-            Change password
-          </app-gradient-button>
-        </div>
-      </div>
-    </div>
+  <div *ngIf="page === 2" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <app-change-password (back)="back()"></app-change-password>
   </div>
 </div>
