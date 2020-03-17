@@ -1,6 +1,6 @@
 <div [formGroup]="formGroup">
   <div class="InputWrapper">
-    <div style="display: flex">
+    <div style="display: flex; position: relative">
       <label
         [ngClass]="{
         'ds-dialog-heading': controlName.valid || controlName.pending || isFocus,
@@ -19,6 +19,13 @@
            class="support-icon"
            *ngIf="rightIcon" [src]="rightIcon | resolveAsset"/>
 
+      </div>
+      <div class="show-password"
+           *ngIf="showPasswordButton"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="changeInput()">
+        <img [src]="'./assets/Eye' + (input_type === 'password' ? '' : ' crossed') + ' (Blue-Gray).svg' | resolveAsset">
+        <div class="password-text">{{ input_type === 'password' ? 'Show' : 'Hide'}}</div>
       </div>
     </div>
     <div class="input-container">
