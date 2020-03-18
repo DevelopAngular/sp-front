@@ -482,6 +482,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       } else if (action === 'profile') {
         this.dialog.open(MyProfileDialogComponent, {
           panelClass: 'sp-form-dialog',
+          width: '425px',
+          height: '500px'
         });
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {

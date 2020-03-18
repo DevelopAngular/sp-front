@@ -1,7 +1,6 @@
 @import "../../../sp-colors";
 
 .profile-wrapper {
-  width: 425px;
   .header-container {
     height: 70px;
     display: flex;
@@ -58,6 +57,24 @@
         display: flex;
         margin-top: 4px;
         color: $blue-gray;
+      }
+    }
+  }
+}
+
+@media all and (max-width: 400px) {
+  .profile-wrapper {
+    .header-container {
+      height: 94px;
+
+      .back-button {
+        display: none;
+      }
+    }
+
+    .profile-content {
+      .block-item {
+        padding-top: 20px;
       }
     }
   }
