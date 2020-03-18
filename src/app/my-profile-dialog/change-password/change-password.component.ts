@@ -52,7 +52,10 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   updateUserPassword() {
-
+    this.userService.updateUser(this.user.id, {password: this.form.get('newPassword').value})
+      .subscribe(res => {
+        console.log('Update Success');
+      });
   }
 
 }
