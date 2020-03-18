@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { User } from '../../models/User';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-change-password',
@@ -22,7 +23,8 @@ export class ChangePasswordComponent implements OnInit {
 
   constructor(
     private formService: CreateFormService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
     ) { }
 
   get isAdmin() {
@@ -47,6 +49,10 @@ export class ChangePasswordComponent implements OnInit {
         Validators.minLength(8)
       ])
     });
+  }
+
+  updateUserPassword() {
+
   }
 
 }
