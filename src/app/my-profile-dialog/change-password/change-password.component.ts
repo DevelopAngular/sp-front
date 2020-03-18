@@ -3,6 +3,7 @@ import { CreateFormService } from '../../create-hallpass-forms/create-form.servi
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../../models/User';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-change-password',
@@ -17,15 +18,19 @@ export class ChangePasswordComponent implements OnInit {
 
   frameMotion$: BehaviorSubject<any>;
   form: FormGroup;
+  showOldPasswordInput: boolean;
 
-  constructor(private formService: CreateFormService) { }
+  constructor(
+    private formService: CreateFormService,
+    private router: Router
+    ) { }
 
   get isAdmin() {
     return this.user && this.user.roles.includes('_profile_admin');
   }
 
   get isSaveButton() {
-    if (this.isAdmin) {
+    if (!this.showOldPasswordInput) {
       return this.form.get('newPassword').valid;
     } else {
       return this.form.valid;
@@ -33,8 +38,8 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.user);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.showOldPasswordInput = !this.router.url.includes('/admin');
     this.form = new FormGroup({
       oldPassword: new FormControl('', [Validators.required]),
       newPassword: new FormControl('', [

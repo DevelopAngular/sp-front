@@ -57,6 +57,7 @@ import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-info.component';
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
+import {ViewProfileComponent} from '../admin/profile-card-dialog/view-profile/view-profile.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -123,7 +124,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SpAppearanceComponent,
     MyProfileDialogComponent,
     ProfileInfoComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    ViewProfileComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -186,7 +188,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ReportSuccessToastComponent,
     RestrictionPickerComponent,
     ProfileInfoComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    ViewProfileComponent
   ],
   providers: [
     {

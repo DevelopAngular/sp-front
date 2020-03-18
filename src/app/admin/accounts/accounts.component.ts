@@ -515,7 +515,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((link: {authorization_url: string}) => {
           const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-            panelClass: 'overlay-dialog',
+            panelClass: 'admin-form-dialog-container-white',
             backdropClass: 'custom-bd',
             width: '425px',
             height: '500px',
@@ -546,7 +546,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     }
 
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-      panelClass: 'overlay-dialog',
+      panelClass: 'admin-form-dialog-container-white',
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',

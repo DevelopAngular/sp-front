@@ -1,12 +1,14 @@
 @import '../../sp-colors';
 
 .settings-wrapper {
-  background-color: #ffffFF;
-  height: 100%;
   position: relative;
+  height: 500px;
+  width: 425px;
+  background: #FFF;
 
   .next-step {
-    width: 100%;
     position: absolute;
+    border-radius: 14px;
+
   }
 }
