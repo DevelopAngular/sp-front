@@ -24,7 +24,7 @@ export class ProfileCardDialogComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<ProfileCardDialogComponent>,
+    public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
     private matDialog: MatDialog,
     private router: Router,
     private dataService: DataService,

@@ -7,6 +7,7 @@ import { School } from '../models/School';
 import { NextStep } from '../animations';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import {map} from 'rxjs/operators';
+import {MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-my-profile-dialog',
@@ -24,7 +25,8 @@ export class MyProfileDialogComponent implements OnInit {
   constructor(
     private userService: UserService,
     private http: HttpService,
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    public dialogRef: MatDialogRef<MyProfileDialogComponent>
   ) { }
 
   ngOnInit() {

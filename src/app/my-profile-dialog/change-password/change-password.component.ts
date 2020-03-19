@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, iif, of} from 'rxjs';
 import { User } from '../../models/User';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
+import {catchError, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-change-password',
@@ -16,10 +17,12 @@ export class ChangePasswordComponent implements OnInit {
   @Input() user: User;
 
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
+  @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
 
   frameMotion$: BehaviorSubject<any>;
   form: FormGroup;
   showOldPasswordInput: boolean;
+  errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   constructor(
     private formService: CreateFormService,
@@ -49,13 +52,29 @@ export class ChangePasswordComponent implements OnInit {
         Validators.minLength(8)
       ])
     });
+    this.form.valueChanges.subscribe(() => {
+      this.errorMessage$.next(null);
+    });
   }
 
   updateUserPassword() {
-    this.userService.updateUser(this.user.id, {password: this.form.get('newPassword').value})
-      .subscribe(res => {
-        console.log('Update Success');
-      });
+    iif(
+      () => this.isAdmin,
+      this.userService.updateUser(this.user.id, {password: this.form.get('newPassword').value}),
+      this.userService.updateUser(this.user.id, {
+        password: this.form.get('newPassword').value,
+        current_password: this.form.get('oldPassword').value})
+    ).pipe(
+      tap(() => {
+        this.cancel.emit();
+      }),
+      catchError(error => {
+        if (error.error.errors.indexOf('password is incorrect') !== -1 ) {
+          this.errorMessage$.next('Current password is incorrect.');
+        }
+        return of(null);
+      })
+    ).subscribe();
   }
 
 }

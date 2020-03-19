@@ -172,7 +172,7 @@ export class ViewProfileComponent implements OnInit {
             this.teacherAssignedTo = res;
           });
       } else {
-        this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo;
+        this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo || [];
       }
     }
 

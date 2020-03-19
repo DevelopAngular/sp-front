@@ -3,6 +3,6 @@
     <app-profile-info [schools]="schools$ | async" [user]="user$ | async" (nextPage)="nextStep()"></app-profile-info>
   </div>
   <div *ngIf="page === 2" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <app-change-password (back)="back()" [user]="user$ | async"></app-change-password>
+    <app-change-password (cancel)="dialogRef.close()" (back)="back()" [user]="user$ | async"></app-change-password>
   </div>
 </div>

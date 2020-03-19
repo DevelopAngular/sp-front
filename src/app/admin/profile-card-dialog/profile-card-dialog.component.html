@@ -3,6 +3,6 @@
     <app-view-profile (close)="dialogRef.close($event)" [data]="data" (nextStep)="goToChangePassword()"></app-view-profile>
   </div>
   <div *ngIf="page === 2" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <app-change-password (back)="goBack()" [user]="profile"></app-change-password>
+    <app-change-password (cancel)="dialogRef.close()" (back)="goBack()" [user]="profile"></app-change-password>
   </div>
 </div>
