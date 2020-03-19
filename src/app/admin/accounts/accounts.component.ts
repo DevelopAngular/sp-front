@@ -247,23 +247,23 @@ export class AccountsComponent implements OnInit, OnDestroy {
         {
           'access_admin_dashboard': {
             controlName: 'access_admin_dashboard',
-            controlLabel: 'Dashboard Tab Access',
+            controlLabel: 'Dashboard tab Access',
           },
           'access_hall_monitor': {
             controlName: 'access_hall_monitor',
-            controlLabel: 'Hall Monitor Tab Access',
+            controlLabel: 'Hall Monitor tab Access',
           },
           'access_admin_search': {
             controlName: 'access_admin_search',
-            controlLabel: 'Search Tab Access',
-          },
-          'access_user_config': {
-            controlName: 'access_user_config',
-            controlLabel: 'Accounts Tab Access',
+            controlLabel: 'Search tab Access',
           },
           'access_pass_config': {
             controlName: 'access_pass_config',
-            controlLabel: 'Rooms Tab Access',
+            controlLabel: 'Rooms tab Access',
+          },
+          'access_user_config': {
+            controlName: 'access_user_config',
+            controlLabel: 'Accounts tab Access',
           },
         }
         :
