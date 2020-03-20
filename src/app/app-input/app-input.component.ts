@@ -73,7 +73,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
       });
 
     setTimeout(() => {
-          this.controlName.setValue(this.input_value);
+      this.controlName.setValue(this.input_value);
     }, 50);
       this.controlName.valueChanges
         .subscribe(res => {
