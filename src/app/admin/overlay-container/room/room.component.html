@@ -101,6 +101,7 @@
             [input_value]="data && data.timeLimit ? data.timeLimit : ''"
             [placeholder]="'minutes'"
             (onUpdate)="data.timeLimit = +$event"
+            [timeInput]="true"
             [rightIcon]="'./assets/Support (Gray).svg'"
             [formGroup]="form"
             [controlName]="form.get('timeLimit')"
