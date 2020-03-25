@@ -18,6 +18,8 @@ import { RequestsService } from '../services/requests.service';
 import {BehaviorSubject, of} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {School} from '../models/School';
+import {HttpService} from '../services/http-service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -46,8 +48,6 @@ export class InvitationCardComponent implements OnInit {
   fromHistoryIndex;
   dateEditOpen: boolean;
 
-  locationChangeOpen: boolean;
-
   frameMotion$: BehaviorSubject<any>;
 
   isModal: boolean;
@@ -55,6 +55,7 @@ export class InvitationCardComponent implements OnInit {
   cancelEditClick: boolean;
   header: string;
   options: any = [];
+  currentSchool: School;
 
   constructor(
       public dialogRef: MatDialogRef<InvitationCardComponent>,
@@ -66,6 +67,7 @@ export class InvitationCardComponent implements OnInit {
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
       private screenService: ScreenService,
+      private http: HttpService
   ) {}
 
   get studentName(){
@@ -88,7 +90,8 @@ export class InvitationCardComponent implements OnInit {
                 (this.selectedStudents.length > 2 ?
                     this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
                     this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
-                    ' and ' + this.selectedStudents[1].display_name : '')) : this.invitation.student.display_name + ` (${this.studentEmail})`);
+                    ' and ' + this.selectedStudents[1].display_name : '')) :
+              this.invitation.student.display_name + (this.currentSchool.display_username ? ` (${this.studentEmail})` : ''));
         }
     }
 
@@ -110,6 +113,7 @@ export class InvitationCardComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.createFormService.getFrameMotionDirection();
+    this.currentSchool = this.http.getSchool();
     if (this.data['pass']) {
       this.isModal = true;
       this.invitation = this.data['pass'];

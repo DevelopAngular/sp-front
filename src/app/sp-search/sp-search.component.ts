@@ -78,13 +78,6 @@ export class GSuiteSelector {
 
 }
 
-// export interface OrgUnit {
-//   unitId: UnitId;
-//   title: string;
-//   selector: GSuiteSelector[];
-//   selected: boolean;
-// }
-
 export class OrgUnit {
 
   unitId: UnitId;
@@ -167,6 +160,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   searchCount: number;
   firstSearchItem: User | GSuiteSelector;
+  currentSchool: School;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -174,15 +168,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private sanitizer: DomSanitizer,
     private httpService: HttpService,
-    private http: HttpClient,
     private mapsApi: MapsAPILoader,
     private shortcutsService: KeyboardShortcutsService,
     private renderer: Renderer2,
     public screenService: ScreenService
-  ) {
-
-
-  }
+  ) {}
 
   private getEmitedValue() {
     if (this.emitSingleProfile)  {
@@ -212,6 +202,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     if (this.chipsMode) {
       this.inputField = false;
     }
+    this.currentSchool = this.httpService.getSchool();
 
     const selfRef = this;
 
@@ -268,12 +259,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ngOnChanges(sc: SimpleChanges) {
-  //   console.log(sc);
-  //   if (!sc.isFocus.isFirstChange() && sc.isFocus.currentValue) {
-  //     this.input.nativeElement.focus();
-  //   }
-  // }
 
   ngOnDestroy(): void {
     this.destroy$.next();

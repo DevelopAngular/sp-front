@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="value">Show a user’s email in parentheses next to the name on pass cards.<br/>
-        Example: John Smith (jsmith)
+        Example: John Smith <span *ngIf="schoolForm.get('display_username').value">(jsmith)</span>
       </div>
     </div>
     <div class="block">

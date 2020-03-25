@@ -17,6 +17,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ScrollPositionService} from '../../scroll-position.service';
 import { takeRight } from 'lodash';
 import * as moment from 'moment';
+import {School} from '../../models/School';
 
 
 
@@ -99,6 +100,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     counter: number = 0;
 
     public reportsDate: Date;
+    currentSchool: School;
 
     changeReports$ = new Subject();
 
@@ -126,20 +128,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     ) {
       this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
       this.minDate = this.timeService.nowDate();
+      this.currentSchool = this.http.getSchool();
     }
-  // get calendarIcon() {
-  //   if (this.inactiveIcon) {
-  //     return this.darkTheme.getIcon({
-  //       iconName: 'Calendar',
-  //       lightFill: 'Navy',
-  //       darkFill: 'White',
-  //     });
-  //
-  //
-  //   } else {
-  //     return './assets/Calendar (Blue).svg';
-  //   }
-  // }
 
   ngOnInit() {
       merge(this.http.globalReload$, this.changeReports$)
@@ -215,7 +205,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
             this.counter = list.length;
           return list.map((report, index) => {
             return {
-              student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
+              student_name: report.student.display_name + (this.currentSchool.display_username ? ` (${report.student.primary_email.split('@', 1)[0]})` : ''),
               issuer: report.issuer.display_name,
               createdDate: Util.formatDateTime(new Date(report.created), false, false).split(', ')[0],
               created: Util.formatDateTime(new Date(report.created), false, false),
