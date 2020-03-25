@@ -178,18 +178,20 @@ export class AccountsComponent implements OnInit, OnDestroy {
     }
 
     TABLE_RELOADING_TRIGGER.pipe(
+      takeUntil(this.destroy$),
       switchMap(() => this.userService.accounts.allAccounts)
     ).subscribe((users) => {
       this.tableRenderer(users);
     });
 
 
-    this.userService.lastAddedAccounts$._all.pipe(filter((res: any) => !!res && res.length))
+    this.userService.lastAddedAccounts$._all.pipe(
+      takeUntil(this.destroy$),
+      filter((res: any) => !!res && res.length)
+    )
       .subscribe(res => {
-        setTimeout(() => {
           this.dataTableHeadersToDisplay = [];
           this.lazyUserList = this.buildUserListData(res);
-        }, 50);
     });
 
   }
@@ -360,6 +362,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
+    console.log(this.selectedUsers);
+    debugger;
+
       if (!eventTarget.classList.contains('button')) {
         (eventTarget as any) = eventTarget.closest('.button');
       }
@@ -414,7 +419,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
           filter(res => !!res.length), take(2));
     }
 
-  loadMore(limit) {
+  loadMore() {
       this.userService.getMoreUserListRequest('_all');
   }
 
