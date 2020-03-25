@@ -1,10 +1,5 @@
 <div class="wrapper">
-<!--  <div class="header">-->
-<!--    <div class="title">-->
-<!--      <img [src]="'./assets/Settings (Navy).svg' | resolveAsset" width="20" height="20" alt="Settings">-->
-<!--      <div class="ds-dialog-title" style="margin-left: 12px">Settings</div>-->
-<!--    </div>-->
-<!--  </div>-->
+
   <div class="settings-header">
     <img class="back-button" *ngIf="!changeForm" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
     <div class="back-button" *ngIf="changeForm" (click)="close()">Cancel</div>
@@ -36,16 +31,32 @@
     </div>
 
     <div class="block">
-      <div class="label">Sign-up date</div>
-      <div class="value">{{ school.created }}</div>
+      <div class="label" [style.margin-bottom]="0">
+        <div>Display email/username</div>
+        <div>
+          <app-toggle-input
+            [form]="schoolForm"
+            [controlName]="'display_username'"
+            [delimiter]="false"
+            [controlSize]="'small'"
+          ></app-toggle-input>
+        </div>
+      </div>
+      <div class="value">Show a user’s email in parentheses next to the name on pass cards.<br/>
+        Example: John Smith (jsmith)
+      </div>
     </div>
     <div class="block">
-      <div class="label">Launch day</div>
-      <div class="value">{{ school.launch_date }}</div>
-    </div>
-    <div class="block" *ngIf="school.address">
-      <div class="label">Address</div>
-      <div class="value">{{ school.address.address }}</div>
+      <div class="label">School info</div>
+      <div class="value">
+        <div class="info">Sign up date: {{ school.created }}</div>
+        <div class="info">Launch date: {{ school.launch_date }}</div>
+        <div class="info">
+          <div>Address:</div>&nbsp;
+          <div>{{ school.address.address }}, <br> {{school.address.city ? school.address.city + ',' : '' }} {{ school.address.state }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
