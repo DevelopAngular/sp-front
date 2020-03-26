@@ -205,7 +205,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
             this.counter = list.length;
           return list.map((report, index) => {
             return {
-              student_name: report.student.display_name + (this.currentSchool.display_username ? ` (${report.student.primary_email.split('@', 1)[0]})` : ''),
+              student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
               issuer: report.issuer.display_name,
               createdDate: Util.formatDateTime(new Date(report.created), false, false).split(', ')[0],
               created: Util.formatDateTime(new Date(report.created), false, false),

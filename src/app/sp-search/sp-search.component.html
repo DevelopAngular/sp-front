@@ -48,7 +48,7 @@
             <span>
               {{student.display_name}}
               {{
-              currentSchool.display_username ? '(' + (student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : '') + ')' : ''
+              '(' + (student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : '') + ')'
               }}
             </span>
           </div>

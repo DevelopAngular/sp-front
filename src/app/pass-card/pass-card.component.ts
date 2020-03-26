@@ -120,7 +120,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
                   this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
                   this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
                   ' and ' + this.selectedStudents[1].display_name : '')) :
-            this.pass.student.display_name + (this.currentSchool.display_username ? ` (${this.studentEmail})` : ''));
+            this.pass.student.display_name + ` (${this.studentEmail})`);
       }
   }
 
