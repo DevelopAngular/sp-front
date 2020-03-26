@@ -1,0 +1,26 @@
+@import "../../sp-colors";
+
+.wrapper {
+  background-color: #FFFFFF;
+  width: 240px;
+
+  .options {
+    padding: 17px 0;
+    .option-container {
+      .option {
+        display: flex;
+        font-size: 14px;
+        padding: 10px 30px;
+        cursor: pointer;
+        .icon {
+          width: 18px;
+          height: 18px;
+          margin-right: 10px;
+        }
+        &:hover {
+          background-color: rgb(228, 235, 255);
+        }
+      }
+    }
+  }
+}

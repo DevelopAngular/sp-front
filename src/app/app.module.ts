@@ -65,6 +65,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
+import {SupportButtonComponent} from './support-button/support-button.component';
 
 
 const appRoutes: Routes = [
@@ -126,7 +127,8 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    ScrollHolderDirective
+    ScrollHolderDirective,
+    SupportButtonComponent,
   ],
   imports: [
     BrowserModule,

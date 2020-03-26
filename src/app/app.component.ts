@@ -25,6 +25,7 @@ import {NotificationService} from './services/notification-service';
 import {GoogleAnalyticsService} from './services/google-analytics.service';
 import {ShortcutInput} from 'ng-keyboard-shortcuts';
 import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
+import {SupportOptionsComponent} from './support-options/support-options.component';
 
 declare const window;
 
@@ -191,13 +192,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
         let newHub: any;
 
-        if (!existingHub) {
-          newHub = document.createElement('script');
-          newHub.type = 'text/javascript';
-          newHub.id = 'hs-script-loader';
-          newHub.setAttribute('id', 'hs-script-loader');
-          newHub.src = '//js.hs-scripts.com/5943240.js';
-        }
+        // if (!existingHub) {
+        //   newHub = document.createElement('script');
+        //   newHub.type = 'text/javascript';
+        //   newHub.id = 'hs-script-loader';
+        //   newHub.setAttribute('id', 'hs-script-loader');
+        //   newHub.src = '//js.hs-scripts.com/5943240.js';
+        // }
 
         if (data.currentUser) {
           this.hubSpotSettings(data.currentUser);
