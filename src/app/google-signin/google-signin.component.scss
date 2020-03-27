@@ -120,6 +120,11 @@ input {
         margin-top: 10px;
         position: absolute;
       }
+
+      .already-message {
+        @extend .error;
+        color: $jade;
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {AuthContext, HttpService} from '../services/http-service';
 import {Meta, Title} from '@angular/platform-browser';
@@ -37,13 +37,15 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isGoogleLogin: boolean;
   public isStandardLogin: boolean;
 
-  inputFocusNumber: number = 1;
-  forceFocus$ = new Subject();
+  public inputFocusNumber: number = 1;
+  public forceFocus$ = new Subject();
 
   public loginForm: FormGroup;
   public error$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   public disabledButton: boolean = true;
-  showError: boolean;
+  public showError: boolean;
+  public schoolAlreadyText$: Observable<string>;
+
   private changeUserName$: Subject<string> = new Subject<string>();
   private destroy$ = new Subject();
 
@@ -59,6 +61,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private shortcuts: KeyboardShortcutsService,
   ) {
+    this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
     this.loginService.isAuthLoaded()
       .subscribe(isLoaded => {
       this._ngZone.run(() => {
@@ -95,7 +98,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       .subscribe((auth: AuthContext) => {
         this.router.navigate(['']);
       console.log(auth);
-    })
+    });
 
     this.loginForm = new FormGroup({
       username: new FormControl(),
@@ -173,12 +176,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         }
       })
     );
-      // .then((res) => {
-      //   console.log(res);
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      // });
   }
   updateDemoUsername(event) {
     if (!event) {
@@ -200,6 +197,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   checkUserAuthType() {
+    this.httpService.schoolSignInRegisterText$.next(null);
     if (this.showError) {
       this.error$.next('Couldn’t find that username or email');
       return false;

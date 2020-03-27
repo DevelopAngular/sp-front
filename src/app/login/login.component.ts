@@ -1,10 +1,9 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
 import {DomSanitizer, Meta, SafeUrl, Title} from '@angular/platform-browser';
-import {HttpClient} from '@angular/common/http';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {JwtHelperService} from '@auth0/angular-jwt';

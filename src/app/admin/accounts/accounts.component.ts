@@ -215,18 +215,20 @@ export class AccountsComponent implements OnInit, OnDestroy {
     }
 
     TABLE_RELOADING_TRIGGER.pipe(
+      takeUntil(this.destroy$),
       switchMap(() => this.userService.accounts.allAccounts)
     ).subscribe((users) => {
       this.tableRenderer(users);
     });
 
 
-    this.userService.lastAddedAccounts$._all.pipe(filter((res: any) => !!res && res.length))
+    this.userService.lastAddedAccounts$._all.pipe(
+      takeUntil(this.destroy$),
+      filter((res: any) => !!res && res.length)
+    )
       .subscribe(res => {
-        setTimeout(() => {
           this.dataTableHeadersToDisplay = [];
           this.lazyUserList = this.buildUserListData(res);
-        }, 50);
     });
 
   }
@@ -311,23 +313,23 @@ export class AccountsComponent implements OnInit, OnDestroy {
         {
           'access_admin_dashboard': {
             controlName: 'access_admin_dashboard',
-            controlLabel: 'Dashboard Tab Access',
+            controlLabel: 'Dashboard tab Access',
           },
           'access_hall_monitor': {
             controlName: 'access_hall_monitor',
-            controlLabel: 'Hall Monitor Tab Access',
+            controlLabel: 'Hall Monitor tab Access',
           },
           'access_admin_search': {
             controlName: 'access_admin_search',
-            controlLabel: 'Search Tab Access',
-          },
-          'access_user_config': {
-            controlName: 'access_user_config',
-            controlLabel: 'Accounts Tab Access',
+            controlLabel: 'Search tab Access',
           },
           'access_pass_config': {
             controlName: 'access_pass_config',
-            controlLabel: 'Rooms Tab Access',
+            controlLabel: 'Rooms tab Access',
+          },
+          'access_user_config': {
+            controlName: 'access_user_config',
+            controlLabel: 'Accounts tab Access',
           },
         }
         :
@@ -424,6 +426,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
+    console.log(this.selectedUsers);
+    debugger;
+
       if (!eventTarget.classList.contains('button')) {
         (eventTarget as any) = eventTarget.closest('.button');
       }
@@ -478,7 +483,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
           filter(res => !!res.length), take(2));
     }
 
-  loadMore(limit) {
+  loadMore() {
       this.userService.getMoreUserListRequest('_all');
   }
 
