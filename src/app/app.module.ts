@@ -79,7 +79,7 @@ const appRoutes: Routes = [
     path: 'school_signup',
     canActivate: [SchoolSignUpGuard],
     loadChildren: 'app/school-sign-up/school-sign-up.module#SchoolSignUpModule',
-    data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: true, authFree: true},
+    data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: false, authFree: true},
   },
   {
     path: 'accounts_setup',
@@ -97,7 +97,7 @@ const appRoutes: Routes = [
     loadChildren: 'app/main/main.module#MainModule',
     resolve: {currentUser: CurrentUserResolver, schools: SchoolsResolver},
     data: {
-      hubspot: false,
+      hubspot: true,
       authFree: false
     }
   },

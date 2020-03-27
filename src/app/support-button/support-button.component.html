@@ -2,4 +2,11 @@
      appCrossPointerEventTarget
      (pointerClickEvent)="openSupportOptions($event)"
      [style.box-shadow]="isOpenOptions ? 'none' : ''"
->{{ isOpenOptions ? '+' : '?' }}</div>
+>
+  <div class="content">
+    <div class="close" *ngIf="isOpenOptions; else ask"></div>
+    <ng-template #ask>
+      <div>?</div>
+    </ng-template>
+  </div>
+</div>

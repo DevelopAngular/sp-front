@@ -2,6 +2,8 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { SupportOptionsComponent } from '../support-options/support-options.component';
 import { MatDialog } from '@angular/material';
 
+declare const window;
+
 @Component({
   selector: 'app-support-button',
   templateUrl: './support-button.component.html',
@@ -26,11 +28,15 @@ export class SupportButtonComponent implements OnInit {
         data: { trigger: new ElementRef(event.currentTarget) }
       });
 
-      SPO.beforeClosed().subscribe(() => {
-        this.isOpenOptions = false;
+      SPO.afterClosed().subscribe((res) => {
+          this.isOpenOptions = res;
       });
     } else {
-      this.dialog.getDialogById('support').close();
+      this.isOpenOptions = false;
+      window.HubSpotConversations.widget.close();
+      if (this.dialog.getDialogById('support')) {
+        this.dialog.getDialogById('support').close();
+      }
     }
   }
 
