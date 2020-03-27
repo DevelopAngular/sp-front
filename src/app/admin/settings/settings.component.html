@@ -56,25 +56,24 @@
           </div>
 
         </div>
-        <mat-divider style="margin: 10px 0 10px 0"></mat-divider>
       </div>
-      <div class="links">
-        <div class="link"
-             *ngFor="let setting of settings"
-             [style.background]="hovered && hoveredColor === setting.background ? setting.background : 'none'"
-             (mouseenter)="onHover(setting.background)"
-             (mouseleave)="hovered = false"
-             appCrossPointerEventTarget
-             (pointerClickEvent)="hovered = false; handleAction(setting)"
-             (pointerDownEvent)="hovered = true"
-             (pointerCancelEvent)="hovered = false"
-        >
-          <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">
-          <div class="setting-name"
-               [style.color]="getColor(setting, hovered, hoveredColor)"
-          >{{ setting.title }}</div>
-        </div>
-      </div>
+<!--      <div class="links">-->
+<!--        <div class="link"-->
+<!--             *ngFor="let setting of settings"-->
+<!--             [style.background]="hovered && hoveredColor === setting.background ? setting.background : 'none'"-->
+<!--             (mouseenter)="onHover(setting.background)"-->
+<!--             (mouseleave)="hovered = false"-->
+<!--             appCrossPointerEventTarget-->
+<!--             (pointerClickEvent)="hovered = false; handleAction(setting)"-->
+<!--             (pointerDownEvent)="hovered = true"-->
+<!--             (pointerCancelEvent)="hovered = false"-->
+<!--        >-->
+<!--          <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">-->
+<!--          <div class="setting-name"-->
+<!--               [style.color]="getColor(setting, hovered, hoveredColor)"-->
+<!--          >{{ setting.title }}</div>-->
+<!--        </div>-->
+<!--      </div>-->
       <mat-divider style="margin: 10px 0 10px 0"></mat-divider>
     </div>
     <div class="footer">

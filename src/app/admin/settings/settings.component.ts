@@ -41,27 +41,27 @@ export class SettingsComponent implements OnInit, OnDestroy {
         //   'action': 'about',
         //   'title': 'About'
         // },
-        {
-          'background': '#6651F1',
-          'icon': 'Launch',
-          'hover_icon': './assets/Launch (White).svg',
-          'action': 'wishlist',
-          'title': 'Wishlist'
-        },
-        {
-          'background': '#F53D45',
-          'icon': 'Support',
-          'hover_icon': './assets/Support (White).svg',
-          'action': 'support',
-          'title': 'Support'
-        },
-        {
-          'background': '#fc7303',
-          'icon': 'Bug',
-          'hover_icon': './assets/Bug (White).svg',
-          'action': 'bug',
-          'title': 'Bug Report'
-        },
+        // {
+        //   'background': '#6651F1',
+        //   'icon': 'Launch',
+        //   'hover_icon': './assets/Launch (White).svg',
+        //   'action': 'wishlist',
+        //   'title': 'Wishlist'
+        // },
+        // {
+        //   'background': '#F53D45',
+        //   'icon': 'Support',
+        //   'hover_icon': './assets/Support (White).svg',
+        //   'action': 'support',
+        //   'title': 'Support'
+        // },
+        // {
+        //   'background': '#fc7303',
+        //   'icon': 'Bug',
+        //   'hover_icon': './assets/Bug (White).svg',
+        //   'action': 'bug',
+        //   'title': 'Bug Report'
+        // },
     ];
 
   constructor(
@@ -140,7 +140,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (this.dialogRef) {
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
       const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-      const top = rect.top - (!this.isSwitchOption ? 370 : (DeviceDetection.isSafari() ? 450 : 410));
+      const top = rect.top - (!this.isSwitchOption ? 215 : (DeviceDetection.isSafari() ? 300 : 300));
       matDialogConfig.position = {left: `${rect.left - 130}px`, top: `${top}px`};
       this.dialogRef.updatePosition(matDialogConfig.position);
     }
