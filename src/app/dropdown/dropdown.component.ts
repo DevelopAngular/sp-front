@@ -26,6 +26,7 @@ export class DropdownComponent implements OnInit {
   }
 
   @ViewChildren('schoolList') schoolList: QueryList<School>;
+  @ViewChildren('_option') locationsList: QueryList<Location>;
 
   user: User;
   heading: string = '';
@@ -85,12 +86,20 @@ export class DropdownComponent implements OnInit {
       }
   }
 
+  get list() {
+    if ((this.locationsList as any)._results.length) {
+      return this.locationsList;
+    } else if ((this.schoolList as any)._results.length) {
+      return this.schoolList;
+    }
+  }
+
   search(value) {
     if (this.findElement) {
       this.renderer.setStyle(this.findElement.nativeElement, 'background-color', 'transparent');
     }
     if (value) {
-      this.findElement = (this.schoolList as any)._results.find(elem => {
+      this.findElement = (this.list as any)._results.find(elem => {
         return elem.nativeElement.innerText.toLowerCase().includes(value);
       });
       if (this.findElement) {

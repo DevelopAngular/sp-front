@@ -90,9 +90,15 @@
       >
         <span>Sign out</span>
       </div>
-      <div class="versions" [style.color]="getColor(null, null)">
-          <div class="privacy"
-               (mouseup)="dialogRef.close('privacy')">Privacy & Terms</div>
+      <div class="options" [style.color]="getColor(null, null)">
+        <span class="option"
+              appCrossPointerEventTarget
+              (pointerClickEvent)="dialogRef.close('privacy')"
+        >Privacy</span>
+        <span class="option"
+              appCrossPointerEventTarget
+              (pointerClickEvent)="dialogRef.close('terms')"
+        >Terms</span>
       </div>
     </div>
     <div class="bottom-arrow-container"

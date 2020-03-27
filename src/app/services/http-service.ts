@@ -1,28 +1,17 @@
-
-import {
-  catchError,
-  tap,
-  first,
-  delay,
-  filter,
-  flatMap,
-  map,
-  switchMap,
-  mapTo, distinctUntilChanged
-} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {of, throwError, BehaviorSubject, Observable, interval, ReplaySubject} from 'rxjs';
+import { Store } from '@ngrx/store';
+import { LocalStorage } from '@ngx-pwa/local-storage';
+import { BehaviorSubject, interval, Observable, of, ReplaySubject, throwError } from 'rxjs';
+import { catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
-import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
-import {StorageService} from './storage.service';
-import { LocalStorage } from '@ngx-pwa/local-storage';
-import {Store} from '@ngrx/store';
-import {AppState} from '../ngrx/app-state/app-state';
-import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
+import { AppState } from '../ngrx/app-state/app-state';
 import { getSchools } from '../ngrx/schools/actions';
+import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
+import { GoogleLoginService, isDemoLogin, isGg4lLogin } from './google-login.service';
+import { StorageService } from './storage.service';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -49,7 +38,7 @@ function ensureFields<T, K extends keyof T>(obj: T, keys: K[]) {
   }
 }
 
-function getSchoolInArray(id: string|number, schools: School[]) {
+function getSchoolInArray(id: string | number, schools: School[]) {
   for (let i = 0; i < schools.length; i++) {
     if (Number(schools[i].id) === Number(id)) {
       return schools[i];
@@ -58,7 +47,7 @@ function getSchoolInArray(id: string|number, schools: School[]) {
   return null;
 }
 
-function isSchoolInArray(id: string|number, schools: School[]) {
+function isSchoolInArray(id: string | number, schools: School[]) {
   return getSchoolInArray(id, schools) !== null;
 }
 
@@ -92,17 +81,19 @@ function makeConfig(config: Config, access_token: string, school: School, effect
 }
 
 function makeUrl(server: LoginServer, endpoint: string) {
+  let url: string;
+
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
-    return endpoint;
+    url = endpoint;
   } else {
-    // if (!environment.production) {
-    //   const proxyPath = new URL(server.api_root).pathname;
-    //   return (proxyPath + endpoint) as string;
-    // } else {
-    //   return server.api_root + endpoint;
-    // }
-    return server.api_root + endpoint;
+    if (/(proxy)/.test(environment.buildType)) {
+      const proxyPath = new URL(server.api_root).pathname;
+      url = proxyPath + endpoint;
+    } else {
+      url = server.api_root + endpoint;
+    }
   }
+  return url;
 }
 
 export interface LoginServer {
@@ -116,9 +107,22 @@ export interface LoginServer {
   ws_url: string;
 }
 
+export interface LoginResponse {
+  servers: LoginServer[];
+  token?: {
+    auth_token: string,
+  };
+}
+
+export interface LoginChoice {
+  server: LoginServer;
+  gg4l_token?: string;
+}
+
 export interface AuthContext {
   server: LoginServer;
   auth: ServerAuth;
+  gg4l_token?: string;
 }
 
 export interface SPError {
@@ -138,6 +142,7 @@ class LoginServerError extends Error {
 export class HttpService {
 
   public errorToast$: ReplaySubject<SPError> = new ReplaySubject(1);
+  public schoolSignInRegisterText$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
@@ -166,11 +171,11 @@ export class HttpService {
   private hasRequestedToken = false;
 
   constructor(
-      private http: HttpClient,
-      private loginService: GoogleLoginService,
-      private storage: StorageService,
-      private pwaStorage: LocalStorage,
-      private store: Store<AppState>
+    private http: HttpClient,
+    private loginService: GoogleLoginService,
+    private storage: StorageService,
+    private pwaStorage: LocalStorage,
+    private store: Store<AppState>
   ) {
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
@@ -198,52 +203,49 @@ export class HttpService {
       return;
     });
 
-      interval(10000)
-        .pipe(
-            switchMap(() => of(this.accessTokenSubject.value)),
-            filter(v => !!v),
-            switchMap(({auth, server}) => {
-              if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
-                  const config = new FormData();
-                  const user = JSON.parse(this.storage.getItem('google_auth'));
-                  config.append('client_id', server.client_id);
-                  config.append('grant_type', 'refresh_token');
-                  config.append('token', auth.refresh_token);
-                  // config.append('username', user.username);
-                  // config.append('password', user.password);
-                  // console.log(new Date(auth.expires));
-
-                return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-                  map((data: any) => {
-                    // console.log('Auth data : ', data);
-                    // don't use TimeService for auth because auth is required for time service
-                    // to be useful
-                    data['expires'] = new Date(new Date() + data['expires_in']);
-
-                    ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-                    const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
-                    this.accessTokenSubject.next(updatedAuthContext);
-                  }),
-                  catchError((err) => {
-                    this.loginService.isAuthenticated$.next(false);
-                    return of(null);
-                  })
-                );                    // return this.fetchServerAuth();
-              } else {
-                return of(null);
-              }
-            }),
-     ).subscribe(() => { });
-
-      this.kioskTokenSubject$.pipe(
+    interval(10000)
+      .pipe(
+        switchMap(() => of(this.accessTokenSubject.value)),
         filter(v => !!v),
-        map(newToken => {
+        switchMap(({auth, server}) => {
+          if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
+            const config = new FormData();
+            const user = JSON.parse(this.storage.getItem('google_auth'));
+            config.append('client_id', server.client_id);
+            config.append('grant_type', 'refresh_token');
+            config.append('token', auth.refresh_token);
+
+            return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+              map((data: any) => {
+                // don't use TimeService for auth because auth is required for time service
+                // to be useful
+                data['expires'] = new Date(new Date() + data['expires_in']);
+
+                ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+                const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+                this.accessTokenSubject.next(updatedAuthContext);
+              }),
+              catchError((err) => {
+                this.loginService.isAuthenticated$.next(false);
+                return of(null);
+              })
+            );                    // return this.fetchServerAuth();
+          } else {
+            return of(null);
+          }
+        }),
+      ).subscribe(() => {
+    });
+
+    this.kioskTokenSubject$.pipe(
+      filter(v => !!v),
+      map(newToken => {
         newToken['expires'] = new Date(new Date() + newToken['expires_in']);
-        return { auth: newToken, server: this.accessTokenSubject.value.server};
+        return {auth: newToken, server: this.accessTokenSubject.value.server};
 
       })).subscribe(res => {
-        this.accessTokenSubject.next(res as AuthContext);
-      });
+      this.accessTokenSubject.next(res as AuthContext);
+    });
 
   }
 
@@ -260,46 +262,44 @@ export class HttpService {
     return this.accessTokenSubject.pipe(filter(e => !!e));
   }
 
-  private getLoginServers(data: FormData): Observable<LoginServer> {
+  private getLoginServers(data: FormData, gg4l: string = ''): Observable<LoginChoice> {
     const preferredEnvironment = environment.preferEnvironment;
 
     if (preferredEnvironment && typeof preferredEnvironment === 'object') {
-      return of(preferredEnvironment as LoginServer);
+      return of({ server: preferredEnvironment as LoginServer });
     }
 
+    let servers$: Observable<LoginResponse>;
     if (!navigator.onLine) {
-      return  this.pwaStorage.getItem('servers').pipe(
-        map((servers: LoginServer[]) => {
-          if (servers.length > 0) {
-            const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
-            // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
-            //   return testEnv.environment.preferEnvironment as LoginServer;
-            // } else {
-              return server;
-            // }
-          } else {
-            return null;
-          }
-        }));
+      servers$ = this.pwaStorage.getItem('servers');
+    } else {
+      const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
+
+      servers$ = this.http.post(discovery, data).pipe(
+        switchMap((servers: LoginResponse) => {
+          return this.pwaStorage.setItem('servers', servers)
+            .pipe(mapTo(servers));
+        })
+      );
     }
 
-    return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
-      switchMap(servers => {
-        return this.pwaStorage.setItem('servers', servers)
-          .pipe(mapTo(servers));
-      }),
-      map((servers: LoginServer[]) => {
-        if (servers.length > 0) {
-          const server = servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
-          // if (environment.preferEnvironment === 'Staging' && server.name !== 'Staging') {
-          //   return testEnv.environment.preferEnvironment as LoginServer;
-          // } else {
-            return server;
-          // }
+    return servers$.pipe(
+      map((servers: LoginResponse) => {
+        if (servers.servers.length > 0) {
+          const server: LoginServer = servers.servers.find(s => s.name === (preferredEnvironment as any)) || servers.servers[0];
+
+          let gg4l_token: string;
+
+          if (servers.token && servers.token.auth_token) {
+            gg4l_token = servers.token.auth_token;
+          }
+
+          return { server, gg4l_token };
         } else {
           return null;
         }
-      }));
+      })
+    );
   }
 
   private loginManual(username: string, password: string): Observable<AuthContext> {
@@ -307,7 +307,8 @@ export class HttpService {
     c.append('email', username);
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c).pipe(flatMap(server => {
+    return this.getLoginServers(c).pipe(flatMap((response: LoginChoice) => {
+      const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
       }
@@ -383,7 +384,8 @@ export class HttpService {
     c.append('provider', 'google-auth-token');
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c).pipe(flatMap(server => {
+    return this.getLoginServers(c).pipe(flatMap((response: LoginChoice) => {
+      const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
       }
@@ -410,21 +412,57 @@ export class HttpService {
     }));
   }
 
+  loginGG4L(code: string): Observable<AuthContext> {
+
+    const c = new FormData();
+    c.append('code', code);
+    c.append('provider', 'gg4l-sso');
+    c.append('platform_type', 'web');
+
+    return this.getLoginServers(c, code).pipe(flatMap((response: LoginChoice) => {
+      const server = response.server;
+      if (server === null) {
+        return throwError(new LoginServerError('No login server!'));
+      }
+
+      const config = new FormData();
+
+      config.append('client_id', server.client_id);
+      config.append('provider', 'gg4l-sso');
+      config.append('token', response.gg4l_token || '');
+
+      return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
+        map((data: any) => {
+          // don't use TimeService for auth because auth is required for time service
+          // to be useful
+          data['expires'] = new Date(new Date() + data['expires_in']);
+
+          ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+          const auth = data as ServerAuth;
+
+          return {auth: auth, server: server, gg4l_token: response.gg4l_token} as AuthContext;
+        }));
+
+    }));
+  }
+
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
     return this.loginService.getIdToken().pipe(
       switchMap((googleToken: any) => {
         let authContext$: Observable<AuthContext>;
         if (isDemoLogin(googleToken)) {
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
+        } else if (isGg4lLogin(googleToken)) {
+          authContext$ = this.loginGG4L(googleToken.gg4l_token);
         } else {
           authContext$ = this.loginGoogleAuth(googleToken);
         }
         return authContext$.pipe(
           tap((res) => {
             if (!res) {
-             throw new LoginServerError('Incorrect Login or password');
+              throw new LoginServerError('Incorrect Login or password');
             }
-            window.waitForAppLoaded(true);
             this.loginService.setAuthenticated();
           }),
           catchError(err => {
@@ -525,11 +563,13 @@ export class HttpService {
       }
       body = formData;
     }
-    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
+    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body,
+      makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   delete<T>(url, config?: Config): Observable<T> {
-    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
+    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url),
+      makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   put<T>(url, body?: any, config?: Config): Observable<T> {
@@ -545,7 +585,8 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
+    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body,
+      makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   patch<T>(url, body?: any, config?: Config): Observable<T> {
@@ -561,7 +602,8 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
+    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body,
+      makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
 }

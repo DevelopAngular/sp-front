@@ -103,9 +103,16 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   get advDisabledOptions() {
-     if (!this.data.selectedTeachers.length) {
-        return ['Any teachers assigned', 'All teachers assigned'];
-     }
+   const page = this.currentPage;
+   if (!this.data.selectedTeachers.length &&
+     (
+       page === Pages.NewRoom ||
+       page === Pages.EditRoom ||
+       page === Pages.NewRoomInFolder ||
+       page === Pages.EditRoomInFolder)
+   ) {
+     return ['Any teachers assigned', 'All teachers assigned'];
+   }
   }
 
   get validForm() {
@@ -294,5 +301,9 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.back.emit();
       });
     }
+  }
+
+  focus() {
+
   }
 }

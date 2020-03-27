@@ -42,13 +42,21 @@
       margin: 35px 0;
       font-size: 15px;
       .label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         color: $navy;
         margin-bottom: 6px;
         font-weight: bold;
       }
       .value {
         color: $blue-gray;
-        width: 200px;
+        width: 300px;
+
+        .info {
+          display: flex;
+          margin-bottom: 6px;
+        }
       }
     }
   }

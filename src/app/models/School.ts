@@ -11,7 +11,10 @@ export class School extends BaseModel {
         public gsuite_config?: any,
         public gsuite_hosted_domain?: string,
         public latest_pass_time?: string,
-        public launch_date?: string
+        public launch_date?: string,
+        public address?: any,
+        public created?: string,
+        public display_username?: boolean
     ) {
         super();
     }
@@ -31,7 +34,10 @@ export class School extends BaseModel {
             gsuite_config: any = JSON['gsuite_config'],
             gsuite_hosted_domain: string = JSON['gsuite_hosted_domain'],
             latest_pass_time: string = JSON['latest_pass_time'],
-            launch_date: string = JSON['launch_date'];
+            launch_date: string = JSON['launch_date'],
+            address: any = JSON['address'],
+            created: string = JSON['created'],
+            display_username: boolean = JSON['display_username'];
 
         return new School(
             display_card_room,
@@ -41,7 +47,10 @@ export class School extends BaseModel {
             gsuite_config,
             gsuite_hosted_domain,
             latest_pass_time,
-            launch_date
+            launch_date,
+            address,
+            created,
+            display_username
         );
     }
 }

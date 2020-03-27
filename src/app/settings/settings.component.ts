@@ -178,7 +178,7 @@ export class SettingsComponent implements OnInit {
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value || DeviceDetection.isIOSMobile() || DeviceDetection.isIOSTablet(),
+      'hidden': !!this.kioskMode.currentRoom$.value || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid() || DeviceDetection.isIOSTablet(),
       'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',

@@ -82,8 +82,8 @@
               <div>
                 <div class="ds-dialog-heading">Account Info</div>
                 <span class="ds-dialog-bold-text">Name: </span> <span>{{profile['Name']}}</span><br>
-                <span class="ds-dialog-bold-text">Username/Email: </span> <span>{{profile['Email/Username']}}</span><br>
-                <span class="ds-dialog-bold-text">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
+                <span class="ds-dialog-bold-text">Email/username: </span> <span>{{profile['Email/Username']}}</span><br>
+                <span class="ds-dialog-bold-text">Account type: </span> <span>{{profile['Account Type']}}</span><br>
               </div>
 <!--              <div [style.text-align]="'right'">-->
 <!--                <div>-->
@@ -210,11 +210,11 @@
         <div class="card-footer">
           <div class="button" *ngIf="profile._originalUserProfile.active && !data.disabledSignIn">
             <app-gradient-button
-              [size]="'editable'"
+              [size]="'small'"
               [width]="'155px'"
               [minHeight]="'37px'"
               [fontSize]="'13px'"
-              [fontWeight]="'bold'"
+              [fontWeight]="'700'"
               [gradient]="'#001115, #033294'"
               [hoverColor]="'#001115'"
               [textColor]="'#FFFFFF'"
@@ -229,11 +229,11 @@
           </div>
           <div class="button" *ngIf="!profile._originalUserProfile.active || data.disabledSignIn">
             <app-gradient-button
-              [size]="'editable'"
+              [size]="'small'"
               [width]="'155px'"
               [minHeight]="'37px'"
               [fontSize]="'13px'"
-              [fontWeight]="'bold'"
+              [fontWeight]="'700'"
               [textColor]="'#FFFFFF'"
               [disabled]="data.disabledSignIn"
               [cursor]="'pointer'"
@@ -248,13 +248,13 @@
           <div class="button">
             <div>
               <app-gradient-button
-                [size]="'editable'"
+                [size]="'small'"
                 [width]="'155px'"
                 [minHeight]="'37px'"
                 [fontSize]="'13px'"
-                [fontWeight]="'bold'"
-                [gradient]="'#DA2370, #FB434A'"
-                [hoverColor]="'#DA2370'"
+                [fontWeight]="'700'"
+                [gradient]="'#E32C66, #E32C66'"
+                [hoverColor]="'#E32C66'"
                 [textColor]="'#FFFFFF'"
                 (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')"
               >

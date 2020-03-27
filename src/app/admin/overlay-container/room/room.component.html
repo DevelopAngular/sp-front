@@ -34,7 +34,9 @@
            *ngIf="currentPage !== 9 && currentPage !== 10">
 
         <div class="teacher-title">
-          <span [ngStyle]="{'color': !data?.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
+          <span [ngStyle]="{'color': !data?.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">
+            Teachers in <span style="border-bottom: dotted">{{ data.roomName }}</span>
+          </span>
           <div class="tooltip-container">
             <img
               [matTooltip]="tooltipText.teachers"
@@ -99,6 +101,7 @@
             [input_value]="data && data.timeLimit ? data.timeLimit : ''"
             [placeholder]="'minutes'"
             (onUpdate)="data.timeLimit = +$event"
+            [timeInput]="true"
             [rightIcon]="'./assets/Support (Gray).svg'"
             [formGroup]="form"
             [controlName]="form.get('timeLimit')"

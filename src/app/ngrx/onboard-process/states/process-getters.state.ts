@@ -4,9 +4,22 @@ import {createSelector} from '@ngrx/store';
 
 export const getProcessState = (state: AppState) => state.onboardProcess;
 
-export const getProcessData = createSelector(
+export const getProcessEntities = createSelector(
   getProcessState,
-  (state: ProcessState) => state.data
+  (state: ProcessState) => state.entities
+);
+
+export const getProcessIds = createSelector(
+  getProcessState,
+  (state: ProcessState) => state.ids
+);
+
+export const getProcessData = createSelector(
+  getProcessEntities,
+  getProcessIds,
+  (entities, ids) => {
+    return ids.map(id => entities[id]);
+  }
 );
 
 export const getLoadedProcess = createSelector(

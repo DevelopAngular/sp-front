@@ -34,20 +34,21 @@ export class SchoolSettingsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.http.currentSchool$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((school: any) => {
-      this.school = {
-        ...school,
-        name: school.name,
-        launch_date: school.launch_date ? moment(school.launch_date).format('MMMM DD, YYYY') : 'Not launched',
-        created: moment(school.created).format('MMMM DD, YYYY')
-      };
-    });
-    this.schoolForm = new FormGroup({
-      name: new FormControl()
+      .subscribe((school: School) => {
+        this.school = {
+          ...school,
+          name: school.name,
+          launch_date: school.launch_date ? moment(school.launch_date).format('MMMM DD, YYYY') : 'Not launched',
+          created: moment(school.created).format('MMMM DD, YYYY')
+        };
+        this.schoolForm = new FormGroup({
+          name: new FormControl(school.name),
+          display_username: new FormControl(school.display_username)
+        });
     });
 
     this.schoolForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
-      this.changeForm = res.name !== this.school.name;
+      this.changeForm = (res.name !== this.school.name) || (res.display_username !== this.school.display_username);
     });
 
     this.changeSettings$.pipe(

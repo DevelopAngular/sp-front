@@ -12,6 +12,7 @@ import {GradientButtonComponent} from '../gradient-button/gradient-button.compon
 import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
 import {NoAccountComponent} from '../no-account/no-account.component';
 import { CheckUserInputDirective } from './directives/check-user-input.directive';
+import {SupportOptionsComponent} from '../support-options/support-options.component';
 
 @NgModule({
   declarations: [
@@ -22,10 +23,11 @@ import { CheckUserInputDirective } from './directives/check-user-input.directive
     DropdownComponent,
     SignedOutToastComponent,
     GradientButtonComponent,
+    CrossPointerEventTargetDirective,
     MoovingTilesComponent,
     NoAccountComponent,
     CheckUserInputDirective,
-    CrossPointerEventTargetDirective,
+    SupportOptionsComponent
   ],
   imports: [
     CommonModule,
@@ -38,12 +40,11 @@ import { CheckUserInputDirective } from './directives/check-user-input.directive
     SchoolToggleBarComponent,
     ToastConnectionComponent,
     DropdownComponent,
+    CrossPointerEventTargetDirective,
     SignedOutToastComponent,
     GradientButtonComponent,
     MoovingTilesComponent,
-    NoAccountComponent,
-    CrossPointerEventTargetDirective
-
+    NoAccountComponent
   ],
   entryComponents: [
     ErrorToastComponent,
@@ -51,6 +52,7 @@ import { CheckUserInputDirective } from './directives/check-user-input.directive
     DropdownComponent,
     SignedOutToastComponent,
     NoAccountComponent,
+    SupportOptionsComponent
   ],
 })
 export class CoreModule { }

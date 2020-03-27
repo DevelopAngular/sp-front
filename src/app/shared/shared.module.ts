@@ -115,7 +115,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     AccountGroupsComponent,
     ReportSuccessToastComponent,
     RestrictionPickerComponent,
-    SpAppearanceComponent
+    SpAppearanceComponent,
   ],
   entryComponents: [
     PassCardComponent,
@@ -126,7 +126,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SortMenuComponent,
     ConsentMenuMobileComponent,
     ReportSuccessToastComponent,
-    SpAppearanceComponent
+    SpAppearanceComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -174,7 +174,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileComponent,
     AccountGroupsComponent,
     ReportSuccessToastComponent,
-    RestrictionPickerComponent
+    RestrictionPickerComponent,
   ],
   providers: [
     {

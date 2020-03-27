@@ -1,12 +1,13 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
-import { NavbarDataService } from '../main/navbar-data.service';
+﻿import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {NavbarDataService} from '../main/navbar-data.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-display-card',
   templateUrl: './display-card.component.html',
-  styleUrls: ['./display-card.component.scss']
+  styleUrls: ['./display-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DisplayCardComponent implements OnInit {
   @Input() intro: number = null;
