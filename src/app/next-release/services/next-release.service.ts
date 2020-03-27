@@ -13,11 +13,11 @@ export class NextReleaseService {
   ) { }
 
   getLastReleasedUpdates(platform: SPPlatform) {
-    return this.http.get(`/v1/airtable_updates?platform=${platform}`);
+    return this.http.get(`v1/airtable_updates?platform=${platform}`);
   }
 
   dismissUpdate(id: number, platform: SPPlatform) {
-    return this.http.post('/v1/airtable_updates/dismiss', {id, platform});
+    return this.http.post('v1/airtable_updates/dismiss', {id, platform});
   }
 
 }
