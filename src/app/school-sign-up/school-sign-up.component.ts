@@ -305,7 +305,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         .subscribe((onboard: any) => {
           if (onboard.school_registered) {
             this.httpService.schoolSignInRegisterText$.next('Your school is already signed up!');
-            this.router.navigate(['']);
+            this.goHome();
           } else {
             this.school = school;
             this.schoolForm.controls.google_place_id.setValue( this.school.place_id);
@@ -324,6 +324,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   openLink(link) {
     window.open(link);
+  }
+
+  goHome() {
+    this.router.navigate(['']);
   }
 
 }

@@ -130,9 +130,9 @@
       color: #767676;
       cursor: pointer;
     }
-    //&:hover {
-    //  background-color: #ECF1FF;
-    //}
+    &:hover {
+      background-color: #ECF1FF;
+    }
   }
   .selected-row {
     background-color: #ECF1FF;

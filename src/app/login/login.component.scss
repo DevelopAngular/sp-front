@@ -4,23 +4,6 @@
   height: 100%;
 }
 
-@media screen and (max-width: 550px){
-  .container {
-
-    .brand {
-      position: relative !important;
-      left: 0 !important;
-      top: 0 !important;
-
-    }
-
-    .moving-tiles {
-      top: 550px !important;
-      width: 100% !important;
-    }
-  }
-}
-
 .container {
   height: 100vh;
   overflow: auto;
@@ -113,4 +96,36 @@
   font-weight: bold;
   text-align: center;
   margin: 40px auto;
+}
+
+
+@media screen and (max-width: 550px){
+  .container {
+
+    .brand {
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+
+    }
+
+    .moving-tiles {
+      top: 550px !important;
+      width: 100% !important;
+    }
+  }
+}
+
+@media all and (max-width: 768px){
+  .container {
+    .moving-tiles {
+
+      .shadow {
+        display: none;
+      }
+      .right-shadow {
+        display: none;
+      }
+    }
+  }
 }

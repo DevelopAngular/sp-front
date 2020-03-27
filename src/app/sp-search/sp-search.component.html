@@ -46,7 +46,10 @@
                [style.color]="textColor(cell)"
           >
             <span>
-              {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
+              {{student.display_name}}
+              {{
+              '(' + (student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : '') + ')'
+              }}
             </span>
           </div>
         </div>
@@ -190,8 +193,6 @@
       <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" tabindex="0" class="option-list_item"
            (mouseenter)="changeColor(true, $event)"
            (mouseleave)="changeColor(false, $event)"
-           (touchstart)="changeColor(true, $event)"
-           (touchend)="changeColor(true, $event)"
            [style.color]="textColor(cell)"
       >
         <span *ngIf="this.searchTarget === 'users'">

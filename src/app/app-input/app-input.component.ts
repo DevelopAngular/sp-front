@@ -32,6 +32,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() forceFocus$: Subject<boolean> = new Subject<boolean>();
   @Input() autocomplete: string = 'off';
   @Input() showPasswordButton: boolean;
+  @Input() timeInput: boolean;
 
   @Input() formGroup;
   @Input() controlName;
@@ -48,6 +49,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
 
   public hovered: boolean;
   public pressed: boolean;
+  public left;
   private destroy$ = new Subject();
 
 
@@ -58,6 +60,21 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
 
   get containerWidth() {
       return this.width ? parseFloat(this.width) + 16 + 'px' : 0;
+  }
+
+  get showMin() {
+    return this.timeInput && !this.isFocus && !!this.formGroup.get('timeLimit').value && this.controlName.valid;
+  }
+
+  get minLeftMargin() {
+    const value = this.formGroup.get('timeLimit').value;
+    if (value < 10) {
+      return 30;
+    } else if (value >= 10 && value < 100) {
+      return 39;
+    } else if (value >= 100) {
+      return 48;
+    }
   }
 
   ngOnInit() {
@@ -73,12 +90,13 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
       });
 
     setTimeout(() => {
-          this.controlName.setValue(this.input_value);
+      this.controlName.setValue(this.input_value);
     }, 50);
-      this.controlName.valueChanges
-        .subscribe(res => {
-        this.onUpdate.emit(res);
-      });
+
+    this.controlName.valueChanges
+      .subscribe(res => {
+      this.onUpdate.emit(res);
+    });
   }
 
   ngOnDestroy(): void {

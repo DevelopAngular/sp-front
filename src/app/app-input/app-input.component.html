@@ -51,6 +51,7 @@
              [placeholder]="(placeholder=='' ? '' : placeholder)"
              [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
              spellcheck="false" #inp />
+      <div class="min" (click)="isFocus = true; updateFocus(inp)" *ngIf="showMin" [style.left]="minLeftMargin + 'px'">min</div>
       <div class="tooltip-container tooltip-container__inline"
            *ngIf="controlName.invalid
             &&
@@ -64,7 +65,9 @@
             controlName.errors.room_number ||
             controlName.errors.minlength ||
             controlName.errors.uniqEmail ||
-            controlName.errors.email
+            controlName.errors.email ||
+            controlName.errors.max ||
+            controlName.errors.min
             )"
       >
         <img
@@ -75,7 +78,8 @@
             controlName.errors.invalid_email ? 'Please use your school email address' :
             controlName.errors.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' :
             controlName.errors.uniqEmail ? 'Account with that email/username already exists' :
-            controlName.errors.email ? 'Must be Email' : null
+            controlName.errors.email ? 'Must be Email' :
+            controlName.errors.max || controlName.errors.min  ? 'Must be between 1 and 120 minutes' : null
           "
           matTooltipClass="tooltip"
           class="success-icon"
@@ -94,7 +98,9 @@
         !controlName.errors.room_number &&
         !controlName.errors.minlength &&
         !controlName.errors.uniqEmail &&
-        !controlName.errors.email
+        !controlName.errors.email &&
+        !controlName.errors.max &&
+        !controlName.errors.min
         )'
         class="success-icon"
         [src]="'./assets/Report (Red).svg' | resolveAsset"
