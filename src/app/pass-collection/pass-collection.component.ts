@@ -1,20 +1,31 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, HostListener, ChangeDetectionStrategy} from '@angular/core';
-import { MatDialog } from '@angular/material';
-import {BehaviorSubject, merge, of, zip,  Observable ,  ReplaySubject ,  Subject } from 'rxjs';
-import { DataService } from '../services/data-service';
-import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
-import { HallPass } from '../models/HallPass';
-import { Invitation } from '../models/Invitation';
-import { PassLikeProvider } from '../models/providers';
-import { Request } from '../models/Request';
-import { PassLike} from '../models';
-import { PassCardComponent } from '../pass-card/pass-card.component';
-import { ReportFormComponent } from '../report-form/report-form.component';
-import { RequestCardComponent } from '../request-card/request-card.component';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {DataService} from '../services/data-service';
+import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
+import {HallPass} from '../models/HallPass';
+import {Invitation} from '../models/Invitation';
+import {PassLikeProvider} from '../models/providers';
+import {Request} from '../models/Request';
+import {PassLike} from '../models';
+import {PassCardComponent} from '../pass-card/pass-card.component';
+import {ReportFormComponent} from '../report-form/report-form.component';
+import {RequestCardComponent} from '../request-card/request-card.component';
 import {delay, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import { TimeService } from '../services/time.service';
-import { isEqual } from 'lodash';
+import {TimeService} from '../services/time.service';
+import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -33,7 +44,8 @@ export class SortOption {
 @Component({
   selector: 'app-pass-collection',
   templateUrl: './pass-collection.component.html',
-  styleUrls: ['./pass-collection.component.scss']
+  styleUrls: ['./pass-collection.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class PassCollectionComponent implements OnInit, OnDestroy {
@@ -101,6 +113,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private kioskMode: KioskModeService,
       private sanitizer: DomSanitizer,
       public screenService: ScreenService,
+      private cdr: ChangeDetectorRef
   ) {}
 
   get gridTemplate() {
@@ -138,6 +151,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         if (this.isActive) {
           this.timers.push(window.setInterval(() => {
             this.timerEvent.next(null);
+            this.cdr.detectChanges();
           }, 1000));
         }
   }

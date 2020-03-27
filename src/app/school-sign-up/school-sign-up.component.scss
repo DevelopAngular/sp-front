@@ -84,6 +84,16 @@
         box-sizing: border-box;
         position: relative;
         z-index: 1;
+
+        .sn-link {
+          color: $jade;
+          cursor: pointer;
+          font-size: 17px;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
 
       .right-side {

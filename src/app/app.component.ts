@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter, find } from 'lodash';
@@ -58,22 +58,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
   public isKioskMode: boolean;
+  public showSupportButton: boolean;
   private openConnectionDialog: boolean;
 
   private subscriber$ = new Subject();
-
-  @HostListener('window:orientationchange', ['$event'])
-  change(event) {
-    if (DeviceDetection.isAndroid()) {
-      console.log('Rotation');
-      screen.orientation.lock('portrait-primary');
-      // switch (window.screen.orientation.angle) {
-      //   case 90: {
-      //
-      //   }
-      // }
-    }
-  }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
@@ -92,7 +80,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private meta: Meta,
     private notifService: NotificationService,
     private googleAnalytics: GoogleAnalyticsService,
-    private shortcutsService: KeyboardShortcutsService
+    private shortcutsService: KeyboardShortcutsService,
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
@@ -203,8 +191,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           this.hubSpotSettings(data.currentUser);
         }
 
-        if (data.hubspot && (data.authFree || (!data.currentUser.isStudent() && !this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value))) {
+        if (data.hubspot && ((data.currentUser && !data.currentUser.isStudent()) && data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value))) {
           if (!existingHub) {
+            this.showSupportButton = true;
             document.body.appendChild(newHub);
             const dst = new Subject<any>();
             interval(100)

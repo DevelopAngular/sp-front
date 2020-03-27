@@ -65,6 +65,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
+import {SupportButtonComponent} from './support-button/support-button.component';
 
 
 const appRoutes: Routes = [
@@ -78,7 +79,7 @@ const appRoutes: Routes = [
     path: 'school_signup',
     canActivate: [SchoolSignUpGuard],
     loadChildren: 'app/school-sign-up/school-sign-up.module#SchoolSignUpModule',
-    data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: true, authFree: true},
+    data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: false, authFree: true},
   },
   {
     path: 'accounts_setup',
@@ -96,7 +97,7 @@ const appRoutes: Routes = [
     loadChildren: 'app/main/main.module#MainModule',
     resolve: {currentUser: CurrentUserResolver, schools: SchoolsResolver},
     data: {
-      hubspot: false,
+      hubspot: true,
       authFree: false
     }
   },
@@ -126,7 +127,8 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    ScrollHolderDirective
+    ScrollHolderDirective,
+    SupportButtonComponent,
   ],
   imports: [
     BrowserModule,

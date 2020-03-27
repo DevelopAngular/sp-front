@@ -302,4 +302,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  focus() {
+
+  }
 }
