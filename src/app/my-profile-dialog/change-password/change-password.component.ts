@@ -6,6 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
 import {catchError, tap} from 'rxjs/operators';
+import {HttpService} from '../../services/http-service';
 
 @Component({
   selector: 'app-change-password',
@@ -27,7 +28,8 @@ export class ChangePasswordComponent implements OnInit {
   constructor(
     private formService: CreateFormService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private http: HttpService
     ) { }
 
   get isAdmin() {
@@ -69,8 +71,9 @@ export class ChangePasswordComponent implements OnInit {
         this.cancel.emit();
       }),
       catchError(error => {
-        if (error.error.errors.indexOf('password is incorrect') !== -1 ) {
+        if (error.error.errors.indexOf('key `current_password` is required') !== -1 ) {
           this.errorMessage$.next('Current password is incorrect.');
+          this.http.errorToast$.next(null);
         }
         return of(null);
       })
