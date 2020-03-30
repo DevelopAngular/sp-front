@@ -24,7 +24,7 @@ export class SupportButtonComponent implements OnInit {
       const SPO = this.dialog.open(SupportOptionsComponent, {
         id: 'support',
         hasBackdrop: false,
-        panelClass: 'toasr',
+        panelClass: 'consent-dialog-container',
         data: { trigger: new ElementRef(event.currentTarget) }
       });
 
