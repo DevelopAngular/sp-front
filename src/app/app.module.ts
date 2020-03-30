@@ -65,6 +65,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
+import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
 
 
@@ -138,8 +139,8 @@ const appRoutes: Routes = [
     HttpClientModule,
     SwiperModule,
     CoreModule,
-
-        KeyboardShortcutsModule.forRoot(),
+    NextReleaseModule,
+    KeyboardShortcutsModule.forRoot(),
 
         RouterModule.forRoot(
             appRoutes,
