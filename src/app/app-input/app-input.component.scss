@@ -61,8 +61,10 @@
 }
 
 .show-password {
+  width: 72px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   position: absolute;
   right: 0;
   cursor: pointer;
@@ -98,7 +100,7 @@
   color: #E32C66 !important;
 }
 .clserrorInput {
-  border: 1px solid #E32C66 !important
+  border: 2px solid #E32C66 !important
 }
 ::ng-deep .tooltip {
   padding: 15px;
