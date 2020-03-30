@@ -6,7 +6,6 @@ import { User } from '../models/User';
 import { School } from '../models/School';
 import { NextStep } from '../animations';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
-import {map} from 'rxjs/operators';
 import {MatDialogRef} from '@angular/material';
 
 @Component({

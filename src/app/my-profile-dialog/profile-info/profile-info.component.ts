@@ -3,6 +3,8 @@ import {User} from '../../models/User';
 import {School} from '../../models/School';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
+import {MatDialogRef} from '@angular/material';
+import {MyProfileDialogComponent} from '../my-profile-dialog.component';
 
 @Component({
   selector: 'app-profile-info',
@@ -18,7 +20,7 @@ export class ProfileInfoComponent implements OnInit {
 
   frameMotion$: BehaviorSubject<any>;
 
-  constructor(private formService: CreateFormService) { }
+  constructor(private formService: CreateFormService, public dialogRef: MatDialogRef<MyProfileDialogComponent>) { }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
