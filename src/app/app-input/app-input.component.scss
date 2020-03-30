@@ -61,8 +61,10 @@
 }
 
 .show-password {
+  width: 72px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   position: absolute;
   right: 0;
   cursor: pointer;
