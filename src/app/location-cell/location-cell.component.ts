@@ -4,6 +4,7 @@ import { HttpService } from '../services/http-service';
 import { DomSanitizer } from '@angular/platform-browser';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-location-cell',
@@ -95,7 +96,7 @@ export class LocationCellComponent implements OnInit {
   changeColor(hovered, pressed?: boolean) {
     if (this.valid) {
       if (hovered) {
-        if (pressed) {
+        if (pressed && !DeviceDetection.isAndroid()) {
           this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#E2E7F4');
         } else {
           this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#ECF1FF');
