@@ -1,8 +1,8 @@
 <div class="wrapper"
      #cell
      appCrossPointerEventTarget
-     (pointerClickEvent)="cellSelected(); changeColor(true, false)"
-     (pointerDownEvent)="changeColor(true, true)"
+     (pointerClickEvent)="cellSelected();"
+     (pointerDownEvent)="onPress(true); changeColor(true, true)"
      (pointerCancelEvent)="changeColor(false, false)"
      (mouseenter)="changeColor(true)"
      (mouseleave)="changeColor(false)"

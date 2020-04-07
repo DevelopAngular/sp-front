@@ -6,6 +6,7 @@ import { DeviceDetection } from '../device-detection.helper';
 import {DragulaService} from 'ng2-dragula';
 import {merge, Observable, of, Subject, timer} from 'rxjs';
 import {delay, mapTo, publish, refCount, skipUntil} from 'rxjs/operators';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-favorite-form',
@@ -21,7 +22,8 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   constructor(
       private dialogRef: MatDialogRef<FavoriteFormComponent>,
       private locationService: LocationsService,
-      private dragulaService: DragulaService
+      private dragulaService: DragulaService,
+      public screen: ScreenService,
   ) { }
 
   ngOnInit() {
@@ -30,6 +32,12 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
       this.dragulaService.drag('locations').pipe(mapTo(false)),
       this.dragulaService.drop('locations').pipe(mapTo(true))
     ).pipe(publish(), refCount());
+
+    // this.screen.overflowLocationTable.subscribe(res => {
+    //   if (!res) {
+    //     // debugger;
+    //   }
+    // });
 
       this.locationService.getFavoriteLocationsRequest().subscribe((stars: any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));

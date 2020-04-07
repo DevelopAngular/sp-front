@@ -47,6 +47,7 @@ export class LocationCellComponent implements OnInit {
   overStar: boolean = false;
   hovered: boolean;
   pressed: boolean;
+  intervalId;
 
   constructor(
     private http: HttpService,
@@ -61,22 +62,6 @@ export class LocationCellComponent implements OnInit {
 
   get cursor(){
     return this.valid?'pointer':'not-allowed';
-  }
-
-  get bgColor(){
-    if (this.valid) {
-      if (this.hovered) {
-        if (this.pressed) {
-          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-        } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
-        }
-      } else {
-        return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
-      }
-    } else {
-      return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
-    }
   }
 
   get textColor() {
@@ -130,10 +115,34 @@ export class LocationCellComponent implements OnInit {
         this.star();
       }
     }
+    this.onPress(false);
+  }
+
+  onPress(press) {
+    let count = 100;
+    if (press) {
+      this.intervalId = setInterval(() => {
+        if (count <= 1000) {
+          count += 100;
+        } else {
+          this.screen.overflowLocationTable.next(false);
+          clearInterval(this.intervalId);
+        }
+      }, 100);
+    } else {
+      this.screen.overflowLocationTable.next(true);
+      clearInterval(this.intervalId);
+    }
   }
 
   star() {
     this.value.starred = !this.value.starred;
+    if (!this.value.starred) {
+      this.hovered = false;
+      this.pressed = false;
+      this.changeColor(false, false);
+      // debugger;
+    }
     this.onStar.emit(this.value);
   }
 
