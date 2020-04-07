@@ -96,11 +96,11 @@
     <div class="options" [style.color]="getColor(null, null)">
       <span class="option"
             appCrossPointerEventTarget
-            (pointerClickEvent)="dialogRef.close('privacy')"
+            (pointerClickEvent)="openLink('privacy')"
       >Privacy</span>
       <span class="option"
             appCrossPointerEventTarget
-            (pointerClickEvent)="dialogRef.close('terms')"
+            (pointerClickEvent)="openLink('terms')"
       >Terms</span>
     </div>
   </div>

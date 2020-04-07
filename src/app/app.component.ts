@@ -117,6 +117,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap((release) => {
           const dialogRef = this.dialog.open(NextReleaseComponent, {
             panelClass: 'main-form-dialog-container',
+            width: '425px',
+            maxHeight: '500px',
             data: {
               isStudent: false,
               isTeacher: true,

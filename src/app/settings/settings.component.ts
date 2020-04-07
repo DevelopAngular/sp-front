@@ -169,6 +169,22 @@ export class SettingsComponent implements OnInit {
       .subscribe();
   }
 
+  openLink(action) {
+    if (action === 'privacy') {
+      if (this.dialogRef) {
+        this.dialogRef.close('privacy');
+      } else {
+        this.sideNavService.sideNavAction$.next('privacy');
+      }
+    } else if (action === 'terms') {
+      if (this.dialogRef) {
+        this.dialogRef.close('terms');
+      } else {
+        this.sideNavService.sideNavAction$.next('terms');
+      }
+    }
+  }
+
   initializeSettings() {
     this.settings.push({
       'hidden': false,

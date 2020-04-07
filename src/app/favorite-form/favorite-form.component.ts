@@ -5,7 +5,7 @@ import { LocationsService } from '../services/locations.service';
 import { DeviceDetection } from '../device-detection.helper';
 import {DragulaService} from 'ng2-dragula';
 import {merge, Observable, of, Subject, timer} from 'rxjs';
-import {mapTo, publish, refCount, skipUntil} from 'rxjs/operators';
+import {delay, mapTo, publish, refCount, skipUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-favorite-form',

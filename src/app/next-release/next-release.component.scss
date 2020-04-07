@@ -3,12 +3,10 @@
 :host {
   .next-release-container {
     position: relative;
-    width: 425px;
-    height: 450px;
+    height: 500px;
     background-color: #FFFFFF;
     border-radius: 14px;
     overflow: auto;
-    position: relative;
     .release-version {
       display: flex;
       flex-direction: column;

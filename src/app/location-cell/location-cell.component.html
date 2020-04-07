@@ -3,6 +3,7 @@
      appCrossPointerEventTarget
      (pointerClickEvent)="cellSelected(); changeColor(true, false)"
      (pointerDownEvent)="changeColor(true, true)"
+     (pointerCancelEvent)="changeColor(false, false)"
      (mouseenter)="changeColor(true)"
      (mouseleave)="changeColor(false)"
      [style.color]="textColor"
