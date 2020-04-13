@@ -385,10 +385,10 @@ export class LiveDataService {
       // pass_request.accept and pass_invitation.accept are sent for "now" and
       // "future" passes, but we need to only show "now" passes here. "future"
       // passes will have a separate hall_pass.start event sent by the server.
-      pass => {
-        // check for pass for "now" as robustly as possible even in the face of clock skew.
-        return Math.abs((+pass.start_time) - (+pass.created)) < 5000;
-      },
+      // pass => {
+      //   // check for pass for "now" as robustly as possible even in the face of clock skew.
+      //   return Math.abs((+pass.start_time) - (+pass.created)) < 5000;
+      // },
     ];
 
     if (filter) {
