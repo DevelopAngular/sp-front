@@ -29,6 +29,7 @@ import {NextReleaseComponent, Update} from './next-release/next-release.componen
 import {User} from './models/User';
 import {UserService} from './services/user.service';
 import {NextReleaseService} from './next-release/services/next-release.service';
+import {ScreenService} from './services/screen.service';
 
 declare const window;
 
@@ -87,6 +88,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private notifService: NotificationService,
     private googleAnalytics: GoogleAnalyticsService,
     private shortcutsService: KeyboardShortcutsService,
+    private screen: ScreenService,
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
@@ -240,7 +242,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           this.hubSpotSettings(data.currentUser);
         }
 
-        if (data.hubspot && ((data.currentUser && !data.currentUser.isStudent()) && data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value))) {
+        if (data.hubspot &&
+          ((data.currentUser && !data.currentUser.isStudent()) &&
+            data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value)) && !this.screen.isDeviceLargeExtra
+        ) {
           if (!existingHub) {
             this.showSupportButton = true;
             document.body.appendChild(newHub);
