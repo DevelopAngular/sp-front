@@ -56,7 +56,7 @@
              [style.background]="
               hovered && hoveredColor === setting.background
               ?
-                i === 2
+                setting.action === 'appearance'
                   ?
                   (darkTheme.isEnabled$.value
                     ?
@@ -65,13 +65,13 @@
         >
           <img class="setting-icon"
                [title]="setting.tooltip"
-               [src]="i === 2
+               [src]="setting.action === 'appearance'
                 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background)
                   ? './assets/Glasses (Navy).svg'
                     : getIcon(setting.icon, setting, hovered, hoveredColor))
                       : (getIcon(setting.icon, setting, hovered, hoveredColor)) | resolveAsset" alt="SET">
           <div class="setting-title"
-               [style.color]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
+               [style.color]="setting.action === 'appearance' ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
           > {{setting.title}} </div>
         </div>
         <mat-divider class="divider"
