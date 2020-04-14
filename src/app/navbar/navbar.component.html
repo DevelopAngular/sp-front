@@ -1,11 +1,12 @@
 <div class="host"
      [style.background]="darkTheme.getColor({dark: '#0F171E', white : (!isStaff ? 'transparent' : '#FFFFFF')})"
      [style.position]="(isStaff || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
-     [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0">
+     [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0"
+     *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
+>
   <div
        class="bar" appNavbarElementSender
        [ngClass]="{shadow: (isStaff || isAssistant) || screenService.isDeviceLargeExtra}"
-       *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
        #navbar>
     <div [ngClass]="isIOSTablet ? 'ios-heading': 'heading'" class="grow">
       <app-smartpass-logo></app-smartpass-logo>
@@ -90,7 +91,6 @@
 
       <div class="inbox-wrapper"
           *ngIf="user && islargeDeviceWidth && !isKioskMode"
-          [style.background-color]="(inboxVisibility && !islargeDeviceWidth?'#E4EBFF':'transparent')"
           [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
           appCrossPointerEventTarget
          (pointerClickEvent)="inboxClick()"
@@ -121,7 +121,8 @@
         </div>
       </div>
 
-      <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant() && this.screenService.isDeviceLargeExtra;" #target
+<!--      *ngIf="user.isAssistant() && this.screenService.isDeviceLargeExtra"-->
+      <div class="ds-mx-10" style="cursor: pointer;" #target *ngIf="false"
            appCrossPointerEventTarget
            (pointerClickEvent)="showTeaches(target)"
       >
@@ -141,7 +142,7 @@
   </div>
 </div>
 
-<div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
+<div class="host" *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
       user.isAssistant() && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
   <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
     <div *ngFor="let button of buttons" class="teacherNav_tab">
