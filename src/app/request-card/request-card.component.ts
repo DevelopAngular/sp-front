@@ -140,7 +140,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     .subscribe(user => {
       this._zone.run(() => {
         this.user = user;
-        // this.forStaff = user.roles.includes('_profile_teacher');
       });
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
@@ -155,15 +154,15 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     return getInnerPassName(this.request);
   }
 
-  get teacherName(){
-    return this.request.teacher.isSameObject(this.user)?'Me':this.request.teacher.first_name.substr(0, 1) +'. ' +this.request.teacher.last_name;
+  get teacherName() {
+    return this.request.teacher.isSameObject(this.user) ? 'Me' : this.request.teacher.first_name.substr(0, 1) + '. ' + this.request.teacher.last_name;
   }
 
-    get gradient() {
-        return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
-    }
+  get gradient() {
+      return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
+  }
 
-  get status(){
+  get status() {
     return this.request.status.charAt(0).toUpperCase() + this.request.status.slice(1);
   }
 
@@ -217,13 +216,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   formatDateTime(date: Date, timeOnly?: boolean){
     return Util.formatDateTime(date, timeOnly);
   }
-  // log(arg) {
-  //   console.log(arg);
-  // }
-  newRequest(){
+
+  newRequest() {
     this.performingAction = true;
     this.generateTeachersToRequest();
-      let body: any = this.forFuture ? {
+      const body: any = this.forFuture ? {
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
           'attachment_message' : this.request.attachment_message,
@@ -235,10 +232,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           'destination' : this.request.destination.id,
           'attachment_message' : this.request.attachment_message,
           'travel_type' : this.selectedTravelType,
-          'duration' : this.selectedDuration*60,
+          'duration' : this.selectedDuration * 60,
         };
+    console.log(this.selectedDuration);
 
-      if (this.isFutureOrNowTeachers) {
+    if (this.isFutureOrNowTeachers) {
           if (this.forFuture) {
               body.teachers = uniq(this.futureTeachers.map(t => t.id));
           } else {
@@ -257,7 +255,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               'duration' : this.request.duration,
               'travel_type' : this.request.travel_type
           };
-         // console.log('this invitation =>', invitation);
+
           this.requestService.createInvitation(invitation).pipe(
             takeUntil(this.destroy$),
             switchMap(() => {
@@ -532,7 +530,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     this.requestService.denyRequest(this.request.id, body)
       .pipe(takeUntil(this.destroy$))
       .subscribe((httpData) => {
-      // console.log('[Request Denied]: ', httpData);
       this.dialogRef.close();
     });
   }

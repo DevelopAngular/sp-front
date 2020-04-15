@@ -5,7 +5,6 @@ import { CreateFormService } from '../../../create-form.service';
 import {BehaviorSubject, fromEvent} from 'rxjs';
 import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Location } from '../../../../models/Location';
 
 import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
@@ -30,8 +29,9 @@ export class RestrictedTargetComponent implements OnInit {
         } else {
           blur = 20;
         }
-
-        this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
+        if (this.header) {
+          this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
+        }
       });
     }
   }
@@ -47,7 +47,6 @@ export class RestrictedTargetComponent implements OnInit {
 
   teachers;
 
-  showDummy = false;
   shadow: boolean = true;
 
   frameMotion$: BehaviorSubject<any>;
