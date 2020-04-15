@@ -24,6 +24,7 @@ import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {NavbarDataService} from '../main/navbar-data.service';
 
 @Component({
   selector: 'app-request-card',
@@ -78,7 +79,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
       public screenService: ScreenService,
-      private shortcutsService: KeyboardShortcutsService
+      private shortcutsService: KeyboardShortcutsService,
+      private navbarData: NavbarDataService
   ) {}
 
   get invalidDate() {
@@ -234,7 +236,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           'travel_type' : this.selectedTravelType,
           'duration' : this.selectedDuration * 60,
         };
-    console.log(this.selectedDuration);
 
     if (this.isFutureOrNowTeachers) {
           if (this.forFuture) {
@@ -272,6 +273,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
                   (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
           })).subscribe((res) => {
           this.performingAction = true;
+        if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile() && this.forFuture) {
+          this.dataService.openRequestPageMobile();
+          this.navbarData.inboxClick$.next(true);
+        }
           this.dialogRef.close();
       });
       }
