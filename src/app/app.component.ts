@@ -56,7 +56,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:popstate', ['$event'])
   back(event) {
-    // window.history.pushState({}, '');
+    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
+      window.history.pushState({}, '');
+    }
   }
 
   public isAuthenticated = null;
@@ -114,7 +116,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             .getLastReleasedUpdates(DeviceDetection.platform())
             .pipe(
               map((release: Array<Update>): Array<Update> => {
-                // console.log(release);
                 return release.filter((update) => {
                   const allowUpdate: boolean = !!update.groups.find((group) => {
                     console.log(group, '-', user.roles.includes(`_profile_${group}`));
