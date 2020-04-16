@@ -522,7 +522,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           });
         }
       } else if (action === 'intro') {
-          // this.router.navigate(['main/intro']);
         this.dialog.open(IntroDialogComponent, {
           width: '100vw',
           height: '100vh',

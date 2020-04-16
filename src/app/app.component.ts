@@ -54,6 +54,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogContainer = content.nativeElement;
   }
 
+  @HostListener('window:popstate', ['$event'])
+  back(event) {
+    // window.history.pushState({}, '');
+  }
+
   public isAuthenticated = null;
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
@@ -94,6 +99,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        window.history.pushState({}, '');
+      }
+    });
 
     this.userService.loadedUser$
       .pipe(
@@ -104,7 +114,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             .getLastReleasedUpdates(DeviceDetection.platform())
             .pipe(
               map((release: Array<Update>): Array<Update> => {
-                console.log(release);
+                // console.log(release);
                 return release.filter((update) => {
                   const allowUpdate: boolean = !!update.groups.find((group) => {
                     console.log(group, '-', user.roles.includes(`_profile_${group}`));
