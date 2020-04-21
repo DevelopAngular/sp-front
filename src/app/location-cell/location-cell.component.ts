@@ -57,12 +57,12 @@ export class LocationCellComponent implements OnInit {
     private renderer: Renderer2
   ) {}
 
-  get showLock(){
+  get showLock() {
     return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
   }
 
-  get cursor(){
-    return this.valid?'pointer':'not-allowed';
+  get cursor() {
+    return this.valid ? 'pointer' : 'not-allowed';
   }
 
   get textColor() {
@@ -120,31 +120,32 @@ export class LocationCellComponent implements OnInit {
   }
 
   onPress(press) {
-    let count = 100;
-    if (press) {
-      this.intervalId = setInterval(() => {
-        if (count <= 1000) {
-          count += 100;
-        } else {
-          this.screen.overflowLocationTable.next(false);
-          clearInterval(this.intervalId);
-        }
-      }, 100);
-    } else {
-      this.screen.overflowLocationTable.next(true);
-      clearInterval(this.intervalId);
+    if (this.allowOnStar) {
+      let count = 100;
+      if (press) {
+        this.intervalId = setInterval(() => {
+          if (count <= 1000) {
+            count += 100;
+          } else {
+            this.screen.enabledLocationTableDnD.next(true);
+            clearInterval(this.intervalId);
+          }
+        }, 100);
+      } else {
+        this.screen.enabledLocationTableDnD.next(false);
+        clearInterval(this.intervalId);
+      }
     }
   }
 
   star() {
-    this.value.starred = !this.value.starred;
-    if (!this.value.starred) {
-      this.hovered = false;
-      this.pressed = false;
-      this.changeColor(false, false);
-      // debugger;
-    }
-    this.onStar.emit(this.value);
+      this.value.starred = !this.value.starred;
+      if (!this.value.starred) {
+        this.hovered = false;
+        this.pressed = false;
+        this.changeColor(false, false);
+      }
+      this.onStar.emit(this.value);
   }
 
 }

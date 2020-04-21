@@ -1,9 +1,9 @@
 <div class="wrapper"
      #cell
      appCrossPointerEventTarget
-     (pointerClickEvent)="cellSelected();"
+     (pointerClickEvent)="cellSelected(); screen.enabledLocationTableDnD.next(false)"
      (pointerDownEvent)="onPress(true); changeColor(true, true)"
-     (pointerCancelEvent)="changeColor(false, false)"
+     (pointerCancelEvent)="changeColor(false, false); screen.enabledLocationTableDnD.next(false)"
      (mouseenter)="changeColor(true)"
      (mouseleave)="changeColor(false)"
      [style.color]="textColor"
