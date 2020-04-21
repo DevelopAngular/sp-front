@@ -6,8 +6,7 @@ import {ScreenService} from '../services/screen.service';
 @Component({
   selector: 'app-display-card',
   templateUrl: './display-card.component.html',
-  styleUrls: ['./display-card.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./display-card.component.scss']
 })
 export class DisplayCardComponent implements OnInit {
   @Input() intro: number = null;
@@ -46,7 +45,7 @@ export class DisplayCardComponent implements OnInit {
   }
 
   get titleColor () {
-    return !this.intro ? this.darkTheme.getColor() : '#1E194F';
+    return this.darkTheme.getColor();
   }
 
   ngOnInit() {

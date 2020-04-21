@@ -650,8 +650,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',
-      data: data,
-      disableClose: true
+      data: data
     });
 
     dialogRef.afterClosed()

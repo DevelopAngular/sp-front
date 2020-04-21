@@ -66,6 +66,7 @@ import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
+import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
 
 
@@ -139,7 +140,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     SwiperModule,
     CoreModule,
-
+    NextReleaseModule,
     KeyboardShortcutsModule.forRoot(),
 
     RouterModule.forRoot(

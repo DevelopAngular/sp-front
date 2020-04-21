@@ -1,0 +1,82 @@
+@import "../../../sp-colors";
+
+.profile-wrapper {
+  .header-container {
+    height: 70px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    .background-header {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .back-button {
+      width: 28px;
+      cursor: pointer;
+      position: absolute;
+      font-size: 15px;
+      font-weight: 500;
+      color: #1F195E;
+      left: 15px;
+
+    }
+
+    .save-button {
+      width: 85px;
+      position: absolute;
+      right: 27px;
+    }
+
+    .profile-header-text {
+      display: flex;
+      color: $navy;
+      font-size: 17px;
+      font-weight: bold;
+      z-index: 10;
+    }
+  }
+
+  .profile-content {
+    height: 370px;
+
+    .block-item {
+      padding: 26px 26px 0 26px;
+      font-size: 15px;
+
+      .label {
+        color: $navy;
+        font-weight: bold;
+      }
+      .item-content {
+        display: flex;
+        margin-top: 4px;
+        color: $blue-gray;
+      }
+    }
+  }
+}
+
+@media all and (max-width: 400px) {
+  .profile-wrapper {
+    .header-container {
+      height: 94px;
+
+      .back-button {
+        display: none;
+      }
+    }
+
+    .profile-content {
+      .block-item {
+        padding-top: 20px;
+      }
+    }
+  }
+}

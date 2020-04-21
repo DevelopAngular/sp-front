@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {SPPlatform} from './next-release/services/next-release.service';
 
 declare const window;
 
@@ -50,6 +51,19 @@ export class DeviceDetection {
             ||
             window.safari
             ;
+  }
+
+  static platform(): SPPlatform {
+    let platform: SPPlatform;
+
+    if (this.isAndroid()) {
+      platform = 'android';
+    } else if (this.isIOSMobile() || this.isIOSTablet()) {
+      platform = 'ios';
+    } else {
+      platform = 'web';
+    }
+    return platform;
   }
 
   static enableScroll() {

@@ -10,16 +10,17 @@ import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { RequestCardComponent } from '../request-card/request-card.component';
 import {filter, switchMap, tap} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
-import {BehaviorSubject, of} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
+import {DeviceDetection} from '../device-detection.helper';
+import {NavbarDataService} from '../main/navbar-data.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -67,15 +68,16 @@ export class InvitationCardComponent implements OnInit {
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
       private screenService: ScreenService,
-      private http: HttpService
+      private http: HttpService,
+      private navbarData: NavbarDataService
   ) {}
 
-  get studentName(){
+  get studentName() {
     return getInnerPassName(this.invitation);
   }
 
-  get issuerName(){
-    return this.invitation.issuer.isSameObject(this.user)?'Me':this.invitation.issuer.first_name.substr(0, 1) +'. ' +this.invitation.issuer.last_name;
+  get issuerName() {
+    return this.invitation.issuer.isSameObject(this.user) ? 'Me' : this.invitation.issuer.first_name.substr(0, 1) + '. ' + this.invitation.issuer.last_name;
   }
 
     get gradient() {
@@ -83,16 +85,16 @@ export class InvitationCardComponent implements OnInit {
     }
 
     get studentText() {
-        if (this.formState && this.formState.data.selectedGroup) {
-            return this.formState.data.selectedGroup.title;
-        } else {
-            return (this.selectedStudents ?
-                (this.selectedStudents.length > 2 ?
-                    this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
-                    this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
-                    ' and ' + this.selectedStudents[1].display_name : '')) :
-              this.invitation.student.display_name + ` (${this.studentEmail})`);
-        }
+      if (this.formState && this.formState.data.selectedGroup) {
+          return this.formState.data.selectedGroup.title;
+      } else {
+          return (this.selectedStudents ?
+              (this.selectedStudents.length > 2 ?
+                  this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
+                  this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
+                  ' and ' + this.selectedStudents[1].display_name : '')) :
+            this.invitation.student.display_name + ` (${this.studentEmail})`);
+      }
     }
 
     get studentEmail() {
@@ -138,7 +140,7 @@ export class InvitationCardComponent implements OnInit {
   this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
-  formatDateTime(date: Date){
+  formatDateTime(date: Date) {
     return Util.formatDateTime(date);
   }
 
@@ -160,11 +162,15 @@ export class InvitationCardComponent implements OnInit {
     };
 
     this.requestService.createInvitation(body).subscribe((data) => {
+      if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
+        this.dataService.openRequestPageMobile();
+        this.navbarData.inboxClick$.next(true);
+      }
       this.dialogRef.close();
     });
   }
 
-  acceptInvitation(){
+  acceptInvitation() {
     this.performingAction = true;
     const body = {
       'start_time' : this.invitation.date_choices[0].toISOString(),
@@ -172,7 +178,6 @@ export class InvitationCardComponent implements OnInit {
     };
 
     this.requestService.acceptInvitation(this.invitation.id, body).subscribe((data: any) => {
-      console.log('[Invitation Accepted]: ', data);
       this.dialogRef.close();
     });
   }
@@ -208,21 +213,21 @@ export class InvitationCardComponent implements OnInit {
         dateDialog.afterClosed().pipe(
           filter((res) => res.data.date && resend_request && this.forStaff),
             switchMap((state) => {
-                const body = {
-                    'students' : this.invitation.student.id,
-                    'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
-                    'destination' : +this.invitation.destination.id,
-                    'date_choices' : [new Date(state.data.date.date).toISOString()],
-                    'duration' : this.invitation.duration,
-                    'travel_type' : this.invitation.travel_type
-                };
-                return this.requestService.createInvitation(body);
+              const body = {
+                  'students' : this.invitation.student.id,
+                  'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+                  'destination' : +this.invitation.destination.id,
+                  'date_choices' : [new Date(state.data.date.date).toISOString()],
+                  'duration' : this.invitation.duration,
+                  'travel_type' : this.invitation.travel_type
+              };
+              return this.requestService.createInvitation(body);
             }), switchMap(() => this.requestService.cancelInvitation(this.invitation.id, '')))
             .subscribe(console.log);
     }
     }
 
-  denyInvitation(evt: MouseEvent){
+  denyInvitation(evt: MouseEvent) {
     if (this.screenService.isDeviceMid) {
       this.cancelEditClick = !this.cancelEditClick;
     }
@@ -239,14 +244,14 @@ export class InvitationCardComponent implements OnInit {
         }
           return false;
       } else if (!this.forStaff) {
-        this.options.push(this.genOption('Decline Pass Request','#E32C66','decline'));
+        this.options.push(this.genOption('Decline Pass Request', '#E32C66', 'decline'));
         this.header = 'Are you sure you want to decline this pass request you received?'
       } else {
         if (this.invalidDate) {
             this.options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'resend'));
         }
-        this.options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
-        this.header = "Are you sure you want to delete this pass request you sent?";
+        this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete'));
+        this.header = 'Are you sure you want to delete this pass request you sent?';
       }
 
       if (!this.screenService.isDeviceMid) {
@@ -275,22 +280,20 @@ export class InvitationCardComponent implements OnInit {
 
   chooseAction(action) {
     this.denyOpen = false;
-    if(action === 'cancel'){
+    if(action === 'cancel') {
       this.dialogRef.close();
-    } else if(action === 'decline'){
+    } else if (action === 'decline') {
       const body = {
         'message' : ''
       };
       this.requestService.denyInvitation(this.invitation.id, body).subscribe((httpData) => {
-        console.log('[Invitation Denied]: ', httpData);
         this.dialogRef.close();
       });
-    } else if(action === 'delete') {
+    } else if (action === 'delete') {
       const body = {
         'message' : ''
       };
       this.requestService.cancelInvitation(this.invitation.id, body).subscribe((httpData) => {
-        console.log('[Invitation Cancelled]: ', httpData);
         this.dialogRef.close();
       });
     } else if (action === 'resend') {
@@ -301,25 +304,6 @@ export class InvitationCardComponent implements OnInit {
   genOption(display, color, action){
     return {display: display, color: color, action: action}
   }
-
-    // openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-    //     const data = {
-    //         'pass': templatePass,
-    //         'fromPast': false,
-    //         'fromHistory': fromHistory,
-    //         'fromHistoryIndex': fromHistoryIndex,
-    //         'forFuture': forLater,
-    //         'forInput': true,
-    //         'forStaff': forStaff,
-    //         'selectedStudents': selectedStudents,
-    //     };
-    //     this.dialog.open(component, {
-    //         panelClass: (forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-    //         backdropClass: 'custom-backdrop',
-    //         disableClose: true,
-    //         data: data
-    //     });
-    // }
 
   cancelClick() {
     this.cancelEditClick = false;

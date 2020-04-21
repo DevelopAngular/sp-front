@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 
 import { merge, Subject } from 'rxjs';
-import {debounceTime, pluck, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
@@ -15,6 +15,8 @@ import { OverlayContainerComponent } from '../overlay-container.component';
 
 import { isNull, isEqual, cloneDeep, omit } from 'lodash';
 import {KeyboardShortcutsService} from '../../../services/keyboard-shortcuts.service';
+import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
+import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 
 @Component({
   selector: 'app-room',
@@ -63,6 +65,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   destroy$ = new Subject();
 
   constructor(
+      private dialog: MatDialog,
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
       public overlayService: OverlayDataService,
       private hallPassService: HallPassesService,
@@ -290,17 +293,28 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.change$.next();
   }
 
-  deleteRoom() {
-    const pinnable = this.overlayService.pageState.getValue().data.pinnable;
-    if (this.currentPage === Pages.EditRoom) {
-      this.hallPassService.deletePinnableRequest(pinnable.id).subscribe(res => {
-        this.dialogRef.close();
-      });
-    } else if (this.currentPage === Pages.EditRoomInFolder) {
-      this.locationService.deleteLocationRequest(this.data.id).subscribe(res => {
-        this.back.emit();
-      });
-    }
+  deleteRoom(target: HTMLElement) {
+    const header = `Are you sure you want to permanently delete this room? All associated passes associated with this room <b>will not</b> be deleted.`;
+    const options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete'}];
+    UNANIMATED_CONTAINER.next(true);
+    const confirmDialog = this.dialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: { trigger: new ElementRef(target), header, options }
+    });
+
+    confirmDialog.afterClosed().pipe(tap(res => UNANIMATED_CONTAINER.next(false)), filter(action => !!action)).subscribe(action => {
+      const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+      if (this.currentPage === Pages.EditRoom) {
+        this.hallPassService.deletePinnableRequest(pinnable.id).subscribe(res => {
+          this.dialogRef.close();
+        });
+      } else if (this.currentPage === Pages.EditRoomInFolder) {
+        this.locationService.deleteLocationRequest(this.data.id).subscribe(res => {
+          this.back.emit();
+        });
+      }
+    });
   }
 
   focus() {

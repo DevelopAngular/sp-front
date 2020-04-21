@@ -72,26 +72,25 @@ export class InlineRequestCardComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-
   }
 
-  formatDateTime(){
+  formatDateTime() {
     return Util.formatDateTime(this.request.request_time);
   }
 
-  cancelRequest(evt: MouseEvent){
+  cancelRequest(evt: MouseEvent) {
     if (this.screenService.isDeviceMid) {
       this.cancelEditClick = !this.cancelEditClick;
     }
 
-    if(!this.cancelOpen){
+    if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
 
 
       this.header = '';
       this.options = [];
 
-      this.options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
+      this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete'));
       this.header = 'Are you sure you want to delete this pass request you sent?';
 
       if (!this.screenService.isDeviceMid) {
@@ -143,8 +142,8 @@ export class InlineRequestCardComponent implements OnInit {
 
   }
 
-  genOption(display, color, action){
-    return {display: display, color: color, action: action}
+  genOption(display, color, action) {
+    return {display: display, color: color, action: action};
   }
 
   get isIOSTablet() {

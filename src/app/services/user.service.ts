@@ -233,6 +233,10 @@ export class UserService {
     return this.http.get('v1/intros');
   }
 
+  updateUser(userId, data) {
+    return this.http.patch(`v1/users/${userId}`, data);
+  }
+
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }

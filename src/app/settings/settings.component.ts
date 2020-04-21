@@ -169,7 +169,37 @@ export class SettingsComponent implements OnInit {
       .subscribe();
   }
 
+  openLink(action) {
+    if (action === 'privacy') {
+      if (this.dialogRef) {
+        this.dialogRef.close('privacy');
+      } else {
+        this.sideNavService.sideNavAction$.next('privacy');
+      }
+    } else if (action === 'terms') {
+      if (this.dialogRef) {
+        this.dialogRef.close('terms');
+      } else {
+        this.sideNavService.sideNavAction$.next('terms');
+      }
+    }
+  }
+
   initializeSettings() {
+    this.settings.push({
+      'hidden': false,
+      'background': '#6651FF',
+      'icon': 'Username',
+      'action': 'profile',
+      'title': 'My Profile'
+    });
+    this.settings.push({
+      'hidden': false,
+      'background': '#134482',
+      'icon': 'Glasses',
+      'action': 'appearance',
+      'title': 'Appearance'
+    });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
       'background': '#EBBB00',
@@ -184,13 +214,13 @@ export class SettingsComponent implements OnInit {
       'action': 'notifications',
       'title': 'Notifications'
     });
-    this.settings.push({
-      'hidden': false,
-      'background': '#134482',
-      'icon': 'Glasses',
-      'action': 'appearance',
-      'title': 'Appearance'
-    });
+    // this.settings.push({
+    //   'hidden': false,
+    //   'background': '#134482',
+    //   'icon': 'Glasses',
+    //   'action': 'appearance',
+    //   'title': 'Appearance'
+    // });
     // this.settings.push({
     //   'hidden': !!this.kioskMode.currentRoom$.value,
     //   'background': '#04CD33',

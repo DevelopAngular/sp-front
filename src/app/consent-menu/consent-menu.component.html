@@ -4,7 +4,7 @@
 
     <div class="ds-mt-15" *ngIf="!header"></div>
     <div *ngIf="header">
-      <div class="consent-header" [style.color]="'#7F879D'">{{ header }}</div>
+      <div class="consent-header" [style.color]="'#7F879D'" [innerHTML]="header"></div>
       <div class="option-divider"></div>
     </div>
 
