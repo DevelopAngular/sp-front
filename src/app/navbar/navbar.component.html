@@ -19,7 +19,6 @@
             <div
                  #tabRef
                  [style.transition]="'transform .4s ease'"
-
                  appCrossPointerEventTarget
                  (pointerClickEvent)="tabRef.style.transform = 'unset'"
                  (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
@@ -39,7 +38,6 @@
       </div>
 
       <div *ngIf="user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra && !isStaff" class="teacherNav">
-        <!--{{buttons.length}}-->
         <div *ngFor="let button of buttons" class="teacherNav_tab">
           <ng-container *ngIf="buttonVisibility(button)">
             <div

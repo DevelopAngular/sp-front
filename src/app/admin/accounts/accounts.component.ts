@@ -14,9 +14,7 @@ import {User} from '../../models/User';
 import {StorageService} from '../../services/storage.service';
 import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-config-dialog.component';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
-import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
-import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {environment} from '../../../environments/environment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
@@ -27,9 +25,8 @@ import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
 import {SyncProviderComponent} from './sync-provider/sync-provider.component';
 import {GG4LSync} from '../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
+
 declare const window;
-import * as moment from 'moment';
-import {TotalAccounts} from '../../models/TotalAccounts';
 
 @Component({
   selector: 'app-accounts',
@@ -40,8 +37,6 @@ import {TotalAccounts} from '../../models/TotalAccounts';
 export class AccountsComponent implements OnInit, OnDestroy {
 
   splash: boolean;
-
-  public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
   user: User;
 
@@ -61,8 +56,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   querySubscriber$ = new Subject();
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
-  loadingAccountsLimit: number = 50;
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -132,23 +125,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
             }));
       })
     )
-    .subscribe((op: any) => {
-      // debugger;
-      // return zip(
-      //   this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
-      //   this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
-      //   .pipe(
-      //     map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
-      //       this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-      //       // this.splash = false;
-      //       this.gg4lSettingsData = gg4l;
-      //       this.schoolSyncInfoData = sync;
-      //       if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
-      //         this.openSyncProvider();
-      //       }
-      //       return gg4l;
-      //     }));
-    });
+    .subscribe();
 
     this.userService.userData.pipe(
       takeUntil(this.destroy$))
@@ -239,9 +216,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.pending$.next(false);
   }
 
-  tableTrigger() {
-    this.openTable = !this.openTable;
-    if (!this.openTable) {
+  tableTrigger(value) {
+    this.openTable = value;
+    if (!value) {
       this.lazyUserList = [];
     }
   }
@@ -249,18 +226,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  addUser() {
-    const DR = this.matDialog.open(AddUserDialogComponent, {
-      width: '425px', height: '500px',
-      panelClass: 'accounts-profiles-dialog',
-      backdropClass: 'custom-bd',
-      data: {
-        role: '_all',
-        syncInfo: this.schoolSyncInfoData
-      }
-    });
   }
 
   openSyncSettings() {
@@ -424,64 +389,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
         });
     }
 
-    promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-
-    console.log(this.selectedUsers);
-    debugger;
-
-      if (!eventTarget.classList.contains('button')) {
-        (eventTarget as any) = eventTarget.closest('.button');
-      }
-
-      eventTarget.style.opacity = '0.75';
-      let header: string;
-      let options: any[];
-
-      switch (option) {
-        case 'delete_from_profile':
-          header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
-          options = [{display: `Confirm Delete`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
-          break;
-      }
-      UNANIMATED_CONTAINER.next(true);
-
-      const DR = this.matDialog.open(ConsentMenuComponent, {
-        data: {
-          role: '_all',
-          selectedUsers: this.selectedUsers,
-          restrictions: false,
-          header: header,
-          options: options,
-          trigger: new ElementRef(eventTarget)
-        },
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-      });
-      DR.afterClosed()
-        .pipe(
-          switchMap((action): Observable<any> => {
-            eventTarget.style.opacity = '1';
-            switch (action) {
-              case 'delete_from_profile':
-                return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], ''))).pipe(mapTo(true));
-              default:
-                return of(false);
-            }
-          }),
-          tap(() => UNANIMATED_CONTAINER.next(false))
-        )
-        .subscribe(() => {
-          this.selectedUsers = [];
-        });
-    }
-
-    private getUserList(search = '') {
-      this.userList = [];
-      this.pending$.next(true);
-      return this.userService.getAccountsRoles('', search, 50)
-        .pipe(
-          filter(res => !!res.length), take(2));
-    }
+  private getUserList(search = '') {
+    this.userList = [];
+    this.pending$.next(true);
+    return this.userService.getAccountsRoles('', search, 50)
+      .pipe(
+        filter(res => !!res.length), take(2));
+  }
 
   loadMore() {
       this.userService.getMoreUserListRequest('_all');
@@ -616,7 +530,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     const data = {
       bulkPermissions: null,
       gSuiteSettings: true,
-    }
+    };
 
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
       panelClass: 'admin-form-dialog-container-white',

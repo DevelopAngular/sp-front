@@ -13,7 +13,7 @@ const routes: Routes = [
       {path: 'hallmonitor', loadChildren: 'app/admin/hallmonitor/hallmonitor.module#HallmonitorModule'},
       {path: 'search', loadChildren: 'app/admin/search/search.module#SearchModule'},
       {path: 'accounts', loadChildren: 'app/admin/accounts/accounts.module#AccountsModule'},
-      {path: 'accounts/:role', loadChildren: 'app/admin/accounts-role/accounts-role.module#AccountsRoleModule' },
+      // {path: 'accounts/:role', loadChildren: 'app/admin/accounts-role/accounts-role.module#AccountsRoleModule' },
       {path: 'passconfig', loadChildren: 'app/admin/pass-config/pass-config.module#PassConfigModule'},
       {path: 'myschool', loadChildren: 'app/admin/my-school/my-school.module#MySchoolModule'},
       {path: 'ios', component: IosComponentComponent},

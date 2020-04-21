@@ -8,6 +8,8 @@ import { AdminSharedModule } from '../shared/admin-shared.module';
 import { AccountsSyncComponent } from './accounts-sync/accounts-sync.component';
 import { SyncSettingsComponent } from './sync-settings/sync-settings.component';
 import { SyncProviderComponent } from './sync-provider/sync-provider.component';
+import { AccountsHeaderComponent } from './accounts-header/accounts-header.component';
+import { TabButtonComponent } from './accounts-header/tab-button/tab-button.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,9 @@ import { SyncProviderComponent } from './sync-provider/sync-provider.component';
     AdminCardButtonComponent,
     AccountsSyncComponent,
     SyncSettingsComponent,
-    SyncProviderComponent
+    SyncProviderComponent,
+    AccountsHeaderComponent,
+    TabButtonComponent,
   ],
   imports: [
     CommonModule,

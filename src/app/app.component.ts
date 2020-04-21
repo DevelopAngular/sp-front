@@ -28,7 +28,6 @@ import {ShortcutInput} from 'ng-keyboard-shortcuts';
 import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
 import {NextReleaseComponent, Update} from './next-release/next-release.component';
 import {User} from './models/User';
-import {UserService} from './services/user.service';
 import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
 
