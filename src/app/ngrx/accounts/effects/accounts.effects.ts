@@ -4,7 +4,6 @@ import * as accountsActions from '../actions/accounts.actions';
 import * as roleActions from '../actions';
 import {concatMap, map} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
-import {User} from '../../../models/User';
 import {PostRoleProps, RoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
 

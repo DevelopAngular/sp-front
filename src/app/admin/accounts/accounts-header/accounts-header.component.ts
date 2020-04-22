@@ -59,9 +59,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getCurrentTab();
     this.router.events.pipe(takeUntil(this.destroy$)).subscribe(value => {
-      if (value instanceof NavigationEnd) {
         this.getCurrentTab();
-      }
     });
   }
 
@@ -71,7 +69,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
   getCurrentTab() {
     const urlSplit: string[] = this.router.url.split('/');
-    this.currentTab = urlSplit[urlSplit.length - 1];
+    this.currentTab = urlSplit[urlSplit.length - 1] === 'accounts' ? '' : urlSplit[urlSplit.length - 1];
   }
 
   tableTrigger() {
@@ -92,7 +90,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   updateTab(route) {
-    this.router.navigate(['/admin/accounts/', route]);
+    if (route) {
+      this.router.navigate(['/admin/accounts/', route]);
+    } else {
+      this.router.navigate(['/admin/accounts/']);
+    }
   }
 
   selectTab(event: HTMLElement, container: HTMLElement) {

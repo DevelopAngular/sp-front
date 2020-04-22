@@ -4,7 +4,7 @@ import {
   EventEmitter,
   Input, NgZone, OnChanges, OnDestroy,
   OnInit,
-  Output,
+  Output, SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
@@ -302,7 +302,6 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
 
-
     this.marginTopStickyHeader = '0px';
     if (!this.displayedColumns) {
       this.displayedColumns = Object.keys(this._data[0]);
@@ -317,7 +316,6 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.selectedUsers.emit([]);
       }
     });
-    console.log(this.columnsToDisplay);
 
     const defaultSortSubject = this.storage.getItem('defaultSortSubject');
     let sortSubject: string;
@@ -340,10 +338,9 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  ngOnChanges() {
+  ngOnChanges(simpleChanges: SimpleChanges) {
     if (this.scrollableAreaName && this.scrollPosition.getComponentScroll(this.scrollableAreaName)) {
       setTimeout(() => {
-        // console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
         this.viewport.scrollToOffset(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
       }, 0);
     }

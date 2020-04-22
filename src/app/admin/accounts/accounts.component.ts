@@ -101,9 +101,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
       tap(() => {
-        this.querySubscriber$.next(this.getUserList());
-      }),
-      tap(() => {
         this.showDisabledBanner$.next(!this.http.getSchool().launch_date);
       }),
       switchMap(() => this.adminService.getCountAccountsRequest()),

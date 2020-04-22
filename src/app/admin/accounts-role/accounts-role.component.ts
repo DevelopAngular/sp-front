@@ -1,8 +1,8 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {BehaviorSubject, interval, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {
   debounceTime,
   distinctUntilChanged, exhaust,
@@ -22,9 +22,7 @@ import {StorageService} from '../../services/storage.service';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {User} from '../../models/User';
-import {DataService} from '../../services/data-service';
 import {Location} from '../../models/Location';
-import {DataTableComponent} from '../data-table/data-table.component';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
 import {LocationsService} from '../../services/locations.service';
@@ -34,8 +32,6 @@ import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
 import { uniqBy } from 'lodash';
-
-import * as moment from 'moment';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
 
@@ -95,7 +91,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             }
             return dot;
           }),
-          // takeUntil(this.destroyer$)
         )
         .subscribe((res) => {
           // console.log(res);
@@ -149,6 +144,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private locService: LocationsService,
     private domSanitizer: DomSanitizer,
     private gsProgress: GettingStartedProgressService,
+    private cdr: ChangeDetectorRef
   ) {
 
   }
@@ -167,7 +163,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.querySubscriber$.pipe(
-      take(1),
+      // take(1),
       switchAll(),
       filter((res: any) => res.length),
       takeUntil(this.destroy$))
@@ -196,11 +192,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.http.globalReload$.pipe(
+    merge(this.http.globalReload$, this.router.events.pipe(filter(event => event instanceof NavigationEnd))).pipe(
       tap(() => {
         this.role = null;
         this.selectedUsers = [];
         this.userList = [];
+        this.placeholder = false;
       }),
       tap(() => {
         this.showDisabledChip = !this.http.getSchool().launch_date;
@@ -219,7 +216,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
         return params;
       }),
-      tap(() => this.router.navigate(['admin/accounts', this.role])),
+      // tap(() => this.router.navigate(['admin/accounts', this.role])),
       filter(() => this.role !== 'g_suite'),
       takeUntil(this.destroy$)
     )
@@ -386,6 +383,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.dataTableHeadersToDisplay = [];
     this.userList = this.buildUserListData(userList);
     this.pending$.next(false);
+    this.cdr.detectChanges();
     this.placeholder = !!userList.length;
   }
 
@@ -445,6 +443,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.tableHeaders['Sign-in status'].index = 3;
       this.tableHeaders['Last sign-in'].index = 4;
     }
+    // this.reloadTableHeaders$.next(Object.keys(this.tableHeaders));
   }
 
   findRelevantAccounts(searchValue) {
@@ -570,6 +569,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(() => {
       UNANIMATED_CONTAINER.next(false);
+      this.cdr.detectChanges();
     });
   }
 
@@ -680,8 +680,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     return this.userService
       .getAccountsRoles(this.role, query, 50)
       .pipe(
-        take(2),
-        tap(() => {
+        tap((res) => {
           this.dataTableHeadersToDisplay = [];
         })
       );
@@ -778,7 +777,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
         this.loaded = true;
 
-        return record;
+      return record;
     });
 
   }

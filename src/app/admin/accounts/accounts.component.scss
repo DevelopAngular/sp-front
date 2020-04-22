@@ -36,15 +36,15 @@
 
 
     .accounts-content {
-
-      .content-wrapper {
-        width: 820px;
-      }
-      margin-top: 24px;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+
+      .content-wrapper {
+        width: 820px;
+      }
       .top-buttons {
         display: flex;
         justify-content: space-between;
