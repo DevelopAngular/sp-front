@@ -14,8 +14,7 @@
         [schoolSyncInfoData]="schoolSyncInfoData"
         [selectedUsers]="selectedUsers"
         (tableStateEmit)="dataTableEditState.next($event)"
-        (searchValueEmit)="findRelevantAccounts($event)"
-        (openTableEmit)="tableTrigger($event)"
+        (currentPageEmit)="currentPage = $event"
       ></app-accounts-header>
     </div>
 <!--      <div class="header-wrapper">-->
@@ -100,8 +99,27 @@
 <!--      </div>-->
 
 
-    <div class="accounts-content" *ngIf="!openTable">
-      <router-outlet></router-outlet>
+    <div class="accounts-content">
+      <div class="overview" *ngIf="!currentPage; else role">
+        <div class="title">Integrations</div>
+        <div class="cards">
+          <app-admin-card-button
+            [title]="'GG4L'"
+            [leftIcon]="'./assets/GG4L Icon.svg'"
+            [subtitle]="'Easy and secure account sync'"
+            (onClick)="openSyncSettings()"
+          ></app-admin-card-button>
+          <app-admin-card-button
+            [title]="'Profile pictures'"
+            [subtitle]="'Bulk-upload profile pictures'"
+            [leftIcon]="'./assets/Folder.svg'"
+          ></app-admin-card-button>
+        </div>
+      </div>
+      <ng-template #role>
+        <router-outlet></router-outlet>
+      </ng-template>
+
 <!--      <div class="content-wrapper">-->
 <!--        <div class="top-buttons" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">-->
 <!--          <app-admin-card-button-->
@@ -138,25 +156,25 @@
 <!--      </div>-->
     </div>
 
-    <div class="user-table" *ngIf="openTable && userList.length && !(pending$ | async)">
-      <div class="column-settings">
-        <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
-      </div>
-      <app-data-table
-              class="ds-my-10"
-              [data]="userList"
-              [lazyData]="lazyUserList"
-              [isCheckbox]="dataTableEditState"
-              (loadMoreAccounts)="loadMore()"
-              [textColor]="'#7E879D'"
-              [marginTopStickyHeader]="'147px'"
-              [disallowHover]="!(dataTableEditState | async)"
-              [displayedColumns]="dataTableHeadersToDisplay"
-              (selectedCell)="findProfileByRole($event)"
-              (selectedUsers)="setSelected($event)"
-              (selectedRow)="prepareData($event)"
-      >
-      </app-data-table>
-    </div>
+<!--    <div class="user-table" *ngIf="openTable && userList.length && !(pending$ | async)">-->
+<!--      <div class="column-settings">-->
+<!--        <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>-->
+<!--      </div>-->
+<!--      <app-data-table-->
+<!--              class="ds-my-10"-->
+<!--              [data]="userList"-->
+<!--              [lazyData]="lazyUserList"-->
+<!--              [isCheckbox]="dataTableEditState"-->
+<!--              (loadMoreAccounts)="loadMore()"-->
+<!--              [textColor]="'#7E879D'"-->
+<!--              [marginTopStickyHeader]="'147px'"-->
+<!--              [disallowHover]="!(dataTableEditState | async)"-->
+<!--              [displayedColumns]="dataTableHeadersToDisplay"-->
+<!--              (selectedCell)="findProfileByRole($event)"-->
+<!--              (selectedUsers)="setSelected($event)"-->
+<!--              (selectedRow)="prepareData($event)"-->
+<!--      >-->
+<!--      </app-data-table>-->
+<!--    </div>-->
   </div>
 </div>

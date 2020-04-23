@@ -39,36 +39,47 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      width: 100%;
+      //align-items: center;
+      //justify-content: center;
 
-      .content-wrapper {
-        width: 820px;
-      }
-      .top-buttons {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-      }
-
-      .groups {
-        width: 100%;
-        margin-top: 48px;
+      .overview {
+        margin: 50px;
         .title {
           color: $navy;
+          font-size: 20px;
           font-weight: bold;
-          font-size: 24px;
-          line-height: 29px;
-        }
-
-        .groups-buttons {
-          width: 100%;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          margin-top: 16px;
+          margin-bottom: 16px;
         }
       }
+
+      //.content-wrapper {
+      //  width: 820px;
+      //}
+      //.top-buttons {
+      //  display: flex;
+      //  justify-content: space-between;
+      //  width: 100%;
+      //}
+      //
+      //.groups {
+      //  width: 100%;
+      //  margin-top: 48px;
+      //  .title {
+      //    color: $navy;
+      //    font-weight: bold;
+      //    font-size: 24px;
+      //    line-height: 29px;
+      //  }
+      //
+      //  .groups-buttons {
+      //    width: 100%;
+      //    display: flex;
+      //    flex-wrap: wrap;
+      //    justify-content: space-between;
+      //    margin-top: 16px;
+      //  }
+      //}
     }
 
     .user-table {

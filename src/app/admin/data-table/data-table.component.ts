@@ -198,8 +198,8 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() set lazyData(value: any[]) {
     if (value.length) {
-        this.dataSource.add(value);
-        this._data = this.dataSource.allData;
+      this.dataSource.add(value);
+      this._data = this.dataSource.allData;
     }
 
   }
@@ -222,12 +222,13 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
           const isFirst = this.dataSource.last === 1;
           const isThree = this.dataSource.last >= 3;
           const isFour = this.dataSource.last >= 4;
-          const allowLoadMore = (
-            (
-              this.dataSource.last * 50) -
-            (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
-            (isFour ? 60 : 0) === (this.dataSource.last * 50) - 20;
 
+          // const allowLoadMore = (
+          //   (
+          //     this.dataSource.last * 50) -
+          //   (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
+          //   (isFour ? 60 : 0) === (this.dataSource.last * 50) - 20;
+    console.log(((this.dataSource.last * ( isFirst ? 40 : 60)) + (isThree ? (this.counter * 20) : 0)) - Math.ceil(offset / PAGESIZE), (this.dataSource.last * 50) - 15);
           if (((this.dataSource.last * ( isFirst ? 40 : 60)) + (isThree ? (this.counter * 20) : 0)) - Math.ceil(offset / PAGESIZE) <= (this.dataSource.last * 50) - 15) {
             if (isThree) {
               this.counter += 1;

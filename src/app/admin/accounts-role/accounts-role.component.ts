@@ -197,6 +197,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.role = null;
         this.selectedUsers = [];
         this.userList = [];
+        this.lazyUserList = [];
         this.placeholder = false;
       }),
       tap(() => {
@@ -216,7 +217,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
         return params;
       }),
-      // tap(() => this.router.navigate(['admin/accounts', this.role])),
       filter(() => this.role !== 'g_suite'),
       takeUntil(this.destroy$)
     )
@@ -361,6 +361,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     ).subscribe((userList) => {
       this.tableRenderer(userList);
     });
+
     this.userService.userData.subscribe((user) => {
       this.user = user;
     });
@@ -371,10 +372,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }),
       filter((res: any) => !!res && res.length)
     ).subscribe(res => {
-      setTimeout(() => {
         this.dataTableHeadersToDisplay = [];
         this.lazyUserList = this.buildUserListData(res);
-      }, 50);
     });
 
   }
@@ -443,7 +442,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.tableHeaders['Sign-in status'].index = 3;
       this.tableHeaders['Last sign-in'].index = 4;
     }
-    // this.reloadTableHeaders$.next(Object.keys(this.tableHeaders));
   }
 
   findRelevantAccounts(searchValue) {
@@ -569,7 +567,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(() => {
       UNANIMATED_CONTAINER.next(false);
-      this.cdr.detectChanges();
     });
   }
 
@@ -685,10 +682,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         })
       );
   }
+
   syncNow() {
       this.adminService.syncNow().subscribe();
       this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
   }
+
   private wrapToHtml(data, htmlTag, dataIndex?) {
     const wrapper =  wrapToHtml.bind(this);
     return wrapper(data, htmlTag, dataIndex);

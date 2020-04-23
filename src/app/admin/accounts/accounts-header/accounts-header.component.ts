@@ -11,6 +11,7 @@ import { UNANIMATED_CONTAINER } from '../../../consent-menu-overlay';
 import { ConsentMenuComponent } from '../../../consent-menu/consent-menu.component';
 import { mapTo, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { UserService } from '../../../services/user.service';
+import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -24,8 +25,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   @Input() selectedUsers: User[];
 
   @Output() tableStateEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() openTableEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() searchValueEmit: EventEmitter<any> = new EventEmitter<any>();
+  @Output() currentPageEmit: EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild('tabPointer') tabPointer: ElementRef;
   @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
@@ -33,7 +34,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
   tableState: boolean;
   openTable: boolean;
-  pts;
+  pts: string;
   currentTab: string;
 
   destroy$ = new Subject();
@@ -70,30 +71,31 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   getCurrentTab() {
     const urlSplit: string[] = this.router.url.split('/');
     this.currentTab = urlSplit[urlSplit.length - 1] === 'accounts' ? '' : urlSplit[urlSplit.length - 1];
+    this.currentPageEmit.emit(this.currentTab);
   }
 
-  tableTrigger() {
-    this.openTable = !this.openTable;
-    this.openTableEmit.emit(this.openTable);
-  }
-
-  addUser() {
-    const DR = this.matDialog.open(AddUserDialogComponent, {
-      width: '425px', height: '500px',
-      panelClass: 'accounts-profiles-dialog',
-      backdropClass: 'custom-bd',
-      data: {
-        role: '_all',
-        syncInfo: this.schoolSyncInfoData
-      }
+  addUser(element) {
+    const AAD = this.matDialog.open(AddAccountPopupComponent, {
+      panelClass: 'calendar-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: { trigger: new ElementRef(element.currentTarget)}
     });
+    // const DR = this.matDialog.open(AddUserDialogComponent, {
+    // //   width: '425px', height: '500px',
+    // //   panelClass: 'accounts-profiles-dialog',
+    // //   backdropClass: 'custom-bd',
+    // //   data: {
+    // //     role: '_all',
+    // //     syncInfo: this.schoolSyncInfoData
+    // //   }
+    // // });
   }
 
   updateTab(route) {
     if (route) {
       this.router.navigate(['/admin/accounts/', route]);
     } else {
-      this.router.navigate(['/admin/accounts/']);
+      this.router.navigate(['/admin/accounts']);
     }
   }
 

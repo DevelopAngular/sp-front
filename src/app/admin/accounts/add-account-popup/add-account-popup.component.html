@@ -1,0 +1,17 @@
+<div class="wrapper">
+  <div class="options">
+    <div class="option-container" *ngFor="let option of options let i = index">
+      <div class="option"
+           #op
+           (mouseenter)="op.hover = true"
+           (mouseleave)="op.hover = false"
+      >
+        <img *ngIf="i !== 0; else first" width="20" [src]="option.icon + (op.hover ? ' (Navy).svg' : ' (Blue-Gray).svg') | resolveAsset">
+        <ng-template #first><img width="20" [src]="option.icon | resolveAsset"></ng-template>
+        <div class="title">{{ option.title }}</div>
+      </div>
+      <mat-divider *ngIf="i === 0"></mat-divider>
+    </div>
+
+  </div>
+</div>

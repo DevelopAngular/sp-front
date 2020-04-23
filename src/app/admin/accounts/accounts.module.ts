@@ -10,6 +10,7 @@ import { SyncSettingsComponent } from './sync-settings/sync-settings.component';
 import { SyncProviderComponent } from './sync-provider/sync-provider.component';
 import { AccountsHeaderComponent } from './accounts-header/accounts-header.component';
 import { TabButtonComponent } from './accounts-header/tab-button/tab-button.component';
+import { AddAccountPopupComponent } from './add-account-popup/add-account-popup.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { TabButtonComponent } from './accounts-header/tab-button/tab-button.comp
     SyncProviderComponent,
     AccountsHeaderComponent,
     TabButtonComponent,
+    AddAccountPopupComponent,
   ],
   imports: [
     CommonModule,
@@ -28,7 +30,8 @@ import { TabButtonComponent } from './accounts-header/tab-button/tab-button.comp
   ],
   entryComponents: [
     SyncSettingsComponent,
-    SyncProviderComponent
+    SyncProviderComponent,
+    AddAccountPopupComponent,
   ]
 })
 export class AccountsModule {
