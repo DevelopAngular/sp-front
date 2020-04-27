@@ -2,7 +2,7 @@
   class="wrapper"
   appCrossPointerEventTarget
   (pointerClickEvent)="doClick()"
-  [style.color]="selected ? '#6651F1' : '#7f879d'"
+  [style.color]="selected ? '#6651F1' : darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})"
 >
   <svg width="25px" height="25px" viewBox="0 0 150 150">
     <use [attr.xlink:href]="icon_url"></use>

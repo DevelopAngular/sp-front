@@ -41,20 +41,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           window.waitForAppLoaded();
           this.goHome(user);
       });
-    // combineLatest(
-    //   this.userService.userData,
-    //   this.outletDummySwitcher$
-    // ).pipe(
-    //   takeUntil(this.destroy$),
-    //   filter(([u, d]) => d || (u && !u.isAdmin())),
-    //   switchMap(([u, d]) => {
-    //     debugger;
-    //       window.waitForAppLoaded();
-    //       return this.userService.userData;
-    //   })
-    // ).subscribe(user => {
-    //   this.goHome(user);
-    // });
   }
 
   ngOnInit() {

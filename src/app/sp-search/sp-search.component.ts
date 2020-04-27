@@ -279,7 +279,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                   this.isOpenedOptions.emit(true);
                   return this.removeDuplicateStudents(paged.results);
                 });
-            } else if (this.type === 'gsuite') {
+            } else if (this.type === 'gsuite' || this.type === 'GG4L') {
               let request$;
               if (this.role !== '_all') {
                 request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);

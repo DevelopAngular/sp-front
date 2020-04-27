@@ -1,10 +1,12 @@
 <div class="wrapper">
   <div class="options">
-    <div class="option-container" *ngFor="let option of options let i = index">
+    <div class="option-container" style="box-sizing: border-box" *ngFor="let option of options let i = index">
       <div class="option"
            #op
            (mouseenter)="op.hover = true"
            (mouseleave)="op.hover = false"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="dialogRef.close(option.action)"
       >
         <img *ngIf="i !== 0; else first" width="20" [src]="option.icon + (op.hover ? ' (Navy).svg' : ' (Blue-Gray).svg') | resolveAsset">
         <ng-template #first><img width="20" [src]="option.icon | resolveAsset"></ng-template>

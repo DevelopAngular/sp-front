@@ -11,6 +11,7 @@ import { SyncProviderComponent } from './sync-provider/sync-provider.component';
 import { AccountsHeaderComponent } from './accounts-header/accounts-header.component';
 import { TabButtonComponent } from './accounts-header/tab-button/tab-button.component';
 import { AddAccountPopupComponent } from './add-account-popup/add-account-popup.component';
+import { BulkAddComponent } from './bulk-add/bulk-add.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { AddAccountPopupComponent } from './add-account-popup/add-account-popup.
     AccountsHeaderComponent,
     TabButtonComponent,
     AddAccountPopupComponent,
+    BulkAddComponent,
   ],
   imports: [
     CommonModule,
@@ -32,6 +34,7 @@ import { AddAccountPopupComponent } from './add-account-popup/add-account-popup.
     SyncSettingsComponent,
     SyncProviderComponent,
     AddAccountPopupComponent,
+    BulkAddComponent
   ]
 })
 export class AccountsModule {

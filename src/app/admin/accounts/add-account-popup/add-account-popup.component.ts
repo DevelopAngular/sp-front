@@ -12,9 +12,9 @@ export class AddAccountPopupComponent implements OnInit {
   triggerElementRef: ElementRef;
 
   options = [
-    { title: 'Add GG4L account', icon: './assets/GG4L Icon.svg' },
-    { title: 'Add basic account', icon: `./assets/Admin`},
-    { title: 'Bulk add basic accounts', icon: './assets/Bulk Accounts' }
+    { title: 'Add GG4L account', icon: './assets/GG4L Icon.svg', action: 'gg4l' },
+    { title: 'Add basic account', icon: `./assets/Admin`, action: 'standard'},
+    { title: 'Bulk add basic accounts', icon: './assets/Bulk Accounts', action: 'bulk' }
   ];
 
   constructor(

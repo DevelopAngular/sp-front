@@ -1,0 +1,168 @@
+@import '../../../../sp-colors';
+
+.wrapper {
+  height: 100%;
+  .heading {
+    min-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $jade;
+    color: #FFFFFF;
+    font-size: 17px;
+    font-weight: bold;
+    position: relative;
+    box-shadow: 0 1px 5px 0px rgba(0, 0, 0, .2);
+    .back-button {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 25px;
+      margin: auto 0;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: grey;
+      img {
+        width: 28px;
+        height: 28px;
+      }
+
+      .cancel {
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+      }
+    }
+    .save-button {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 20px;
+      margin: auto 0px;
+      display: flex;
+      align-items: center;
+
+      .incomplete {
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .content {
+    .import-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 32px 32px 0 32px;
+      .template-and-info {
+        width: 227px;
+        .import-rooms-info {
+          color: #7F879D;
+          font-size: 14px;
+          text-align: center;
+        }
+      }
+
+      .download-template-link {
+        font-weight: bolder;
+        cursor: pointer;
+        color: #1E194F;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .choose-file {
+        display: flex;
+        width: 285px;
+        height: 110px;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 0 10px darkgrey;
+        border-radius: 20px;
+        margin-top: 46px;
+        cursor: pointer;
+
+        .choose-icon {
+          width: 50px;
+          height: 50px;
+        }
+
+        .choose-text {
+          font-size: 22px;
+          font-weight: bolder;
+          color: #7F879D;
+          margin-left: 8px;
+        }
+      }
+      .uploading-area {
+        margin-top: 25px;
+        width: 383px;
+        height: 190px;
+        border: 2px dashed #7F879D;
+        color: #7F879D;
+        font-size: 14px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        .choose-file-inline {
+          text-decoration: underline;
+          cursor: pointer;
+        }
+      }
+      .uploading-progress {
+        width: 206px;
+        height: 50px;
+        color: #1F194E;
+        font-weight: bold;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 20px 2px rgba(0, 0, 0, .2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 38px;
+      }
+    }
+
+    .issues-screen {
+      height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .issues-container {
+        overflow: auto;
+        flex: 1 1 70%;
+        max-height: 70%;
+      }
+      .issues-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        .cancel {
+          margin-right: 25px;
+          color: $blue-gray;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .imports-success {
+      height: 430px;
+      display: flex;
+      flex-direction: column;
+      //justify-content: center;
+      align-items: center;
+
+      .count-accounts {
+        color: $blue-gray;
+        margin-top: 10px;
+      }
+    }
+  }
+}

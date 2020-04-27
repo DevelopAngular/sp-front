@@ -39,7 +39,7 @@ export class AddUserDialogComponent implements OnInit {
       });
     }
   }
-  public typeChoosen: string;
+  public typeChosen: string;
   public newAlternativeAccount: FormGroup;
   public selectedUsers: User[] = [];
   public permissionsForm: FormGroup;
@@ -59,6 +59,8 @@ export class AddUserDialogComponent implements OnInit {
       { title: 'Assistant', icon: 'Assistant', selected: false, role: '_profile_assistant', disabled: false },
       { title: 'Student', icon: 'Student', selected: false, role: '_profile_student', disabled: false }
   ];
+  public title: string;
+  public icon: string;
   private pendingSubject = new BehaviorSubject(false);
   public pending$ = this.pendingSubject.asObservable();
 
@@ -75,8 +77,10 @@ export class AddUserDialogComponent implements OnInit {
 
   ) {
     this.syncInfo = this.data['syncInfo'];
-    this.accountTypes = this.syncInfo.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G_Suite', 'Standard'];
-    this.typeChoosen = this.accountTypes[0];
+    this.title = this.data['title'];
+    this.icon = this.data['icon'];
+    this.accountTypes = this.syncInfo.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G_Suite', 'Standard', 'GG4L'];
+    this.typeChosen = this.data['type'];
     if (this.data.role === '_profile_assistant' || this.data.role === '_all') {
       this.assistantLike = {
         user: null,
@@ -91,10 +95,10 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   get showNextButton() {
-    if (this.typeChoosen === this.accountTypes[0] && !this.state) {
+    if (this.typeChosen === this.accountTypes[0] && !this.state) {
         return (this.data.role === '_profile_assistant' && ((this.assistantLike.user || this.newAlternativeAccount.valid))) ||
             (this.data.role === '_all' && (this.newAlternativeAccount.valid || this.selectedUsers.length));
-    } else if (this.data.role === '_profile_assistant' && this.typeChoosen === this.accountTypes[1] && !this.state) {
+    } else if (this.data.role === '_profile_assistant' && this.typeChosen === this.accountTypes[1] && !this.state) {
       return this.newAlternativeAccount.valid;
     } else if (this.data.role === '_all' && !this.state) {
       return this.newAlternativeAccount.valid;
@@ -168,7 +172,7 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   showSaveButton() {
-    if (this.typeChoosen === this.accountTypes[0]) {
+    if (this.typeChosen === this.accountTypes[0]) {
       if (this.data.role === '_profile_assistant' && this.state) {
           return this.assistantLike.user && this.assistantLike.behalfOf.length;
       } else if (this.data.role === '_all' && this.state) {
@@ -180,7 +184,7 @@ export class AddUserDialogComponent implements OnInit {
       } else {
           return this.selectedUsers && this.selectedUsers.length;
       }
-    } else if (this.typeChoosen === this.accountTypes[1]) {
+    } else if (this.typeChosen === this.accountTypes[1]) {
       if (this.data.role !== '_profile_assistant' && this.data.role !== '_all') {
           return this.newAlternativeAccount.valid;
       } else {
@@ -213,7 +217,7 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   showIncomplete() {
-    if (this.typeChoosen === this.accountTypes[1]) {
+    if (this.typeChosen === this.accountTypes[1]) {
       return this.newAlternativeAccount.dirty && !this.showSaveButton() && !this.showNextButton;
     }
   }
@@ -252,12 +256,12 @@ export class AddUserDialogComponent implements OnInit {
           return role === 'all' ? selectedRoles : [role];
         }),
         switchMap((rolesToDb) => {
-          if (this.typeChoosen === this.accountTypes[0]) {
+          if (this.typeChosen === this.accountTypes[0]) {
             return zip(
               ...this.selectedUsers
                 .map((user) => this.userService.addAccountRequest(this.school.id, user, 'gsuite', rolesToDb, this.data.role))
             );
-          } else if (this.typeChoosen === this.accountTypes[1]) {
+          } else if (this.typeChosen === this.accountTypes[1]) {
 
             const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
             const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
@@ -323,7 +327,7 @@ export class AddUserDialogComponent implements OnInit {
     } else {
         this.selectedUsers = evt;
     }
-    console.log(evt);
+    // console.log(evt);
   }
   setSecretary(evtUser, evtBehalfOf) {
     if (evtUser) {

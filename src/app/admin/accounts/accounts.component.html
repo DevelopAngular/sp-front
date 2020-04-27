@@ -101,7 +101,7 @@
 
     <div class="accounts-content">
       <div class="overview" *ngIf="!currentPage; else role">
-        <div class="title">Integrations</div>
+        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Integrations</div>
         <div class="cards">
           <app-admin-card-button
             [title]="'GG4L'"

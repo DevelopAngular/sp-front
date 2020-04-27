@@ -1,0 +1,110 @@
+<div
+  class="wrapper"
+  (dragenter)="handleDragEvent($event, '#00B476')"
+  (dragover)="handleDragEvent($event, '#00B476')"
+  (dragleave)="handleDragEvent($event, '#7F879D')"
+  (drop)="catchFile($event)"
+>
+  <div class="heading" #header>
+    <div class="back-button">
+      <img *ngIf="true;" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+      <ng-template #cancel>
+        <div class="cancel">Cancel</div>
+      </ng-template>
+    </div>
+    <div class="ds-dialog-title-white ds-flex-center-center">
+      <img [src]="'./assets/Bulk Accounts (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+      <span>Bulk Add</span>
+    </div>
+    <div class="save-button">
+      <app-gradient-button
+         [size]="'small'"
+         [gradient]="'#FFFFFF, #FFFFFF'"
+         [hoverColor]="'#FCFDFF'"
+         [textColor]="'#04CD33'"
+         [cursor]="'pointer'"
+      >
+        <div class="ds-flex-center-start">
+          <span>Save</span>
+        </div>
+      </app-gradient-button>
+      <div class="incomplete" *ngIf="false">Incomplete</div>
+    </div>
+  </div>
+  <div class="content" [attr.data-motion-translate]="true">
+    <div class="import-screen" *ngIf="getAccountsImportScreen() === 1">
+      <div class="ds-w-100" [ngClass]="{'ds-flex-center-between': !uploadingProgress.inProgress && !uploadingProgress.completed}">
+        <div>
+          <img [ngClass]="{'slide-center': uploadingProgress.inProgress || uploadingProgress.completed}" [src]="'./assets/emptyStates/upload-file.svg'" alt="upload-file">
+        </div>
+        <div class="template-and-info" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">
+
+          <div class="import-rooms-info">
+            Import a list of room names, room numbers, and teachers in room from an Excel spreadsheet or CSV.
+          </div>
+          <div class="ds-flex-center-center ds-pt-15">
+
+            <app-gradient-button
+              [size]="'small'"
+              [gradient]="'#F4F4F4, #F4F4F4'"
+              [buttonLink]="'./assets/xlsx/Rooms Configuration.xlsx'"
+              [linkType]="'_self'"
+              [download]="true"
+              [hoverColor]="'#F4F4F4'"
+              [textColor]="'#1E194F'"
+              [leftIcon]="'./assets/Download (Navy).svg'"
+              [text]="'Download Template'"
+              [cursor]="'pointer'"
+            >
+            </app-gradient-button>
+          </div>
+        </div>
+
+      </div>
+      <div>
+      </div>
+      <div #dropArea class="uploading-area" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">
+        <span class="ds-pb-10">Drop spreadsheet here</span>
+        <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
+      </div>
+      <div *ngIf="uploadingProgress.inProgress || uploadingProgress.completed">
+        <div class="uploading-progress" #uploadingProgress
+             [style.background-image]="getProgress(uploadingProgress)">
+          <span>Importing Rooms</span>
+        </div>
+        <div class="ds-flex-column ds-flex-center-center ds-cell-text-2 ds-mt-15">
+          <span class="ds-pb-5">{{ importAccounts.length }} Accounts</span>
+          <span *ngIf="invalidAccounts.length">{{ invalidAccounts.length }} issues</span>
+        </div>
+      </div>
+
+    </div>
+    <input type="file" [formControl]="form.get('file')"  #file style="display: none"/>
+
+    <div class="issues-screen ds-p-25" *ngIf="getAccountsImportScreen() === 2">
+
+      <div class="issues-container">
+        <div class="ds-dialog-heading ds-pt-10 ds-pb-10">Review Issues ({{ invalidAccounts.length }})</div>
+        <div *ngFor="let issue of invalidAccounts" class="ds-cell-text-2 ds-pb-15">
+          <div>{{ issue.first_name + ' ' + issue.last_name }}</div>
+          <div *ngIf="issue.existsEmail">- Email/username already used</div>
+          <div *ngIf="issue.invalidType">- Account group not specified (Admin, Teacher, Student, or Assistant)</div>
+          <div *ngIf="issue.invalidEmail">- Email/username not specified</div>
+        </div>
+      </div>
+      <div class="issues-footer">
+        <div class="cancel" (click)="goBack()">Cancel</div>
+        <app-gradient-button
+          (buttonClick)="saveAccountPage = true"
+        >
+          Next
+        </app-gradient-button>
+      </div>
+    </div>
+
+    <div class="imports-success" *ngIf="getAccountsImportScreen() === 3">
+      <img class="slide-center" [src]="'./assets/emptyStates/Upload Success.svg'" alt="upload-file">
+      <div class="count-accounts">{{ validAccountsToDb.length }} Accounts Imported</div>
+    </div>
+  </div>
+</div>

@@ -295,6 +295,22 @@ export class UserService {
               }
             })
           );
+        case 'GG4L':
+          return this.http.currentSchool$.pipe(
+            take(1),
+            switchMap((currentSchool: School) => {
+              if (excludeProfile) {
+                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
+                  search: search,
+                  profile: excludeProfile
+                }));
+              } else {
+                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
+                  search
+                }));
+              }
+            })
+          );
       }
   }
 

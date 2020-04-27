@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {DarkThemeSwitch} from '../../../../dark-theme-switch';
 
 @Component({
   selector: 'app-tab-button',
@@ -13,7 +14,7 @@ export class TabButtonComponent implements OnInit {
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor() { }
+  constructor(public darkTheme: DarkThemeSwitch) { }
 
   ngOnInit() {
   }

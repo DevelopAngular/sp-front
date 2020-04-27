@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable, of, Subject, zip} from 'rxjs';
 import { TotalAccounts } from '../../../models/TotalAccounts';
 import { AdminService } from '../../../services/admin.service';
@@ -9,9 +9,10 @@ import { AddUserDialogComponent } from '../../add-user-dialog/add-user-dialog.co
 import { User } from '../../../models/User';
 import { UNANIMATED_CONTAINER } from '../../../consent-menu-overlay';
 import { ConsentMenuComponent } from '../../../consent-menu/consent-menu.component';
-import { mapTo, switchMap, takeUntil, tap } from 'rxjs/operators';
+import {filter, mapTo, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { UserService } from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
+import {BulkAddComponent} from '../bulk-add/bulk-add.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -80,15 +81,32 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
       backdropClass: 'invis-backdrop',
       data: { trigger: new ElementRef(element.currentTarget)}
     });
-    // const DR = this.matDialog.open(AddUserDialogComponent, {
-    // //   width: '425px', height: '500px',
-    // //   panelClass: 'accounts-profiles-dialog',
-    // //   backdropClass: 'custom-bd',
-    // //   data: {
-    // //     role: '_all',
-    // //     syncInfo: this.schoolSyncInfoData
-    // //   }
-    // // });
+    AAD.afterClosed().pipe(filter(res => !!res)).subscribe(action => {
+      if (action === 'gg4l' || action === 'standard') {
+        const DR = this.matDialog.open(AddUserDialogComponent, {
+          width: '425px', height: '500px',
+          panelClass: 'accounts-profiles-dialog',
+          backdropClass: 'custom-bd',
+          data: {
+            role: !this.currentTab ? '_all' : this.currentTab,
+            title: action === 'gg4l' ? 'Add GG4L Account' : 'Add Account',
+            syncInfo: this.schoolSyncInfoData,
+            icon: action === 'gg4l' ? './assets/GG4L Icon.svg' : './assets/Add Account (White).svg',
+            type: action === 'gg4l' ? 'GG4L' : 'Standard'
+          }
+        });
+      } else if (action === 'bulk') {
+        const BAAD = this.matDialog.open(BulkAddComponent, {
+          width: '425px', height: '500px',
+          panelClass: 'accounts-profiles-dialog',
+          backdropClass: 'custom-bd',
+          data: {
+            role: !this.currentTab ? '_all' : this.currentTab,
+          }
+        });
+      }
+    });
+
   }
 
   updateTab(route) {

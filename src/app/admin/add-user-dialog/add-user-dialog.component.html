@@ -1,7 +1,7 @@
 <div class="add-user-dialog-container">
   <!-- Disables card when some async stuffs occur-->
   <div class="disabled-state loading-theme_light-gray spinner" *ngIf="(pending$ | async)">
-    <mat-spinner [diameter]="'100'" [color]="'accent'"></mat-spinner>
+    <mat-spinner [diameter]="100" [color]="'accent'"></mat-spinner>
   </div>
   <!-- end -->
   <div class="heading" #header>
@@ -15,8 +15,8 @@
       <img [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
     </div>
     <div class="ds-dialog-title-white ds-flex-center-center">
-      <img [src]="'./assets/Plus (White).svg'" width="20" height="20" alt="(White).svg" class="ds-mr-10">
-      <span>Add User</span>
+      <img [src]="icon | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+      <span>{{ title }}</span>
     </div>
     <div class="save-button">
       <app-gradient-button *ngIf="showSaveButton()"
@@ -49,27 +49,27 @@
     </div>
   </div>
   <div class="content" *ngIf="!state" #rc>
-    <div class="content_top">
-      <div class="content_top-header">
-        <span class="ds-dialog-heading" style="padding-bottom: 0">Account Type</span>
-      </div>
-      <div class="content_top-body">
+<!--    <div class="content_top">-->
+<!--      <div class="content_top-header">-->
+<!--        <span class="ds-dialog-heading" style="padding-bottom: 0">Account Type</span>-->
+<!--      </div>-->
+<!--      <div class="content_top-body">-->
 
-        <div class="account-type-picker">
-          <app-restriction-picker
-            [choices]="accountTypes"
-            [selectedChoice]="typeChoosen"
-            [height]="32"
-            [width]="167"
-            [fontSize]="13"
-            (result)="typeChoosen = $event"
-          ></app-restriction-picker>
-        </div>
-      </div>
-    </div>
+<!--        <div class="account-type-picker">-->
+<!--          <app-restriction-picker-->
+<!--            [choices]="accountTypes"-->
+<!--            [selectedChoice]="typeChosen"-->
+<!--            [height]="32"-->
+<!--            [width]="167"-->
+<!--            [fontSize]="13"-->
+<!--            (result)="typeChosen = $event"-->
+<!--          ></app-restriction-picker>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 
     <div>
-      <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
+      <div class="content_rest" *ngIf="typeChosen === accountTypes[0] || typeChosen === accountTypes[2]">
         <div class="ds-w-100 ds-flex-start-center" style="position: relative;">
 
           <div class="profile-search">
@@ -78,7 +78,7 @@
               [selectedOptions]="selectedUsers"
               [placeholder]="'Search syncing accounts'"
               [dummyRoleText]="'users'"
-              [type]="'gsuite'"
+              [type]="typeChosen"
               [role]="data.role"
               (onUpdate)="setSelectedUsers($event)"
             ></app-sp-search>
@@ -87,7 +87,7 @@
       </div>
     </div>
 
-    <div class="content_rest" *ngIf="typeChoosen === accountTypes[1]">
+    <div class="content_rest" *ngIf="typeChosen === accountTypes[1]">
       <form class="new-alt-acc-form" [formGroup]="newAlternativeAccount">
 
         <div style="width: 238px">
@@ -137,7 +137,7 @@
         </div>
 
       </form>
-      <div class="info-text" *ngIf="typeChoosen === accountTypes[1]">
+      <div class="info-text" *ngIf="typeChosen === accountTypes[1]">
         <div style="margin-top: 7px">New users aren’t emailed this, you will need to share their password with them.</div>
       </div>
 
