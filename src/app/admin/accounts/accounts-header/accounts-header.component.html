@@ -23,14 +23,14 @@
       </div>
 
       <div class="header-buttons">
-        <div class="ds-mx-10">
+        <div class="ds-mx-10" *ngIf="currentTab !== ''">
           <app-round-input
             [minWidth]="'230px'"
             [width]="'230px'"
             [type]="'text'"
             [pending$]="pending$"
             [placeholder]="'Search'"
-            (ontextupdate)="searchValueEmit.emit($event)"
+            (ontextupdate)="search($event)"
             [isSearch]="true">
           </app-round-input>
         </div>

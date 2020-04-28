@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of, Subject, zip} from 'rxjs';
 import { TotalAccounts } from '../../../models/TotalAccounts';
@@ -137,6 +146,10 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
           this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
         }
       }, timeout);
+  }
+
+  search(value) {
+    this.adminService.searchAccountEmit$.next(value);
   }
 
   promptConfirmation(eventTarget: HTMLElement, option: string = '') {

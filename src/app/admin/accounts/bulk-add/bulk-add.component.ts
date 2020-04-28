@@ -1,10 +1,13 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import {map, switchMap} from 'rxjs/operators';
-import {forkJoin, fromEvent, MonoTypeOperatorFunction, of, Subject, zip} from 'rxjs';
-import * as XLSX from 'xlsx';
-import {UserService} from '../../../services/user.service';
+import { MatDialogRef } from '@angular/material';
+
+import {map, switchMap, takeUntil} from 'rxjs/operators';
+import { forkJoin, fromEvent, MonoTypeOperatorFunction, of, Subject, zip } from 'rxjs';
 import { differenceBy } from 'lodash';
+import * as XLSX from 'xlsx';
+
+import { UserService } from '../../../services/user.service';
 
 export interface ImportAccount {
   id: string;
@@ -24,7 +27,11 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
       return forkJoin({
         users: of(users),
         isValidEmail: zip(...users.map(user => {
-          return userService.checkUserEmail(user.primary_email);
+          if (user.primary_email) {
+            return userService.checkUserEmail(user.primary_email);
+          } else {
+            return of({exists: false});
+          }
         }))
       });
     }),
@@ -34,7 +41,10 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
           ...user,
           existsEmail: isValidEmail[index].exists,
           invalidEmail: !user.primary_email,
-          invalidType: !user.type
+          invalidType: !user.type ||
+            (user.type.toLowerCase() !== 'admin' &&
+            user.type.toLowerCase() !== 'teacher' &&
+            user.type.toLowerCase() !== 'student')
         };
       });
     })
@@ -46,7 +56,7 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
   templateUrl: './bulk-add.component.html',
   styleUrls: ['./bulk-add.component.scss']
 })
-export class BulkAddComponent implements OnInit {
+export class BulkAddComponent implements OnInit, OnDestroy {
 
   @ViewChild('dropArea') dropArea: ElementRef;
   @ViewChild('file') set fileRef(fileRef: ElementRef) {
@@ -95,7 +105,12 @@ export class BulkAddComponent implements OnInit {
   dragEvent$: Subject<any> = new Subject<any>();
   dropEvent$: Subject<any> = new Subject<any>();
 
-  constructor(private userService: UserService) { }
+  destroy$: Subject<any> = new Subject<any>();
+
+  constructor(
+    private userService: UserService,
+    public dialogRef: MatDialogRef<BulkAddComponent>
+  ) {}
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -104,6 +119,7 @@ export class BulkAddComponent implements OnInit {
 
     this.dropEvent$
       .pipe(
+        takeUntil(this.destroy$),
         switchMap((dragEvt: DragEvent) => {
           this.uploadingProgress.inProgress = true;
           const FR = new FileReader();
@@ -119,11 +135,16 @@ export class BulkAddComponent implements OnInit {
         this.complete(users);
       });
 
-    this.dragEvent$.subscribe((dropAreaColor) => {
+    this.dragEvent$.pipe(takeUntil(this.destroy$)).subscribe((dropAreaColor) => {
       if (this.dropArea && this.dropArea.nativeElement && this.getAccountsImportScreen() === 1) {
         this.dropArea.nativeElement.style.borderColor = dropAreaColor;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   complete(users) {
@@ -189,6 +210,7 @@ export class BulkAddComponent implements OnInit {
       }
     } else if (this.importAccounts.length && !this.invalidAccounts.length) {
       this.saveAccountPage = true;
+      return 3;
     }
   }
 
@@ -200,6 +222,10 @@ export class BulkAddComponent implements OnInit {
   catchFile(evt: DragEvent) {
     evt.preventDefault();
     this.dropEvent$.next(evt);
+  }
+
+  save() {
+    console.log(this.validAccountsToDb);
   }
 
 }

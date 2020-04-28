@@ -7,22 +7,21 @@
 >
   <div class="heading" #header>
     <div class="back-button">
-      <img *ngIf="true;" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
-      <ng-template #cancel>
-        <div class="cancel">Cancel</div>
-      </ng-template>
+      <img (click)="dialogRef.close()" *ngIf="getAccountsImportScreen() === 1 && !uploadingProgress.completed" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+      <div *ngIf="getAccountsImportScreen() === 3" class="cancel" (click)="goBack()">Cancel</div>
     </div>
     <div class="ds-dialog-title-white ds-flex-center-center">
       <img [src]="'./assets/Bulk Accounts (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
       <span>Bulk Add</span>
     </div>
-    <div class="save-button">
+    <div class="save-button" *ngIf="getAccountsImportScreen() === 3">
       <app-gradient-button
          [size]="'small'"
          [gradient]="'#FFFFFF, #FFFFFF'"
          [hoverColor]="'#FCFDFF'"
          [textColor]="'#04CD33'"
          [cursor]="'pointer'"
+         (buttonClick)="save()"
       >
         <div class="ds-flex-center-start">
           <span>Save</span>
@@ -33,7 +32,7 @@
   </div>
   <div class="content" [attr.data-motion-translate]="true">
     <div class="import-screen" *ngIf="getAccountsImportScreen() === 1">
-      <div class="ds-w-100" [ngClass]="{'ds-flex-center-between': !uploadingProgress.inProgress && !uploadingProgress.completed}">
+      <div [ngClass]="{'ds-flex-center-between': !uploadingProgress.inProgress && !uploadingProgress.completed}">
         <div>
           <img [ngClass]="{'slide-center': uploadingProgress.inProgress || uploadingProgress.completed}" [src]="'./assets/emptyStates/upload-file.svg'" alt="upload-file">
         </div>
@@ -47,7 +46,7 @@
             <app-gradient-button
               [size]="'small'"
               [gradient]="'#F4F4F4, #F4F4F4'"
-              [buttonLink]="'./assets/xlsx/Rooms Configuration.xlsx'"
+              [buttonLink]="'./assets/xlsx/SmartPass Bulk Account Add.xlsx'"
               [linkType]="'_self'"
               [download]="true"
               [hoverColor]="'#F4F4F4'"
@@ -88,7 +87,7 @@
         <div *ngFor="let issue of invalidAccounts" class="ds-cell-text-2 ds-pb-15">
           <div>{{ issue.first_name + ' ' + issue.last_name }}</div>
           <div *ngIf="issue.existsEmail">- Email/username already used</div>
-          <div *ngIf="issue.invalidType">- Account group not specified (Admin, Teacher, Student, or Assistant)</div>
+          <div *ngIf="issue.invalidType">- Account group not specified (Admin, Teacher, Student)</div>
           <div *ngIf="issue.invalidEmail">- Email/username not specified</div>
         </div>
       </div>
@@ -103,8 +102,10 @@
     </div>
 
     <div class="imports-success" *ngIf="getAccountsImportScreen() === 3">
-      <img class="slide-center" [src]="'./assets/emptyStates/Upload Success.svg'" alt="upload-file">
-      <div class="count-accounts">{{ validAccountsToDb.length }} Accounts Imported</div>
+      <div class="success-content">
+        <img class="slide-center" [src]="'./assets/emptyStates/Upload Success.svg'" alt="upload-file">
+        <div class="count-accounts">{{ validAccountsToDb.length }} Accounts Imported</div>
+      </div>
     </div>
   </div>
 </div>

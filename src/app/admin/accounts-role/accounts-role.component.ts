@@ -121,6 +121,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   };
 
   public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
+  public searchValue: string;
 
   querySubscriber$ = new Subject();
 
@@ -374,6 +375,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     ).subscribe(res => {
         this.dataTableHeadersToDisplay = [];
         this.lazyUserList = this.buildUserListData(res);
+    });
+
+    this.adminService.searchAccountEmit$.asObservable()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+      this.searchValue = value;
+      this.findRelevantAccounts(value);
     });
 
   }
@@ -666,7 +674,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           }
           this.selectedUsers = [];
         }
-        this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
+        if (!this.searchValue) {
+          this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
+        }
     });
   }
 
