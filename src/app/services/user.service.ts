@@ -279,7 +279,7 @@ export class UserService {
       switch (type) {
         case 'alternative':
           return this.http.get(constructUrl(`v1/users`, {search: search}), );
-        case 'gsuite':
+        case 'G_Suite':
           return this.http.currentSchool$.pipe(
             take(1),
             switchMap((currentSchool: School) => {
@@ -347,7 +347,7 @@ export class UserService {
       });
     } else if (userType === 'username') {
         return this.http.post(`v1/schools/${id}/add_user`, {
-            type:  'username',
+            type: 'username',
             username: user.email,
             password: user.password,
             first_name: user.first_name,

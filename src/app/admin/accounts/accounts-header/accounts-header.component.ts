@@ -22,6 +22,7 @@ import {filter, mapTo, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { UserService } from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
+import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 
 @Component({
   selector: 'app-accounts-header',
@@ -31,7 +32,7 @@ import {BulkAddComponent} from '../bulk-add/bulk-add.component';
 export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
   @Input() pending$: Subject<boolean>;
-  @Input() schoolSyncInfoData;
+  @Input() schoolSyncInfoData: SchoolSyncInfo;
   @Input() selectedUsers: User[];
 
   @Output() tableStateEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -88,20 +89,23 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
     const AAD = this.matDialog.open(AddAccountPopupComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: { trigger: new ElementRef(element.currentTarget)}
+      data: {
+        trigger: new ElementRef(element.currentTarget),
+        gg4l_enabled: this.schoolSyncInfoData.is_gg4l_enabled
+      }
     });
     AAD.afterClosed().pipe(filter(res => !!res)).subscribe(action => {
-      if (action === 'gg4l' || action === 'standard') {
+      if (action === 'gg4l' || action === 'g_suite' || action === 'standard') {
         const DR = this.matDialog.open(AddUserDialogComponent, {
           width: '425px', height: '500px',
           panelClass: 'accounts-profiles-dialog',
           backdropClass: 'custom-bd',
           data: {
             role: !this.currentTab ? '_all' : this.currentTab,
-            title: action === 'gg4l' ? 'Add GG4L Account' : 'Add Account',
+            title: (action === 'gg4l' ? 'Add GG4L' : action === 'g_suite' ? 'Add G_Suite' : 'Add') + ' Account',
             syncInfo: this.schoolSyncInfoData,
-            icon: action === 'gg4l' ? './assets/GG4L Icon.svg' : './assets/Add Account (White).svg',
-            type: action === 'gg4l' ? 'GG4L' : 'Standard'
+            icon: action === 'gg4l' ? './assets/GG4L Icon.svg' : action === 'g_suite' ? './assets/Google (Color).svg' : './assets/Add Account (White).svg',
+            type: action === 'gg4l' ? 'GG4L' : action === 'g_suite' ? 'G_Suite' : 'Standard'
           }
         });
       } else if (action === 'bulk') {

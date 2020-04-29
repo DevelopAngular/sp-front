@@ -10,9 +10,9 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 export class AddAccountPopupComponent implements OnInit {
 
   triggerElementRef: ElementRef;
+  isGG4L: boolean;
 
   options = [
-    { title: 'Add GG4L account', icon: './assets/GG4L Icon.svg', action: 'gg4l' },
     { title: 'Add basic account', icon: `./assets/Admin`, action: 'standard'},
     { title: 'Bulk add basic accounts', icon: './assets/Bulk Accounts', action: 'bulk' }
   ];
@@ -25,6 +25,13 @@ export class AddAccountPopupComponent implements OnInit {
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
+    this.isGG4L = this.data['gg4l_enabled'];
+
+    if (this.isGG4L) {
+      this.options.unshift({ title: 'Add GG4L account', icon: './assets/GG4L Icon.svg', action: 'gg4l' });
+    } else {
+      this.options.unshift({title: 'Add G_Suite Account', icon: './assets/Google (Color).svg', action: 'g_suite'});
+    }
     this.updateSettingsPosition();
   }
 

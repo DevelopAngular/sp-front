@@ -44,7 +44,6 @@ export class AddUserDialogComponent implements OnInit {
   public selectedUsers: User[] = [];
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
-  public controlsIteratable: any[];
   public assistantLike: {
     user: User,
     behalfOf: User[]
@@ -79,7 +78,7 @@ export class AddUserDialogComponent implements OnInit {
     this.syncInfo = this.data['syncInfo'];
     this.title = this.data['title'];
     this.icon = this.data['icon'];
-    this.accountTypes = this.syncInfo.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G_Suite', 'Standard', 'GG4L'];
+    this.accountTypes = ['G_Suite', 'Standard', 'GG4L'];
     this.typeChosen = this.data['type'];
     if (this.data.role === '_profile_assistant' || this.data.role === '_all') {
       this.assistantLike = {
@@ -124,7 +123,6 @@ export class AddUserDialogComponent implements OnInit {
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
-      this.controlsIteratable = Object.values(permissions);
       const group: any = {};
       for (const key in permissions) {
         group[key] = new FormControl(true);

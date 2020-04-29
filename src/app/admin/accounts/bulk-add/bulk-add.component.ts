@@ -8,6 +8,7 @@ import { differenceBy } from 'lodash';
 import * as XLSX from 'xlsx';
 
 import { UserService } from '../../../services/user.service';
+import {HttpService} from '../../../services/http-service';
 
 export interface ImportAccount {
   id: string;
@@ -61,13 +62,11 @@ export class BulkAddComponent implements OnInit, OnDestroy {
   @ViewChild('dropArea') dropArea: ElementRef;
   @ViewChild('file') set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
-      console.log(this.selectedFile);
       this.selectedFile = fileRef;
       fromEvent(this.selectedFile.nativeElement , 'change')
         .pipe(
           switchMap((evt: Event) => {
             this.uploadingProgress.inProgress = true;
-
             const FR = new FileReader();
             FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
             return fromEvent(FR, 'load');
@@ -109,7 +108,8 @@ export class BulkAddComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    public dialogRef: MatDialogRef<BulkAddComponent>
+    public dialogRef: MatDialogRef<BulkAddComponent>,
+    private http: HttpService
   ) {}
 
   ngOnInit() {
@@ -225,7 +225,21 @@ export class BulkAddComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    console.log(this.validAccountsToDb);
+    const requests$ = this.validAccountsToDb.map(user => {
+      const emailExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+      const userData: any = {
+        password: user.password,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.primary_email,
+        display_name: `${user.first_name} ${user.last_name}`
+      };
+      const userType = emailExp.test(user.primary_email) ? 'email' : 'username';
+      return this.userService.addAccountRequest(this.http.getSchool().id, userData, userType, [user.type.toLowerCase()], `_profile_${user.type.toLowerCase()}`);
+    });
+    zip(...requests$).subscribe(res => {
+      console.log(res);
+    });
   }
 
 }

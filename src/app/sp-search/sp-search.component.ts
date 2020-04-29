@@ -129,7 +129,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() role: string = '_profile_student';
   @Input() dummyRoleText: string = 'students';
   @Input() placeholder: string = 'Search students';
-  @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
+  @Input() type: string = 'alternative'; // Can be alternative or G_Suite or GG4L, endpoint will depend on that.
 
   @Input() searchingTeachers: User[];
 
@@ -279,7 +279,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                   this.isOpenedOptions.emit(true);
                   return this.removeDuplicateStudents(paged.results);
                 });
-            } else if (this.type === 'gsuite' || this.type === 'GG4L') {
+            } else if (this.type === 'G_Suite' || this.type === 'GG4L') {
               let request$;
               if (this.role !== '_all') {
                 request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);
