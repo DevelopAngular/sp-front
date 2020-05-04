@@ -25,6 +25,7 @@ import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
 import {SyncProviderComponent} from './sync-provider/sync-provider.component';
 import {GG4LSync} from '../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
+import {ProfilePictureComponent} from './profile-picture/profile-picture.component';
 
 declare const window;
 
@@ -250,6 +251,15 @@ export class AccountsComponent implements OnInit, OnDestroy {
         this.isOpenModal = false;
       });
     }
+  }
+
+  openProfilePictures() {
+    const PPD = this.matDialog.open(ProfilePictureComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px'
+    });
   }
 
   // findProfileByRole(evt) {

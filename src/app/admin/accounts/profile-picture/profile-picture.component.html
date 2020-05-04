@@ -1,0 +1,89 @@
+<div class="wrapper">
+  <div class="heading" #header>
+    <div class="back-button">
+      <img [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+      <div class="cancel" *ngIf="false">Cancel</div>
+    </div>
+    <div class="ds-dialog-title-white ds-flex-center-center">
+      <img [src]="'./assets/Pictures (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+      <span>Profile Pictures</span>
+    </div>
+    <div class="save-button" *ngIf="false">
+      <app-gradient-button
+        [size]="'small'"
+        [gradient]="'#FFFFFF, #FFFFFF'"
+        [hoverColor]="'#FCFDFF'"
+        [textColor]="'#04CD33'"
+        [cursor]="'pointer'"
+      >
+        <div class="ds-flex-center-start">
+          <span>Save</span>
+        </div>
+      </app-gradient-button>
+      <div class="incomplete" *ngIf="false">Incomplete</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page" *ngIf="page === 1">
+      <div class="center-content">
+        <img style="margin-right: 15px" [src]="'./assets/emptyStates/upload-file.svg' | resolveAsset">
+        <div style="margin-top: 35px"  class="ds-dialog-heading">Add Profile Pictures</div>
+        <div class="subtitle">Quickly add profile pictures for all your users with an image map from your SIS.</div>
+        <app-gradient-button
+          [gradient]="'#07ABC3, #07ABC3'"
+          [hoverColor]="'#07ABC3'"
+          [rightIcon]="'./assets/Chevron Right (White).svg'"
+          (buttonClick)="nextPage()"
+        >Continue
+        </app-gradient-button>
+      </div>
+    </div>
+    <div class="page" *ngIf="page === 2">
+      <div class="step">
+        <div class="ds-dialog-heading">Step 1: Upload image files</div>
+        <div class="description">Supported image types: JPEG, PNG <br>
+          You can also upload a zip file that contains the images.</div>
+        <div class="button">
+          <app-gradient-button
+            [gradient]="'#7F879D, #7F879D'"
+            [hoverColor]="'#7F879D'"
+            [leftIcon]="'./assets/Zip (White).svg'"
+            (buttonClick)="zip.click()"
+          >Choose files
+          </app-gradient-button>
+          <input type="file" [formControl]="form.get('images')"  #zip style="display: none"/>
+        </div>
+      </div>
+      <div class="step">
+        <div class="ds-dialog-heading">Step 1: Add map file</div>
+        <div class="description">
+          Upload an Excel spreadsheet or CSV containing the user ID number and the corresponding image file name.
+        </div>
+        <div class="buttons">
+          <app-gradient-button
+            [size]="'small'"
+            [gradient]="'#F4F4F4, #F4F4F4'"
+            [buttonLink]="'./assets/xlsx/SmartPass Bulk Account Add.xlsx'"
+            [linkType]="'_self'"
+            [download]="true"
+            [hoverColor]="'#F4F4F4'"
+            [textColor]="'#1E194F'"
+            [leftIcon]="'./assets/Download (Navy).svg'"
+            [text]="'Download Template'"
+            [cursor]="'pointer'"
+          >
+          </app-gradient-button>
+          <app-gradient-button
+            [gradient]="'#7F879D, #7F879D'"
+            [hoverColor]="'#7F879D'"
+            [leftIcon]="'./assets/XLSX (White).svg'"
+            (buttonClick)="csvFile.click()"
+          >Choose files
+          </app-gradient-button>
+          <input type="file" [formControl]="form.get('csvFile')"  #csvFile style="display: none"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

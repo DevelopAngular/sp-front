@@ -12,6 +12,7 @@ import { AccountsHeaderComponent } from './accounts-header/accounts-header.compo
 import { TabButtonComponent } from './accounts-header/tab-button/tab-button.component';
 import { AddAccountPopupComponent } from './add-account-popup/add-account-popup.component';
 import { BulkAddComponent } from './bulk-add/bulk-add.component';
+import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { BulkAddComponent } from './bulk-add/bulk-add.component';
     TabButtonComponent,
     AddAccountPopupComponent,
     BulkAddComponent,
+    ProfilePictureComponent,
   ],
   imports: [
     CommonModule,
@@ -34,7 +36,8 @@ import { BulkAddComponent } from './bulk-add/bulk-add.component';
     SyncSettingsComponent,
     SyncProviderComponent,
     AddAccountPopupComponent,
-    BulkAddComponent
+    BulkAddComponent,
+    ProfilePictureComponent
   ]
 })
 export class AccountsModule {
