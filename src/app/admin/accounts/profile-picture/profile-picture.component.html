@@ -8,16 +8,19 @@
       <img [src]="'./assets/Pictures (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
       <span>Profile Pictures</span>
     </div>
-    <div class="save-button" *ngIf="false">
+    <div class="save-button" *ngIf="page !== 1 && uploadingProgress.images.complete && uploadingProgress.csv.complete">
       <app-gradient-button
         [size]="'small'"
         [gradient]="'#FFFFFF, #FFFFFF'"
         [hoverColor]="'#FCFDFF'"
-        [textColor]="'#04CD33'"
+        [textColor]="'#07ABC3'"
         [cursor]="'pointer'"
+        (buttonClick)="nextPage()"
       >
         <div class="ds-flex-center-start">
-          <span>Save</span>
+          <span>
+           {{ page === 2 ? 'Next' : 'Save' }}
+          </span>
         </div>
       </app-gradient-button>
       <div class="incomplete" *ngIf="false">Incomplete</div>
@@ -46,13 +49,22 @@
           You can also upload a zip file that contains the images.</div>
         <div class="button">
           <app-gradient-button
+            *ngIf="!uploadingProgress.images.inProcess && !uploadingProgress.images.complete"
             [gradient]="'#7F879D, #7F879D'"
             [hoverColor]="'#7F879D'"
             [leftIcon]="'./assets/Zip (White).svg'"
             (buttonClick)="zip.click()"
           >Choose files
           </app-gradient-button>
-          <input type="file" [formControl]="form.get('images')"  #zip style="display: none"/>
+          <input type="file" multiple [formControl]="form.get('images')"  #zip style="display: none"/>
+
+          <div class="upload" *ngIf="uploadingProgress.images.inProcess || uploadingProgress.images.complete">
+            <mat-spinner *ngIf="uploadingProgress.images.inProcess; else complete" [color]="'warn'" [diameter]="30"></mat-spinner>
+            <ng-template #complete><img style="width: 16px" [src]="'./assets/Check (Jade).svg' | resolveAsset"></ng-template>
+            <div class="info"
+              [style.color]="uploadingProgress.images.inProcess ? '#7f879d' : '#04CD33'"
+            >{{ uploadingProgress.images.inProcess ? 'Uploading' : selectedImgFiles.length + ' images uploaded' }}</div>
+          </div>
         </div>
       </div>
       <div class="step">
@@ -60,11 +72,11 @@
         <div class="description">
           Upload an Excel spreadsheet or CSV containing the user ID number and the corresponding image file name.
         </div>
-        <div class="buttons">
+        <div class="buttons" *ngIf="!uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete">
           <app-gradient-button
             [size]="'small'"
             [gradient]="'#F4F4F4, #F4F4F4'"
-            [buttonLink]="'./assets/xlsx/SmartPass Bulk Account Add.xlsx'"
+            [buttonLink]="'./assets/xlsx/SmartPass Picture Map.xlsx'"
             [linkType]="'_self'"
             [download]="true"
             [hoverColor]="'#F4F4F4'"
@@ -83,7 +95,19 @@
           </app-gradient-button>
           <input type="file" [formControl]="form.get('csvFile')"  #csvFile style="display: none"/>
         </div>
+        <div class="button">
+          <div class="upload" *ngIf="uploadingProgress.csv.inProcess || uploadingProgress.csv.complete">
+            <mat-spinner *ngIf="uploadingProgress.csv.inProcess; else complete" [color]="'warn'" [diameter]="30"></mat-spinner>
+            <ng-template #complete><img style="width: 16px" [src]="'./assets/Check (Jade).svg' | resolveAsset" alt="Check"></ng-template>
+            <div class="info"
+                 [style.color]="uploadingProgress.csv.inProcess ? '#7f879d' : '#04CD33'"
+            >{{ uploadingProgress.csv.inProcess ? 'Uploading' : 'Map file uploaded' }}</div>
+          </div>
+        </div>
       </div>
+    </div>
+    <div class="page" *ngIf="page === 3">
+      <div class="ds-dialog-heading">Review Issues </div>
     </div>
   </div>
 </div>
