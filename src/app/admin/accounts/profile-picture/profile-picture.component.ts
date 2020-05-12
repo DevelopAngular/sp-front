@@ -1,9 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import {forkJoin, fromEvent, of, zip} from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { isArray, uniqBy, differenceBy } from 'lodash';
+import { forkJoin, fromEvent, of, zip } from 'rxjs';
+import {filter, map, switchMap} from 'rxjs/operators';
+import { isArray, uniqBy } from 'lodash';
 
 import { XlsxService } from '../../../services/xlsx.service';
 import { ZipService } from '../../../services/zip.service';
@@ -32,9 +32,8 @@ export class ProfilePictureComponent implements OnInit {
           switchMap(rows => {
             const validate$ = rows.map(row => {
               // if (!!row[0]) {
-              //   return this.userService.searchProfileById(row[0]).pipe(
+              //   return this.userService.searchProfileWithFilter(row[0]).pipe(
               //     map(user => {
-              //       debugger;
               //       return { user_id: row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: !user };
               //     })
               //   );
@@ -59,6 +58,12 @@ export class ProfilePictureComponent implements OnInit {
         .pipe(
           switchMap((event) => {
             const filesStream = [];
+            if (fileRef.nativeElement.files.length === 1) {
+              const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1];
+              if (extension !== 'zip' && extension !== 'jpeg' && extension !== 'png') {
+                return of(null);
+              }
+            }
             this.uploadingProgress.images.inProcess = true;
             for (let i = 0; i < fileRef.nativeElement.files.length; i++) {
               const file = fileRef.nativeElement.files.item(i);
@@ -77,6 +82,7 @@ export class ProfilePictureComponent implements OnInit {
             }
             return zip(...filesStream);
           }),
+          filter(res => !!res),
           map(result => {
             let arrayFiles = [];
             result.forEach(item => {
@@ -86,11 +92,15 @@ export class ProfilePictureComponent implements OnInit {
                 arrayFiles = [...arrayFiles, item];
               }
             });
-            return arrayFiles;
+            return uniqBy(arrayFiles, 'file_name');
+          }),
+          map(files => {
+            return this.parseArrayToObject(files);
           })
         )
         .subscribe(files => {
-          this.selectedImgFiles = uniqBy(files, 'name');
+          this.imagesLength = Object.keys(files).length;
+          this.selectedImgFiles = files;
           this.uploadingProgress.images.inProcess = false;
           this.uploadingProgress.images.complete = true;
         });
@@ -100,13 +110,14 @@ export class ProfilePictureComponent implements OnInit {
   page: number = 1;
   form: FormGroup;
   selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
-  selectedImgFiles: { file_name: string, file: string }[] = [];
+  selectedImgFiles;
+  filesToDB: any[] = [];
+  imagesLength: number;
   uploadingProgress = {
     images: { inProcess: false, complete: false, error: null },
     csv: { inProcess: false, complete: false, error: null }
   };
-  invalidMapFiles;
-  invalidImgFiles;
+  issues = [];
 
   constructor(
     private xlsxService: XlsxService,
@@ -121,27 +132,34 @@ export class ProfilePictureComponent implements OnInit {
     });
   }
 
+  parseArrayToObject(array: any[]) {
+    return array.reduce((acc, curr) => {
+      return { ...acc, [curr.file_name]: curr };
+    }, {});
+  }
+
   nextPage() {
     this.page += 1;
     if (this.page === 3) {
-      this.findIssues();
+      this.issues = this.findIssues();
+    } else if (this.page === 4) {
+
     }
   }
 
   findIssues() {
-    this.invalidMapFiles = this.selectedMapFiles.map(file => {
-      const errors = [];
-      if (!file.isFileName) {
-        errors.push({user_id: file.user_id, error: '- Image not listed'});
+    const errors = [];
+    this.selectedMapFiles.forEach(file => {
+      if (!file.file_name) {
+        errors.push({fileNotListed: file});
+      } else if (!file.user_id)  {
+        errors.push({noUserIdListed: file});
+      } else if (file.file_name && !this.selectedImgFiles[file.file_name]) {
+        errors.push({noImgFound: file});
+      } else {
+        this.filesToDB.push({user_id: file.user_id, file: this.selectedImgFiles[file.file_name].file});
       }
-      if (!file.isUserId) {
-        errors.push({image_name: file.file_name, error: '- User ID not listed'});
-      }
-      if (file.isUserId && file.isFileName && !this.selectedImgFiles.find(img => img.file_name === file.file_name)) {
-        errors.push({user_id: file.user_id, image_name: file.file_name, error: '- No image found'});
-      }
-      return errors;
     });
+    return errors;
   }
-
 }

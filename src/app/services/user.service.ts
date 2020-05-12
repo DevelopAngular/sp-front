@@ -270,6 +270,10 @@ export class UserService {
       return this.http.get<User>(`v1/users/${id}`);
   }
 
+  searchProfileWithFilter(id) {
+    return this.http.get(`v1/users?id=${id}`);
+  }
+
   searchUserByCardId(id): Observable<User[]> {
     return this.http.get(constructUrl('v1/users', {search: id}));
   }

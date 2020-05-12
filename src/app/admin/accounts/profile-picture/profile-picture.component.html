@@ -19,7 +19,7 @@
       >
         <div class="ds-flex-center-start">
           <span>
-           {{ page === 2 ? 'Next' : 'Save' }}
+           {{ page === 4 ? 'Save' : 'Next' }}
           </span>
         </div>
       </app-gradient-button>
@@ -63,7 +63,7 @@
             <ng-template #complete><img style="width: 16px" [src]="'./assets/Check (Jade).svg' | resolveAsset"></ng-template>
             <div class="info"
               [style.color]="uploadingProgress.images.inProcess ? '#7f879d' : '#04CD33'"
-            >{{ uploadingProgress.images.inProcess ? 'Uploading' : selectedImgFiles.length + ' images uploaded' }}</div>
+            >{{ uploadingProgress.images.inProcess ? 'Uploading' : imagesLength + ' images uploaded' }}</div>
           </div>
         </div>
       </div>
@@ -107,7 +107,29 @@
       </div>
     </div>
     <div class="page" *ngIf="page === 3">
-      <div class="ds-dialog-heading">Review Issues </div>
+      <div class="ds-dialog-heading">Review Issues ({{ issues.length }})</div>
+      <div class="view-issuer" *ngFor="let issuer of issues">
+        <div class="error" *ngIf="issuer.fileNotListed">
+          <span>{{ 'User ID: ' + issuer.fileNotListed.user_id }}</span><br>
+          <span>- Image filename not listed</span>
+        </div>
+        <div class="error" *ngIf="issuer.noUserIdListed">
+          <span>{{ 'Image filename: ' + issuer.noUserIdListed.file_name }}</span><br>
+          <span>- User ID not listed</span>
+        </div>
+        <div class="error" *ngIf="issuer.noImgFound">
+          <span>{{ 'User ID: ' + issuer.noImgFound.user_id + ', Image filename: ' + issuer.noImgFound.file_name }}</span><br>
+          <span>- No image found</span>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <div class="imports-success" *ngIf="page === 4">
+        <div class="success-content">
+          <img class="slide-center" [src]="'./assets/emptyStates/Upload Success.svg'" alt="upload-file">
+          <div class="count-accounts">{{ filesToDB.length }} Profile Pictures Added</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

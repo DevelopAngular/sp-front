@@ -104,6 +104,31 @@
           }
         }
       }
+
+      .view-issuer {
+        .error {
+          color: $blue-gray;
+          margin-bottom: 10px;
+        }
+      }
+
+      .imports-success {
+        height: 430px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .success-content {
+          display: flex;
+          flex-direction: column;
+          margin-top: 75px;
+
+          .count-accounts {
+            color: $blue-gray;
+            margin-top: 10px;
+          }
+        }
+      }
     }
   }
 }
