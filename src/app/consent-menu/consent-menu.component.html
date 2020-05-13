@@ -42,18 +42,21 @@
                }"
                appCrossPointerEventTarget
                (pointerClickEvent)="_matDialogRef.close(option.action); _option.style.background = 'transparent'"
-               (pointerDownEvent)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'; sortMode = option.action"
-               (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : 'rgba(226, 231, 244, .2)' : '#ECF1FF'"
+               (pointerDownEvent)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : option.clickBackground ? option.clickBackground : 'rgba(127, 135, 157, .15)'; sortMode = option.action"
+               (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : 'rgba(226, 231, 244, .2)' : option.hoverBackground ? option.hoverBackground : 'rgba(127, 135, 157, .1)'"
                (mouseleave)="_option.style.background = 'transparent'"
                >
             <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
               <span>{{ option.display }}</span>
               <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" *ngIf="sortMode === option.action" alt="Check.svg">
             </div>
-            <ng-template #simpleOptions>{{ option.display }}</ng-template>
+            <ng-template #simpleOptions>
+              <img width="16" height="16" *ngIf="option.icon" [src]="option.icon | resolveAsset" alt="Icon">
+              <span style="margin-left: 8px">{{ option.display }}</span>
+            </ng-template>
           </div>
         </ng-template>
-        <div class="option-divider" *ngIf="i !== options.length - 1"></div>
+<!--        <div class="option-divider" *ngIf="i !== options.length - 1"></div>-->
       </div>
     </div>
   </div>
