@@ -110,8 +110,9 @@
 }
 
 .content{
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
   position: relative;
   left: 0;
   right: 0;

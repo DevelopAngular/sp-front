@@ -7,7 +7,7 @@ import {BehaviorSubject} from 'rxjs';
 })
 export class ScreenService {
 
-  overflowLocationTable: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  enabledLocationTableDnD: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() { }
 

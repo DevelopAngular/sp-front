@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
-import {map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
 import { sortBy, differenceBy, some, filter as _filter } from 'lodash';
@@ -27,7 +27,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() forKioskMode: boolean = false;
   @Input() placeholder: string;
   @Input() type: string;
-  @Input() showStars: string;
+  @Input() showStars: boolean;
   @Input() showFavorites: boolean;
   @Input() staticChoices: any[];
   @Input() forStaff: boolean;

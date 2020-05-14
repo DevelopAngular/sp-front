@@ -4,8 +4,8 @@ import { MatDialogRef } from '@angular/material';
 import { LocationsService } from '../services/locations.service';
 import { DeviceDetection } from '../device-detection.helper';
 import {DragulaService} from 'ng2-dragula';
-import {merge, Observable, of, Subject, timer} from 'rxjs';
-import {delay, mapTo, publish, refCount, skipUntil} from 'rxjs/operators';
+import {merge, Observable, of} from 'rxjs';
+import {mapTo, publish, refCount} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 
 @Component({

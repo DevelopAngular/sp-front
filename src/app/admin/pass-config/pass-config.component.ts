@@ -238,13 +238,17 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             const target = new ElementRef(evnt.currentTarget);
             let options = [];
 
-            if(this.selectedPinnables.length > 0 && this.bulkSelect){
-                options.push(this.genOption('Bulk Edit Selection', this.darkTheme.getColor(), 'edit'));
-                options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor(), 'newFolder'));
-                // options.push(this.genOption('Delete Selection','#E32C66','delete'));
-            } else{
-                options.push(this.genOption('New Room', this.darkTheme.getColor(), 'newRoom'));
-                options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
+            if(this.selectedPinnables.length > 0 && this.bulkSelect) {
+                options.push(
+                  this.genOption('Bulk Edit Selection',
+                    this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}),
+                    'edit',
+                  )
+                );
+                options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newFolder'));
+            } else {
+                options.push(this.genOption('New Room', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newRoom', this.darkTheme.getIcon({iconName: 'Room', darkFill: 'White', lightFill: 'Blue-Gray'})));
+                options.push(this.genOption('New Folder', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newFolder', this.darkTheme.getIcon({iconName: 'New Folder', darkFill: 'White', lightFill: 'Blue-Gray'})));
             }
 
             UNANIMATED_CONTAINER.next(true);
@@ -252,7 +256,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             const cancelDialog = this.dialog.open(ConsentMenuComponent, {
                 panelClass: 'consent-dialog-container',
                 backdropClass: 'invis-backdrop',
-                data: {'header': '', 'options': options, 'trigger': target}
+                data: {'options': options, 'trigger': target}
             });
 
             cancelDialog.afterOpen().subscribe( () => {
@@ -271,8 +275,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         }
     }
 
-    genOption(display, color, action) {
-        return {display: display, color: color, action: action};
+    genOption(display, color, action, icon?) {
+      return { display, color, action, icon };
     }
 
   selectPinnable({action, selection}) {

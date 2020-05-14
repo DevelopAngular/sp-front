@@ -365,53 +365,21 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       this.header = '';
       if (!this.forInput) {
         if (this.forStaff) {
-          this.options.push(this.genOption('Attach Message & Deny', '#3D396B', 'deny_with_message'));
-          this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny'));
+          this.options.push(this.genOption('Attach Message & Deny', '#7f879d', 'deny_with_message', './assets/Message (Blue-Gray).svg'));
+          this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
         } else {
           if (this.invalidDate) {
-            this.options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'change_date'));
+            this.options.push(this.genOption('Change Date & Time to Resend', '#7f879d', 'change_date'));
           }
-          this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete'));
+          this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
         }
         this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
       } else {
         if (!this.pinnableOpen) {
-          if (this.isSeen) {
             this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
             this.formState.previousStep = 4;
             this.createFormService.setFrameMotionDirection('disable');
             this.cardEvent.emit(this.formState);
-          } else {
-            this.dialogRef.close();
-            const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-              width: '750px',
-              panelClass: 'form-dialog-container',
-              maxWidth: '100vw',
-              backdropClass: 'custom-backdrop',
-              data: {
-                'fromLocation': this.request.origin,
-                'fromHistory': this.fromHistory,
-                'fromHistoryIndex': this.fromHistoryIndex,
-                'colorProfile': this.request.color_profile,
-                'forLater': this.forFuture,
-                'forStaff': this.forStaff,
-                'selectedStudents': this.selectedStudents,
-                'toLocation': this.request.destination,
-                'requestTarget': this.request.teacher,
-                'toIcon': this.request.icon
-              }
-            });
-            dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
-              this.openInputCard(result['templatePass'],
-                result['forLater'],
-                result['forStaff'],
-                result['selectedStudents'],
-                (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-                result['fromHistory'],
-                result['fromHistoryIndex']
-              );
-            });
-          }
         }
         return false;
       }
@@ -452,7 +420,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
       } else {
         let config;
-        if (this.isSeen) {
           config = {
             panelClass: 'form-dialog-container',
             backdropClass: 'invis-backdrop',
@@ -469,7 +436,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               'studentMessage': this.request.attachment_message
             }
           };
-        }
         const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
         messageDialog.afterOpen().subscribe(() => {
@@ -509,26 +475,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     }
   }
 
-  openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-     const data = {
-       'pass': templatePass,
-       'fromPast': false,
-       'fromHistory': fromHistory,
-       'fromHistoryIndex': fromHistoryIndex,
-       'forFuture': forLater,
-       'forInput': true,
-       'forStaff': forStaff,
-       'selectedStudents': selectedStudents,
-    };
-    this.dialog.open(component, {
-       panelClass: (forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-       backdropClass: 'custom-backdrop',
-       disableClose: true,
-       data: data
-    });
-    }
-
-  denyRequest(denyMessage: string){
+  denyRequest(denyMessage: string) {
     const body = {
       'message' : denyMessage
     };
@@ -539,8 +486,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     });
   }
 
-  genOption(display, color, action) {
-    return {display: display, color: color, action: action};
+  genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {
+    return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
   approveRequest() {

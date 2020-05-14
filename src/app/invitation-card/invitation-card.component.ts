@@ -236,21 +236,25 @@ export class InvitationCardComponent implements OnInit {
       this.options = [];
       this.header = '';
       if (this.forInput) {
-        if (this.isSeen) {
-            this.formState.step = 3;
-            this.formState.previousStep = 4;
-            this.createFormService.setFrameMotionDirection('disable');
-            this.cardEvent.emit(this.formState);
-        }
+        this.formState.step = 3;
+        this.formState.previousStep = 4;
+        this.createFormService.setFrameMotionDirection('disable');
+        this.cardEvent.emit(this.formState);
           return false;
       } else if (!this.forStaff) {
-        this.options.push(this.genOption('Decline Pass Request', '#E32C66', 'decline'));
-        this.header = 'Are you sure you want to decline this pass request you received?'
+        this.options.push(
+          this.genOption('Decline Pass Request', '#E32C66', 'decline', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)' )
+        );
+        this.header = 'Are you sure you want to decline this pass request you received?';
       } else {
         if (this.invalidDate) {
-            this.options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'resend'));
+            this.options.push(
+              this.genOption('Change Date & Time to Resend', '#7f879d', 'resend')
+            );
         }
-        this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete'));
+        this.options.push(
+          this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)')
+        );
         this.header = 'Are you sure you want to delete this pass request you sent?';
       }
 
@@ -262,7 +266,7 @@ export class InvitationCardComponent implements OnInit {
           data: {'header': this.header, 'options': this.options, 'trigger': target}
         });
 
-        consentDialog.afterOpen().subscribe( () =>{
+        consentDialog.afterOpen().subscribe( () => {
           this.denyOpen = true;
         });
 
@@ -280,7 +284,7 @@ export class InvitationCardComponent implements OnInit {
 
   chooseAction(action) {
     this.denyOpen = false;
-    if(action === 'cancel') {
+    if (action === 'cancel') {
       this.dialogRef.close();
     } else if (action === 'decline') {
       const body = {
@@ -301,8 +305,8 @@ export class InvitationCardComponent implements OnInit {
     }
   }
 
-  genOption(display, color, action){
-    return {display: display, color: color, action: action}
+  genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {
+    return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
   cancelClick() {

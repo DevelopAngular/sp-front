@@ -7,21 +7,22 @@
         <div class="ds-dialog-title-white">Favorites</div>
       </div>
     </div>
-      <div class="content" [style.overflow]="(overflow$ | async) ? 'auto' : 'hidden'">
-        <app-location-table class="locations"
-                            [rightHeaderText]="true"
-                            [isEdit]="true"
-                            (onStar)="onStar($event)"
-                            [showFavorites]="true"
-                            (onUpdate)="starChangesIds = $event"
-                            [type]="'location'"
-                            [allowOnStar]="true"
-                            [placeholder]="'Search rooms'"
-                            [isFavoriteForm]="true"
-                            [searchExceptFavourites]="true"
-                            [showStars]="true">
+      <div class="content">
+        <app-location-table
+          class="locations"
+          [rightHeaderText]="true"
+          [isEdit]="true"
+          (onStar)="onStar($event)"
+          [showFavorites]="true"
+          (onUpdate)="starChangesIds = $event"
+          [type]="'location'"
+          [allowOnStar]="true"
+          [placeholder]="'Search rooms'"
+          [isFavoriteForm]="true"
+          [searchExceptFavourites]="true"
+          [showStars]="true"
+        >
         </app-location-table>
-<!--        <div class="bottom-shadow-hint"></div>-->
       </div>
   </div>
 

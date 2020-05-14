@@ -120,12 +120,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getColor(setting?, hover?: boolean, hoveredColor?: string) {
-    return this.darkTheme.getColor({
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
-    });
+  getColor(dark, white) {
+    return this.darkTheme.getColor({ dark, white });
   }
 
   handleAction(setting) {
