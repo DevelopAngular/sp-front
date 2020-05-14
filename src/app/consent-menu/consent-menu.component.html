@@ -2,7 +2,7 @@
   <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('low')"></div></div>
   <div class="rounded-corners-box">
 
-    <div class="ds-mt-15" *ngIf="!header"></div>
+<!--    <div class="ds-mt-15" *ngIf="!header"></div>-->
     <div *ngIf="header">
       <div class="consent-header" [style.color]="'#7F879D'" [innerHTML]="header"></div>
       <div class="option-divider"></div>
@@ -36,10 +36,7 @@
         </div>
         <ng-template #stringOptionsView>
           <div [style.color]="option.color" #_option class="option-wrapper ds-w-100"
-               [ngClass]="{
-                'option-wrapper': !darkTheme.isEnabled$.value,
-                'option-wrapper__dark': darkTheme.isEnabled$.value
-               }"
+               [style.justify-content]="header ? 'center' : 'flex-start'"
                appCrossPointerEventTarget
                (pointerClickEvent)="_matDialogRef.close(option.action); _option.style.background = 'transparent'"
                (pointerDownEvent)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : option.clickBackground ? option.clickBackground : 'rgba(127, 135, 157, .15)'; sortMode = option.action"

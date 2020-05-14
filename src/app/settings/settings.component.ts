@@ -41,6 +41,7 @@ export class SettingsComponent implements OnInit {
   hoveredMasterOption: boolean;
   hoveredSignout: boolean;
   hovered: boolean;
+  pressed: boolean;
   hoveredColor: string;
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
@@ -94,20 +95,17 @@ export class SettingsComponent implements OnInit {
       });
   }
 
-  getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
+  getIcon(iconName: string, setting: any) {
     return this.darkTheme.getIcon({
       iconName: iconName,
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
+      setting: setting
     });
   }
 
-  getColor(setting?, hover?: boolean, hoveredColor?: string) {
+  getColor(dark, white) {
     return this.darkTheme.getColor({
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
+      dark,
+      white
     });
   }
 
