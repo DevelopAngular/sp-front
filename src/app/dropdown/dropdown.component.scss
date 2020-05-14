@@ -52,7 +52,10 @@
 
 .options-wrapper{
     width: 100%;
-    height: calc(100% - 50px);
+    padding: 22px 0;
+    height: auto;
+    max-height: 282px;
+    //height: calc(100% - 50px);
     overflow: auto;
     box-sizing: border-box
 }
@@ -72,7 +75,7 @@
 }
 .option{
     width: inherit;
-    height: 55px;
+    height: 40px;
     display: flex;
     flex-direction: column;
     cursor: pointer;
