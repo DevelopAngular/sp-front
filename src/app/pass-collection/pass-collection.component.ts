@@ -72,10 +72,12 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() isAdminPage: boolean;
   @Input() headerWidth: string = '100%';
   @Input() passProvider: PassLikeProvider;
+  @Input() hasFilterPasses: boolean = true;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
   @Output() currentPassesEmit = new EventEmitter();
+  @Output() filterPasses = new EventEmitter();
 
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
@@ -128,33 +130,42 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     return this.grid_gap;
   }
 
-  ngOnInit() {
-      if (this.mock) {
+  get selectedText() {
+    if (this.selectedSort === 'past_hour') {
+      return 'Past hour';
+    } else if (this.selectedSort === 'today') {
+      return 'Today';
+    } else if (this.selectedSort === 'past_3') {
+      return 'Past 3 days';
+    } else if (this.selectedSort === 'past_7') {
+      return 'Past 7 days';
+    }
+  }
 
-      } else {
-        this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-        this.currentPasses$
-          .pipe(
-            switchMap((_passes) => {
-              if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
-                return of(_passes);
-              } else {
-                this.currentPasses = [];
-                return of(_passes).pipe(delay(500));
-              }
-            })
-          )
-          .subscribe((passes: any) => {
-            this.currentPasses = passes;
-            this.currentPassesEmit.emit(passes);
-          });
-      }
-        if (this.isActive) {
-          this.timers.push(window.setInterval(() => {
-            this.timerEvent.next(null);
-            this.cdr.detectChanges();
-          }, 1000));
-        }
+  ngOnInit() {
+    this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+    this.currentPasses$
+      .pipe(
+        switchMap((_passes) => {
+          if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
+            return of(_passes);
+          } else {
+            this.currentPasses = [];
+            return of(_passes).pipe(delay(500));
+          }
+        })
+      )
+      .subscribe((passes: any) => {
+        this.currentPasses = passes;
+        this.currentPassesEmit.emit(passes);
+      });
+
+    if (this.isActive) {
+      this.timers.push(window.setInterval(() => {
+        this.timerEvent.next(null);
+        this.cdr.detectChanges();
+      }, 1000));
+    }
   }
 
   ngOnDestroy() {
@@ -185,6 +196,32 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     this.activePassTime$ = time$;
     this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
+  }
+
+  openFilter(target) {
+    const sortOptions = [
+      { display: 'Past hour', color: this.darkTheme.getColor(), action: 'past_hour'},
+      { display: 'Today', color: this.darkTheme.getColor(), action: 'today'},
+      { display: 'Past 3 days', color: this.darkTheme.getColor(), action: 'past_3'},
+      { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past_7'}
+    ];
+    const filterDialog = this.dialog.open(DropdownComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': target.currentTarget,
+        'sortData': sortOptions,
+        'selectedSort': this.selectedSort
+      }
+    });
+
+    filterDialog.afterClosed()
+      .pipe(filter(res => !!res))
+      .subscribe(res => {
+        this.selectedSort = res;
+        this.cdr.detectChanges();
+        this.filterPasses.emit();
+    });
   }
 
   onSortSelected(sort: string) {
@@ -227,7 +264,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(dialogData => {
-      console.log('Closed with ===>', dialogData);
+      // console.log('Closed with ===>', dialogData);
       if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
           width: '425px',
