@@ -217,10 +217,14 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
     filterDialog.afterClosed()
       .pipe(filter(res => !!res))
-      .subscribe(res => {
-        this.selectedSort = res;
+      .subscribe(action => {
+        if (this.selectedSort === action) {
+          this.selectedSort = null;
+        } else {
+          this.selectedSort = action;
+        }
         this.cdr.detectChanges();
-        this.filterPasses.emit();
+        this.filterPasses.emit(this.selectedSort);
     });
   }
 
@@ -288,17 +292,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
     ];
     UNANIMATED_CONTAINER.next(true);
-    // const sortDialog = this.dialog.open(ConsentMenuComponent, {
-    //     panelClass: 'consent-dialog-container',
-    //     backdropClass: 'invis-backdrop',
-    //     data: {
-    //       'header': 'SORT BY',
-    //       'options': sortOptions,
-    //       'trigger': new ElementRef(event.currentTarget),
-    //       'isSort': true,
-    //       'sortMode': this.dataService.sort$.value
-    //     }
-    // });
 
     const sortDialog = this.dialog.open(DropdownComponent, {
       panelClass: 'consent-dialog-container',
@@ -317,8 +310,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       )
       .subscribe(sortMode => {
         this.selectedSort = sortMode;
-        this.onSortSelected(sortMode);
-        // console.log(sortMode);
+        this.onSortSelected(this.selectedSort);
       });
   }
 

@@ -149,7 +149,10 @@ function mergeFilters<T>(filters: FilterFunc<T>[]): FilterFunc<T> {
 /**
  * Types of filters for hall passes.
  */
-export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location | Location[] };
+export type PassFilterType =
+  { type: 'issuer', value: User } |
+  { type: 'student', value: User } |
+  { type: 'location', value: Location | Location[] };
 
 export type RequestFilterType =
   { type: 'issuer', value: User }
@@ -495,7 +498,7 @@ export class LiveDataService {
   watchPastHallPasses(filter?: PassFilterType): Observable<HallPass[]> {
     let queryFilter = '';
     const filters: FilterFunc<HallPass>[] = [
-      makeSchoolFilter(this.http),
+      makeSchoolFilter(this.http)
     ];
 
     if (filter) {
