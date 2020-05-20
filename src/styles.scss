@@ -92,6 +92,16 @@ div {
   background-color: white;
 }
 
+.admin-form-dialog-container-white .mat-dialog-container {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  scrollbar-face-color: #D6D6D6;
+  scrollbar-track-color: white;
+  background-color: white;
+}
+
 .sp-form-dialog .mat-dialog-container {
   border-radius: 14px;
   overflow: hidden;

@@ -44,6 +44,7 @@ import {NavbarElementsRefsService} from '../services/navbar-elements-refs.servic
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import { filter as _filter } from 'lodash';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 
 declare const window;
 
@@ -246,7 +247,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = this.router.url.includes('kioskMode');
-        // console.log('Hide ===>>', value.url);
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit[urlSplit.length - 1];
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
@@ -256,6 +256,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this.isMyRoomRoute = value.url === '/main/myroom';
         this.isAdminRoute = value.url.includes('/admin');
       }
+    });
+
+    this.navbarData.inboxClick$.subscribe(res => {
+      this.isInboxClicked = res;
     });
 
     this.userService.userData
@@ -387,6 +391,15 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
+  getColor(setting?, hover?: boolean, hoveredColor?: string) {
+
+    return this.darkTheme.getColor({
+      setting: setting,
+      hover: hover,
+      hoveredColor: hoveredColor
+    });
+  }
+
   selectTab(event: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = event.getBoundingClientRect();
@@ -458,8 +471,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     });
     representedUsersDialog.afterClosed().subscribe((v: RepresentedUser) => {
-      console.log(v);
-      // this.effectiveUser = v ? v : this.effectiveUser;
       if (v) {
         this.userService.effectiveUser.next(v);
         this.http.effectiveUserId.next(+v.user.id);
@@ -474,6 +485,12 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         const teachPinDialog = this.dialog.open(TeacherPinComponent, {
           panelClass: 'sp-form-dialog',
           backdropClass: 'custom-backdrop',
+        });
+      } else if (action === 'profile') {
+        this.dialog.open(MyProfileDialogComponent, {
+          panelClass: 'sp-form-dialog',
+          width: '425px',
+          height: '500px'
         });
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
@@ -566,8 +583,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.screenService.isDeviceLarge && !this.screenService.isDeviceMid) {
       this.sideNavService.toggleRight$.next(true);
     }
-
-    // this.navbarElementsService.navbarRef$.next(this.navbar);
   }
 
   ngOnDestroy(): void {

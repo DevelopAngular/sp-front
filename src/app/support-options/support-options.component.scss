@@ -1,16 +1,18 @@
 @import "../../sp-colors";
 
 .wrapper {
-  background-color: #FFFFFF;
   width: 240px;
+  border-radius: 9px;
 
   .options {
     padding: 17px 0;
     .option-container {
       .option {
         display: flex;
+        height: 40px;
         font-size: 14px;
-        padding: 10px 30px;
+        padding-left: 30px;
+        align-items: center;
         cursor: pointer;
         outline: none;
         text-decoration: none;
@@ -18,9 +20,6 @@
           width: 18px;
           height: 18px;
           margin-right: 10px;
-        }
-        &:hover {
-          background-color: rgb(228, 235, 255);
         }
       }
     }

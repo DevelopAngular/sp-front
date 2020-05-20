@@ -1,5 +1,4 @@
 <div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false">
-<!--  <div style="position: sticky; top: 0;">Sticky rtest</div>-->
   <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
   <div *ngIf="errorToastTrigger | async">
     <app-error-toast
@@ -20,5 +19,4 @@
   </div>
 </div>
 
-<!--<app-error *ngIf="(isAuthenticated === false) && !(showUI | async)"></app-error>-->
 <div #dialogContainer [@.disabled]="true"></div>

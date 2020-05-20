@@ -47,6 +47,10 @@ export class SupportOptionsComponent implements OnInit {
     });
   }
 
+  getColor(dark, white) {
+    return this.darkTheme.getColor({ dark, white });
+  }
+
   updateDialogPosition(user) {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     if (this.targetElementRef && this.dialogRef) {

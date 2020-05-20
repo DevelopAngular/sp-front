@@ -65,6 +65,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
+import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
 
 
@@ -138,64 +139,64 @@ const appRoutes: Routes = [
     HttpClientModule,
     SwiperModule,
     CoreModule,
-
+    NextReleaseModule,
     KeyboardShortcutsModule.forRoot(),
 
-    RouterModule.forRoot(
-      appRoutes,
-      {
-        enableTracing: false,
-      }
-    ),
-    AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
-    AngularFireMessagingModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
-      libraries: ['places']
-    }),
-    StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([
-      ReportsEffects,
-      PinnablesEffects,
-      AccountsEffects,
-      AllAccountsEffects,
-      AdminsEffects,
-      TeachersEffects,
-      AssistantsEffects,
-      StudentsEffects,
-      CountAccountsEffects,
-      TeacherLocationsEffects,
-      DashboardEffects,
-      PassStatsEffects,
-      StudentGroupsEffects,
-      LocationsEffects,
-      FavoriteLocationsEffects,
-      ColorsEffects,
-      SchoolsEffects,
-      UserEffects,
-      ProcessEffects
-    ]),
-    StoreDevtoolsModule.instrument({})
-  ],
-  providers: [
-    DataService,
-    HttpService,
-    UserService,
-    KioskModeService,
-    NotificationService,
-    GoogleLoginService,
-    LoadingService,
-    CurrentUserResolver,
-    GoogleApiService,
-    GoogleAuthService,
-    {provide: OverlayContainer, useFactory: InitOverlay},
-    {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
-    {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
-    {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
-    {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
-    provideErrorHandler()
-  ],
-  bootstrap: [AppComponent]
+        RouterModule.forRoot(
+            appRoutes,
+            {
+                enableTracing: false,
+            }
+        ),
+        AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
+        AngularFireMessagingModule,
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
+            libraries: ['places']
+        }),
+        StoreModule.forRoot(reducers),
+        EffectsModule.forRoot([
+            ReportsEffects,
+            PinnablesEffects,
+            AccountsEffects,
+            AllAccountsEffects,
+            AdminsEffects,
+            TeachersEffects,
+            AssistantsEffects,
+            StudentsEffects,
+            CountAccountsEffects,
+            TeacherLocationsEffects,
+            DashboardEffects,
+            PassStatsEffects,
+            StudentGroupsEffects,
+            LocationsEffects,
+            FavoriteLocationsEffects,
+            ColorsEffects,
+            SchoolsEffects,
+            UserEffects,
+            ProcessEffects
+        ]),
+        StoreDevtoolsModule.instrument({})
+    ],
+    providers: [
+        DataService,
+        HttpService,
+        UserService,
+        KioskModeService,
+        NotificationService,
+        GoogleLoginService,
+        LoadingService,
+        CurrentUserResolver,
+        GoogleApiService,
+        GoogleAuthService,
+        {provide: OverlayContainer, useFactory: InitOverlay},
+        {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
+        {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
+        {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
+        {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
+        provideErrorHandler()
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor() {}

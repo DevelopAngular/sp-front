@@ -1,3 +1,5 @@
+@import '../../sp-colors';
+
 @media all and (max-width: 940px) {
   div.top-arrow-container {
     display: none;
@@ -54,7 +56,8 @@
       .option {
         display: flex;
         align-items: center;
-        padding: 12px 0 12px 25px;
+        height: 40px;
+        padding-left: 25px;
         cursor: pointer;
         position: relative;
 
@@ -82,7 +85,8 @@
       .content {
         display: flex;
         align-items: center;
-        padding: 12px 0 12px 0;
+        //padding-left: 25px;
+        height: 40px;
         cursor: pointer;
       }
       .setting-icon {
@@ -93,6 +97,7 @@
       .setting-title {
         font-size: 15px;
         margin-left: 15px;
+        //color: $blue-gray;
       }
     }
   }
@@ -102,14 +107,17 @@
     height: 76px;
     justify-content: space-between;
     .sign-out {
-      padding: 12px 0 12px 25px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding-left: 25px;
       color: #7F879D;
       font-size: 15px;
       cursor: pointer;
-      &:hover {
-        background-color: rgb(228, 235, 255);
-        color: #1F195E;
-      }
+      //&:hover {
+      //  background-color: rgb(228, 235, 255);
+      //  color: #1F195E;
+      //}
     }
     .options {
       display: flex;

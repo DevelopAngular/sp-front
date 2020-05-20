@@ -23,8 +23,8 @@ export class SupportButtonComponent implements OnInit {
       this.isOpenOptions = true;
       const SPO = this.dialog.open(SupportOptionsComponent, {
         id: 'support',
-        hasBackdrop: false,
-        panelClass: 'toasr',
+        backdropClass: 'invis-backdrop',
+        panelClass: 'consent-dialog-container',
         data: { trigger: new ElementRef(event.currentTarget) }
       });
 

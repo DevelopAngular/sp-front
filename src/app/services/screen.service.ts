@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import {DeviceDetection} from '../device-detection.helper';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScreenService {
+
+  enabledLocationTableDnD: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() { }
 

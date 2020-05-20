@@ -41,6 +41,7 @@ export class SettingsComponent implements OnInit {
   hoveredMasterOption: boolean;
   hoveredSignout: boolean;
   hovered: boolean;
+  pressed: boolean;
   hoveredColor: string;
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
@@ -94,20 +95,17 @@ export class SettingsComponent implements OnInit {
     this.updateDialogPosition();
   }
 
-  getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
+  getIcon(iconName: string, setting: any) {
     return this.darkTheme.getIcon({
       iconName: iconName,
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
+      setting: setting
     });
   }
 
-  getColor(setting?, hover?: boolean, hoveredColor?: string) {
+  getColor(dark, white) {
     return this.darkTheme.getColor({
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
+      dark,
+      white
     });
   }
 
@@ -169,6 +167,22 @@ export class SettingsComponent implements OnInit {
       .subscribe();
   }
 
+  openLink(action) {
+    if (action === 'privacy') {
+      if (this.dialogRef) {
+        this.dialogRef.close('privacy');
+      } else {
+        this.sideNavService.sideNavAction$.next('privacy');
+      }
+    } else if (action === 'terms') {
+      if (this.dialogRef) {
+        this.dialogRef.close('terms');
+      } else {
+        this.sideNavService.sideNavAction$.next('terms');
+      }
+    }
+  }
+
   initializeSettings() {
     if (this.isStaff) {
       this.settings.push({
@@ -179,6 +193,20 @@ export class SettingsComponent implements OnInit {
         'title': 'Approval Pin'
       });
     }
+    this.settings.push({
+      'hidden': false,
+      'background': '#6651FF',
+      'icon': 'Username',
+      'action': 'profile',
+      'title': 'My Profile'
+    });
+    this.settings.push({
+      'hidden': false,
+      'background': '#134482',
+      'icon': 'Glasses',
+      'action': 'appearance',
+      'title': 'Appearance'
+    });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
       'background': '#EBBB00',
@@ -193,41 +221,5 @@ export class SettingsComponent implements OnInit {
       'action': 'notifications',
       'title': 'Notifications'
     });
-    this.settings.push({
-      'hidden': false,
-      'background': '#134482',
-      'icon': 'Glasses',
-      'action': 'appearance',
-      'title': 'Appearance'
-    });
-    // this.settings.push({
-    //   'hidden': !!this.kioskMode.currentRoom$.value,
-    //   'background': '#04CD33',
-    //   'icon': 'Info',
-    //   'action': 'intro',
-    //   'title': 'View Intro'
-    // });
-    // this.settings.push({
-    //   'hidden': false,
-    //   'background': '#F53D45',
-    //   'icon': 'Support',
-    //   'action': 'support',
-    //   'title': 'Support'
-    // });
-    // this.settings.push({
-    //   'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
-    //   'background': '#6651F1',
-    //   'icon': 'Launch',
-    //   'action': 'wishlist',
-    //   'title': 'Wishlist'
-    // });
-    // this.settings.push({
-    //   'hidden': false,
-    //   'background': '#fc7303',
-    //   'icon': 'Bug',
-    //   'action': 'bug',
-    //   'title': 'Bug Report',
-    //   'tooltip': BUILD_DATE,
-    // });
   }
 }

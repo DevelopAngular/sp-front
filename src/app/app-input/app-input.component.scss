@@ -74,8 +74,10 @@
 }
 
 .show-password {
+  width: 72px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   position: absolute;
   right: 0;
   cursor: pointer;
@@ -93,7 +95,7 @@
 }
 
 .InputWrapper input {
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   display: block;
   width: 95%;
   font-size: 1rem;
@@ -105,13 +107,13 @@
 }
 
 .InputWrapper input:focus {
-  border: 2px inset $navy;
+  border: 2px solid $navy;
 }
 .clserrorLabel {
   color: #E32C66 !important;
 }
 .clserrorInput {
-  border: 1px solid #E32C66 !important
+  border: 2px solid #E32C66 !important
 }
 ::ng-deep .tooltip {
   padding: 15px;

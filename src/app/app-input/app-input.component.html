@@ -24,7 +24,7 @@
            *ngIf="showPasswordButton"
            appCrossPointerEventTarget
            (pointerClickEvent)="changeInput()">
-        <img [src]="'./assets/Eye' + (input_type === 'password' ? '' : ' crossed') + ' (Blue-Gray).svg' | resolveAsset">
+        <img width="25" height="20" [src]="'./assets/Eye' + (input_type === 'password' ? '' : ' crossed') + ' (Blue-Gray).svg' | resolveAsset">
         <div class="password-text">{{ input_type === 'password' ? 'Show' : 'Hide'}}</div>
       </div>
     </div>

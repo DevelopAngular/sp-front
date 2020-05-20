@@ -1,7 +1,6 @@
 import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {StorageService} from './services/storage.service';
-import {DeviceDetection} from './device-detection.helper';
 
 declare const window;
 
