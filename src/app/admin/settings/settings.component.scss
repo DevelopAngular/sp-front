@@ -86,14 +86,12 @@
       }
     }
 
-    .versions {
+    .options {
       display: flex;
       justify-content: center;
-      //color: #7F879D;
       font-size: 12px;
       margin-bottom: 12px;
-
-      .privacy {
+      .option {
         margin-left: 10px;
         cursor: pointer;
         &:hover {

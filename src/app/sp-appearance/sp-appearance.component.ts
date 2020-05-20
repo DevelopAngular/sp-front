@@ -29,17 +29,17 @@ export class SpAppearanceComponent implements OnInit {
     public router: Router,
   ) { }
 
-  get extraSmallDevice() {
-    return this.screenService.isDeviceSmallExtra;
+  get IpadDevice() {
+    return this.screenService.isIpadWidth;
   }
   get extraLargeDevice() {
     return this.screenService.isDeviceLargeExtra;
   }
-  get hostWidth() {
-    return this.extraSmallDevice ?
-            300 : this.extraLargeDevice ?
-              335 : 425;
-  }
+  // get hostWidth() {
+  //   return this.extraSmallDevice ?
+  //           300 : this.extraLargeDevice ?
+  //             335 : 425;
+  // }
   ngOnInit() {
     this.selectedTheme = this.darkTheme.currentTheme();
     this.isList = JSON.parse(this.storage.getItem('isGrid'));

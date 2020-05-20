@@ -4,7 +4,7 @@ import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {RELEASE_NAME} from '../../build-info';
+import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
@@ -18,6 +18,7 @@ export interface Setting {
   icon: string;
   action: string | Function;
   title: string;
+  tooltip?: string;
 }
 
 @Component({
@@ -40,9 +41,11 @@ export class SettingsComponent implements OnInit {
   hoveredMasterOption: boolean;
   hoveredSignout: boolean;
   hovered: boolean;
+  pressed: boolean;
   hoveredColor: string;
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
+  currentBuildTime = BUILD_DATE;
 
   constructor(
       public dialog: MatDialog,
@@ -92,20 +95,17 @@ export class SettingsComponent implements OnInit {
       });
   }
 
-  getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
+  getIcon(iconName: string, setting: any) {
     return this.darkTheme.getIcon({
       iconName: iconName,
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
+      setting: setting
     });
   }
 
-  getColor(setting?, hover?: boolean, hoveredColor?: string) {
+  getColor(dark, white) {
     return this.darkTheme.getColor({
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
+      dark,
+      white
     });
   }
 
@@ -167,20 +167,29 @@ export class SettingsComponent implements OnInit {
       .subscribe();
   }
 
+  openLink(action) {
+    if (action === 'privacy') {
+      if (this.dialogRef) {
+        this.dialogRef.close('privacy');
+      } else {
+        this.sideNavService.sideNavAction$.next('privacy');
+      }
+    } else if (action === 'terms') {
+      if (this.dialogRef) {
+        this.dialogRef.close('terms');
+      } else {
+        this.sideNavService.sideNavAction$.next('terms');
+      }
+    }
+  }
+
   initializeSettings() {
     this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value,
-      'background': '#EBBB00',
-      'icon': 'Star',
-      'action': 'favorite',
-      'title': 'Favorites'
-    });
-    this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value || DeviceDetection.isIOSMobile() || DeviceDetection.isIOSTablet(),
-      'background': '#E32C66',
-      'icon': 'Notifications',
-      'action': 'notifications',
-      'title': 'Notifications'
+      'hidden': false,
+      'background': '#6651FF',
+      'icon': 'Username',
+      'action': 'profile',
+      'title': 'My Profile'
     });
     this.settings.push({
       'hidden': false,
@@ -191,31 +200,17 @@ export class SettingsComponent implements OnInit {
     });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
-      'background': '#04CD33',
-      'icon': 'Info',
-      'action': 'intro',
-      'title': 'View Intro'
+      'background': '#EBBB00',
+      'icon': 'Star',
+      'action': 'favorite',
+      'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': false,
-      'background': '#F53D45',
-      'icon': 'Support',
-      'action': 'support',
-      'title': 'Support'
-    });
-    this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value || !(this.user && (this.user.isAdmin() || this.user.isTeacher())),
-      'background': '#6651F1',
-      'icon': 'Launch',
-      'action': 'wishlist',
-      'title': 'Wishlist'
-    });
-    this.settings.push({
-      'hidden': false,
-      'background': '#fc7303',
-      'icon': 'Bug',
-      'action': 'bug',
-      'title': 'Bug Report'
+      'hidden': !!this.kioskMode.currentRoom$.value || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid() || DeviceDetection.isIOSTablet(),
+      'background': '#E32C66',
+      'icon': 'Notifications',
+      'action': 'notifications',
+      'title': 'Notifications'
     });
   }
 }

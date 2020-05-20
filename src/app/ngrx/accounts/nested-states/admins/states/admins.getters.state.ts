@@ -18,6 +18,16 @@ export const getLoadingAdminsAccounts = createSelector(
   (state: AdminsState) => state.loading
 );
 
+export const getNextRequestAdminsAccounts = createSelector(
+  getAdminsAccountsProfiles,
+  (state: AdminsState) => state.nextRequest
+);
+
+export const getLastAddedAdminsAccounts = createSelector(
+  getAdminsAccountsProfiles,
+  (state: AdminsState) => state.lastAddedAdmins
+);
+
 export const getCountAdmins = adapter.getSelectors(getAdminsAccountsProfiles).selectTotal;
 
 export const getAdminsCollections = adapter.getSelectors(getAdminsAccountsProfiles).selectAll;

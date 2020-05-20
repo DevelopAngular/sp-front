@@ -1,7 +1,7 @@
 export class InputRestriciontSm {
   type = 'text';
-  minWidth = '100%';
-  width = '100%';
+  minWidth = '95%';
+  width = '95%';
   placeholder = 'Search';
   fieldIconPosition = 'left';
   closeIcon = true;

@@ -11,6 +11,7 @@ import { PollingService } from './polling-service';
 import { UserService } from './user.service';
 import { HallPass } from '../models/HallPass';
 import {StorageService} from './storage.service';
+import {NavbarDataService} from '../main/navbar-data.service';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
@@ -62,7 +63,7 @@ export class DataService {
       private userService: UserService,
       private http: HttpService,
       private polling: PollingService,
-      private storage: StorageService
+      private storage: StorageService,
   )
   {
     this.polling.listen('pass_invitation')
@@ -78,6 +79,11 @@ export class DataService {
           this.inboxSource = new BehaviorSubject<boolean>(true);
       }
       this.inboxState = this.inboxSource.asObservable();
+  }
+
+  openRequestPageMobile() {
+      this.storage.setItem('showInbox', true);
+      this.updateInbox(true);
   }
 
   watchInvitationsSlow(options: Partial<InvitationOptions>): Observable<Invitation[]> {

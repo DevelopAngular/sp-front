@@ -33,6 +33,7 @@
     border-radius: 10px;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.102836);
     .options-container {
+      padding: 12px 0;
       //border-bottom-left-radius: 10px;
       //border-bottom-right-radius: 10px;
       //overflow: hidden;
@@ -54,9 +55,8 @@
 }
 
 .option-wrapper{
-    height: 55px;
+    height: 40px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -68,8 +68,6 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    //border-top: 1px solid $blue-gray;
-    text-align: center;
     &:hover {
       background-color: rgba(210, 210, 210, 0.3);
     }

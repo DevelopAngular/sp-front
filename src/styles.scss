@@ -29,6 +29,13 @@ body {
   }
 }
 
+//@media only screen and (orientation:landscape){
+//  body {
+//    height: 100vw;
+//    transform: rotate(90deg);
+//  }
+//}
+
 .filter-shadow {
   filter: url("#dropshadow");
 }
@@ -83,6 +90,30 @@ div {
   scrollbar-face-color: #D6D6D6;
   scrollbar-track-color: white;
   background-color: white;
+}
+
+.admin-form-dialog-container-white .mat-dialog-container {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  scrollbar-face-color: #D6D6D6;
+  scrollbar-track-color: white;
+  background-color: white;
+}
+
+.sp-form-dialog .mat-dialog-container {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+  margin: 0;
+  padding: 0;
+  scrollbar-face-color: #D6D6D6;
+  scrollbar-track-color: white;
+  background-color: transparent;
+  z-index: 100;
+  width: 425px;
+  height: 500px;
 }
 
 .main-form-dialog-container .mat-dialog-container {

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import {combineLatest, empty, merge, of, Observable, Subject, BehaviorSubject, ReplaySubject} from 'rxjs';
-import {map, scan, startWith, switchMap} from 'rxjs/operators';
-import { HttpService } from '../services/http-service';
+import * as moment from 'moment';
+
+import { combineLatest, empty, merge, Observable, of, Subject } from 'rxjs';
+import { map, scan, startWith, switchMap } from 'rxjs/operators';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
@@ -10,6 +11,7 @@ import { Invitation } from '../models/Invitation';
 import { Location } from '../models/Location';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
+import { HttpService } from '../services/http-service';
 import { PollingEvent, PollingService } from '../services/polling-service';
 import { TimeService } from '../services/time.service';
 import {
@@ -33,8 +35,6 @@ import {
   UpdateItem
 } from './polling-event-handlers';
 import { State } from './state';
-
-import * as moment from 'moment';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -181,13 +181,15 @@ export class LiveDataService {
   private globalReload$ = new Subject();
 
   constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
-    this.http.currentSchool$.subscribe(() => {
+    this.http.currentSchool$.subscribe((value) => {
       setTimeout(() => {
         this.globalReload$.next(null);
       }, 5);
     });
 
-    this.globalReload$.subscribe(() => console.log('Global reload event'));
+    this.globalReload$.subscribe(() => {
+      console.log('Global reload event');
+    });
   }
 
   private watch<ModelType extends BaseModel, ExternalEventType>(config: WatchData<ModelType, ExternalEventType>):
@@ -378,7 +380,15 @@ export class LiveDataService {
       active: true
     };
     const filters: FilterFunc<HallPass>[] = [
-      makeSchoolFilter(this.http)
+      makeSchoolFilter(this.http),
+      // Explicitly checking for start_time in the past is necessary because
+      // pass_request.accept and pass_invitation.accept are sent for "now" and
+      // "future" passes, but we need to only show "now" passes here. "future"
+      // passes will have a separate hall_pass.start event sent by the server.
+      // pass => {
+      //   // check for pass for "now" as robustly as possible even in the face of clock skew.
+      //   return Math.abs((+pass.start_time) - (+pass.created)) < 5000;
+      // },
     ];
 
     if (filter) {

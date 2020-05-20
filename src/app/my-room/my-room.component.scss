@@ -191,7 +191,7 @@
   display: flex;
   justify-content: center;
   //height: 100vh;
-  height: calc(100vh - 78px);
+  height: calc(100vh - 100px);
   overflow: auto;
 }
 
@@ -414,8 +414,9 @@ input {
 
 .cancel {
   &-wrapper {
-    position: absolute;
-    right: 10px;
+    margin-right: 10px;
+    //position: absolute;
+    //right: 10px;
     //width: 60px;
     //height: 60px;
     //display: flex;

@@ -21,25 +21,43 @@
       <mat-divider class="divider" *ngIf="!forKioskMode"></mat-divider>
 
       <!-- Favorite Window -->
-      <div *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode"
-           class="choices"
-           dragula="locations"
-           [(dragulaModel)]="starredChoices"
-           (dragulaModelChange)="updateOrderLocation($event)"
-      >
-        <div class="choice" *ngFor="let choice of starredChoices">
-          <app-location-cell
-            (onSelect)="choiceSelected($event)"
-            (onStar)="star($event)"
-            [value]="choice"
-            [type]="type"
-            [starred]="true"
-            [showStar]="!!showStars"
-            [allowOnStar]="allowOnStar"
-          >
-          </app-location-cell>
+      <div class="favorite" *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode">
+        <div
+             class="choices"
+             [dragula]="(screenService.enabledLocationTableDnD | async) ? 'locations' : null"
+             (dragulaModelChange)="updateOrderLocation($event)"
+        >
+          <div class="choice" *ngFor="let choice of starredChoices">
+            <app-location-cell
+              (onSelect)="choiceSelected($event)"
+              (onStar)="star($event)"
+              [value]="choice"
+              [type]="type"
+              [starred]="true"
+              [showStar]="!!showStars"
+              [allowOnStar]="allowOnStar"
+            >
+            </app-location-cell>
+          </div>
         </div>
+        <ng-template #noDnd>
+          <div class="choices">
+            <div class="choice" *ngFor="let choice of starredChoices">
+              <app-location-cell
+                (onSelect)="choiceSelected($event)"
+                (onStar)="star($event)"
+                [value]="choice"
+                [type]="type"
+                [starred]="true"
+                [showStar]="!!showStars"
+                [allowOnStar]="allowOnStar"
+              >
+              </app-location-cell>
+            </div>
+          </div>
+        </ng-template>
       </div>
+
 
       <!-- Create Pass Form -->
       <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode"

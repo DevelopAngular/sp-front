@@ -78,13 +78,6 @@ export class GSuiteSelector {
 
 }
 
-// export interface OrgUnit {
-//   unitId: UnitId;
-//   title: string;
-//   selector: GSuiteSelector[];
-//   selected: boolean;
-// }
-
 export class OrgUnit {
 
   unitId: UnitId;
@@ -167,6 +160,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   searchCount: number;
   firstSearchItem: User | GSuiteSelector;
+  currentSchool: School;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -174,15 +168,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private sanitizer: DomSanitizer,
     private httpService: HttpService,
-    private http: HttpClient,
     private mapsApi: MapsAPILoader,
     private shortcutsService: KeyboardShortcutsService,
     private renderer: Renderer2,
     public screenService: ScreenService
-  ) {
-
-
-  }
+  ) {}
 
   private getEmitedValue() {
     if (this.emitSingleProfile)  {
@@ -212,6 +202,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     if (this.chipsMode) {
       this.inputField = false;
     }
+    this.currentSchool = this.httpService.getSchool();
 
     const selfRef = this;
 
@@ -268,12 +259,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ngOnChanges(sc: SimpleChanges) {
-  //   console.log(sc);
-  //   if (!sc.isFocus.isFirstChange() && sc.isFocus.currentValue) {
-  //     this.input.nativeElement.focus();
-  //   }
-  // }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -281,12 +266,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   onSearch(search: string) {
-
     switch (this.searchTarget) {
       case 'users':
           if (search !== '') {
             this.pending$.next(true);
-
             if (this.type === 'alternative') {
               this.students = this.userService.searchProfile(this.role, 50, search)
                 .toPromise()
@@ -310,35 +293,30 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                   return this.removeDuplicateStudents(users);
                 });
             }
-
           } else {
-
             this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
             this.showDummy = false;
             this.inputValue$.next('');
           }
         break;
       case 'schools':
-
         if (search !== '') {
-
-          this.pending$.next(true);
-          this.placePredictionService.getPlacePredictions({
-            location: this.currentPosition,
-            input: search,
-            radius: 100000,
-            types: ['establishment']
-          }, (predictions, status) => {
-            this.query.next(predictions ? predictions : []);
-          });
-
+          if (search.length >= 4) {
+            this.pending$.next(true);
+            this.placePredictionService.getPlacePredictions({
+              location: this.currentPosition,
+              input: search,
+              radius: 100000,
+              types: ['establishment']
+            }, (predictions, status) => {
+              this.query.next(predictions ? predictions : []);
+            });
+          }
         } else {
-
           this.query.next(null);
           this.showDummy = false;
           this.inputValue$.next('');
           this.pending$.next(false);
-
         }
           break;
       case 'orgunits':

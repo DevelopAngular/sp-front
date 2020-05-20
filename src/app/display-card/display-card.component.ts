@@ -1,5 +1,5 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
-import { NavbarDataService } from '../main/navbar-data.service';
+﻿import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {NavbarDataService} from '../main/navbar-data.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';
 
@@ -45,7 +45,7 @@ export class DisplayCardComponent implements OnInit {
   }
 
   get titleColor () {
-    return !this.intro ? this.darkTheme.getColor() : '#1E194F';
+    return this.darkTheme.getColor();
   }
 
   ngOnInit() {

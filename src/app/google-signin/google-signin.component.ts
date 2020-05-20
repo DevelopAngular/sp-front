@@ -1,15 +1,16 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {HttpService} from '../services/http-service';
+import {AuthContext, HttpService} from '../services/http-service';
 import {Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {HttpClient} from '@angular/common/http';
 import {FormControl, FormGroup} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {QueryParams} from '../live-data/helpers';
 
 declare const window;
 
@@ -26,7 +27,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isLoaded = false;
   public showSpinner: boolean = false;
   public loggedWith: number;
-  public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+  // public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
   public loginData = {
     demoLoginEnabled: false,
     demoUsername: '',
@@ -36,14 +37,17 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isGoogleLogin: boolean;
   public isStandardLogin: boolean;
 
-  inputFocusNumber: number = 1;
-  forceFocus$ = new Subject();
+  public inputFocusNumber: number = 1;
+  public forceFocus$ = new Subject();
 
   public loginForm: FormGroup;
   public error$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-  showError: boolean;
+  public disabledButton: boolean = true;
+  public showError: boolean;
+  public schoolAlreadyText$: Observable<string>;
+
   private changeUserName$: Subject<string> = new Subject<string>();
-  destroy$ = new Subject();
+  private destroy$ = new Subject();
 
   constructor(
     private httpService: HttpService,
@@ -51,11 +55,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private loginService: GoogleLoginService,
     private titleService: Title,
     private metaService: Meta,
+    private router: Router,
     private route: ActivatedRoute,
     private http: HttpClient,
     private dialog: MatDialog,
-    private shortcuts: KeyboardShortcutsService
+    private shortcuts: KeyboardShortcutsService,
   ) {
+    this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
     this.loginService.isAuthLoaded()
       .subscribe(isLoaded => {
       this._ngZone.run(() => {
@@ -83,6 +89,17 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    this.route.queryParams
+      .pipe(
+        filter((qp: QueryParams) => !!qp.code),
+        switchMap(({code}) => this.loginSSO(code as string))
+      )
+      .subscribe((auth: AuthContext) => {
+        this.router.navigate(['']);
+      console.log(auth);
+    });
+
     this.loginForm = new FormGroup({
       username: new FormControl(),
       password: new FormControl()
@@ -101,15 +118,23 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
             this.inputFocusNumber = 1;
           }
           this.forceFocus$.next();
+        } else if (key[0] === 'enter') {
+          if (!this.disabledButton && !this.loginData.demoLoginEnabled) {
+            this.checkUserAuthType();
+          } else if (this.loginData.demoLoginEnabled) {
+            this.demoLogin();
+          }
         }
       });
 
     this.changeUserName$.pipe(
       filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
+      tap(() => this.disabledButton = true),
       distinctUntilChanged(),
       debounceTime(500),
       switchMap(userName => {
-        return this.http.get<any>(`https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`);
+        const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
+        return this.http.get<any>(discovery);
       })
     ).subscribe(({auth_types}) => {
       if (!auth_types.length) {
@@ -124,17 +149,16 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
         this.isGoogleLogin = true;
-      } else if (auth_types.indexOf('password') !== -1) {
+      } else if (auth_types.indexOf('gg4l') !== -1) {
+        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+      } else
+        if (auth_types.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
         this.isStandardLogin = true;
       } else {
         this.loginData.demoLoginEnabled = false;
       }
-      // else if (auth_types.indexOf('gg4l') !== -1) {
-        // this.loginSSO();
-        //   this.isGoogleLogin = true;
-      // }
-
+      this.disabledButton = false;
     });
   }
 
@@ -143,14 +167,15 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loginSSO() {
-    this.loginService.simpleSignOn();
-      // .then((res) => {
-      //   console.log(res);
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      // });
+  loginSSO(code: string) {
+    // this.loginService.simpleSignOn(code);
+    return this.httpService.loginGG4L(code).pipe(
+      tap((auth: AuthContext) => {
+        if (auth.gg4l_token) {
+          this.loginService.updateAuth({ gg4l_token: auth.gg4l_token, type: 'gg4l-login'});
+        }
+      })
+    );
   }
   updateDemoUsername(event) {
     if (!event) {
@@ -172,9 +197,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   checkUserAuthType() {
+    this.httpService.schoolSignInRegisterText$.next(null);
     if (this.showError) {
       this.error$.next('Couldn’t find that username or email');
-      this.showError = false;
       return false;
     } else if (this.isGoogleLogin) {
       this.initLogin();
@@ -196,7 +221,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       .pipe(
         finalize(() => {
           this.showSpinner = false;
-        }),
+        })
       );
   }
 

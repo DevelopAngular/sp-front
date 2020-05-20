@@ -13,7 +13,7 @@
             <img class="inbox-icon" [src]="getIcon('./assets/Inbox (Navy).svg') | resolveAsset">
           </div>
           <div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
-            {{title}}
+            {{ title }}
           </div>
         </div>
         <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"  [style.height]="iconSize" [style.width]="iconSize">

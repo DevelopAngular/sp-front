@@ -1,7 +1,6 @@
 import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {StorageService} from './services/storage.service';
-import {DeviceDetection} from './device-detection.helper';
 
 declare const window;
 
@@ -35,6 +34,7 @@ function listenSysLight(evt: MediaQueryListEvent) {
     this.isEnabled$.next(false);
   }
 }
+
 function listenSysDark(evt: MediaQueryListEvent) {
   if (evt.matches) {
     this.isEnabled$.next(true);

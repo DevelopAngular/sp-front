@@ -46,7 +46,6 @@ import {GoogleSigninComponent} from '../google-signin/google-signin.component';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {IntroComponent} from '../intro/intro.component';
 import {SortMenuComponent} from '../sort-menu/sort-menu.component';
-import {NextReleaseComponent} from '../next-release/next-release.component';
 import {CoreModule} from '../core/core.module';
 import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
@@ -54,6 +53,10 @@ import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-g
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
+import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-info.component';
+import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
+import {ViewProfileComponent} from '../admin/profile-card-dialog/view-profile/view-profile.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -110,14 +113,17 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroDialogComponent,
     IntroComponent,
     SortMenuComponent,
-    NextReleaseComponent,
     ConsentMenuMobileComponent,
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
     ReportSuccessToastComponent,
     RestrictionPickerComponent,
-    SpAppearanceComponent
+    SpAppearanceComponent,
+    MyProfileDialogComponent,
+    ProfileInfoComponent,
+    ChangePasswordComponent,
+    ViewProfileComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -126,10 +132,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConsentMenuComponent,
     IntroDialogComponent,
     SortMenuComponent,
-    NextReleaseComponent,
     ConsentMenuMobileComponent,
     ReportSuccessToastComponent,
-    SpAppearanceComponent
+    SpAppearanceComponent,
+    MyProfileDialogComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -177,7 +183,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileComponent,
     AccountGroupsComponent,
     ReportSuccessToastComponent,
-    RestrictionPickerComponent
+    RestrictionPickerComponent,
+    ProfileInfoComponent,
+    ChangePasswordComponent,
+    ViewProfileComponent
   ],
   providers: [
     {

@@ -168,11 +168,11 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
         this.effectiveUser = v.eu;
         this.isStaff = v.cu.roles.includes('_profile_teacher');
 
-        if (this.effectiveUser) {
-          this.canView = this.effectiveUser.roles.includes('access_hall_monitor') && this.effectiveUser.roles.includes('view_traveling_users');
-        } else {
-          this.canView = this.user.roles.includes('access_hall_monitor') && this.user.roles.includes('view_traveling_users');
-        }
+        // if (this.effectiveUser) {
+        //   this.canView = this.effectiveUser.roles.includes('access_hall_monitor') && this.effectiveUser.roles.includes('view_traveling_users');
+        // } else {
+          this.canView = this.user.roles.includes('access_hall_monitor');
+        // }
       });
     });
 

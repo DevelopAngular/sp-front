@@ -1,5 +1,6 @@
 export interface ProcessState {
-  data: any;
+  entities: any;
+  ids: string[];
   loading: boolean;
   loaded: boolean;
 }

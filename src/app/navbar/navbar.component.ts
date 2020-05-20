@@ -43,6 +43,7 @@ import {NavbarElementsRefsService} from '../services/navbar-elements-refs.servic
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import { filter as _filter } from 'lodash';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 
 declare const window;
 
@@ -186,6 +187,29 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     return this.pts;
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
+  get isKioskMode() {
+    return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get isSafari() {
+    return DeviceDetection.isSafari();
+  }
+
+  get flexDirection() {
+    let direction = 'row';
+    if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
+    if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
+    return direction;
+  }
+
+  get notificationBadge$() {
+    return this.navbarData.notificationBadge$;
+  }
+
   ngOnInit() {
     this.underlinePosition();
     this.shortcutsService.onPressKeyEvent$
@@ -222,7 +246,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = this.router.url.includes('kioskMode');
-        // console.log('Hide ===>>', value.url);
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit[urlSplit.length - 1];
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
@@ -232,6 +255,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this.isMyRoomRoute = value.url === '/main/myroom';
         this.isAdminRoute = value.url.includes('/admin');
       }
+    });
+
+    this.navbarData.inboxClick$.subscribe(res => {
+      this.isInboxClicked = res;
     });
 
     this.userService.userData
@@ -386,11 +413,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   hasRoles(roles: string[]) {
-    if (this.user.isAssistant()) {
-      return roles.every((_role) => this.effectiveUser.roles.includes(_role));
-    } else {
-      return roles.every((_role) => this.user.roles.includes(_role));
-    }
+    const userRoles = roles.reduce((acc, curr, index) => {
+      return {...acc, [curr]: index};
+    }, {});
+      return this.user.roles.find(role => userRoles[role]);
   }
 
   buttonVisibility(button) {
@@ -444,8 +470,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     });
     representedUsersDialog.afterClosed().subscribe((v: RepresentedUser) => {
-      console.log(v);
-      // this.effectiveUser = v ? v : this.effectiveUser;
       if (v) {
         this.userService.effectiveUser.next(v);
         this.http.effectiveUserId.next(+v.user.id);
@@ -455,8 +479,13 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   settingsAction(action: string) {
       if (action === 'signout') {
-        // window.waitForAppLoaded();
         this.router.navigate(['sign-out']);
+      } else if (action === 'profile') {
+        this.dialog.open(MyProfileDialogComponent, {
+          panelClass: 'sp-form-dialog',
+          width: '425px',
+          height: '500px'
+        });
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
               panelClass: 'form-dialog-container',
@@ -506,7 +535,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         });
       } else if (action === 'appearance') {
           this.dialog.open(SpAppearanceComponent, {
-            panelClass: 'form-dialog-container',
+            panelClass: 'sp-form-dialog',
           });
       }  else if (action === 'switch') {
         this.router.navigate(['admin']);
@@ -536,7 +565,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   inboxClick() {
-    // debugger;
     this.inboxVisibility = !this.inboxVisibility;
     this.storage.setItem('showInbox', this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);
@@ -549,12 +577,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.screenService.isDeviceLarge && !this.screenService.isDeviceMid) {
       this.sideNavService.toggleRight$.next(true);
     }
-
-    // this.navbarElementsService.navbarRef$.next(this.navbar);
-  }
-
-  get notificationBadge$() {
-    return this.navbarData.notificationBadge$;
   }
 
   ngOnDestroy(): void {
@@ -576,25 +598,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     } else {
       this.rendered.setStyle(tab, 'webkitTransform', 'unset');
     }
-  }
-
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
-  }
-
-  get isKioskMode() {
-    return !!this.kioskMode.currentRoom$.value;
-  }
-
-  get isSafari() {
-    return DeviceDetection.isSafari();
-  }
-
-  get flexDirection() {
-    let direction = 'row';
-    if  (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
-    if  (this.isKioskMode && this.screenService.isDeviceLargeExtra) direction = 'row';
-    return direction;
   }
 
   changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {

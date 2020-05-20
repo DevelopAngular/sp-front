@@ -3,7 +3,8 @@ import {Action, createReducer, on} from '@ngrx/store';
 import * as processActions from '../actions';
 
 const onboardProcessInitialState: ProcessState = {
-  data: [],
+  entities: {},
+  ids: [],
   loading: false,
   loaded: false
 };
@@ -13,15 +14,23 @@ const reducer = createReducer(
   on(processActions.getOnboardProcess,
     processActions.updateOnboardProcess, state => ({...state, loading: true, loaded: false})),
   on(processActions.getOnboardProcessSuccess,
-    processActions.updateOnboardProcessSuccess,
     (state, {process}) => {
+
+    const ids = process.map(p => p.name);
+    const entities = process.reduce((acc, curr) => {
+      return {...acc, [curr.name]: curr};
+    }, {});
+
+    return { ...state, entities, ids, loading: false, loaded: true };
+  }),
+  on(processActions.updateOnboardProcessSuccess, (state, {process}) => {
     return {
       ...state,
-      data: process,
       loading: false,
-      loaded: true
+      loaded: true,
+      entities: { ...state.entities, [process.name]: process }
     };
-  }),
+  })
 );
 
 export function onboardProcessReducer(state: any | undefined, action: Action) {

@@ -26,19 +26,22 @@ export class DropdownComponent implements OnInit {
   }
 
   @ViewChildren('schoolList') schoolList: QueryList<School>;
+  @ViewChildren('_option') locationsList: QueryList<Location>;
 
   user: User;
   heading: string = '';
   locations: Location[];
-  schools: School[];
-  teachers: RepresentedUser[];
   selectedLocation: Location;
+  schools: School[];
   selectedSchool: School;
+  teachers: RepresentedUser[];
   selectedTeacher: RepresentedUser;
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
   scrollPosition: number;
   findElement: ElementRef;
+  sortData: any[];
+  selectedSort: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -57,14 +60,15 @@ export class DropdownComponent implements OnInit {
     this.selectedTeacher = data['selectedTeacher'];
     this.user = data['user'];
     this.scrollPosition = data['scrollPosition'];
-
+    this.sortData = data['sortData'];
+    this.selectedSort = data['selectedSort'] || '';
   }
 
   ngOnInit() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
-    matDialogConfig.width = this.teachers ? '305px' : '350px';
-    matDialogConfig.height = this.teachers ? '180px' : '215px';
+    matDialogConfig.width = !!this.sortData ? '250px' : '300px';
+    // matDialogConfig.height = this.teachers ? '180px' : '215px';
     matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
@@ -85,12 +89,20 @@ export class DropdownComponent implements OnInit {
       }
   }
 
+  get list() {
+    if ((this.locationsList as any)._results.length) {
+      return this.locationsList;
+    } else if ((this.schoolList as any)._results.length) {
+      return this.schoolList;
+    }
+  }
+
   search(value) {
     if (this.findElement) {
       this.renderer.setStyle(this.findElement.nativeElement, 'background-color', 'transparent');
     }
     if (value) {
-      this.findElement = (this.schoolList as any)._results.find(elem => {
+      this.findElement = (this.list as any)._results.find(elem => {
         return elem.nativeElement.innerText.toLowerCase().includes(value);
       });
       if (this.findElement) {

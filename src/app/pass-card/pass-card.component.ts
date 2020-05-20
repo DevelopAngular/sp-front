@@ -20,6 +20,8 @@ import { TimeService } from '../services/time.service';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {HttpService} from '../services/http-service';
+import {School} from '../models/School';
 
 @Component({
   selector: 'app-pass-card',
@@ -77,6 +79,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   options: any = [];
   cancelEditClick: boolean;
   frameMotion$: BehaviorSubject<any>;
+  currentSchool: School;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -92,7 +95,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private formService: CreateFormService,
       private timeService: TimeService,
       public screenService: ScreenService,
-      private shortcutsService: KeyboardShortcutsService
+      private shortcutsService: KeyboardShortcutsService,
+      private http: HttpService
   ) {}
 
   getUserName(user: any) {
@@ -115,7 +119,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
               (this.selectedStudents.length > 2 ?
                   this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
                   this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
-                  ' and ' + this.selectedStudents[1].display_name : '')) : this.pass.student.display_name + ` (${this.studentEmail})`);
+                  ' and ' + this.selectedStudents[1].display_name : '')) :
+            this.pass.student.display_name + ` (${this.studentEmail})`);
       }
   }
 
@@ -142,6 +147,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.currentSchool = this.http.getSchool();
 
     if (this.data['pass']) {
       this.isModal = true;
@@ -242,10 +248,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
 
     if (this.isActive) {
-      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.start_time), (this.pagerPages+1));
       this.activePage = (this.pagerPages);
     } else if (this.fromPast) {
-      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.start_time), (this.pagerPages+1));
       let start: Date = this.pass.start_time;
       let end: Date = this.pass.end_time;
       let diff: number = (end.getTime() - start.getTime()) / 1000;

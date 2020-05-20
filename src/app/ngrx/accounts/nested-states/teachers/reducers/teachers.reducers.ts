@@ -8,7 +8,9 @@ export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
 export const teachersInitialState: TeachersStates = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  nextRequest: null,
+  lastAddedTeachers: []
 });
 
 const reducer = createReducer(
@@ -16,8 +18,8 @@ const reducer = createReducer(
   on(teachersActions.getTeachers,
     teachersActions.removeTeacher,
     (state) => ({...state, loading: true, loaded: false})),
-  on(teachersActions.getTeachersSuccess, (state, {teachers}) => {
-    return adapter.addAll(teachers, {...state, loading: false, loaded: true });
+  on(teachersActions.getTeachersSuccess, (state, {teachers, next}) => {
+    return adapter.addAll(teachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: []});
   }),
   on(teachersActions.removeTeacherSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});
@@ -26,6 +28,12 @@ const reducer = createReducer(
     teachersActions.updateTeacherPermissionsSuccess,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
+  }),
+  on(teachersActions.getMoreTeachersSuccess, (state, {moreTeachers, next}) => {
+    return adapter.addMany(moreTeachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: moreTeachers});
+  }),
+  on(teachersActions.postTeacherSuccess, (state, {teacher}) => {
+    return adapter.addOne(teacher, {...state, loading: false, loaded: true});
   })
 );
 

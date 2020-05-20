@@ -166,9 +166,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       email: new FormControl('',
         [
         Validators.required,
-        Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+.[a-zA-Z0-9]+$'),
+        // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+.[a-zA-Z0-9]+$'),
+          Validators.email,
         (fc: FormControl) => {
-          return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1)) ? {invalid_email: true}  : null;
+          return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1).toLowerCase()) ? {invalid_email: true}  : null;
         }
       ], [
           this.checkEmailValidatorAsync.bind(this)
@@ -303,7 +304,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         )
         .subscribe((onboard: any) => {
           if (onboard.school_registered) {
-            this.router.navigate(['']);
+            this.httpService.schoolSignInRegisterText$.next('Your school is already signed up!');
+            this.goHome();
           } else {
             this.school = school;
             this.schoolForm.controls.google_place_id.setValue( this.school.place_id);
@@ -322,6 +324,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   openLink(link) {
     window.open(link);
+  }
+
+  goHome() {
+    this.router.navigate(['']);
   }
 
 }
