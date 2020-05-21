@@ -1,29 +1,3 @@
-@media all and (max-width: 375px) {
-  div.header-content {
-    padding: 3% !important;
-  }
-}
-
-@media all and (max-width: 320px) {
-  div.inline-request-card-wrapper {
-    max-width: 300px;
-    margin: auto;
-  }
-}
-
-@media all and (max-width: 940px) and (min-width: 335px) {
-    div.inline-request-card-wrapper {
-      max-width: 335px;
-      margin: auto;
-    }
-}
-
-@media all and (max-width: 940px) {
-  div.message {
-    margin-left: 50px;
-  }
-}
-
 .ios-margin-left {
   margin-left: 50px;
 }
@@ -43,9 +17,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            padding: 20px;
             width: 291px;
-            //height: 65px;
 
             .header-info {
                 display: flex;
@@ -328,4 +301,30 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #B6B6B6;
+}
+
+@media all and (max-width: 375px) {
+  div.header-content {
+    //padding: 3% !important;
+  }
+}
+
+@media all and (max-width: 320px) {
+  div.inline-request-card-wrapper {
+    max-width: 300px;
+    margin: auto;
+  }
+}
+
+@media all and (max-width: 940px) and (min-width: 335px) {
+  div.inline-request-card-wrapper {
+    max-width: 335px;
+    margin: auto;
+  }
+}
+
+@media all and (max-width: 940px) {
+  div.message {
+    margin-left: 50px;
+  }
 }

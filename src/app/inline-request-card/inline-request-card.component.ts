@@ -194,7 +194,7 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   onLeave(target: HTMLElement) {
-    target.style.marginLeft = this.filteredTeachers.length > 1 ? '0px' : '15px';
+    target.style.marginLeft = this.filteredTeachers.length > 1 ? '0px' : '10px';
     target.style.transition = `margin-left .4s ease`;
     target.style.width = `auto`;
     this.removeShadow = false;

@@ -279,6 +279,14 @@
     cursor: pointer;
     position: relative;
     margin: -79px 0 0 0%;
+
+  .center-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
 }
 
 .resend-button-content-title{
@@ -293,7 +301,7 @@
   overflow: hidden;
   display: flex;
   z-index: 2;
-  height: 30px;
+  height: 25px;
   width: 92%;
   //box-shadow: -5px 0px 5px 0px rgba(54, 50, 50, 0.1) inset;
 

@@ -9,7 +9,7 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
-import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
@@ -304,33 +304,35 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   changeDate(resend_request?: boolean) {
     if (!this.dateEditOpen) {
-       let config;
-            this.dialogRef.close();
-            config = {
-                panelClass: 'form-dialog-container',
-                maxWidth: '100vw',
-                backdropClass: 'custom-backdrop',
-                data: {
-                    'entryState': {
-                        step: 1,
-                        state: 1
-                    },
-                    'forInput': false,
-                    'originalToLocation': this.request.destination,
-                    'colorProfile': this.request.color_profile,
-                    'originalFromLocation': this.request.origin,
-                    'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
-                    'request': this.request,
-                    'resend_request': resend_request
-                }
-            };
+      let config;
+      this.dialogRef.close();
+      config = {
+          panelClass: 'form-dialog-container',
+          maxWidth: '100vw',
+          backdropClass: 'custom-backdrop',
+          data: {
+              'entryState': {
+                  step: 1,
+                  state: 1
+              },
+              'forInput': false,
+              'originalToLocation': this.request.destination,
+              'colorProfile': this.request.color_profile,
+              'originalFromLocation': this.request.origin,
+              'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
+              'request': this.request,
+              'resend_request': resend_request
+          }
+      };
       const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
       dateDialog.afterOpen().subscribe( () => {
         this.dateEditOpen = true;
       });
 
-      dateDialog.afterClosed().pipe(filter((state) => resend_request && state), switchMap((state) => {
+      dateDialog.afterClosed().pipe(
+        filter((state) => resend_request && state),
+        switchMap((state) => {
           const body: any = {
               'origin' : this.request.origin.id,
               'destination' : this.request.destination.id,
@@ -342,10 +344,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           };
 
          return this.requestService.createRequest(body);
-      }),
-        takeUntil(this.destroy$),
-        switchMap(() => this.requestService.cancelRequest(this.request.id)))
-          .subscribe(console.log);
+        }),
+        switchMap(() => this.requestService.cancelRequest(this.request.id))
+      ).subscribe();
     }
   }
 

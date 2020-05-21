@@ -19,6 +19,7 @@
 
       .cancel {
         color: #ffffFF;
+        cursor: pointer;
       }
     }
 
@@ -56,13 +57,13 @@
       .info {
         font-size: 14px;
         color: $blue-gray;
-        width: 295px;
+        max-width: 295px;
         margin-top: 5px;
       }
       .instruction {
         font-size: 14px;
         color: $blue-gray;
-        width: 295px;
+        max-width: 295px;
         margin-top: 20px;
       }
     }

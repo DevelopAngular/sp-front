@@ -43,6 +43,7 @@ export class TeacherPinComponent implements OnInit {
         Validators.required,
         Validators.minLength(4),
         Validators.pattern('^[0-9]*?[0-9]+$'),
+        (fn) => fn.value.length < 4 ? { minPin: true } : null
       ])
     });
   }
