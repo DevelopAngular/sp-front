@@ -16,7 +16,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 
   schoolForm: FormGroup;
   currentSchool: School;
-  initialState: { display_card_room: boolean, pass_buffer_time: string | number };
+  initialState: { display_card_room: boolean, pass_buffer_time: string | number, display_pass_count: boolean };
   changeForm: boolean;
   showSpinner: boolean;
   hideMin: boolean;
@@ -37,7 +37,9 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
     });
     this.initialState = this.schoolForm.value;
     this.schoolForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
-      this.changeForm = res.display_card_room !== this.initialState.display_card_room || +res.pass_buffer_time !== +this.initialState.pass_buffer_time;
+      this.changeForm = res.display_card_room !== this.initialState.display_card_room ||
+        +res.pass_buffer_time !== +this.initialState.pass_buffer_time ||
+        res.display_pass_count !== this.initialState.display_pass_count;
     });
     this.changeSettings$.pipe(
         takeUntil(this.destroy$),
@@ -63,7 +65,8 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
                 Validators.required,
                 Validators.pattern('^[0-9]*?[0-9]+$'),
                 Validators.max(60),
-                Validators.min(0)])
+                Validators.min(0)]),
+      display_pass_count: new FormControl(false)
     });
   }
 

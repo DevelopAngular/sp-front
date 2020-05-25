@@ -54,7 +54,7 @@
       <div class="min"
            (click)="isFocus = true;
            updateFocus(inp)"
-           *ngIf="showMin"
+           *ngIf="showMin && !disabled && !!controlName.value"
            [style.left]="minLeftMargin + 'px'">
         {{ formGroup.get('timeLimit') ? 'min' : 'passes' }}
       </div>

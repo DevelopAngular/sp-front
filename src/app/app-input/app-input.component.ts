@@ -64,24 +64,20 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
 
   get showMin() {
     return this.timeInput && !this.isFocus &&
-      (!!this.getValueFormGroup('timeLimit') || !!this.getValueFormGroup('from') || !!this.getValueFormGroup('to')) &&
+      (!!this.formGroup.get('timeLimit') || !!this.formGroup.get('from') || !!this.formGroup.get('to')) &&
       this.controlName.valid;
   }
 
-  getValueFormGroup(group: string) {
-    if (this.formGroup.get(group)) {
-      return this.formGroup.get(group).value;
-    }
-  }
-
   get minLeftMargin() {
-    const value = this.getValueFormGroup('timeLimit') || this.getValueFormGroup('from') || this.getValueFormGroup('to');
+    const value = this.controlName.value;
     if (value < 10) {
       return 30;
     } else if (value >= 10 && value < 100) {
       return 39;
-    } else if (value >= 100) {
+    } else if (value >= 100 && value < 1000) {
       return 48;
+    } else if (value >= 1000) {
+      return 55;
     }
   }
 

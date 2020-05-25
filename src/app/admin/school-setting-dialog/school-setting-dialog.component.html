@@ -44,6 +44,15 @@
           ></app-input>
         </div>
       </div>
+      <div class="display-room-control" style="margin-top: 15px">
+        <div class="controls-description">
+          <div class="ds-cell-text-2">Display pass counts</div>
+          <div class="ds-cell-description-text" style="width: 300px; margin-top: 6px">Show the number of passes to/from a room when students are making passes.</div>
+        </div>
+        <div class="toggle-control">
+          <app-toggle-input [form]="schoolForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'display_pass_count'"></app-toggle-input>
+        </div>
+      </div>
     </div>
 <!--    <div class="bottom-block">-->
 <!--      <div class="ds-dialog-bold-text">Have a feature suggestion?</div>-->

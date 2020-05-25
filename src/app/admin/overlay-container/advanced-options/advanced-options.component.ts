@@ -119,7 +119,13 @@ export class AdvancedOptionsComponent implements OnInit {
           this.optionState = cloneDeep(data);
         });
         this.buildData();
-        this.change$.subscribe(res => {
+        this.mockAPCForm.valueChanges.subscribe(res => {
+          if (!res.fromEnabled && res.from !== '') {
+            this.mockAPCForm.get('from').setValue('');
+          }
+          if (!res.toEnabled && res.to !== '') {
+            this.mockAPCForm.get('to').setValue('');
+          }
           this.checkValidOptions();
           this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
         });
@@ -216,12 +222,23 @@ export class AdvancedOptionsComponent implements OnInit {
                     incomplete: true,
                     cancel: true
                 };
-                if (this.mockAPCForm.value.from) {
-                  this.isShowButtons = {
-                    publish: true,
-                    incomplete: false,
-                    cancel: true
-                  };
+                if (this.mockAPCForm.value.from || this.mockAPCForm.value.to) {
+                  if (
+                    (this.mockAPCForm.value.from && (this.mockAPCForm.value.toEnabled && !this.mockAPCForm.value.to)) ||
+                    (this.mockAPCForm.value.to && (this.mockAPCForm.value.fromEnabled && !this.mockAPCForm.value.from))
+                  ) {
+                    this.isShowButtons = {
+                      publish: false,
+                      incomplete: true,
+                      cancel: true
+                    };
+                  } else {
+                    this.isShowButtons = {
+                      publish: true,
+                      incomplete: false,
+                      cancel: true
+                    };
+                  }
                 }
             } else {
                 this.isShowButtons = {
