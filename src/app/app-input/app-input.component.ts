@@ -32,7 +32,8 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() forceFocus$: Subject<boolean> = new Subject<boolean>();
   @Input() autocomplete: string = 'off';
   @Input() showPasswordButton: boolean;
-  @Input() timeInput: boolean = false;
+  @Input() timeInput: boolean;
+  @Input() pattern: string;
 
   @Input() formGroup;
   @Input() controlName;

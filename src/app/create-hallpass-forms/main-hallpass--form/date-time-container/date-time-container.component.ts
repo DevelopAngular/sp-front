@@ -66,7 +66,6 @@ export class DateTimeContainerComponent implements OnInit {
       } else {
         this.FORM_STATE.state = 1;
       }
-
       this.nextStepEvent.emit(this.FORM_STATE);
     }, 100);
 

@@ -13,7 +13,8 @@
         </div>
 
         <div [ngClass]="iconClass">
-          <app-icon-button [srcString]="'./assets/' +((!forStaff && !forInput && !invalidDate) ? 'Delete' : (!forInput && (forStaff || invalidDate) ? 'Dots' : 'Chevron Left')) +' (Transparent).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="cancelRequest($event)"></app-icon-button>
+          <app-icon-button *ngIf="!activeTeacherPin" [srcString]="'./assets/' +((!forStaff && !forInput && !invalidDate) ? 'Delete' : (!forInput && (forStaff || invalidDate) ? 'Dots' : 'Chevron Left')) +' (Transparent).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="cancelRequest($event)"></app-icon-button>
+          <app-icon-button *ngIf="activeTeacherPin" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="activeTeacherPin = false"></app-icon-button>
         </div>
 
       </div>
@@ -44,7 +45,7 @@
     </div>
 
     <div class="request-card-content-modal" *ngIf="isModal">
-      <div class="student-view" *ngIf="!forStaff">
+      <div class="student-view" *ngIf="!forStaff && !activeTeacherPin">
         <div class="center-block">
           <app-pager *ngIf="!forInput"  [arrowPosition]="'-93px'" [isStaff]="false">
             <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
@@ -98,20 +99,49 @@
 
         </div>
 
-        <mat-divider *ngIf="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)"></mat-divider>
+        <mat-divider *ngIf="((request.status==='accepted' || invalidDate) && !forInput && !forStaff) || (request.status!=='pending' && forStaff)"></mat-divider>
 
         <div class="bottom-block">
-          <div *ngIf="request.status==='pending'">
+          <div *ngIf="request.status==='pending' && !invalidDate; else noTeachPin"
+               (mouseenter)="onHover(desc, title)"
+               (mouseleave)="onLeave(desc)">
+              <app-card-button
+                [width]="'297px'"
+                [height]="'81px'"
+                [gradientColor]="request.color_profile.gradient_color"
+                (onClick)="activeTeacherPin = true">
+                <div class="resend-button-content">
+                  <div class="center-content">
+                    <div class="resend-button-content-title" style="display: flex; align-items: center;">
+                      <img style="margin-right: 10px" width="18" height="18" [src]="'./assets/Lock dots (White).svg' | resolveAsset" alt="Lock">
+                      Enter Teacher Pin
+                    </div>
+                    <div class="description-container" #title>
+                      <div class="shadow left-radius" [ngStyle]="{'box-shadow': '0px 0px 17px 10px ' + solidColorRgba2}" [style.background]="request.gradient_color.split(',')[1]" [style.left]="0" *ngIf="leftTextShadow"></div>
+                      <div class="description-title" #desc [style.margin-left]="filteredTeachers.length > 1 ? '0px' : '15px'">
+                        Pass Request sent to:
+                        <span style="width: 5px"></span>
+                        <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                            <span style="margin-right: 3px">{{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}</span>
+                          </span>
+                      </div>
+                      <div class="shadow right-radius" [ngStyle]="{'box-shadow': '0px 0px 30px 20px ' + solidColorRgba}" [style.background]="request.gradient_color.split(',')[0]" *ngIf="!removeShadow" [style.right]="0"></div>
+                    </div>
+                  </div>
+                </div>
+              </app-card-button>
+            </div>
+          <ng-template #noTeachPin>
             <div class="request-description">
               <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
               <div class="request-description-text">
                 Pass Request sent to: <br>
                 <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
-                {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
-              </span>
+                  {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
+                </span>
               </div>
             </div>
-          </div>
+          </ng-template>
           <div *ngIf="request.status==='accepted'">
             <div class="request-description">
               <img class="request-description-icon" [src]="'./assets/Arrow (White).svg' | resolveAsset">
@@ -131,6 +161,9 @@
             </app-card-button>
           </div>
         </div>
+      </div>
+      <div class="teacher-pin" *ngIf="!forStaff && activeTeacherPin">
+        <app-teacher-pin-student (pinResult)="dialogRef.close()" [requestId]="request.id"></app-teacher-pin-student>
       </div>
 
       <div class="teacher-view" *ngIf="forStaff">
@@ -238,6 +271,7 @@
         <div class="student-text"> {{ request.student.display_name }} </div>
       </div>
     </div>
+
   </div>
 </div>
 

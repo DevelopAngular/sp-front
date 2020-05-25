@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter, find } from 'lodash';
-import {BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
-import {filter, map, mapTo, mergeMap, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {filter, map, mergeMap, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -128,16 +128,33 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         filter((release: Array<Update>) => !!release.length),
         switchMap((release) => {
-          const dialogRef = this.dialog.open(NextReleaseComponent, {
-            panelClass: 'main-form-dialog-container',
-            width: '425px',
-            maxHeight: '500px',
-            data: {
-              isStudent: false,
-              isTeacher: true,
-              releaseUpdates: release
-            }
-          });
+          // release = [release[0]];
+          let config;
+          if (DeviceDetection.isMobile()) {
+            config = {
+              panelClass: 'main-form-dialog-container-mobile',
+              width: '100%',
+              maxWidth: '100%',
+              height: '100%',
+              data: {
+                isStudent: false,
+                isTeacher: true,
+                releaseUpdates: release
+              }
+            };
+          } else {
+            config = {
+              panelClass: 'main-form-dialog-container',
+              width: '425px',
+              maxHeight: '450px',
+              data: {
+                isStudent: false,
+                isTeacher: true,
+                releaseUpdates: release
+              }
+            };
+          }
+          const dialogRef = this.dialog.open(NextReleaseComponent, config);
           return dialogRef.afterClosed().pipe(
             switchMap(() => zip(
               ...release.map((update: Update) => this.nextReleaseService.dismissUpdate(update.id, DeviceDetection.platform()))
@@ -145,9 +162,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           );
         })
       )
-      .subscribe((res) => {
-        console.log(res);
-      });
+      .subscribe(console.log);
 
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;

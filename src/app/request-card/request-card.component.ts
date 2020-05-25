@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy} from '@angular/core';
+import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy, Renderer2} from '@angular/core';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { Util } from '../../Util';
@@ -9,14 +9,14 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
-import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep} from '../animations';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
 import { uniqBy, uniq, isNull } from 'lodash';
@@ -24,6 +24,7 @@ import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {StorageService} from '../services/storage.service';
 import {NavbarDataService} from '../main/navbar-data.service';
 
 @Component({
@@ -66,6 +67,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   header: string;
   cancelEditClick: boolean;
 
+  hoverDestroyer$: Subject<any>;
+
+  activeTeacherPin: boolean;
+  solidColorRgba: string;
+  solidColorRgba2: string;
+  removeShadow: boolean;
+  leftTextShadow: boolean;
   destroy$: Subject<any> = new Subject<any>();
 
 
@@ -80,7 +88,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       private createFormService: CreateFormService,
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
-      private navbarData: NavbarDataService
+      private navbarData: NavbarDataService,
+      private storage: StorageService
   ) {}
 
   get invalidDate() {
@@ -145,11 +154,22 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       });
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
+    if (this.isModal) {
+      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
+      this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  getGradient() {
+    if (this.request.gradient_color) {
+      const gradient: string[] = this.request.gradient_color.split(',');
+      return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
+    }
   }
 
   get studentName() {
@@ -215,7 +235,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       }
   }
 
-  formatDateTime(date: Date, timeOnly?: boolean){
+  formatDateTime(date: Date, timeOnly?: boolean) {
     return Util.formatDateTime(date, timeOnly);
   }
 
@@ -284,33 +304,35 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   changeDate(resend_request?: boolean) {
     if (!this.dateEditOpen) {
-       let config;
-            this.dialogRef.close();
-            config = {
-                panelClass: 'form-dialog-container',
-                maxWidth: '100vw',
-                backdropClass: 'custom-backdrop',
-                data: {
-                    'entryState': {
-                        step: 1,
-                        state: 1
-                    },
-                    'forInput': false,
-                    'originalToLocation': this.request.destination,
-                    'colorProfile': this.request.color_profile,
-                    'originalFromLocation': this.request.origin,
-                    'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
-                    'request': this.request,
-                    'resend_request': resend_request
-                }
-            };
+      let config;
+      this.dialogRef.close();
+      config = {
+          panelClass: 'form-dialog-container',
+          maxWidth: '100vw',
+          backdropClass: 'custom-backdrop',
+          data: {
+              'entryState': {
+                  step: 1,
+                  state: 1
+              },
+              'forInput': false,
+              'originalToLocation': this.request.destination,
+              'colorProfile': this.request.color_profile,
+              'originalFromLocation': this.request.origin,
+              'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
+              'request': this.request,
+              'resend_request': resend_request
+          }
+      };
       const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
       dateDialog.afterOpen().subscribe( () => {
         this.dateEditOpen = true;
       });
 
-      dateDialog.afterClosed().pipe(filter((state) => resend_request && state), switchMap((state) => {
+      dateDialog.afterClosed().pipe(
+        filter((state) => resend_request && state),
+        switchMap((state) => {
           const body: any = {
               'origin' : this.request.origin.id,
               'destination' : this.request.destination.id,
@@ -322,10 +344,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           };
 
          return this.requestService.createRequest(body);
-      }),
-        takeUntil(this.destroy$),
-        switchMap(() => this.requestService.cancelRequest(this.request.id)))
-          .subscribe(console.log);
+        }),
+        switchMap(() => this.requestService.cancelRequest(this.request.id))
+      ).subscribe();
     }
   }
 
@@ -468,6 +489,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       this.requestService.cancelRequest(this.request.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => {
+          const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
+          if (storageData && storageData[this.request.id]) {
+            delete storageData[this.request.id];
+            this.storage.setItem('pinAttempts', JSON.stringify({...storageData}));
+          }
         this.dialogRef.close();
       });
     } else if (action === 'change_date') {
@@ -515,6 +541,43 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   receiveOption(action) {
     this.chooseAction(action);
     this.dialogRef.close();
+  }
+
+  onHover(evt: HTMLElement, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = evt;
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if (margin > 0) {
+          this.leftTextShadow = true;
+        }
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        } else {
+          this.removeShadow = true;
+        }
+      });
+  }
+
+  onLeave(target: HTMLElement) {
+    target.style.marginLeft = this.filteredTeachers.length > 1 ? '0px' : '15px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `auto`;
+    this.removeShadow = false;
+    this.leftTextShadow = false;
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
   }
 
   get isIOSTablet() {
