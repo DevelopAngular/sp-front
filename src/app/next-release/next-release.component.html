@@ -1,12 +1,12 @@
-<div class="next-release-container" (scroll)="onScroll($event)">
+<div class="next-release-container" [ngClass]="{ 'desktop-width': !isMobile }"  (scroll)="onScroll($event)">
   <div class="close" (click)="markAsSeen()">
     <img draggable="false" [src]="'./assets/Close Input (Grey).svg' | resolveAsset" alt="Close Input (Grey).svg">
   </div>
   <div class="ds-flex-center-center ds-pt-25">
-    <img [src]="'./assets/balloons.svg'" alt="balloons.svg">
+    <img [ngClass]="{'mobile-icon': isMobile}" [src]="'./assets/balloons.svg'" alt="balloons.svg">
   </div>
   <div class="release-version" #stickHeader>
-    <span class="release-version_heading">What's New</span>
+    <span class="release-version_heading" [style.font-size]="isMobile ? '32px' : '24px'">What's New</span>
   </div>
   <div class="release-items">
     <div *ngFor="let item of whatsNewItems; let i = index;">
@@ -22,7 +22,7 @@
             <span>{{item.description}}</span>
             <a class="link" [attr.href]="item.link" [attr.target]="'blank'" [style.color]="itemBackgroundColor(item)">Learn more...</a>
           </div>
-          <div class="item_date ds-pt-10"><span>{{item.date_launched | date}}</span></div>
+          <div class="item_date ds-pt-10"><span>{{ formattedDate(item.date_launched) }}</span></div>
         </div>
       </div>
     </div>
