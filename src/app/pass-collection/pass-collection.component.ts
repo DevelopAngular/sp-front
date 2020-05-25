@@ -22,7 +22,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {delay, filter, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {TimeService} from '../services/time.service';
 import {isEqual} from 'lodash';
@@ -31,6 +31,7 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {DropdownComponent} from '../dropdown/dropdown.component';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -78,6 +79,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
+  selectedSort;
 
   activePassTime$;
 
@@ -242,33 +244,44 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   openSortDialog(event) {
-
-    // this.sortOptions.forEach((opt) => opt.color = this.darkTheme.getColor());
+    // debugger;
     const sortOptions = [
       { display: 'Pass Expiration Time', color: this.darkTheme.getColor(), action: 'expiration_time', toggle: false },
       { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
       { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
     ];
     UNANIMATED_CONTAINER.next(true);
-    const sortDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {
-          'header': 'SORT BY',
-          'options': sortOptions,
-          'trigger': new ElementRef(event.currentTarget),
-          'isSort': true,
-          'sortMode': this.dataService.sort$.value
-        }
+    // const sortDialog = this.dialog.open(ConsentMenuComponent, {
+    //     panelClass: 'consent-dialog-container',
+    //     backdropClass: 'invis-backdrop',
+    //     data: {
+    //       'header': 'SORT BY',
+    //       'options': sortOptions,
+    //       'trigger': new ElementRef(event.currentTarget),
+    //       'isSort': true,
+    //       'sortMode': this.dataService.sort$.value
+    //     }
+    // });
+
+    const sortDialog = this.dialog.open(DropdownComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': event.currentTarget,
+        'sortData': sortOptions,
+        'selectedSort': this.selectedSort
+      }
     });
 
     sortDialog.afterClosed()
       .pipe(
-        tap(() => UNANIMATED_CONTAINER.next(false))
+        tap(() => UNANIMATED_CONTAINER.next(false)),
+        filter(res => !!res)
       )
       .subscribe(sortMode => {
+        this.selectedSort = sortMode;
         this.onSortSelected(sortMode);
-        console.log(sortMode);
+        // console.log(sortMode);
       });
   }
 

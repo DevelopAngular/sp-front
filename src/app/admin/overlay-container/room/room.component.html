@@ -35,7 +35,7 @@
 
         <div class="teacher-title">
           <span [ngStyle]="{'color': !data?.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">
-            Teachers in <span style="border-bottom: dotted">{{ data.roomName }}</span>
+            Teachers in Room
           </span>
           <div class="tooltip-container">
             <img
@@ -177,13 +177,12 @@
                 [style.width]="'140px'"
                 [cursor]="'pointer'"
                 [fontSize]="'14px'"
-                (buttonClick)="deleteRoom()"
-        >
-            Delete Room</app-gradient-button>
+                (buttonClick)="deleteRoom($event.target)"
+        >Delete Room</app-gradient-button>
 
-        <div class="delete-info-text">
-            This <b style="color: #7f879d">will</b> erase all active and scheduled passes to and from this room.<br/>
-            This <b style="color: #7f879d">will not</b> erase any expired passes to or from this room.
-        </div>
+<!--        <div class="delete-info-text">-->
+<!--            This <b style="color: #7f879d">will</b> erase all active and scheduled passes to and from this room.<br/>-->
+<!--            This <b style="color: #7f879d">will not</b> erase any expired passes to or from this room.-->
+<!--        </div>-->
     </div>
 </div>

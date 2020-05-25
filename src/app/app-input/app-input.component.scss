@@ -82,7 +82,7 @@
 }
 
 .InputWrapper input {
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   display: block;
   width: 95%;
   font-size: 1rem;
@@ -94,7 +94,7 @@
 }
 
 .InputWrapper input:focus {
-  border: 2px inset $navy;
+  border: 2px solid $navy;
 }
 .clserrorLabel {
   color: #E32C66 !important;

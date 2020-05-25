@@ -246,7 +246,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = this.router.url.includes('kioskMode');
-        // console.log('Hide ===>>', value.url);
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit[urlSplit.length - 1];
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
@@ -256,6 +255,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this.isMyRoomRoute = value.url === '/main/myroom';
         this.isAdminRoute = value.url.includes('/admin');
       }
+    });
+
+    this.navbarData.inboxClick$.subscribe(res => {
+      this.isInboxClicked = res;
     });
 
     this.userService.userData
@@ -467,8 +470,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     });
     representedUsersDialog.afterClosed().subscribe((v: RepresentedUser) => {
-      console.log(v);
-      // this.effectiveUser = v ? v : this.effectiveUser;
       if (v) {
         this.userService.effectiveUser.next(v);
         this.http.effectiveUserId.next(+v.user.id);
@@ -564,7 +565,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   inboxClick() {
-    // debugger;
     this.inboxVisibility = !this.inboxVisibility;
     this.storage.setItem('showInbox', this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);
@@ -577,8 +577,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.screenService.isDeviceLarge && !this.screenService.isDeviceMid) {
       this.sideNavService.toggleRight$.next(true);
     }
-
-    // this.navbarElementsService.navbarRef$.next(this.navbar);
   }
 
   ngOnDestroy(): void {
