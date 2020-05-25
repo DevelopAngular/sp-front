@@ -18,7 +18,7 @@ export class SupportOptionsComponent implements OnInit {
   targetElementRef: ElementRef;
 
   constructor(
-    private darkTheme: DarkThemeSwitch,
+    public darkTheme: DarkThemeSwitch,
     private dialogRef: MatDialogRef<SupportOptionsComponent>,
     private userService: UserService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
