@@ -51,7 +51,13 @@
              [placeholder]="(placeholder=='' ? '' : placeholder)"
              [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
              spellcheck="false" #inp />
-      <div class="min" (click)="isFocus = true; updateFocus(inp)" *ngIf="showMin" [style.left]="minLeftMargin + 'px'">min</div>
+      <div class="min"
+           (click)="isFocus = true;
+           updateFocus(inp)"
+           *ngIf="showMin"
+           [style.left]="minLeftMargin + 'px'">
+        {{ formGroup.get('timeLimit') ? 'min' : 'passes' }}
+      </div>
       <div class="tooltip-container tooltip-container__inline"
            *ngIf="controlName.invalid
             &&

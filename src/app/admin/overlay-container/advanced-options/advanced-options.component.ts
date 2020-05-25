@@ -24,6 +24,10 @@ export interface OptionState {
             all_teach_assign: string;
         }
     };
+    from?: string;
+    fromEnabled?: boolean;
+    to?: string;
+    toEnabled?: boolean;
 }
 
 export interface ValidButtons {
@@ -78,15 +82,17 @@ export class AdvancedOptionsComponent implements OnInit {
     hovered: boolean;
     pressed: boolean;
 
+    change$: Subject<any> = new Subject<any>();
+
     constructor(
         public darkTheme: DarkThemeSwitch,
         private sanitizer: DomSanitizer,
         private fb: FormBuilder
     ) {
       this.mockAPCForm = this.fb.group({
-        fromEnabled: [''],
+        fromEnabled: [false],
         from: [''],
-        toEnabled: [''],
+        toEnabled: [false],
         to: ['']
       });
     }
@@ -105,11 +111,18 @@ export class AdvancedOptionsComponent implements OnInit {
 
     ngOnInit() {
         this.optionState = cloneDeep(this.data);
-        this.initialState = cloneDeep(this.optionState);
+        this.initialState = cloneDeep({
+          ...this.optionState,
+          ...this.mockAPCForm.value
+        });
         this.resetOptions$.subscribe(data => {
           this.optionState = cloneDeep(data);
         });
         this.buildData();
+        this.change$.subscribe(res => {
+          this.checkValidOptions();
+          this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
+        });
     }
 
     buildData() {
@@ -121,6 +134,24 @@ export class AdvancedOptionsComponent implements OnInit {
             nowTeachers: this.optionState.now.data.selectedTeachers,
             futTeachers: this.optionState.future.data.selectedTeachers,
         };
+    }
+
+    formValidation() {
+      if (this.mockAPCForm.dirty && this.initialState.fromEnabled !== this.mockAPCForm.value.fromEnabled) {
+        if (this.mockAPCForm.value.fromEnabled) {
+          this.isShowButtons = {
+            publish: false,
+            incomplete: true,
+            cancel: true
+          };
+        } else {
+          this.isShowButtons = {
+            publish: false,
+            incomplete: false,
+            cancel: false
+          };
+        }
+      }
     }
 
     toggleContent() {
@@ -176,14 +207,22 @@ export class AdvancedOptionsComponent implements OnInit {
             (now.state === 'All teachers assigned' && !now.data.all_teach_assign) ||
             (future.state === 'All teachers assigned' && !future.data.all_teach_assign) ||
             (now.state === 'Certain \n teacher(s)' && !now.data.selectedTeachers.length) ||
-            (future.state === 'Certain \n teacher(s)' && !future.data.selectedTeachers.length)
+            (future.state === 'Certain \n teacher(s)' && !future.data.selectedTeachers.length ||
+            this.mockAPCForm.dirty )
         ) {
-            if (!isEqual(this.initialState, this.optionState)) {
+            if (!isEqual(this.initialState, {...this.optionState, ...this.mockAPCForm.value})) {
                 this.isShowButtons = {
                     publish: false,
                     incomplete: true,
                     cancel: true
                 };
+                if (this.mockAPCForm.value.from) {
+                  this.isShowButtons = {
+                    publish: true,
+                    incomplete: false,
+                    cancel: true
+                  };
+                }
             } else {
                 this.isShowButtons = {
                     publish: false,
@@ -192,7 +231,7 @@ export class AdvancedOptionsComponent implements OnInit {
                 };
             }
         } else {
-            if (isEqual(this.initialState, this.optionState)) {
+            if (isEqual(this.initialState, {...this.optionState, ...this.mockAPCForm.value})) {
                 this.isShowButtons = {
                     publish: false,
                     incomplete: false,

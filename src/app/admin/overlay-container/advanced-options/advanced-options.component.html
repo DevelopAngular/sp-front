@@ -27,6 +27,7 @@
               [form]="mockAPCForm"
               [controlName]="'fromEnabled'"
               [controlSize]="'small'"
+              (pushOutValue)="change$.next()"
             ></app-toggle-input>
             <span class="ds-pl-15">Passes <span style="font-weight: bold;">from</span> this room</span>
           </div>
@@ -38,19 +39,23 @@
               [fieldSpace]="'0px'"
               [input_value]="mockAPCForm.get('from').value"
               [formGroup]="mockAPCForm"
+              [timeInput]="true"
               [controlName]="mockAPCForm.get('from')"
               [disabled]="!mockAPCForm.get('fromEnabled').value"
+              [placeholder]="'# of passes'"
+              (onUpdate)="change$.next()"
             >
             </app-input>
           </div>
         </div>
-        <div class="to ds-ml-25" *ngIf="!false">
+        <div class="to ds-ml-25">
           <div class="ds-flex-center-start">
             <app-toggle-input
               [delimiter]="false"
               [form]="mockAPCForm"
               [controlName]="'toEnabled'"
               [controlSize]="'small'"
+              (pushOutValue)="change$.next()"
             ></app-toggle-input>
             <span class="ds-pl-15">Passes <span style="font-weight: bold;">to</span> this room</span>
           </div>
@@ -60,11 +65,12 @@
               [height]="'35px'"
               [maxLength]="15"
               [fieldSpace]="'0px'"
+              [timeInput]="true"
               [input_value]="mockAPCForm.get('to').value"
               [formGroup]="mockAPCForm"
               [controlName]="mockAPCForm.get('to')"
               [disabled]="!mockAPCForm.get('toEnabled').value"
-
+              [placeholder]="'# of passes'"
             >
             </app-input>
           </div>
