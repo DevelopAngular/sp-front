@@ -20,6 +20,26 @@
         </div>
 
         <div class="option"
+             *ngFor="let setting of settings"
+             #option
+             [style.background]="option.pressed ? 'rgba(127, 135, 157, .15)' : (option.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"
+             (mouseenter)="option.hovered = true"
+             (mouseleave)="option.hovered = false; option.pressed = false"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="dialogRef.close(setting.action)"
+             (pointerDownEvent)="option.pressed = true"
+             (pointerCancelEvent)="option.pressed = false; option.hovered = false;"
+        >
+          <img class="switch-icon" [src]="getIcon(setting.icon, null) | resolveAsset">
+          <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
+            <div>
+              <span>{{ setting.title }}</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="option"
              *ngIf="showGetStarted"
              [style.background]="started.pressed ? 'rgba(127, 135, 157, .15)' : (started.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"
              #started
@@ -35,25 +55,6 @@
           <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
             <div>
               <span>Get Started</span>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="option"
-             #appearance
-             [style.background]="appearance.pressed ? 'rgba(127, 135, 157, .15)' : (hoveredTheme ? 'rgba(127, 135, 157, .1)' : 'transparent')"
-             (mouseenter)="hoveredTheme = true"
-             (mouseleave)="hoveredTheme = false; appearance.pressed = false"
-             appCrossPointerEventTarget
-             (pointerClickEvent)="dialogRef.close('appearance')"
-             (pointerDownEvent)="appearance.pressed = true"
-             (pointerCancelEvent)="appearance.pressed = false; hoveredTheme = false;"
-        >
-          <img class="switch-icon" [src]="getIcon('Glasses', null) | resolveAsset">
-          <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
-            <div>
-              <span>Appearance</span>
             </div>
           </div>
 

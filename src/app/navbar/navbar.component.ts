@@ -528,7 +528,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           });
         }
       } else if (action === 'intro') {
-          // this.router.navigate(['main/intro']);
         this.dialog.open(IntroDialogComponent, {
           width: '100vw',
           height: '100vh',
@@ -588,22 +587,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyer$.next();
     this.destroyer$.complete();
-  }
-
-  shrinkTab(tab) {
-      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');
-  }
-
-  expandTab(tab) {
-    const isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
-    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isSafari && iOS) {
-      setTimeout( () => {
-        this.rendered.setStyle(tab, 'webkitTransform', 'unset');
-      }, 200);
-    } else {
-      this.rendered.setStyle(tab, 'webkitTransform', 'unset');
-    }
   }
 
   changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {
