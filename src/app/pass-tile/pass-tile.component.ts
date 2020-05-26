@@ -27,6 +27,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Input() isActive = false;
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
+  @Input() profileImage: boolean;
 
   @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
 

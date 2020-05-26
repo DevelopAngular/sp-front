@@ -1,18 +1,18 @@
 <div *ngIf="!mock" class="tile-wrapper"
-      [style.background]="backgroundGradient()"
+      [style.height]="profileImage ? '173px' : '86.5px'"
       [style.justify-content]="forStaff?'unset':'center'"
+      [style.background]="!profileImage ? backgroundGradient() : 'transparent'"
       [style.box-shadow]="boxShadow"
       [@pressState]="buttonState"
       (mouseenter)="hovered = true"
       (mouseleave)="buttonDown = false; hovered = false"
-
       appCrossPointerEventTarget
       (pointerClickEvent)="buttonDown = false; onClick($event)"
       (pointerDownEvent)="buttonDown = true;"
       (pointerCancelEvent)="buttonDown = false;"
   >
 
-  <div class="tile-title-container" [style.margin-top]="forStaff ? '0' : '-6px'" >
+  <div class="tile-title-container" [style.background]="profileImage ? backgroundGradient() : 'transparent'" [style.margin-top]="forStaff ? '0' : '-6px'" >
     <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
       <div class="tile-content"  #title [style.height]="forStaff ? '30px' : '20px'">
         <div *ngIf="pass.destination.title.length >= 10; else shortTitle" class="tile-title tile-title-truncated" [style.margin-top]="forStaff ? '8px' : '0px'"  (mouseover)="onHover($event, title);"
@@ -26,11 +26,15 @@
     <div class="tile-subtitle">{{ tileContent }}</div>
   </div>
 
+  <div class="profile-image" *ngIf="profileImage">
+
+  </div>
+
   <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">
   <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">
   <div *ngIf="isBadgeVisible" class="badge">1</div>
-<div *ngIf="forStaff" class="names-overlay"></div>
-<div *ngIf="forStaff" class="names">{{ tileName }}</div>
+<div *ngIf="forStaff && !profileImage" class="names-overlay"></div>
+<div *ngIf="forStaff" class="names" [style.color]="profileImage ? '#1F195E' : '#FFFFFF'">{{ tileName }}</div>
 </div>
   <!--{{boxShadow}}-->
 
