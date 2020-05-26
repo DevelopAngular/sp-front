@@ -1,10 +1,10 @@
 <div class="settings-wrapper" (scroll)="$event.stopPropagation()"  *ngIf="data || dataSideNav" [style.background-color]="darkTheme.getBackground('high', true)">
-  <div class="top-arrow-container"
-       appCrossPointerEventTarget
-       (pointerClickEvent)="dialogRef.close()"
-  >
-    <div class="top-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
-  </div>
+<!--  <div class="top-arrow-container"-->
+<!--       appCrossPointerEventTarget-->
+<!--       (pointerClickEvent)="dialogRef.close()"-->
+<!--  >-->
+<!--    <div class="top-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>-->
+<!--  </div>-->
   <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
   <div class="settings-content">
     <div class="profile-switch" *ngIf="kioskMode.currentRoom$ | async">
