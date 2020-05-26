@@ -14,6 +14,7 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
 import {HttpService} from '../../services/http-service';
+import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
 
 declare const window;
 
@@ -208,6 +209,12 @@ export class NavComponent implements OnInit {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
+        } else if (action === 'profile') {
+          this.dialog.open(MyProfileDialogComponent, {
+            panelClass: 'sp-form-dialog',
+            width: '425px',
+            height: '500px'
+          });
         } else if (action === 'getStarted') {
           this.router.navigate(['admin/gettingstarted']);
         } else if (action === 'about') {

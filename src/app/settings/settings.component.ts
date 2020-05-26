@@ -184,15 +184,6 @@ export class SettingsComponent implements OnInit {
   }
 
   initializeSettings() {
-    if (this.isStaff) {
-      this.settings.push({
-        'hidden': !!this.kioskMode.currentRoom$.value,
-        'background': '#12C29E',
-        'icon': 'Lock dots',
-        'action': 'myPin',
-        'title': 'Approval Pin'
-      });
-    }
     this.settings.push({
       'hidden': false,
       'background': '#6651FF',
@@ -207,6 +198,15 @@ export class SettingsComponent implements OnInit {
       'action': 'appearance',
       'title': 'Appearance'
     });
+    if (this.isStaff) {
+      this.settings.push({
+        'hidden': !!this.kioskMode.currentRoom$.value,
+        'background': '#12C29E',
+        'icon': 'Lock dots',
+        'action': 'myPin',
+        'title': 'Approval Pin'
+      });
+    }
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
       'background': '#EBBB00',

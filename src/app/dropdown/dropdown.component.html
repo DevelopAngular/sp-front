@@ -1,14 +1,11 @@
-<div class="pointer-wrapper">
-  <div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div>
-</div>
+<!--<div class="pointer-wrapper">-->
+<!--  <div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div>-->
+<!--</div>-->
 <div class="consent-wrapper"
      [style.background-color]="darkTheme.getBackground('low')"
      appCheckUserInput
      (inputValueEmit)="search($event)"
 >
-<!--  <div class="consent-header" [style.color]="'#7F879D'" *ngIf="heading">-->
-<!--    {{heading}}-->
-<!--  </div>-->
 
   <div class="options-wrapper" *ngIf="locations" #optionsWrapper>
     <div class="option" #_option>

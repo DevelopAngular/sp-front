@@ -1,5 +1,5 @@
 ﻿<div class="consent-wrapper" [style.background-color]="darkTheme.getBackground('low')">
-  <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('low')"></div></div>
+<!--  <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('low')"></div></div>-->
   <div class="rounded-corners-box">
 
 <!--    <div class="ds-mt-15" *ngIf="!header"></div>-->
@@ -36,7 +36,6 @@
         </div>
         <ng-template #stringOptionsView>
           <div [style.color]="option.color" #_option class="option-wrapper ds-w-100"
-               [style.justify-content]="header ? 'center' : 'flex-start'"
                appCrossPointerEventTarget
                (pointerClickEvent)="_matDialogRef.close(option.action); _option.style.background = 'transparent'"
                (pointerDownEvent)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : option.clickBackground ? option.clickBackground : 'rgba(127, 135, 157, .15)'; sortMode = option.action"
@@ -49,7 +48,7 @@
             </div>
             <ng-template #simpleOptions>
               <img width="16" height="16" *ngIf="option.icon" [src]="option.icon | resolveAsset" alt="Icon">
-              <span style="margin-left: 8px">{{ option.display }}</span>
+              <span [style.margin-left]="option.icon ? '8px' : 0">{{ option.display }}</span>
             </ng-template>
           </div>
         </ng-template>

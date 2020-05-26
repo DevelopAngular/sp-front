@@ -589,22 +589,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.destroyer$.complete();
   }
 
-  shrinkTab(tab) {
-      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');
-  }
-
-  expandTab(tab) {
-    const isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
-    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isSafari && iOS) {
-      setTimeout( () => {
-        this.rendered.setStyle(tab, 'webkitTransform', 'unset');
-      }, 200);
-    } else {
-      this.rendered.setStyle(tab, 'webkitTransform', 'unset');
-    }
-  }
-
   changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {
     if (DeviceDetection.isIOSMobile() || DeviceDetection.isIOSMobile()) {
       this.rendered.setStyle(clickedTab, 'opacity', 0.8);
