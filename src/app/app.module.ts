@@ -129,7 +129,7 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     ScrollHolderDirective,
-    SupportButtonComponent,
+    SupportButtonComponent
   ],
   imports: [
     BrowserModule,

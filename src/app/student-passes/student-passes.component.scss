@@ -1,0 +1,73 @@
+@import '../../sp-colors';
+
+.student-wrapper {
+  border-radius: 13px;
+  background-color: #FFFFFF;
+  padding: 10px 15px;
+  cursor: pointer;
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  overflow: hidden;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      .profile-image {
+        width: 75px;
+        height: 75px;
+        background-color: powderblue;
+        border-radius: 50%;
+        margin-right: 12px;
+      }
+
+      .title {
+        .full-name {
+          color: $navy;
+          font-size: 22px;
+        }
+        .email {
+          color: $blue-gray;
+          font-size: 14px;
+          margin-top: 6px;
+        }
+      }
+    }
+
+    .open {
+      right: 0;
+      position: absolute;
+    }
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+    }
+  }
+
+  .collection {
+    margin-top: 30px;
+
+    .title {
+      display: flex;
+      color: $navy;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .passes {
+      display: grid;
+      grid-gap: 10px;
+      margin-top: 15px;
+      grid-template-columns: repeat(auto-fill, 144px);
+    }
+  }
+}

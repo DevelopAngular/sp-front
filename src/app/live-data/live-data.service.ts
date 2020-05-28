@@ -374,9 +374,9 @@ export class LiveDataService {
     );
   }
 
-  watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null): Observable<HallPass[]> {
+  watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null, limit: number = 100000): Observable<HallPass[]> {
     const queryFilter: QueryParams = {
-      limit: 100000,
+      limit,
       active: true
     };
     const filters: FilterFunc<HallPass>[] = [
@@ -492,7 +492,7 @@ export class LiveDataService {
     });
   }
 
-  watchPastHallPasses(filter?: PassFilterType): Observable<HallPass[]> {
+  watchPastHallPasses(filter?: PassFilterType, limit: number = 20): Observable<HallPass[]> {
     let queryFilter = '';
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
@@ -527,7 +527,7 @@ export class LiveDataService {
     return this.watch<HallPass, string>({
       externalEvents: empty(),
       eventNamespace: 'hall_pass',
-      initialUrl: `v1/hall_passes?limit=20&active=past${queryFilter}`,
+      initialUrl: `v1/hall_passes?limit=${limit}&active=past${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([

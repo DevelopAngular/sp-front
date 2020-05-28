@@ -1,14 +1,14 @@
-import {Component, Input, OnInit, Output, OnDestroy, EventEmitter, ViewChild, ElementRef} from '@angular/core';
-import {interval, BehaviorSubject, Subject, Observable} from 'rxjs';
+import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
+import { interval, BehaviorSubject, Subject, Observable } from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { TimeService } from '../services/time.service';
-import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisible} from './pass-display-util';
+import { getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
-import {filter, takeUntil} from 'rxjs/operators';
-import {ScreenService} from '../services/screen.service';
+import { filter, takeUntil } from 'rxjs/operators';
+import { ScreenService } from '../services/screen.service';
 
 @Component({
   selector: 'app-pass-tile',

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, ViewChild} from '@angular/core';
 import { Invitation } from '../models/Invitation';
 import { User } from '../models/User';
 import { Location} from '../models/Location';
@@ -10,17 +10,17 @@ import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
-import {BehaviorSubject} from 'rxjs';
-import {ScreenService} from '../services/screen.service';
-import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
-import {School} from '../models/School';
-import {HttpService} from '../services/http-service';
-import {DeviceDetection} from '../device-detection.helper';
-import {NavbarDataService} from '../main/navbar-data.service';
+import { BehaviorSubject } from 'rxjs';
+import { ScreenService } from '../services/screen.service';
+import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
+import { School } from '../models/School';
+import { HttpService } from '../services/http-service';
+import { DeviceDetection } from '../device-detection.helper';
+import { NavbarDataService } from '../main/navbar-data.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -38,6 +38,8 @@ export class InvitationCardComponent implements OnInit {
   @Input() selectedStudents: User[] = [];
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
+
+  @ViewChild('cardWrapper') cardWrapper: ElementRef;
 
   selectedOrigin: Location;
   denyOpen: boolean = false;
@@ -319,5 +321,21 @@ export class InvitationCardComponent implements OnInit {
 
   receiveOption(action: any) {
     this.chooseAction(action);
+  }
+
+  scaleCard({action, interval}) {
+    if (action === 'open') {
+      const scale = 1 - (interval / 300);
+      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
+      if (interval === 15) {
+        this.dialogRef.addPanelClass('off-shadow');
+      }
+    } else if (action === 'close') {
+      const scale = 0.953333 + (interval / 300);
+      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
+      if (interval === 15) {
+        this.dialogRef.removePanelClass('off-shadow');
+      }
+    }
   }
 }

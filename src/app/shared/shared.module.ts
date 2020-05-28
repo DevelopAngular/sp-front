@@ -58,6 +58,7 @@ import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.c
 import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-info.component';
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
 import {ViewProfileComponent} from '../admin/profile-card-dialog/view-profile/view-profile.component';
+import {StudentPassesComponent} from '../student-passes/student-passes.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -125,7 +126,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     MyProfileDialogComponent,
     ProfileInfoComponent,
     ChangePasswordComponent,
-    ViewProfileComponent
+    ViewProfileComponent,
+    StudentPassesComponent
   ],
   entryComponents: [
     PassCardComponent,
@@ -189,7 +191,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileInfoComponent,
     ChangePasswordComponent,
     ViewProfileComponent,
-    TeacherPinStudentComponent
+    TeacherPinStudentComponent,
+    StudentPassesComponent
   ],
   providers: [
     {

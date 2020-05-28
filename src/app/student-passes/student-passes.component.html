@@ -1,0 +1,46 @@
+<div
+  class="student-wrapper"
+  appCrossPointerEventTarget (pointerClickEvent)="openProfile()"
+  [style.height]="height + 'px'"
+>
+  <div class="content">
+    <div class="profile-info">
+      <div class="profile-image"></div>
+      <div class="title">
+        <div class="full-name">{{ profile.first_name }} {{ profile.last_name }}</div>
+        <div class="email">{{ profile.primary_email.slice(0, profile.primary_email.indexOf('@')) }}</div>
+      </div>
+    </div>
+    <div class="open" *ngIf="height === 75; else close">
+      <app-icon-button
+        [size]="20"
+        [srcString]="'Chevron Right'"
+        [eventBubbling]="true"
+      ></app-icon-button>
+    </div>
+    <ng-template #close>
+      <div class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
+        <img width="25" height="25" [src]="'./assets/Cancel (Search-Gray).svg' | resolveAsset">
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="collection" *ngIf="height !== 75">
+    <div class="title">
+      <img width="20" [src]="'./assets/Expired (Navy).svg' | resolveAsset" alt="Expired">
+      <div style="margin-left: 8px">Latest Passes</div>
+    </div>
+    <div class="passes">
+      <div class="pass" *ngFor="let pass of lastStudentPasses | async">
+        <app-pass-tile
+          [timerEvent]="timerEvent"
+          [forFuture]="false"
+          [fromPast]="!isActivePass(pass)"
+          [isActive]="isActivePass(pass)"
+          [forStaff]="false"
+          [pass]="pass"
+        ></app-pass-tile>
+      </div>
+    </div>
+  </div>
+</div>
