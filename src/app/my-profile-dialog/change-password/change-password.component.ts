@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import {BehaviorSubject, iif, of} from 'rxjs';
+import { BehaviorSubject, iif, of } from 'rxjs';
 import { User } from '../../models/User';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import {Router} from '@angular/router';
-import {UserService} from '../../services/user.service';
-import {catchError, tap} from 'rxjs/operators';
-import {HttpService} from '../../services/http-service';
+import { Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
+import { catchError, tap } from 'rxjs/operators';
+import { HttpService } from '../../services/http-service';
 
 @Component({
   selector: 'app-change-password',
@@ -40,7 +40,7 @@ export class ChangePasswordComponent implements OnInit {
     if (!this.showOldPasswordInput) {
       return this.form.get('newPassword').valid;
     } else {
-      return this.form.valid;
+      return this.form.valid && this.form.get('newPassword').value !== this.form.get('oldPassword').value;
     }
   }
 
