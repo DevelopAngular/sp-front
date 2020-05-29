@@ -195,6 +195,15 @@
         opacity: 0.4;
     }
 
+  .teacher-pin {
+    position: absolute;
+    z-index: 100;
+    top: 82px
+  }
+  .content-container {
+    //position: absolute;
+  }
+
 }
 
 

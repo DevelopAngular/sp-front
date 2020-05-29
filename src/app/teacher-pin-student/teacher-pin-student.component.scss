@@ -22,7 +22,7 @@ shake {
   height: 319px;
   display: flex;
   justify-content: center;
-  position: relative;
+  //position: relative;
 
   .content {
     display: flex;
@@ -33,7 +33,7 @@ shake {
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
+      //position: relative;
       .pin-title {
         color: white;
         font-size: 20px;
