@@ -10,8 +10,6 @@ import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import {concatMap, filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
-import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
@@ -55,6 +53,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   pinnableOpen: boolean = false;
   user: User;
   isSeen: boolean;
+  pinLoaded: boolean = false;
 
   isModal: boolean;
 
@@ -69,7 +68,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   hoverDestroyer$: Subject<any>;
 
-  activeTeacherPin: boolean;
+  activeTeacherPin: boolean = false;
   solidColorRgba: string;
   solidColorRgba2: string;
   removeShadow: boolean;
@@ -94,6 +93,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   get invalidDate() {
     return Util.invalidDate(this.request.request_time);
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 
   get teacherNames() {
@@ -580,7 +583,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     this.hoverDestroyer$.complete();
   }
 
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
+  goToPin() {
+   this.activeTeacherPin = true;
   }
 }
