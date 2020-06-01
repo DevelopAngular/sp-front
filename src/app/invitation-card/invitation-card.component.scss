@@ -155,6 +155,12 @@
         .center-block {
             height: 221px;
 
+          .message {
+            overflow: auto;
+            word-wrap: break-word;
+            width: 222px;
+          }
+
             &.center {
                 display: flex;
                 align-items: center;

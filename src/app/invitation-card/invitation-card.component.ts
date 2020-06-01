@@ -48,6 +48,7 @@ export class InvitationCardComponent implements OnInit {
   fromHistory;
   fromHistoryIndex;
   dateEditOpen: boolean;
+  locationChangeOpen: boolean;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -142,6 +143,35 @@ export class InvitationCardComponent implements OnInit {
 
   formatDateTime(date: Date) {
     return Util.formatDateTime(date);
+  }
+
+  changeLocation(){
+    if(!this.locationChangeOpen){
+      const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
+        panelClass: 'form-dialog-container',
+        maxWidth: '100vw',
+        backdropClass: 'invis-backdrop',
+        data: {
+          'forInput': false,
+          'hasClose': true,
+          'entryState': { step: 3, state: 1 },
+          'originalToLocation': this.invitation.destination,
+          'colorProfile': this.invitation.color_profile,
+          'originalFromLocation': this.invitation['default_origin']}
+      });
+
+      locationDialog.afterOpen().subscribe(() => {
+        this.locationChangeOpen = true;
+      });
+
+      locationDialog.beforeClose().subscribe(() => {
+        this.locationChangeOpen = false;
+      });
+
+      locationDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
+        this.setLocation((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.invitation['default_origin']);
+      });
+    }
   }
 
   setLocation(location: Location) {
