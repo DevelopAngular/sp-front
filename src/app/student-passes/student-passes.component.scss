@@ -11,7 +11,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 10000;
   .content {
     display: flex;
     justify-content: space-between;
@@ -28,6 +28,7 @@
         background-color: powderblue;
         border-radius: 50%;
         margin-right: 12px;
+        overflow: hidden;
       }
 
       .title {
@@ -59,6 +60,7 @@
 
     .title {
       display: flex;
+      align-items: center;
       color: $navy;
       font-size: 20px;
       font-weight: bold;

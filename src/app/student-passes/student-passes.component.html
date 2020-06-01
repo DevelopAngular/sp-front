@@ -5,7 +5,9 @@
 >
   <div class="content">
     <div class="profile-info">
-      <div class="profile-image"></div>
+      <div class="profile-image">
+        <img width="75" height="75" [src]="'./assets/Default Avatar.png' | resolveAsset" alt="Avatar">
+      </div>
       <div class="title">
         <div class="full-name">{{ profile.first_name }} {{ profile.last_name }}</div>
         <div class="email">{{ profile.primary_email.slice(0, profile.primary_email.indexOf('@')) }}</div>
