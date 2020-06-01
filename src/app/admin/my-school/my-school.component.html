@@ -11,7 +11,7 @@
           <div class="selected-date">
             <div class="label" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Set a launch day</div>
 
-            <app-date-chip [selectedDate]="selectedDate" (dateEmit)="selectedDate = $event"></app-date-chip>
+            <app-date-chip [selectedDate]="selectedDate" (dateEmit)="updateLaunchDay($event)"></app-date-chip>
 
           </div>
 

@@ -1,15 +1,12 @@
-import {Component, ElementRef, Inject, OnDestroy, OnInit} from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ColorProfile } from '../../models/ColorProfile';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
-import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {BUILD_DATE, RELEASE_NAME} from '../../../build-info';
-import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest, Subject} from 'rxjs';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
-import {takeUntil} from 'rxjs/operators';
-import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
-import {DeviceDetection} from '../../device-detection.helper';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
+import { DarkThemeSwitch } from '../../dark-theme-switch';
+import { RELEASE_NAME } from '../../../build-info';
+import { LocalStorage } from '@ngx-pwa/local-storage';
+import { combineLatest, Subject } from 'rxjs';
+import { GettingStartedProgressService } from '../getting-started-progress.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-settings',
@@ -23,8 +20,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   isSwitchOption: boolean;
   showGetStarted: boolean;
   hoveredProfile: boolean;
-  hoveredTheme: boolean;
-  pressedTheme: boolean;
   hoveredSignout: boolean;
   hovered: boolean;
   hoveredColor: string;
@@ -33,36 +28,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   destroy$ = new Subject();
 
-    public settings = [
-        // {
-        //   'background': '#139BE6',
-        //   'icon': 'Team',
-        //   'hover_icon': './assets/Team (White).svg',
-        //   'action': 'about',
-        //   'title': 'About'
-        // },
-        {
-          'background': '#6651F1',
-          'icon': 'Launch',
-          'hover_icon': './assets/Launch (White).svg',
-          'action': 'wishlist',
-          'title': 'Wishlist'
-        },
-        {
-          'background': '#F53D45',
-          'icon': 'Support',
-          'hover_icon': './assets/Support (White).svg',
-          'action': 'support',
-          'title': 'Support'
-        },
-        {
-          'background': '#fc7303',
-          'icon': 'Bug',
-          'hover_icon': './assets/Bug (White).svg',
-          'action': 'bug',
-          'title': 'Bug Report'
-        },
-    ];
+  public settings = [
+    {
+      'hidden': false,
+      'icon': 'Username',
+      'action': 'profile',
+      'title': 'My Profile'
+    },
+    {
+      'hidden': false,
+      'icon': 'Glasses',
+      'action': 'appearance',
+      'title': 'Appearance'
+    }
+  ];
 
   constructor(
     private router: Router,
@@ -71,19 +50,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     private elemRef: ElementRef,
     private pwaStorage: LocalStorage,
-    private dialog: MatDialog,
     public gsProgress: GettingStartedProgressService,
   ) {
-  }
-
-  get _themeBackground() {
-    return this.hoveredTheme
-      ?
-      !this.darkTheme.isEnabled$.value
-        ?
-        '#134482'
-          : 'rgb(228, 235, 255)'
-            : 'transparent';
   }
 
   ngOnInit() {
@@ -95,14 +63,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.triggerElementRef = this.data['trigger'];
     this.isSwitchOption = this.data['isSwitch'];
     this.updateSettingsPosition();
-  }
-
-  switchTheme() {
-    this.pressedTheme = false;
-    // this.data.darkBackground = !this.data.darkBackground;
-    this.dialog.open(SpAppearanceComponent, {
-      panelClass: 'form-dialog-container',
-    });
   }
 
   ngOnDestroy(): void {
@@ -120,12 +80,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getColor(setting?, hover?: boolean, hoveredColor?: string) {
-    return this.darkTheme.getColor({
-      setting: setting,
-      hover: hover,
-      hoveredColor: hoveredColor
-    });
+  getColor(dark, white) {
+    return this.darkTheme.getColor({ dark, white });
   }
 
   handleAction(setting) {
@@ -140,7 +96,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (this.dialogRef) {
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
       const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-      const top = rect.top - (!this.isSwitchOption ? 370 : (DeviceDetection.isSafari() ? 450 : 410));
+      const top = rect.top - (!this.isSwitchOption ? 240 : 330);
       matDialogConfig.position = {left: `${rect.left - 130}px`, top: `${top}px`};
       this.dialogRef.updatePosition(matDialogConfig.position);
     }

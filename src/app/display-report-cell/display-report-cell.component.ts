@@ -37,15 +37,6 @@ export class DisplayReportCellComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    const reportDate = new Date(this.created);
-    const time = reportDate.getHours() < 12
-      ?
-      `${reportDate.getHours()}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} AM`
-      :
-      `${reportDate.getHours() - 12}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} PM`;
-    const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;
-
     this.data = {
       student_name: this.student_name,
       created: this.created,
@@ -55,8 +46,6 @@ export class DisplayReportCellComponent implements OnInit {
   }
 
   printReport(e) {
-    // e.preventDefault();
-
     this.pdf.generateReport(this.data, 'p', 'hallmonitor');
 
   }

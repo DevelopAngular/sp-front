@@ -1,0 +1,13 @@
+@import '../../sp-colors';
+
+.settings-wrapper {
+  position: relative;
+  height: 500px;
+  background: #FFF;
+
+  .next-step {
+    position: absolute;
+    border-radius: 14px;
+    width: 100%;
+  }
+}

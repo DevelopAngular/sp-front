@@ -1,6 +1,6 @@
 <div [formGroup]="formGroup">
   <div class="InputWrapper">
-    <div style="display: flex">
+    <div style="display: flex; position: relative">
       <label
         [ngClass]="{
         'ds-dialog-heading': controlName.valid || controlName.pending || isFocus,
@@ -20,6 +20,13 @@
            *ngIf="rightIcon" [src]="rightIcon | resolveAsset"/>
 
       </div>
+      <div class="show-password"
+           *ngIf="showPasswordButton"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="changeInput()">
+        <img width="25" height="20" [src]="'./assets/Eye' + (input_type === 'password' ? '' : ' crossed') + ' (Blue-Gray).svg' | resolveAsset">
+        <div class="password-text">{{ input_type === 'password' ? 'Show' : 'Hide'}}</div>
+      </div>
     </div>
     <div class="input-container">
       <input
@@ -27,6 +34,7 @@
              [attr.disabled]="disabled ? '' : null"
              [style.background-color]="isFocus && inp.focused ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
              tabindex="1"
+             [pattern]="pattern"
              [style.width]="containerWidth"
              [style.height]="height"
              [style.margin-top]="fieldSpace"
@@ -44,6 +52,7 @@
              [placeholder]="(placeholder=='' ? '' : placeholder)"
              [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
              spellcheck="false" #inp />
+      <div class="min" (click)="isFocus = true; updateFocus(inp)" *ngIf="showMin" [style.left]="minLeftMargin + 'px'">min</div>
       <div class="tooltip-container tooltip-container__inline"
            *ngIf="controlName.invalid
             &&
@@ -57,7 +66,10 @@
             controlName.errors.room_number ||
             controlName.errors.minlength ||
             controlName.errors.uniqEmail ||
-            controlName.errors.email
+            controlName.errors.email ||
+            controlName.errors.max ||
+            controlName.errors.min ||
+            controlName.errors.minPin
             )"
       >
         <img
@@ -66,9 +78,11 @@
             controlName.errors.room_name ? 'Room name already used' :
             controlName.errors.email_in_use ? 'Email already in use' :
             controlName.errors.invalid_email ? 'Please use your school email address' :
-            controlName.errors.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' :
+            controlName.errors.minPin ? 'Pins must be 4 digits' :
             controlName.errors.uniqEmail ? 'Account with that email/username already exists' :
-            controlName.errors.email ? 'Must be Email' : null
+            controlName.errors.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' :
+            controlName.errors.email ? 'Must be Email' :
+            controlName.errors.max || controlName.errors.min  ? 'Must be between 1 and 120 minutes' : null
           "
           matTooltipClass="tooltip"
           class="success-icon"
@@ -87,7 +101,9 @@
         !controlName.errors.room_number &&
         !controlName.errors.minlength &&
         !controlName.errors.uniqEmail &&
-        !controlName.errors.email
+        !controlName.errors.email &&
+        !controlName.errors.max &&
+        !controlName.errors.min
         )'
         class="success-icon"
         [src]="'./assets/Report (Red).svg' | resolveAsset"

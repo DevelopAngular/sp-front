@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter, find } from 'lodash';
-import {BehaviorSubject, fromEvent, interval, Observable, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
-import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import {filter, map, mergeMap, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -25,6 +25,11 @@ import {NotificationService} from './services/notification-service';
 import {GoogleAnalyticsService} from './services/google-analytics.service';
 import {ShortcutInput} from 'ng-keyboard-shortcuts';
 import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
+import {NextReleaseComponent, Update} from './next-release/next-release.component';
+import {User} from './models/User';
+import {UserService} from './services/user.service';
+import {NextReleaseService} from './next-release/services/next-release.service';
+import {ScreenService} from './services/screen.service';
 
 declare const window;
 
@@ -58,25 +63,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
   public isKioskMode: boolean;
+  public showSupportButton: boolean;
   private openConnectionDialog: boolean;
 
   private subscriber$ = new Subject();
 
-  @HostListener('window:orientationchange', ['$event'])
-  change(event) {
-    if (DeviceDetection.isAndroid()) {
-      switch (window.screen.orientation.angle) {
-        case 90: {
-          // document.querySelector('body').style.transform = 'rotate(-90deg)';
-          // document.querySelector('body').style.width = '100%';
-        }
-      }
-    }
-  }
-
   constructor(
     public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
+    private userService: UserService,
+    private nextReleaseService: NextReleaseService,
     private http: HttpService,
     private httpNative: HttpClient,
     private adminService: AdminService,
@@ -91,13 +87,72 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private meta: Meta,
     private notifService: NotificationService,
     private googleAnalytics: GoogleAnalyticsService,
-    private shortcutsService: KeyboardShortcutsService
+    private shortcutsService: KeyboardShortcutsService,
+    private screen: ScreenService,
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
-    // this.storageService.removeItem('refresh_token');
+
+    this.userService.loadedUser$
+      .pipe(
+        filter(l => l),
+        switchMap(l => this.userService.user$),
+        switchMap((user: User) => {
+          return this.nextReleaseService
+            .getLastReleasedUpdates(DeviceDetection.platform())
+            .pipe(
+              map((release: Array<Update>): Array<Update> => {
+                console.log(release);
+                return release.filter((update) => {
+                  const allowUpdate: boolean = !!update.groups.find((group) => {
+                    console.log(group, '-', user.roles.includes(`_profile_${group}`));
+                    return user.roles.includes(`_profile_${group}`);
+                  });
+                  return allowUpdate;
+                });
+              })
+            );
+        }),
+        filter((release: Array<Update>) => !!release.length),
+        switchMap((release) => {
+          // release = [release[0]];
+          let config;
+          if (DeviceDetection.isMobile()) {
+            config = {
+              panelClass: 'main-form-dialog-container-mobile',
+              width: '100%',
+              maxWidth: '100%',
+              height: '100%',
+              data: {
+                isStudent: false,
+                isTeacher: true,
+                releaseUpdates: release
+              }
+            };
+          } else {
+            config = {
+              panelClass: 'main-form-dialog-container',
+              width: '425px',
+              maxHeight: '450px',
+              data: {
+                isStudent: false,
+                isTeacher: true,
+                releaseUpdates: release
+              }
+            };
+          }
+          const dialogRef = this.dialog.open(NextReleaseComponent, config);
+          return dialogRef.afterClosed().pipe(
+            switchMap(() => zip(
+              ...release.map((update: Update) => this.nextReleaseService.dismissUpdate(update.id, DeviceDetection.platform()))
+            ))
+          );
+        })
+      )
+      .subscribe(console.log);
+
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
@@ -112,11 +167,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
-      // this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
-      // this.meta.updateTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
       document.documentElement.style.background = val ? '#0F171E' : '#FBFEFF';
       document.body.style.boxShadow = `0px 0px 100px 100px ${val ? '#0F171E' : '#FBFEFF'}`;
-      // box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
     });
 
     if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
@@ -205,8 +257,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           this.hubSpotSettings(data.currentUser);
         }
 
-        if (data.hubspot && (data.authFree || (!data.currentUser.isStudent() && !this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value))) {
+        if (data.hubspot &&
+          ((data.currentUser && !data.currentUser.isStudent()) &&
+            data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value)) && !this.screen.isDeviceLargeExtra
+        ) {
           if (!existingHub) {
+            this.showSupportButton = true;
             document.body.appendChild(newHub);
             const dst = new Subject<any>();
             interval(100)

@@ -24,9 +24,9 @@ import {
   filter,
   map, pluck, publishBehavior,
   publishReplay,
-  refCount,
+  refCount, shareReplay,
   startWith,
-  switchMap, takeUntil,
+  switchMap, take, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -56,6 +56,7 @@ import {NotificationButtonService} from '../services/notification-button.service
 
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
+import {HallPassesService} from '../services/hall-passes.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -145,7 +146,8 @@ export class InboxRequestProvider implements PassLikeProvider {
       this.isStudent = user.isStudent();
       return this.liveDataService.watchInboxRequests(user);
     }))
-      .pipe(map(req => {
+      .pipe(
+        map(req => {
         if (this.isStudent) {
           return req.filter((r) => !!r.request_time);
         }
@@ -165,10 +167,8 @@ export class InboxInvitationProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const invitations$ = this.user$.pipe(switchMap(user => this.liveDataService.watchInboxInvitations(user)),
-      map(inv => {
-        return inv;
-      }));
+    const invitations$ = this.user$.pipe(
+      switchMap(user => this.liveDataService.watchInboxInvitations(user)));
 
     return invitations$;
   }
@@ -225,6 +225,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(scrollObserver)
           )
           .subscribe((v) => {
+            console.log('Subscribe ==>>', v);
             if (v) {
               this.scrollableArea.scrollTo({top: scrollOffset});
               scrollObserver.next();
@@ -260,6 +261,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   passesLoaded: Observable<boolean> = of(false);
 
   showEmptyState: Observable<boolean>;
+
 
   isOpenedModal: boolean;
   destroy$: Subject<any> = new Subject();
@@ -304,8 +306,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private shortcutsService: KeyboardShortcutsService,
     private  notificationButtonService: NotificationButtonService,
-    private httpService: HttpService
-  ) {
+    private httpService: HttpService,
+    private passesService: HallPassesService
+    ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -331,8 +334,19 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser
       .pipe(
-        map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
-      ).subscribe(isStudent => {
+        map(user => {
+          this.user = user;
+          this.isStaff =
+            user.roles.includes('_profile_teacher') ||
+            user.roles.includes('_profile_admin') ||
+            user.roles.includes('_profile_assistant');
+          if (this.isStaff) {
+            this.dataService.updateInbox(true);
+          }
+          return user.roles.includes('hallpass_student');
+        }) // TODO filter events to only changes.
+      )
+      .subscribe(isStudent => {
       const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
 
       if (isStudent) {
@@ -391,21 +405,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         } else if (key[0] === 'f') {
           this.showMainForm(true);
         }
-      });
-
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
-      .subscribe(user => {
-        this._zone.run(() => {
-          this.user = user;
-          this.isStaff =
-            user.roles.includes('_profile_teacher') ||
-            user.roles.includes('_profile_admin') ||
-            user.roles.includes('_profile_assistant');
-          if (this.isStaff) {
-            this.dataService.updateInbox(true);
-          }
-        });
       });
 
     this.inboxHasItems = combineLatest(
@@ -491,6 +490,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     }
+  }
+
+  passClick(event) {
+    this.passesService.isOpenPassModal$.next(true);
   }
 
   @HostListener('window:resize')

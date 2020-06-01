@@ -32,7 +32,7 @@ export class DurationPickerComponent implements OnInit {
       } else if (delta > 0 && this.selectedDuration > this.minDuration) {
         this.selectedDuration -= 1;
       }
-      this.onChange.emit(this.selectedDuration);
+      this.emitResult(this.selectedDuration);
     }
 
   public selectedDuration: number = 5;
@@ -47,15 +47,28 @@ export class DurationPickerComponent implements OnInit {
 
     this.selectedDuration = this.maxDuration < 5 ? this.maxDuration : 5;
 
-    this.onChange.emit(this.selectedDuration);
+    this.emitResult(this.selectedDuration);
+  }
+
+  emitResult(value) {
+    if (value && value <= this.maxDuration && value >= this.minDuration) {
+      this.selectedDuration = value;
+      this.onChange.emit(this.selectedDuration);
+    } else {
+      if (!value) {
+        this.selectedDuration = 1;
+        this.minDuration = 1;
+      } else if (value > this.maxDuration) {
+        this.selectedDuration = this.maxDuration;
+      }
+    }
   }
 
   updateDuration(event:any) {
     if (!event.value) {
       this.minDuration = 1;
     } else {
-      this.selectedDuration = event.value;
-      this.onChange.emit(this.selectedDuration);
+        this.emitResult(this.selectedDuration);
     }
   }
 

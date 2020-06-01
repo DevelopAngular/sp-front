@@ -1,10 +1,10 @@
 <div class="wrapper">
-<!--  <div class="header">-->
-<!--    <div class="title">-->
-<!--      <img [src]="'./assets/Settings (Navy).svg' | resolveAsset" width="20" height="20" alt="Settings">-->
-<!--      <div class="ds-dialog-title" style="margin-left: 12px">Settings</div>-->
-<!--    </div>-->
-<!--  </div>-->
+  <!--  <div class="header">-->
+  <!--    <div class="title">-->
+  <!--      <img [src]="'./assets/Settings (Navy).svg' | resolveAsset" width="20" height="20" alt="Settings">-->
+  <!--      <div class="ds-dialog-title" style="margin-left: 12px">Settings</div>-->
+  <!--    </div>-->
+  <!--  </div>-->
   <div class="settings-header">
     <img class="back-button" *ngIf="!changeForm" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
     <div class="back-button" *ngIf="changeForm" (click)="close()">Cancel</div>
@@ -45,7 +45,7 @@
     </div>
     <div class="block" *ngIf="school.address">
       <div class="label">Address</div>
-      <div class="value">{{ school.address.address }}, <br> {{school.address.city ? school.address.city + ',' : '' }} {{ school.address.state }}</div>
+      <div class="value">{{ school.address.address }}</div>
     </div>
   </div>
 </div>

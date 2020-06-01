@@ -29,7 +29,8 @@
           (onUpdate)="loginData.demoPassword ? updateDemoPassword($event) : null"
         ></app-input>
       </div>
-      <div class="error" *ngIf="error$ | async; let errorMessage"> {{ errorMessage }}</div>
+      <div class="error" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>
+      <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div>
       <div class="button" style="margin-top: 97px;" *ngIf="!loginData.demoLoginEnabled">
         <app-gradient-button
           [disabled]="disabledButton"

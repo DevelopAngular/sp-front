@@ -19,7 +19,7 @@ import {wrapToHtml} from '../helpers';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
 import { findIndex } from 'lodash';
-import {distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, delay, distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
 import {StorageService} from '../../services/storage.service';
 
 const PAGESIZE = 50;
@@ -198,8 +198,8 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() set lazyData(value: any[]) {
     if (value.length) {
-      this.dataSource.add(value);
-      this._data = this.dataSource.allData;
+        this.dataSource.add(value);
+        this._data = this.dataSource.allData;
     }
 
   }
@@ -222,13 +222,16 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
           const isFirst = this.dataSource.last === 1;
           const isThree = this.dataSource.last >= 3;
           const isFour = this.dataSource.last >= 4;
-          // console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) + (isFour ? 20 : 0), (this.dataSource.last * 50) - 20, this.dataSource.last);
           const allowLoadMore = (
             (
               this.dataSource.last * 50) -
             (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
-            (isFour ? 20 : 0) === (this.dataSource.last * 50) - 20;
-          if (allowLoadMore) {
+            (isFour ? 60 : 0) === (this.dataSource.last * 50) - 20;
+
+          if (((this.dataSource.last * ( isFirst ? 40 : 60)) + (isThree ? (this.counter * 20) : 0)) - Math.ceil(offset / PAGESIZE) <= (this.dataSource.last * 50) - 15) {
+            if (isThree) {
+              this.counter += 1;
+            }
             this.loadMoreAccounts.emit(null);
             this.dataSource.last = this.dataSource.last + 1;
           }
@@ -268,6 +271,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   selection = new SelectionModel<any>(true, []);
   darkMode$: Observable<boolean>;
   placeholderHeight = 0;
+  counter = 1;
 
   private _data: any[] = [];
   private destroyOffset$ = new Subject();

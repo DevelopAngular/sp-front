@@ -127,8 +127,12 @@ export class MySchoolComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  selected(date) {
+  updateLaunchDay(date: moment.Moment) {
     this.selectedDate = date.startOf('day');
+  }
+
+  selected(date) {
+    this.updateLaunchDay(date);
     this.updateLaunchDate$.next(true);
   }
 

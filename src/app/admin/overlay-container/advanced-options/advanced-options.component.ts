@@ -158,7 +158,6 @@ export class AdvancedOptionsComponent implements OnInit {
     }
 
     checkValidOptions() {
-        // console.log('Chack ==>>', this.optionState);
         const now = this.optionState.now;
         const future = this.optionState.future;
         if (
