@@ -43,7 +43,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   @Input() profile: User;
 
   @Output()
-  userClickResult: EventEmitter<{action: string, interval: number}> = new EventEmitter<{action: string, interval: number}>();
+  userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
 
   height: number = 75;
   lastStudentPasses;
@@ -77,7 +77,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
       interval(20)
         .pipe(takeUntil(destroy))
         .subscribe((res) => {
-          this.userClickResult.emit({action: 'open', interval: res});
+          this.userClickResult.emit({action: 'open', intervalValue: res});
           this.height += 25;
           if (this.height === 450) {
             destroy.next();
@@ -93,7 +93,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
       interval(20)
         .pipe(takeUntil(destroy))
         .subscribe((res) => {
-          this.userClickResult.emit({action: 'close', interval: res});
+          this.userClickResult.emit({action: 'close', intervalValue: res});
           this.height -= 25;
           if (this.height === 75) {
             destroy.next();

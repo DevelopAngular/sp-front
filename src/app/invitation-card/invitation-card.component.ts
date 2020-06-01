@@ -323,19 +323,13 @@ export class InvitationCardComponent implements OnInit {
     this.chooseAction(action);
   }
 
-  scaleCard({action, interval}) {
+  scaleCard({action, intervalValue}) {
     if (action === 'open') {
-      const scale = 1 - (interval / 300);
+      const scale = 1 - (intervalValue / 300);
       this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
-      if (interval === 15) {
-        this.dialogRef.addPanelClass('off-shadow');
-      }
     } else if (action === 'close') {
-      const scale = 0.953333 + (interval / 300);
+      const scale = 0.953333 + (intervalValue / 300);
       this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
-      if (interval === 15) {
-        this.dialogRef.removePanelClass('off-shadow');
-      }
     }
   }
 }

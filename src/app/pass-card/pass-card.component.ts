@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ElementRef, NgZone, OnDestroy } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ElementRef, NgZone, OnDestroy, ViewChild} from '@angular/core';
 import { User } from '../models/User';
 import { HallPass} from '../models/HallPass';
 import { Util } from '../../Util';
@@ -9,12 +9,9 @@ import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
-import {RequestCardComponent} from '../request-card/request-card.component';
-import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
+import {map, pluck, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, interval, merge, Observable, of, Subject, Subscription} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {HallPassesService} from '../services/hall-passes.service';
 import { TimeService } from '../services/time.service';
 import {ScreenService} from '../services/screen.service';
@@ -42,6 +39,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @Input() students: User[] = [];
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
+
+  @ViewChild('cardWrapper') cardWrapper: ElementRef;
 
   timeLeft: string = '';
   valid: boolean = true;
@@ -455,5 +454,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   receiveOption(action) {
     this.chooseAction(action);
+  }
+
+  scaleCard({action, intervalValue}) {
+    if (action === 'open') {
+      const scale = 1 - (intervalValue / 300);
+      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
+    } else if (action === 'close') {
+      const scale = 0.953333 + (intervalValue / 300);
+      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
+    }
   }
 }

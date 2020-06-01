@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy, Renderer2} from '@angular/core';
+import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy, ViewChild} from '@angular/core';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { Util } from '../../Util';
@@ -9,23 +9,21 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
-import {concatMap, filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
-import {PassCardComponent} from '../pass-card/pass-card.component';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
-import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {RequestsService} from '../services/requests.service';
-import {NextStep} from '../animations';
-import {BehaviorSubject, interval, of, Subject} from 'rxjs';
+import { filter, pluck, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
+import { CreateFormService } from '../create-hallpass-forms/create-form.service';
+import { RequestsService } from '../services/requests.service';
+import { NextStep } from '../animations';
+import { BehaviorSubject, interval, of, Subject } from 'rxjs';
 
 import * as moment from 'moment';
 import { uniqBy, uniq, isNull } from 'lodash';
-import {ScreenService} from '../services/screen.service';
-import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
-import {DeviceDetection} from '../device-detection.helper';
-import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
-import {StorageService} from '../services/storage.service';
-import {NavbarDataService} from '../main/navbar-data.service';
+import { ScreenService } from '../services/screen.service';
+import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
+import { DeviceDetection } from '../device-detection.helper';
+import { KeyboardShortcutsService } from '../services/keyboard-shortcuts.service';
+import { StorageService } from '../services/storage.service';
+import { NavbarDataService } from '../main/navbar-data.service';
 
 @Component({
   selector: 'app-request-card',
@@ -43,6 +41,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   @Input() formState: Navigation;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
+
+  @ViewChild('cardWrapper') cardWrapper: ElementRef;
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -94,6 +94,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   get invalidDate() {
     return Util.invalidDate(this.request.request_time);
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 
   get teacherNames() {
@@ -580,7 +584,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     this.hoverDestroyer$.complete();
   }
 
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
+  scaleCard({action, intervalValue}) {
+    if (action === 'open') {
+      const scale = 1 - (intervalValue / 300);
+      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
+    } else if (action === 'close') {
+      const scale = 0.953333 + (intervalValue / 300);
+      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
+    }
   }
 }

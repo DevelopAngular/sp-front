@@ -1,5 +1,6 @@
-<div class="pass-card-wrapper" [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? '451px' : '412px'" ondragstart="return false">
-  <div class="pass-card-header">
+<div class="pass-card-container">
+  <div class="pass-card-wrapper" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? (isModal ? '400px' : '451px') : '412px'" ondragstart="return false">
+    <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
           <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
@@ -14,83 +15,88 @@
         <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
 
       </div>
-    <mat-divider></mat-divider>
-  </div>
-  <div class="pass-card-content" *ngIf="!isModal">
-    <div class="duration-picker">
-      <app-traveltype-picker
-        [width]="(pass.destination.travel_types.length < 2 ? '106px' : '185px')"
-        [height]="'32px'"
-        (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
-      <app-duration-picker [forStaff]="forStaff" [plural]="selectedStudents.length>1" (onChange)="selectedDuration=$event" [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:15"></app-duration-picker>
+      <mat-divider></mat-divider>
     </div>
-    <div class="button">
-      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
-        <div class="start-pass-content">
-          <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-          <div *ngIf="!performingAction" class="start-pass-content-text">
+    <div class="pass-card-content" *ngIf="!isModal">
+      <div class="duration-picker">
+        <app-traveltype-picker
+          [width]="(pass.destination.travel_types.length < 2 ? '106px' : '185px')"
+          [height]="'32px'"
+          (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
+        <app-duration-picker [forStaff]="forStaff" [plural]="selectedStudents.length>1" (onChange)="selectedDuration=$event" [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:15"></app-duration-picker>
+      </div>
+      <div class="button">
+        <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
+          <div class="start-pass-content">
+            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+            <div *ngIf="!performingAction" class="start-pass-content-text">
               {{((forFuture && forInput)?'Schedule Pass' + (selectedStudents.length > 1 ? 'es' : ''):(forStaff?'Send Pass' + (selectedStudents.length > 1 ? 'es' : ''):'Start Pass' + (selectedStudents.length > 1 ? 'es' : '')))}}</div>
-          <img *ngIf="!performingAction"  class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
-        </div>
-      </app-card-button>
-
-    </div>
-  </div>
-
-  <div class="pass-card-content-modal" *ngIf="isModal">
-    <div class="center-block">
-      <app-travel-view [pass]="pass"></app-travel-view>
-    </div>
-
-    <mat-divider *ngIf="!data.kioskMode"></mat-divider>
-
-    <div class="top-block" [style.justify-content]="data.kioskMode ? 'flex-start' : 'center'">
-
-      <div *ngIf="isActive && !forStaff">
-        <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (click)="endPass()">
-          <div class="end-pass-content">
-            {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+            <img *ngIf="!performingAction"  class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
           </div>
         </app-card-button>
-      </div>
-      <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff">
-        <span style="font-size: 20px; font-weight: bold; color: white">{{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}</span>
-      </div>
 
-      <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff ">
-        <div class="page-1 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
-        </div>
-        <div class="page-2 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==2?((activePassTime$ | async) +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
-        </div>
-        <div class="page-3 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
-        </div>
-        <div class="page-4 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
-        </div>
-
-        <div class="page-5 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
-        </div>
-        <div class="page-6 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
-        </div>
-        <div class="page-7 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
-        </div>
-        <div class="page-8 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
-        </div>
-      </app-pager>
+      </div>
     </div>
-  </div>
-    <div class="pass-card-footer" *ngIf="forStaff || data.kioskMode">
+
+    <div class="pass-card-content-modal" *ngIf="isModal">
+      <div class="center-block">
+        <app-travel-view [pass]="pass"></app-travel-view>
+      </div>
+
+      <mat-divider *ngIf="!data.kioskMode"></mat-divider>
+
+      <div class="top-block" [style.justify-content]="data.kioskMode ? 'flex-start' : 'center'">
+
+        <div *ngIf="isActive && !forStaff">
+          <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (click)="endPass()">
+            <div class="end-pass-content">
+              {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+            </div>
+          </app-card-button>
+        </div>
+        <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff">
+          <span style="font-size: 20px; font-weight: bold; color: white">{{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}</span>
+        </div>
+
+        <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff ">
+          <div class="page-1 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
+          </div>
+          <div class="page-2 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==2?((activePassTime$ | async) +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
+          </div>
+          <div class="page-3 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
+          </div>
+          <div class="page-4 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
+          </div>
+
+          <div class="page-5 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
+          </div>
+          <div class="page-6 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
+          </div>
+          <div class="page-7 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
+          </div>
+          <div class="page-8 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
+          </div>
+        </app-pager>
+      </div>
+    </div>
+    <div class="pass-card-footer" *ngIf="(forStaff || data.kioskMode) && !isModal">
       <div class="student-footer"></div>
       <div class="student-text"> {{ studentText }} </div>
     </div>
 
+  </div>
+
+  <div class="student-footer-info" *ngIf="forStaff && isModal">
+    <app-student-passes [profile]="pass.student" (userClickResult)="scaleCard($event)"></app-student-passes>
+  </div>
 </div>
 
 <app-consent-menu-mobile

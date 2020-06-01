@@ -1,5 +1,5 @@
-<div style="position: relative">
-  <div class="request-card-wrapper" [style.background-image]="gradient" [style.height]="forStaff ? '451px' : '412px'" ondragstart="return false">
+<div class="request-container">
+  <div class="request-card-wrapper" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff ? (isModal ? '400px': '451px') : '412px'" ondragstart="return false">
     <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
@@ -266,12 +266,16 @@
         </ng-template>
       </div>
 
-      <div class="request-card-footer" *ngIf="forStaff">
+      <div class="request-card-footer" *ngIf="forStaff && !isModal">
         <div class="student-footer"></div>
         <div class="student-text"> {{ request.student.display_name }} </div>
       </div>
     </div>
 
+  </div>
+
+  <div class="student-footer-info" *ngIf="forStaff && isModal">
+    <app-student-passes [profile]="request.student" (userClickResult)="scaleCard($event)"></app-student-passes>
   </div>
 </div>
 
