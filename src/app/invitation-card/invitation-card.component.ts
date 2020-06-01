@@ -48,6 +48,7 @@ export class InvitationCardComponent implements OnInit {
   fromHistory;
   fromHistoryIndex;
   dateEditOpen: boolean;
+  locationChangeOpen: boolean;
 
   frameMotion$: BehaviorSubject<any>;
 
