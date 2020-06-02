@@ -148,6 +148,7 @@ export class HttpService {
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
+    take(1),
     switchMap(() => {
       return this.getSchoolsRequest();
     }),
@@ -183,7 +184,7 @@ export class HttpService {
     // First, if there is a current school loaded, try to use that one.
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
-    this.schools$.subscribe(schools => {
+    this.schools$.pipe(filter(schools => !!schools.length)).subscribe(schools => {
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
         this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
@@ -199,7 +200,6 @@ export class HttpService {
         this.currentSchoolSubject.next(schools[0]);
         return;
       }
-
       this.currentSchoolSubject.next(null);
       return;
     });
