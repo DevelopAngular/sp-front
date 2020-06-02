@@ -7,7 +7,6 @@ import { School } from '../../../models/School';
 import { of } from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
 import {GoogleLoginService} from '../../../services/google-login.service';
-import {environment} from '../../../../environments/environment';
 import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {StorageService} from '../../../services/storage.service';

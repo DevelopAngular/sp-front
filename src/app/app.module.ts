@@ -96,7 +96,7 @@ const appRoutes: Routes = [
     path: 'main',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
     loadChildren: 'app/main/main.module#MainModule',
-    resolve: {currentUser: CurrentUserResolver, schools: SchoolsResolver},
+    resolve: {currentUser: CurrentUserResolver},
     data: {
       hubspot: true,
       authFree: false
@@ -106,7 +106,7 @@ const appRoutes: Routes = [
     path: 'admin',
     canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
     loadChildren: 'app/admin/admin.module#AdminModule',
-    resolve: {currentUser: CurrentUserResolver, schools: SchoolsResolver},
+    resolve: {currentUser: CurrentUserResolver},
     data: {
       hideScroll: true,
       hubspot: true,

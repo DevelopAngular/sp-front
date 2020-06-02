@@ -19,6 +19,7 @@ export class SupportButtonComponent implements OnInit {
   }
 
   openSupportOptions(event) {
+    const chat = document.querySelector('#hubspot-messages-iframe-container');
     if (!this.isOpenOptions) {
       this.isOpenOptions = true;
       const SPO = this.dialog.open(SupportOptionsComponent, {
@@ -34,6 +35,7 @@ export class SupportButtonComponent implements OnInit {
     } else {
       this.isOpenOptions = false;
       window.HubSpotConversations.widget.close();
+      (chat as HTMLElement).setAttribute('style', 'opacity: 0 !important');
       if (this.dialog.getDialogById('support')) {
         this.dialog.getDialogById('support').close();
       }

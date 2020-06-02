@@ -49,7 +49,6 @@ export class SpAppearanceComponent implements OnInit {
 
   setSelectedTheme(evt: SPTheme) {
     this.selectedTheme = evt;
-    this.storage.setItem('dark-theme', evt);
     this.darkTheme.switchTheme(evt);
   }
 
