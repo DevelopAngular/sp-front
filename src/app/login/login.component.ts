@@ -54,7 +54,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private titleService: Title,
     private metaService: Meta,
     private notifService: NotificationService,
-    private darkSwitch: DarkThemeSwitch,
     public screen: ScreenService
   ) {
     this.jwt = new JwtHelperService();
@@ -66,8 +65,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.darkSwitch.switchTheme('Light');
-
     this.titleService.setTitle('SmartPass Sign-in');
     this.metaService.addTag({
       name: 'description',

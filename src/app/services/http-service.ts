@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import { BehaviorSubject, interval, Observable, of, ReplaySubject, throwError } from 'rxjs';
-import { catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import {catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { School } from '../models/School';
@@ -151,6 +151,7 @@ export class HttpService {
     switchMap(() => {
       return this.getSchoolsRequest();
     }),
+    switchMap(() => this.schoolsCollection$)
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
   public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
@@ -517,7 +518,7 @@ export class HttpService {
 
   getSchoolsRequest() {
     this.store.dispatch(getSchools());
-    return this.schoolsCollection$;
+    return of(null);
   }
 
   getSchools(): Observable<School[]> {
