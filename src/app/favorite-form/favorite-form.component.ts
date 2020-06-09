@@ -33,12 +33,6 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
       this.dragulaService.drop('locations').pipe(mapTo(true))
     ).pipe(publish(), refCount());
 
-    // this.screen.overflowLocationTable.subscribe(res => {
-    //   if (!res) {
-    //     // debugger;
-    //   }
-    // });
-
       this.locationService.getFavoriteLocationsRequest().subscribe((stars: any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));
         this.starChangesIds = stars.map(star => star.id);
