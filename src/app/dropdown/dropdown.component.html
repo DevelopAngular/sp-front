@@ -15,7 +15,7 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (!selectedLocation ? '#ECF1FF' : 'transparent'))"
+           [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (!selectedLocation ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
            appCrossPointerEventTarget
            (pointerClickEvent)="closeDropdown('all_rooms');"
            (pointerDownEvent)="_option.pressed = true"
@@ -43,7 +43,7 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (selectedLocation && location.room === selectedLocation.room && location.title === selectedLocation.title ? '#ECF1FF' : 'transparent'))"
+           [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (selectedLocation && location.room === selectedLocation.room && location.title === selectedLocation.title ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
            appCrossPointerEventTarget
            (pointerClickEvent)="closeDropdown(location)"
            (pointerDownEvent)="_option.pressed = true"
@@ -75,7 +75,7 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (school.id === selectedSchool.id && school.name === selectedSchool.name ? '#ECF1FF' : 'transparent'))"
+           [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (school.id === selectedSchool.id && school.name === selectedSchool.name ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
            appCrossPointerEventTarget
            (pointerClickEvent)="_matDialogRef.close(school)"
            (pointerDownEvent)="_option.pressed = true"
@@ -103,7 +103,7 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (teacher.user.id === selectedTeacher.user.id ? '#ECF1FF' : 'transparent'))"
+           [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (teacher.user.id === selectedTeacher.user.id ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
            appCrossPointerEventTarget
            (pointerClickEvent)="_matDialogRef.close(teacher);"
            (pointerDownEvent)="_option.pressed = true;"
@@ -136,7 +136,7 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           [style.background]="_st.pressed ? 'rgba(127, 135, 157, .15)' : (_st.hovered ? 'rgba(127, 135, 157, .1)' : (sort.action === selectedSort ? '#ECF1FF' : 'transparent'))"
+           [style.background]="_st.pressed ? 'rgba(127, 135, 157, .15)' : (_st.hovered ? 'rgba(127, 135, 157, .1)' : (sort.action === selectedSort ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
            appCrossPointerEventTarget
            (pointerClickEvent)="_matDialogRef.close(sort.action)"
            (pointerDownEvent)="_st.pressed = true"
