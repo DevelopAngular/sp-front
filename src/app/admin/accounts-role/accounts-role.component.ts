@@ -270,9 +270,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
           switch (this.role) {
             case '_profile_teacher':
-              this.dataTableHeaders['Rooms'] = {
+              this.dataTableHeaders['rooms'] = {
                 value: true,
-                label: 'Rooms',
+                label: 'rooms',
                 disabled: false
               };
               this.dataTableHeaders['Permissions'] = {
@@ -422,9 +422,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.tableHeaders['Sign-in status'].index = 4;
       this.tableHeaders['Last sign-in'].index = 5;
       this.tableHeaders['Account Type'].index = 3;
-      this.tableHeaders['Rooms'] = {
+      this.tableHeaders['rooms'] = {
         index: 2,
-        label: 'Rooms',
+        label: 'rooms',
       };
       this.tableHeaders['Permissions'] = {
         index: 6,
@@ -710,7 +710,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         const rawObj = {
           'Name': raw.display_name,
           'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-          'Rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
+          'rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
           'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
