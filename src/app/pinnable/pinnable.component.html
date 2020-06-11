@@ -38,8 +38,9 @@
     </div>
     <div *ngIf="restricted && !forStaff" class="overlay-container">
       <div class="overlay"></div>
-      <img class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
+      <div class="pass-count">5</div>
     </div>
+    <img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
   </div>
 </div>
 

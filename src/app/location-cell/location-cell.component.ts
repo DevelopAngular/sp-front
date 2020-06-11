@@ -2,7 +2,6 @@ import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, V
 import { Location } from '../models/Location';
 import { HttpService } from '../services/http-service';
 import { DomSanitizer } from '@angular/platform-browser';
-import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';
 import {DeviceDetection} from '../device-detection.helper';
 
@@ -63,6 +62,11 @@ export class LocationCellComponent implements OnInit {
 
   get cursor() {
     return this.valid ? 'pointer' : 'not-allowed';
+  }
+
+  get gradient() {
+    const gradient = '';
+    return 'radial-gradient(circle at 73% 71%, ' + gradient + ')';
   }
 
   get textColor() {
