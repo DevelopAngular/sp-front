@@ -144,15 +144,15 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.showError = false;
         this.error$.next(null);
       }
-      this.loginData.authType = auth_types.filter(at => at !== 'gg4l')[auth_types.length - 1];
-      if (auth_types.indexOf('google') !== -1) {
+      this.loginData.authType = auth_types[auth_types.length - 1];
+      if (this.loginData.authType.indexOf('google') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
         this.isGoogleLogin = true;
-      } else if (auth_types.indexOf('gg4l') !== -1) {
+      } else if (this.loginData.authType.indexOf('gg4l') !== -1) {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
       } else
-        if (auth_types.indexOf('password') !== -1) {
+        if (this.loginData.authType.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
         this.isStandardLogin = true;
       } else {
@@ -190,10 +190,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   updateDemoPassword(event) {
     this.loginData.demoPassword = event;
-  }
-
-  toggleDemoLogin() {
-    window.open('https://www.smartpass.app/get-started', '_self');
   }
 
   checkUserAuthType() {

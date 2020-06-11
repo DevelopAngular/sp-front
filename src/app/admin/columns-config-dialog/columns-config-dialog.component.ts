@@ -69,10 +69,10 @@ export class ColumnsConfigDialogComponent implements OnInit {
   updatePosition() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
-    console.log( rect, this.triggerElementRef);
+    // console.log( rect, this.triggerElementRef);
 
     matDialogConfig.position = { left: `${rect.left + rect.width - 225}px`, top: `${rect.bottom + 20}px` };
-    console.log(matDialogConfig.position);
+    // console.log(matDialogConfig.position);
 
     matDialogConfig.width = '245px';
     this._matDialogRef.updateSize(matDialogConfig.width, 'auto');

@@ -121,7 +121,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private gsProgress: GettingStartedProgressService,
     private fb: FormBuilder,
     private shortcutsService: KeyboardShortcutsService,
-    private darkSwitch: DarkThemeSwitch
   ) {
     this.jwt = new JwtHelperService();
     this.errorToast = this.httpService.errorToast$;
@@ -130,10 +129,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    if (this.darkSwitch.isEnabled$.value) {
-      this.darkSwitch.switchTheme('Light');
-    }
-
     this.route.queryParams
       .pipe(
         switchMap((qp: QueryParams) => {

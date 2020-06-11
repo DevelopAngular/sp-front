@@ -41,25 +41,25 @@
     <div *ngIf="!forStaff" class="student-view">
 
       <div class="center-block" [class.center]="invalidDate">
-        <app-travel-view *ngIf="!forInput && !invalidDate" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
-<!--        <app-pager *ngIf="!forInput && !invalidDate" [arrowPosition]="'-93px'" [isStaff]="true">-->
-<!--          <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">-->
-<!--            <app-travel-view-->
-<!--              [forStaff]="forStaff"-->
-<!--              [height]="'170px'"-->
-<!--              [pass]='invitation'-->
-<!--              (locationSelected)="setLocation($event)"-->
-<!--            ></app-travel-view>-->
-<!--          </div>-->
-<!--          <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">-->
-<!--            <div class="page-2-wrapper">-->
-<!--              <div class="message" [style.height]="(forInput?'70px':'164px')">-->
-<!--                <span [style.font-weight]="'bold'">{{ 'Message from ' + issuerName }}</span><br>-->
-<!--                {{ 'Learn one way to build applications with Angular and reuse your code and abilities to build apps for any deployment target. For web, mobile web, native mobile and native desktop.' }}-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </app-pager>-->
+
+        <app-pager *ngIf="!forInput && !invalidDate" [arrowPosition]="'-93px'" [isStaff]="true">
+          <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <app-travel-view
+              [forStaff]="forStaff"
+              [height]="'170px'"
+              [pass]='invitation'
+              (locationSelected)="setLocation($event)"
+            ></app-travel-view>
+          </div>
+          <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <div class="page-2-wrapper">
+              <div class="message" [style.height]="(forInput?'70px':'164px')">
+                <span [style.font-weight]="'bold'">{{ 'Message from ' + issuerName }}</span><br>
+                {{ invitation.issuer_message ? invitation.issuer_message : 'No Message' }}
+              </div>
+            </div>
+          </div>
+        </app-pager>
 
         <app-card-button *ngIf="!forInput && !forStaff && invalidDate" (onClick)="changeDate()" [width]="'297px'" [height]="'81px'" [gradientColor]="invitation.color_profile.gradient_color">
           <div class="resend-button-content">
@@ -69,35 +69,40 @@
         </app-card-button>
       </div>
 
-      <mat-divider *ngIf="(!selectedOrigin && !forStaff) || (!forInput && forStaff)"></mat-divider>
+      <mat-divider *ngIf="false"></mat-divider>
 
       <div class="bottom-block">
 
         <div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">
           <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
-            <div class="button-content">
               <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-              <div *ngIf="!performingAction" class="get-pass-content-text">Accept Pass</div>
-              <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
-            </div>
+              <div *ngIf="!performingAction" class="resend-button-content">
+                <div class="resend-button-content-title">Accept Pass Request</div>
+                <div class="resend-button-content-subtitle">Pass Request from {{ issuerName }}</div>
+              </div>
           </app-card-button>
         </div>
         <ng-template #noLocation>
-          <div *ngIf="!invitation.cancelled; else cancelled" class="invitation-description">
-            <img class="invitation-description-icon" [src]="'./assets/Received (White).svg' | resolveAsset">
-            <div class="invitation-description-text">
-              Pass Request from: <br>
-              <span style="font-weight: normal">{{ invitation.issuer.first_name + ' ' + invitation.issuer.last_name }}</span>
-            </div>
-          </div>
-          <ng-template #cancelled>
-            <div class="invitation-description">
+          <app-card-button (onClick)="changeLocation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
+            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+              <div class="resend-button-content">
+                <div class="resend-button-content-title">Select Origin to Accept</div>
+                <div class="resend-button-content-subtitle">Pass Request from {{ issuerName }}</div>
+              </div>
+          </app-card-button>
+<!--          <div *ngIf="!invitation.cancelled; else cancelled" class="invitation-description">-->
+<!--            <img class="invitation-description-icon" [src]="'./assets/Received (White).svg' | resolveAsset">-->
+<!--            <div class="invitation-description-text">-->
+<!--              Pass Request from: <br>-->
+<!--              <span style="font-weight: normal">{{ invitation.issuer.first_name + ' ' + invitation.issuer.last_name }}</span>-->
+<!--            </div>-->
+<!--          </div>-->
+            <div class="invitation-description" *ngIf="invitation.cancelled">
               <img class="invitation-description-icon" [src]="'./assets/Report (White).svg' | resolveAsset">
               <div class="invitation-description-text">
                 Pass Request has been cancelled
               </div>
             </div>
-          </ng-template>
         </ng-template>
 
       </div>
@@ -105,7 +110,24 @@
 
     <div class="teacher-view" *ngIf="forStaff">
       <div class="center-block">
-        <app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
+        <app-pager *ngIf="!forInput" [arrowPosition]="'-93px'" [isStaff]="true">
+          <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <app-travel-view
+              [forStaff]="forStaff"
+              [height]="'170px'"
+              [pass]='invitation'
+              (locationSelected)="setLocation($event)"
+            ></app-travel-view>
+          </div>
+          <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <div class="page-2-wrapper">
+              <div class="message" [style.height]="(forInput?'70px':'164px')">
+                <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
+                {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
+              </div>
+            </div>
+          </div>
+        </app-pager>
       </div>
 
       <mat-divider></mat-divider>

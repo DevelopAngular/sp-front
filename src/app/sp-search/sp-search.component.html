@@ -191,8 +191,8 @@
     </div>
     <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
       <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" tabindex="0" class="option-list_item"
-           (mouseenter)="changeColor(true, $event)"
-           (mouseleave)="changeColor(false, $event)"
+           (mouseenter)="changeColor(true, $event); cell.hovered = true"
+           (mouseleave)="changeColor(false, $event); cell.hovered = false"
            [style.color]="textColor(cell)"
       >
         <span *ngIf="this.searchTarget === 'users'">
@@ -206,7 +206,7 @@
           (mousedown)="cell.pressed = true"
           (mouseup)="cell.pressed = false"
           (click)="selectedOptions.splice(i, 1); this.onUpdate.emit(this.selectedOptions)"
-          [src]="cell.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15"alt="Check.svg">
+          [src]="cell.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" alt="Check.svg">
       </div>
     </div>
   </div>

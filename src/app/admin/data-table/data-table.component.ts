@@ -278,7 +278,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private _ngZone: NgZone,
-    private darkTheme: DarkThemeSwitch,
+    public darkTheme: DarkThemeSwitch,
     private domSanitizer: DomSanitizer,
     private scrollPosition: ScrollPositionService,
     private cdr: ChangeDetectorRef,
@@ -291,7 +291,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
     TABLE_RELOADING_TRIGGER.subscribe(({header, tableHeaders}) => {
       const itemIndex = findIndex(this.displayedColumns, (item) => {
-        return item === header.label;
+        return item.toLowerCase() === header.label.toLowerCase();
       });
       const headerIndex = this.columnsToDisplay[0] === 'select' ? header.index + 1 : header.index;
       const iIndex = this.columnsToDisplay[0] === 'select' ? itemIndex + 1 : itemIndex;

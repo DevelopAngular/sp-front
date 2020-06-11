@@ -54,7 +54,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private titleService: Title,
     private metaService: Meta,
     private notifService: NotificationService,
-    private darkSwitch: DarkThemeSwitch,
     public screen: ScreenService
   ) {
     this.jwt = new JwtHelperService();
@@ -66,8 +65,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.darkSwitch.switchTheme('Light');
-
     this.titleService.setTitle('SmartPass Sign-in');
     this.metaService.addTag({
       name: 'description',
@@ -80,7 +77,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.loginService.isAuthenticated$.pipe(
       filter(v => v),
-      switchMap((): Observable<[User, Array<string>]> => {
+      switchMap((v): Observable<[User, Array<string>]> => {
         return zip(
           this.userService.userData.asObservable().pipe(filter(user => !!user)),
           INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').filter(v => v && v !== 'app')))

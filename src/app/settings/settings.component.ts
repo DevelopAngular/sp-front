@@ -61,10 +61,20 @@ export class SettingsComponent implements OnInit {
       private pwaStorage: LocalStorage,
 
   ) {
-    this.initializeSettings();
+    // this.initializeSettings();
   }
 
   ngOnInit() {
+    this.dataService.currentUser
+      .pipe(this.loadingService.watchFirst)
+      .subscribe(user => {
+        this._zone.run(() => {
+          this.user = user;
+          this.settings = [];
+          this.isStaff = user.isTeacher() || user.isAssistant();
+          this.initializeSettings();
+        });
+      });
     if (this.data) {
       this.targetElementRef = this.data['trigger'];
       this.isSwitch = this.data['isSwitch'] && !this.kioskMode.currentRoom$.value;
@@ -83,16 +93,6 @@ export class SettingsComponent implements OnInit {
     });
 
     this.updateDialogPosition();
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
-      .subscribe(user => {
-        this._zone.run(() => {
-          this.user = user;
-          this.settings = [];
-          this.initializeSettings();
-          this.isStaff = user.roles.includes('edit_all_hallpass');
-        });
-      });
   }
 
   getIcon(iconName: string, setting: any) {
@@ -198,6 +198,15 @@ export class SettingsComponent implements OnInit {
       'action': 'appearance',
       'title': 'Appearance'
     });
+    if (this.isStaff) {
+      this.settings.push({
+        'hidden': !!this.kioskMode.currentRoom$.value,
+        'background': '#12C29E',
+        'icon': 'Lock dots',
+        'action': 'myPin',
+        'title': 'Approval Pin'
+      });
+    }
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,
       'background': '#EBBB00',

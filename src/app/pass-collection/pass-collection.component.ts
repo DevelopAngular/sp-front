@@ -76,6 +76,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
   @Output() currentPassesEmit = new EventEmitter();
+  @Output() passClick = new EventEmitter<boolean>();
 
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
@@ -183,6 +184,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
+    this.passClick.emit(true);
     this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }
@@ -227,7 +229,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(dialogData => {
-      console.log('Closed with ===>', dialogData);
+      this.passClick.emit(false);
       if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
           width: '425px',

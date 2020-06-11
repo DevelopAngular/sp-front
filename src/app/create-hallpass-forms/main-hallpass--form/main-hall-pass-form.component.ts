@@ -1,14 +1,14 @@
-import {ChangeDetectorRef, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
-import { Location } from '../../models/Location';
-import { Pinnable } from '../../models/Pinnable';
-import { User } from '../../models/User';
-import { StudentList } from '../../models/StudentList';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {Location} from '../../models/Location';
+import {Pinnable} from '../../models/Pinnable';
+import {User} from '../../models/User';
+import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
 import {filter, map, takeUntil} from 'rxjs/operators';
-import { find, cloneDeep } from 'lodash';
+import {cloneDeep, find} from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
@@ -61,7 +61,8 @@ export interface Navigation {
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
-  animations: [NextStep]
+  animations: [NextStep],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
@@ -219,9 +220,10 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
                       }
                       return fpin;
                   });
-              })).subscribe(rooms => {
+              }))
+        .subscribe(rooms => {
           this.FORM_STATE.data.teacherRooms = rooms;
-      });
+        });
 
     this.dialogRef
       .backdropClick()
@@ -248,31 +250,22 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       // console.log('STEP EVENT ===>', evt);
       this.FORM_STATE = evt;
     }
-    // this.setFormSize();
   }
 
   setContainerSize(startOrEnd: 'start' | 'end') {
-    // return
     switch (startOrEnd) {
       case 'start':
         this.formSize.containerWidth = this.formSize.width;
         this.formSize.containerHeight =  this.formSize.height;
-        // this.cd.detectChanges();
         break;
       case 'end':
         this.formSize.containerWidth =  `${window.innerWidth}px`;
         this.formSize.containerHeight =  `${window.innerHeight}px`;
-        // this.cd.detectChanges();
         break;
     }
   }
 
   setFormSize() {
-    // const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
-    //       form.style.boxShadow = 'none';
-    //       if (form && this.FORM_STATE.step !== 4) {
-    //         form.style.boxShadow = '0 2px 26px 0px rgba(0, 0, 0, 0.15)';
-    //       }
 
     switch (this.FORM_STATE.step) {
       case 1:
@@ -293,9 +286,6 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         this.formSize.height =  `500px`;
         break;
       case 4:
-        // if (form) {
-        //   // form.style.boxShadow = 'none';
-        // }
         this.formSize.width =  `335px`;
         this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
         break;

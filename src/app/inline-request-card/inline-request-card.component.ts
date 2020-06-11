@@ -6,12 +6,14 @@ import { MatDialog } from '@angular/material';
 import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
-import {tap} from 'rxjs/operators';
+import {takeUntil, tap} from 'rxjs/operators';
 import { uniqBy } from 'lodash';
 import {DeviceDetection} from '../device-detection.helper';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
+import {StorageService} from '../services/storage.service';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -31,6 +33,14 @@ export class InlineRequestCardComponent implements OnInit {
   cancelEditClick: boolean;
   header: any;
   options = [];
+  solidColorRgba: string;
+  solidColorRgba2: string;
+  removeShadow: boolean;
+  leftTextShadow: boolean;
+
+  hoverDestroyer$: Subject<any>;
+
+  activeTeacherPin: boolean;
 
   constructor(
       private requestService: RequestsService,
@@ -39,6 +49,8 @@ export class InlineRequestCardComponent implements OnInit {
       private formService: CreateFormService,
       private screenService: ScreenService,
       private renderer: Renderer2,
+      private passesService: HallPassesService,
+      private storage: StorageService
   ) { }
 
   get hasDivider() {
@@ -71,7 +83,15 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.request) {
+      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
+      this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
+    }
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.passesService.isOpenPassModal$.subscribe(res => {
+      this.activeTeacherPin = !res;
+    });
+
   }
 
   formatDateTime() {
@@ -146,6 +166,43 @@ export class InlineRequestCardComponent implements OnInit {
     return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
+  onHover(evt: HTMLElement, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = evt;
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if (margin > 0) {
+          this.leftTextShadow = true;
+        }
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        } else {
+          this.removeShadow = true;
+        }
+      });
+  }
+
+  onLeave(target: HTMLElement) {
+    target.style.marginLeft = this.filteredTeachers.length > 1 ? '0px' : '10px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `auto`;
+    this.removeShadow = false;
+    this.leftTextShadow = false;
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
+  }
+
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
   }
@@ -158,6 +215,11 @@ export class InlineRequestCardComponent implements OnInit {
     if (action === 'delete') {
       this.requestService.cancelRequest(this.request.id).subscribe((data) => {
         console.log('[Request Canceled]: ', data);
+        const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
+        if (storageData && storageData[this.request.id]) {
+          delete storageData[this.request.id];
+          this.storage.setItem('pinAttempts', JSON.stringify({...storageData}));
+        }
       });
     }
     this.closeMenu();
