@@ -10,7 +10,7 @@
      [style.cursor]="cursor"
      tabindex="0"
 >
-  <div *ngIf="type==='location'" class="info">
+  <div *ngIf="type==='location'" class="info" customToolTip [contentTemplate]="tooltip">
     <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
     <div class="title">
       {{value.title}}
@@ -21,6 +21,10 @@
       <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Lock (Navy).svg' | resolveAsset">
     </div>
   </div>
+
+  <ng-template #tooltip>
+    <app-pass-limit-tooltip [description]="'5 students have passes from this room'"></app-pass-limit-tooltip>
+  </ng-template>
 
   <div *ngIf="type==='teachers'" class="info">
     <div class="title">

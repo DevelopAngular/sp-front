@@ -39,7 +39,7 @@
         <div class="pin-collection">
           <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
             <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-              <app-pinnable
+              <app-pinnable customToolTip [contentTemplate]="tooltip" [showToolTip]="pinnable.location"
                 [width]="gridRestrictions.pileWidth"
                 [height]="gridRestrictions.pileHeight"
                 [valid]="(pinnable.location && location ? isValidPinnable(pinnable) : true)"
@@ -48,6 +48,11 @@
                 [pinnable]="pinnable"
                 (onSelectEvent)="pinnableSelected($event)"
               ></app-pinnable>
+
+              <ng-template #tooltip>
+                <app-pass-limit-tooltip [description]="'5 students have passes from this room'"></app-pass-limit-tooltip>
+              </ng-template>
+
             </mat-grid-tile>
           </mat-grid-list>
         </div>

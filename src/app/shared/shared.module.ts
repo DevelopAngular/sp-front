@@ -57,8 +57,10 @@ import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-info.component';
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
-import {ViewProfileComponent} from '../admin/profile-card-dialog/view-profile/view-profile.component';
-
+import {ViewProfileComponent} from '../admin/profile-card-dialog/view-profile/view-profile.component';;
+import { CustomToolTipComponent } from './shared-components/custom-tool-tip/custom-tool-tip.component'
+;
+import { PassLimitTooltipComponent } from './shared-components/pass-limit-tooltip/pass-limit-tooltip.component'
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -125,8 +127,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     MyProfileDialogComponent,
     ProfileInfoComponent,
     ChangePasswordComponent,
-    ViewProfileComponent
-  ],
+    ViewProfileComponent,
+    CustomToolTipComponent
+,
+    PassLimitTooltipComponent  ],
   entryComponents: [
     PassCardComponent,
     CalendarComponent,
@@ -137,7 +141,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConsentMenuMobileComponent,
     ReportSuccessToastComponent,
     SpAppearanceComponent,
-    MyProfileDialogComponent
+    MyProfileDialogComponent,
+    CustomToolTipComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -189,7 +194,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileInfoComponent,
     ChangePasswordComponent,
     ViewProfileComponent,
-    TeacherPinStudentComponent
+    TeacherPinStudentComponent,
+    PassLimitTooltipComponent
   ],
   providers: [
     {
