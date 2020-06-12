@@ -7,6 +7,7 @@ import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
 import { sortBy, differenceBy, some, filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
+import {HallPassesService} from '../services/hall-passes.service';
 
 
 export interface Paged<T> {
@@ -62,6 +63,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   search: string = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
+  pinnables;
+  pinnablesLoaded: boolean;
 
   showSpinner$: Observable<boolean>;
   loaded$: Observable<boolean>;
@@ -73,12 +76,33 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   constructor(
       private http: HttpService,
       private locationService: LocationsService,
+      private pinnableService: HallPassesService,
       private shortcutsService: KeyboardShortcutsService,
-      public screenService: ScreenService
+      public screenService: ScreenService,
   ) {
   }
 
   ngOnInit() {
+    this.pinnableService.loadedPinnables$.pipe(
+      filter(res => res),
+      switchMap(value => {
+        return this.pinnableService.pinnables$;
+      }),
+      map(pins => {
+        return pins.reduce((acc, pinnable) => {
+          if (pinnable.category) {
+            return { ...acc, [pinnable.category]: pinnable};
+          } else if (pinnable.location) {
+            return { ...acc, [pinnable.location.id]: pinnable };
+          }
+        }, {});
+      }),
+      takeUntil(this.destroy$)
+    )
+      .subscribe(res => {
+        this.pinnables = res;
+        this.pinnablesLoaded = true;
+    });
     this.showSpinner$ = combineLatest(
       this.locationService.loadingLocations$,
       this.locationService.loadingFavoriteLocations$,
@@ -161,6 +185,17 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
+  }
+
+  normalizeLocations(locations) {
+    return locations.map(loc => {
+      if (loc.category) {
+        loc.gradient = this.pinnables[loc.category].gradient_color;
+      } else {
+        loc.gradient = this.pinnables[loc.id].gradient_color;
+      }
+      return loc;
+    });
   }
 
   ngOnDestroy(): void {

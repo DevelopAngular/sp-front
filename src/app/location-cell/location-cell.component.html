@@ -16,7 +16,7 @@
       {{value.title}}
     </div>
     <div class="room" [style.color]="roomColor">
-      <div class="circle" *ngIf="true" [style.background]="">5</div>
+      <div class="circle" *ngIf="true" [style.background]="gradient">5</div>
       {{value.room}}
       <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Lock (Navy).svg' | resolveAsset">
     </div>

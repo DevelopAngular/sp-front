@@ -65,7 +65,7 @@ export class LocationCellComponent implements OnInit {
   }
 
   get gradient() {
-    const gradient = '';
+    const gradient = (this.value as any).gradient;
     return 'radial-gradient(circle at 73% 71%, ' + gradient + ')';
   }
 

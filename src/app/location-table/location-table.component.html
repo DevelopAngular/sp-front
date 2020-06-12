@@ -21,7 +21,7 @@
       <mat-divider class="divider" *ngIf="!forKioskMode"></mat-divider>
 
       <!-- Favorite Window -->
-      <div class="favorite" *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode">
+      <div class="favorite" *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode && pinnablesLoaded">
         <div
              class="choices"
              [dragula]="(screenService.enabledLocationTableDnD | async) ? 'locations' : null"
@@ -60,9 +60,9 @@
 
 
       <!-- Create Pass Form -->
-      <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode"
+      <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode && pinnablesLoaded"
            class="choices">
-        <div class="choice" *ngFor="let choice of starredChoices">
+        <div class="choice" *ngFor="let choice of normalizeLocations(starredChoices)">
           <app-location-cell
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
@@ -90,12 +90,12 @@
       <div *ngIf="rightHeaderText && !hideFavorites" [style.margin-top]="forKioskMode ? '' : '25px'" class="fav-header">All Rooms</div>
       <mat-divider class="divider"></mat-divider>
     </div>
-    <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices">
+    <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices && pinnablesLoaded">
       <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
       <div class="choices">
         <div
           class="choice-wrapper"
-          *ngFor="let choice of choices"
+          *ngFor="let choice of normalizeLocations(choices)"
           #item
         >
           <app-location-cell
