@@ -19,6 +19,8 @@ export class ToggleInputComponent implements OnInit {
   @Input() disabled: boolean = false;
   @Input() delimiter: boolean = true;
   @Input() mock: boolean = false;
+  @Input() icon: string = './assets/Hand (Jade).svg';
+  @Input() hasIcon: boolean = true;
 
   @ViewChild('inp') set inputField(inputField: ElementRef) {
     this.inp = inputField;

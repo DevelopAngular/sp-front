@@ -9,6 +9,7 @@
     <div class="checkbox-container" [ngClass]="sizedLayout">
       <input type="checkbox" class="ios-toggle checkbox1" style="display: none;" [formControlName]="controlName" #inp [id]="controlName"/>
       <label [for]="controlName" class="checkbox-label"></label>
+      <img class="icon" *ngIf="inp.checked && hasIcon" [src]="icon | resolveAsset">
     </div>
   </div>
   <div class="user-action-none" *ngIf="disabled">
