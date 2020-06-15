@@ -13,7 +13,7 @@
               (buttonClick)="save()"
       >
         <span *ngIf="!showSpinner">Save</span>
-        <mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+        <mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="30"></mat-spinner>
       </app-gradient-button>
     </div>
   </div>
@@ -50,7 +50,13 @@
           <div class="ds-cell-description-text" style="width: 300px; margin-top: 6px">Show the number of passes to/from a room when students are making passes.</div>
         </div>
         <div class="toggle-control">
-          <app-toggle-input [form]="schoolForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'display_pass_count'"></app-toggle-input>
+          <app-toggle-input
+            [form]="schoolForm"
+            [hasIcon]="true"
+            [controlSize]="'small'"
+            [delimiter]="false"
+            [controlName]="'display_pass_count'"
+          ></app-toggle-input>
         </div>
       </div>
     </div>
