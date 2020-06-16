@@ -270,12 +270,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   restrictedEvent(isRestricted) {
-      this.data.restricted = isRestricted === 'Restricted';
+      this.data.restricted = isRestricted;
       this.change$.next();
   }
 
   schedulingRestrictedEvent(isRestricted) {
-      this.data.scheduling_restricted = isRestricted === 'Restricted';
+      this.data.scheduling_restricted = isRestricted;
       this.change$.next();
   }
 

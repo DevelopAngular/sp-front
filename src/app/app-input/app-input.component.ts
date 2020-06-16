@@ -72,13 +72,13 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   get minLeftMargin() {
     const value = this.controlName.value;
     if (value < 10) {
-      return 30;
+      return 32;
     } else if (value >= 10 && value < 100) {
-      return 39;
+      return 41;
     } else if (value >= 100 && value < 1000) {
-      return 48;
+      return 50;
     } else if (value >= 1000) {
-      return 55;
+      return 59;
     }
   }
 

@@ -6,6 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { cloneDeep, isEqual } from 'lodash';
 import {Subject} from 'rxjs';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {OverlayDataService} from '../overlay-data.service';
 
 export interface OptionState {
     now: {
@@ -53,12 +54,18 @@ export class AdvancedOptionsComponent implements OnInit {
 
     @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() resultOptions: EventEmitter<{options: OptionState, validButtons: ValidButtons}> = new EventEmitter<{options: OptionState, validButtons: ValidButtons}>();
+    @Output() nowRestrEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() futureRestEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     openedContent: boolean;
     hideFutureBlock: boolean;
     isActiveTooltip: boolean;
+    tooltipText;
+    openNowOptions: boolean;
+    openFutureOptions: boolean;
 
     mockAPCForm: FormGroup;
+    restrictionForm: FormGroup;
 
     toggleChoices = [
         'Any teacher (default)',
@@ -87,13 +94,18 @@ export class AdvancedOptionsComponent implements OnInit {
     constructor(
         public darkTheme: DarkThemeSwitch,
         private sanitizer: DomSanitizer,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        private overlayService: OverlayDataService
     ) {
       this.mockAPCForm = this.fb.group({
         fromEnabled: [false],
         from: [''],
         toEnabled: [false],
         to: ['']
+      });
+      this.restrictionForm = this.fb.group({
+        forNow: [],
+        forFuture: []
       });
     }
 
@@ -110,6 +122,7 @@ export class AdvancedOptionsComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.tooltipText = this.overlayService.tooltipText;
         this.optionState = cloneDeep(this.data);
         this.initialState = cloneDeep({
           ...this.optionState,
@@ -262,5 +275,13 @@ export class AdvancedOptionsComponent implements OnInit {
                 };
             }
         }
+    }
+
+    nowEvent(value) {
+      this.nowRestrEmit.emit(value);
+    }
+
+    futureEvent(value) {
+      this.futureRestEmit.emit(value);
     }
 }
