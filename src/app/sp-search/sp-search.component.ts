@@ -130,6 +130,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() dummyRoleText: string = 'students';
   @Input() placeholder: string = 'Search students';
   @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
+  @Input() isProposed: boolean;
+  @Input() proposedSearchString: string;
 
   @Input() searchingTeachers: User[];
 
@@ -161,6 +163,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   searchCount: number;
   firstSearchItem: User | GSuiteSelector;
   currentSchool: School;
+  suggestedTeacher: User;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -241,6 +244,13 @@ export class SPSearchComponent implements OnInit, OnDestroy {
         this.showDummy = !this.removeDuplicateStudents(res).length;
         this.orgunits.next(this.removeDuplicateStudents(res));
       });
+    }
+
+    if (this.isProposed) {
+      this.userService.searchProfile('_profile_teacher', 1, this.proposedSearchString)
+        .subscribe(res => {
+          this.suggestedTeacher = res.results[0];
+        });
     }
 
     this.shortcutsService.onPressKeyEvent$
@@ -427,5 +437,19 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.students = null;
     this.inputField = false;
     this.onUpdate.emit(this.getEmitedValue());
+  }
+
+  update(value) {
+    this.selectedOptions = value;
+    this.onUpdate.emit(this.selectedOptions);
+    if (this.suggestedTeacher && !(this.selectedOptions as any[]).find(t => t.id === this.suggestedTeacher.id)) {
+      this.isProposed = true;
+    }
+  }
+
+  addSuggested() {
+    this.selectedOptions.push(this.suggestedTeacher);
+    this.onUpdate.emit(this.selectedOptions);
+    this.isProposed = false;
   }
 }

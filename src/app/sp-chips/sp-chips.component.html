@@ -15,7 +15,7 @@
   </div>
   <app-gradient-button class=""
     [size]="'editable'"
-    [width]="'100px'"
+    [minWidth]="'100px'"
     [minHeight]="'31px'"
     [textColor]="'#7F879D'"
     [gradient]="'#F4F4F4, #F4F4F4'"
@@ -26,5 +26,5 @@
     [withShadow]="false"
     [fontSize]="'14px'"
     (buttonClick)="add.emit(true)"
-  >Add</app-gradient-button>
+  >{{ text }}</app-gradient-button>
 </div>

@@ -41,6 +41,7 @@ export class ToggleInputComponent implements OnInit {
   constructor(
     private _zone: NgZone
   ) {}
+
   ngOnInit() {
 
     this._zone.run(() => {

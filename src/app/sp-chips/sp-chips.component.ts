@@ -11,6 +11,7 @@ export class SpChipsComponent implements OnInit {
 
   @Input() selectedProfiles: User[] = [];
   @Input() preventRemovingLast: boolean = false;
+  @Input() text: string = 'Add';
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
   @Output() updateSelectedEvent: EventEmitter<User[]> = new EventEmitter();

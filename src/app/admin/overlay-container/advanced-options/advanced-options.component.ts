@@ -68,9 +68,9 @@ export class AdvancedOptionsComponent implements OnInit {
     restrictionForm: FormGroup;
 
     toggleChoices = [
-        'Any teacher (default)',
-        'Any teachers assigned',
-        'All teachers assigned',
+        'Any teacher',
+        'Any teachers in room',
+        'All teachers in room',
         'Certain \n teacher(s)'
     ];
 
@@ -142,6 +142,8 @@ export class AdvancedOptionsComponent implements OnInit {
           this.checkValidOptions();
           this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
         });
+        this.futureRestEmit.emit(false);
+        this.nowRestrEmit.emit(false);
     }
 
     buildData() {
@@ -221,10 +223,10 @@ export class AdvancedOptionsComponent implements OnInit {
         const now = this.optionState.now;
         const future = this.optionState.future;
         if (
-            (now.state === 'Any teachers assigned' && !now.data.any_teach_assign) ||
-            (future.state === 'Any teachers assigned' && !future.data.any_teach_assign) ||
-            (now.state === 'All teachers assigned' && !now.data.all_teach_assign) ||
-            (future.state === 'All teachers assigned' && !future.data.all_teach_assign) ||
+            (now.state === 'Any teachers in room' && !now.data.any_teach_assign) ||
+            (future.state === 'Any teachers in room' && !future.data.any_teach_assign) ||
+            (now.state === 'All teachers in room' && !now.data.all_teach_assign) ||
+            (future.state === 'All teachers in room' && !future.data.all_teach_assign) ||
             (now.state === 'Certain \n teacher(s)' && !now.data.selectedTeachers.length) ||
             (future.state === 'Certain \n teacher(s)' && !future.data.selectedTeachers.length ||
             this.mockAPCForm.dirty )

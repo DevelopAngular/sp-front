@@ -111,7 +111,7 @@
             <div class="toggle-options" *ngIf="nowRestricted">
               <div class="subtitle">Pass approval from: </div>
               <div class="state-name" appCrossPointerEventTarget (pointerClickEvent)="openNowOptions = !openNowOptions">
-                {{ optionState.now.state }}
+                {{ optionState.now.state || 'Any teacher' }}
                 <img [src]="'./assets/Rect (Blue-Gray).svg' | resolveAsset" style="margin-left: 7px">
               </div>
             </div>
@@ -124,10 +124,10 @@
               <app-restriction-picker
                 [width]="396"
                 [height]="52"
-                [padding]="8"
+                [padding]="9"
                 [fontSize]="13"
                 [disabledOptions]="disabledOptions"
-                [selectedChoice]="optionState.now.state || 'Any teacher (default)'"
+                [selectedChoice]="optionState.now.state || 'Any teacher'"
                 [choices]="toggleChoices"
                 (result)="changeOptions('now', $event)"
               >
@@ -155,7 +155,7 @@
               </div>
             </div>
             <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
-              <div class="ds-mr-10">Pass requests will automatically get sent to all teachers assigned to:</div>
+              <div class="ds-mr-10">Pass requests will automatically get sent to All teachers in room to:</div>
               <app-restriction-picker
                 [width]="240"
                 [height]="32"
@@ -210,7 +210,7 @@
             <div class="toggle-options" *ngIf="futureRestricted">
               <div class="subtitle">Pass approval from: </div>
               <div class="state-name" appCrossPointerEventTarget (pointerClickEvent)="openFutureOptions = !openFutureOptions">
-                {{ optionState.future.state }}
+                {{ optionState.future.state || 'Any teacher' }}
                 <img [src]="'./assets/Rect (Blue-Gray).svg' | resolveAsset" style="margin-left: 7px">
               </div>
             </div>
@@ -223,10 +223,10 @@
               <app-restriction-picker
                 [width]="396"
                 [height]="52"
-                [padding]="8"
+                [padding]="9"
                 [fontSize]="13"
                 [disabledOptions]="disabledOptions"
-                [selectedChoice]="optionState.future.state || 'Any teacher (default)'"
+                [selectedChoice]="optionState.future.state || 'Any teacher'"
                 [choices]="toggleChoices"
                 (result)="changeOptions('future', $event)"
               >
@@ -255,7 +255,7 @@
               </div>
             </div>
             <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
-              <div class="ds-mr-10">Pass requests will automatically get sent to all teachers assigned to:</div>
+              <div class="ds-mr-10">Pass requests will automatically get sent to All teachers in room to:</div>
               <app-restriction-picker
                 [width]="240"
                 [height]="32"

@@ -96,15 +96,17 @@
         <div class="search-field" style="display: flex">
           <div class="ds-w-100">
             <app-sp-search
-                    [selectedOptions]="data && data.selectedTeachers ? data.selectedTeachers : []"
-                    [chipsMode]="true"
-                    [focused]="true"
-                    [role]="'_profile_teacher'"
-                    [dummyRoleText]="'teachers'"
-                    [rollUpAfterSelection]="true"
-                    [cancelButton]="true"
-                    [placeholder]="'Search Teachers'"
-                    (onUpdate)="selectTeacherEvent($event)"
+              [selectedOptions]="data && data.selectedTeachers ? data.selectedTeachers : []"
+              [chipsMode]="true"
+              [focused]="true"
+              [role]="'_profile_teacher'"
+              [dummyRoleText]="'teachers'"
+              [rollUpAfterSelection]="true"
+              [cancelButton]="true"
+              [placeholder]="'Search Teachers'"
+              [isProposed]="true"
+              [proposedSearchString]="data.roomName"
+              (onUpdate)="selectTeacherEvent($event)"
             ></app-sp-search>
           </div>
         </div>

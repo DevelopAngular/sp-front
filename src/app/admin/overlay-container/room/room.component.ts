@@ -114,7 +114,7 @@ export class RoomComponent implements OnInit, OnDestroy {
        page === Pages.NewRoomInFolder ||
        page === Pages.EditRoomInFolder)
    ) {
-     return ['Any teachers assigned', 'All teachers assigned'];
+     return ['Any teachers in room', 'All teachers in room'];
    }
   }
 
@@ -248,8 +248,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.data.selectedTeachers = teachers;
     if (!this.data.selectedTeachers.length) {
       this.data.advOptState = {
-        now: { state: 'Any teacher (default)', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
-        future: { state: 'Any teacher (default)', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
+        now: { state: 'Any teacher', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+        future: { state: 'Any teacher', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
       };
       this.resetadvOpt$.next(this.data.advOptState);
     }
@@ -315,9 +315,5 @@ export class RoomComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  focus() {
-
   }
 }
