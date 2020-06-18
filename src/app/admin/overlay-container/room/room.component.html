@@ -167,6 +167,7 @@
             [disabledOptions]="advDisabledOptions"
             (openedOptions)="advancedOptionsOpened($event, advancedOptionsRef)"
             [resetOptions$]="resetadvOpt$"
+            [roomData]="data"
             (resultOptions)="advancedOptions($event)"
             (nowRestrEmit)="restrictedEvent($event)"
             (futureRestEmit)="schedulingRestrictedEvent($event)"

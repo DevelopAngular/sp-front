@@ -1,5 +1,4 @@
 <div class="sp-search-wrapper" *ngIf="chipsMode && !inputField">
-  <div style="display: flex">
     <div class="chip">
       <app-sp-chips
         [preventRemovingLast]="preventRemovingLast"
@@ -8,17 +7,16 @@
         (updateSelectedEvent)="update($event)"
       ></app-sp-chips>
     </div>
-    <div class="chip">
-      <app-sp-chips
-        *ngIf="isProposed && suggestedTeacher"
-        [preventRemovingLast]="preventRemovingLast"
-        [selectedProfiles]="selectedOptions"
-        [text]="'Suggested: ' + suggestedTeacher.display_name"
-        (add)="addSuggested()"
-      ></app-sp-chips>
-    </div>
+  <div class="chip">
+    <app-sp-chips
+      *ngIf="isProposed && suggestedTeacher"
+      [preventRemovingLast]="preventRemovingLast"
+      [text]="'Suggested: ' + suggestedTeacher.display_name"
+      (add)="addSuggested()"
+    ></app-sp-chips>
   </div>
 </div>
+
 <div class="sp-search-wrapper" [style.width]="width" *ngIf="inputField">
 
   <div class="input">

@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { cloneDeep, isEqual } from 'lodash';
 import {Subject} from 'rxjs';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {OverlayDataService} from '../overlay-data.service';
+import {OverlayDataService, RoomData} from '../overlay-data.service';
 
 export interface OptionState {
     now: {
@@ -51,6 +51,7 @@ export class AdvancedOptionsComponent implements OnInit {
     @Input() disabledOptions: string[];
     @Input() data: OptionState;
     @Input() resetOptions$: Subject<OptionState>;
+    @Input() roomData: RoomData;
 
     @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() resultOptions: EventEmitter<{options: OptionState, validButtons: ValidButtons}> = new EventEmitter<{options: OptionState, validButtons: ValidButtons}>();
@@ -103,10 +104,6 @@ export class AdvancedOptionsComponent implements OnInit {
         toEnabled: [false],
         to: ['']
       });
-      this.restrictionForm = this.fb.group({
-        forNow: [],
-        forFuture: []
-      });
     }
 
     get bgColor() {
@@ -142,8 +139,12 @@ export class AdvancedOptionsComponent implements OnInit {
           this.checkValidOptions();
           this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
         });
-        this.futureRestEmit.emit(false);
-        this.nowRestrEmit.emit(false);
+        this.restrictionForm = this.fb.group({
+          forNow: [this.roomData.restricted],
+          forFuture: [this.roomData.scheduling_restricted]
+        });
+        this.futureRestEmit.emit(this.roomData.scheduling_restricted);
+        this.nowRestrEmit.emit(this.roomData.restricted);
     }
 
     buildData() {

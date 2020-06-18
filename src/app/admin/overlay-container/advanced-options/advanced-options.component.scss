@@ -53,6 +53,9 @@
         .line {
           display: flex;
           align-items: center;
+          .toggle {
+            z-index: 0;
+          }
           .toggle-content {
             margin: 0 12px;
             .title-line {
