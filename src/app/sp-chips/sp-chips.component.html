@@ -26,5 +26,22 @@
     [withShadow]="false"
     [fontSize]="'14px'"
     (buttonClick)="add.emit(true)"
-  >{{ text }}</app-gradient-button>
+  >Add</app-gradient-button>
+
+  <app-gradient-button
+   *ngIf="!!suggestedTeacher && isProposed"
+   [style.margin-left]="'10px'"
+   [size]="'editable'"
+   [minWidth]="'100px'"
+   [minHeight]="'31px'"
+   [textColor]="'#7F879D'"
+   [gradient]="'#F4F4F4, #F4F4F4'"
+   [hoverColor]="'#F4F4F4'"
+   [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
+   [leftImageWidth]="'16px'"
+   [leftImageHeight]="'16px'"
+   [withShadow]="false"
+   [fontSize]="'14px'"
+   (buttonClick)="addSuggestedTeacher.emit(suggestedTeacher)"
+  >Suggested: {{ suggestedTeacher.display_name }}</app-gradient-button>
 </div>

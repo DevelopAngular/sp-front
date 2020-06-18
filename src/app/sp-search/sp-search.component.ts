@@ -19,7 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, switchMap, takeUntil } from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
@@ -250,6 +250,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       this.userService.searchProfile('_profile_teacher', 1, this.proposedSearchString)
         .subscribe(res => {
           this.suggestedTeacher = res.results[0];
+          if (this.suggestedTeacher && (this.selectedOptions as any[]).find(t => t.id === this.suggestedTeacher.id)) {
+            this.isProposed = false;
+          }
         });
     }
 
@@ -447,7 +450,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  addSuggested() {
+  addSuggested(teacher) {
     this.selectedOptions.push(this.suggestedTeacher);
     this.onUpdate.emit(this.selectedOptions);
     this.isProposed = false;
