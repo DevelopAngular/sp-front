@@ -5,7 +5,7 @@ import { DarkThemeSwitch } from '../../../dark-theme-switch';
 import { DomSanitizer } from '@angular/platform-browser';
 import { cloneDeep, isEqual } from 'lodash';
 import {Subject} from 'rxjs';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {OverlayDataService, RoomData} from '../overlay-data.service';
 
 export interface OptionState {
@@ -72,7 +72,7 @@ export class AdvancedOptionsComponent implements OnInit {
         'Any teacher',
         'Any teachers in room',
         'All teachers in room',
-        'Certain \n teacher(s)'
+        'Certain \n teachers'
     ];
 
     optionState: OptionState;
@@ -100,9 +100,9 @@ export class AdvancedOptionsComponent implements OnInit {
     ) {
       this.mockAPCForm = this.fb.group({
         fromEnabled: [false],
-        from: [''],
+        from: ['', [Validators.required, Validators.min(1), Validators.pattern('^[0-9]*?[0-9]+$')]],
         toEnabled: [false],
-        to: ['']
+        to: ['', [Validators.required, Validators.min(1), Validators.pattern('^[0-9]*?[0-9]+$')]]
       });
     }
 
@@ -139,9 +139,9 @@ export class AdvancedOptionsComponent implements OnInit {
           this.checkValidOptions();
           this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
         });
-        this.restrictionForm = this.fb.group({
-          forNow: [this.roomData.restricted],
-          forFuture: [this.roomData.scheduling_restricted]
+        this.restrictionForm = new FormGroup({
+          forNow: new FormControl(this.roomData.restricted),
+          forFuture: new FormControl(this.roomData.scheduling_restricted)
         });
         this.futureRestEmit.emit(this.roomData.scheduling_restricted);
         this.nowRestrEmit.emit(this.roomData.restricted);
@@ -156,24 +156,6 @@ export class AdvancedOptionsComponent implements OnInit {
             nowTeachers: this.optionState.now.data.selectedTeachers,
             futTeachers: this.optionState.future.data.selectedTeachers,
         };
-    }
-
-    formValidation() {
-      if (this.mockAPCForm.dirty && this.initialState.fromEnabled !== this.mockAPCForm.value.fromEnabled) {
-        if (this.mockAPCForm.value.fromEnabled) {
-          this.isShowButtons = {
-            publish: false,
-            incomplete: true,
-            cancel: true
-          };
-        } else {
-          this.isShowButtons = {
-            publish: false,
-            incomplete: false,
-            cancel: false
-          };
-        }
-      }
     }
 
     toggleContent() {
@@ -228,8 +210,8 @@ export class AdvancedOptionsComponent implements OnInit {
             (future.state === 'Any teachers in room' && !future.data.any_teach_assign) ||
             (now.state === 'All teachers in room' && !now.data.all_teach_assign) ||
             (future.state === 'All teachers in room' && !future.data.all_teach_assign) ||
-            (now.state === 'Certain \n teacher(s)' && !now.data.selectedTeachers.length) ||
-            (future.state === 'Certain \n teacher(s)' && !future.data.selectedTeachers.length ||
+            (now.state === 'Certain \n teachers' && !now.data.selectedTeachers.length) ||
+            (future.state === 'Certain \n teachers' && !future.data.selectedTeachers.length ||
             this.mockAPCForm.dirty )
         ) {
             if (!isEqual(this.initialState, {...this.optionState, ...this.mockAPCForm.value})) {
@@ -240,8 +222,8 @@ export class AdvancedOptionsComponent implements OnInit {
                 };
                 if (this.mockAPCForm.value.from || this.mockAPCForm.value.to) {
                   if (
-                    (this.mockAPCForm.value.from && (this.mockAPCForm.value.toEnabled && !this.mockAPCForm.value.to)) ||
-                    (this.mockAPCForm.value.to && (this.mockAPCForm.value.fromEnabled && !this.mockAPCForm.value.from))
+                    (this.mockAPCForm.value.from && (this.mockAPCForm.value.toEnabled && !this.mockAPCForm.value.to) || this.mockAPCForm.get('from').invalid) ||
+                    (this.mockAPCForm.value.to && (this.mockAPCForm.value.fromEnabled && !this.mockAPCForm.value.from) || this.mockAPCForm.get('from').invalid)
                   ) {
                     this.isShowButtons = {
                       publish: false,

@@ -3,10 +3,9 @@
 .wrapper {
   cursor: pointer;
 
-  &:focus {
+  &:hover, &:focus {
     outline: none;
-    background-color: #ECF1FF !important;
-    color: $navy !important;
+    background-color: rgba(127, 135, 157, .1) !important;
   }
 }
 
@@ -16,6 +15,7 @@
 
 .info {
   font-size: 14px;
+  font-weight: 500;
   display: flex;
   flex-direction: row;
   padding: 11.5px 6px 11.5px 8px;
@@ -45,7 +45,7 @@
 .room{
   white-space: nowrap;
   margin-left: auto;
-  //width: 55px;
+  font-weight: normal;
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;

@@ -62,11 +62,11 @@
       <!-- Create Pass Form -->
       <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode && pinnablesLoaded"
            class="choices">
-        <div class="choice" *ngFor="let choice of normalizeLocations(starredChoices)">
+        <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
-            [value]="choice"
+            [value]="normalizeLocations(choice)"
             [type]="type"
             [hasLocks]="hasLocks"
             [forLater]="forLater"
@@ -95,7 +95,7 @@
       <div class="choices">
         <div
           class="choice-wrapper"
-          *ngFor="let choice of normalizeLocations(choices)"
+          *ngFor="let choice of choices"
           #item
         >
           <app-location-cell
@@ -108,7 +108,7 @@
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
             [allowOnStar]="allowOnStar"
-            [value]="choice"
+            [value]="normalizeLocations(choice)"
             [type]="type"
             [valid]="isValidLocation(choice)"
           >

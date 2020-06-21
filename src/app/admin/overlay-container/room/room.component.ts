@@ -191,7 +191,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   checkValidRoomOptions() {
       if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
-          if (this.validForm && this.isValidRestrictions) {
+          if (this.validForm) {
               this.roomValidButtons = {
                   publish: false,
                   incomplete: false,
@@ -205,7 +205,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           }
       } else {
-        if (this.validForm && this.isValidRestrictions) {
+        if (this.validForm) {
             this.roomValidButtons = {
                 publish: true,
                 incomplete: false,

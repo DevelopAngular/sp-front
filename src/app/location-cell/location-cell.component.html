@@ -2,10 +2,8 @@
      #cell
      appCrossPointerEventTarget
      (pointerClickEvent)="cellSelected(); screen.enabledLocationTableDnD.next(false)"
-     (pointerDownEvent)="onPress(true); changeColor(true, true)"
-     (pointerCancelEvent)="changeColor(false, false); screen.enabledLocationTableDnD.next(false)"
-     (mouseenter)="changeColor(true)"
-     (mouseleave)="changeColor(false)"
+     (pointerDownEvent)="onPress(true);"
+     (pointerCancelEvent)="screen.enabledLocationTableDnD.next(false)"
      [style.color]="textColor"
      [style.cursor]="cursor"
      tabindex="0"
@@ -18,7 +16,7 @@
     <div class="room" [style.color]="roomColor">
       <div class="circle" *ngIf="true" [style.background]="gradient">5</div>
       {{value.room}}
-      <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Lock (Navy).svg' | resolveAsset">
+      <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Locked (Blue-Gray).svg' | resolveAsset">
     </div>
   </div>
 

@@ -105,7 +105,7 @@
           </div>
           <div class="toggle-content">
             <div class="title-line">
-              <div class="label">Restriction for now</div>
+              <div class="label" [style.color]="nowRestricted ? '#1F194E' : '#7F879D'">Restriction for now</div>
               <img [matTooltip]="tooltipText.restriction" matTooltipClass="tooltip" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
             </div>
             <div class="toggle-options" *ngIf="nowRestricted">
@@ -148,7 +148,7 @@
                   [width]="240"
                   [height]="32"
                   [fontSize]="13"
-                  [selectedChoice]="selectedOpt.anyNow"
+                  [selectedChoice]="selectedOpt.anyNow || 'This Room'"
                   [choices]="['This Room', 'Origin', 'Both']"
                   (result)="changeState('now_any', $event)"
                 ></app-restriction-picker>
@@ -160,7 +160,7 @@
                 [width]="240"
                 [height]="32"
                 [fontSize]="13"
-                [selectedChoice]="selectedOpt.allNow"
+                [selectedChoice]="selectedOpt.allNow || 'This Room'"
                 [choices]="['This Room', 'Origin', 'Both']"
                 (result)="changeState('now_all', $event)"
               ></app-restriction-picker>
@@ -204,7 +204,7 @@
           </div>
           <div class="toggle-content">
             <div class="title-line">
-              <div class="label">Restriction for future</div>
+              <div class="label" [style.color]="futureRestricted ? '#1F194E' : '#7F879D'">Restriction for future</div>
               <img [matTooltip]="tooltipText.scheduling_restricted" matTooltipClass="tooltip" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
             </div>
             <div class="toggle-options" *ngIf="futureRestricted">
@@ -248,7 +248,7 @@
                   [width]="240"
                   [height]="32"
                   [fontSize]="13"
-                  [selectedChoice]="selectedOpt.anyFut"
+                  [selectedChoice]="selectedOpt.anyFut || 'This Room'"
                   [choices]="['This Room', 'Origin',  'Both']"
                   (result)="changeState('future_any', $event)"
                 ></app-restriction-picker>
@@ -260,7 +260,7 @@
                 [width]="240"
                 [height]="32"
                 [fontSize]="13"
-                [selectedChoice]="selectedOpt.allFut"
+                [selectedChoice]="selectedOpt.allFut || 'This Room'"
                 [choices]="['This Room', 'Origin',  'Both']"
                 (result)="changeState('future_all', $event)"
               ></app-restriction-picker>
@@ -303,25 +303,26 @@
           </div>
           <div class="toggle-content">
             <div class="title-line">
-              <div class="label">Pass Limit: <span class="place">form this room</span></div>
+              <div class="label" [style.color]="mockAPCForm.get('fromEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit <span class="place">form</span> this room</div>
             </div>
           </div>
         </div>
         <div class="active-block" *ngIf="mockAPCForm.get('fromEnabled').value">
-          <app-input
-            [width]="'131px'"
-            [height]="'40px'"
-            [maxLength]="15"
-            [fieldSpace]="'0px'"
-            [input_value]="mockAPCForm.get('from').value"
-            [formGroup]="mockAPCForm"
-            [timeInput]="true"
-            [controlName]="mockAPCForm.get('from')"
-            [disabled]="!mockAPCForm.get('fromEnabled').value"
-            [placeholder]="'# of passes'"
-            (onUpdate)="change$.next()"
-          >
-          </app-input>
+          <div [style.width]="'145px'">
+            <app-input
+              [width]="'131px'"
+              [height]="'40px'"
+              [maxLength]="15"
+              [isFocus]="true"
+              [fieldSpace]="'0px'"
+              [input_value]="mockAPCForm.get('from').value"
+              [formGroup]="mockAPCForm"
+              [timeInput]="true"
+              [controlName]="mockAPCForm.get('from')"
+              [placeholder]="'# of passes'"
+              (onUpdate)="change$.next()">
+            </app-input>
+          </div>
         </div>
       </div>
 
@@ -341,24 +342,25 @@
           </div>
           <div class="toggle-content">
             <div class="title-line">
-              <div class="label">Pass Limit: <span class="place">to this room</span></div>
+              <div class="label" [style.color]="mockAPCForm.get('toEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit <span class="place">to</span> this room</div>
             </div>
           </div>
         </div>
         <div class="active-block" *ngIf="mockAPCForm.get('toEnabled').value">
-          <app-input
-            [width]="'131px'"
-            [height]="'40px'"
-            [maxLength]="15"
-            [fieldSpace]="'0px'"
-            [timeInput]="true"
-            [input_value]="mockAPCForm.get('to').value"
-            [formGroup]="mockAPCForm"
-            [controlName]="mockAPCForm.get('to')"
-            [disabled]="!mockAPCForm.get('toEnabled').value"
-            [placeholder]="'# of passes'"
-          >
-          </app-input>
+          <div [style.width]="'145px'">
+            <app-input
+              [width]="'131px'"
+              [height]="'40px'"
+              [maxLength]="15"
+              [isFocus]="true"
+              [fieldSpace]="'0px'"
+              [timeInput]="true"
+              [input_value]="mockAPCForm.get('to').value"
+              [formGroup]="mockAPCForm"
+              [controlName]="mockAPCForm.get('to')"
+              [placeholder]="'# of passes'">
+            </app-input>
+          </div>
         </div>
       </div>
 

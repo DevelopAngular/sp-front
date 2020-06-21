@@ -62,7 +62,6 @@ export interface Navigation {
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
   animations: [NextStep],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
@@ -227,6 +226,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
     this.dialogRef
       .backdropClick()
+      .pipe(filter(() => this.FORM_STATE.state !== 1))
       .subscribe(() => {
         this.formService.setFrameMotionDirection('disable');
         this.formService.compressableBoxController.next(false);

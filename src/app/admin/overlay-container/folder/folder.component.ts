@@ -364,7 +364,7 @@ export class FolderComponent implements OnInit, OnDestroy {
         } else if (loc.request_mode === 'all_teachers_in_room') {
             this.advOptState.now.state = 'All teachers in room';
         } else if (loc.request_mode === 'specific_teachers') {
-            this.advOptState.now.state = 'Certain \n teacher(s)';
+            this.advOptState.now.state = 'Certain \n teachers';
         }
         if (loc.scheduling_request_mode === 'any_teacher') {
             this.advOptState.future.state = 'Any teacher';
@@ -373,7 +373,7 @@ export class FolderComponent implements OnInit, OnDestroy {
         } else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
             this.advOptState.future.state = 'All teachers in room';
         } else if (loc.scheduling_request_mode === 'specific_teachers') {
-            this.advOptState.future.state = 'Certain \n teacher(s)';
+            this.advOptState.future.state = 'Certain \n teachers';
         }
         return this.advOptState;
     }

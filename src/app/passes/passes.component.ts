@@ -466,6 +466,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',
           backdropClass: 'custom-backdrop',
+          disableClose: true,
           maxWidth: '100vw',
           data: {
             'forLater': forLater,

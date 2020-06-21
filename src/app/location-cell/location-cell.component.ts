@@ -86,7 +86,7 @@ export class LocationCellComponent implements OnInit {
       if (this.hovered) {
         return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
       } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+          return this.sanitizer.bypassSecurityTrustStyle('#7F879D');
       }
     } else {
        return this.sanitizer.bypassSecurityTrustStyle('#CDCDCE');

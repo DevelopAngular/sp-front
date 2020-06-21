@@ -349,7 +349,7 @@ export class OverlayContainerComponent implements OnInit {
       } else if (loc.request_mode === 'all_teachers_in_room') {
           this.advOptState.now.state = 'All teachers in room';
       } else if (loc.request_mode === 'specific_teachers') {
-          this.advOptState.now.state = 'Certain \n teacher(s)';
+          this.advOptState.now.state = 'Certain \n teachers';
       }
       if (loc.scheduling_request_mode === 'any_teacher') {
           this.advOptState.future.state = 'Any teacher';
@@ -358,7 +358,7 @@ export class OverlayContainerComponent implements OnInit {
       } else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
           this.advOptState.future.state = 'All teachers in room';
       } else if (loc.scheduling_request_mode === 'specific_teachers') {
-          this.advOptState.future.state = 'Certain \n teacher(s)';
+          this.advOptState.future.state = 'Certain \n teachers';
       }
       return this.advOptState;
   }
@@ -427,7 +427,7 @@ export class OverlayContainerComponent implements OnInit {
           data.request_mode = 'teacher_in_room';
       } else if (roomData.advOptState.now.state === 'All teachers in room') {
           data.request_mode = 'all_teachers_in_room';
-      } else if (roomData.advOptState.now.state === 'Certain \n teacher(s)') {
+      } else if (roomData.advOptState.now.state === 'Certain \n teachers') {
           data.request_mode = 'specific_teachers';
       }
       if (roomData.advOptState.future.state === 'Any teacher') {
@@ -438,7 +438,7 @@ export class OverlayContainerComponent implements OnInit {
           data.scheduling_request_mode = 'teacher_in_room';
       } else if (roomData.advOptState.future.state === 'All teachers in room') {
           data.scheduling_request_mode = 'all_teachers_in_room';
-      } else if (roomData.advOptState.future.state === 'Certain \n teacher(s)') {
+      } else if (roomData.advOptState.future.state === 'Certain \n teachers') {
           data.scheduling_request_mode = 'specific_teachers';
       }
       if (roomData.advOptState.now.data.any_teach_assign === 'Both' || roomData.advOptState.now.data.all_teach_assign === 'Both') {

@@ -187,15 +187,13 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   }
 
-  normalizeLocations(locations) {
-    return locations.map(loc => {
+  normalizeLocations(loc) {
       if (loc.category) {
         loc.gradient = this.pinnables[loc.category].gradient_color;
       } else {
         loc.gradient = this.pinnables[loc.id].gradient_color;
       }
       return loc;
-    });
   }
 
   ngOnDestroy(): void {
