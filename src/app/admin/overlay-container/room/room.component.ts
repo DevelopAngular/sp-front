@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output} f
 import { FormGroup } from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material';
 
-import { merge, Subject } from 'rxjs';
+import {merge, Observable, Subject} from 'rxjs';
 import {debounceTime, filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
@@ -26,6 +26,10 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
+
+  @Input() showErrors: boolean;
+
+  @Input() passLimitForm: FormGroup;
 
   @Output() back = new EventEmitter();
 
@@ -277,14 +281,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   schedulingRestrictedEvent(isRestricted) {
       this.data.scheduling_restricted = isRestricted;
       this.change$.next();
-  }
-
-  advancedOptionsOpened(event: boolean, advancedOptionsRef: HTMLElement) {
-    if (event) {
-        setTimeout(() => {
-            advancedOptionsRef.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
-        }, 10);
-    }
   }
 
   advancedOptions({options, validButtons}) {

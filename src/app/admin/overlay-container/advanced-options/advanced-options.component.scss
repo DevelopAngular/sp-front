@@ -1,6 +1,7 @@
 @import '../../../../sp-colors';
 
 .options-wrapper {
+  overflow: hidden;
 
   .options-header {
     display: block;
@@ -67,7 +68,7 @@
                 font-weight: bold;
 
                 .place {
-                  color: $blue-gray;
+                  //color: $blue-gray;
                   margin-left: 5px;
                   border-bottom: 3px solid $blue-gray;
                 }

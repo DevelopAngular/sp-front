@@ -33,7 +33,7 @@
       <div class="travel-settings">
         <div class="travel-picker">
           <div class="toggle-label">
-            <span [ngStyle]="{'color': !data?.travelType.length ? '#7F879D' : ' #1F195E'}">Travel Type</span>
+            <span [ngStyle]="{'color': !data?.travelType.length ? (showErrors ? '#E32C66' : '#7F879D') : ' #1F195E'}">Travel Type</span>
             <div class="tooltip-container">
               <img
                 [matTooltip]="tooltipText.travel"
@@ -165,9 +165,9 @@
             [futureRestricted]="data.scheduling_restricted"
             [data]="data.advOptState"
             [disabledOptions]="advDisabledOptions"
-            (openedOptions)="advancedOptionsOpened($event, advancedOptionsRef)"
             [resetOptions$]="resetadvOpt$"
             [roomData]="data"
+            [passLimitForm]="passLimitForm"
             (resultOptions)="advancedOptions($event)"
             (nowRestrEmit)="restrictedEvent($event)"
             (futureRestEmit)="schedulingRestrictedEvent($event)"

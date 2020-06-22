@@ -191,7 +191,11 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       if (loc.category) {
         loc.gradient = this.pinnables[loc.category].gradient_color;
       } else {
-        loc.gradient = this.pinnables[loc.id].gradient_color;
+        if (!this.pinnables[loc.id] || !this.pinnables[loc.id].gradient_color) {
+          loc.gradient = '#7f879d, #7f879d';
+        } else {
+          loc.gradient = this.pinnables[loc.id].gradient_color;
+        }
       }
       return loc;
   }

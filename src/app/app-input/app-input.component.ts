@@ -110,9 +110,9 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(sc: SimpleChanges) {
-    if ('forcedFocus' in sc && !sc.forcedFocus.isFirstChange() && sc.forcedFocus.currentValue) {
-      this.input.nativeElement.focus();
-    }
+    // if ('forcedFocus' in sc && !sc.forcedFocus.isFirstChange() && sc.forcedFocus.currentValue) {
+    //   this.input.nativeElement.focus();
+    // }
   }
 
   updateFocus(el) {

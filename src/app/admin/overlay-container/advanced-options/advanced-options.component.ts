@@ -52,6 +52,7 @@ export class AdvancedOptionsComponent implements OnInit {
     @Input() data: OptionState;
     @Input() resetOptions$: Subject<OptionState>;
     @Input() roomData: RoomData;
+    @Input() passLimitForm: FormGroup;
 
     @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() resultOptions: EventEmitter<{options: OptionState, validButtons: ValidButtons}> = new EventEmitter<{options: OptionState, validButtons: ValidButtons}>();
@@ -65,7 +66,6 @@ export class AdvancedOptionsComponent implements OnInit {
     openNowOptions: boolean;
     openFutureOptions: boolean;
 
-    mockAPCForm: FormGroup;
     restrictionForm: FormGroup;
 
     toggleChoices = [
@@ -98,24 +98,6 @@ export class AdvancedOptionsComponent implements OnInit {
         private fb: FormBuilder,
         private overlayService: OverlayDataService
     ) {
-      this.mockAPCForm = this.fb.group({
-        fromEnabled: [false],
-        from: ['', [Validators.required, Validators.min(1), Validators.pattern('^[0-9]*?[0-9]+$')]],
-        toEnabled: [false],
-        to: ['', [Validators.required, Validators.min(1), Validators.pattern('^[0-9]*?[0-9]+$')]]
-      });
-    }
-
-    get bgColor() {
-        if (this.hovered) {
-            if (this.pressed) {
-                return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-            } else {
-                return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
-            }
-        } else {
-            return this.sanitizer.bypassSecurityTrustStyle('transparent');
-        }
     }
 
     ngOnInit() {
@@ -123,18 +105,18 @@ export class AdvancedOptionsComponent implements OnInit {
         this.optionState = cloneDeep(this.data);
         this.initialState = cloneDeep({
           ...this.optionState,
-          ...this.mockAPCForm.value
+          ...this.passLimitForm.value
         });
         this.resetOptions$.subscribe(data => {
           this.optionState = cloneDeep(data);
         });
         this.buildData();
-        this.mockAPCForm.valueChanges.subscribe(res => {
-          if (!res.fromEnabled && res.from !== '') {
-            this.mockAPCForm.get('from').setValue('');
+        this.passLimitForm.valueChanges.subscribe(res => {
+          if (!res.fromEnabled && res.from !== 0) {
+            this.passLimitForm.get('from').setValue('');
           }
-          if (!res.toEnabled && res.to !== '') {
-            this.mockAPCForm.get('to').setValue('');
+          if (!res.toEnabled && res.to !== 0) {
+            this.passLimitForm.get('to').setValue('');
           }
           this.checkValidOptions();
           this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
@@ -212,18 +194,18 @@ export class AdvancedOptionsComponent implements OnInit {
             (future.state === 'All teachers in room' && !future.data.all_teach_assign) ||
             (now.state === 'Certain \n teachers' && !now.data.selectedTeachers.length) ||
             (future.state === 'Certain \n teachers' && !future.data.selectedTeachers.length ||
-            this.mockAPCForm.dirty )
+            this.passLimitForm.dirty )
         ) {
-            if (!isEqual(this.initialState, {...this.optionState, ...this.mockAPCForm.value})) {
+            if (!isEqual(this.initialState, {...this.optionState, ...this.passLimitForm.value})) {
                 this.isShowButtons = {
                     publish: false,
                     incomplete: true,
                     cancel: true
                 };
-                if (this.mockAPCForm.value.from || this.mockAPCForm.value.to) {
+                if (this.passLimitForm.value.from || this.passLimitForm.value.to) {
                   if (
-                    (this.mockAPCForm.value.from && (this.mockAPCForm.value.toEnabled && !this.mockAPCForm.value.to) || this.mockAPCForm.get('from').invalid) ||
-                    (this.mockAPCForm.value.to && (this.mockAPCForm.value.fromEnabled && !this.mockAPCForm.value.from) || this.mockAPCForm.get('from').invalid)
+                    (this.passLimitForm.value.from && (this.passLimitForm.value.toEnabled && !this.passLimitForm.value.to) || this.passLimitForm.get('from').invalid) ||
+                    (this.passLimitForm.value.to && (this.passLimitForm.value.fromEnabled && !this.passLimitForm.value.from) || this.passLimitForm.get('from').invalid)
                   ) {
                     this.isShowButtons = {
                       publish: false,
@@ -246,7 +228,7 @@ export class AdvancedOptionsComponent implements OnInit {
                 };
             }
         } else {
-            if (isEqual(this.initialState, {...this.optionState, ...this.mockAPCForm.value})) {
+            if (isEqual(this.initialState, {...this.optionState, ...this.passLimitForm.value})) {
                 this.isShowButtons = {
                     publish: false,
                     incomplete: false,

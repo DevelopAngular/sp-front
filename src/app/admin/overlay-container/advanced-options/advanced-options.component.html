@@ -292,7 +292,7 @@
           <div class="toggle">
             <app-toggle-input
               [delimiter]="false"
-              [form]="mockAPCForm"
+              [form]="passLimitForm"
               [controlName]="'fromEnabled'"
               [controlSize]="'small'"
               [color]="'#1F195E'"
@@ -303,22 +303,21 @@
           </div>
           <div class="toggle-content">
             <div class="title-line">
-              <div class="label" [style.color]="mockAPCForm.get('fromEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit <span class="place">form</span> this room</div>
+              <div class="label" [style.color]="passLimitForm.get('fromEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit <span class="place">from</span> this room</div>
             </div>
           </div>
         </div>
-        <div class="active-block" *ngIf="mockAPCForm.get('fromEnabled').value">
+        <div class="active-block" *ngIf="passLimitForm.get('fromEnabled').value">
           <div [style.width]="'145px'">
             <app-input
               [width]="'131px'"
               [height]="'40px'"
               [maxLength]="15"
-              [isFocus]="true"
               [fieldSpace]="'0px'"
-              [input_value]="mockAPCForm.get('from').value"
-              [formGroup]="mockAPCForm"
+              [input_value]="passLimitForm.get('from').value || ''"
+              [formGroup]="passLimitForm"
               [timeInput]="true"
-              [controlName]="mockAPCForm.get('from')"
+              [controlName]="passLimitForm.get('from')"
               [placeholder]="'# of passes'"
               (onUpdate)="change$.next()">
             </app-input>
@@ -331,7 +330,7 @@
           <div class="toggle">
             <app-toggle-input
               [delimiter]="false"
-              [form]="mockAPCForm"
+              [form]="passLimitForm"
               [controlName]="'toEnabled'"
               [controlSize]="'small'"
               [color]="'#1F195E'"
@@ -342,22 +341,21 @@
           </div>
           <div class="toggle-content">
             <div class="title-line">
-              <div class="label" [style.color]="mockAPCForm.get('toEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit <span class="place">to</span> this room</div>
+              <div class="label" [style.color]="passLimitForm.get('toEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit <span class="place">to</span> this room</div>
             </div>
           </div>
         </div>
-        <div class="active-block" *ngIf="mockAPCForm.get('toEnabled').value">
+        <div class="active-block" *ngIf="passLimitForm.get('toEnabled').value">
           <div [style.width]="'145px'">
             <app-input
               [width]="'131px'"
               [height]="'40px'"
               [maxLength]="15"
-              [isFocus]="true"
               [fieldSpace]="'0px'"
               [timeInput]="true"
-              [input_value]="mockAPCForm.get('to').value"
-              [formGroup]="mockAPCForm"
-              [controlName]="mockAPCForm.get('to')"
+              [input_value]="passLimitForm.get('to').value || ''"
+              [formGroup]="passLimitForm"
+              [controlName]="passLimitForm.get('to')"
               [placeholder]="'# of passes'">
             </app-input>
           </div>

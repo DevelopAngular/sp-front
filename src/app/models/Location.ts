@@ -21,7 +21,12 @@ export class Location extends BaseModel {
               public travel_types: string[],
               public teachers: User[],
               public max_allowed_time: number,
-              public starred: boolean) {
+              public starred: boolean,
+              public max_passes_from: number,
+              public max_passes_from_active: boolean,
+              public max_passes_to: number,
+              public max_passes_to_active: boolean
+              ) {
     super();
   }
 
@@ -49,7 +54,11 @@ export class Location extends BaseModel {
       scheduling_request_mode: string = JSON['scheduling_request_mode'],
       scheduling_request_send_destination_teachers: boolean = !!JSON['scheduling_request_send_destination_teachers'],
       scheduling_request_send_origin_teachers: boolean = !!JSON['scheduling_request_send_origin_teachers'],
-      scheduling_request_teachers: User[]  = [];
+      scheduling_request_teachers: User[]  = [],
+      max_passes_from: number = JSON['max_passes_from'],
+      max_passes_from_active: boolean = !!JSON['max_passes_from_active'],
+      max_passes_to: number = JSON['max_passes_to'],
+      max_passes_to_active: boolean = !!JSON['max_passes_to_active'];
 
     const attachmentsJSON = JSON['required_attachments'];
     for (let i = 0; i < attachmentsJSON.length; i++) {
@@ -79,7 +88,8 @@ export class Location extends BaseModel {
       teachers.push(User.fromJSON(teachersJSON[i]));
     }
 
-    return new Location(id,
+    return new Location(
+        id,
         title,
         campus,
         room,
@@ -99,6 +109,10 @@ export class Location extends BaseModel {
         teachers,
         max_allowed_time,
         starred,
+        max_passes_from,
+        max_passes_from_active,
+        max_passes_to,
+        max_passes_to_active
         );
   }
 
