@@ -39,18 +39,19 @@
         <div class="pin-collection">
           <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
             <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-              <app-pinnable customToolTip [contentTemplate]="tooltip" [showToolTip]="pinnable.location"
+              <app-pinnable customToolTip [contentTemplate]="tooltip" [showToolTip]="pinnable.location && pinnable.location.max_passes_to_active"
                 [width]="gridRestrictions.pileWidth"
                 [height]="gridRestrictions.pileHeight"
                 [valid]="(pinnable.location && location ? isValidPinnable(pinnable) : true)"
                 [forStaff]="isStaff && !dialogData.kioskModeRoom"
                 [forLater]="!!date"
                 [pinnable]="pinnable"
+                [currentPage]="'to'"
                 (onSelectEvent)="pinnableSelected($event)"
               ></app-pinnable>
 
               <ng-template #tooltip>
-                <app-pass-limit-tooltip [description]="'5 students have passes from this room'"></app-pass-limit-tooltip>
+                <app-pass-limit-tooltip [description]="pinnable.location.max_passes_to + ' students have passes from this room'"></app-pass-limit-tooltip>
               </ng-template>
 
             </mat-grid-tile>
@@ -79,6 +80,7 @@
       (onSelect)="locationSelected($event)"
       [dummyString]="'No rooms found'"
       [mergedAllRooms]="true"
+      [currentPage]="'to'"
     >
     </app-location-table>
 

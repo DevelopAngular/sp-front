@@ -42,13 +42,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() isEdit: boolean = false;
   @Input() rightHeaderText: boolean = false;
   @Input() mergedAllRooms: boolean;
-  @Input() dummyString: '';
+  @Input() dummyString: string =  '';
   @Input() withMergedStars: boolean = true;
   @Input() searchExceptFavourites: boolean = false;
   @Input() allowOnStar: boolean = false;
   @Input() isFavoriteForm: boolean;
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
+  @Input() currentPage: string;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();

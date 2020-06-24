@@ -49,11 +49,11 @@
       </div>
 
       <div class="block" *ngIf="currentPage === 5">
-        <app-new-room-in-folder [form]="form" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
+        <app-new-room-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (errorsEmit)="setFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
       </div>
 
       <div class="block" *ngIf="currentPage === 6">
-        <app-edit-room-in-folder (deleteRoom)="deleteRoomInFolder($event)" [form]="form" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
+        <app-edit-room-in-folder (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="setFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
       </div>
 
       <div class="block" *ngIf="currentPage === 8">
@@ -69,11 +69,11 @@
       </div>
 
       <div class="block" *ngIf="currentPage === 9">
-        <app-bulk-edit-rooms (bulkEditResult)="bulkEditResult($event)" [form]="form"></app-bulk-edit-rooms>
+        <app-bulk-edit-rooms (bulkEditResult)="bulkEditResult($event)" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors"></app-bulk-edit-rooms>
       </div>
 
       <div class="block" *ngIf="currentPage === 10">
-        <app-bulk-edit-rooms-in-folder [form]="form" (bulkEditResult)="bulkEditInFolder($event)" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
+        <app-bulk-edit-rooms-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (bulkEditResult)="bulkEditInFolder($event)" (errorsEmit)="setFormErrors()" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
       </div>
 
 

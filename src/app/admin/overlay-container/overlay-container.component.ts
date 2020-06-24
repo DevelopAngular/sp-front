@@ -579,9 +579,12 @@ export class OverlayContainerComponent implements OnInit {
           icon: this.selectedIcon.inactive_icon,
           category: this.folderData.folderName + salt
         };
-
-        this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
-          .subscribe(res => this.dialogRef.close(true));
+        if (this.pinnable) {
+          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
+            .subscribe(res => this.dialogRef.close(true));
+        } else {
+          this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)).subscribe(res => this.dialogRef.close(true));
+        }
       }
       if (this.folderData.roomsToDelete.length) {
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
@@ -834,11 +837,15 @@ export class OverlayContainerComponent implements OnInit {
       id: room.id,
       title: room.roomName,
       room: room.roomNumber,
-      restricted: room.restricted,
-      scheduling_restricted: room.scheduling_restricted,
+      restricted: !!room.restricted,
+      scheduling_restricted: !!room.scheduling_restricted,
       teachers: room.selectedTeachers,
       travel_types: room.travelType,
       max_allowed_time: +room.timeLimit,
+      max_passes_from: +this.passLimitForm.get('from').value,
+      max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
+      max_passes_to: +this.passLimitForm.get('to').value,
+      max_passes_to_active: this.passLimitForm.get('toEnabled').value,
     };
   }
 

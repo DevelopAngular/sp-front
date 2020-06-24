@@ -39,6 +39,8 @@ export class LocationCellComponent implements OnInit {
   @Input()
   allowOnStar: boolean = false;
 
+  @Input() currentPage: string;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
@@ -58,6 +60,10 @@ export class LocationCellComponent implements OnInit {
 
   get showLock() {
     return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
+  }
+
+  get show_max_passes() {
+    return !this.forStaff && (this.currentPage === 'from' && this.value.max_passes_from_active) || (this.currentPage === 'to' && this.value.max_passes_to_active);
   }
 
   get cursor() {

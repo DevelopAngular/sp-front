@@ -36,9 +36,9 @@
       </ng-template>
       <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="ARROW">
     </div>
-    <div *ngIf="restricted && !forStaff" class="overlay-container">
+    <div *ngIf="show_max_passes" class="overlay-container">
       <div class="overlay"></div>
-      <div class="pass-count">5</div>
+      <div class="pass-count">{{ currentPage === 'to' ? pinnable.location.max_passes_to : pinnable.location.max_passes_from }}</div>
     </div>
     <img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
   </div>

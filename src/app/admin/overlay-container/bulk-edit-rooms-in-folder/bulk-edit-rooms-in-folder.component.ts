@@ -15,6 +15,10 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
 
   @Input() form: FormGroup;
 
+  @Input() passLimitForm: FormGroup;
+
+  @Input() showErrors: boolean;
+
   @Output() back = new EventEmitter();
 
   @Output()
@@ -22,6 +26,8 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
     rooms: Location[],
     roomData: RoomData
   }> = new EventEmitter<{rooms: any[], roomData: RoomData}>();
+
+  @Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
 
   advOptionsButtons: ValidButtons;
 
@@ -110,6 +116,10 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
   }
 
   save() {
+    if (this.roomsValidButtons.getValue().incomplete) {
+      this.errorsEmit.emit();
+      return;
+    }
     this.bulkEditResult.emit({
       roomData: this.roomData,
       rooms: this.selectedRoomsInFolder

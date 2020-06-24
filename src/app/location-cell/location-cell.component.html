@@ -8,20 +8,20 @@
      [style.cursor]="cursor"
      tabindex="0"
 >
-  <div *ngIf="type==='location'" class="info" customToolTip [contentTemplate]="tooltip">
+  <div *ngIf="type==='location'" class="info" customToolTip [contentTemplate]="tooltip" [showToolTip]="show_max_passes">
     <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
     <div class="title">
       {{value.title}}
     </div>
     <div class="room" [style.color]="roomColor">
-      <div class="circle" *ngIf="true" [style.background]="gradient">5</div>
+      <div class="circle" *ngIf="show_max_passes" [style.background]="gradient">{{ currentPage === 'from' ? value.max_passes_from : value.max_passes_to }}</div>
       {{value.room}}
       <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Locked (Blue-Gray).svg' | resolveAsset">
     </div>
   </div>
 
   <ng-template #tooltip>
-    <app-pass-limit-tooltip [description]="'5 students have passes from this room'"></app-pass-limit-tooltip>
+    <app-pass-limit-tooltip [description]="(currentPage === 'from' ? value.max_passes_from : value.max_passes_to) + ' students have passes from this room'"></app-pass-limit-tooltip>
   </ng-template>
 
   <div *ngIf="type==='teachers'" class="info">

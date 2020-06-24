@@ -15,10 +15,16 @@ export class EditRoomInFolderComponent implements OnInit {
 
     @Input() form: FormGroup;
 
+    @Input() passLimitForm: FormGroup;
+
+    @Input() showErrors: boolean;
+
     @Output() back = new EventEmitter();
     @Output() deleteRoom = new EventEmitter();
 
     @Output() save: EventEmitter<RoomData> = new EventEmitter<RoomData>();
+
+    @Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
 
     roomValidButtons = new BehaviorSubject<ValidButtons>({
         publish: false,
@@ -61,6 +67,10 @@ export class EditRoomInFolderComponent implements OnInit {
   }
 
   saveInFolder() {
+    if (this.roomValidButtons.getValue().incomplete) {
+      this.errorsEmit.emit();
+      return;
+    }
      this.save.emit(this.roomInFolderData);
   }
 

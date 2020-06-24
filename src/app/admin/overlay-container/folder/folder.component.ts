@@ -220,11 +220,12 @@ export class FolderComponent implements OnInit, OnDestroy {
             this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
           }
         } else {
-          if (this.roomsImFolder.length) {
-            this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
-          } else {
-              this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
-          }
+          // if (this.roomsImFolder.length) {
+          //   this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
+          // } else {
+          //     this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
+          // }
+          this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
         }
       } else {
         this.folderValidButtons = {publish: false, incomplete: false, cancel: false};

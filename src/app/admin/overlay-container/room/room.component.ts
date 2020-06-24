@@ -134,7 +134,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.tooltipText = this.overlayService.tooltipText;
       this.currentPage = this.overlayService.pageState.getValue().currentPage;
 
-      if (this.overlayService.pageState.getValue().data) {
+    if (this.overlayService.pageState.getValue().data) {
           if (this.currentPage === Pages.EditRoom) {
               const pinnable = this.overlayService.pageState.getValue().data.pinnable;
               this.data = {
@@ -142,13 +142,19 @@ export class RoomComponent implements OnInit, OnDestroy {
                   roomNumber: pinnable.location.room,
                   travelType: pinnable.location.travel_types,
                   selectedTeachers: pinnable.location.teachers,
-                  restricted: pinnable.location.restricted,
-                  scheduling_restricted: pinnable.location.scheduling_restricted,
+                  restricted: !!pinnable.location.restricted,
+                  scheduling_restricted: !!pinnable.location.scheduling_restricted,
                   timeLimit: pinnable.location.max_allowed_time,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
+              this.passLimitForm.patchValue({
+                to: data.max_passes_to,
+                toEnabled: data.max_passes_to_active,
+                from: data.max_passes_from,
+                fromEnabled: data.max_passes_from_active
+              });
               this.data = {
                   id: data.id,
                   roomName: data.title,
@@ -156,8 +162,8 @@ export class RoomComponent implements OnInit, OnDestroy {
                   timeLimit: data.max_allowed_time,
                   selectedTeachers: data.teachers,
                   travelType: data.travel_types,
-                  restricted: data.restricted,
-                  scheduling_restricted: data.scheduling_restricted,
+                  restricted: !!data.restricted,
+                  scheduling_restricted: !!data.scheduling_restricted,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions
               };
           }

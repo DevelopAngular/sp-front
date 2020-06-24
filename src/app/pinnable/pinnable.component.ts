@@ -57,6 +57,8 @@ export class PinnableComponent implements OnInit, OnChanges {
 
   @Input() disabled: boolean = false;
 
+  @Input() currentPage: string;
+
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
@@ -92,6 +94,10 @@ export class PinnableComponent implements OnInit, OnChanges {
     } else {
       return this.sanitizer.bypassSecurityTrustStyle(' 0px 3px 5px rgba(0, 0, 0, 0.1)');
     }
+  }
+
+  get show_max_passes() {
+    return (!this.forStaff && this.pinnable.location) && ((this.currentPage === 'from' && this.pinnable.location.max_passes_from_active) || (this.currentPage === 'to' && this.pinnable.location.max_passes_to_active));
   }
 
   ngOnInit() {
