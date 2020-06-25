@@ -11,7 +11,13 @@
 
      (mouseenter)="hovered = true"
      (mouseleave)="onPress(false); hovered = false"
+     customToolTip [contentTemplate]="tooltip" [showToolTip]="show_max_passes"
 >
+
+  <ng-template #tooltip>
+    <app-pass-limit-tooltip [description]="pinnable.location.current_active_pass_count_as_destination + ' students have passes to this room'"></app-pass-limit-tooltip>
+  </ng-template>
+
      <div *ngIf="selected" class="selected-overlay"></div>
   <div class="pinnable-card" [style.background]="getGradient()" [style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'" [style.opacity]="valid ? 1 : 0.5" [style.height]="height">
     <img draggable="false" *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON">
@@ -38,7 +44,7 @@
     </div>
     <div *ngIf="show_max_passes" class="overlay-container">
       <div class="overlay"></div>
-      <div class="pass-count">{{ currentPage === 'to' ? pinnable.location.max_passes_to : pinnable.location.max_passes_from }}</div>
+      <div class="pass-count">{{ currentPage === 'to' ? pinnable.location.current_active_pass_count_as_destination : pinnable.location.current_active_pass_count_as_origin }}</div>
     </div>
     <img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
   </div>

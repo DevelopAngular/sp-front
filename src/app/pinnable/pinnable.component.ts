@@ -97,7 +97,9 @@ export class PinnableComponent implements OnInit, OnChanges {
   }
 
   get show_max_passes() {
-    return (!this.forStaff && this.pinnable.location) && ((this.currentPage === 'from' && this.pinnable.location.max_passes_from_active) || (this.currentPage === 'to' && this.pinnable.location.max_passes_to_active));
+    return (!this.forStaff && this.pinnable.location) &&
+      ((this.currentPage === 'from' && this.pinnable.location.max_passes_from_active && this.pinnable.location.current_active_pass_count_as_origin) ||
+      (this.currentPage === 'to' && this.pinnable.location.max_passes_to_active && this.pinnable.location.current_active_pass_count_as_destination));
   }
 
   ngOnInit() {

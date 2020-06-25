@@ -4,6 +4,8 @@ import { HttpService } from '../services/http-service';
 import { DomSanitizer } from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {School} from '../models/School';
+import {TooltipDataService} from '../services/tooltip-data.service';
 
 @Component({
   selector: 'app-location-cell',
@@ -39,12 +41,14 @@ export class LocationCellComponent implements OnInit {
   @Input()
   allowOnStar: boolean = false;
 
-  @Input() currentPage: string;
+  @Input() currentPage: 'from' | 'to';
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('cell') cell: ElementRef;
+
+  currentSchool: School;
 
   overStar: boolean = false;
   hovered: boolean;
@@ -55,15 +59,32 @@ export class LocationCellComponent implements OnInit {
     private http: HttpService,
     private sanitizer: DomSanitizer,
     public screen: ScreenService,
-    private renderer: Renderer2
-  ) {}
+    private renderer: Renderer2,
+    private tooltipService: TooltipDataService
+  ) {
+    this.currentSchool = this.http.getSchool();
+  }
 
   get showLock() {
     return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
   }
 
+  get tooltipDescription(): string {
+    return this.tooltipService.tooltipDescription(this.currentPage, this.value);
+  }
+
   get show_max_passes() {
-    return !this.forStaff && (this.currentPage === 'from' && this.value.max_passes_from_active) || (this.currentPage === 'to' && this.value.max_passes_to_active);
+    return !this.forStaff &&
+      (this.currentPage === 'from' && this.value.max_passes_from_active && this.value.current_active_pass_count_as_origin) ||
+      (this.currentPage === 'to' && this.value.max_passes_to_active && this.value.current_active_pass_count_as_destination);
+  }
+
+  get showTooltip() {
+    return !this.forStaff &&
+      (this.currentSchool.show_active_passes_number ||
+        (this.currentPage === 'from' && this.value.max_passes_from_active) ||
+        (this.currentPage === 'to' && this.value.max_passes_to_active)
+      );
   }
 
   get cursor() {

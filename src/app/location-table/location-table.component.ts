@@ -4,10 +4,11 @@ import { Location } from '../models/Location';
 import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
-import { sortBy, differenceBy, some, filter as _filter } from 'lodash';
+import { sortBy, filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {HallPassesService} from '../services/hall-passes.service';
+import {TooltipDataService} from '../services/tooltip-data.service';
 
 
 export interface Paged<T> {
@@ -49,7 +50,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() isFavoriteForm: boolean;
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
-  @Input() currentPage: string;
+  @Input() currentPage: 'from' | 'to';
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -80,8 +81,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       private pinnableService: HallPassesService,
       private shortcutsService: KeyboardShortcutsService,
       public screenService: ScreenService,
-  ) {
-  }
+      public tooltipService: TooltipDataService
+  ) {}
 
   ngOnInit() {
     this.pinnableService.loadedPinnables$.pipe(
@@ -295,8 +296,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
 
-  isValidLocation(location) {
-    return !this.invalidLocation || +location.id !== +this.invalidLocation;
+  isValidLocation(location: Location) {
+    return this.tooltipService.reachedPassLimit(this.currentPage, location) && !this.invalidLocation && +location.id !== +this.invalidLocation;
   }
 
   mergeLocations(url, withStars: boolean, category: string) {

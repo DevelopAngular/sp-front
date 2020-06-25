@@ -25,7 +25,11 @@ export class Location extends BaseModel {
               public max_passes_from: number,
               public max_passes_from_active: boolean,
               public max_passes_to: number,
-              public max_passes_to_active: boolean
+              public max_passes_to_active: boolean,
+              public current_active_pass_count_as_destination?: number,
+              public current_active_pass_count_as_origin?: number,
+              public has_reached_limit_as_destination?: boolean,
+              public has_reached_limit_as_origin?: boolean
               ) {
     super();
   }
@@ -58,7 +62,11 @@ export class Location extends BaseModel {
       max_passes_from: number = JSON['max_passes_from'],
       max_passes_from_active: boolean = !!JSON['max_passes_from_active'],
       max_passes_to: number = JSON['max_passes_to'],
-      max_passes_to_active: boolean = !!JSON['max_passes_to_active'];
+      max_passes_to_active: boolean = !!JSON['max_passes_to_active'],
+      current_active_pass_count_as_destination: number = JSON['current_active_pass_count_as_destination'],
+      current_active_pass_count_as_origin: number = JSON['current_active_pass_count_as_origin'],
+      has_reached_limit_as_destination: boolean = !!JSON['has_reached_limit_as_destination'],
+      has_reached_limit_as_origin: boolean = !!JSON['has_reached_limit_as_origin'];
 
     const attachmentsJSON = JSON['required_attachments'];
     for (let i = 0; i < attachmentsJSON.length; i++) {
@@ -112,7 +120,11 @@ export class Location extends BaseModel {
         max_passes_from,
         max_passes_from_active,
         max_passes_to,
-        max_passes_to_active
+        max_passes_to_active,
+        current_active_pass_count_as_destination,
+        current_active_pass_count_as_origin,
+        has_reached_limit_as_destination,
+        has_reached_limit_as_origin
         );
   }
 
@@ -120,7 +132,7 @@ export class Location extends BaseModel {
     return this.title + ' (' + this.room + ')';
   }
 
-  toString(): string{
+  toString(): string {
     return this.nameRoom;
   }
 }
