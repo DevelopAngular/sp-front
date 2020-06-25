@@ -377,14 +377,14 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         this.forceSelectedLocation = null;
       });
       overlayDialog.afterClosed()
-        .pipe(
-          switchMap((res) => {
-            if (res) {
-              return this.hallPassService.getPinnablesRequest()
-            }
-            return of(null);
-          }),
-        )
+        // .pipe(
+        //   switchMap((res) => {
+        //     if (res) {
+        //       return this.hallPassService.getPinnablesRequest();
+        //     }
+        //     return of(null);
+        //   }),
+        // )
         .subscribe(res => {
           this.selectedPinnables = [];
           this.bulkSelect = false;
