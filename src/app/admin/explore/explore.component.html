@@ -1,0 +1,10 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="switch-button" *ngIf="currentView$ | async as currentView" [style.background-color]="views[currentView].color">
+      <div class="button-content">
+        <img [src]="views[currentView].icon | resolveAsset" alt="View Icon">
+        <div class="title">{{ views[currentView].title }}</div>
+      </div>
+    </div>
+  </div>
+</div>

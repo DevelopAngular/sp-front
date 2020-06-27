@@ -12,6 +12,7 @@ const routes: Routes = [
       {path: 'dashboard', loadChildren: 'app/admin/dashboard/dashboard.module#DashboardModule'},
       {path: 'hallmonitor', loadChildren: 'app/admin/hallmonitor/hallmonitor.module#HallmonitorModule'},
       {path: 'search', loadChildren: 'app/admin/search/search.module#SearchModule'},
+      {path: 'explore', loadChildren: 'app/admin/explore/explore.module#ExploreModule'},
       {path: 'accounts', loadChildren: 'app/admin/accounts/accounts.module#AccountsModule'},
       {path: 'accounts/:role', loadChildren: 'app/admin/accounts-role/accounts-role.module#AccountsRoleModule' },
       {path: 'passconfig', loadChildren: 'app/admin/pass-config/pass-config.module#PassConfigModule'},
