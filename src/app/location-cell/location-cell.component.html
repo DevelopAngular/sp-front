@@ -14,7 +14,7 @@
       {{value.title}}
     </div>
     <div class="room" [style.color]="roomColor">
-      <div class="circle" *ngIf="show_max_passes" [style.background]="gradient">{{ currentPage === 'from' ? value.current_active_pass_count_as_origin : value.current_active_pass_count_as_destination }}</div>
+      <div class="circle" *ngIf="show_max_passes" [style.background]="gradient">{{ currentPage === 'from' ? passLimit.from_count : passLimit.to_count }}</div>
       {{value.room}}
       <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Locked (Blue-Gray).svg' | resolveAsset">
     </div>

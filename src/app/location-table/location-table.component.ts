@@ -9,6 +9,7 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TooltipDataService} from '../services/tooltip-data.service';
+import {PassLimit} from '../models/PassLimit';
 
 
 export interface Paged<T> {
@@ -68,6 +69,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   pinnables;
   pinnablesLoaded: boolean;
 
+  passLimits: {[id: number]: PassLimit};
+
   showSpinner$: Observable<boolean>;
   loaded$: Observable<boolean>;
 
@@ -105,6 +108,13 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         this.pinnables = res;
         this.pinnablesLoaded = true;
     });
+
+    this.locationService.getPassLimitRequest()
+      .pipe(switchMap(() => this.locationService.pass_limits_entities$))
+      .subscribe(res => {
+        this.passLimits = res;
+    });
+
     this.showSpinner$ = combineLatest(
       this.locationService.loadingLocations$,
       this.locationService.loadingFavoriteLocations$,
@@ -296,8 +306,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
 
-  isValidLocation(location: Location) {
-    return this.tooltipService.reachedPassLimit(this.currentPage, location) && !this.invalidLocation && +location.id !== +this.invalidLocation;
+  isValidLocation(location: PassLimit) {
+    return (!this.forStaff && this.tooltipService.reachedPassLimit(this.currentPage, location)) && (+location.id !== +this.invalidLocation);
   }
 
   mergeLocations(url, withStars: boolean, category: string) {

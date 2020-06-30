@@ -11,11 +11,11 @@
 
      (mouseenter)="hovered = true"
      (mouseleave)="onPress(false); hovered = false"
-     customToolTip [contentTemplate]="tooltip" [showToolTip]="show_max_passes"
+     customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip"
 >
 
   <ng-template #tooltip>
-    <app-pass-limit-tooltip [description]="pinnable.location.current_active_pass_count_as_destination + ' students have passes to this room'"></app-pass-limit-tooltip>
+    <app-pass-limit-tooltip [description]="tooltipDescription"></app-pass-limit-tooltip>
   </ng-template>
 
      <div *ngIf="selected" class="selected-overlay"></div>
@@ -44,7 +44,7 @@
     </div>
     <div *ngIf="show_max_passes" class="overlay-container">
       <div class="overlay"></div>
-      <div class="pass-count">{{ currentPage === 'to' ? pinnable.location.current_active_pass_count_as_destination : pinnable.location.current_active_pass_count_as_origin }}</div>
+      <div class="pass-count">{{ currentPage === 'to' ? passLimit.to_count : passLimit.from_count }}</div>
     </div>
     <img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
   </div>

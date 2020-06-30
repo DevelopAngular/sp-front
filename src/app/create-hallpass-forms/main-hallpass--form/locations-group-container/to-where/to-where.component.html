@@ -44,6 +44,7 @@
                 [height]="gridRestrictions.pileHeight"
                 [valid]="(pinnable.location && location ? isValidPinnable(pinnable) : true)"
                 [forStaff]="isStaff && !dialogData.kioskModeRoom"
+                [passLimit]="pinnable.location ? passLimits[pinnable.location.id] : null"
                 [forLater]="!!date"
                 [pinnable]="pinnable"
                 [currentPage]="'to'"
