@@ -46,7 +46,7 @@
       <div class="overlay"></div>
       <div class="pass-count">{{ currentPage === 'to' ? passLimit.to_count : passLimit.from_count }}</div>
     </div>
-    <img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
+    <img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Locked (White).svg' | resolveAsset" alt="LOCK">
   </div>
 </div>
 

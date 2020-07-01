@@ -2,6 +2,7 @@
 import { MatDialog } from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
 import {merge, of, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -83,7 +84,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    merge(of(''), this.forceFocus$)
+    merge(of(''), this.forceFocus$).pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         setTimeout(() => {
           if (this.isFocus) {
@@ -98,7 +99,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
       this.controlName.setValue(this.input_value);
     }, 50);
 
-    this.controlName.valueChanges
+    this.controlName.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(res => {
       this.onUpdate.emit(res);
     });

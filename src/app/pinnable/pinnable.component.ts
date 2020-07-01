@@ -106,22 +106,28 @@ export class PinnableComponent implements OnInit, OnChanges {
   }
 
   get show_max_passes() {
-    return (!this.forStaff && this.passLimit && this.currentSchool.show_active_passes_number) &&
-      ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
-      (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active));
+    if (this.passLimit) {
+      return (!this.forStaff && this.currentSchool.show_active_passes_number) &&
+        ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
+          (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active));
+    }
   }
 
   get showTooltip() {
-    return !this.forStaff && this.passLimit &&
-      this.currentSchool.show_active_passes_number ||
-      (
-        (this.currentPage === 'from' && this.passLimit && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
-        (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
-      );
+    if (this.passLimit) {
+      return !this.forStaff &&
+        this.currentSchool.show_active_passes_number ||
+        (
+          (this.currentPage === 'from' && this.passLimit && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
+          (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
+        );
+    }
   }
 
   get tooltipDescription(): string {
-    return this.passLimit && this.tooltipService.tooltipDescription('to', this.passLimit);
+    if (this.passLimit) {
+      return this.passLimit && this.tooltipService.tooltipDescription('to', this.passLimit);
+    }
   }
 
   ngOnInit() {

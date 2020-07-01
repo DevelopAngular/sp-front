@@ -7,7 +7,6 @@ import {DeviceDetection} from '../device-detection.helper';
 import {School} from '../models/School';
 import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
-import {LocationsService} from '../services/locations.service';
 
 @Component({
   selector: 'app-location-cell',
@@ -74,22 +73,28 @@ export class LocationCellComponent implements OnInit {
   }
 
   get tooltipDescription(): string {
-    return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit);
+    if (this.passLimit) {
+      return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit);
+    }
   }
 
   get show_max_passes() {
-    return (!this.forStaff && this.passLimit && this.currentSchool.show_active_passes_number) &&
-      ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
-      (this.currentPage === 'to' && this.passLimit.max_passes_to_active));
+    if (this.passLimit) {
+      return (!this.forStaff && this.currentSchool.show_active_passes_number) &&
+        ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
+          (this.currentPage === 'to' && this.passLimit.max_passes_to_active));
+    }
   }
 
   get showTooltip() {
-    return !this.forStaff && this.passLimit &&
-      this.currentSchool.show_active_passes_number ||
-      (
-        (this.currentPage === 'from' && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
-        (this.currentPage === 'to' && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
-      );
+    if (this.passLimit) {
+      return !this.forStaff &&
+        this.currentSchool.show_active_passes_number ||
+        (
+          (this.currentPage === 'from' && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
+          (this.currentPage === 'to' && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
+        );
+    }
   }
 
   get cursor() {

@@ -5,7 +5,7 @@
         [ngClass]="{
         'ds-dialog-heading': controlName.valid || controlName.pending || isFocus,
         'ds-dialog-heading-gray': controlName.invalid,
-        'clserrorLabel': controlName.invalid && controlName.errors && controlName.dirty
+        'clserrorLabel': !isFocus && (controlName.invalid && controlName.errors && controlName.dirty)
         }"
       >
         {{input_label}}
@@ -50,11 +50,11 @@
              (mouseleave)="hovered = false"
              (click)="isFocus = true; updateFocus(inp)"
              [placeholder]="(placeholder=='' ? '' : placeholder)"
-             [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.dirty }"
+             [ngClass]="{ clserrorInput: (controlName.invalid && controlName.errors && controlName.dirty) && !isFocus }"
              spellcheck="false" #inp />
       <div class="min"
            (click)="isFocus = true;updateFocus(inp)"
-           *ngIf="showMin && !disabled && !!controlName.value"
+           *ngIf="showMin && !disabled"
            [style.left]="minLeftMargin + 'px'">
         {{ formGroup.get('timeLimit') ? 'min' : 'passes max' }}
       </div>
@@ -98,6 +98,7 @@
         controlName.invalid &&
         controlName.errors &&
         controlName.dirty &&
+        !isFocus &&
         (
         !controlName.errors.email_in_use &&
         !controlName.errors.invalid_email &&

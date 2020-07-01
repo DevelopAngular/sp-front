@@ -307,7 +307,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 
   isValidLocation(location: PassLimit) {
-    return (!this.forStaff && this.tooltipService.reachedPassLimit(this.currentPage, location)) && (+location.id !== +this.invalidLocation);
+    return (!this.forStaff && (location && this.tooltipService.reachedPassLimit(this.currentPage, location))) && (+location.id !== +this.invalidLocation);
   }
 
   mergeLocations(url, withStars: boolean, category: string) {

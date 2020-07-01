@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { User } from '../../../models/User';
 import { bumpIn } from '../../../animations';
 import { DarkThemeSwitch } from '../../../dark-theme-switch';
@@ -7,6 +7,7 @@ import { cloneDeep, isEqual } from 'lodash';
 import {Subject} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {OverlayDataService, RoomData} from '../overlay-data.service';
+import {take, takeUntil} from 'rxjs/operators';
 
 export interface OptionState {
     now: {
@@ -43,7 +44,7 @@ export interface ValidButtons {
   styleUrls: ['./advanced-options.component.scss'],
   animations: [bumpIn]
 })
-export class AdvancedOptionsComponent implements OnInit {
+export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
     @Input() roomName: string;
     @Input() nowRestricted: boolean;
@@ -59,12 +60,15 @@ export class AdvancedOptionsComponent implements OnInit {
     @Output() nowRestrEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() futureRestEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    openedContent: boolean;
     hideFutureBlock: boolean;
-    isActiveTooltip: boolean;
     tooltipText;
     openNowOptions: boolean;
     openFutureOptions: boolean;
+
+    limitInputsFocus: {
+      to: boolean,
+      from: boolean
+    } = {to: false, from: false};
 
     restrictionForm: FormGroup;
 
@@ -91,6 +95,7 @@ export class AdvancedOptionsComponent implements OnInit {
     pressed: boolean;
 
     change$: Subject<any> = new Subject<any>();
+    destroy$: Subject<any> = new Subject<any>();
 
     constructor(
         public darkTheme: DarkThemeSwitch,
@@ -111,12 +116,12 @@ export class AdvancedOptionsComponent implements OnInit {
           this.optionState = cloneDeep(data);
         });
         this.buildData();
-        this.passLimitForm.valueChanges.subscribe(res => {
+        this.passLimitForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
           if (!res.fromEnabled && res.from !== 0) {
-            this.passLimitForm.get('from').setValue('');
+            this.passLimitForm.get('from').setValue(0);
           }
           if (!res.toEnabled && res.to !== 0) {
-            this.passLimitForm.get('to').setValue('');
+            this.passLimitForm.get('to').setValue(0);
           }
           this.checkValidOptions();
           this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
@@ -127,9 +132,21 @@ export class AdvancedOptionsComponent implements OnInit {
         });
         this.futureRestEmit.emit(this.roomData.scheduling_restricted);
         this.nowRestrEmit.emit(this.roomData.restricted);
+
+        this.change$.pipe(takeUntil(this.destroy$)).subscribe(({value, action}) => {
+          this.limitInputsFocus[action] = value;
+          if (this.limitInputsFocus[action]) {
+            this.passLimitForm.get(action).setValue('');
+          }
+        });
     }
 
-    buildData() {
+    ngOnDestroy() {
+      this.destroy$.next();
+      this.destroy$.complete();
+    }
+
+  buildData() {
         this.selectedOpt = {
             anyNow: this.optionState.now.data.any_teach_assign,
             anyFut: this.optionState.future.data.any_teach_assign,
@@ -138,11 +155,6 @@ export class AdvancedOptionsComponent implements OnInit {
             nowTeachers: this.optionState.now.data.selectedTeachers,
             futTeachers: this.optionState.future.data.selectedTeachers,
         };
-    }
-
-    toggleContent() {
-        this.openedContent = !this.openedContent;
-        this.openedOptions.emit(this.openedContent);
     }
 
     changeState(action, data) {
