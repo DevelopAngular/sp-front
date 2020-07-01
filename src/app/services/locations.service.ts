@@ -32,6 +32,9 @@ import {
   getLoadingFavoriteLocations
 } from '../ngrx/favorite-locations/states/favorite-locations-getters.state';
 import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
+import {PassLimit} from '../models/PassLimit';
+import {getPassLimitCollection, getPassLimitEntities} from '../ngrx/pass-limits/states';
+import {getPassLimits} from '../ngrx/pass-limits/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +46,8 @@ export class LocationsService {
   updatedLocation$: Observable<Location> = this.store.select(getUpdatedLocation);
   loadingLocations$: Observable<boolean> = this.store.select(getLoadingLocations);
   loadedLocations$: Observable<boolean> = this.store.select(getLoadedLocations);
+  pass_limits$: Observable<PassLimit[]> = this.store.select(getPassLimitCollection);
+  pass_limits_entities$: Observable<{[id: number]: PassLimit}> = this.store.select(getPassLimitEntities);
 
   foundLocations$: Observable<Location[]> = this.store.select(getFoundLocations);
   locsFromCategory$: Observable<Location[]> = this.store.select(getLocationsFromCategoryGetter);
@@ -152,6 +157,15 @@ export class LocationsService {
 
     checkLocationNumber(value) {
         return this.http.get(`v1/locations/check_fields?room=${value}`);
+    }
+
+    getPassLimit() {
+      return this.http.get('v1/locations/pass_limits');
+    }
+
+    getPassLimitRequest() {
+      this.store.dispatch(getPassLimits());
+      return this.pass_limits$;
     }
 
     /////// Favorite Locations

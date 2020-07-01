@@ -4,9 +4,12 @@ import { Location } from '../models/Location';
 import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
-import { sortBy, differenceBy, some, filter as _filter } from 'lodash';
+import { sortBy, filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
+import {HallPassesService} from '../services/hall-passes.service';
+import {TooltipDataService} from '../services/tooltip-data.service';
+import {PassLimit} from '../models/PassLimit';
 
 
 export interface Paged<T> {
@@ -41,13 +44,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() isEdit: boolean = false;
   @Input() rightHeaderText: boolean = false;
   @Input() mergedAllRooms: boolean;
-  @Input() dummyString: '';
+  @Input() dummyString: string =  '';
   @Input() withMergedStars: boolean = true;
   @Input() searchExceptFavourites: boolean = false;
   @Input() allowOnStar: boolean = false;
   @Input() isFavoriteForm: boolean;
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
+  @Input() currentPage: 'from' | 'to';
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -62,6 +66,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   search: string = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
+  pinnables;
+  pinnablesLoaded: boolean;
+
+  passLimits: {[id: number]: PassLimit};
 
   showSpinner$: Observable<boolean>;
   loaded$: Observable<boolean>;
@@ -73,12 +81,40 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   constructor(
       private http: HttpService,
       private locationService: LocationsService,
+      private pinnableService: HallPassesService,
       private shortcutsService: KeyboardShortcutsService,
-      public screenService: ScreenService
-  ) {
-  }
+      public screenService: ScreenService,
+      public tooltipService: TooltipDataService
+  ) {}
 
   ngOnInit() {
+    this.pinnableService.loadedPinnables$.pipe(
+      filter(res => res),
+      switchMap(value => {
+        return this.pinnableService.pinnables$;
+      }),
+      map(pins => {
+        return pins.reduce((acc, pinnable) => {
+          if (pinnable.category) {
+            return { ...acc, [pinnable.category]: pinnable};
+          } else if (pinnable.location) {
+            return { ...acc, [pinnable.location.id]: pinnable };
+          }
+        }, {});
+      }),
+      takeUntil(this.destroy$)
+    )
+      .subscribe(res => {
+        this.pinnables = res;
+        this.pinnablesLoaded = true;
+    });
+
+    this.locationService.getPassLimitRequest()
+      .pipe(switchMap(() => this.locationService.pass_limits_entities$))
+      .subscribe(res => {
+        this.passLimits = res;
+    });
+
     this.showSpinner$ = combineLatest(
       this.locationService.loadingLocations$,
       this.locationService.loadingFavoriteLocations$,
@@ -161,6 +197,19 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
+  }
+
+  normalizeLocations(loc) {
+      if (loc.category) {
+        loc.gradient = this.pinnables[loc.category].gradient_color;
+      } else {
+        if (!this.pinnables[loc.id] || !this.pinnables[loc.id].gradient_color) {
+          loc.gradient = '#7f879d, #7f879d';
+        } else {
+          loc.gradient = this.pinnables[loc.id].gradient_color;
+        }
+      }
+      return loc;
   }
 
   ngOnDestroy(): void {
@@ -257,8 +306,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
 
-  isValidLocation(location) {
-    return !this.invalidLocation || +location.id !== +this.invalidLocation;
+  isValidLocation(location: PassLimit) {
+    return (!this.forStaff && (location && this.tooltipService.reachedPassLimit(this.currentPage, location))) && (+location.id !== +this.invalidLocation);
   }
 
   mergeLocations(url, withStars: boolean, category: string) {

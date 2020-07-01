@@ -12,6 +12,10 @@ import { Pinnable } from '../models/Pinnable';
 import { DomSanitizer } from '@angular/platform-browser';
 import {interval, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {TooltipDataService} from '../services/tooltip-data.service';
+import {PassLimit} from '../models/PassLimit';
+import {HttpService} from '../services/http-service';
+import {School} from '../models/School';
 
 @Component({
   selector: 'app-pinnable',
@@ -57,6 +61,10 @@ export class PinnableComponent implements OnInit, OnChanges {
 
   @Input() disabled: boolean = false;
 
+  @Input() currentPage: string;
+
+  @Input() passLimit: PassLimit;
+
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
@@ -66,14 +74,17 @@ export class PinnableComponent implements OnInit, OnChanges {
   buttonDown = false;
   hovered: boolean;
   intervalId;
+  currentSchool: School;
 
   hoverDestroyer$: Subject<any>;
 
   constructor(
     private sanitizer: DomSanitizer,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
+    private tooltipService: TooltipDataService,
+    private http: HttpService
   ) {
-
+    this.currentSchool = this.http.getSchool();
   }
 
   get shadow() {
@@ -91,6 +102,31 @@ export class PinnableComponent implements OnInit, OnChanges {
       return this.sanitizer.bypassSecurityTrustStyle(`0px 3px 10px rgba(${rgbString}, 0.2)`);
     } else {
       return this.sanitizer.bypassSecurityTrustStyle(' 0px 3px 5px rgba(0, 0, 0, 0.1)');
+    }
+  }
+
+  get show_max_passes() {
+    if (this.passLimit) {
+      return (!this.forStaff && this.currentSchool.show_active_passes_number) &&
+        ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
+          (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active));
+    }
+  }
+
+  get showTooltip() {
+    if (this.passLimit) {
+      return !this.forStaff &&
+        this.currentSchool.show_active_passes_number ||
+        (
+          (this.currentPage === 'from' && this.passLimit && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
+          (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
+        );
+    }
+  }
+
+  get tooltipDescription(): string {
+    if (this.passLimit) {
+      return this.passLimit && this.tooltipService.tooltipDescription('to', this.passLimit);
     }
   }
 

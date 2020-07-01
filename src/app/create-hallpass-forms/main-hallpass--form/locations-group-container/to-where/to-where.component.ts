@@ -12,6 +12,9 @@ import {MAT_DIALOG_DATA} from '@angular/material';
 import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
+import {TooltipDataService} from '../../../../services/tooltip-data.service';
+import {PassLimit} from '../../../../models/PassLimit';
+import {LocationsService} from '../../../../services/locations.service';
 
 @Component({
   selector: 'app-to-where',
@@ -54,6 +57,8 @@ export class ToWhereComponent implements OnInit {
   public isLocationList$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(JSON.parse(this.storage.getItem('isGrid')));
   public hiddenBanner: boolean = JSON.parse(this.storage.getItem('hiddenBanner'));
 
+  passLimits: {[id: number]: PassLimit};
+
   public gridRestrictions: ToWhereGridRestriction = new ToWhereGridRestrictionLg();
 
   frameMotion$: BehaviorSubject<any>;
@@ -67,7 +72,9 @@ export class ToWhereComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
     public screenService: ScreenService,
-    private storage: StorageService
+    private storage: StorageService,
+    private tooltipDataService: TooltipDataService,
+    private locationService: LocationsService
   ) {
     this.states = States;
   }
@@ -94,10 +101,14 @@ export class ToWhereComponent implements OnInit {
           this.headerTransition['to-header_animation-back'] = false;
       }
     });
+
+    this.locationService.pass_limits_entities$.subscribe(res => {
+      this.passLimits = res;
+    });
   }
 
   isValidPinnable(pinnable: Pinnable) {
-    if (pinnable.location.id === this.location.id) {
+    if (pinnable.location.id === this.location.id || !this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id])) {
       return false;
     }
     if (!this.isStaff &&

@@ -11,9 +11,12 @@ export class SpChipsComponent implements OnInit {
 
   @Input() selectedProfiles: User[] = [];
   @Input() preventRemovingLast: boolean = false;
+  @Input() suggestedTeacher: User;
+  @Input() isProposed: boolean;
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
   @Output() updateSelectedEvent: EventEmitter<User[]> = new EventEmitter();
+  @Output() addSuggestedTeacher: EventEmitter<User> = new EventEmitter<User>();
 
   constructor(
     private sanitizer: DomSanitizer,

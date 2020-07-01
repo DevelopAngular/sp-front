@@ -67,6 +67,7 @@ import {ScrollHolderDirective} from './scroll-holder.directive';
 import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
+import {PassLimitEffects} from './ngrx/pass-limits/effects';
 
 
 const appRoutes: Routes = [
@@ -174,7 +175,8 @@ const appRoutes: Routes = [
             ColorsEffects,
             SchoolsEffects,
             UserEffects,
-            ProcessEffects
+            ProcessEffects,
+            PassLimitEffects
         ]),
         StoreDevtoolsModule.instrument({})
     ],

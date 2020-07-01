@@ -11,7 +11,13 @@
 
      (mouseenter)="hovered = true"
      (mouseleave)="onPress(false); hovered = false"
+     customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip"
 >
+
+  <ng-template #tooltip>
+    <app-pass-limit-tooltip [description]="tooltipDescription"></app-pass-limit-tooltip>
+  </ng-template>
+
      <div *ngIf="selected" class="selected-overlay"></div>
   <div class="pinnable-card" [style.background]="getGradient()" [style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'" [style.opacity]="valid ? 1 : 0.5" [style.height]="height">
     <img draggable="false" *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON">
@@ -36,10 +42,11 @@
       </ng-template>
       <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="ARROW">
     </div>
-    <div *ngIf="restricted && !forStaff" class="overlay-container">
+    <div *ngIf="show_max_passes" class="overlay-container">
       <div class="overlay"></div>
-      <img class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
+      <div class="pass-count">{{ currentPage === 'to' ? passLimit.to_count : passLimit.from_count }}</div>
     </div>
+    <img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Locked (White).svg' | resolveAsset" alt="LOCK">
   </div>
 </div>
 
