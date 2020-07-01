@@ -3,7 +3,7 @@ import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
-import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
+import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
 import { sortBy, filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
@@ -272,7 +272,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                   return item.title.toLowerCase().includes(this.search);
               }));
 
-            this.choices = this.searchExceptFavourites && !this.forKioskMode
+            this.choices = (this.searchExceptFavourites && !this.forKioskMode) || !!this.category
                             ? [...this.filterResults(p)]
                             : [...filtFevLoc, ...this.filterResults(p)];
             this.noChoices = !this.choices.length;
@@ -281,15 +281,15 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         if (this.staticChoices && this.staticChoices.length) {
           this.choices = this.staticChoices;
         } else {
-          this.locationService.locations$
+          iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
             .pipe(
               map(locs => {
                 return this.kioskModeFilter(locs);
             }))
             .subscribe(res => {
-            this.choices = res;
-            this.hideFavorites = false;
-            this.noChoices = !this.choices.length;
+              this.choices = res;
+              this.hideFavorites = false;
+              this.noChoices = !this.choices.length;
           });
 
         }
