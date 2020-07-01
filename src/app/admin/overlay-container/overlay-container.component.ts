@@ -527,7 +527,7 @@ export class OverlayContainerComponent implements OnInit {
     }
     if (this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').invalid) {
       this.passLimitForm.get('to').markAsDirty();
-      this.passLimitForm.get('to').setErrors(this.passLimitForm.get('to').errors)
+      this.passLimitForm.get('to').setErrors(this.passLimitForm.get('to').errors);
     }
     this.showErrors = true;
   }

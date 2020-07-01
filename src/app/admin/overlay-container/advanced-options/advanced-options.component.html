@@ -316,7 +316,7 @@
               [maxLength]="'15'"
               [fieldSpace]="'0px'"
               [timeInput]="true"
-              [input_value]="passLimitForm.get('to').value || 0"
+              [input_value]="passLimitForm.get('to').value || ''"
               [formGroup]="passLimitForm"
               [controlName]="passLimitForm.get('to')"
               [placeholder]="'# of passes'">
@@ -353,7 +353,7 @@
               [isFocus]="limitInputsFocus['from']"
               [maxLength]="'15'"
               [fieldSpace]="'0px'"
-              [input_value]="passLimitForm.get('from').value || 0"
+              [input_value]="passLimitForm.get('from').value || ''"
               [formGroup]="passLimitForm"
               [timeInput]="true"
               [controlName]="passLimitForm.get('from')"

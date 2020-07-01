@@ -117,12 +117,12 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
         });
         this.buildData();
         this.passLimitForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
-          if (!res.fromEnabled && res.from !== 0) {
-            this.passLimitForm.get('from').setValue(0);
-          }
-          if (!res.toEnabled && res.to !== 0) {
-            this.passLimitForm.get('to').setValue(0);
-          }
+          // if (!res.fromEnabled && res.from !== 0) {
+          //   this.passLimitForm.get('from').setValue(null);
+          // }
+          // if (!res.toEnabled && res.to !== 0) {
+          //   this.passLimitForm.get('to').setValue(null);
+          // }
           this.checkValidOptions();
           this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
         });
