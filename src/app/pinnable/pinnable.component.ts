@@ -107,9 +107,10 @@ export class PinnableComponent implements OnInit, OnChanges {
 
   get show_max_passes() {
     if (this.passLimit) {
-      return (!this.forStaff && this.currentSchool.show_active_passes_number) &&
-        ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
-          (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active));
+      return (!this.forStaff && this.currentSchool.show_active_passes_number);
+        // &&
+        // ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
+        //   (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active));
     }
   }
 
