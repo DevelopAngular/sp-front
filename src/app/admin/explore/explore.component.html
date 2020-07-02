@@ -1,9 +1,15 @@
 <div class="wrapper">
   <div class="header">
-    <div class="switch-button" *ngIf="currentView$ | async as currentView" [style.background-color]="views[currentView].color">
+    <div class="switch-button"
+       *ngIf="currentView$ | async as currentView"
+       [style.background-color]="views[currentView].color"
+       appCrossPointerEventTarget
+       (pointerClickEvent)="openSwitchPage($event)"
+    >
       <div class="button-content">
-        <img [src]="views[currentView].icon | resolveAsset" alt="View Icon">
+        <img width="35" [src]="'./assets/' + views[currentView].icon + ' (White).svg' | resolveAsset" alt="View Icon">
         <div class="title">{{ views[currentView].title }}</div>
+        <img width="9" height="7" [src]="'./assets/Rect (White).svg' | resolveAsset" alt="Rect">
       </div>
     </div>
   </div>

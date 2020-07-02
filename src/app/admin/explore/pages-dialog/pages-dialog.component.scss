@@ -1,0 +1,28 @@
+@import '../../../../sp-colors';
+
+.wrapper {
+  width: 255px;
+
+  .options {
+    padding: 15px 0;
+
+    .option {
+      height: 40px;
+      padding: 0 27px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(210, 210, 210, 0.3);
+      }
+
+      .title {
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}
