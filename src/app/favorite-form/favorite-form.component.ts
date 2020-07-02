@@ -45,7 +45,6 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   }
 
   onStar(loc: any) {
-    // debugger;
     if (loc.starred) {
       this.addLoc(loc, this.starChanges);
     } else {
@@ -54,13 +53,13 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   }
 
   addLoc(loc: any, array: any[]) {
-    if(!array.includes(loc))
+    if (!array.includes(loc))
       array.push(loc);
       this.starChangesIds.push(loc.id);
   }
 
   removeLoc(loc: any, array: any[]) {
-    var index = array.findIndex((element) => element.id === loc.id);
+    const index = array.findIndex((element) => element.id === loc.id);
     if (index > -1) {
       array.splice(index, 1);
       this.starChangesIds.splice(index, 1);

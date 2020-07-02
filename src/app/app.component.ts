@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter, find } from 'lodash';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip } from 'rxjs';
 
-import {filter, map, mergeMap, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
+import { filter, map, mergeMap, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -18,18 +18,18 @@ import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
 import { WebConnectionService } from './services/web-connection.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
-import {OverlayContainer} from '@angular/cdk/overlay';
-import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
-import {Meta} from '@angular/platform-browser';
-import {NotificationService} from './services/notification-service';
-import {GoogleAnalyticsService} from './services/google-analytics.service';
-import {ShortcutInput} from 'ng-keyboard-shortcuts';
-import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
-import {NextReleaseComponent, Update} from './next-release/next-release.component';
-import {User} from './models/User';
-import {UserService} from './services/user.service';
-import {NextReleaseService} from './next-release/services/next-release.service';
-import {ScreenService} from './services/screen.service';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
+import { Meta} from '@angular/platform-browser';
+import { NotificationService } from './services/notification-service';
+import { GoogleAnalyticsService } from './services/google-analytics.service';
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
+import { KeyboardShortcutsService } from './services/keyboard-shortcuts.service';
+import { NextReleaseComponent, Update } from './next-release/next-release.component';
+import { User } from './models/User';
+import { UserService } from './services/user.service';
+import { NextReleaseService } from './next-release/services/next-release.service';
+import { ScreenService } from './services/screen.service';
 
 declare const window;
 
@@ -52,6 +52,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private dialogContainer: HTMLElement;
   @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
     this.dialogContainer = content.nativeElement;
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  back(event) {
+    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
+      window.history.pushState({}, '');
+    }
   }
 
   public isAuthenticated = null;
@@ -94,6 +101,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        window.history.pushState({}, '');
+      }
+    });
 
     this.userService.loadedUser$
       .pipe(
@@ -104,7 +116,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             .getLastReleasedUpdates(DeviceDetection.platform())
             .pipe(
               map((release: Array<Update>): Array<Update> => {
-                console.log(release);
                 return release.filter((update) => {
                   const allowUpdate: boolean = !!update.groups.find((group) => {
                     console.log(group, '-', user.roles.includes(`_profile_${group}`));

@@ -13,6 +13,7 @@ import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component'
 import {NoAccountComponent} from '../no-account/no-account.component';
 import { CheckUserInputDirective } from './directives/check-user-input.directive';
 import {SupportOptionsComponent} from '../support-options/support-options.component';
+import { ToolTipRendererDirective } from './directives/tool-tip-renderer.directive';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import {SupportOptionsComponent} from '../support-options/support-options.compon
     MoovingTilesComponent,
     NoAccountComponent,
     CheckUserInputDirective,
-    SupportOptionsComponent
+    SupportOptionsComponent,
+    ToolTipRendererDirective
   ],
   imports: [
     CommonModule,
@@ -44,7 +46,8 @@ import {SupportOptionsComponent} from '../support-options/support-options.compon
     SignedOutToastComponent,
     GradientButtonComponent,
     MoovingTilesComponent,
-    NoAccountComponent
+    NoAccountComponent,
+    ToolTipRendererDirective
   ],
   entryComponents: [
     ErrorToastComponent,

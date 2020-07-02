@@ -29,13 +29,28 @@ scripts/make_build_info.sh
 
 config=production
 
+# The config names are not intuitive. They refer to which *server* environment
+# is used. The environment controls very few things. Notably it does set which
+# server environment new schools are onboarded with.
+
+# This is the testing environment, currently smartpass-testing.lavanote.com
 if [[ "$CI_ENVIRONMENT_SLUG" = "testing" ]]; then
   config=staging
 fi
 
+# This is the feature environment, currently smartpass-feature.lavanote.com
+if [[ "$CI_ENVIRONMENT_SLUG" = "feature-testing" ]]; then
+  config=staging
+fi
+
+# Testing and feature use the staging server environment info.
+
+# This is the local environment, unused
 if [[ "$CI_ENVIRONMENT_SLUG" = "local" ]]; then
   config=local
 fi
+
+# Staging and prod use the prod server environment info.
 
 echo "Using config: $config"
 

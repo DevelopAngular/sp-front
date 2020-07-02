@@ -1,13 +1,17 @@
 <div class="sp-search-wrapper" *ngIf="chipsMode && !inputField">
-  <div>
-    <app-sp-chips
-      [preventRemovingLast]="preventRemovingLast"
-      [selectedProfiles]="selectedOptions"
-      (add)="inputField = true"
-      (updateSelectedEvent)="selectedOptions = $event; onUpdate.emit(selectedOptions)"
-    ></app-sp-chips>
-  </div>
+    <div class="chip">
+      <app-sp-chips
+        [preventRemovingLast]="preventRemovingLast"
+        [selectedProfiles]="selectedOptions"
+        [suggestedTeacher]="suggestedTeacher"
+        [isProposed]="isProposed"
+        (add)="inputField = true"
+        (updateSelectedEvent)="update($event)"
+        (addSuggestedTeacher)="addSuggested($event)"
+      ></app-sp-chips>
+    </div>
 </div>
+
 <div class="sp-search-wrapper" [style.width]="width" *ngIf="inputField">
 
   <div class="input">

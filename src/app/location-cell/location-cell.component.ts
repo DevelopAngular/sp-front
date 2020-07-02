@@ -2,9 +2,11 @@ import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, V
 import { Location } from '../models/Location';
 import { HttpService } from '../services/http-service';
 import { DomSanitizer } from '@angular/platform-browser';
-import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {School} from '../models/School';
+import {TooltipDataService} from '../services/tooltip-data.service';
+import {PassLimit} from '../models/PassLimit';
 
 @Component({
   selector: 'app-location-cell',
@@ -40,10 +42,16 @@ export class LocationCellComponent implements OnInit {
   @Input()
   allowOnStar: boolean = false;
 
+  @Input() currentPage: 'from' | 'to';
+
+  @Input() passLimit: PassLimit;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('cell') cell: ElementRef;
+
+  currentSchool: School;
 
   overStar: boolean = false;
   hovered: boolean;
@@ -54,15 +62,49 @@ export class LocationCellComponent implements OnInit {
     private http: HttpService,
     private sanitizer: DomSanitizer,
     public screen: ScreenService,
-    private renderer: Renderer2
-  ) {}
+    private renderer: Renderer2,
+    private tooltipService: TooltipDataService,
+  ) {
+    this.currentSchool = this.http.getSchool();
+  }
 
   get showLock() {
     return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
   }
 
+  get tooltipDescription(): string {
+    if (this.passLimit) {
+      return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit);
+    }
+  }
+
+  get show_max_passes() {
+    if (this.passLimit) {
+      return (!this.forStaff && this.currentSchool.show_active_passes_number);
+        // &&
+        // ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
+        //   (this.currentPage === 'to' && this.passLimit.max_passes_to_active));
+    }
+  }
+
+  get showTooltip() {
+    if (this.passLimit) {
+      return !this.forStaff &&
+        this.currentSchool.show_active_passes_number ||
+        (
+          (this.currentPage === 'from' && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
+          (this.currentPage === 'to' && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
+        );
+    }
+  }
+
   get cursor() {
     return this.valid ? 'pointer' : 'not-allowed';
+  }
+
+  get gradient() {
+    const gradient = (this.value as any).gradient;
+    return 'radial-gradient(circle at 73% 71%, ' + gradient + ')';
   }
 
   get textColor() {
@@ -82,7 +124,7 @@ export class LocationCellComponent implements OnInit {
       if (this.hovered) {
         return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
       } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+          return this.sanitizer.bypassSecurityTrustStyle('#7F879D');
       }
     } else {
        return this.sanitizer.bypassSecurityTrustStyle('#CDCDCE');

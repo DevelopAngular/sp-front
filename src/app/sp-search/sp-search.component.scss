@@ -14,12 +14,23 @@
   }
 }
 
+.chips-wrapper {
+  display: flex;
+  align-items: center;
+}
+
 .sp-search-wrapper{
     margin-top: 10px;
     width: 100%;
     position: relative;
     z-index: 1;
     min-height: 50px;
+
+    .chip {
+      display: flex;
+      margin-right: 10px;
+      flex-wrap: wrap;
+    }
 }
 
 .cancel-button {

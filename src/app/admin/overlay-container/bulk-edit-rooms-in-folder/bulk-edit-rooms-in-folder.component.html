@@ -13,16 +13,16 @@
       </div>
       <div class="header-in-folder-button">
         <app-gradient-button
-                *ngIf="showSave"
+                *ngIf="showSave || showIncomplete"
                 [minHeight]="'30px'"
                 [cursor]="'pointer'"
                 [fontSize]="'12px'"
                 (buttonClick)="save()"
         >
           Save
-          <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+          <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
         </app-gradient-button>
-        <div *ngIf="showIncomplete" [style.color]="'#1F194E'">Incomplete</div>
+        <div *ngIf="false" [style.color]="'#1F194E'">Incomplete</div>
       </div>
     </div>
   </div>
@@ -32,6 +32,6 @@
   </div>
 
   <div class="content">
-    <app-room [form]="form" (roomDataResult)="roomResult($event)"></app-room>
+    <app-room [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (roomDataResult)="roomResult($event)"></app-room>
   </div>
 </div>
