@@ -21,6 +21,7 @@
   padding: 11.5px 6px 11.5px 8px;
   white-space: nowrap;
   align-items: center;
+  position: relative;
 }
 
 .divider{
@@ -50,6 +51,8 @@
   flex-direction: row-reverse;
   justify-content: space-between;
   align-items: center;
+  position: absolute;
+  right: 7px;
 
   .circle {
     width: 19px;

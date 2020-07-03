@@ -9,12 +9,14 @@ import {debounce} from 'rxjs/operators';
 })
 export class TooltipDataService {
 
+  intervalId: any;
+
   constructor(private http: HttpService) { }
 
   reachedPassLimit(currentPage: 'from' | 'to', passLimit: PassLimit): boolean {
-    if (currentPage === 'from' && passLimit.max_passes_from_active && ((passLimit.from_count && passLimit.from_count <= passLimit.max_passes_from) || (!passLimit.from_count && !passLimit.max_passes_from))) {
+    if (currentPage === 'from' && passLimit.max_passes_from_active && ((passLimit.from_count && passLimit.from_count >= passLimit.max_passes_from) || (!passLimit.from_count && !passLimit.max_passes_from))) {
       return false;
-    } else if (currentPage === 'to' && passLimit.max_passes_to_active && ((passLimit.to_count && passLimit.to_count <= passLimit.max_passes_to) || (!passLimit.to_count && !passLimit.max_passes_to))) {
+    } else if (currentPage === 'to' && passLimit.max_passes_to_active && ((passLimit.to_count && passLimit.to_count >= passLimit.max_passes_to) || (!passLimit.to_count && !passLimit.max_passes_to))) {
       return false;
     }
     return true;

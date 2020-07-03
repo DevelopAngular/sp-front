@@ -165,7 +165,6 @@ export class LocationsService {
 
     getPassLimitRequest() {
       this.store.dispatch(getPassLimits());
-      return this.pass_limits$;
     }
 
     /////// Favorite Locations
