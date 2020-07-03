@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter} from 'rxjs/operators';
+import {StudentFilterComponent} from './student-filter/student-filter.component';
 
 export interface View {
   [view: string]: CurrentView;
@@ -47,9 +48,23 @@ export class ExploreComponent implements OnInit {
       }
     });
 
-    pagesDialog.afterClosed().pipe(filter(res => !!res)).subscribe(action => {
+    pagesDialog.afterClosed()
+      .pipe(filter(res => !!res))
+      .subscribe(action => {
       this.currentView$.next(action);
     });
+  }
+
+  openFilter(event, action) {
+    if (action === 'students') {
+      const studentFilter = this.dialog.open(StudentFilterComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {
+          'trigger': event.currentTarget
+        }
+      });
+    }
   }
 
 }

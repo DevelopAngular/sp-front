@@ -5,17 +5,23 @@ import { ExploreRoutingModule } from './explore-routing.module';
 import { ExploreComponent } from './explore.component';
 import { CoreModule } from '../../core/core.module';
 import { PagesDialogComponent } from './pages-dialog/pages-dialog.component';
+import { FilterButtonComponent } from './filter-button/filter-button.component';
+import { StudentFilterComponent } from './student-filter/student-filter.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [
     ExploreComponent,
-    PagesDialogComponent
+    PagesDialogComponent,
+    FilterButtonComponent,
+    StudentFilterComponent
   ],
   imports: [
     CommonModule,
     ExploreRoutingModule,
-    CoreModule
+    CoreModule,
+    SharedModule
   ],
-  entryComponents: [PagesDialogComponent]
+  entryComponents: [PagesDialogComponent, StudentFilterComponent]
 })
 export class ExploreModule { }

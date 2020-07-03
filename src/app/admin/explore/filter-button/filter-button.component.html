@@ -1,0 +1,15 @@
+<div class="wrapper"
+     #button
+     (mouseenter)="button.hover = true"
+     (mouseleave)="button.hover = false; button.pressed = false"
+     appCrossPointerEventTarget
+     (pointerDownEvent)="button.pressed = true"
+     (pointerCancelEvent)="button.pressed = false"
+     (pointerClickEvent)="buttonClick.emit($event); button.pressed = false"
+     [style.background-color]="background(button.hover, button.pressed)"
+>
+  <div class="content-button">
+    <div class="title" [style.color]="'#1F195E'">{{ title }}</div>
+    <img width="8" height="6" [src]="'./assets/Rect (Navy).svg' | resolveAsset" alt="Rect">
+  </div>
+</div>

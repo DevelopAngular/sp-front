@@ -132,6 +132,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
   @Input() isProposed: boolean;
   @Input() proposedSearchString: string;
+  @Input() displaySelectedTitle: boolean = true;
 
   @Input() searchingTeachers: User[];
 

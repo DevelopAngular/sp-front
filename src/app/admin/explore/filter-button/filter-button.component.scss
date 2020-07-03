@@ -1,0 +1,21 @@
+.wrapper {
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px 0 12px;
+  cursor: pointer;
+
+  .content-button {
+    display: flex;
+    align-items: center;
+
+    .title {
+      margin-right: 12px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}

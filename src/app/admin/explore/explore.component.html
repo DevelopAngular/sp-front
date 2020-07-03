@@ -1,7 +1,6 @@
-<div class="wrapper">
+<div class="wrapper" *ngIf="currentView$ | async as currentView">
   <div class="header">
     <div class="switch-button"
-       *ngIf="currentView$ | async as currentView"
        [style.background-color]="views[currentView].color"
        appCrossPointerEventTarget
        (pointerClickEvent)="openSwitchPage($event)"
@@ -10,6 +9,17 @@
         <img width="35" [src]="'./assets/' + views[currentView].icon + ' (White).svg' | resolveAsset" alt="View Icon">
         <div class="title">{{ views[currentView].title }}</div>
         <img width="9" height="7" [src]="'./assets/Rect (White).svg' | resolveAsset" alt="Rect">
+      </div>
+    </div>
+    <div class="filters">
+      <div class="filter">
+        <app-filter-button (buttonClick)="openFilter($event, 'students')" [title]="'Students'"></app-filter-button>
+      </div>
+      <div class="filter" *ngIf="views[currentView].id === 1">
+        <app-filter-button [title]="'Destination'"></app-filter-button>
+      </div>
+      <div class="filter" *ngIf="views[currentView].id === 1">
+        <app-filter-button [title]="'Pass start time'"></app-filter-button>
       </div>
     </div>
   </div>
