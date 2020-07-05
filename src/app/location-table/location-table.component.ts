@@ -109,8 +109,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         this.pinnablesLoaded = true;
     });
 
-    this.locationService.getPassLimitRequest()
-      .pipe(switchMap(() => this.locationService.pass_limits_entities$))
+    this.locationService.pass_limits_entities$
+      .pipe(filter(() => !this.isFavoriteForm))
       .subscribe(res => {
         this.passLimits = res;
     });
@@ -201,7 +201,11 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   normalizeLocations(loc) {
       if (loc.category) {
-        loc.gradient = this.pinnables[loc.category].gradient_color;
+        if (!this.pinnables[loc.category] || !this.pinnables[loc.category].gradient_color) {
+          loc.gradient = '#7f879d, #7f879d';
+        } else {
+          loc.gradient = this.pinnables[loc.category].gradient_color;
+        }
       } else {
         if (!this.pinnables[loc.id] || !this.pinnables[loc.id].gradient_color) {
           loc.gradient = '#7f879d, #7f879d';
@@ -306,8 +310,12 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
 
-  isValidLocation(location: PassLimit) {
-    return (!this.forStaff && (location && this.tooltipService.reachedPassLimit(this.currentPage, location))) && (+location.id !== +this.invalidLocation);
+  isValidLocation(locationId: any) {
+    if ((this.forStaff && (+locationId !== +this.invalidLocation)) || this.isFavoriteForm) {
+      return true;
+    }
+    const location = this.passLimits[locationId];
+    return location && (!this.forStaff && this.tooltipService.reachedPassLimit(this.currentPage, location)) && (+location.id !== +this.invalidLocation);
   }
 
   mergeLocations(url, withStars: boolean, category: string) {

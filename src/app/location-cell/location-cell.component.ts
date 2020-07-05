@@ -7,6 +7,8 @@ import {DeviceDetection} from '../device-detection.helper';
 import {School} from '../models/School';
 import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
+import {of} from 'rxjs';
+import {delay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-location-cell',
@@ -53,6 +55,8 @@ export class LocationCellComponent implements OnInit {
 
   currentSchool: School;
 
+  showTooltipWithDelay: boolean;
+
   overStar: boolean = false;
   hovered: boolean;
   pressed: boolean;
@@ -81,9 +85,6 @@ export class LocationCellComponent implements OnInit {
   get show_max_passes() {
     if (this.passLimit) {
       return (!this.forStaff && this.currentSchool.show_active_passes_number);
-        // &&
-        // ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
-        //   (this.currentPage === 'to' && this.passLimit.max_passes_to_active));
     }
   }
 
@@ -148,6 +149,18 @@ export class LocationCellComponent implements OnInit {
       }
     } else {
       this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#FFFFFF');
+    }
+  }
+
+  tooltipDelay(hover, delayValue?) {
+    if (hover) {
+      of('').pipe(
+        delay(delayValue),
+      ).subscribe(res => {
+        this.showTooltipWithDelay = true;
+      });
+    } else {
+      this.showTooltipWithDelay = false;
     }
   }
 

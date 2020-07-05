@@ -10,8 +10,8 @@ import {
 import { bumpIn } from '../animations';
 import { Pinnable } from '../models/Pinnable';
 import { DomSanitizer } from '@angular/platform-browser';
-import {interval, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {interval, of, Subject} from 'rxjs';
+import {delay, takeUntil} from 'rxjs/operators';
 import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
 import {HttpService} from '../services/http-service';
@@ -76,6 +76,8 @@ export class PinnableComponent implements OnInit, OnChanges {
   intervalId;
   currentSchool: School;
 
+  showTooltipWithDelay: boolean;
+
   hoverDestroyer$: Subject<any>;
 
   constructor(
@@ -131,6 +133,10 @@ export class PinnableComponent implements OnInit, OnChanges {
     }
   }
 
+  get buttonState() {
+    return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';
+  }
+
   ngOnInit() {
 
     if (!this.mock) {
@@ -146,8 +152,16 @@ export class PinnableComponent implements OnInit, OnChanges {
     this.changeDetector.detectChanges();
   }
 
-  get buttonState() {
-    return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';
+  tooltipDelay(hover, delayValue?) {
+    if (hover) {
+      of('').pipe(
+        delay(delayValue),
+      ).subscribe(res => {
+        this.showTooltipWithDelay = true;
+      });
+    } else {
+      this.showTooltipWithDelay = false;
+    }
   }
 
   onHover(evt: Event, container: HTMLElement) {

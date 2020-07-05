@@ -34,7 +34,7 @@
               [value]="choice"
               [type]="type"
               [currentPage]="currentPage"
-              [passLimit]="passLimits[choice.id]"
+              [passLimit]="passLimits ? passLimits[choice.id] : null"
               [starred]="true"
               [showStar]="!!showStars"
               [allowOnStar]="allowOnStar"
@@ -71,14 +71,14 @@
             [value]="normalizeLocations(choice)"
             [type]="type"
             [currentPage]="currentPage"
-            [passLimit]="passLimits[choice.id]"
+            [passLimit]="passLimits ? passLimits[choice.id] : null"
             [hasLocks]="hasLocks"
             [forLater]="forLater"
             [forStaff]="forStaff"
             [starred]="true"
             [showStar]="!!showStars"
             [allowOnStar]="allowOnStar"
-            [valid]="isValidLocation(passLimits[choice.id])"
+            [valid]="isValidLocation(choice.id)"
           >
           </app-location-cell>
         </div>
@@ -110,13 +110,13 @@
             [showStar]="showStars && !noRightStar"
             [starred]="isSelected(choice)"
             [currentPage]="currentPage"
-            [passLimit]="passLimits[choice.id]"
+            [passLimit]="passLimits ? passLimits[choice.id] : null"
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
             [allowOnStar]="allowOnStar"
             [value]="normalizeLocations(choice)"
             [type]="type"
-            [valid]="isValidLocation(passLimits[choice.id])"
+            [valid]="isValidLocation(choice.id)"
           >
           </app-location-cell>
         </div>
