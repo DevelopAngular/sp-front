@@ -4,6 +4,8 @@ import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
+import {User} from '../../models/User';
+import {SearchCalendarComponent} from './search-calendar/search-calendar.component';
 
 export interface View {
   [view: string]: CurrentView;
@@ -30,6 +32,7 @@ export class ExploreComponent implements OnInit {
     'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
     'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
+  selectedStudents: User[];
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>('pass_search');
 
@@ -61,8 +64,21 @@ export class ExploreComponent implements OnInit {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
-          'trigger': event.currentTarget
+          'trigger': event.currentTarget,
+          'selectedStudents': this.selectedStudents
         }
+      });
+
+      studentFilter.afterClosed()
+        .pipe(filter(res => res))
+        .subscribe(students => {
+          this.selectedStudents = students;
+        });
+    } else if (action === 'calendar') {
+      const calendar = this.dialog.open(SearchCalendarComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: { 'trigger': event.currentTarget }
       });
     }
   }

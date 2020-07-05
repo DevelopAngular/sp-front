@@ -1,10 +1,23 @@
 <div class="wrapper">
   <div class="content">
     <app-sp-search
-      [width]="'280px'"
+      [width]="'254px'"
       [listMaxHeight]="'unset'"
       [focused]="true"
+      [selectedOptions]="selectedStudents"
       [displaySelectedTitle]="false"
+      (onUpdate)="updateStudents($event)"
     ></app-sp-search>
+
+    <div class="button" *ngIf="showButton">
+      <app-gradient-button
+        [size]="'small'"
+        [gradient]="'#ECF1FF, #ECF1FF'"
+        [textColor]="'#1F195E'"
+        (buttonClick)="saveStudents()"
+      >
+        {{ isUpdate ? 'Update Filter' : 'Apply Filter' }}
+      </app-gradient-button>
+    </div>
   </div>
 </div>

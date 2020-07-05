@@ -13,13 +13,19 @@
     </div>
     <div class="filters">
       <div class="filter">
-        <app-filter-button (buttonClick)="openFilter($event, 'students')" [title]="'Students'"></app-filter-button>
+        <app-filter-button
+          (buttonClick)="openFilter($event, 'students')"
+          [title]="'Students' + (selectedStudents && selectedStudents.length ? ' (' + selectedStudents.length + ')' : '')"
+          [filter]="selectedStudents && !!selectedStudents.length"
+          (clearData)="selectedStudents = null"
+        >
+        </app-filter-button>
       </div>
       <div class="filter" *ngIf="views[currentView].id === 1">
         <app-filter-button [title]="'Destination'"></app-filter-button>
       </div>
       <div class="filter" *ngIf="views[currentView].id === 1">
-        <app-filter-button [title]="'Pass start time'"></app-filter-button>
+        <app-filter-button [title]="'Pass start time'" (buttonClick)="openFilter($event, 'calendar')"></app-filter-button>
       </div>
     </div>
   </div>

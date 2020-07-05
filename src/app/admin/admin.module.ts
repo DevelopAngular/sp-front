@@ -24,7 +24,8 @@ import {EditRoomInFolderComponent} from './overlay-container/edit-room-in-folder
 import {BulkEditRoomsComponent} from './overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
 import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
 import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
-import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
+import {OverlayContainerComponent} from './overlay-container/overlay-container.component';;
+import { CustomTableComponent } from './custom-table/custom-table.component'
 
 @NgModule({
     imports: [
@@ -55,7 +56,8 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
         BulkEditRoomsInFolderComponent,
         ImportRoomsComponent,
         OverlayContainerComponent
-    ],
+,
+        CustomTableComponent    ],
     entryComponents: [
         LinkGeneratedDialogComponent,
         ColumnsConfigDialogComponent,

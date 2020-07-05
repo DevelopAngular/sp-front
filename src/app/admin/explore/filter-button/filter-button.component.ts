@@ -12,6 +12,7 @@ export class FilterButtonComponent implements OnInit {
   @Input() filter: boolean;
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
+  @Output() clearData: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private domSanitizer: DomSanitizer) { }
 
@@ -29,7 +30,16 @@ export class FilterButtonComponent implements OnInit {
           return this.domSanitizer.bypassSecurityTrustStyle('rgba(127, 135, 157, .1)');
         }
       }
+    } else {
+      if (this.filter) {
+        return this.domSanitizer.bypassSecurityTrustStyle('rgba(236, 241, 255)');
+      }
     }
+  }
+
+  clear(event) {
+    event.stopPropagation();
+    this.clearData.emit();
   }
 
 }

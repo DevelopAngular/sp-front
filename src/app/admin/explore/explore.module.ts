@@ -8,13 +8,15 @@ import { PagesDialogComponent } from './pages-dialog/pages-dialog.component';
 import { FilterButtonComponent } from './filter-button/filter-button.component';
 import { StudentFilterComponent } from './student-filter/student-filter.component';
 import { SharedModule } from '../../shared/shared.module';
+import { SearchCalendarComponent } from './search-calendar/search-calendar.component';
 
 @NgModule({
   declarations: [
     ExploreComponent,
     PagesDialogComponent,
     FilterButtonComponent,
-    StudentFilterComponent
+    StudentFilterComponent,
+    SearchCalendarComponent
   ],
   imports: [
     CommonModule,
@@ -22,6 +24,10 @@ import { SharedModule } from '../../shared/shared.module';
     CoreModule,
     SharedModule
   ],
-  entryComponents: [PagesDialogComponent, StudentFilterComponent]
+  entryComponents: [
+    PagesDialogComponent,
+    StudentFilterComponent,
+    SearchCalendarComponent
+  ]
 })
 export class ExploreModule { }

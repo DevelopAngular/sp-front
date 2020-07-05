@@ -11,5 +11,6 @@
   <div class="content-button">
     <div class="title" [style.color]="'#1F195E'">{{ title }}</div>
     <img width="8" height="6" [src]="'./assets/Rect (Navy).svg' | resolveAsset" alt="Rect">
+    <img *ngIf="filter" appCrossPointerEventTarget (pointerClickEvent)="clear($event)" class="close-button" [src]="'./assets/Close.svg' | resolveAsset" alt="Close">
   </div>
 </div>
