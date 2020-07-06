@@ -1,14 +1,15 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
+import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
 
-import { isEqual, cloneDeep } from 'lodash';
+import {cloneDeep, isEqual} from 'lodash';
 
-import { User } from '../../../models/User';
+import {User} from '../../../models/User';
 
 @Component({
   selector: 'app-student-filter',
   templateUrl: './student-filter.component.html',
-  styleUrls: ['./student-filter.component.scss']
+  styleUrls: ['./student-filter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StudentFilterComponent implements OnInit {
 

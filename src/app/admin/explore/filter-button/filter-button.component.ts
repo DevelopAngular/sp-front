@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-filter-button',
   templateUrl: './filter-button.component.html',
-  styleUrls: ['./filter-button.component.scss']
+  styleUrls: ['./filter-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterButtonComponent implements OnInit {
 

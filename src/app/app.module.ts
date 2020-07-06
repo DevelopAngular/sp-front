@@ -68,6 +68,7 @@ import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
 import {PassLimitEffects} from './ngrx/pass-limits/effects';
+import {PassesEffects} from './ngrx/passes/effects';
 
 
 const appRoutes: Routes = [
@@ -176,7 +177,8 @@ const appRoutes: Routes = [
             SchoolsEffects,
             UserEffects,
             ProcessEffects,
-            PassLimitEffects
+            PassLimitEffects,
+            PassesEffects
         ]),
         StoreDevtoolsModule.instrument({})
     ],

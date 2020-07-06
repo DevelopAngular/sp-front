@@ -1,3 +1,26 @@
-<p>
-  custom-table works!
-</p>
+<div class="wrapper">
+  <table class="table-wrapper">
+    <thead>
+    <tr>
+      <th class="checkbox">
+        <mat-checkbox></mat-checkbox>
+      </th>
+      <th class="header" *ngFor="let column of displayedColumns | keyvalue: disableSortColumns">
+        <span [innerHTML]="column.value.title"></span>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+      <tr *cdkVirtualFor="let row of data | async | keyvalue: disableSortColumns">
+        <td class="row-checkbox">
+          <mat-checkbox></mat-checkbox>
+        </td>
+        <td class="row-content" (click)="columnClick(row.value[column.value.field])" *ngFor="let column of displayedColumns | keyvalue: disableSortColumns; let i = index">
+          <span>{{ row.value[column.value.field] }}</span>
+        </td>
+      </tr>
+    </cdk-virtual-scroll-viewport>
+    </tbody>
+  </table>
+</div>

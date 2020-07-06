@@ -28,50 +28,53 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
 import { CustomTableComponent } from './custom-table/custom-table.component'
 
 @NgModule({
-    imports: [
-        CommonModule,
-        SharedModule,
-        AdminRoutingModule,
-        FormsModule,
-        AdminSharedModule,
-    ],
-    declarations: [
-        AdminPageComponent,
-        SettingsComponent,
-        LinkGeneratedDialogComponent,
-        ColumnsConfigDialogComponent,
-        SchoolSettingDialogComponent,
-        AddUserDialogComponent,
-        IosComponentComponent,
-        SearchFilterDialogComponent,
-        DateTimeFilterComponent,
-        RoomsSearchComponent,
-        AdvancedOptionsComponent,
-        AddExistingRoomComponent,
-        RoomComponent,
-        FolderComponent,
-        NewRoomInFolderComponent,
-        EditRoomInFolderComponent,
-        BulkEditRoomsComponent,
-        BulkEditRoomsInFolderComponent,
-        ImportRoomsComponent,
-        OverlayContainerComponent
-,
-        CustomTableComponent    ],
-    entryComponents: [
-        LinkGeneratedDialogComponent,
-        ColumnsConfigDialogComponent,
-        SchoolSettingDialogComponent,
-        AddUserDialogComponent,
-        SettingsComponent,
-        SearchFilterDialogComponent,
-        DateTimeFilterComponent,
-        OverlayContainerComponent,
-    ],
-    providers: [
-        [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
-        PdfGeneratorService,
-    ],
+  imports: [
+    CommonModule,
+    SharedModule,
+    AdminRoutingModule,
+    FormsModule,
+    AdminSharedModule,
+  ],
+  declarations: [
+    AdminPageComponent,
+    SettingsComponent,
+    LinkGeneratedDialogComponent,
+    ColumnsConfigDialogComponent,
+    SchoolSettingDialogComponent,
+    AddUserDialogComponent,
+    IosComponentComponent,
+    SearchFilterDialogComponent,
+    DateTimeFilterComponent,
+    RoomsSearchComponent,
+    AdvancedOptionsComponent,
+    AddExistingRoomComponent,
+    RoomComponent,
+    FolderComponent,
+    NewRoomInFolderComponent,
+    EditRoomInFolderComponent,
+    BulkEditRoomsComponent,
+    BulkEditRoomsInFolderComponent,
+    ImportRoomsComponent,
+    OverlayContainerComponent
+    ,
+    CustomTableComponent],
+  entryComponents: [
+    LinkGeneratedDialogComponent,
+    ColumnsConfigDialogComponent,
+    SchoolSettingDialogComponent,
+    AddUserDialogComponent,
+    SettingsComponent,
+    SearchFilterDialogComponent,
+    DateTimeFilterComponent,
+    OverlayContainerComponent,
+  ],
+  providers: [
+    [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
+    PdfGeneratorService,
+  ],
+  exports: [
+    CustomTableComponent
+  ]
 })
 export class AdminModule {
 }

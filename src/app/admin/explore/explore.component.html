@@ -28,5 +28,21 @@
         <app-filter-button [title]="'Pass start time'" (buttonClick)="openFilter($event, 'calendar')"></app-filter-button>
       </div>
     </div>
+
+    <div class="search-button">
+      <app-gradient-button
+        [gradient]="views[currentView].color + ', ' + views[currentView].color"
+        [rightIcon]="'./assets/Chevron Right (White).svg'"
+        [size]="'medium'"
+        (buttonClick)="search()"
+      >{{ views[currentView].title }}</app-gradient-button>
+    </div>
+  </div>
+
+  <div class="content">
+    <app-custom-table
+      [displayedColumns]="displayedColumns(views[currentView].id)"
+      [data]="searchedPassData$"
+    ></app-custom-table>
   </div>
 </div>

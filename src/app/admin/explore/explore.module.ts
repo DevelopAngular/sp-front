@@ -9,6 +9,7 @@ import { FilterButtonComponent } from './filter-button/filter-button.component';
 import { StudentFilterComponent } from './student-filter/student-filter.component';
 import { SharedModule } from '../../shared/shared.module';
 import { SearchCalendarComponent } from './search-calendar/search-calendar.component';
+import { AdminModule } from '../admin.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { SearchCalendarComponent } from './search-calendar/search-calendar.compo
     CommonModule,
     ExploreRoutingModule,
     CoreModule,
-    SharedModule
+    SharedModule,
+    AdminModule
   ],
   entryComponents: [
     PagesDialogComponent,
