@@ -200,6 +200,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
   normalizeLocations(loc) {
+    if (this.currentPage !== 'from') {
       if (loc.category) {
         if (!this.pinnables[loc.category] || !this.pinnables[loc.category].gradient_color) {
           loc.gradient = '#7f879d, #7f879d';
@@ -213,6 +214,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           loc.gradient = this.pinnables[loc.id].gradient_color;
         }
       }
+    }
       return loc;
   }
 
