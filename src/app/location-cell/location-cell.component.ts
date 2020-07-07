@@ -77,23 +77,24 @@ export class LocationCellComponent implements OnInit {
   }
 
   get tooltipDescription(): string {
-    if (this.passLimit) {
+    if (this.passLimit && this.currentPage !== 'from') {
       return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit);
     }
   }
 
   get show_max_passes() {
-    if (this.passLimit) {
+    if (this.passLimit && this.currentPage !== 'from') {
       return (!this.forStaff && this.currentSchool.show_active_passes_number);
     }
   }
 
   get showTooltip() {
-    if (this.passLimit) {
+    if (this.passLimit && this.currentPage !== 'from') {
       return !this.forStaff &&
         this.currentSchool.show_active_passes_number ||
         (
-          (this.currentPage === 'from' && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
+          // TODO uncomment when branch SP-1050 is available
+          // (this.currentPage === 'from' && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
           (this.currentPage === 'to' && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
         );
     }
