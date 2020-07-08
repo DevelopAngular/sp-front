@@ -77,6 +77,7 @@ export class ExploreComponent implements OnInit {
       .pipe(filter(res => !!res))
       .subscribe(action => {
       this.currentView$.next(action);
+      this.cdr.detectChanges();
     });
   }
 
@@ -95,6 +96,7 @@ export class ExploreComponent implements OnInit {
         .pipe(filter(res => res))
         .subscribe(students => {
           this.selectedStudents = students;
+          this.cdr.detectChanges();
         });
     } else if (action === 'calendar') {
       const calendar = this.dialog.open(SearchCalendarComponent, {
@@ -109,7 +111,7 @@ export class ExploreComponent implements OnInit {
     if (page_id === SearchPages.search) {
       return {
         1: { sortBy: 'asc', title: 'Pass', field: 'icon' },
-        2: {sortBy: 'asc', title: 'Student Name', field: 'student'},
+        2: { sortBy: 'asc', title: 'Student Name', field: 'student'},
         3: { sortBy: 'asc', title: 'Origin', field: 'origin'},
         4: { sortBy: 'asc', title: 'Destination', field: 'destination'},
         5: { sortBy: 'asc', title: 'Pass start time', field: 'start_time'},
@@ -154,43 +156,7 @@ export class ExploreComponent implements OnInit {
       }
     }
 
-    this.hallPassService
-      .searchPassesRequest(url);
-    // this.cdr.detectChanges();
-      // .pipe(filter(res => !!res))
-      // .subscribe((passes: HallPass[]) => {
-
-        // this.passes = passes;
-        // this.tableData = passes.map((hallPass, i) => {
-        //
-        //   const duration = moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time)));
-        //
-        //   const name = hallPass.student.first_name + ' ' + hallPass.student.last_name +
-        //     ` (${hallPass.student.primary_email.split('@', 1)[0]})`;
-        //
-        //   const rawObj = {
-        //     'Student Name': name,
-        //     'Origin': hallPass.origin.title,
-        //     'TT': hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY,
-        //     'Destination': hallPass.destination.title,
-        //     'Date & Time': moment(hallPass.created).format('M/DD h:mm A'),
-        //     'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
-        //   };
-        //
-        //   const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
-        //
-        //
-        //   Object.defineProperty(rawObj, 'id', { enumerable: false, value: hallPass.id});
-        //   Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(hallPass.created) });
-        //   Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
-        //   Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: hallPass.travel_type });
-        //
-        //   Object.defineProperty(record, '_data', {enumerable: false, value: rawObj });
-        //   return record;
-        // });
-        // this.spinner = false;
-        // this.hasSearched = true;
-      // });
+    this.hallPassService.searchPassesRequest(url);
   }
 
 }

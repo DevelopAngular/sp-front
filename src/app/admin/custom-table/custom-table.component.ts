@@ -1,4 +1,6 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
+import {DomSanitizer} from '@angular/platform-browser';
 
 export interface CustomTableColumns {
   [id: number]: {
@@ -16,16 +18,35 @@ export interface CustomTableColumns {
 })
 export class CustomTableComponent implements OnInit {
 
+  @Input() height: string = '800px';
   @Input() displayedColumns: CustomTableColumns;
   @Input() data;
 
-  constructor() { }
+  @ViewChild(CdkVirtualScrollViewport)
+  public viewPort: CdkVirtualScrollViewport;
+
+  constructor(
+    private domSanitizer: DomSanitizer
+  ) { }
 
   ngOnInit() {
   }
 
   disableSortColumns() {
     return 0;
+  }
+
+  getGradient(gradient: string) {
+    const colors = gradient.split(',');
+    return 'radial-gradient(circle at 73% 71%, ' + (colors[0]) + ', ' + colors[1] + ')';
+  }
+
+  generateColumnData(value, field, element: HTMLElement) {
+    if (field === 'icon') {
+      return element.innerHTML = `<img width="13" src="${value}" alt="Icon">`;
+    } else {
+      return value;
+    }
   }
 
   columnClick(key) {

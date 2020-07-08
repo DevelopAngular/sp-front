@@ -5,7 +5,6 @@ import {DomSanitizer} from '@angular/platform-browser';
   selector: 'app-filter-button',
   templateUrl: './filter-button.component.html',
   styleUrls: ['./filter-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterButtonComponent implements OnInit {
 

@@ -1,4 +1,40 @@
-.example-viewport {
-  width: 500px;
-  height: 700px;
+.wrapper {
+  .table-wrapper {
+    background: #FFFFFF;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.0616259);
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    .header {
+      background-color: #D3D6DE;
+      height: 41px;
+      border: none;
+      position: sticky;
+      top: 0;
+    }
+
+    .table-viewport {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+
+      .row-content {
+
+
+        .pass {
+          width: 38px;
+          height: 23px;
+          border-radius: 5px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+  }
 }
+
+//::ng-deep .cdk-virtual-scroll-content-wrapper {
+//  transform: translateY(0px) !important;
+//}
