@@ -146,7 +146,7 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
     this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
       this.currentSort = sort;
       console.log(this.dataSource.sort);
-      debugger;
+      // debugger;
       const data = this.dataSource.allData;
       if (!sort.active || sort.direction === '') {
         this.dataSource.allData = data;
