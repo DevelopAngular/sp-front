@@ -18,7 +18,7 @@ import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.st
 import {bufferCount, mergeMap, reduce} from 'rxjs/operators';
 import {constructUrl} from '../live-data/helpers';
 import {searchPasses} from '../ngrx/passes/actions';
-import {getPassesEntities} from '../ngrx/passes/states';
+import {getPassesCollection, getPassesEntities, getPassesLoaded} from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
 
 @Injectable({
@@ -33,6 +33,8 @@ export class HallPassesService {
   isLoadingArranged$: Observable<boolean> = this.store.select(getArrangedLoading);
 
   passesEntities$: Observable<{[id: number]: HallPass}> = this.store.select(getPassesEntities);
+  passesCollection$: Observable<HallPass[]> = this.store.select(getPassesCollection);
+  passesLoaded$: Observable<boolean> = this.store.select(getPassesLoaded);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;

@@ -6,6 +6,7 @@ import { IPassesState } from './passes.state';
 export const getPassesState = (state: AppState) => state.passes;
 
 export const getPassesEntities = adapter.getSelectors(getPassesState).selectEntities;
+export const getPassesCollection = adapter.getSelectors(getPassesState).selectAll;
 
 export const getPassesLoaded = createSelector(
   getPassesState,

@@ -24,8 +24,10 @@ import {EditRoomInFolderComponent} from './overlay-container/edit-room-in-folder
 import {BulkEditRoomsComponent} from './overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
 import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
 import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
-import {OverlayContainerComponent} from './overlay-container/overlay-container.component';;
-import { CustomTableComponent } from './custom-table/custom-table.component'
+import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
+import { CustomTableComponent } from './custom-table/custom-table.component';
+import { SpDataTableComponent } from './sp-data-table/sp-data-table.component';
+
 
 @NgModule({
   imports: [
@@ -55,9 +57,10 @@ import { CustomTableComponent } from './custom-table/custom-table.component'
     BulkEditRoomsComponent,
     BulkEditRoomsInFolderComponent,
     ImportRoomsComponent,
-    OverlayContainerComponent
-    ,
-    CustomTableComponent],
+    OverlayContainerComponent,
+    CustomTableComponent,
+    SpDataTableComponent
+    ],
   entryComponents: [
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
@@ -73,7 +76,8 @@ import { CustomTableComponent } from './custom-table/custom-table.component'
     PdfGeneratorService,
   ],
   exports: [
-    CustomTableComponent
+    CustomTableComponent,
+    SpDataTableComponent
   ]
 })
 export class AdminModule {

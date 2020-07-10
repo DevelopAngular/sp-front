@@ -15,7 +15,7 @@ import { DisabledChipComponent } from '../accounts/disabled-chip/disabled-chip.c
   imports: [
     CommonModule,
     SharedModule,
-    FormsModule,
+    FormsModule
   ],
   declarations: [
       ColorPalletPickerComponent,

@@ -39,10 +39,11 @@
     </div>
   </div>
 
-  <div class="content">
-    <app-custom-table
-      [displayedColumns]="displayedColumns(views[currentView].id)"
-      [data]="searchedPassData$"
-    ></app-custom-table>
+  <div class="content" *ngIf="loadedData$ | async">
+<!--    <app-custom-table-->
+<!--      [displayedColumns]="displayedColumns(views[currentView].id)"-->
+<!--      [data]="searchedPassData$"-->
+<!--    ></app-custom-table>-->
+    <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="searchedPassData$"></app-sp-data-table>
   </div>
 </div>

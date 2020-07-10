@@ -2,11 +2,10 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@an
 import {BehaviorSubject, Observable} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
-import {filter} from 'rxjs/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
 import {SearchCalendarComponent} from './search-calendar/search-calendar.component';
-import {CustomTableColumns} from '../custom-table/custom-table.component';
 import {HallPass} from '../../models/HallPass';
 import * as moment from 'moment';
 import {HallPassesService} from '../../services/hall-passes.service';
@@ -47,8 +46,12 @@ export class ExploreComponent implements OnInit {
   selectedStudents: User[];
   selectedDate: { start: moment.Moment, end: moment.Moment };
   selectedRooms: any[];
+  isCheckbox$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  displayedColumns: string[];
+  loadedData$: Observable<boolean>;
+  loaded: boolean;
 
-  searchedPassData$: Observable<{[id: number]: HallPass}>;
+  searchedPassData$: any;
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>('pass_search');
 
@@ -59,7 +62,46 @@ export class ExploreComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    this.searchedPassData$ = this.hallPassService.passesEntities$;
+    this.loadedData$ = this.currentView$.asObservable().pipe(
+      switchMap((view: string) => {
+        if (view === 'pass_search') {
+          return this.hallPassService.passesLoaded$;
+        }
+      })
+    );
+    this.searchedPassData$ = this.hallPassService.passesCollection$
+      .pipe(
+        filter(res => !!res.length),
+        map((passes: HallPass[]) => {
+          return passes.map(pass => {
+            const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
+            const passImg = `<div class="pass-icon" style="background-color: red">
+                                <img width="15" src="${pass.icon}" alt="Icon">
+                             </div>`;
+            const rawObj = {
+              'Pass': passImg,
+              'Student Name': pass.student.display_name,
+              'Origin': pass.origin.title,
+              'Destination': pass.destination.title,
+              'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
+              'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
+            };
+
+            Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
+            Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
+            Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+            Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
+            Object.defineProperty(rawObj, '_data', {enumerable: false, value: rawObj });
+
+            return rawObj;
+          });
+        })
+      );
+  }
+
+  getGradient(gradient: string) {
+    const colors = gradient.split(',');
+    return 'radial-gradient(circle at 73% 71%, ' + (colors[0]) + ', ' + colors[1] + ')';
   }
 
   openSwitchPage(event) {
@@ -107,18 +149,18 @@ export class ExploreComponent implements OnInit {
     }
   }
 
-  displayedColumns(page_id: number): CustomTableColumns {
-    if (page_id === SearchPages.search) {
-      return {
-        1: { sortBy: 'asc', title: 'Pass', field: 'icon' },
-        2: { sortBy: 'asc', title: 'Student Name', field: 'student'},
-        3: { sortBy: 'asc', title: 'Origin', field: 'origin'},
-        4: { sortBy: 'asc', title: 'Destination', field: 'destination'},
-        5: { sortBy: 'asc', title: 'Pass start time', field: 'start_time'},
-        6: { sortBy: 'asc', title: 'Duration', field: 'duration'}
-      };
-    }
-  }
+  // displayedColumns(page_id: number): CustomTableColumns {
+  //   if (page_id === SearchPages.search) {
+  //     return {
+  //       1: { sortBy: 'asc', title: 'Pass', field: 'icon' },
+  //       2: { sortBy: 'asc', title: 'Student Name', field: 'student'},
+  //       3: { sortBy: 'asc', title: 'Origin', field: 'origin'},
+  //       4: { sortBy: 'asc', title: 'Destination', field: 'destination'},
+  //       5: { sortBy: 'asc', title: 'Pass start time', field: 'start_time'},
+  //       6: { sortBy: 'asc', title: 'Duration', field: 'duration'}
+  //     };
+  //   }
+  // }
 
   search() {
     let url = 'v1/hall_passes?';
