@@ -115,6 +115,7 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
   dataSource: GridTableDataSource;
   selection = new SelectionModel<any>(true, []);
   itemSize = 33;
+  currentSort: {active: string, direction: string} = {active: '', direction: ''};
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -143,6 +144,9 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
     });
 
     this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
+      this.currentSort = sort;
+      console.log(this.dataSource.sort);
+      debugger;
       const data = this.dataSource.allData;
       if (!sort.active || sort.direction === '') {
         this.dataSource.allData = data;

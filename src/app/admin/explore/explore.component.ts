@@ -9,6 +9,7 @@ import {SearchCalendarComponent} from './search-calendar/search-calendar.compone
 import {HallPass} from '../../models/HallPass';
 import * as moment from 'moment';
 import {HallPassesService} from '../../services/hall-passes.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 export interface View {
   [view: string]: CurrentView;
@@ -58,7 +59,8 @@ export class ExploreComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private hallPassService: HallPassesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private domSanitizer: DomSanitizer
     ) { }
 
   ngOnInit() {
@@ -75,9 +77,9 @@ export class ExploreComponent implements OnInit {
         map((passes: HallPass[]) => {
           return passes.map(pass => {
             const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
-            const passImg = `<div class="pass-icon" style="background-color: red">
-                                <img width="15" src="${pass.icon}" alt="Icon">
-                             </div>`;
+            const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}">
+                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">
+                              </div>`);
             const rawObj = {
               'Pass': passImg,
               'Student Name': pass.student.display_name,
