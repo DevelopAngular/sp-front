@@ -80,9 +80,6 @@ export class ToWhereComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.locationService.getPassLimitSocket().subscribe(res => {
-    //   debugger;
-    // });
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
     if (this.formState.data.teacherRooms && !this.dialogData['kioskMode']) {

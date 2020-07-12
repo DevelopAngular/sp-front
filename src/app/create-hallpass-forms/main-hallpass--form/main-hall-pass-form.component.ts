@@ -224,6 +224,9 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
           this.FORM_STATE.data.teacherRooms = rooms;
         });
     this.locationsService.getPassLimitRequest();
+    this.locationsService.listenPassLimitSocket().subscribe(res => {
+      this.locationsService.updatePassLimitRequest(res);
+    });
 
     this.dialogRef
       .backdropClick()
