@@ -1,0 +1,35 @@
+<div class="wrapper">
+ <div class="columns" *ngFor="let column of columns; let i = index">
+   <div class="column">
+     <div class="left">
+       <app-toggle-input
+         [style.width]="'auto'"
+         [controlSize]="'small'"
+         [delimiter]="false"
+         [form]="formGroup"
+         [controlName]="column"
+         (pushOutValue)="updateColumn($event, i, column)"
+       >
+       </app-toggle-input>
+       <div class="label">{{ column }}</div>
+     </div>
+     <div class="right">
+       <img [src]="'./assets/Burger (Blue-Gray).svg' | resolveAsset">
+     </div>
+
+   </div>
+ </div>
+  <div class="buttons">
+      <app-gradient-button
+        [gradient]="'#F4F4F4, #F4F4F4'"
+        [textColor]="'#7F879D'"
+      >Hide all
+      </app-gradient-button>
+      <app-gradient-button
+        [style.margin-left]="'13px'"
+        [gradient]="'#F4F4F4, #F4F4F4'"
+        [textColor]="'#7F879D'"
+      >Show all
+      </app-gradient-button>
+  </div>
+</div>

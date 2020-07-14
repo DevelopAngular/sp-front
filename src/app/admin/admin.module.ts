@@ -27,6 +27,7 @@ import {ImportRoomsComponent} from './overlay-container/import-rooms/import-room
 import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
 import { CustomTableComponent } from './custom-table/custom-table.component';
 import { SpDataTableComponent } from './sp-data-table/sp-data-table.component';
+import { ColumnOptionsComponent } from './sp-data-table/column-options/column-options.component';
 
 
 @NgModule({
@@ -59,8 +60,9 @@ import { SpDataTableComponent } from './sp-data-table/sp-data-table.component';
     ImportRoomsComponent,
     OverlayContainerComponent,
     CustomTableComponent,
-    SpDataTableComponent
-    ],
+    SpDataTableComponent,
+    ColumnOptionsComponent
+  ],
   entryComponents: [
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
@@ -70,6 +72,7 @@ import { SpDataTableComponent } from './sp-data-table/sp-data-table.component';
     SearchFilterDialogComponent,
     DateTimeFilterComponent,
     OverlayContainerComponent,
+    ColumnOptionsComponent
   ],
   providers: [
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

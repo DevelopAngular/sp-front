@@ -78,7 +78,7 @@ export class ExploreComponent implements OnInit {
           return passes.map(pass => {
             const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
             const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}">
-                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">
+<!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
             const rawObj = {
               'Pass': passImg,

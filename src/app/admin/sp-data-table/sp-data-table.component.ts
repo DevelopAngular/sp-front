@@ -2,9 +2,12 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, In
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
-import {MatSort, Sort} from '@angular/material';
+import {MatDialog, MatSort, Sort} from '@angular/material';
 import * as moment from 'moment';
 import {StorageService} from '../../services/storage.service';
+import {ColumnOptionsComponent} from './column-options/column-options.component';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
+import {TableService} from './table.service';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
@@ -115,11 +118,18 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
   dataSource: GridTableDataSource;
   selection = new SelectionModel<any>(true, []);
   itemSize = 33;
-  currentSort: {active: string, direction: string} = {active: '', direction: ''};
+  currentSort: {active: string, direction: string}[] = [];
+  tableOptionButtons = [
+    { icon: 'Columns', action: 'column' },
+    { icon: 'Print', action: 'print' },
+    { icon: 'CSV', action: 'csv'}
+  ];
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private storage: StorageService
+    private storage: StorageService,
+    private dialog: MatDialog,
+    private tableService: TableService
   ) {}
 
   ngAfterViewInit() {
@@ -144,9 +154,13 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
     });
 
     this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
-      this.currentSort = sort;
-      console.log(this.dataSource.sort);
-      // debugger;
+      const activeSort = this.currentSort.find(curr => curr.active === sort.active);
+      if (!activeSort) {
+        this.currentSort.push(sort);
+      } else {
+        activeSort.direction = sort.direction;
+      }
+
       const data = this.dataSource.allData;
       if (!sort.active || sort.direction === '') {
         this.dataSource.allData = data;
@@ -168,10 +182,30 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
 
       });
     });
+
+    this.tableService.updateTableHeaders$
+      .subscribe(({index, value, column}) => {
+        index = this.columnsToDisplay[0] === 'select' ? index + 1 : index;
+        if (value) {
+          this.columnsToDisplay.splice(index, 0, column);
+        } else {
+          this.columnsToDisplay.splice(index, 1);
+        }
+        this.cdr.detectChanges();
+    });
   }
 
   placeholderWhen(index: number, _: any) {
     return index === 0;
+  }
+
+  getColumnSort(column) {
+    const activeSort = this.currentSort.find(sort => sort.active === column);
+    if (activeSort) {
+      return activeSort.direction;
+    } else {
+      return null;
+    }
   }
 
   isAllSelected() {
@@ -192,5 +226,24 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
+
+  openOption(action: string, event) {
+    UNANIMATED_CONTAINER.next(true);
+    if (action === 'column') {
+      const CD = this.dialog.open(ColumnOptionsComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {
+          'trigger': event.currentTarget,
+          'columns': this.displayedColumns
+        }
+      });
+
+      CD.afterClosed().subscribe(res => {
+        this.cdr.detectChanges();
+        UNANIMATED_CONTAINER.next(false);
+      });
+    }
   }
 }

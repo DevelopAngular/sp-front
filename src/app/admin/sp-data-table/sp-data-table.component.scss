@@ -1,9 +1,32 @@
-.example-viewport {
-  height: 700px;
-  width: 100%;
+.wrapper {
+  display: flex;
   background: #FFFFFF;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.0616259);
   border-radius: 12px;
+  overflow: hidden;
+
+
+  .table-options-screen {
+    width: 44px;
+    border-left: 1px solid #7E879D;
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 12px;
+
+      .button {
+        margin-top: 25px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.example-viewport {
+  height: 700px;
+  width: 100%;
 }
 
 .table {
@@ -22,6 +45,11 @@
 
   .mat-cell, .mat-header-cell {
     padding-left: 12px;
+  }
+
+  .mat-header-cell:hover {
+    background: #FFFFFF;
+    mix-blend-mode: normal;
   }
 
   .sort-icon {
@@ -43,6 +71,15 @@
 
 ::ng-deep .mat-sort-header-arrow {
   display: none !important;
+}
+
+::ng-deep .mat-checkbox-frame {
+  background-color: #7F879D !important;
+  border-style: none !important;
+}
+
+::ng-deep .mat-checkbox-background {
+  background-color: transparent !important;
 }
 
 ::ng-deep .pass-icon {

@@ -1,0 +1,33 @@
+@import "../../../../sp-colors";
+
+.wrapper {
+  background-color: #FFFFFF;
+  width: 200px;
+  padding: 25px;
+  border-radius: 9px;
+
+  .columns {
+
+    .column {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .left {
+        display: flex;
+        align-items: center;
+
+        .label {
+          font-size: 14px;
+          color: $blue-gray;
+          margin-left: 9px;
+        }
+      }
+    }
+  }
+
+  .buttons {
+    display: flex;
+    margin-top: 11px;
+  }
+}
