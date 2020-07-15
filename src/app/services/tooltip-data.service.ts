@@ -9,22 +9,20 @@ import {debounce} from 'rxjs/operators';
 })
 export class TooltipDataService {
 
-  intervalId: any;
-
   constructor(private http: HttpService) { }
 
-  reachedPassLimit(currentPage: 'from' | 'to', passLimit: PassLimit): boolean {
+  reachedPassLimit(currentPage: 'from' | 'to', passLimit: PassLimit, isStaff?: boolean): boolean {
     // TODO uncomment when branch SP-1050 is available
     // if (currentPage === 'from' && passLimit.max_passes_from_active && ((passLimit.from_count && passLimit.from_count >= passLimit.max_passes_from) || (!passLimit.from_count && !passLimit.max_passes_from))) {
     //   return false;
     // } else
-      if (currentPage === 'to' && passLimit.max_passes_to_active && ((passLimit.to_count && passLimit.to_count >= passLimit.max_passes_to) || (!passLimit.to_count && !passLimit.max_passes_to))) {
+      if (currentPage === 'to' && passLimit.max_passes_to_active && ((passLimit.to_count && passLimit.to_count >= passLimit.max_passes_to) || (!passLimit.to_count && !passLimit.max_passes_to)) && !isStaff) {
       return false;
     }
     return true;
   }
 
-  tooltipDescription(currentPage: 'from' | 'to', passLimit: PassLimit): string {
+  tooltipDescription(currentPage: 'from' | 'to', passLimit: PassLimit, isStaff?: boolean): string {
     // TODO uncomment when branch SP-1050 is available
     // if (currentPage === 'from') {
     //   if (this.http.getSchool().show_active_passes_number) {

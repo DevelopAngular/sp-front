@@ -29,6 +29,8 @@ function doesFilterMatch(prefix: string, path: string): boolean {
       return false;
     }
   }
+  // console.log(prefixParts);
+  // debugger
 
   return true;
 }

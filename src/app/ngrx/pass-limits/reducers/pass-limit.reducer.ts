@@ -17,6 +17,15 @@ const reducer = createReducer(
   on(passLimitActions.getPassLimits, state => ({...state, loading: true, loaded: false})),
   on(passLimitActions.getPassLimitsSuccess, (state, {pass_limits}) => {
     return adapter.addAll(pass_limits, {...state, loading: false, loaded: true});
+  }),
+  on(passLimitActions.updatePassLimitSuccess, (state, {pass_limit}) => {
+    let currentItem = {...state.entities[pass_limit.location_id]};
+    currentItem = {
+      ...currentItem,
+      from_count: pass_limit.passes_from,
+      to_count: pass_limit.passes_to
+    };
+    return adapter.upsertOne(currentItem, {...state, loading: false, loaded: true});
   })
 );
 

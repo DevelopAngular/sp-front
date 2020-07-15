@@ -34,7 +34,8 @@ import {
 import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
 import {PassLimit} from '../models/PassLimit';
 import {getPassLimitCollection, getPassLimitEntities} from '../ngrx/pass-limits/states';
-import {getPassLimits} from '../ngrx/pass-limits/actions';
+import {getPassLimits, updatePassLimit} from '../ngrx/pass-limits/actions';
+import {PollingService} from './polling-service';
 
 @Injectable({
   providedIn: 'root'
@@ -62,7 +63,11 @@ export class LocationsService {
 
   focused: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
-  constructor(private http: HttpService, private store: Store<AppState>) { }
+  constructor(
+    private http: HttpService,
+    private store: Store<AppState>,
+    private pollingService: PollingService
+  ) { }
 
     getLocationsWithCategory(category: string) {
         return this.http.get(`v1/locations?category=${category}&`);
@@ -165,6 +170,15 @@ export class LocationsService {
 
     getPassLimitRequest() {
       this.store.dispatch(getPassLimits());
+    }
+
+    updatePassLimitRequest(item) {
+      this.store.dispatch(updatePassLimit({item}));
+    }
+
+    listenPassLimitSocket() {
+      this.pollingService.sendMessage('location.active_pass_counts.enable', null);
+      return this.pollingService.listen('location.active_pass_counts');
     }
 
     /////// Favorite Locations

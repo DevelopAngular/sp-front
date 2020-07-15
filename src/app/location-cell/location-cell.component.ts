@@ -78,18 +78,18 @@ export class LocationCellComponent implements OnInit {
 
   get tooltipDescription(): string {
     if (this.passLimit && this.currentPage !== 'from') {
-      return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit);
+      return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit, this.forStaff);
     }
   }
 
   get show_max_passes() {
-    if (this.passLimit && this.currentPage !== 'from') {
+    if (this.passLimit && this.passLimit.to_count && this.currentPage !== 'from') {
       return (!this.forStaff && this.currentSchool.show_active_passes_number);
     }
   }
 
   get showTooltip() {
-    if (this.passLimit && this.currentPage !== 'from') {
+    if (this.passLimit && this.passLimit.to_count && this.currentPage !== 'from') {
       return !this.forStaff &&
         this.currentSchool.show_active_passes_number ||
         (

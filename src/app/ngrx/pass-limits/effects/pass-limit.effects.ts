@@ -24,6 +24,18 @@ export class PassLimitEffects {
       );
   });
 
+  updatePassLimit$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(passLimitActions.updatePassLimit),
+        map((action: any) => {
+          // debugger;
+          return passLimitActions.updatePassLimitSuccess({pass_limit: action.item.data});
+        }),
+        catchError(error => of(passLimitActions.updatePassLimitFailure({errorMessage: error.message})))
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private locationsService: LocationsService
