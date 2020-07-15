@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import {MatDialog, MatSort, Sort} from '@angular/material';
 import * as moment from 'moment';
@@ -8,6 +8,7 @@ import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
+import {findIndex, cloneDeep} from 'lodash';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
@@ -38,7 +39,7 @@ export class GridTableDataSource extends DataSource<any> {
     super();
     this.initialData$
       .subscribe(res => {
-        this.allData = res;
+          this.allData = res;
       });
 
     this.viewport.elementScrolled().subscribe((ev: any) => {
@@ -115,6 +116,7 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
   placeholderHeight = 0;
   displayedColumns: string[];
   columnsToDisplay: string[];
+  tableInitialColumns: string[];
   dataSource: GridTableDataSource;
   selection = new SelectionModel<any>(true, []);
   itemSize = 33;
@@ -144,6 +146,7 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
     });
     this.displayedColumns = Object.keys(this.dataSource.allData[0]);
     this.columnsToDisplay = this.displayedColumns.slice();
+
     this.isCheckbox.subscribe((v) => {
       if (v) {
         this.columnsToDisplay.unshift('select');
@@ -151,6 +154,7 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
         this.columnsToDisplay.shift();
         this.selection.clear();
       }
+      this.tableInitialColumns = cloneDeep(this.columnsToDisplay);
     });
 
     this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
@@ -185,11 +189,17 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
 
     this.tableService.updateTableHeaders$
       .subscribe(({index, value, column}) => {
-        index = this.columnsToDisplay[0] === 'select' ? index + 1 : index;
+        // const currindex = this.isCheckbox.getValue() ? index + 1 : index;
         if (value) {
-          this.columnsToDisplay.splice(index, 0, column);
+          const itemIndex = findIndex(this.tableInitialColumns, (item) => {
+            return item.toLowerCase() === column.toLowerCase();
+          });
+          this.columnsToDisplay.splice(itemIndex, 0, column);
         } else {
-          this.columnsToDisplay.splice(index, 1);
+          const itemIndex = findIndex(this.columnsToDisplay, (item) => {
+            return item.toLowerCase() === column.toLowerCase();
+          });
+          this.columnsToDisplay.splice(itemIndex, 1);
         }
         this.cdr.detectChanges();
     });

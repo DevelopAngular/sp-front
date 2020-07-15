@@ -15,11 +15,13 @@ export class StudentFilterComponent implements OnInit {
 
   triggerElementRef: HTMLElement;
 
-  selectedStudents: User[] = [];
+  selectedStudents: User[] | Location[] = [];
 
-  initialStudentsArray: User[];
+  initialStudentsArray: User[] | Location[];
 
   update: boolean;
+
+  type: 'selectedStudents' | 'rooms';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -27,7 +29,7 @@ export class StudentFilterComponent implements OnInit {
   ) { }
 
   get isUpdate() {
-    return !!this.data['selectedStudents'] && !!this.data['selectedStudents'].length;
+    return !!this.data[this.type] && !!this.data[this.type].length;
   }
 
   get displayUpdateButton() {
@@ -40,9 +42,10 @@ export class StudentFilterComponent implements OnInit {
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
-    if (this.data['selectedStudents']) {
-      this.selectedStudents = cloneDeep(this.data['selectedStudents']);
-      this.initialStudentsArray = cloneDeep(this.data['selectedStudents']);
+    this.type = this.data['type'];
+    if (this.data[this.type]) {
+      this.selectedStudents = cloneDeep(this.data[this.type]);
+      this.initialStudentsArray = cloneDeep(this.data[this.type]);
     }
     this.updateDialogPosition();
   }
@@ -59,7 +62,7 @@ export class StudentFilterComponent implements OnInit {
   }
 
   saveStudents() {
-    this.dialogRef.close(this.selectedStudents);
+    this.dialogRef.close({students: this.selectedStudents, type: this.type});
   }
 
 }

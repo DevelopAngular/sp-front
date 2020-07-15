@@ -23,10 +23,12 @@ import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
+import {LocationsService} from '../services/locations.service';
+import {Location} from '../models/Location';
 
 declare const window;
 
-export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local';
+export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local' | 'rooms';
 
 export type selectorIndicator = '+' | '-';
 
@@ -113,7 +115,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = true;
   @Input() showOptions: boolean = true;
-  @Input() selectedOptions: Array<User | School | GSuiteSelector> = [];
+  @Input() selectedOptions: Array<User | School | GSuiteSelector | Location> = [];
   @Input() selectedOrgUnits: any[] = [];
   @Input() height: string = '40px';
   @Input() width: string = '280px';
@@ -165,6 +167,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   firstSearchItem: User | GSuiteSelector;
   currentSchool: School;
   suggestedTeacher: User;
+  foundLocations: Location[];
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -175,7 +178,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private mapsApi: MapsAPILoader,
     private shortcutsService: KeyboardShortcutsService,
     private renderer: Renderer2,
-    public screenService: ScreenService
+    public screenService: ScreenService,
+    private locationService: LocationsService
   ) {}
 
   private getEmitedValue() {
@@ -360,13 +364,40 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           this.pending$.next(false);
           this.teacherCollection$.next(null);
         }
+        break;
+      case 'rooms':
+        if (search !== '') {
+          const url = `v1/locations?limit=100&search=${search}&starred=false`;
+          this.locationService.searchLocationsRequest(url)
+            .pipe(filter(res => !!res.length))
+            .subscribe((locs) => {
+                this.foundLocations = locs;
+                this.showDummy = !locs.length;
+                this.pending$.next(false);
+          });
+        } else {
+            this.showDummy = false;
+            this.inputValue$.next('');
+            this.pending$.next(false);
+        }
 
+        break;
     }
   }
   selectSchool(school) {
     this.selectedSchool = school;
     this.onUpdate.emit(school);
     this.schools.next(null);
+  }
+
+  addLocation(location) {
+    this.foundLocations = null;
+    this.inputValue$.next('');
+    this.onSearch('');
+    if (!this.selectedOptions.includes(location)) {
+      this.selectedOptions.push(location);
+      this.onUpdate.emit(this.getEmitedValue());
+    }
   }
 
   addUnit(unit) {

@@ -48,9 +48,8 @@ export class ExploreComponent implements OnInit {
   selectedDate: { start: moment.Moment, end: moment.Moment };
   selectedRooms: any[];
   isCheckbox$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  displayedColumns: string[];
   loadedData$: Observable<boolean>;
-  loaded: boolean;
+  isSearched: boolean;
 
   searchedPassData$: any;
 
@@ -62,6 +61,15 @@ export class ExploreComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private domSanitizer: DomSanitizer
     ) { }
+
+  get dateText() {
+    const start = this.selectedDate.start;
+    const end = this.selectedDate.end;
+    if (start && end) {
+      return this.selectedDate &&
+      start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
+    }
+  }
 
   ngOnInit() {
     this.loadedData$ = this.currentView$.asObservable().pipe(
@@ -126,57 +134,73 @@ export class ExploreComponent implements OnInit {
   }
 
   openFilter(event, action) {
-    if (action === 'students') {
+    if (action === 'students' || action === 'destination') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': event.currentTarget,
-          'selectedStudents': this.selectedStudents
+          'selectedStudents': this.selectedStudents,
+          'type': action === 'students' ? 'selectedStudents' : 'rooms',
+          'rooms': this.selectedRooms
         }
       });
 
       studentFilter.afterClosed()
         .pipe(filter(res => res))
-        .subscribe(students => {
-          this.selectedStudents = students;
+        .subscribe(({students, type}) => {
+          if (type === 'rooms') {
+            this.selectedRooms = students;
+          } else if (type === 'selectedStudents') {
+            this.selectedStudents = students;
+          }
+          if (this.isSearched) {
+            this.autoSearch();
+          }
           this.cdr.detectChanges();
         });
     } else if (action === 'calendar') {
       const calendar = this.dialog.open(SearchCalendarComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: { 'trigger': event.currentTarget }
+        data: { 'trigger': event.currentTarget, selectedDate: this.selectedDate }
+      });
+
+      calendar.afterClosed()
+        .pipe(filter(res => res))
+        .subscribe(res => {
+        this.selectedDate = res;
+        if (this.isSearched) {
+          this.autoSearch();
+        }
+        this.cdr.detectChanges();
       });
     }
   }
 
-  // displayedColumns(page_id: number): CustomTableColumns {
-  //   if (page_id === SearchPages.search) {
-  //     return {
-  //       1: { sortBy: 'asc', title: 'Pass', field: 'icon' },
-  //       2: { sortBy: 'asc', title: 'Student Name', field: 'student'},
-  //       3: { sortBy: 'asc', title: 'Origin', field: 'origin'},
-  //       4: { sortBy: 'asc', title: 'Destination', field: 'destination'},
-  //       5: { sortBy: 'asc', title: 'Pass start time', field: 'start_time'},
-  //       6: { sortBy: 'asc', title: 'Duration', field: 'duration'}
-  //     };
-  //   }
-  // }
+  autoSearch() {
+    if (!this.selectedRooms && !this.selectedDate && !this.selectedStudents) {
+      this.isSearched = false;
+    }
+    if (this.isSearched) {
+      this.search();
+    }
+  }
 
   search() {
     let url = 'v1/hall_passes?';
     if (this.selectedRooms) {
       this.selectedRooms.forEach(room => {
-        if (room.filter === 'Origin') {
-          url += 'origin=' + room.id + '&';
-        }
-        if (room.filter === 'Destination') {
-          url += 'destination=' + room.id + '&';
-        }
-        if (room.filter === 'Either') {
-          url += 'location=' + room.id + '&';
-        }
+        url += 'destination=' + room.id + '&';
+        // if (room.filter === 'Origin') {
+        //   url += 'origin=' + room.id + '&';
+        // }
+        // if (room.filter === 'Destination') {
+        //   url += 'destination=' + room.id + '&';
+        // }
+        // if (room.filter === 'Either') {
+        //   url += 'location=' + room.id + '&';
+        // }
       });
 
     }
@@ -201,6 +225,7 @@ export class ExploreComponent implements OnInit {
     }
 
     this.hallPassService.searchPassesRequest(url);
+    this.isSearched = true;
   }
 
 }

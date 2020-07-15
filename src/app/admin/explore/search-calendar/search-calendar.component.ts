@@ -9,6 +9,7 @@ import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material'
 export class SearchCalendarComponent implements OnInit {
 
   triggerElementRef: HTMLElement;
+  selectedDate;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -17,6 +18,7 @@ export class SearchCalendarComponent implements OnInit {
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
+    this.selectedDate = this.data['selectedDate'];
     this.updateDialogPosition();
   }
 
@@ -25,6 +27,10 @@ export class SearchCalendarComponent implements OnInit {
     const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.position = { left: `${rect.left}px`, top: `${rect.bottom + 13}px` };
     this.dialogRef.updatePosition(matDialogConfig.position);
+  }
+
+  result(date) {
+    this.dialogRef.close(date);
   }
 
 }

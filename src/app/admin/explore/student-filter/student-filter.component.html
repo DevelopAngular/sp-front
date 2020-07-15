@@ -4,6 +4,8 @@
       [width]="'254px'"
       [listMaxHeight]="'unset'"
       [focused]="true"
+      [placeholder]="type === 'rooms' ? 'Search Rooms' : 'Search students'"
+      [searchTarget]="type === 'rooms' ? 'rooms' : 'users'"
       [selectedOptions]="selectedStudents"
       [displaySelectedTitle]="false"
       (onUpdate)="updateStudents($event)"

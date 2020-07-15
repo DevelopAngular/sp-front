@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 import {TableService} from '../table.service';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-column-options',
@@ -41,6 +42,10 @@ export class ColumnOptionsComponent implements OnInit {
 
   updateColumn(value, index, column) {
     this.tableService.updateTableHeaders$.next({index, value, column});
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
   }
 
 }

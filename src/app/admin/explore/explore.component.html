@@ -17,33 +17,40 @@
           (buttonClick)="openFilter($event, 'students')"
           [title]="'Students' + (selectedStudents && selectedStudents.length ? ' (' + selectedStudents.length + ')' : '')"
           [filter]="selectedStudents && !!selectedStudents.length"
-          (clearData)="selectedStudents = null"
+          (clearData)="selectedStudents = null; autoSearch()"
         >
         </app-filter-button>
       </div>
       <div class="filter" *ngIf="views[currentView].id === 1">
-        <app-filter-button [title]="'Destination'"></app-filter-button>
+        <app-filter-button
+          (buttonClick)="openFilter($event, 'destination')"
+          [title]="'Destination' + (selectedRooms && selectedRooms.length ? ' (' + selectedRooms.length + ')' : '')"
+          [filter]="selectedRooms && !!selectedRooms.length"
+          (clearData)="selectedRooms = null; autoSearch()"
+        ></app-filter-button>
       </div>
       <div class="filter" *ngIf="views[currentView].id === 1">
-        <app-filter-button [title]="'Pass start time'" (buttonClick)="openFilter($event, 'calendar')"></app-filter-button>
+        <app-filter-button
+          [title]="selectedDate ? dateText : 'Pass start time'"
+          (buttonClick)="openFilter($event, 'calendar')"
+          [filter]="!!selectedDate"
+          (clearData)="selectedDate = null; autoSearch()">
+        </app-filter-button>
       </div>
     </div>
 
-    <div class="search-button">
+    <div class="search-button" *ngIf="!isSearched">
       <app-gradient-button
         [gradient]="views[currentView].color + ', ' + views[currentView].color"
         [rightIcon]="'./assets/Chevron Right (White).svg'"
         [size]="'medium'"
         (buttonClick)="search()"
-      >{{ views[currentView].title }}</app-gradient-button>
+      >{{ views[currentView].title }}
+      </app-gradient-button>
     </div>
   </div>
 
   <div class="content" *ngIf="loadedData$ | async">
-<!--    <app-custom-table-->
-<!--      [displayedColumns]="displayedColumns(views[currentView].id)"-->
-<!--      [data]="searchedPassData$"-->
-<!--    ></app-custom-table>-->
     <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="searchedPassData$"></app-sp-data-table>
   </div>
 </div>
