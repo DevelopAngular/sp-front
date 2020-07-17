@@ -6,9 +6,7 @@ import { Subject } from 'rxjs';
 })
 export class TableService {
 
-  updateTableHeaders$:
-    Subject<{index: number, value: boolean, column: string}>
-    = new Subject<{index: number, value: boolean, column: string}>();
+  updateTableColumns$: Subject<string[]> = new Subject<string[]>();
 
   constructor() { }
 }

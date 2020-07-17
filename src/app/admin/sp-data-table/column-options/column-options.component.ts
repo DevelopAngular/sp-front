@@ -40,12 +40,37 @@ export class ColumnOptionsComponent implements OnInit {
     this.dialogRef.updatePosition(matDialogConfig.position);
   }
 
-  updateColumn(value, index, column) {
-    this.tableService.updateTableHeaders$.next({index, value, column});
+  updateColumn() {
+    const filteredColumns = [];
+    this.columns.forEach(column => {
+      if (this.formGroup.get(column).value) {
+        filteredColumns.push(column);
+      }
+    });
+    this.tableService.updateTableColumns$.next(filteredColumns);
+  }
+
+  hideAll() {
+    this.tableService.updateTableColumns$.next([]);
+    this.columns.forEach((column, index) => {
+      if (this.formGroup.get(column).value) {
+        this.formGroup.get(column).setValue(false);
+      }
+    });
+  }
+
+  showAll() {
+    this.tableService.updateTableColumns$.next(this.columns);
+    this.columns.forEach((column, index) => {
+      if (!this.formGroup.get(column).value) {
+        this.formGroup.get(column).setValue(true);
+      }
+    });
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+    this.updateColumn();
   }
 
 }

@@ -59,7 +59,6 @@ import {FavoriteLocationsEffects} from './ngrx/favorite-locations/effects';
 import {ColorsEffects} from './ngrx/color-profiles/effects';
 import {SchoolsEffects} from './ngrx/schools/effects';
 import {UserEffects} from './ngrx/user/effects';
-import {SchoolsResolver} from './core/resolvers/schools-resolver';
 import {ProcessEffects} from './ngrx/onboard-process/effects';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
@@ -131,7 +130,7 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     ScrollHolderDirective,
-    SupportButtonComponent,
+    SupportButtonComponent
   ],
   imports: [
     BrowserModule,

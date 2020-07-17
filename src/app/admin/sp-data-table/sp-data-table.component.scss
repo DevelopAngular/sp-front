@@ -47,10 +47,10 @@
     padding-left: 12px;
   }
 
-  .mat-header-cell:hover {
-    background: #FFFFFF;
-    mix-blend-mode: normal;
-  }
+  //.mat-header-cell:hover {
+  //  background: #FFFFFF;
+  //  mix-blend-mode: normal;
+  //}
 
   .sort-icon {
     display: flex;
@@ -74,7 +74,7 @@
 }
 
 ::ng-deep .mat-checkbox-frame {
-  background-color: #7F879D !important;
+  background-color: currentColor !important;
   border-style: none !important;
 }
 

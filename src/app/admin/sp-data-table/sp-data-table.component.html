@@ -12,6 +12,7 @@
           <th mat-header-cell *matHeaderCellDef>
             <mat-checkbox (change)="$event ? masterToggle() : null"
                           [checked]="selection.hasValue() && isAllSelected()"
+                          [style.color]="selection.hasValue() ? '#1F195E' : '#7F879D'"
                           [indeterminate]="selection.hasValue() && !isAllSelected()"
                           [aria-label]="checkboxLabel()">
             </mat-checkbox>
@@ -20,6 +21,7 @@
             <mat-checkbox (click)="$event.stopPropagation()"
                           (change)="$event ? selection.toggle(row) : null"
                           [checked]="selection.isSelected(row)"
+                          [style.color]="selection.isSelected(row) ? '#1F195E' : '#7F879D'"
                           [aria-label]="checkboxLabel(row)">
             </mat-checkbox>
           </td>
@@ -27,7 +29,13 @@
 
         <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns; last as isLast; first as isFirst">
           <ng-container *ngIf="column !== 'Pass'; else passNoSort">
-            <th [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'" mat-sort-header mat-header-cell *matHeaderCellDef>
+            <th
+              [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
+              [style.background-color]="getColumnSort(column) === 'asc' || getColumnSort(column) === 'desc' ? '#FFFFFF' : '#D3D6DE'"
+              mat-sort-header
+              mat-header-cell
+              *matHeaderCellDef
+            >
               {{ column }}
               <div class="sort-icon">
                 <mat-icon class="icon" [ngStyle]="{'color': getColumnSort(column) === 'asc' ? '#666D81' : '#7F879D'}">arrow_drop_up</mat-icon>
@@ -35,12 +43,24 @@
               </div>
             </th>
           </ng-container>
+
           <ng-template #passNoSort>
-            <th [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'" mat-header-cell *matHeaderCellDef>
+            <th
+              [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
+              mat-header-cell
+              *matHeaderCellDef>
               {{ column }}
             </th>
           </ng-template>
-          <td mat-cell [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'" *matCellDef="let element" [innerHTML]="element[column]"></td>
+
+          <td
+            mat-cell
+            [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
+            *matCellDef="let element"
+            [innerHTML]="element[column]"
+            appCrossPointerEventTarget
+            (pointerClickEvent)="column === 'Pass' ? cellClick(element, column) : null"
+          ></td>
         </ng-container>
 
         <tr class="header" mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
@@ -49,7 +69,12 @@
         We will use a plcaholder row in the table instead because the translate causes problems with the sticky header -->
         <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>
 
-        <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
+            [style.cursor]="'pointer'"
+            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : 'transparent'"
+            appCrossPointerEventTarget
+            (pointerClickEvent)="rowOnClick(row)">
+        </tr>
       </table>
     </cdk-virtual-scroll-viewport>
 <!--  </div>-->
@@ -57,7 +82,7 @@
   <div class="table-options-screen">
     <div class="buttons">
       <div class="button" appCrossPointerEventTarget (pointerClickEvent)="openOption(option.action, $event)" *ngFor="let option of tableOptionButtons; first as isFirst" [style.margin-top]="isFirst ? 0 : '25px'">
-        <img width="20" [src]="'./assets/' + option.icon + ' (Blue-Gray).svg'">
+        <img width="20" [src]="'./assets/' + option.icon + ' ('+ (selection.selected.length && !isFirst ? 'Navy' : 'Blue-Gray') +').svg' | resolveAsset">
       </div>
     </div>
   </div>

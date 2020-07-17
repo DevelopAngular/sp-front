@@ -28,6 +28,7 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
 import { CustomTableComponent } from './custom-table/custom-table.component';
 import { SpDataTableComponent } from './sp-data-table/sp-data-table.component';
 import { ColumnOptionsComponent } from './sp-data-table/column-options/column-options.component';
+import { GeneratedTableDialogComponent } from './sp-data-table/generated-table-dialog/generated-table-dialog.component';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { ColumnOptionsComponent } from './sp-data-table/column-options/column-op
     OverlayContainerComponent,
     CustomTableComponent,
     SpDataTableComponent,
-    ColumnOptionsComponent
+    ColumnOptionsComponent,
+    GeneratedTableDialogComponent
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,
@@ -72,7 +74,8 @@ import { ColumnOptionsComponent } from './sp-data-table/column-options/column-op
     SearchFilterDialogComponent,
     DateTimeFilterComponent,
     OverlayContainerComponent,
-    ColumnOptionsComponent
+    ColumnOptionsComponent,
+    GeneratedTableDialogComponent
   ],
   providers: [
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

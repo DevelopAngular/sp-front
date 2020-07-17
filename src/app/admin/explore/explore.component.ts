@@ -81,7 +81,6 @@ export class ExploreComponent implements OnInit {
     );
     this.searchedPassData$ = this.hallPassService.passesCollection$
       .pipe(
-        filter(res => !!res.length),
         map((passes: HallPass[]) => {
           return passes.map(pass => {
             const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));

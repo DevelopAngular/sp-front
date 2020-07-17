@@ -1,6 +1,6 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import {MatDialog, MatSort, Sort} from '@angular/material';
 import * as moment from 'moment';
@@ -9,12 +9,18 @@ import {ColumnOptionsComponent} from './column-options/column-options.component'
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
 import {findIndex, cloneDeep} from 'lodash';
+import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {HallPassesService} from '../../services/hall-passes.service';
+import {el} from '@angular/platform-browser/testing/src/browser_util';
+import {PassCardComponent} from '../../pass-card/pass-card.component';
+import {GeneratedTableDialogComponent} from './generated-table-dialog/generated-table-dialog.component';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
 
 export class GridTableDataSource extends DataSource<any> {
   private _data: any[];
+  loadedData$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   get allData(): any[] {
     return this._data.slice();
@@ -40,6 +46,7 @@ export class GridTableDataSource extends DataSource<any> {
     this.initialData$
       .subscribe(res => {
           this.allData = res;
+          this.loadedData$.next(true);
       });
 
     this.viewport.elementScrolled().subscribe((ev: any) => {
@@ -105,7 +112,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy}]
 })
-export class SpDataTableComponent implements OnInit, AfterViewInit {
+export class SpDataTableComponent implements OnInit, OnDestroy {
 
   @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   @Input() data$: Observable<any>;
@@ -126,38 +133,43 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
     { icon: 'Print', action: 'print' },
     { icon: 'CSV', action: 'csv'}
   ];
+  disableRowClick: boolean;
+
+  destroy$ = new Subject();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private storage: StorageService,
     private dialog: MatDialog,
-    private tableService: TableService
+    private tableService: TableService,
+    private hallpassService: HallPassesService
   ) {}
-
-  ngAfterViewInit() {
-
-  }
 
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.dataSource.sort = this.sort;
-    this.dataSource.offsetChange.subscribe(offset => {
+    this.dataSource.offsetChange.pipe(takeUntil(this.destroy$)).subscribe(offset => {
       this.placeholderHeight = offset;
     });
-    this.displayedColumns = Object.keys(this.dataSource.allData[0]);
-    this.columnsToDisplay = this.displayedColumns.slice();
+    this.dataSource.loadedData$.pipe(
+      filter(value => value && this.dataSource.allData[0]),
+      switchMap(value => {
+        this.displayedColumns = Object.keys(this.dataSource.allData[0]);
+        this.columnsToDisplay = this.displayedColumns.slice();
+        return this.isCheckbox;
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe((v) => {
+        if (v) {
+          this.columnsToDisplay.unshift('select');
+        } else if (!v && (this.columnsToDisplay[0] === 'select')) {
+          this.columnsToDisplay.shift();
+          this.selection.clear();
+        }
+        this.tableInitialColumns = cloneDeep(this.columnsToDisplay);
+      });
 
-    this.isCheckbox.subscribe((v) => {
-      if (v) {
-        this.columnsToDisplay.unshift('select');
-      } else if (!v && (this.columnsToDisplay[0] === 'select')) {
-        this.columnsToDisplay.shift();
-        this.selection.clear();
-      }
-      this.tableInitialColumns = cloneDeep(this.columnsToDisplay);
-    });
-
-    this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
+    this.dataSource.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe((sort: Sort) => {
       const activeSort = this.currentSort.find(curr => curr.active === sort.active);
       if (!activeSort) {
         this.currentSort.push(sort);
@@ -187,22 +199,17 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
       });
     });
 
-    this.tableService.updateTableHeaders$
-      .subscribe(({index, value, column}) => {
-        // const currindex = this.isCheckbox.getValue() ? index + 1 : index;
-        if (value) {
-          const itemIndex = findIndex(this.tableInitialColumns, (item) => {
-            return item.toLowerCase() === column.toLowerCase();
-          });
-          this.columnsToDisplay.splice(itemIndex, 0, column);
-        } else {
-          const itemIndex = findIndex(this.columnsToDisplay, (item) => {
-            return item.toLowerCase() === column.toLowerCase();
-          });
-          this.columnsToDisplay.splice(itemIndex, 1);
-        }
+    this.tableService.updateTableColumns$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((columns: string[]) => {
+        this.columnsToDisplay = ['select', this.displayedColumns[0], ...columns];
         this.cdr.detectChanges();
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   placeholderWhen(index: number, _: any) {
@@ -238,19 +245,70 @@ export class SpDataTableComponent implements OnInit, AfterViewInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
+  rowOnClick(row) {
+    if (!this.disableRowClick) {
+      this.selection.toggle(row);
+    }
+    this.disableRowClick = false;
+  }
+
+  cellClick(element, column) {
+    if (column === 'Pass') {
+      this.disableRowClick = true;
+      this.hallpassService.passesEntities$
+        .pipe(map(passes => {
+          return passes[element.id];
+        })).subscribe(pass => {
+        pass.start_time = new Date(pass.start_time);
+        pass.end_time = new Date(pass.end_time);
+        const data = {
+          pass: pass,
+          fromPast: true,
+          forFuture: false,
+          forMonitor: false,
+          isActive: false,
+          forStaff: true,
+        };
+        const dialogRef = this.dialog.open(PassCardComponent, {
+          panelClass: 'search-pass-card-dialog-container',
+          backdropClass: 'custom-bd',
+          data: data,
+        });
+      });
+    }
+  }
+
   openOption(action: string, event) {
-    UNANIMATED_CONTAINER.next(true);
     if (action === 'column') {
+      UNANIMATED_CONTAINER.next(true);
       const CD = this.dialog.open(ColumnOptionsComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': event.currentTarget,
-          'columns': this.displayedColumns
+          'columns': this.displayedColumns.slice(1)
         }
       });
 
       CD.afterClosed().subscribe(res => {
+        this.cdr.detectChanges();
+        UNANIMATED_CONTAINER.next(false);
+      });
+    } else if (action === 'csv' && this.selection.selected.length) {
+      UNANIMATED_CONTAINER.next(true);
+      const csv = this.dialog.open(GeneratedTableDialogComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        disableClose: true,
+        data: {
+          'trigger': event.currentTarget,
+          'header': 'CSV Generated',
+          'subtitle': 'Download it to your computer now.',
+          'selected': this.selection.selected
+        }
+      });
+
+      csv.afterClosed().subscribe(res => {
         this.cdr.detectChanges();
         UNANIMATED_CONTAINER.next(false);
       });

@@ -438,18 +438,18 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       return [];
     }
     if (students[0] instanceof User || this.searchTarget === 'users') {
-      let fixedStudents: User[] = <User[]>students;
-      let studentsToRemove: User[] = [];
-      for (let selectedStudent of <Array<User>>this.selectedOptions) {
-        for (let student of fixedStudents) {
+      const fixedStudents: User[] = <User[]>students;
+      const studentsToRemove: User[] = [];
+      for (const selectedStudent of <Array<User>>this.selectedOptions) {
+        for (const student of fixedStudents) {
           if (selectedStudent.id === student.id) {
             studentsToRemove.push(student);
           }
         }
       }
 
-      for (let studentToRemove of studentsToRemove) {
-        var index = fixedStudents.indexOf(studentToRemove, 0);
+      for (const studentToRemove of studentsToRemove) {
+        const index = fixedStudents.indexOf(studentToRemove, 0);
         if (index > -1) {
           fixedStudents.splice(index, 1);
         }

@@ -11,7 +11,7 @@
               [form]="formGroup"
               [controlName]="column"
               [padding]="'0'"
-              (pushOutValue)="updateColumn($event, i, column)">
+              (pushOutValue)="updateColumn()">
             </app-toggle-input>
           </div>
           <div class="label">{{ column }}</div>
@@ -28,12 +28,14 @@
       <app-gradient-button
         [gradient]="'#F4F4F4, #F4F4F4'"
         [textColor]="'#7F879D'"
+        (buttonClick)="hideAll()"
       >Hide all
       </app-gradient-button>
       <app-gradient-button
         [style.margin-left]="'13px'"
         [gradient]="'#F4F4F4, #F4F4F4'"
         [textColor]="'#7F879D'"
+        (buttonClick)="showAll()"
       >Show all
       </app-gradient-button>
   </div>
