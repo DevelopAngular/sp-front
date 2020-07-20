@@ -130,7 +130,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.changeUserName$.pipe(
       filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
       tap(() => this.disabledButton = true),
-      distinctUntilChanged(),
       debounceTime(500),
       switchMap(userName => {
         const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
@@ -140,19 +139,21 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       if (!auth_types.length) {
         this.showError = true;
         this.isGoogleLogin = true;
+        return;
       } else {
         this.showError = false;
         this.error$.next(null);
       }
       this.loginData.authType = auth_types[auth_types.length - 1];
-      if (this.loginData.authType.indexOf('google') !== -1) {
+      const auth = auth_types[auth_types.length - 1];
+      if (auth.indexOf('google') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
         this.isGoogleLogin = true;
-      } else if (this.loginData.authType.indexOf('gg4l') !== -1) {
+      } else if (auth.indexOf('gg4l') !== -1) {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
       } else
-        if (this.loginData.authType.indexOf('password') !== -1) {
+        if (auth.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
         this.isStandardLogin = true;
       } else {
