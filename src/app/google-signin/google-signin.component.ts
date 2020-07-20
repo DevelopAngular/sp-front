@@ -146,7 +146,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       }
       this.loginData.authType = auth_types[auth_types.length - 1];
       const auth = auth_types[auth_types.length - 1];
-      debugger;
       if (auth.indexOf('google') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
