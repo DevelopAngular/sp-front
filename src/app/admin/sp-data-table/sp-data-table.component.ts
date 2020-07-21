@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
@@ -8,10 +8,9 @@ import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
-import {findIndex, cloneDeep} from 'lodash';
+import {cloneDeep} from 'lodash';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {HallPassesService} from '../../services/hall-passes.service';
-import {el} from '@angular/platform-browser/testing/src/browser_util';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {GeneratedTableDialogComponent} from './generated-table-dialog/generated-table-dialog.component';
 
@@ -116,6 +115,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   @Input() data$: Observable<any>;
+  @Input() height: string = 'calc(100vh - 200px)';
 
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
   @ViewChild(MatSort) sort: MatSort;

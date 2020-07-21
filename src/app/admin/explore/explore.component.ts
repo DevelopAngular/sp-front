@@ -10,6 +10,8 @@ import {HallPass} from '../../models/HallPass';
 import * as moment from 'moment';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DomSanitizer} from '@angular/platform-browser';
+import {HttpService} from '../../services/http-service';
+import {School} from '../../models/School';
 
 export interface View {
   [view: string]: CurrentView;
@@ -50,6 +52,7 @@ export class ExploreComponent implements OnInit {
   isCheckbox$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   loadedData$: Observable<boolean>;
   isSearched: boolean;
+  schools$: Observable<School[]>;
 
   searchedPassData$: any;
 
@@ -59,7 +62,8 @@ export class ExploreComponent implements OnInit {
     private dialog: MatDialog,
     private hallPassService: HallPassesService,
     private cdr: ChangeDetectorRef,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private http: HttpService
     ) { }
 
   get dateText() {
@@ -79,6 +83,7 @@ export class ExploreComponent implements OnInit {
         }
       })
     );
+    this.schools$ = this.http.schoolsCollection$;
     this.searchedPassData$ = this.hallPassService.passesCollection$
       .pipe(
         map((passes: HallPass[]) => {
@@ -186,8 +191,11 @@ export class ExploreComponent implements OnInit {
     }
   }
 
-  search() {
-    let url = 'v1/hall_passes?';
+  search(limit?: number) {
+    let url = `v1/hall_passes?`;
+    if (limit) {
+      url += `limit=${limit}&`;
+    }
     if (this.selectedRooms) {
       this.selectedRooms.forEach(room => {
         url += 'destination=' + room.id + '&';

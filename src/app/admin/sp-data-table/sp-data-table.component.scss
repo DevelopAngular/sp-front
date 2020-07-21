@@ -3,11 +3,11 @@
   background: #FFFFFF;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.0616259);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: auto;
 
 
   .table-options-screen {
-    width: 44px;
+    min-width: 44px;
     border-left: 1px solid #7E879D;
 
     .buttons {
@@ -25,8 +25,8 @@
 }
 
 .example-viewport {
-  height: calc(100vh - 200px);
   width: 100%;
+  min-width: 800px;
 }
 
 .table {

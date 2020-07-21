@@ -51,6 +51,10 @@
   </div>
 
   <div class="content" *ngIf="loadedData$ | async">
-    <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="searchedPassData$"></app-sp-data-table>
+    <app-sp-data-table
+      [isCheckbox]="isCheckbox$"
+      [data$]="searchedPassData$"
+      [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+    ></app-sp-data-table>
   </div>
 </div>

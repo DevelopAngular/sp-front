@@ -1,6 +1,9 @@
 <div class="wrapper">
-<!--  <div class="table-screen">-->
-    <cdk-virtual-scroll-viewport class="example-viewport" itemSize="33">
+    <cdk-virtual-scroll-viewport
+      class="example-viewport"
+      itemSize="33"
+      [style.height]="height"
+    >
       <table class="table"
              mat-table
              [dataSource]="dataSource"
@@ -8,7 +11,7 @@
              matSort
       >
 
-        <ng-container matColumnDef="select" *ngIf="isCheckbox | async">
+        <ng-container matColumnDef="select" *ngIf="isCheckbox | async" [sticky]="true">
           <th mat-header-cell *matHeaderCellDef>
             <mat-checkbox (change)="$event ? masterToggle() : null"
                           [checked]="selection.hasValue() && isAllSelected()"
@@ -77,7 +80,6 @@
         </tr>
       </table>
     </cdk-virtual-scroll-viewport>
-<!--  </div>-->
 
   <div class="table-options-screen">
     <div class="buttons">
