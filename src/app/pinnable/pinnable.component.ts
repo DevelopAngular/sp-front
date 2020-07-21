@@ -10,8 +10,12 @@ import {
 import { bumpIn } from '../animations';
 import { Pinnable } from '../models/Pinnable';
 import { DomSanitizer } from '@angular/platform-browser';
-import {interval, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {interval, of, Subject} from 'rxjs';
+import {delay, takeUntil} from 'rxjs/operators';
+import {TooltipDataService} from '../services/tooltip-data.service';
+import {PassLimit} from '../models/PassLimit';
+import {HttpService} from '../services/http-service';
+import {School} from '../models/School';
 
 @Component({
   selector: 'app-pinnable',
@@ -57,6 +61,10 @@ export class PinnableComponent implements OnInit, OnChanges {
 
   @Input() disabled: boolean = false;
 
+  @Input() currentPage: string;
+
+  @Input() passLimit: PassLimit;
+
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
@@ -66,14 +74,19 @@ export class PinnableComponent implements OnInit, OnChanges {
   buttonDown = false;
   hovered: boolean;
   intervalId;
+  currentSchool: School;
+
+  showTooltipWithDelay: boolean;
 
   hoverDestroyer$: Subject<any>;
 
   constructor(
     private sanitizer: DomSanitizer,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
+    private tooltipService: TooltipDataService,
+    private http: HttpService
   ) {
-
+    this.currentSchool = this.http.getSchool();
   }
 
   get shadow() {
@@ -94,6 +107,35 @@ export class PinnableComponent implements OnInit, OnChanges {
     }
   }
 
+  get show_max_passes() {
+    if (this.passLimit && this.passLimit.to_count) {
+      return (this.currentSchool.show_active_passes_number);
+        // &&
+        // ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
+        //   (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active));
+    }
+  }
+
+  get showTooltip() {
+    if (this.passLimit && this.passLimit.to_count) {
+      return this.currentSchool.show_active_passes_number ||
+        (
+          (this.currentPage === 'from' && this.passLimit && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
+          (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
+        );
+    }
+  }
+
+  get tooltipDescription(): string {
+    if (this.passLimit) {
+      return this.passLimit && this.tooltipService.tooltipDescription('to', this.passLimit, this.forStaff);
+    }
+  }
+
+  get buttonState() {
+    return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';
+  }
+
   ngOnInit() {
 
     if (!this.mock) {
@@ -109,8 +151,16 @@ export class PinnableComponent implements OnInit, OnChanges {
     this.changeDetector.detectChanges();
   }
 
-  get buttonState() {
-    return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';
+  tooltipDelay(hover, delayValue?) {
+    if (hover) {
+      of('').pipe(
+        delay(delayValue),
+      ).subscribe(res => {
+        this.showTooltipWithDelay = true;
+      });
+    } else {
+      this.showTooltipWithDelay = false;
+    }
   }
 
   onHover(evt: Event, container: HTMLElement) {

@@ -116,14 +116,14 @@
               [style.width]="'140px'"
               [cursor]="'pointer'"
               [fontSize]="'14px'"
-              (buttonClick)="deleteRoom()"
+              (buttonClick)="deleteRoom($event.target)"
       >
         Delete Folder</app-gradient-button>
 
-      <div class="delete-info-text">
-        This <b style="color: gray">will</b> erase all active and scheduled passes to and from all rooms in this folder.<br/>
-        This <b style="color: gray">will not</b> erase any expired passes to or from any rooms in this folder.
-      </div>
+<!--      <div class="delete-info-text">-->
+<!--        This <b style="color: gray">will</b> erase all active and scheduled passes to and from all rooms in this folder.<br/>-->
+<!--        This <b style="color: gray">will not</b> erase any expired passes to or from any rooms in this folder.-->
+<!--      </div>-->
     </div>
   </div>
 </div>

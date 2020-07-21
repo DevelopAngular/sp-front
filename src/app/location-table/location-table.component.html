@@ -21,42 +21,64 @@
       <mat-divider class="divider" *ngIf="!forKioskMode"></mat-divider>
 
       <!-- Favorite Window -->
-      <div *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode"
-           class="choices"
-           dragula="locations"
-           [(dragulaModel)]="starredChoices"
-           (dragulaModelChange)="updateOrderLocation($event)"
-      >
-        <div class="choice" *ngFor="let choice of starredChoices">
-          <app-location-cell
-            (onSelect)="choiceSelected($event)"
-            (onStar)="star($event)"
-            [value]="choice"
-            [type]="type"
-            [starred]="true"
-            [showStar]="!!showStars"
-            [allowOnStar]="allowOnStar"
-          >
-          </app-location-cell>
+      <div class="favorite" *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode && pinnablesLoaded">
+        <div
+             class="choices"
+             [dragula]="(screenService.enabledLocationTableDnD | async) ? 'locations' : null"
+             (dragulaModelChange)="updateOrderLocation($event)"
+        >
+          <div class="choice" *ngFor="let choice of starredChoices">
+            <app-location-cell
+              (onSelect)="choiceSelected($event)"
+              (onStar)="star($event)"
+              [value]="choice"
+              [type]="type"
+              [currentPage]="currentPage"
+              [passLimit]="passLimits ? passLimits[choice.id] : null"
+              [starred]="true"
+              [showStar]="!!showStars"
+              [allowOnStar]="allowOnStar"
+            >
+            </app-location-cell>
+          </div>
         </div>
+        <ng-template #noDnd>
+          <div class="choices">
+            <div class="choice" *ngFor="let choice of starredChoices">
+              <app-location-cell
+                (onSelect)="choiceSelected($event)"
+                (onStar)="star($event)"
+                [value]="choice"
+                [type]="type"
+                [starred]="true"
+                [showStar]="!!showStars"
+                [allowOnStar]="allowOnStar"
+              >
+              </app-location-cell>
+            </div>
+          </div>
+        </ng-template>
       </div>
 
+
       <!-- Create Pass Form -->
-      <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode"
+      <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode && pinnablesLoaded"
            class="choices">
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
-            [value]="choice"
+            [value]="normalizeLocations(choice)"
             [type]="type"
+            [currentPage]="currentPage"
+            [passLimit]="passLimits ? passLimits[choice.id] : null"
             [hasLocks]="hasLocks"
             [forLater]="forLater"
             [forStaff]="forStaff"
             [starred]="true"
             [showStar]="!!showStars"
             [allowOnStar]="allowOnStar"
-            [valid]="isValidLocation(choice)"
+            [valid]="isValidLocation(choice.id)"
           >
           </app-location-cell>
         </div>
@@ -72,7 +94,7 @@
       <div *ngIf="rightHeaderText && !hideFavorites" [style.margin-top]="forKioskMode ? '' : '25px'" class="fav-header">All Rooms</div>
       <mat-divider class="divider"></mat-divider>
     </div>
-    <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices">
+    <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices && pinnablesLoaded">
       <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
       <div class="choices">
         <div
@@ -87,12 +109,14 @@
             [forStaff]="forStaff"
             [showStar]="showStars && !noRightStar"
             [starred]="isSelected(choice)"
+            [currentPage]="currentPage"
+            [passLimit]="passLimits ? passLimits[choice.id] : null"
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
             [allowOnStar]="allowOnStar"
-            [value]="choice"
+            [value]="normalizeLocations(choice)"
             [type]="type"
-            [valid]="isValidLocation(choice)"
+            [valid]="isValidLocation(choice.id)"
           >
           </app-location-cell>
         </div>

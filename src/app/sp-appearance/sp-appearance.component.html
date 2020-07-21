@@ -1,10 +1,10 @@
-<div class="host" [style.width.px]="hostWidth">
+<div class="host">
   <div class="appearance-header">
     <div class="back-button"
          appCrossPointerEventTarget
          (pointerClickEvent)="dialogRef.close()"
     >
-      <img [width]="34" [src]="'./assets/Back Button (White-Transparent).svg'"
+      <img [width]="28" [src]="'./assets/Back Button (Blue-White).svg'"
       >
     </div>
     <div>
@@ -33,17 +33,18 @@
     <div class="page-layout" *ngIf="!hideLayoutSettings">
       <div class="header">
         <div class="header-title">Destination Page Layout</div>
-        <div class="header-info">Switch the layout of the “To where?” page during pass creation.</div>
+        <div class="header-info" *ngIf="!extraLargeDevice || IpadDevice">Switch the layout of the “To where?” page during pass creation.</div>
       </div>
       <div class="picker">
         <app-restriction-picker
-          [width]="141"
+          [width]="!extraLargeDevice || IpadDevice ? 141 : 0"
           [height]="32"
           [selectedChoice]="isList ? 'List' : 'Grid'"
           [choices]="['Grid', 'List']"
           (result)="selectedLayout($event)"
         ></app-restriction-picker>
       </div>
+      <div class="header-info-mobile" *ngIf="extraLargeDevice && !IpadDevice">Switch the layout of the “To where?” page during pass creation.</div>
     </div>
   </div>
 </div>

@@ -1,5 +1,12 @@
 .card-button-container{
     border-radius: 15px;
+    z-index: 100;
+    transition: box-shadow .3s ease;
+  //box-shadow: -20px 0px 10px 0px white inset;
+    &:hover {
+      z-index: 10;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    }
 }
 
 .card-button-base{
@@ -11,13 +18,16 @@
 
 .card-button-base{
     position: relative;
-    z-index: 5;
-    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+
+
 }
 
 .card-button-base:hover{
-    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.3);
-    transition: box-shadow .3s ease;
+  //box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  //z-index: 10;
+    //box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.3);
+  //box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+
 }
 
 .card-button-overlay-base{

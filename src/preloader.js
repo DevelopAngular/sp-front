@@ -31,6 +31,7 @@ window.waitForAppLoaded = function(force = false) {
     window.preloader.visibility = true;
   }
 
+
   var preloaderRef = document.getElementById('preloaderRef');
   var preloaderSvg = document.getElementById('preloaderSvg');
 
@@ -39,6 +40,14 @@ window.waitForAppLoaded = function(force = false) {
   var percentDisplay = document.querySelector('.percent-display');
 
   var timerId;
+
+  const currentTheme = window.localStorage.getItem('appearance') || 'Auto';
+  const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
+
+  if (currentTheme === 'Dark' || currentTheme === 'Auto' && darkMode.matches) {
+    preloaderRef.classList.add('preloader-container__dark');
+  }
+
 
   timerId = setInterval(function() {
     if (window.safari) {
@@ -54,7 +63,6 @@ window.waitForAppLoaded = function(force = false) {
       if (window.preloader.n !== 0) {
         if (window.preloader.percent < 99) {
           window.preloader.percent += 1;
-
         } else {
           window.preloader.percent = 99;
         }

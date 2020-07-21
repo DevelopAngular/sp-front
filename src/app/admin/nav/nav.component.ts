@@ -14,6 +14,7 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
 import {HttpService} from '../../services/http-service';
+import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
 
 declare const window;
 
@@ -61,10 +62,11 @@ export class NavComponent implements OnInit {
         private http: HttpService
     ) { }
 
-  console = console;
-    user: User;
+  user: User;
   showButton: boolean;
   selectedSettings: boolean;
+  process: number;
+  hidePointer: boolean;
 
   get pointerTopSpace() {
     return this.pts;
@@ -78,7 +80,11 @@ export class NavComponent implements OnInit {
           return this.gsProgress.onboardProgress$;
         }),
       ).subscribe(res => {
-        if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
+        this.process = res.progress;
+        setTimeout(() => {
+          this.hidePointer = this.router.url === '/admin/gettingstarted' && this.process === 100;
+        }, 100);
+      if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
           this.buttons.splice(0, 1);
         } else if (res.progress < 100 && !this.buttons.find(button => button.title === 'Get Started')) {
           this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
@@ -94,6 +100,7 @@ export class NavComponent implements OnInit {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
+        this.hidePointer = this.process === 100 && this.tab.indexOf('gettingstarted') !== -1;
       }
     });
 
@@ -202,6 +209,12 @@ export class NavComponent implements OnInit {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
+        } else if (action === 'profile') {
+          this.dialog.open(MyProfileDialogComponent, {
+            panelClass: 'sp-form-dialog',
+            width: '425px',
+            height: '500px'
+          });
         } else if (action === 'getStarted') {
           this.router.navigate(['admin/gettingstarted']);
         } else if (action === 'about') {

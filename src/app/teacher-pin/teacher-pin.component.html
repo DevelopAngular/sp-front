@@ -1,0 +1,60 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="back-button">
+      <app-icon-button *ngIf="!(pinData$ | async)"
+        [srcString]="'Back Button'"
+        (clickEvent)="close()"
+        [size]="28"
+        [onDarkShade]="false"
+        [blueWhite]="true"
+        [hasShadow]="false"
+      ></app-icon-button>
+      <div class="cancel" appCrossPointerEventTarget (pointerClickEvent)="close()" *ngIf="!!(pinData$ | async)">Cancel</div>
+    </div>
+    <div class="title">
+      <img [src]="'./assets/Lock dots (White).svg' | resolveAsset" [width]="23" height="23" alt="Lock">
+      <span style="margin-left: 12px">Approval Pin</span>
+    </div>
+    <app-gradient-button
+      *ngIf="!!(pinData$ | async) && form.valid"
+      class="save-button"
+      [gradient]="'#FFFFFF, #FFFFFF'"
+      [textColor]="'#12C29E'"
+      appCrossPointerEventTarget
+      (pointerClickEvent)="save()"
+    >Save
+    </app-gradient-button>
+  </div>
+  <div class="content">
+    <div class="top-block">
+      <div class="pin">
+        <div class="label">Pin</div>
+        <app-input
+          [width]="'65px'"
+          [input_value]="userPin$ | async"
+          [controlName]="form.get('pin')"
+          [input_type]="'text'"
+          [formGroup]="form"
+          [pattern]="'[0-9]*'"
+          [isErrorIcon]="false"
+        ></app-input>
+      </div>
+      <div class="info">
+        This pin can be used to approve or deny Pass Requests from a student’s device.
+        Pins cannot be used to access any account information.
+      </div>
+      <div class="instruction">
+        Pins must be 4 digits and can be changed at any time.
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="bottom-block">
+      <div class="text">Example</div>
+      <div class="pinnable-wrapper">
+        <img [src]="'./assets/Library.png' | resolveAsset" width="235" height="175">
+      </div>
+    </div>
+  </div>
+</div>

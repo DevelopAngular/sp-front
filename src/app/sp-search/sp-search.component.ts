@@ -19,7 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, switchMap, takeUntil } from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
@@ -78,13 +78,6 @@ export class GSuiteSelector {
 
 }
 
-// export interface OrgUnit {
-//   unitId: UnitId;
-//   title: string;
-//   selector: GSuiteSelector[];
-//   selected: boolean;
-// }
-
 export class OrgUnit {
 
   unitId: UnitId;
@@ -137,6 +130,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() dummyRoleText: string = 'students';
   @Input() placeholder: string = 'Search students';
   @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
+  @Input() isProposed: boolean;
+  @Input() proposedSearchString: string;
 
   @Input() searchingTeachers: User[];
 
@@ -167,6 +162,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   searchCount: number;
   firstSearchItem: User | GSuiteSelector;
+  currentSchool: School;
+  suggestedTeacher: User;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -174,15 +171,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private sanitizer: DomSanitizer,
     private httpService: HttpService,
-    private http: HttpClient,
     private mapsApi: MapsAPILoader,
     private shortcutsService: KeyboardShortcutsService,
     private renderer: Renderer2,
     public screenService: ScreenService
-  ) {
-
-
-  }
+  ) {}
 
   private getEmitedValue() {
     if (this.emitSingleProfile)  {
@@ -212,6 +205,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     if (this.chipsMode) {
       this.inputField = false;
     }
+    this.currentSchool = this.httpService.getSchool();
 
     const selfRef = this;
 
@@ -252,6 +246,16 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
     }
 
+    if (this.isProposed) {
+      this.userService.searchProfile('_profile_teacher', 1, this.proposedSearchString)
+        .subscribe(res => {
+          this.suggestedTeacher = res.results[0];
+          if (this.suggestedTeacher && (this.selectedOptions as any[]).find(t => t.id === this.suggestedTeacher.id)) {
+            this.isProposed = false;
+          }
+        });
+    }
+
     this.shortcutsService.onPressKeyEvent$
       .pipe(
         takeUntil(this.destroy$),
@@ -268,12 +272,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ngOnChanges(sc: SimpleChanges) {
-  //   console.log(sc);
-  //   if (!sc.isFocus.isFirstChange() && sc.isFocus.currentValue) {
-  //     this.input.nativeElement.focus();
-  //   }
-  // }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -281,12 +279,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   onSearch(search: string) {
-
     switch (this.searchTarget) {
       case 'users':
           if (search !== '') {
             this.pending$.next(true);
-
             if (this.type === 'alternative') {
               this.students = this.userService.searchProfile(this.role, 50, search)
                 .toPromise()
@@ -310,35 +306,30 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                   return this.removeDuplicateStudents(users);
                 });
             }
-
           } else {
-
             this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
             this.showDummy = false;
             this.inputValue$.next('');
           }
         break;
       case 'schools':
-
         if (search !== '') {
-
-          this.pending$.next(true);
-          this.placePredictionService.getPlacePredictions({
-            location: this.currentPosition,
-            input: search,
-            radius: 100000,
-            types: ['establishment']
-          }, (predictions, status) => {
-            this.query.next(predictions ? predictions : []);
-          });
-
+          if (search.length >= 4) {
+            this.pending$.next(true);
+            this.placePredictionService.getPlacePredictions({
+              location: this.currentPosition,
+              input: search,
+              radius: 100000,
+              types: ['establishment']
+            }, (predictions, status) => {
+              this.query.next(predictions ? predictions : []);
+            });
+          }
         } else {
-
           this.query.next(null);
           this.showDummy = false;
           this.inputValue$.next('');
           this.pending$.next(false);
-
         }
           break;
       case 'orgunits':
@@ -449,5 +440,19 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.students = null;
     this.inputField = false;
     this.onUpdate.emit(this.getEmitedValue());
+  }
+
+  update(value) {
+    this.selectedOptions = value;
+    this.onUpdate.emit(this.selectedOptions);
+    if (this.suggestedTeacher && !(this.selectedOptions as any[]).find(t => t.id === this.suggestedTeacher.id)) {
+      this.isProposed = true;
+    }
+  }
+
+  addSuggested(teacher) {
+    this.selectedOptions.push(this.suggestedTeacher);
+    this.onUpdate.emit(this.selectedOptions);
+    this.isProposed = false;
   }
 }

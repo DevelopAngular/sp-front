@@ -1,24 +1,34 @@
 <div class="wrapper"
      #cell
      appCrossPointerEventTarget
-     (pointerClickEvent)="cellSelected(); changeColor(true, false)"
-     (pointerDownEvent)="changeColor(true, true)"
-     (mouseenter)="changeColor(true)"
-     (mouseleave)="changeColor(false)"
+     (pointerClickEvent)="cellSelected(); screen.enabledLocationTableDnD.next(false)"
+     (pointerDownEvent)="onPress(true);"
+     (pointerCancelEvent)="screen.enabledLocationTableDnD.next(false)"
+     (mouseenter)="tooltipDelay(true, 1000)"
+     (mouseleave)="tooltipDelay(false)"
      [style.color]="textColor"
      [style.cursor]="cursor"
      tabindex="0"
 >
-  <div *ngIf="type==='location'" class="info">
+  <div *ngIf="type==='location'" class="info" customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip">
     <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
     <div class="title">
       {{value.title}}
     </div>
     <div class="room" [style.color]="roomColor">
+      <div class="circle"
+           *ngIf="show_max_passes"
+           [style.background]="gradient"
+           (mouseenter)="tooltipDelay(true, 300)"
+      >{{ currentPage === 'from' ? passLimit.from_count : passLimit.to_count }}</div>
       {{value.room}}
-      <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Lock (Navy).svg' | resolveAsset">
+      <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Locked (Blue-Gray).svg' | resolveAsset">
     </div>
   </div>
+
+  <ng-template #tooltip>
+    <app-pass-limit-tooltip *ngIf="showTooltipWithDelay" [description]="tooltipDescription"></app-pass-limit-tooltip>
+  </ng-template>
 
   <div *ngIf="type==='teachers'" class="info">
     <div class="title">

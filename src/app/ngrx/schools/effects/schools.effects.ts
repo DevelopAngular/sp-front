@@ -7,8 +7,9 @@ import { School } from '../../../models/School';
 import { of } from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
 import {GoogleLoginService} from '../../../services/google-login.service';
-import {environment} from '../../../../environments/environment';
 import {Router} from '@angular/router';
+import {UserService} from '../../../services/user.service';
+import {StorageService} from '../../../services/storage.service';
 
 declare const window;
 
@@ -22,6 +23,7 @@ export class SchoolsEffects {
         return this.http.getSchools()
           .pipe(
             map((schools: School[]) => {
+              window.waitForAppLoaded(true);
               return schoolsActions.getSchoolsSuccess({schools});
             }),
             catchError(error => {
@@ -55,16 +57,18 @@ export class SchoolsEffects {
   showErrorToast$ = createEffect(() => {
     return this.actions$
       .pipe(
-        ofType(schoolsActions.getSchoolsFailure, schoolsActions.getSchoolsFailure),
+        ofType(schoolsActions.getSchoolsFailure),
         map((action: any) => {
           window.appLoaded();
           this.http.errorToast$.next({
             header: 'Oops! Sign in error',
             message: 'School has not been yet launched'
           });
-          setTimeout(() => {
-            this.router.navigate(['sign-out']);
-          }, 2500);
+          this.http.clearInternal();
+          this.loginService.clearInternal(true);
+          this.http.setSchool(null);
+          this.userService.clearUser();
+          this.userService.userData.next(null);
           return schoolsActions.errorToastSuccess();
         })
       );
@@ -74,6 +78,9 @@ export class SchoolsEffects {
     private actions$: Actions,
     private http: HttpService,
     private adminService: AdminService,
-    private router: Router
+    private router: Router,
+    private userService: UserService,
+    private loginService: GoogleLoginService,
+    private storage: StorageService
   ) {}
 }

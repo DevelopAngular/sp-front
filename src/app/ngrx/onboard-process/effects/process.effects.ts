@@ -15,7 +15,7 @@ export class ProcessEffects {
         concatMap(action => {
           return this.adminService.getOnboardProgress()
             .pipe(
-              map(process => {
+              map((process: any[]) => {
                 return processActions.getOnboardProcessSuccess({process});
               }),
               catchError(error => of(processActions.getOnboardProcessFailure({errorMessage: error.message})))
@@ -31,7 +31,6 @@ export class ProcessEffects {
         concatMap((action: any) => {
           return this.adminService.updateOnboardProgress(action.data)
             .pipe(
-              switchMap(() => this.adminService.getOnboardProgress()),
               map(process => {
                 return processActions.updateOnboardProcessSuccess({process});
               }),

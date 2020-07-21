@@ -6,7 +6,7 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
-import {filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -54,8 +54,8 @@ import {
   getLoadingGroups,
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
-import {getLoadedUser, getUserData} from '../ngrx/user/states/user-getters.state';
-import {clearUser, getUser} from '../ngrx/user/actions';
+import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
+import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 
 @Injectable()
@@ -121,6 +121,7 @@ export class UserService {
   };
 
   user$: Observable<User> = this.store.select(getUserData);
+  userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
   loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
 
   studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
@@ -165,6 +166,13 @@ export class UserService {
                 this.representedUsers.next(null);
                 this.effectiveUser.next(null);
                 this.http.effectiveUserId.next(null);
+              return of(user);
+            }
+          }),
+          switchMap(user => {
+            if (user.isTeacher() && !user.isAssistant()) {
+              return this.getUserPinRequest().pipe(mapTo(user));
+            } else {
               return of(user);
             }
           })
@@ -227,6 +235,24 @@ export class UserService {
 
   getUser() {
      return this.http.get<User>('v1/users/@me');
+  }
+
+  getUserPinRequest() {
+    this.store.dispatch(getUserPinAction());
+    return this.userPin$;
+  }
+
+  getUserPin() {
+    return this.http.get('v1/users/@me/pin_info');
+  }
+
+  updateUserRequest(user, data) {
+    this.store.dispatch(updateUserAction({user, data}));
+    return this.user$;
+  }
+
+  updateUser(userId, data) {
+    return this.http.patch(`v1/users/${userId}`, data);
   }
 
   getIntros() {

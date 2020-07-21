@@ -19,7 +19,8 @@ import {wrapToHtml} from '../helpers';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
 import { findIndex } from 'lodash';
-import {distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, delay, distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
+import {StorageService} from '../../services/storage.service';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -197,12 +198,11 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() set lazyData(value: any[]) {
     if (value.length) {
-      this.dataSource.add(value);
-      this._data = this.dataSource.allData;
+        this.dataSource.add(value);
+        this._data = this.dataSource.allData;
     }
 
   }
-
 
   @Input() set data(value: any[]) {
     this._data = [...value];
@@ -222,13 +222,16 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
           const isFirst = this.dataSource.last === 1;
           const isThree = this.dataSource.last >= 3;
           const isFour = this.dataSource.last >= 4;
-          // console.log(((this.dataSource.last * 50) - (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) + (isFour ? 20 : 0), (this.dataSource.last * 50) - 20, this.dataSource.last);
           const allowLoadMore = (
             (
               this.dataSource.last * 50) -
             (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
-            (isFour ? 20 : 0) === (this.dataSource.last * 50) - 20;
-          if (allowLoadMore) {
+            (isFour ? 60 : 0) === (this.dataSource.last * 50) - 20;
+
+          if (((this.dataSource.last * ( isFirst ? 40 : 60)) + (isThree ? (this.counter * 20) : 0)) - Math.ceil(offset / PAGESIZE) <= (this.dataSource.last * 50) - 15) {
+            if (isThree) {
+              this.counter += 1;
+            }
             this.loadMoreAccounts.emit(null);
             this.dataSource.last = this.dataSource.last + 1;
           }
@@ -242,8 +245,10 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         return;
       }
 
+      this.storage.setItem('defaultSortSubject', sort.active);
+
       this.dataSource.allData = data.sort((a, b) => {
-        const isAsc = sort.direction === 'asc';
+        const isAsc = sort.direction === 'desc';
         const {_data: _a} = a;
         const {_data: _b} = b;
 
@@ -266,16 +271,18 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   selection = new SelectionModel<any>(true, []);
   darkMode$: Observable<boolean>;
   placeholderHeight = 0;
+  counter = 1;
 
   private _data: any[] = [];
   private destroyOffset$ = new Subject();
 
   constructor(
     private _ngZone: NgZone,
-    private darkTheme: DarkThemeSwitch,
+    public darkTheme: DarkThemeSwitch,
     private domSanitizer: DomSanitizer,
     private scrollPosition: ScrollPositionService,
     private cdr: ChangeDetectorRef,
+    private storage: StorageService
   ) {
     this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
   }
@@ -284,7 +291,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
     TABLE_RELOADING_TRIGGER.subscribe(({header, tableHeaders}) => {
       const itemIndex = findIndex(this.displayedColumns, (item) => {
-        return item === header.label;
+        return item.toLowerCase() === header.label.toLowerCase();
       });
       const headerIndex = this.columnsToDisplay[0] === 'select' ? header.index + 1 : header.index;
       const iIndex = this.columnsToDisplay[0] === 'select' ? itemIndex + 1 : itemIndex;
@@ -310,8 +317,23 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.selectedUsers.emit([]);
       }
     });
+    console.log(this.columnsToDisplay);
+
+    const defaultSortSubject = this.storage.getItem('defaultSortSubject');
+    let sortSubject: string;
+
+    if (defaultSortSubject && this.columnsToDisplay.includes(defaultSortSubject)) {
+      sortSubject = defaultSortSubject;
+    } else if (this.columnsToDisplay.includes('Last sign-in')) {
+      sortSubject = 'Last sign-in';
+    } else if (this.columnsToDisplay.includes('Group(s)')) {
+      sortSubject = 'Group(s)';
+    } else {
+      sortSubject = 'Name';
+    }
+
     this.dataSource.sort.sort({
-      id: this.columnsToDisplay[0],
+      id: sortSubject,
       start: 'asc',
       disableClear: false
     });

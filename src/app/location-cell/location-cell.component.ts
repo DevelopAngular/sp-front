@@ -2,8 +2,13 @@ import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, V
 import { Location } from '../models/Location';
 import { HttpService } from '../services/http-service';
 import { DomSanitizer } from '@angular/platform-browser';
-import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';
+import {DeviceDetection} from '../device-detection.helper';
+import {School} from '../models/School';
+import {TooltipDataService} from '../services/tooltip-data.service';
+import {PassLimit} from '../models/PassLimit';
+import {of} from 'rxjs';
+import {delay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-location-cell',
@@ -39,44 +44,69 @@ export class LocationCellComponent implements OnInit {
   @Input()
   allowOnStar: boolean = false;
 
+  @Input() currentPage: 'from' | 'to';
+
+  @Input() passLimit: PassLimit;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('cell') cell: ElementRef;
 
+  currentSchool: School;
+
+  showTooltipWithDelay: boolean;
+
   overStar: boolean = false;
   hovered: boolean;
   pressed: boolean;
+  intervalId;
 
   constructor(
     private http: HttpService,
     private sanitizer: DomSanitizer,
     public screen: ScreenService,
-    private renderer: Renderer2
-  ) {}
+    private renderer: Renderer2,
+    private tooltipService: TooltipDataService,
+  ) {
+    this.currentSchool = this.http.getSchool();
+  }
 
-  get showLock(){
+  get showLock() {
     return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
   }
 
-  get cursor(){
-    return this.valid?'pointer':'not-allowed';
+  get tooltipDescription(): string {
+    if (this.passLimit && this.currentPage !== 'from') {
+      return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit, this.forStaff);
+    }
   }
 
-  get bgColor(){
-    if (this.valid) {
-      if (this.hovered) {
-        if (this.pressed) {
-          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-        } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
-        }
-      } else {
-        return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
-      }
-    } else {
-      return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+  get show_max_passes() {
+    if (this.passLimit && this.passLimit.to_count && this.currentPage !== 'from') {
+      return (!this.forStaff && this.currentSchool.show_active_passes_number);
     }
+  }
+
+  get showTooltip() {
+    if (this.passLimit && this.passLimit.to_count && this.currentPage !== 'from') {
+      return !this.forStaff &&
+        this.currentSchool.show_active_passes_number ||
+        (
+          // TODO uncomment when branch SP-1050 is available
+          // (this.currentPage === 'from' && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
+          (this.currentPage === 'to' && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
+        );
+    }
+  }
+
+  get cursor() {
+    return this.valid ? 'pointer' : 'not-allowed';
+  }
+
+  get gradient() {
+    const gradient = (this.value as any).gradient;
+    return 'radial-gradient(circle at 73% 71%, ' + gradient + ')';
   }
 
   get textColor() {
@@ -96,7 +126,7 @@ export class LocationCellComponent implements OnInit {
       if (this.hovered) {
         return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
       } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+          return this.sanitizer.bypassSecurityTrustStyle('#7F879D');
       }
     } else {
        return this.sanitizer.bypassSecurityTrustStyle('#CDCDCE');
@@ -110,7 +140,7 @@ export class LocationCellComponent implements OnInit {
   changeColor(hovered, pressed?: boolean) {
     if (this.valid) {
       if (hovered) {
-        if (pressed) {
+        if (pressed && !DeviceDetection.isAndroid()) {
           this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#E2E7F4');
         } else {
           this.renderer.setStyle(this.cell.nativeElement, 'background-color', '#ECF1FF');
@@ -123,6 +153,18 @@ export class LocationCellComponent implements OnInit {
     }
   }
 
+  tooltipDelay(hover, delayValue?) {
+    if (hover) {
+      of('').pipe(
+        delay(delayValue),
+      ).subscribe(res => {
+        this.showTooltipWithDelay = true;
+      });
+    } else {
+      this.showTooltipWithDelay = false;
+    }
+  }
+
   cellSelected() {
     if (this.valid) {
       this.onSelect.emit(this.value);
@@ -130,11 +172,36 @@ export class LocationCellComponent implements OnInit {
         this.star();
       }
     }
+    this.onPress(false);
+  }
+
+  onPress(press) {
+    if (this.allowOnStar) {
+      let count = 100;
+      if (press) {
+        this.intervalId = setInterval(() => {
+          if (count <= 1000) {
+            count += 100;
+          } else {
+            this.screen.enabledLocationTableDnD.next(true);
+            clearInterval(this.intervalId);
+          }
+        }, 100);
+      } else {
+        this.screen.enabledLocationTableDnD.next(false);
+        clearInterval(this.intervalId);
+      }
+    }
   }
 
   star() {
-    this.value.starred = !this.value.starred;
-    this.onStar.emit(this.value);
+      this.value.starred = !this.value.starred;
+      if (!this.value.starred) {
+        this.hovered = false;
+        this.pressed = false;
+        this.changeColor(false, false);
+      }
+      this.onStar.emit(this.value);
   }
 
 }

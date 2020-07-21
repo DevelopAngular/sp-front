@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { Pinnable } from '../../../models/Pinnable';
 import { Location } from '../../../models/Location';
 import { LocationsService } from '../../../services/locations.service';
-import { RoomData } from '../overlay-data.service';
+import {OverlayDataService, RoomData} from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { isNull } from 'lodash';
 
@@ -17,6 +17,10 @@ import { isNull } from 'lodash';
 export class BulkEditRoomsComponent implements OnInit {
 
   @Input() form: FormGroup;
+
+  @Input() passLimitForm: FormGroup;
+
+  @Input() showErrors: boolean;
 
   @Output()
   bulkEditResult: EventEmitter<{
@@ -36,10 +40,12 @@ export class BulkEditRoomsComponent implements OnInit {
   };
 
   roomData: RoomData;
+  currentPage: number = this.overlayData.pageState.getValue().currentPage;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private locationService: LocationsService,
+    private overlayData: OverlayDataService
   ) { }
 
   ngOnInit() {

@@ -32,6 +32,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
     private darkTheme: DarkThemeSwitch,
     private sanitizer: DomSanitizer,
   ) {}
+
   get src() {
     let lightFill;
 

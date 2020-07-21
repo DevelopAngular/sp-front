@@ -1,171 +1,289 @@
 <div class="options-wrapper">
-  <mat-divider class="divider"></mat-divider>
-  <div class="options-header"
-       (click)="toggleContent()"
-       [style.background-color]="bgColor"
-       (mouseenter)="hovered = true"
-       (mouseleave)="hovered = false"
-       (mousedown)="pressed = true"
-       (mouseup)="pressed = false"
-  >
-    <div class="header-text">
-      Advanced Options
-      <img class="open-arrow" [src]="(openedContent ? './assets/Chevron Up (Navy).svg' : './assets/Chevron Down (Navy).svg') | resolveAsset">
-    </div>
-    <!--<mat-divider class="divider" *ngIf="!openedContent"></mat-divider>-->
-  </div>
-  <div class="options-content" *ngIf="openedContent">
-    <div class="content-header">
-      <span class="text">Sending Pass Request to?</span>
-      <img
-        class="support-icon"
-        [src]="'./assets/Support (Gray).svg' | resolveAsset"
-        [matTooltip]="'Choose which teachers students can select pass requests to be sent to or if they will be sent to teachers automatically.'"
-        (mouseenter)="isActiveTooltip = true"
-        (mouseleave)="isActiveTooltip = false"
-        matTooltipClass="tooltip"
-      >
-    </div>
+  <div class="options-content">
     <div class="content-wrapper">
-      <div class="now-block">
-        <div class="restriction-toggle">
-          <div class="title">Restriction for Now</div>
-          <div class="toggle" *ngIf="nowRestricted">
-            <app-restriction-picker
-                    [width]="440"
-                    [height]="52"
-                    [padding]="14"
-                    [fontSize]="13"
-                    [disabledOptions]="disabledOptions"
-                    [selectedChoice]="optionState.now.state || 'Any teacher (default)'"
-                    [choices]="toggleChoices"
-                    (result)="changeOptions('now', $event)"
-            >
-            </app-restriction-picker>
+      <div class="block">
+        <div class="line">
+          <div class="toggle">
+            <app-toggle-input
+              [form]="restrictionForm"
+              [controlName]="'forNow'"
+              [delimiter]="false"
+              [controlSize]="'small'"
+              [hasIcon]="true"
+              [icon]="'./assets/Locked (Navy).svg'"
+              [color]="'#1F195E'"
+              (pushOutValue)="nowEvent($event)"
+            ></app-toggle-input>
           </div>
-        </div>
-        <div class="options" *ngIf="nowRestricted" [ngSwitch]="optionState.now.state">
-
-          <div class="default" *ngSwitchCase="toggleChoices[0]">
-            Students can send a pass request to any teacher by searching his/her name.
-            A <strong>Quick Select</strong> menu shows the teachers that are assigned to the origin and destination rooms.
-          </div>
-          <div class="any-teacher" *ngSwitchCase="toggleChoices[1]">
-            <div>Students choose a teacher from the menu who the pass request will get sent to.</div>
-            <div style="display: flex; margin-top: 5px">
-              <span class="ds-mr-10"><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
-              <app-restriction-picker
-                      [width]="240"
-                      [height]="32"
-                      [fontSize]="13"
-                      [selectedChoice]="selectedOpt.anyNow"
-                      [choices]="['This Room', 'Origin', 'Both']"
-                      (result)="changeState('now_any', $event)"
-              ></app-restriction-picker>
+          <div class="toggle-content">
+            <div class="title-line">
+              <div class="label" [style.color]="nowRestricted ? '#1F194E' : '#7F879D'">Restriction for now</div>
+              <img [matTooltip]="tooltipText.restriction" matTooltipClass="tooltip" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
+            </div>
+            <div class="toggle-options" *ngIf="nowRestricted">
+              <div class="subtitle">Pass approval from: </div>
+              <div class="state-name" appCrossPointerEventTarget (pointerClickEvent)="openNowOptions = !openNowOptions">
+                {{ optionState.now.state || 'Any teacher' }}
+                <img [src]="'./assets/Rect (Blue-Gray).svg' | resolveAsset" style="margin-left: 7px">
+              </div>
             </div>
           </div>
-          <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
-            <div class="ds-mr-10">Pass requests will automatically get sent to all teachers assigned to:</div>
-            <app-restriction-picker
-                    [width]="240"
-                    [height]="32"
-                    [fontSize]="13"
-                    [selectedChoice]="selectedOpt.allNow"
-                    [choices]="['This Room', 'Origin', 'Both']"
-                    (result)="changeState('now_all', $event)"
-            ></app-restriction-picker>
-          </div>
-          <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
-            <div class="title">Pass requests will automatically get sent to:</div>
-            <app-sp-search
-                    [selectedOptions]="selectedOpt.nowTeachers"
-                    [chipsMode]="true"
-                    [focused]="true"
-                    [role]="'_profile_teacher'"
-                    [dummyRoleText]="'teachers'"
-                    [rollUpAfterSelection]="true"
-                    [cancelButton]="true"
-                    [placeholder]="'Search Teachers'"
-                    (onUpdate)="changeState('now_teacher', $event)"
-            ></app-sp-search>
-          </div>
-        </div>
 
-        <div class="unrestricted" *ngIf="!nowRestricted">
-          Rooms editing are unrestricted for now passes.
-          Make {{ roomName }} restricted for now passes above to select pass request sending options.
         </div>
-      </div>
-    <div class="future-block" *ngIf="!hideFutureBlock">
-      <div class="future-restriction-toggle">
-        <div class="title">Restriction for Future</div>
-        <div class="toggle" *ngIf="futureRestricted">
-          <app-restriction-picker
-                  [width]="440"
-                  [height]="52"
-                  [fontSize]="13"
-                  [padding]="14"
-                  [disabledOptions]="disabledOptions"
-                  [selectedChoice]="optionState.future.state || 'Any teacher (default)'"
-                  [choices]="toggleChoices"
-                  (result)="changeOptions('future', $event)"
-          >
-          </app-restriction-picker>
-        </div>
-      </div>
-
-      <div class="options" *ngIf="futureRestricted" [ngSwitch]="optionState.future.state">
-
-        <div class="default" *ngSwitchCase="toggleChoices[0]">
-          Students can send a pass request to any teacher by searching his/her name.
-          A <strong>Quick Select</strong> menu shows the teachers that are assigned to the origin and destination rooms.
-        </div>
-        <div class="any-teacher" *ngSwitchCase="toggleChoices[1]">
-          <div>Students choose a teacher from the menu who the pass request will get sent to.</div>
-          <div style="display: flex; margin-top: 5px">
-            <span class="ds-mr-10"><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
-            <app-restriction-picker
-                    [width]="240"
-                    [height]="32"
-                    [fontSize]="13"
-                    [selectedChoice]="selectedOpt.anyFut"
-                    [choices]="['This Room', 'Origin',  'Both']"
-                    (result)="changeState('future_any', $event)"
-            ></app-restriction-picker>
+        <div class="active-block" *ngIf="openNowOptions && nowRestricted">
+          <div class="restriction-toggle">
+            <div class="toggle">
+              <app-restriction-picker
+                [width]="396"
+                [height]="52"
+                [padding]="9"
+                [fontSize]="13"
+                [disabledOptions]="disabledOptions"
+                [selectedChoice]="optionState.now.state || 'Any teacher'"
+                [choices]="toggleChoices"
+                (result)="changeOptions('now', $event)"
+              >
+              </app-restriction-picker>
+            </div>
           </div>
-        </div>
-        <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
-          <div class="ds-mr-10">Pass requests will automatically get sent to all teachers assigned to:</div>
-          <app-restriction-picker
+          <div class="options" *ngIf="openNowOptions && nowRestricted" [ngSwitch]="optionState.now.state">
+
+            <div class="default" *ngSwitchCase="toggleChoices[0]">
+              Students can send a pass request to any teacher by searching his/her name.
+              A <strong>Quick Select</strong> menu shows the teachers that are assigned to the origin and destination rooms.
+            </div>
+            <div class="any-teacher" *ngSwitchCase="toggleChoices[1]">
+              <div>Students choose a teacher from the menu who the pass request will get sent to.</div>
+              <div style="display: flex; margin-top: 5px">
+                <span class="ds-mr-10"><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
+                <app-restriction-picker
                   [width]="240"
                   [height]="32"
                   [fontSize]="13"
-                  [selectedChoice]="selectedOpt.allFut"
+                  [selectedChoice]="selectedOpt.anyNow || 'This Room'"
+                  [choices]="['This Room', 'Origin', 'Both']"
+                  (result)="changeState('now_any', $event)"
+                ></app-restriction-picker>
+              </div>
+            </div>
+            <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
+              <div class="ds-mr-10">Pass requests will automatically get sent to All teachers in room to:</div>
+              <app-restriction-picker
+                [width]="240"
+                [height]="32"
+                [fontSize]="13"
+                [selectedChoice]="selectedOpt.allNow || 'This Room'"
+                [choices]="['This Room', 'Origin', 'Both']"
+                (result)="changeState('now_all', $event)"
+              ></app-restriction-picker>
+            </div>
+            <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
+              <div class="title">Pass requests will automatically get sent to:</div>
+              <app-sp-search
+                [selectedOptions]="selectedOpt.nowTeachers"
+                [chipsMode]="true"
+                [focused]="true"
+                [role]="'_profile_teacher'"
+                [dummyRoleText]="'teachers'"
+                [rollUpAfterSelection]="true"
+                [cancelButton]="true"
+                [placeholder]="'Search Teachers'"
+                (onUpdate)="changeState('now_teacher', $event)"
+              ></app-sp-search>
+            </div>
+          </div>
+
+          <div class="unrestricted" *ngIf="false">
+            Rooms editing are unrestricted for now passes.
+            Make {{ roomName }} restricted for now passes above to select pass request sending options.
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="line">
+          <div class="toggle">
+            <app-toggle-input
+              [form]="restrictionForm"
+              [controlName]="'forFuture'"
+              [delimiter]="false"
+              [controlSize]="'small'"
+              [hasIcon]="true"
+              [icon]="'./assets/Locked (Navy).svg'"
+              [color]="'#1F195E'"
+              (pushOutValue)="futureEvent($event)"
+            ></app-toggle-input>
+          </div>
+          <div class="toggle-content">
+            <div class="title-line">
+              <div class="label" [style.color]="futureRestricted ? '#1F194E' : '#7F879D'">Restriction for future</div>
+              <img [matTooltip]="tooltipText.scheduling_restricted" matTooltipClass="tooltip" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
+            </div>
+            <div class="toggle-options" *ngIf="futureRestricted">
+              <div class="subtitle">Pass approval from: </div>
+              <div class="state-name" appCrossPointerEventTarget (pointerClickEvent)="openFutureOptions = !openFutureOptions">
+                {{ optionState.future.state || 'Any teacher' }}
+                <img [src]="'./assets/Rect (Blue-Gray).svg' | resolveAsset" style="margin-left: 7px">
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="active-block" *ngIf="!hideFutureBlock && openFutureOptions && futureRestricted">
+          <div class="restriction-toggle">
+            <div class="toggle">
+              <app-restriction-picker
+                [width]="396"
+                [height]="52"
+                [padding]="9"
+                [fontSize]="13"
+                [disabledOptions]="disabledOptions"
+                [selectedChoice]="optionState.future.state || 'Any teacher'"
+                [choices]="toggleChoices"
+                (result)="changeOptions('future', $event)"
+              >
+              </app-restriction-picker>
+            </div>
+          </div>
+
+          <div class="options" *ngIf="openFutureOptions && futureRestricted" [ngSwitch]="optionState.future.state">
+
+            <div class="default" *ngSwitchCase="toggleChoices[0]">
+              Students can send a pass request to any teacher by searching his/her name.
+              A <strong>Quick Select</strong> menu shows the teachers that are assigned to the origin and destination rooms.
+            </div>
+            <div class="any-teacher" *ngSwitchCase="toggleChoices[1]">
+              <div>Students choose a teacher from the menu who the pass request will get sent to.</div>
+              <div style="display: flex; margin-top: 5px">
+                <span class="ds-mr-10"><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
+                <app-restriction-picker
+                  [width]="240"
+                  [height]="32"
+                  [fontSize]="13"
+                  [selectedChoice]="selectedOpt.anyFut || 'This Room'"
                   [choices]="['This Room', 'Origin',  'Both']"
-                  (result)="changeState('future_all', $event)"
-          ></app-restriction-picker>
-        </div>
-        <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
-          <div class="title">Pass requests will automatically get sent to:</div>
-          <app-sp-search
-                  [selectedOptions]="selectedOpt.futTeachers"
-                  [chipsMode]="true"
-                  [focused]="true"
-                  [role]="'_profile_teacher'"
-                  [dummyRoleText]="'teachers'"
-                  [rollUpAfterSelection]="true"
-                  [cancelButton]="true"
-                  [placeholder]="'Search Teachers'"
-                  (onUpdate)="changeState('future_teacher', $event)"
-          ></app-sp-search>
+                  (result)="changeState('future_any', $event)"
+                ></app-restriction-picker>
+              </div>
+            </div>
+            <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
+              <div class="ds-mr-10">Pass requests will automatically get sent to All teachers in room to:</div>
+              <app-restriction-picker
+                [width]="240"
+                [height]="32"
+                [fontSize]="13"
+                [selectedChoice]="selectedOpt.allFut || 'This Room'"
+                [choices]="['This Room', 'Origin',  'Both']"
+                (result)="changeState('future_all', $event)"
+              ></app-restriction-picker>
+            </div>
+            <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
+              <div class="title">Pass requests will automatically get sent to:</div>
+              <app-sp-search
+                [selectedOptions]="selectedOpt.futTeachers"
+                [chipsMode]="true"
+                [focused]="true"
+                [role]="'_profile_teacher'"
+                [dummyRoleText]="'teachers'"
+                [rollUpAfterSelection]="true"
+                [cancelButton]="true"
+                [placeholder]="'Search Teachers'"
+                (onUpdate)="changeState('future_teacher', $event)"
+              ></app-sp-search>
+            </div>
+          </div>
+          <div class="unrestricted" *ngIf="!futureRestricted">
+            Rooms editing are unrestricted for future passes.
+            Make {{ roomName }} restricted for future passes above to select pass request sending options.
+          </div>
         </div>
       </div>
-      <div class="unrestricted" *ngIf="!futureRestricted">
-        Rooms editing are unrestricted for future passes.
-        Make {{ roomName }} restricted for future passes above to select pass request sending options.
+
+      <div class="block">
+        <div class="line">
+          <div class="toggle">
+            <app-toggle-input
+              [delimiter]="false"
+              [form]="passLimitForm"
+              [controlName]="'toEnabled'"
+              [controlSize]="'small'"
+              [color]="'#1F195E'"
+              [hasIcon]="true"
+              [icon]="'./assets/Hand (Navy).svg'"
+              (pushOutValue)="change$.next({value: $event, action: 'to'})"
+            ></app-toggle-input>
+          </div>
+          <div class="toggle-content">
+            <div class="title-line">
+              <div class="label" [style.color]="passLimitForm.get('toEnabled').value ? '#1F194E' : '#7F879D'">
+                Active Pass Limit
+                <!-- TODO uncomment when branch SP-1050 is available -->
+<!--                <span class="place">to</span> this room-->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="active-block" *ngIf="passLimitForm.get('toEnabled').value">
+          <div [style.width]="'145px'">
+            <app-input
+              [width]="'131px'"
+              [height]="'40px'"
+              [isFocus]="limitInputsFocus['to']"
+              [maxLength]="'15'"
+              [fieldSpace]="'0px'"
+              [timeInput]="true"
+              [input_value]="passLimitForm.get('to').value || ''"
+              [formGroup]="passLimitForm"
+              [controlName]="passLimitForm.get('to')"
+              [placeholder]="'# of passes'">
+            </app-input>
+          </div>
+        </div>
       </div>
+
+
+      <!-- TODO uncomment when branch SP-1050 is available -->
+
+<!--      <div class="block">-->
+<!--        <div class="line">-->
+<!--          <div class="toggle">-->
+<!--            <app-toggle-input-->
+<!--              [delimiter]="false"-->
+<!--              [form]="passLimitForm"-->
+<!--              [controlName]="'fromEnabled'"-->
+<!--              [controlSize]="'small'"-->
+<!--              [color]="'#1F195E'"-->
+<!--              [hasIcon]="true"-->
+<!--              [icon]="'./assets/Hand (Navy).svg'"-->
+<!--              (pushOutValue)="change$.next({value: $event, action: 'from'})"-->
+<!--            ></app-toggle-input>-->
+<!--          </div>-->
+<!--          <div class="toggle-content">-->
+<!--            <div class="title-line">-->
+<!--              <div class="label" [style.color]="passLimitForm.get('fromEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit <span class="place">from</span> this room</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="active-block" *ngIf="passLimitForm.get('fromEnabled').value">-->
+<!--          <div [style.width]="'145px'">-->
+<!--            <app-input-->
+<!--              [width]="'131px'"-->
+<!--              [height]="'40px'"-->
+<!--              [isFocus]="limitInputsFocus['from']"-->
+<!--              [maxLength]="'15'"-->
+<!--              [fieldSpace]="'0px'"-->
+<!--              [input_value]="passLimitForm.get('from').value || ''"-->
+<!--              [formGroup]="passLimitForm"-->
+<!--              [timeInput]="true"-->
+<!--              [controlName]="passLimitForm.get('from')"-->
+<!--              [placeholder]="'# of passes'">-->
+<!--            </app-input>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+
     </div>
+
     </div>
   </div>
-  <mat-divider class="divider"></mat-divider>
-</div>
+

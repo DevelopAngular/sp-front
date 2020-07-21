@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 import {BehaviorSubject, interval, merge, Subject, zip} from 'rxjs';
 
@@ -16,8 +16,10 @@ import { OptionState, ValidButtons } from '../advanced-options/advanced-options.
 
 import { sortBy, cloneDeep, differenceBy, isEqual } from 'lodash';
 import {NextStep} from '../../../animations';
-import {filter, mapTo, takeUntil} from 'rxjs/operators';
+import {filter, mapTo, takeUntil, tap} from 'rxjs/operators';
 import {ScrollPositionService} from '../../../scroll-position.service';
+import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
+import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 
 @Component({
   selector: 'app-folder',
@@ -118,6 +120,7 @@ export class FolderComponent implements OnInit, OnDestroy {
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       public overlayService: OverlayDataService,
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
+      private dialog: MatDialog,
       private hallPassService: HallPassesService,
       private locationService: LocationsService,
       private sanitizer: DomSanitizer,
@@ -217,11 +220,12 @@ export class FolderComponent implements OnInit, OnDestroy {
             this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
           }
         } else {
-          if (this.roomsImFolder.length) {
-            this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
-          } else {
-              this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
-          }
+          // if (this.roomsImFolder.length) {
+          //   this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
+          // } else {
+          //     this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
+          // }
+          this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
         }
       } else {
         this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
@@ -297,19 +301,31 @@ export class FolderComponent implements OnInit, OnDestroy {
       }
   }
 
-  deleteRoom() {
-    const pinnable = this.overlayService.pageState.getValue().data.pinnable;
-    const deletions = [
-        this.hallPassService.deletePinnableRequest(pinnable.id).pipe(mapTo(null))
-    ];
-
-    if (pinnable.location) {
-        deletions.push(this.locationService.deleteLocationRequest(pinnable.location.id));
-    }
-
-    zip(...deletions).subscribe(res => {
-        this.dialogRef.close();
+  deleteRoom(target: HTMLElement) {
+    const header = `Are you sure you want to permanently delete this folder? All associated passes associated with this rooms in this folder <b>will not</b> be deleted.`;
+    const options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete'}];
+    UNANIMATED_CONTAINER.next(true);
+    const confirmDialog = this.dialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: { trigger: new ElementRef(target), header, options }
     });
+
+    confirmDialog.afterClosed().pipe(tap(res => UNANIMATED_CONTAINER.next(false), filter(action => !!action)))
+      .subscribe(() => {
+        const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+        const deletions = [
+          this.hallPassService.deletePinnableRequest(pinnable.id).pipe(mapTo(null))
+        ];
+
+        if (pinnable.location) {
+          deletions.push(this.locationService.deleteLocationRequest(pinnable.location.id));
+        }
+
+        zip(...deletions).subscribe(res => {
+          this.dialogRef.close();
+        });
+      });
   }
 
     generateAdvOptionsModel(loc: Location) {
@@ -343,22 +359,22 @@ export class FolderComponent implements OnInit, OnDestroy {
         }
 
         if (loc.request_mode === 'any_teacher') {
-            this.advOptState.now.state = 'Any teacher (default)';
+            this.advOptState.now.state = 'Any teacher';
         } else if (loc.request_mode === 'teacher_in_room') {
-            this.advOptState.now.state = 'Any teachers assigned';
+            this.advOptState.now.state = 'Any teachers in room';
         } else if (loc.request_mode === 'all_teachers_in_room') {
-            this.advOptState.now.state = 'All teachers assigned';
+            this.advOptState.now.state = 'All teachers in room';
         } else if (loc.request_mode === 'specific_teachers') {
-            this.advOptState.now.state = 'Certain \n teacher(s)';
+            this.advOptState.now.state = 'Certain \n teachers';
         }
         if (loc.scheduling_request_mode === 'any_teacher') {
-            this.advOptState.future.state = 'Any teacher (default)';
+            this.advOptState.future.state = 'Any teacher';
         } else if (loc.scheduling_request_mode === 'teacher_in_room') {
-            this.advOptState.future.state = 'Any teachers assigned';
+            this.advOptState.future.state = 'Any teachers in room';
         } else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
-            this.advOptState.future.state = 'All teachers assigned';
+            this.advOptState.future.state = 'All teachers in room';
         } else if (loc.scheduling_request_mode === 'specific_teachers') {
-            this.advOptState.future.state = 'Certain \n teacher(s)';
+            this.advOptState.future.state = 'Certain \n teachers';
         }
         return this.advOptState;
     }

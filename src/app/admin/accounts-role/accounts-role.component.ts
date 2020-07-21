@@ -203,7 +203,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.userList = [];
       }),
       tap(() => {
-        this.showDisabledChip = !this.http.getSchool().launch_date || moment().isSameOrBefore(moment(this.http.getSchool().launch_date), 'day');
+        this.showDisabledChip = !this.http.getSchool().launch_date;
       }),
       switchMap(() => {
         return this.adminService.getCountAccountsRequest().pipe(take(1));
@@ -270,9 +270,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
           switch (this.role) {
             case '_profile_teacher':
-              this.dataTableHeaders['Rooms'] = {
+              this.dataTableHeaders['rooms'] = {
                 value: true,
-                label: 'Rooms',
+                label: 'rooms',
                 disabled: false
               };
               this.dataTableHeaders['Permissions'] = {
@@ -309,23 +309,23 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         {
           'access_admin_dashboard': {
             controlName: 'access_admin_dashboard',
-            controlLabel: 'Dashboard Tab Access',
+            controlLabel: 'Dashboard tab Access',
           },
           'access_hall_monitor': {
             controlName: 'access_hall_monitor',
-            controlLabel: 'Hall Monitor Tab Access',
+            controlLabel: 'Hall Monitor tab Access',
           },
           'access_admin_search': {
             controlName: 'access_admin_search',
-            controlLabel: 'Search Tab Access',
-          },
-          'access_user_config': {
-            controlName: 'access_user_config',
-            controlLabel: 'Accounts Tab Access',
+            controlLabel: 'Search tab Access',
           },
           'access_pass_config': {
             controlName: 'access_pass_config',
-            controlLabel: 'Rooms Tab Access',
+            controlLabel: 'Rooms tab Access',
+          },
+          'access_user_config': {
+            controlName: 'access_user_config',
+            controlLabel: 'Accounts tab Access',
           },
         }
                    :
@@ -343,15 +343,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         {
           'access_passes': {
             controlName: 'access_passes',
-            controlLabel: 'Passes Tab Access'
+            controlLabel: 'Passes tab Access'
           },
           'access_hall_monitor': {
             controlName: 'access_hall_monitor',
-            controlLabel: 'Hall Monitor Tab Access'
+            controlLabel: 'Hall Monitor tab Access'
           },
           'access_teacher_room': {
             controlName: 'access_teacher_room',
-            controlLabel: 'My Room Tab Access'
+            controlLabel: 'My Room tab Access'
           },
         }
                    :
@@ -422,9 +422,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.tableHeaders['Sign-in status'].index = 4;
       this.tableHeaders['Last sign-in'].index = 5;
       this.tableHeaders['Account Type'].index = 3;
-      this.tableHeaders['Rooms'] = {
+      this.tableHeaders['rooms'] = {
         index: 2,
-        label: 'Rooms',
+        label: 'rooms',
       };
       this.tableHeaders['Permissions'] = {
         index: 6,
@@ -632,7 +632,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       gSuiteSettings: gSuite,
       role: this.role,
       permissions: this.profilePermissions,
-      disabledSignIn: this.showDisabledChip
+      disabledSignIn: this.showDisabledChip && this.role === '_profile_student'
     };
 
     if (this.selectedUsers.length && !bulk || this.role === '_all' && !gSuite)  {
@@ -650,8 +650,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',
-      data: data,
-      disableClose: true
+      data: data
     });
 
     dialogRef.afterClosed()
@@ -711,7 +710,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         const rawObj = {
           'Name': raw.display_name,
           'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-          'Rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
+          'rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
           'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;

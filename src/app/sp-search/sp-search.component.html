@@ -1,13 +1,17 @@
 <div class="sp-search-wrapper" *ngIf="chipsMode && !inputField">
-  <div>
-    <app-sp-chips
-      [preventRemovingLast]="preventRemovingLast"
-      [selectedProfiles]="selectedOptions"
-      (add)="inputField = true"
-      (updateSelectedEvent)="selectedOptions = $event; onUpdate.emit(selectedOptions)"
-    ></app-sp-chips>
-  </div>
+    <div class="chip">
+      <app-sp-chips
+        [preventRemovingLast]="preventRemovingLast"
+        [selectedProfiles]="selectedOptions"
+        [suggestedTeacher]="suggestedTeacher"
+        [isProposed]="isProposed"
+        (add)="inputField = true"
+        (updateSelectedEvent)="update($event)"
+        (addSuggestedTeacher)="addSuggested($event)"
+      ></app-sp-chips>
+    </div>
 </div>
+
 <div class="sp-search-wrapper" [style.width]="width" *ngIf="inputField">
 
   <div class="input">
@@ -46,7 +50,10 @@
                [style.color]="textColor(cell)"
           >
             <span>
-              {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
+              {{student.display_name}}
+              {{
+              '(' + (student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : '') + ')'
+              }}
             </span>
           </div>
         </div>
@@ -188,10 +195,8 @@
     </div>
     <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
       <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" tabindex="0" class="option-list_item"
-           (mouseenter)="changeColor(true, $event)"
-           (mouseleave)="changeColor(false, $event)"
-           (touchstart)="changeColor(true, $event)"
-           (touchend)="changeColor(true, $event)"
+           (mouseenter)="changeColor(true, $event); cell.hovered = true"
+           (mouseleave)="changeColor(false, $event); cell.hovered = false"
            [style.color]="textColor(cell)"
       >
         <span *ngIf="this.searchTarget === 'users'">
@@ -205,7 +210,7 @@
           (mousedown)="cell.pressed = true"
           (mouseup)="cell.pressed = false"
           (click)="selectedOptions.splice(i, 1); this.onUpdate.emit(this.selectedOptions)"
-          [src]="cell.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15"alt="Check.svg">
+          [src]="cell.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" alt="Check.svg">
       </div>
     </div>
   </div>

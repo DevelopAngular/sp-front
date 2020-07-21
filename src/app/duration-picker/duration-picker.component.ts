@@ -20,6 +20,8 @@ export class DurationPickerComponent implements OnInit {
   @Input()
   plural: boolean;
 
+  @Input() disabled;
+
   @Output() onChange: EventEmitter<any> = new EventEmitter();
 
   @HostListener('window:wheel', ['$event'])
@@ -30,7 +32,7 @@ export class DurationPickerComponent implements OnInit {
       } else if (delta > 0 && this.selectedDuration > this.minDuration) {
         this.selectedDuration -= 1;
       }
-      this.onChange.emit(this.selectedDuration);
+      this.emitResult(this.selectedDuration);
     }
 
   public selectedDuration: number = 5;
@@ -38,13 +40,37 @@ export class DurationPickerComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    if (this.maxDuration === this.maxDuration) {
+      this.minDuration = 0;
+      this.disabled = true;
+    }
+
     this.selectedDuration = this.maxDuration < 5 ? this.maxDuration : 5;
-    this.onChange.emit(this.selectedDuration);
+
+    this.emitResult(this.selectedDuration);
+  }
+
+  emitResult(value) {
+    if (value && value <= this.maxDuration && value >= this.minDuration) {
+      this.selectedDuration = value;
+      // console.log('Value ==>>>', this.selectedDuration);
+      this.onChange.emit(this.selectedDuration);
+    } else {
+      if (!value) {
+        this.selectedDuration = 1;
+        this.minDuration = 1;
+      } else if (value > this.maxDuration) {
+        this.selectedDuration = this.maxDuration;
+      }
+    }
   }
 
   updateDuration(event:any) {
-    this.selectedDuration = event.value;
-    this.onChange.emit(event.value);
+    if (!event.value) {
+      this.minDuration = 1;
+    } else {
+        this.emitResult(event.value);
+    }
   }
 
 }

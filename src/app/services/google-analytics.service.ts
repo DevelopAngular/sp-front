@@ -17,9 +17,19 @@ export class GoogleAnalyticsService {
   private listenForRouteChanges() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        gtag('config', 'G-5NCCB9C2PJ', {
-          'page_path': event.urlAfterRedirects,
-        });
+        if (event.urlAfterRedirects.includes('/school_signup?key') || event.urlAfterRedirects === '/' || event.urlAfterRedirects === '/admin/gettingstarted') {
+          gtag('event', 'sign_in', {
+            'send_to': 'public',
+            'page_path': event.urlAfterRedirects,
+            'event_callback': function (key) {}
+          });
+        } else {
+          gtag('event', 'other', {
+            'send_to': 'private',
+            'page_path': event.urlAfterRedirects,
+            'event_callback': function (key) {}
+          });
+        }
       }
     });
   }
