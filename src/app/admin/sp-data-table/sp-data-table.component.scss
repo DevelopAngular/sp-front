@@ -25,7 +25,7 @@
 }
 
 .example-viewport {
-  height: 700px;
+  height: calc(100vh - 200px);
   width: 100%;
 }
 
