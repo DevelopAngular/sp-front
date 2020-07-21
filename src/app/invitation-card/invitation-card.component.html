@@ -75,7 +75,7 @@
 
         <div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">
           <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
-              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
               <div *ngIf="!performingAction" class="resend-button-content">
                 <div class="resend-button-content-title">Accept Pass Request</div>
                 <div class="resend-button-content-subtitle">Pass Request from {{ issuerName }}</div>
@@ -83,22 +83,15 @@
           </app-card-button>
         </div>
         <ng-template #noLocation>
-          <app-card-button (onClick)="changeLocation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
-            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+          <app-card-button *ngIf="!invalidDate" (onClick)="changeLocation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
+            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
               <div class="resend-button-content">
                 <div class="resend-button-content-title">Select Origin to Accept</div>
                 <div class="resend-button-content-subtitle">Pass Request from {{ issuerName }}</div>
               </div>
           </app-card-button>
-<!--          <div *ngIf="!invitation.cancelled; else cancelled" class="invitation-description">-->
-<!--            <img class="invitation-description-icon" [src]="'./assets/Received (White).svg' | resolveAsset">-->
-<!--            <div class="invitation-description-text">-->
-<!--              Pass Request from: <br>-->
-<!--              <span style="font-weight: normal">{{ invitation.issuer.first_name + ' ' + invitation.issuer.last_name }}</span>-->
-<!--            </div>-->
-<!--          </div>-->
             <div class="invitation-description" *ngIf="invitation.cancelled">
-              <img class="invitation-description-icon" [src]="'./assets/Report (White).svg' | resolveAsset">
+              <img class="invitation-description-icon" [src]="'./assets/Report (White).svg' | resolveAsset" alt="Report">
               <div class="invitation-description-text">
                 Pass Request has been cancelled
               </div>

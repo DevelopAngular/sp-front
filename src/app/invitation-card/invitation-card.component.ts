@@ -102,11 +102,11 @@ export class InvitationCardComponent implements OnInit {
         return this.invitation.student.primary_email.split('@', 1)[0];
     }
 
-  get status(){
+  get status() {
     return this.invitation.status.charAt(0).toUpperCase() + this.invitation.status.slice(1);
   }
 
-  get durationPlural(){
+  get durationPlural() {
     return this.selectedStudents && this.selectedStudents.length > 1;
   }
 
@@ -241,11 +241,11 @@ export class InvitationCardComponent implements OnInit {
         });
 
         dateDialog.afterClosed().pipe(
-          filter((res) => res.data.date && resend_request && this.forStaff),
+          filter((res) => res && res.data.date && resend_request && this.forStaff),
             switchMap((state) => {
               const body = {
                   'students' : this.invitation.student.id,
-                  'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+                  'default_origin' : this.invitation.default_origin ? this.invitation.default_origin.id : null,
                   'destination' : +this.invitation.destination.id,
                   'date_choices' : [new Date(state.data.date.date).toISOString()],
                   'duration' : this.invitation.duration,
