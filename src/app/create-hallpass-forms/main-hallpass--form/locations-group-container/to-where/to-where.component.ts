@@ -113,10 +113,12 @@ export class ToWhereComponent implements OnInit {
     }
     if (!this.isStaff &&
       (!this.formState.forLater &&
+      pinnable.location.restricted &&
       pinnable.location.request_mode === 'all_teachers_in_room' &&
       pinnable.location.request_send_origin_teachers &&
       !this.location.teachers.length) ||
       (this.formState.forLater &&
+      pinnable.location.scheduling_restricted &&
       pinnable.location.scheduling_request_mode === 'all_teachers_in_room' &&
       pinnable.location.scheduling_request_send_origin_teachers &&
       !this.location.teachers.length)
