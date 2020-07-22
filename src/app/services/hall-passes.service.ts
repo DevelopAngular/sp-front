@@ -17,8 +17,8 @@ import {getPassStats} from '../ngrx/pass-stats/actions';
 import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
 import {bufferCount, mergeMap, reduce} from 'rxjs/operators';
 import {constructUrl} from '../live-data/helpers';
-import {searchPasses} from '../ngrx/passes/actions';
-import {getPassesCollection, getPassesEntities, getPassesLoaded} from '../ngrx/passes/states';
+import {getMorePasses, searchPasses} from '../ngrx/passes/actions';
+import {getPassesCollection, getPassesEntities, getPassesLoaded, getPassesNextUrl} from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
 
 @Injectable({
@@ -35,6 +35,8 @@ export class HallPassesService {
   passesEntities$: Observable<{[id: number]: HallPass}> = this.store.select(getPassesEntities);
   passesCollection$: Observable<HallPass[]> = this.store.select(getPassesCollection);
   passesLoaded$: Observable<boolean> = this.store.select(getPassesLoaded);
+
+  passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
@@ -147,16 +149,20 @@ export class HallPassesService {
     return of(null);
   }
 
-    createArrangedPinnable(body) {
-        return this.http.post(`v1/pinnables/arranged`, body);
-    }
+  createArrangedPinnable(body) {
+      return this.http.post(`v1/pinnables/arranged`, body);
+  }
 
-    searchPassesRequest(url: string) {
-      this.store.dispatch(searchPasses({url}));
-    }
+  searchPassesRequest(url: string) {
+    this.store.dispatch(searchPasses({url}));
+  }
 
-    searchPasses(url) {
-      return this.http.get(url);
-    }
+  searchPasses(url) {
+    return this.http.get(url);
+  }
+
+  getMorePasses() {
+    this.store.dispatch(getMorePasses());
+  }
 }
 

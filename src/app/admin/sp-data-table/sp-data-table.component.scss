@@ -3,7 +3,7 @@
   background: #FFFFFF;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.0616259);
   border-radius: 12px;
-  overflow: auto;
+  overflow: hidden;
 
 
   .table-options-screen {
@@ -93,4 +93,9 @@
 
 ::ng-deep .cdk-virtual-scroll-content-wrapper {
   transform: translateY(0px) !important;
+  contain: none;
 }
+
+//.no-container .cdk-virtual-scroll-content-wrapper {
+//  contain: none;
+//}

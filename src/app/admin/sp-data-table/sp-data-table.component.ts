@@ -9,7 +9,7 @@ import {ColumnOptionsComponent} from './column-options/column-options.component'
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
 import {cloneDeep} from 'lodash';
-import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, delay, filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {GeneratedTableDialogComponent} from './generated-table-dialog/generated-table-dialog.component';
@@ -27,7 +27,7 @@ export class GridTableDataSource extends DataSource<any> {
 
   set allData(data: any[]) {
     this._data = data;
-    this.viewport.scrollToOffset(0);
+    // this.viewport.scrollToOffset(0);
     this.viewport.setTotalContentSize(this.itemSize * data.length);
     this.visibleData.next(this._data.slice(0, PAGESIZE));
   }
@@ -145,11 +145,21 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     private hallpassService: HallPassesService
   ) {}
 
+  get viewportDataItems(): number {
+    return Math.floor(this.viewport.getViewportSize() / ROW_HEIGHT);
+  }
+
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.dataSource.sort = this.sort;
-    this.dataSource.offsetChange.pipe(takeUntil(this.destroy$)).subscribe(offset => {
-      this.placeholderHeight = offset;
+    this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
+      .subscribe(offset => this.placeholderHeight = offset);
+
+    this.viewport.scrolledIndexChange.subscribe(res => {
+      if (res === (this.dataSource.allData.length - this.viewportDataItems)) {
+        this.hallpassService.getMorePasses();
+        console.log('loading data ==>>>>');
+      }
     });
     this.dataSource.loadedData$.pipe(
       filter(value => value && this.dataSource.allData[0]),
@@ -236,6 +246,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.allData.forEach(row => this.selection.select(row));
+    console.log(this.selection.selected.length);
   }
 
   checkboxLabel(row?): string {

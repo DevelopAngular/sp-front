@@ -84,6 +84,8 @@ export class ExploreComponent implements OnInit {
       })
     );
     this.schools$ = this.http.schoolsCollection$;
+
+    this.search(300);
     this.searchedPassData$ = this.hallPassService.passesCollection$
       .pipe(
         map((passes: HallPass[]) => {
@@ -191,11 +193,8 @@ export class ExploreComponent implements OnInit {
     }
   }
 
-  search(limit?: number) {
-    let url = `v1/hall_passes?`;
-    if (limit) {
-      url += `limit=${limit}&`;
-    }
+  search(limit: number = 100000) {
+    let url = `v1/hall_passes?limit=${limit}`;
     if (this.selectedRooms) {
       this.selectedRooms.forEach(room => {
         url += 'destination=' + room.id + '&';

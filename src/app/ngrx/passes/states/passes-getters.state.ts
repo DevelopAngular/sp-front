@@ -12,3 +12,9 @@ export const getPassesLoaded = createSelector(
   getPassesState,
   (state: IPassesState) => state.loaded
 );
+
+export const getPassesNextUrl = createSelector(
+  getPassesState,
+  (state: IPassesState) => state.nextRequest
+);
+

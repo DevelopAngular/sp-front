@@ -1,5 +1,6 @@
 <div class="wrapper">
     <cdk-virtual-scroll-viewport
+      autosize
       class="example-viewport"
       itemSize="33"
       [style.height]="height"
@@ -30,7 +31,7 @@
           </td>
         </ng-container>
 
-        <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns; last as isLast; first as isFirst">
+        <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns; last as isLast; first as isFirst" [sticky]="isFirst">
           <ng-container *ngIf="column !== 'Pass'; else passNoSort">
             <th
               [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
