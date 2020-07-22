@@ -118,6 +118,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     return uniqBy(this.teacherNames, 'id');
   }
 
+  get iconClass() {
+    return  this.forStaff || this.invalidDate || !this.forStaff && !this.forInput && !this.invalidDate ? '' : 'icon-button';
+  }
+
   ngOnInit() {
     this.frameMotion$ = this.createFormService.getFrameMotionDirection();
 
@@ -224,7 +228,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
                   this.futureTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
               } else if (to.scheduling_request_send_origin_teachers) {
-                  this.futureTeachers = this.formState.data.direction.from.teachers;
+                  this.futureTeachers = this.formState.data.direction.from.teachers.length ? this.formState.data.direction.from.teachers : this.formState.data.direction.to.teachers;
               } else if (to.scheduling_request_send_destination_teachers) {
                   this.futureTeachers = this.formState.data.direction.to.teachers;
               }
@@ -259,7 +263,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           'travel_type' : this.selectedTravelType,
           'duration' : this.selectedDuration * 60,
         };
-
     if (this.isFutureOrNowTeachers) {
           if (this.forFuture) {
               body.teachers = uniq(this.futureTeachers.map(t => t.id));
@@ -527,10 +530,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       .subscribe(() => {
       this.dialogRef.close();
     });
-  }
-
-  get iconClass() {
-   return  this.forStaff || this.invalidDate || !this.forStaff && !this.forInput && !this.invalidDate ? '' : 'icon-button';
   }
 
   cancelClick() {
