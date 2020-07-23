@@ -134,6 +134,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     { icon: 'CSV', action: 'csv'}
   ];
   disableRowClick: boolean;
+  morePassesLoading$: Observable<boolean>;
 
   destroy$ = new Subject();
 
@@ -150,6 +151,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.morePassesLoading$ = this.hallpassService.moreLoading$;
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.dataSource.sort = this.sort;
     this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))

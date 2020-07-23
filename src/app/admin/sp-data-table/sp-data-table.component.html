@@ -1,19 +1,13 @@
 <div class="wrapper">
-    <cdk-virtual-scroll-viewport
-      autosize
-      class="example-viewport"
-      itemSize="33"
-      [style.height]="height"
-    >
-      <table class="table"
-             mat-table
-             [dataSource]="dataSource"
-             [multiTemplateDataRows]="true"
-             matSort
-      >
-
-        <ng-container matColumnDef="select" *ngIf="isCheckbox | async" [sticky]="true">
-          <th mat-header-cell *matHeaderCellDef>
+  <div class="spinner-container" *ngIf="morePassesLoading$ | async">
+    <div class="loading-theme_blue-gray spinner ds-flex-center-center">
+      <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
+    </div>
+  </div>
+    <cdk-virtual-scroll-viewport class="example-viewport" [itemSize]="itemSize" [style.height]="height">
+      <table class="table" mat-table [dataSource]="dataSource" [multiTemplateDataRows]="true" matSort>
+        <ng-container matColumnDef="select" *ngIf="isCheckbox | async" sticky>
+          <th mat-header-cell *matHeaderCellDef style="padding: 0 15px;">
             <mat-checkbox (change)="$event ? masterToggle() : null"
                           [checked]="selection.hasValue() && isAllSelected()"
                           [style.color]="selection.hasValue() ? '#1F195E' : '#7F879D'"
@@ -21,7 +15,7 @@
                           [aria-label]="checkboxLabel()">
             </mat-checkbox>
           </th>
-          <td mat-cell *matCellDef="let row">
+          <td mat-cell *matCellDef="let row" style="padding: 0 15px;">
             <mat-checkbox (click)="$event.stopPropagation()"
                           (change)="$event ? selection.toggle(row) : null"
                           [checked]="selection.isSelected(row)"
@@ -50,6 +44,7 @@
 
           <ng-template #passNoSort>
             <th
+              style="padding-left: 0; padding-right: 15px"
               [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
               mat-header-cell
               *matHeaderCellDef>
@@ -59,10 +54,12 @@
 
           <td
             mat-cell
+            [style.padding]="column === 'Pass' ? '0 15px 0 0' : ''"
             [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
             *matCellDef="let element"
             [innerHTML]="element[column]"
             appCrossPointerEventTarget
+            [style.cursor]="column === 'Pass' ? 'pointer' : 'default'"
             (pointerClickEvent)="column === 'Pass' ? cellClick(element, column) : null"
           ></td>
         </ng-container>
@@ -74,10 +71,7 @@
         <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>
 
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
-            [style.cursor]="'pointer'"
-            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : 'transparent'"
-            appCrossPointerEventTarget
-            (pointerClickEvent)="rowOnClick(row)">
+            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : '#FFFFFF'">
         </tr>
       </table>
     </cdk-virtual-scroll-viewport>

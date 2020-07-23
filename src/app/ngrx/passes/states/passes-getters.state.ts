@@ -18,3 +18,8 @@ export const getPassesNextUrl = createSelector(
   (state: IPassesState) => state.nextRequest
 );
 
+export const getMorePassesLoading = createSelector(
+  getPassesState,
+  (state: IPassesState) => state.moreLoading
+);
+

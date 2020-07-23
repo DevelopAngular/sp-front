@@ -1,14 +1,34 @@
+@import '../../../sp-colors';
+
 .wrapper {
   display: flex;
   background: #FFFFFF;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.0616259);
   border-radius: 12px;
   overflow: hidden;
+  position: relative;
+
+  .spinner-container {
+    position: absolute;
+    left: 0;
+    right: 45px;
+    top: 44px;
+    bottom: 0;
+    background-color: white;
+    z-index: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
 
   .table-options-screen {
     min-width: 44px;
     border-left: 1px solid #7E879D;
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: white;
 
     .buttons {
       display: flex;
@@ -26,17 +46,21 @@
 
 .example-viewport {
   width: 100%;
-  min-width: 800px;
+  //overflow: auto;
 }
 
 .table {
   width: 100%;
+  min-width: 800px;
 
   .header {
-    background-color: #D3D6DE;
+    background-color: #D3D6DE !important;
     height: 41px;
-    font-size: 14px;
+    z-index: 1000;
+  }
 
+  .mat-header-cell {
+    font-size: 14px;
   }
 
   .mat-row {
@@ -44,13 +68,19 @@
   }
 
   .mat-cell, .mat-header-cell {
-    padding-left: 12px;
+    padding-left: 22px;
+    color: $blue-gray;
   }
 
   //.mat-header-cell:hover {
   //  background: #FFFFFF;
   //  mix-blend-mode: normal;
   //}
+
+  //.mat-cell {
+  //  background-color: white;
+  //}
+
 
   .sort-icon {
     display: flex;
@@ -67,6 +97,52 @@
   }
 
 
+}
+
+::ng-deep .mat-column-Origin, .mat-column-Destination, .mat-column-Duration, .mat-column-Pass-start-time, .mat-column-Student-Name {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 155px !important;
+  width: 155px !important;
+  overflow-wrap: break-word;
+
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Pass {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 30px !important;
+  width: 30px !important;
+  overflow-wrap: break-word;
+
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+::ng-deep .mat-column-select {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 10px !important;
+  width: 10px !important;
+  overflow-wrap: break-word;
+
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
 ::ng-deep .mat-sort-header-arrow {

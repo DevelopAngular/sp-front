@@ -10,6 +10,7 @@ export const adapter: EntityAdapter<HallPass> = createEntityAdapter<HallPass>();
 export const passesInitialState: IPassesState = adapter.getInitialState({
   loading: false,
   loaded: false,
+  moreLoading: false,
   nextRequest: null,
   lastAddedPasses: []
 });
@@ -17,11 +18,12 @@ export const passesInitialState: IPassesState = adapter.getInitialState({
 const reducer = createReducer(
   passesInitialState,
   on(passesActions.searchPasses, state => ({...state, loading: true, loaded: false})),
+  on(passesActions.getMorePasses, state => ({...state, moreLoading: true})),
   on(passesActions.searchPassesSuccess, (state, {passes, next}) => {
     return adapter.addAll(passes, {...state, loading: false, loaded: true, nextRequest: next, lastAddedPasses: passes});
   }),
   on(passesActions.getMorePassesSuccess, (state, {passes, next}) => {
-    return adapter.addMany(passes, {...state, loaded: true, loading: false, nextRequest: next, lastAddedPasses: passes});
+    return adapter.addMany(passes, {...state, loaded: true, loading: false, nextRequest: next, lastAddedPasses: passes, moreLoading: false});
   })
 );
 
