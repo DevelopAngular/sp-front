@@ -68,6 +68,7 @@ import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
 import {PassLimitEffects} from './ngrx/pass-limits/effects';
 import {PassesEffects} from './ngrx/passes/effects';
+import {ContactTraceEffects} from './ngrx/contact-trace/effects';
 
 
 const appRoutes: Routes = [
@@ -177,7 +178,8 @@ const appRoutes: Routes = [
             UserEffects,
             ProcessEffects,
             PassLimitEffects,
-            PassesEffects
+            PassesEffects,
+            ContactTraceEffects
         ]),
         StoreDevtoolsModule.instrument({})
     ],

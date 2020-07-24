@@ -29,7 +29,7 @@
           (clearData)="selectedRooms = null; autoSearch()"
         ></app-filter-button>
       </div>
-      <div class="filter" *ngIf="views[currentView].id === 1">
+      <div class="filter">
         <app-filter-button
           [title]="selectedDate ? dateText : 'Pass start time'"
           (buttonClick)="openFilter($event, 'calendar')"
@@ -39,12 +39,12 @@
       </div>
     </div>
 
-    <div class="search-button" *ngIf="false">
+    <div class="search-button" *ngIf="views[currentView].id === 3 && this.selectedStudents && this.selectedDate">
       <app-gradient-button
         [gradient]="views[currentView].color + ', ' + views[currentView].color"
         [rightIcon]="'./assets/Chevron Right (White).svg'"
         [size]="'medium'"
-        (buttonClick)="search()"
+        (buttonClick)="contactTrace()"
       >{{ views[currentView].title }}
       </app-gradient-button>
     </div>
@@ -52,9 +52,16 @@
 
   <div class="content" *ngIf="loadedData$ | async">
     <app-sp-data-table
+      *ngIf="views[currentView].id === 1"
       [isCheckbox]="isCheckbox$"
       [data$]="searchedPassData$"
       (loadMoreData)="loadMorePasses()"
+      [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+    ></app-sp-data-table>
+    <app-sp-data-table
+      *ngIf="views[currentView].id === 3"
+      [isCheckbox]="isCheckbox$"
+      [data$]="contactTraceData$"
       [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
     ></app-sp-data-table>
   </div>

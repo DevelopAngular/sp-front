@@ -176,6 +176,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         console.log('loading data ==>>>>');
       }
     });
+
     this.dataSource.loadedData$.pipe(
       filter(value => value && this.dataSource.allData[0]),
       switchMap(value => {

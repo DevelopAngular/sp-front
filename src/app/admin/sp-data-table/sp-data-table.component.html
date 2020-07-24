@@ -44,7 +44,7 @@
 
           <ng-template #passNoSort>
             <th
-              style="padding-left: 0; padding-right: 15px"
+              style="padding-left: 10px; padding-right: 15px"
               [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
               mat-header-cell
               *matHeaderCellDef>
@@ -54,7 +54,7 @@
 
           <td
             mat-cell
-            [style.padding]="column === 'Pass' ? '0 15px 0 0' : ''"
+            [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
             [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
             *matCellDef="let element"
             [innerHTML]="element[column]"

@@ -99,11 +99,50 @@
 
 }
 
-::ng-deep .mat-column-Origin, .mat-column-Destination, .mat-column-Duration, .mat-column-Pass-start-time, .mat-column-Student-Name {
+::ng-deep .mat-column-Origin,
+.mat-column-Destination,
+.mat-column-Duration,
+.mat-column-Contact-date,
+.mat-column-Pass-start-time,
+.mat-column-Student-Name {
   word-wrap: break-word !important;
   white-space: unset !important;
   flex: 0 0 145px !important;
   min-width: 145px !important;
+  overflow-wrap: break-word;
+  left: 46px !important;
+
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Degree {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 100px !important;
+  min-width: 100px !important;
+  overflow-wrap: break-word;
+  left: 46px !important;
+
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Contact-connection {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 200px !important;
+  min-width: 200px !important;
   overflow-wrap: break-word;
 
   word-break: break-word;
@@ -118,8 +157,8 @@
 ::ng-deep .mat-column-Pass {
   word-wrap: break-word !important;
   white-space: unset !important;
-  flex: 0 0 30px !important;
-  min-width: 30px !important;
+  flex: 0 0 40px !important;
+  min-width: 40px !important;
   overflow-wrap: break-word;
   left: 46px !important;
 

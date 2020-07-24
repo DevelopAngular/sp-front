@@ -12,6 +12,8 @@ import {HallPassesService} from '../../services/hall-passes.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
+import {ContactTraceService} from '../../services/contact-trace.service';
+import {ContactTrace} from '../../models/ContactTrace';
 
 export interface View {
   [view: string]: CurrentView;
@@ -55,6 +57,7 @@ export class ExploreComponent implements OnInit {
   schools$: Observable<School[]>;
 
   searchedPassData$: any;
+  contactTraceData$: any;
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>('pass_search');
 
@@ -63,7 +66,8 @@ export class ExploreComponent implements OnInit {
     private hallPassService: HallPassesService,
     private cdr: ChangeDetectorRef,
     private domSanitizer: DomSanitizer,
-    private http: HttpService
+    private http: HttpService,
+    private contactTraceService: ContactTraceService
     ) { }
 
   get dateText() {
@@ -80,41 +84,61 @@ export class ExploreComponent implements OnInit {
       switchMap((view: string) => {
         if (view === 'pass_search') {
           return this.hallPassService.passesLoaded$;
+        } else if (view === 'contact_trace') {
+          return this.contactTraceService.contactTraceLoaded$;
         }
-        return of(false);
       })
     );
 
     this.schools$ = this.http.schoolsCollection$;
 
-    this.search(300);
-    this.searchedPassData$ = this.hallPassService.passesCollection$
-      .pipe(
-        map((passes: HallPass[]) => {
-          return passes.map(pass => {
-            const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
-            const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}">
+      this.search(300);
+      this.searchedPassData$ = this.hallPassService.passesCollection$
+        .pipe(
+          filter(() => this.currentView$.getValue() === 'pass_search'),
+          map((passes: HallPass[]) => {
+            return passes.map(pass => {
+              const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
+              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}">
 <!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
-            const rawObj = {
-              'Pass': passImg,
-              'Student Name': pass.student.display_name,
-              'Origin': pass.origin.title,
-              'Destination': pass.destination.title,
-              'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
-              'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
-            };
+              const rawObj = {
+                'Pass': passImg,
+                'Student Name': pass.student.display_name,
+                'Origin': pass.origin.title,
+                'Destination': pass.destination.title,
+                'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
+                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
+              };
 
-            Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
-            Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
-            Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
-            Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
-            Object.defineProperty(rawObj, '_data', {enumerable: false, value: rawObj });
+              Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
+              Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
+              Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+              Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
+              Object.defineProperty(rawObj, '_data', {enumerable: false, value: rawObj });
 
-            return rawObj;
-          });
-        })
-      );
+              return rawObj;
+            });
+          })
+        );
+      this.contactTraceData$ = this.contactTraceService.contactTraceData$
+        .pipe(
+          filter(() => this.currentView$.getValue() === 'contact_trace'),
+          map((contacts: ContactTrace[]) => {
+            return contacts.map(contact => {
+              const duration = moment.duration(contact.total_contact_duration);
+              return {
+                'Student Name': contact.student.display_name,
+                'Degree': contact.degree,
+                'Contact connection': contact.contact_paths[0][0].display_name,
+                'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
+                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min',
+                'Pass': this.domSanitizer
+                  .bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(contact.contact_passes[0].contact_pass.gradient_color)}"></div>`)
+              };
+            });
+          })
+        );
   }
 
   getGradient(gradient: string) {
@@ -238,6 +262,10 @@ export class ExploreComponent implements OnInit {
 
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
+  }
+
+  contactTrace() {
+    this.contactTraceService.getContactsRequest(this.selectedStudents.map(s => s.id), this.selectedDate['start'].toISOString());
   }
 
 }
