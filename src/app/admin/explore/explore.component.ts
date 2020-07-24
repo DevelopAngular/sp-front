@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap} from 'rxjs/operators';
@@ -42,9 +42,9 @@ export class ExploreComponent implements OnInit {
 
   views: View = {
     'pass_search': {id: 1, title: 'Pass Search', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
-    'report_search': {id: 2, title: 'Reports search', color: 'red', icon: 'Report Search', action: 'report_search'},
+    // 'report_search': {id: 2, title: 'Reports search', color: 'red', icon: 'Report Search', action: 'report_search'},
     'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
-    'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
+    // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
   selectedStudents: User[];
   selectedDate: { start: moment.Moment, end: moment.Moment };
@@ -81,8 +81,10 @@ export class ExploreComponent implements OnInit {
         if (view === 'pass_search') {
           return this.hallPassService.passesLoaded$;
         }
+        return of(false);
       })
     );
+
     this.schools$ = this.http.schoolsCollection$;
 
     this.search(300);
@@ -134,8 +136,8 @@ export class ExploreComponent implements OnInit {
     pagesDialog.afterClosed()
       .pipe(filter(res => !!res))
       .subscribe(action => {
-      this.currentView$.next(action);
-      this.cdr.detectChanges();
+        this.currentView$.next(action);
+        this.cdr.detectChanges();
     });
   }
 
@@ -184,6 +186,10 @@ export class ExploreComponent implements OnInit {
     }
   }
 
+  loadMorePasses() {
+    this.hallPassService.getMorePasses();
+  }
+
   autoSearch() {
     if (!this.selectedRooms && !this.selectedDate && !this.selectedStudents) {
       this.isSearched = false;
@@ -194,7 +200,7 @@ export class ExploreComponent implements OnInit {
   }
 
   search(limit: number = 100000) {
-    let url = `v1/hall_passes?limit=${limit}`;
+    let url = `v1/hall_passes?limit=${limit}&`;
     if (this.selectedRooms) {
       this.selectedRooms.forEach(room => {
         url += 'destination=' + room.id + '&';

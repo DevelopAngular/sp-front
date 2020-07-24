@@ -1,4 +1,14 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
@@ -120,6 +130,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
   @ViewChild(MatSort) sort: MatSort;
 
+  @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
+
   placeholderHeight = 0;
   displayedColumns: string[];
   columnsToDisplay: string[];
@@ -133,6 +145,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     { icon: 'Print', action: 'print' },
     { icon: 'CSV', action: 'csv'}
   ];
+  selectedRows: any[];
   disableRowClick: boolean;
   morePassesLoading$: Observable<boolean>;
 
@@ -159,13 +172,21 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
     this.viewport.scrolledIndexChange.subscribe(res => {
       if (res === (this.dataSource.allData.length - this.viewportDataItems)) {
-        this.hallpassService.getMorePasses();
+        this.loadMoreData.emit();
         console.log('loading data ==>>>>');
       }
     });
     this.dataSource.loadedData$.pipe(
       filter(value => value && this.dataSource.allData[0]),
       switchMap(value => {
+        if (!!this.selection.selected.length) {
+          this.selectedRows = cloneDeep(this.selection.selected);
+          this.selection.clear();
+          // this.selectedRows.forEach(row => {
+          //     this.select(row);
+          //     this.cdr.detectChanges();
+          // });
+        }
         this.displayedColumns = Object.keys(this.dataSource.allData[0]);
         this.columnsToDisplay = this.displayedColumns.slice();
         return this.isCheckbox;
@@ -211,6 +232,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       });
     });
 
+    if (!this.selection.isEmpty()) {
+      this.selection.clear();
+    }
+
     this.tableService.updateTableColumns$
       .pipe(takeUntil(this.destroy$))
       .subscribe((columns: string[]) => {
@@ -222,6 +247,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  select(row) {
+    this.selection.toggle(row);
+    this.cdr.detectChanges();
   }
 
   placeholderWhen(index: number, _: any) {
@@ -248,7 +278,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.allData.forEach(row => this.selection.select(row));
-    console.log(this.selection.selected.length);
+    // console.log(this.selection.selected.length);
   }
 
   checkboxLabel(row?): string {

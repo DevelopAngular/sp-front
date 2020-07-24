@@ -102,8 +102,8 @@
 ::ng-deep .mat-column-Origin, .mat-column-Destination, .mat-column-Duration, .mat-column-Pass-start-time, .mat-column-Student-Name {
   word-wrap: break-word !important;
   white-space: unset !important;
-  flex: 0 0 155px !important;
-  width: 155px !important;
+  flex: 0 0 145px !important;
+  min-width: 145px !important;
   overflow-wrap: break-word;
 
   word-break: break-word;
@@ -119,8 +119,9 @@
   word-wrap: break-word !important;
   white-space: unset !important;
   flex: 0 0 30px !important;
-  width: 30px !important;
+  min-width: 30px !important;
   overflow-wrap: break-word;
+  left: 46px !important;
 
   word-break: break-word;
 
@@ -134,7 +135,7 @@
   word-wrap: break-word !important;
   white-space: unset !important;
   flex: 0 0 10px !important;
-  width: 10px !important;
+  min-width: 10px !important;
   overflow-wrap: break-word;
 
   word-break: break-word;

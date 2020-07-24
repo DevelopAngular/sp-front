@@ -54,6 +54,7 @@
     <app-sp-data-table
       [isCheckbox]="isCheckbox$"
       [data$]="searchedPassData$"
+      (loadMoreData)="loadMorePasses()"
       [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
     ></app-sp-data-table>
   </div>
