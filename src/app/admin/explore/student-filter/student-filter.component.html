@@ -18,7 +18,7 @@
         [textColor]="'#1F195E'"
         (buttonClick)="saveStudents()"
       >
-        {{ isUpdate ? 'Update Filter' : 'Apply Filter' }}
+        {{ isMultiSelect ? isUpdate ? 'Update Filter' : 'Apply Filter' : 'Select student' }}
       </app-gradient-button>
     </div>
   </div>

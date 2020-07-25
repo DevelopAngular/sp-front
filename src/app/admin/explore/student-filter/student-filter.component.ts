@@ -19,6 +19,8 @@ export class StudentFilterComponent implements OnInit {
 
   initialStudentsArray: User[] | Location[];
 
+  isMultiSelect: boolean;
+
   update: boolean;
 
   type: 'selectedStudents' | 'rooms';
@@ -43,6 +45,7 @@ export class StudentFilterComponent implements OnInit {
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
     this.type = this.data['type'];
+    this.isMultiSelect = this.data['multiSelect'];
     if (this.data[this.type]) {
       this.selectedStudents = cloneDeep(this.data[this.type]);
       this.initialStudentsArray = cloneDeep(this.data[this.type]);
@@ -58,7 +61,11 @@ export class StudentFilterComponent implements OnInit {
   }
 
   updateStudents(students) {
-    this.selectedStudents = students;
+    if (this.isMultiSelect || this.type === 'rooms') {
+      this.selectedStudents = students;
+    } else {
+      this.selectedStudents = [students[students.length - 1]];
+    }
   }
 
   saveStudents() {

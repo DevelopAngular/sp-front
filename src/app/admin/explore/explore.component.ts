@@ -1,11 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
-import {SearchCalendarComponent} from './search-calendar/search-calendar.component';
 import {HallPass} from '../../models/HallPass';
 import * as moment from 'moment';
 import {HallPassesService} from '../../services/hall-passes.service';
@@ -14,6 +13,7 @@ import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
 import {ContactTraceService} from '../../services/contact-trace.service';
 import {ContactTrace} from '../../models/ContactTrace';
+import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filter.component';
 
 export interface View {
   [view: string]: CurrentView;
@@ -34,6 +34,12 @@ export enum SearchPages {
   rooms = 4
 }
 
+export interface SearchData {
+  selectedStudents: User[];
+  selectedDate: {start: moment.Moment, end: moment.Moment};
+  selectedRooms?: any[];
+}
+
 @Component({
   selector: 'app-explore',
   templateUrl: './explore.component.html',
@@ -48,16 +54,29 @@ export class ExploreComponent implements OnInit {
     'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
-  selectedStudents: User[];
-  selectedDate: { start: moment.Moment, end: moment.Moment };
-  selectedRooms: any[];
+
   isCheckbox$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   loadedData$: Observable<boolean>;
   isSearched: boolean;
   schools$: Observable<School[]>;
 
+  passSearchData: SearchData = {
+    selectedStudents: null,
+    selectedRooms: null,
+    selectedDate: null,
+  };
+  contactTraceData: SearchData = {
+    selectedStudents: null,
+    selectedDate: {start: moment().subtract(3, 'days').startOf('day'), end: moment()}
+  };
+
   searchedPassData$: any;
   contactTraceData$: any;
+
+  adminCalendarOptions = {
+    rangeId: 'range_5',
+    toggleResult: 'Range'
+  };
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>('pass_search');
 
@@ -70,12 +89,15 @@ export class ExploreComponent implements OnInit {
     private contactTraceService: ContactTraceService
     ) { }
 
-  get dateText() {
-    const start = this.selectedDate.start;
-    const end = this.selectedDate.end;
+  dateText({start, end}) {
     if (start && end) {
-      return this.selectedDate &&
-      start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
+      if (this.currentView$.getValue() === 'pass_search') {
+        return this.passSearchData.selectedDate &&
+        start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
+      } else {
+        return this.contactTraceData.selectedDate &&
+        start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
+      }
     }
   }
 
@@ -172,9 +194,10 @@ export class ExploreComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': event.currentTarget,
-          'selectedStudents': this.selectedStudents,
+          'selectedStudents': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedStudents : this.contactTraceData.selectedStudents,
           'type': action === 'students' ? 'selectedStudents' : 'rooms',
-          'rooms': this.selectedRooms
+          'rooms': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedRooms : this.contactTraceData.selectedRooms,
+          'multiSelect': this.currentView$.getValue() === 'pass_search'
         }
       });
 
@@ -182,9 +205,17 @@ export class ExploreComponent implements OnInit {
         .pipe(filter(res => res))
         .subscribe(({students, type}) => {
           if (type === 'rooms') {
-            this.selectedRooms = students;
+            if (this.currentView$.getValue() === 'pass_search') {
+              this.passSearchData.selectedRooms = students;
+            } else {
+              this.contactTraceData.selectedRooms = students;
+            }
           } else if (type === 'selectedStudents') {
-            this.selectedStudents = students;
+            if (this.currentView$.getValue() === 'pass_search') {
+              this.passSearchData.selectedStudents = students;
+            } else {
+              this.contactTraceData.selectedStudents = students;
+            }
           }
           if (this.isSearched) {
             this.autoSearch();
@@ -192,16 +223,34 @@ export class ExploreComponent implements OnInit {
           this.cdr.detectChanges();
         });
     } else if (action === 'calendar') {
-      const calendar = this.dialog.open(SearchCalendarComponent, {
+      const target = new ElementRef(event.currentTarget);
+      const calendar = this.dialog.open(DateTimeFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: { 'trigger': event.currentTarget, selectedDate: this.selectedDate }
+        data: {
+          target,
+          date: (this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedDate : this.contactTraceData.selectedDate),
+          options: this.adminCalendarOptions
+        }
       });
 
       calendar.afterClosed()
         .pipe(filter(res => res))
-        .subscribe(res => {
-        this.selectedDate = res;
+        .subscribe(({date, options}) => {
+          this.adminCalendarOptions = options;
+          if (this.currentView$.getValue() === 'pass_search') {
+            if (!date.start) {
+              this.passSearchData.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
+            } else {
+              this.passSearchData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
+            }
+          } else {
+            if (!date.start) {
+              this.contactTraceData.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
+            } else {
+              this.contactTraceData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
+            }
+          }
         if (this.isSearched) {
           this.autoSearch();
         }
@@ -215,8 +264,8 @@ export class ExploreComponent implements OnInit {
   }
 
   autoSearch() {
-    if (!this.selectedRooms && !this.selectedDate && !this.selectedStudents) {
-      this.isSearched = false;
+    if (!this.passSearchData.selectedRooms && !this.passSearchData.selectedDate && !this.passSearchData.selectedStudents) {
+      this.search(300);
     }
     if (this.isSearched) {
       this.search();
@@ -225,8 +274,8 @@ export class ExploreComponent implements OnInit {
 
   search(limit: number = 100000) {
     let url = `v1/hall_passes?limit=${limit}&`;
-    if (this.selectedRooms) {
-      this.selectedRooms.forEach(room => {
+    if (this.passSearchData.selectedRooms) {
+      this.passSearchData.selectedRooms.forEach(room => {
         url += 'destination=' + room.id + '&';
         // if (room.filter === 'Origin') {
         //   url += 'origin=' + room.id + '&';
@@ -240,22 +289,22 @@ export class ExploreComponent implements OnInit {
       });
 
     }
-    if (this.selectedStudents) {
-      const students: any[] = this.selectedStudents.map(s => s['id']);
+    if (this.passSearchData.selectedStudents) {
+      const students: any[] = this.passSearchData.selectedStudents.map(s => s['id']);
       Array.from(Array(students.length).keys()).map(i => {
         url += 'student=' + students[i] + '&';
       });
     }
 
-    if (this.selectedDate) {
+    if (this.passSearchData.selectedDate) {
       let start;
       let end;
-      if (this.selectedDate['start']) {
-        start = this.selectedDate['start'].toISOString();
+      if (this.passSearchData.selectedDate['start']) {
+        start = this.passSearchData.selectedDate['start'].toISOString();
         url += (start ? ('created_after=' + start + '&') : '');
       }
-      if (this.selectedDate['end']) {
-        end = this.selectedDate['end'].toISOString();
+      if (this.passSearchData.selectedDate['end']) {
+        end = this.passSearchData.selectedDate['end'].toISOString();
         url += (end ? ('end_time_before=' + end) : '');
       }
     }
@@ -265,7 +314,10 @@ export class ExploreComponent implements OnInit {
   }
 
   contactTrace() {
-    this.contactTraceService.getContactsRequest(this.selectedStudents.map(s => s.id), this.selectedDate['start'].toISOString());
+    this.contactTraceService.getContactsRequest(
+      this.contactTraceData.selectedStudents.map(s => s.id),
+      this.contactTraceData.selectedDate['start'].toISOString()
+    );
   }
 
 }

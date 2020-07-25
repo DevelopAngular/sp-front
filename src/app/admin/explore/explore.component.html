@@ -13,33 +13,48 @@
     </div>
     <div class="filters">
       <div class="filter">
-        <app-filter-button
+        <app-filter-button *ngIf="views[currentView].id === 1; else trace"
           (buttonClick)="openFilter($event, 'students')"
-          [title]="'Students' + (selectedStudents && selectedStudents.length ? ' (' + selectedStudents.length + ')' : '')"
-          [filter]="selectedStudents && !!selectedStudents.length"
-          (clearData)="selectedStudents = null; autoSearch()"
-        >
+          [title]="'Students' + (passSearchData.selectedStudents && passSearchData.selectedStudents.length ? ' (' + passSearchData.selectedStudents.length + ')' : '')"
+          [filter]="passSearchData.selectedStudents && !!passSearchData.selectedStudents.length"
+          (clearData)="passSearchData.selectedStudents = null; autoSearch()">
         </app-filter-button>
+        <ng-template #trace>
+          <app-filter-button
+             (buttonClick)="openFilter($event, 'students')"
+             [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'"
+             [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
+             (clearData)="contactTraceData.selectedStudents = null;">
+          </app-filter-button>
+        </ng-template>
       </div>
       <div class="filter" *ngIf="views[currentView].id === 1">
         <app-filter-button
           (buttonClick)="openFilter($event, 'destination')"
-          [title]="'Destination' + (selectedRooms && selectedRooms.length ? ' (' + selectedRooms.length + ')' : '')"
-          [filter]="selectedRooms && !!selectedRooms.length"
-          (clearData)="selectedRooms = null; autoSearch()"
+          [title]="'Destination' + (passSearchData.selectedRooms && passSearchData.selectedRooms.length ? ' (' + passSearchData.selectedRooms.length + ')' : '')"
+          [filter]="passSearchData.selectedRooms && !!passSearchData.selectedRooms.length"
+          (clearData)="passSearchData.selectedRooms = null; autoSearch()"
         ></app-filter-button>
       </div>
       <div class="filter">
-        <app-filter-button
-          [title]="selectedDate ? dateText : 'Pass start time'"
+        <app-filter-button *ngIf="views[currentView].id === 1; else traceDate"
+          [title]="passSearchData.selectedDate ? dateText(passSearchData.selectedDate) : 'Pass start time'"
           (buttonClick)="openFilter($event, 'calendar')"
-          [filter]="!!selectedDate"
-          (clearData)="selectedDate = null; autoSearch()">
+          [filter]="!!passSearchData.selectedDate"
+          (clearData)="passSearchData.selectedDate = null; autoSearch()">
         </app-filter-button>
+        <ng-template #traceDate>
+          <app-filter-button
+            [title]="contactTraceData.selectedDate ? dateText(contactTraceData.selectedDate) : 'Pass start time'"
+            (buttonClick)="openFilter($event, 'calendar')"
+            [filter]="!!contactTraceData.selectedDate"
+            (clearData)="contactTraceData.selectedDate = null">
+          </app-filter-button>
+        </ng-template>
       </div>
     </div>
 
-    <div class="search-button" *ngIf="views[currentView].id === 3 && this.selectedStudents && this.selectedDate">
+    <div class="search-button" *ngIf="views[currentView].id === 3 && this.contactTraceData.selectedStudents && this.contactTraceData.selectedDate">
       <app-gradient-button
         [gradient]="views[currentView].color + ', ' + views[currentView].color"
         [rightIcon]="'./assets/Chevron Right (White).svg'"
