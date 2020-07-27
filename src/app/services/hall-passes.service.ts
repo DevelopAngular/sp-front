@@ -18,7 +18,14 @@ import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.st
 import {bufferCount, mergeMap, reduce} from 'rxjs/operators';
 import {constructUrl} from '../live-data/helpers';
 import {getMorePasses, searchPasses} from '../ngrx/passes/actions';
-import {getMorePassesLoading, getPassesCollection, getPassesEntities, getPassesLoaded, getPassesNextUrl} from '../ngrx/passes/states';
+import {
+  getMorePassesLoading,
+  getPassesCollection,
+  getPassesEntities,
+  getPassesLoaded,
+  getPassesLoading,
+  getPassesNextUrl
+} from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
 
 @Injectable({
@@ -35,6 +42,7 @@ export class HallPassesService {
   passesEntities$: Observable<{[id: number]: HallPass}> = this.store.select(getPassesEntities);
   passesCollection$: Observable<HallPass[]> = this.store.select(getPassesCollection);
   passesLoaded$: Observable<boolean> = this.store.select(getPassesLoaded);
+  passesLoading$: Observable<boolean> = this.store.select(getPassesLoading);
   moreLoading$: Observable<boolean> = this.store.select(getMorePassesLoading);
 
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);

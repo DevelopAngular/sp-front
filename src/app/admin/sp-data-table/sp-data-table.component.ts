@@ -127,6 +127,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() data$: Observable<any>;
   @Input() height: string = 'calc(100vh - 200px)';
 
+  @Input() loading$: Observable<boolean>;
+
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -147,7 +149,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   ];
   selectedRows: any[];
   disableRowClick: boolean;
-  morePassesLoading$: Observable<boolean>;
 
   destroy$ = new Subject();
 
@@ -164,7 +165,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.morePassesLoading$ = this.hallpassService.moreLoading$;
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.dataSource.sort = this.sort;
     this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
@@ -300,7 +300,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     if (column === 'Pass') {
       this.disableRowClick = true;
       this.hallpassService.passesEntities$
-        .pipe(map(passes => {
+        .pipe(
+          takeUntil(this.destroy$),
+          map(passes => {
           return passes[element.id];
         })).subscribe(pass => {
         pass.start_time = new Date(pass.start_time);

@@ -17,8 +17,10 @@ export const passesInitialState: IPassesState = adapter.getInitialState({
 
 const reducer = createReducer(
   passesInitialState,
-  on(passesActions.searchPasses, state => ({...state, loading: true, loaded: false})),
-  on(passesActions.getMorePasses, state => ({...state, moreLoading: true})),
+  on(
+    passesActions.searchPasses,
+    passesActions.getMorePasses,
+      state => ({...state, loading: true, loaded: false})),
   on(passesActions.searchPassesSuccess, (state, {passes, next}) => {
     return adapter.addAll(passes, {...state, loading: false, loaded: true, nextRequest: next, lastAddedPasses: passes});
   }),

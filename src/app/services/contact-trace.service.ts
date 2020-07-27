@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from './http-service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getContacts} from '../ngrx/contact-trace/actions';
+import {clearContactTraceData, getContacts} from '../ngrx/contact-trace/actions';
 import {Observable} from 'rxjs';
 import {ContactTrace} from '../models/ContactTrace';
 import {getContactTraceCollection, getContactTraceLoaded, getContactTraceLoading} from '../ngrx/contact-trace/states';
@@ -27,5 +27,9 @@ export class ContactTraceService {
 
   getContactsRequest(studentsIds, start_time) {
     this.store.dispatch(getContacts({studentsIds, start_time}));
+  }
+
+  clearContactTraceDataRequest() {
+    this.store.dispatch(clearContactTraceData());
   }
 }

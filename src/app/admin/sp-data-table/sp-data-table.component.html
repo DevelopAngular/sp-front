@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <div class="spinner-container" *ngIf="morePassesLoading$ | async">
+  <div class="spinner-container" *ngIf="loading$ | async">
     <div class="loading-theme_blue-gray spinner ds-flex-center-center">
       <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
     </div>

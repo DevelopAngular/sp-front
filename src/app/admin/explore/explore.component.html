@@ -31,9 +31,17 @@
       <div class="filter" *ngIf="views[currentView].id === 1">
         <app-filter-button
           (buttonClick)="openFilter($event, 'destination')"
-          [title]="'Destination' + (passSearchData.selectedRooms && passSearchData.selectedRooms.length ? ' (' + passSearchData.selectedRooms.length + ')' : '')"
-          [filter]="passSearchData.selectedRooms && !!passSearchData.selectedRooms.length"
-          (clearData)="passSearchData.selectedRooms = null; autoSearch()"
+          [title]="'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' (' + passSearchData.selectedDestinationRooms.length + ')' : '')"
+          [filter]="passSearchData.selectedDestinationRooms && !!passSearchData.selectedDestinationRooms.length"
+          (clearData)="passSearchData.selectedDestinationRooms = null; autoSearch()"
+        ></app-filter-button>
+      </div>
+      <div class="filter" *ngIf="views[currentView].id === 1">
+        <app-filter-button
+          (buttonClick)="openFilter($event, 'origin')"
+          [title]="'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' (' + passSearchData.selectedOriginRooms.length + ')' : '')"
+          [filter]="passSearchData.selectedOriginRooms && !!passSearchData.selectedOriginRooms.length"
+          (clearData)="passSearchData.selectedOriginRooms = null; autoSearch()"
         ></app-filter-button>
       </div>
       <div class="filter">
@@ -65,18 +73,20 @@
     </div>
   </div>
 
-  <div class="content" *ngIf="loadedData$ | async">
+  <div class="content">
     <app-sp-data-table
       *ngIf="views[currentView].id === 1"
       [isCheckbox]="isCheckbox$"
       [data$]="searchedPassData$"
+      [loading$]="loadingPasses$"
       (loadMoreData)="loadMorePasses()"
       [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
     ></app-sp-data-table>
     <app-sp-data-table
-      *ngIf="views[currentView].id === 3"
+      *ngIf="views[currentView].id === 3 && showContactTraceTable"
       [isCheckbox]="isCheckbox$"
       [data$]="contactTraceData$"
+      [loading$]="loadingContacts$"
       [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
     ></app-sp-data-table>
   </div>

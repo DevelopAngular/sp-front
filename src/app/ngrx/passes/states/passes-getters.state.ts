@@ -13,6 +13,11 @@ export const getPassesLoaded = createSelector(
   (state: IPassesState) => state.loaded
 );
 
+export const getPassesLoading = createSelector(
+  getPassesState,
+  (state: IPassesState) => state.loading
+);
+
 export const getPassesNextUrl = createSelector(
   getPassesState,
   (state: IPassesState) => state.nextRequest

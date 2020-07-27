@@ -13,7 +13,8 @@ const reducer = createReducer(
   on(contactTraceActions.getContacts, state => ({...state, loading: true, loaded: false})),
   on(contactTraceActions.getContactsSuccess, (state, {contacts_trace}) => {
     return {...state, loading: false, loaded: true, data: contacts_trace};
-  })
+  }),
+  on(contactTraceActions.clearContactTraceData, state => ({...state, loaded: false, loading: false, data: []}))
 );
 
 

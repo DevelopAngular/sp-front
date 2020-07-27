@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnIni
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
-import {filter, map, switchMap} from 'rxjs/operators';
+import {filter, map, startWith, switchMap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
@@ -37,7 +37,8 @@ export enum SearchPages {
 export interface SearchData {
   selectedStudents: User[];
   selectedDate: {start: moment.Moment, end: moment.Moment};
-  selectedRooms?: any[];
+  selectedDestinationRooms?: any[];
+  selectedOriginRooms?: any[];
 }
 
 @Component({
@@ -56,13 +57,16 @@ export class ExploreComponent implements OnInit {
   };
 
   isCheckbox$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  loadedData$: Observable<boolean>;
+  loadingPasses$: Observable<boolean>;
+  loadingContacts$: Observable<boolean>;
   isSearched: boolean;
+  showContactTraceTable: boolean;
   schools$: Observable<School[]>;
 
   passSearchData: SearchData = {
     selectedStudents: null,
-    selectedRooms: null,
+    selectedOriginRooms: null,
+    selectedDestinationRooms: null,
     selectedDate: null,
   };
   contactTraceData: SearchData = {
@@ -73,10 +77,7 @@ export class ExploreComponent implements OnInit {
   searchedPassData$: any;
   contactTraceData$: any;
 
-  adminCalendarOptions = {
-    rangeId: 'range_5',
-    toggleResult: 'Range'
-  };
+  adminCalendarOptions;
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>('pass_search');
 
@@ -89,7 +90,16 @@ export class ExploreComponent implements OnInit {
     private contactTraceService: ContactTraceService
     ) { }
 
-  dateText({start, end}) {
+  dateText({start, end}): string {
+    if (start.isSame(moment().subtract(3, 'days'), 'day')) {
+      return 'Last 3 days';
+    } else if (start.isSame(moment().subtract(7, 'days'), 'day')) {
+      return  'Last 7 days';
+    } else if (start.isSame(moment().subtract(30, 'days'), 'day')) {
+      return 'Last 30 days';
+    } else if (start.isSame(moment().subtract(90, 'days'), 'day')) {
+      return 'Last 90 days';
+    }
     if (start && end) {
       if (this.currentView$.getValue() === 'pass_search') {
         return this.passSearchData.selectedDate &&
@@ -102,23 +112,50 @@ export class ExploreComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadedData$ = this.currentView$.asObservable().pipe(
-      switchMap((view: string) => {
+    this.loadingPasses$ = this.hallPassService.passesLoading$;
+    this.loadingContacts$ = this.contactTraceService.contactTraceLoading$;
+    this.currentView$.asObservable()
+      .subscribe((view: string) => {
         if (view === 'pass_search') {
+          this.passSearchData = {
+            selectedStudents: null,
+            selectedDestinationRooms: null,
+            selectedOriginRooms: null,
+            selectedDate: null,
+          };
+          this.search(300);
           return this.hallPassService.passesLoaded$;
         } else if (view === 'contact_trace') {
+          this.showContactTraceTable = false;
+          this.contactTraceService.clearContactTraceDataRequest();
+          this.contactTraceData = {
+            selectedStudents: null,
+            selectedDate: {start: moment().subtract(3, 'days').startOf('day'), end: moment()}
+          };
+          this.adminCalendarOptions = {
+            rangeId: 'range_5',
+            toggleResult: 'Range'
+          };
           return this.contactTraceService.contactTraceLoaded$;
         }
-      })
-    );
+      });
 
     this.schools$ = this.http.schoolsCollection$;
 
-      this.search(300);
-      this.searchedPassData$ = this.hallPassService.passesCollection$
+    this.searchedPassData$ = this.hallPassService.passesCollection$
         .pipe(
-          filter(() => this.currentView$.getValue() === 'pass_search'),
+          filter((res: any[]) => this.currentView$.getValue() === 'pass_search'),
           map((passes: HallPass[]) => {
+            if (!passes.length) {
+              return [{
+                'Pass': null,
+                'Student Name': null,
+                'Origin': null,
+                'Destination': null,
+                'Pass start time': null,
+                'Duration': null
+              }];
+            }
             return passes.map(pass => {
               const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
               const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}">
@@ -143,13 +180,25 @@ export class ExploreComponent implements OnInit {
             });
           })
         );
+
       this.contactTraceData$ = this.contactTraceService.contactTraceData$
         .pipe(
           filter(() => this.currentView$.getValue() === 'contact_trace'),
           map((contacts: ContactTrace[]) => {
+            if (!contacts.length) {
+              return [{
+                'Student Name': null,
+                'Degree': null,
+                'Contact connection': null,
+                'Contact date': null,
+                'Duration': null,
+                'Pass': null
+              }];
+            }
             return contacts.map(contact => {
               const duration = moment.duration(contact.total_contact_duration);
-              return {
+
+              const result = {
                 'Student Name': contact.student.display_name,
                 'Degree': contact.degree,
                 'Contact connection': contact.contact_paths[0][0].display_name,
@@ -158,6 +207,10 @@ export class ExploreComponent implements OnInit {
                 'Pass': this.domSanitizer
                   .bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(contact.contact_passes[0].contact_pass.gradient_color)}"></div>`)
               };
+
+              Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
+
+              return result;
             });
           })
         );
@@ -188,15 +241,15 @@ export class ExploreComponent implements OnInit {
   }
 
   openFilter(event, action) {
-    if (action === 'students' || action === 'destination') {
+    if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': event.currentTarget,
-          'selectedStudents': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedStudents : this.contactTraceData.selectedStudents,
+          'selectedStudents': action === 'students' ? this.passSearchData.selectedStudents : this.contactTraceData.selectedStudents,
           'type': action === 'students' ? 'selectedStudents' : 'rooms',
-          'rooms': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedRooms : this.contactTraceData.selectedRooms,
+          'rooms': this.currentView$.getValue() === 'pass_search' ? (action === 'origin' ? this.passSearchData.selectedOriginRooms : this.passSearchData.selectedDestinationRooms) : this.contactTraceData.selectedDestinationRooms,
           'multiSelect': this.currentView$.getValue() === 'pass_search'
         }
       });
@@ -205,10 +258,10 @@ export class ExploreComponent implements OnInit {
         .pipe(filter(res => res))
         .subscribe(({students, type}) => {
           if (type === 'rooms') {
-            if (this.currentView$.getValue() === 'pass_search') {
-              this.passSearchData.selectedRooms = students;
-            } else {
-              this.contactTraceData.selectedRooms = students;
+            if (action === 'origin') {
+              this.passSearchData.selectedOriginRooms = students;
+            } else if (action === 'destination') {
+              this.passSearchData.selectedDestinationRooms = students;
             }
           } else if (type === 'selectedStudents') {
             if (this.currentView$.getValue() === 'pass_search') {
@@ -264,30 +317,27 @@ export class ExploreComponent implements OnInit {
   }
 
   autoSearch() {
-    if (!this.passSearchData.selectedRooms && !this.passSearchData.selectedDate && !this.passSearchData.selectedStudents) {
-      this.search(300);
-    }
-    if (this.isSearched) {
-      this.search();
+    if (this.currentView$.getValue() === 'pass_search') {
+      if (!this.passSearchData.selectedDestinationRooms && !this.passSearchData.selectedOriginRooms && !this.passSearchData.selectedDate && !this.passSearchData.selectedStudents) {
+        this.search(300);
+      }
+      if (this.isSearched) {
+        this.search();
+      }
     }
   }
 
   search(limit: number = 100000) {
     let url = `v1/hall_passes?limit=${limit}&`;
-    if (this.passSearchData.selectedRooms) {
-      this.passSearchData.selectedRooms.forEach(room => {
+    if (this.passSearchData.selectedDestinationRooms) {
+      this.passSearchData.selectedDestinationRooms.forEach(room => {
         url += 'destination=' + room.id + '&';
-        // if (room.filter === 'Origin') {
-        //   url += 'origin=' + room.id + '&';
-        // }
-        // if (room.filter === 'Destination') {
-        //   url += 'destination=' + room.id + '&';
-        // }
-        // if (room.filter === 'Either') {
-        //   url += 'location=' + room.id + '&';
-        // }
       });
-
+    }
+    if (this.passSearchData.selectedOriginRooms) {
+      this.passSearchData.selectedOriginRooms.forEach(room => {
+        url += 'origin=' + room.id + '&';
+      });
     }
     if (this.passSearchData.selectedStudents) {
       const students: any[] = this.passSearchData.selectedStudents.map(s => s['id']);
@@ -314,6 +364,7 @@ export class ExploreComponent implements OnInit {
   }
 
   contactTrace() {
+    this.showContactTraceTable = true;
     this.contactTraceService.getContactsRequest(
       this.contactTraceData.selectedStudents.map(s => s.id),
       this.contactTraceData.selectedDate['start'].toISOString()
