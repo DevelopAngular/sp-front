@@ -4,6 +4,14 @@
       <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
     </div>
   </div>
+  <div class="empty-state" *ngIf="showEmptyState">
+    <div class="empty-content">
+      <img width="135" [src]="emptyIcon | resolveAsset" alt="Empty">
+      <div class="empty-description">
+        <span *ngIf="emptyText">{{ emptyText }}</span>
+      </div>
+    </div>
+  </div>
     <cdk-virtual-scroll-viewport class="example-viewport" [itemSize]="itemSize" [style.height]="height">
       <table class="table" mat-table [dataSource]="dataSource" [multiTemplateDataRows]="true" matSort>
         <ng-container matColumnDef="select" *ngIf="isCheckbox | async" sticky>
@@ -29,7 +37,7 @@
           <ng-container *ngIf="column !== 'Pass'; else passNoSort">
             <th
               [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
-              [style.background-color]="getColumnSort(column) === 'asc' || getColumnSort(column) === 'desc' ? '#FFFFFF' : '#D3D6DE'"
+              [style.background-color]="getColumnSort(column) === 'asc' || getColumnSort(column) === 'desc' ? 'rgba(255,255,255, .4)' : '#D3D6DE'"
               mat-sort-header
               mat-header-cell
               *matHeaderCellDef

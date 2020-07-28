@@ -1,3 +1,4 @@
+@import "../../../sp-colors";
 
 :host {
   width: 100%;
@@ -19,6 +20,7 @@
     display: flex;
     align-items: center;
     min-width: 800px;
+    position: relative;
 
     .switch-button {
       width: 183px;
@@ -42,6 +44,11 @@
       }
     }
 
+    .search-button {
+      position: absolute;
+      right: 30px;
+    }
+
     .filters {
       margin-left: 23px;
       display: flex;
@@ -54,5 +61,31 @@
 
   .content {
     margin-top: 16px;
+
+    .contact-trace {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      .contact-empty {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .description {
+          font-size: 17px;
+          color: $blue-gray;
+          margin-top: 41px;
+          text-align: center;
+          width: 386px;
+        }
+      }
+    }
   }
 }

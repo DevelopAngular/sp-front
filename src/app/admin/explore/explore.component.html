@@ -74,20 +74,38 @@
   </div>
 
   <div class="content">
-    <app-sp-data-table
-      *ngIf="views[currentView].id === 1"
-      [isCheckbox]="isCheckbox$"
-      [data$]="searchedPassData$"
-      [loading$]="loadingPasses$"
-      (loadMoreData)="loadMorePasses()"
-      [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
-    ></app-sp-data-table>
-    <app-sp-data-table
-      *ngIf="views[currentView].id === 3 && showContactTraceTable"
-      [isCheckbox]="isCheckbox$"
-      [data$]="contactTraceData$"
-      [loading$]="loadingContacts$"
-      [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
-    ></app-sp-data-table>
+    <div class="pass-search" *ngIf="views[currentView].id === 1">
+      <app-sp-data-table
+        [isCheckbox]="isCheckbox$"
+        [data$]="searchedPassData$"
+        [loading$]="passSearchState.loading$"
+        [showEmptyState]="passSearchState.isEmpty && passSearchState.loaded$ | async"
+        [emptyIcon]="'./assets/Pass Search (Blue-Gray).svg'"
+        [emptyText]="'No passes found with the selected filters.'"
+        (loadMoreData)="loadMorePasses()"
+        [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+      ></app-sp-data-table>
+    </div>
+    <div class="contact-trace" *ngIf="views[currentView].id === 3" [style.height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'">
+      <app-sp-data-table
+        *ngIf="showContactTraceTable; else empty"
+        [isCheckbox]="isCheckbox$"
+        [data$]="contactTraceData$"
+        [loading$]="contactTraceState.loading$"
+        [showEmptyState]="contactTraceState.isEmpty && contactTraceState.loaded$ | async"
+        [emptyIcon]="'./assets/Contact Trace (Blue-Gray).svg'"
+        [emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have any hall passes overlap.'"
+        [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+      ></app-sp-data-table>
+      <ng-template #empty>
+        <div class="contact-empty">
+          <img width="135" [src]="'./assets/Contact Trace (Blue-Gray).svg' | resolveAsset" alt="Empty">
+          <div class="description">
+            Stay ahead of the spread to instantly trace back possibly infected students in your school.
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
   </div>
 </div>

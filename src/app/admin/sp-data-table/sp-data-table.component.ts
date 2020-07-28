@@ -84,9 +84,10 @@ export class GridTableDataSource extends DataSource<any> {
 
   sortingDataAccessor(item, property) {
     switch (property) {
-      case 'Name':
-        return item[property].split(' ')[1];
+      case 'Student Name':
+        return item[property];
       case 'Pass start time':
+      case 'Contact date':
         return moment(item['date']).milliseconds;
       case 'Duration':
         return item['sortDuration'].as('milliseconds');
@@ -128,6 +129,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() height: string = 'calc(100vh - 200px)';
 
   @Input() loading$: Observable<boolean>;
+
+  @Input() showEmptyState: boolean;
+  @Input() emptyIcon: string;
+  @Input() emptyText: string;
 
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
   @ViewChild(MatSort) sort: MatSort;
@@ -296,7 +301,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.disableRowClick = false;
   }
 
-  cellClick(element, column) {
+  cellClick(element, column?) {
     if (column === 'Pass') {
       this.disableRowClick = true;
       this.hallpassService.passesEntities$
@@ -337,8 +342,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       });
 
       CD.afterClosed().subscribe(res => {
-        this.cdr.detectChanges();
         UNANIMATED_CONTAINER.next(false);
+        this.cdr.detectChanges();
       });
     } else if (action === 'csv' && this.selection.selected.length) {
       UNANIMATED_CONTAINER.next(true);
@@ -355,8 +360,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       });
 
       csv.afterClosed().subscribe(res => {
-        this.cdr.detectChanges();
         UNANIMATED_CONTAINER.next(false);
+        this.cdr.detectChanges();
       });
     }
   }

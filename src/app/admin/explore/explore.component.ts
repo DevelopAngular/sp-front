@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnIni
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
-import {filter, map, startWith, switchMap} from 'rxjs/operators';
+import {filter, map, startWith, switchMap, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
@@ -14,6 +14,7 @@ import {School} from '../../models/School';
 import {ContactTraceService} from '../../services/contact-trace.service';
 import {ContactTrace} from '../../models/ContactTrace';
 import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filter.component';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 export interface View {
   [view: string]: CurrentView;
@@ -57,8 +58,16 @@ export class ExploreComponent implements OnInit {
   };
 
   isCheckbox$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  loadingPasses$: Observable<boolean>;
-  loadingContacts$: Observable<boolean>;
+  passSearchState: {
+    loading$: Observable<boolean>,
+    loaded$: Observable<boolean>
+    isEmpty?: boolean
+  };
+  contactTraceState: {
+    loading$: Observable<boolean>,
+    loaded$: Observable<boolean>,
+    isEmpty?: boolean
+  };
   isSearched: boolean;
   showContactTraceTable: boolean;
   schools$: Observable<School[]>;
@@ -112,8 +121,14 @@ export class ExploreComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadingPasses$ = this.hallPassService.passesLoading$;
-    this.loadingContacts$ = this.contactTraceService.contactTraceLoading$;
+    this.passSearchState = {
+      loading$: this.hallPassService.passesLoading$,
+      loaded$: this.hallPassService.passesLoaded$
+    };
+    this.contactTraceState = {
+      loading$: this.contactTraceService.contactTraceLoading$,
+      loaded$: this.contactTraceService.contactTraceLoaded$
+    };
     this.currentView$.asObservable()
       .subscribe((view: string) => {
         if (view === 'pass_search') {
@@ -147,6 +162,7 @@ export class ExploreComponent implements OnInit {
           filter((res: any[]) => this.currentView$.getValue() === 'pass_search'),
           map((passes: HallPass[]) => {
             if (!passes.length) {
+              this.passSearchState.isEmpty = true;
               return [{
                 'Pass': null,
                 'Student Name': null,
@@ -156,9 +172,10 @@ export class ExploreComponent implements OnInit {
                 'Duration': null
               }];
             }
+            this.passSearchState.isEmpty = false;
             return passes.map(pass => {
               const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
-              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}">
+              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" (click)="cellClick(element, column)" style="background: ${this.getGradient(pass.gradient_color)}">
 <!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
               const rawObj = {
@@ -186,6 +203,7 @@ export class ExploreComponent implements OnInit {
           filter(() => this.currentView$.getValue() === 'contact_trace'),
           map((contacts: ContactTrace[]) => {
             if (!contacts.length) {
+              this.contactTraceState.isEmpty = true;
               return [{
                 'Student Name': null,
                 'Degree': null,
@@ -195,20 +213,39 @@ export class ExploreComponent implements OnInit {
                 'Pass': null
               }];
             }
+            this.contactTraceState.isEmpty = false;
             return contacts.map(contact => {
               const duration = moment.duration(contact.total_contact_duration);
 
               const result = {
                 'Student Name': contact.student.display_name,
                 'Degree': contact.degree,
-                'Contact connection': contact.contact_paths[0][0].display_name,
+                // 'Contact connection': contact.contact_paths[0][0].display_name,
+                'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
+                  `<div style="display: flex; width: 100%; text-overflow: ellipsis">` +
+                  contact.contact_paths.map(path => {
+                  if (path.length === 1) {
+                    return `<div>${path[0].display_name}</div>`;
+                  } else {
+                    return `<div>${path[0].display_name + ' to ' + path[1].display_name}</div>`;
+                  }
+                }).join() + `</div>`),
                 'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
                 'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min',
-                'Pass': this.domSanitizer
-                  .bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(contact.contact_passes[0].contact_pass.gradient_color)}"></div>`)
+                // 'Pass': this.domSanitizer
+                //   .bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(contact.contact_passes[0].contact_pass.gradient_color)}"></div>`)
+                'Pass': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
+                  contact.contact_passes
+                    .map(({contact_pass, student_pass}, index) => {
+                    return `<div style="display: flex; ${(index > 0 ? 'margin-left: 5px' : '')}"><div class="pass-icon" style="background: ${this.getGradient(contact_pass.gradient_color)}"></div><div class="pass-icon" style="background: ${this.getGradient(student_pass.gradient_color)}; margin-left: 5px"></div></div>`;
+                  }).join('') + `</div>`
+                )
               };
 
               Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
+              Object.defineProperty(result, 'date', {enumerable: false, value: moment(contact.initial_contact_date) });
+              Object.defineProperty(result, 'sortDuration', {enumerable: false, value: duration });
+              Object.defineProperty(result, '_data', {enumerable: false, value: contact });
 
               return result;
             });
@@ -222,6 +259,7 @@ export class ExploreComponent implements OnInit {
   }
 
   openSwitchPage(event) {
+    UNANIMATED_CONTAINER.next(true);
     const pagesDialog = this.dialog.open(PagesDialogComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
@@ -233,7 +271,10 @@ export class ExploreComponent implements OnInit {
     });
 
     pagesDialog.afterClosed()
-      .pipe(filter(res => !!res))
+      .pipe(
+        tap(() => UNANIMATED_CONTAINER.next(false)),
+        filter(res => !!res)
+      )
       .subscribe(action => {
         this.currentView$.next(action);
         this.cdr.detectChanges();
@@ -241,13 +282,14 @@ export class ExploreComponent implements OnInit {
   }
 
   openFilter(event, action) {
+    UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': event.currentTarget,
-          'selectedStudents': action === 'students' ? this.passSearchData.selectedStudents : this.contactTraceData.selectedStudents,
+          'selectedStudents': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedStudents : this.contactTraceData.selectedStudents,
           'type': action === 'students' ? 'selectedStudents' : 'rooms',
           'rooms': this.currentView$.getValue() === 'pass_search' ? (action === 'origin' ? this.passSearchData.selectedOriginRooms : this.passSearchData.selectedDestinationRooms) : this.contactTraceData.selectedDestinationRooms,
           'multiSelect': this.currentView$.getValue() === 'pass_search'
@@ -255,7 +297,10 @@ export class ExploreComponent implements OnInit {
       });
 
       studentFilter.afterClosed()
-        .pipe(filter(res => res))
+        .pipe(
+          tap(() => UNANIMATED_CONTAINER.next(false)),
+          filter(res => res)
+        )
         .subscribe(({students, type}) => {
           if (type === 'rooms') {
             if (action === 'origin') {
@@ -288,7 +333,10 @@ export class ExploreComponent implements OnInit {
       });
 
       calendar.afterClosed()
-        .pipe(filter(res => res))
+        .pipe(
+          tap(() => UNANIMATED_CONTAINER.next(false)),
+          filter(res => res)
+        )
         .subscribe(({date, options}) => {
           this.adminCalendarOptions = options;
           if (this.currentView$.getValue() === 'pass_search') {
