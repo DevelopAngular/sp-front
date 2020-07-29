@@ -1,0 +1,54 @@
+<div class="wrapper">
+  <div class="header">
+    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
+    <div class="back-button" *ngIf="false" (click)="close()">Cancel</div>
+    <img width="21" height="21" [src]="'./assets/GG4L (White).svg' | resolveAsset" alt="Options">
+    <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Set-up</div>
+    <div class="save-button" *ngIf="false">
+      <app-gradient-button
+        [width]="'85px'"
+        [minHeight]="'30px'"
+        [fontSize]="'14px'"
+        [cursor]="'pointer'"
+      >
+        <span *ngIf="true">Save</span>
+        <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
+      </app-gradient-button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="no-connect">
+      <div class="top-block">
+        <div class="title">Add SmartPass in GG4L</div>
+        <div class="subtitle">You’ll need to be a GG4L admin to add an application.</div>
+        <div class="button">
+          <app-gradient-button
+            [gradient]="'#5352E4, #5352E4'"
+            [leftIcon]="'./assets/External Link (White).svg'"
+            (buttonClick)="openLink('https://www.smartpass.app/gg4l-open')"
+          >Open GG4L Connect</app-gradient-button>
+        </div>
+      </div>
+      <div class="center-block">
+        <div class="title">Wait for approval from SmartPass</div>
+        <div class="subtitle">
+          After you add SmartPass in GG4L, we’ll start processing your activation request immediately. It might take a few hours, but we’ll send you an email once accounts are ready.
+        </div>
+      </div>
+    </div>
+
+    <div class="content-enabled">
+
+    </div>
+  </div>
+  <div class="footer">
+    <mat-divider></mat-divider>
+
+    <div class="footer-content">
+        <div class="link" style="color: #7f879d">Need more help?</div>
+        <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/gg4l" target="_blank">See tutorial</a></div>
+        <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/meeting" target="_blank">Schedule a call</a></div>
+    </div>
+  </div>
+</div>

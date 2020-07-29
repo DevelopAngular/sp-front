@@ -1,0 +1,93 @@
+@import "../../../../../sp-colors";
+
+.wrapper {
+  background-color: #FFFFFF;
+  width: 425px;
+  height: 100%;
+  position: relative;
+  .header {
+    height: 70px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    background: #484CE6;
+
+    .back-button {
+      width: 28px;
+      cursor: pointer;
+      position: absolute;
+      font-size: 15px;
+      font-weight: 500;
+      color: #FFFFFF;
+      left: 15px;
+
+    }
+
+    .save-button {
+      width: 85px;
+      position: absolute;
+      right: 27px;
+    }
+  }
+  .content {
+    padding: 32px;
+
+    .title {
+      font-size: 15px;
+      color: $navy;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: $blue-gray;
+      font-size: 14px;
+      line-height: 22px;
+      width: 295px;
+      margin-top: 5px;
+    }
+
+    .button {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 22px;
+    }
+
+    .center-block {
+      margin-top: 37px;
+      .title {
+        font-size: 15px;
+        color: #E48C15;
+        font-weight: bold;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        line-height: 22px;
+        color: $blue-gray;
+        margin-top: 5px;
+        width: 356px;
+      }
+    }
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 68px;
+
+    .footer-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+
+    }
+  }
+}

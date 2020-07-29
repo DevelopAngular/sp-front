@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class Ggl4SettingsComponent implements OnInit {
 
+  page: number = 1;
+
   constructor() { }
 
   ngOnInit() {

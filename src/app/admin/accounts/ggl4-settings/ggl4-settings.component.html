@@ -1,5 +1,8 @@
 <div class="wrapper">
-  <div class="info">
-    <app-info-dialog></app-info-dialog>
+  <div class="info" *ngIf="page === 1">
+    <app-info-dialog (nextPage)="page = 2"></app-info-dialog>
+  </div>
+  <div class="set-up" *ngIf="page === 2">
+    <app-gg4l-set-up (back)="page = 1"></app-gg4l-set-up>
   </div>
 </div>

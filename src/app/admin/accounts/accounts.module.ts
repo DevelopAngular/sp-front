@@ -12,6 +12,7 @@ import { Ggl4SettingsComponent } from './ggl4-settings/ggl4-settings.component';
 import { InfoDialogComponent } from './ggl4-settings/info-dialog/info-dialog.component';
 import { GSuiteSettingsComponent } from './g-suite-settings/g-suite-settings.component';
 import { GSuiteInfoComponent } from './g-suite-settings/g-suite-info/g-suite-info.component';
+import { Gg4lSetUpComponent } from './ggl4-settings/gg4l-set-up/gg4l-set-up.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { GSuiteInfoComponent } from './g-suite-settings/g-suite-info/g-suite-inf
     Ggl4SettingsComponent,
     InfoDialogComponent,
     GSuiteSettingsComponent,
-    GSuiteInfoComponent
+    GSuiteInfoComponent,
+    Gg4lSetUpComponent
   ],
   imports: [
     CommonModule,
