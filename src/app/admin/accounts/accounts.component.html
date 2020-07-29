@@ -56,6 +56,16 @@
               </app-gradient-button>
 
               <app-gradient-button
+                [style.margin-left]="'15px'"
+                [gradient]="'#F4F4F4, #F4F4F4'"
+                [leftIcon]="'./assets/Integrations (Navy).svg'"
+                [size]="'medium'"
+                [cursor]="'pointer'"
+                [textColor]="'#1F194E'"
+                (buttonClick)="openIntegrations()"
+              >Integrations</app-gradient-button>
+
+              <app-gradient-button
                       [style.margin-left]="'15px'"
                       [size]="'medium'"
                       [hoverColor]="'#00B476'"

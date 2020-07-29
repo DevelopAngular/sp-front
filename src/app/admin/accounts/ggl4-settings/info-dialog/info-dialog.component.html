@@ -1,0 +1,32 @@
+<div class="wrapper">
+  <div class="back-button">
+    <img width="28" [src]="'./assets/Back Button (White).svg'" alt="Back">
+  </div>
+
+  <div class="content">
+    <div class="integrations">
+      <div class="integration" *ngFor="let icon of integrations">
+        <img [src]="icon | resolveAsset" alt="int">
+      </div>
+    </div>
+    <div class="header">Sync your accounts from your SIS with GG4L</div>
+    <div class="info-list">
+      <div class="info">
+        <img width="24" height="24" [src]="'./assets/Check (White).svg' | resolveAsset">
+        <div class="title">Automatically syncs new and updated accounts every 4 hours.</div>
+      </div>
+      <div class="info" style="margin-top: 13px">
+        <img width="24" height="24" [src]="'./assets/Check (White).svg' | resolveAsset">
+        <div class="title">Student grade-level, profile picture support, and more…</div>
+      </div>
+    </div>
+  </div>
+  <mat-divider [style.border-top-color]="'#D8D8D8'"></mat-divider>
+
+  <div class="footer">
+    <app-gradient-button [gradient]="'#FFFFFF, #FFFFFF'"></app-gradient-button>
+    <div class="link">
+      <a style="text-decoration: none; color: #FFFFFF" href="https://www.smartpass.app/gg4l-setup" target="_blank">What if my school doesn’t use GG4L?</a>
+    </div>
+  </div>
+</div>

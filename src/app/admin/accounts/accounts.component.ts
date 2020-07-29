@@ -25,6 +25,9 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {LocationsService} from '../../services/locations.service';
 import * as moment from 'moment';
 import {TotalAccounts} from '../../models/TotalAccounts';
+import {IntegrationsDialogComponent} from './integrations-dialog/integrations-dialog.component';
+import {act} from '@ngrx/effects';
+import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
 
 @Component({
   selector: 'app-accounts',
@@ -543,6 +546,33 @@ export class AccountsComponent implements OnInit, OnDestroy {
       this.gsProgress.updateProgress('setup_accounts:end');
     }
   }
+
+  openIntegrations() {
+    const ID = this.matDialog.open(IntegrationsDialogComponent, {
+      panelClass: 'admin-form-dialog-container-white',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+    });
+
+    ID.afterClosed()
+      .pipe(filter(res => !!res))
+      .subscribe(action => {
+        this.openSettingsDialog(action);
+      });
+  }
+
+  openSettingsDialog(action) {
+    if (action === 'gg4l') {
+      const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
+        panelClass: 'admin-form-dialog-container-white',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+      });
+    }
+  }
+
   showSettings() {
 
     const data = {

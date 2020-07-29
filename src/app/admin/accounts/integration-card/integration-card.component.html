@@ -1,0 +1,25 @@
+<div class="wrapper">
+    <div class="header">
+      <img [src]="icon | resolveAsset" width="37" alt="Integration-icon">
+      <div class="title">{{ title }}</div>
+    </div>
+  <div class="content">
+    <div class="subtitle">{{ subtitle }}</div>
+    <div class="buttons">
+      <app-gradient-button
+        [style.margin-right]="'10px'"
+        [gradient]="'#7F879D, #7F879D'"
+        (buttonClick)="setUp.emit()"
+      >Set up
+      </app-gradient-button>
+
+      <app-gradient-button
+        [gradient]="'#F4F4F4'"
+        [linkType]="'_blank'"
+        [textColor]="'#7f879d'"
+        [buttonLink]="learnMoreLink"
+        [text]="'Learn more'">
+      </app-gradient-button>
+    </div>
+  </div>
+</div>
