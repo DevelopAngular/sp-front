@@ -28,6 +28,7 @@ import {TotalAccounts} from '../../models/TotalAccounts';
 import {IntegrationsDialogComponent} from './integrations-dialog/integrations-dialog.component';
 import {act} from '@ngrx/effects';
 import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
+import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
 
 @Component({
   selector: 'app-accounts',
@@ -565,6 +566,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
   openSettingsDialog(action) {
     if (action === 'gg4l') {
       const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
+        panelClass: 'admin-form-dialog-container-white',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+      });
+    } else if (action === 'g_suite') {
+      const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
         panelClass: 'admin-form-dialog-container-white',
         backdropClass: 'custom-bd',
         width: '425px',

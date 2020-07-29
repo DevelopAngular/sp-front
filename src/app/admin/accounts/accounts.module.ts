@@ -10,6 +10,8 @@ import { IntegrationCardComponent } from './integration-card/integration-card.co
 import { IntegrationsDialogComponent } from './integrations-dialog/integrations-dialog.component';
 import { Ggl4SettingsComponent } from './ggl4-settings/ggl4-settings.component';
 import { InfoDialogComponent } from './ggl4-settings/info-dialog/info-dialog.component';
+import { GSuiteSettingsComponent } from './g-suite-settings/g-suite-settings.component';
+import { GSuiteInfoComponent } from './g-suite-settings/g-suite-info/g-suite-info.component';
 
 @NgModule({
   declarations: [
@@ -19,14 +21,16 @@ import { InfoDialogComponent } from './ggl4-settings/info-dialog/info-dialog.com
     IntegrationCardComponent,
     IntegrationsDialogComponent,
     Ggl4SettingsComponent,
-    InfoDialogComponent
+    InfoDialogComponent,
+    GSuiteSettingsComponent,
+    GSuiteInfoComponent
   ],
   imports: [
     CommonModule,
     AccountsRoutingModule,
     AdminSharedModule,
   ],
-  entryComponents: [IntegrationsDialogComponent, Ggl4SettingsComponent]
+  entryComponents: [IntegrationsDialogComponent, Ggl4SettingsComponent, GSuiteSettingsComponent]
 })
 export class AccountsModule {
 }
