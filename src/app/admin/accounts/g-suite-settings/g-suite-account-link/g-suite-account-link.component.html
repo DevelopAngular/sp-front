@@ -1,20 +1,71 @@
 <div class="wrapper">
   <div class="header">
-    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-    <div class="back-button" *ngIf="false">Cancel</div>
+    <img class="back-button" *ngIf="!showSave" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <div class="back-button" *ngIf="showSave">Cancel</div>
     <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
     <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Account Link</div>
-    <div class="save-button" *ngIf="false">
+    <div class="save-button" *ngIf="showSave">
       <app-gradient-button
         [width]="'85px'"
         [minHeight]="'30px'"
         [fontSize]="'14px'"
         [cursor]="'pointer'"
         [gradient]="'#FFFFFF, #FFFFFF'"
-      >
+        [textColor]="'#1976D2'">
         <span *ngIf="true">Save</span>
         <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
       </app-gradient-button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="block">
+      <div class="label" [style.color]="users.students.length ? '#1F195E' : '#7f879d'">Students</div>
+      <app-sp-search
+        [chipsMode]="true"
+        [selectedOptions]="users.students"
+        (onUpdate)="users.students = $event"
+        [placeholder]="'Search G Suite org units'"
+      ></app-sp-search>
+    </div>
+    <div class="block">
+      <div class="label" [style.color]="users.teachers.length ? '#1F195E' : '#7f879d'">Teachers</div>
+      <app-sp-search
+        [chipsMode]="true"
+        [selectedOptions]="users.teachers"
+        (onUpdate)="users.teachers = $event"
+        [role]="'_profile_teacher'"
+        [placeholder]="'Search G Suite org units'"
+      ></app-sp-search>
+    </div>
+    <div class="block">
+      <div class="label" [style.color]="users.admins.length ? '#1F195E' : '#7f879d'">Admins</div>
+      <app-sp-search
+        [chipsMode]="true"
+        [selectedOptions]="users.admins"
+        (onUpdate)="users.admins = $event"
+        [role]="'_profile_admin'"
+        [placeholder]="'Search G Suite org units'"
+      ></app-sp-search>
+    </div>
+    <div class="block">
+      <div class="label" [style.color]="users.admins.length ? '#1F195E' : '#7f879d'">Assistants</div>
+      <app-sp-search
+        [chipsMode]="true"
+        [selectedOptions]="users.assistants"
+        (onUpdate)="users.assistants = $event"
+        [role]="'_profile_assistant'"
+        [placeholder]="'Search G Suite org units'"
+      ></app-sp-search>
+    </div>
+  </div>
+
+  <div class="footer">
+    <mat-divider></mat-divider>
+
+    <div class="footer-content">
+      <div style="color: #7f879d">Need more help?</div>
+      <div style="color: #7f879d">Email <a style="color: #7f879d" href="https://www.smartpass.app/support" target="_blank">support@smartpass.app</a></div>
     </div>
   </div>
 </div>
