@@ -10,11 +10,11 @@ export class InfoDialogComponent implements OnInit {
   @Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
 
   integrations: string[] = [
-    './assets/integrations/Power School.svg',
-    './assets/integrations/Skyward_Logo.svg',
-    './assets/integrations/aeries.svg',
-    './assets/integrations/gradelink.svg',
-    './assets/integrations/+100s more.svg'
+    './assets/integrations/Power school.png',
+    './assets/integrations/Skyward.png',
+    './assets/integrations/Aeries.png',
+    './assets/integrations/Gradelink.png',
+    './assets/integrations/100s more.png'
   ];
 
   constructor() { }

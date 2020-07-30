@@ -5,8 +5,8 @@
 
   <div class="content">
     <div class="integrations">
-      <div class="integration" *ngFor="let icon of integrations">
-        <img [src]="icon | resolveAsset" alt="int">
+      <div *ngFor="let icon of integrations">
+        <img width="62" [src]="icon | resolveAsset" alt="int">
       </div>
     </div>
     <div class="header">Sync your accounts from your SIS with GG4L</div>
@@ -26,7 +26,7 @@
   <div class="footer">
     <app-gradient-button [gradient]="'#FFFFFF, #FFFFFF'" [textColor]="'#484CE6'" (buttonClick)="nextPage.emit()">Next</app-gradient-button>
     <div class="link">
-      <a style="text-decoration: none; color: #FFFFFF" href="https://www.smartpass.app/gg4l-setup" target="_blank">What if my school doesn’t use GG4L?</a>
+      <a style="text-decoration: none; color: #FFFFFF; outline: none" href="https://www.smartpass.app/gg4l-setup" target="_blank">What if my school doesn’t use GG4L?</a>
     </div>
   </div>
 </div>

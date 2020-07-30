@@ -550,7 +550,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   openIntegrations() {
     const ID = this.matDialog.open(IntegrationsDialogComponent, {
-      panelClass: 'admin-form-dialog-container-white',
+      panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',
@@ -566,14 +566,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
   openSettingsDialog(action) {
     if (action === 'gg4l') {
       const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
-        panelClass: 'admin-form-dialog-container-white',
+        panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
       });
     } else if (action === 'g_suite') {
       const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
-        panelClass: 'admin-form-dialog-container-white',
+        panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
