@@ -10,16 +10,17 @@
       [title]="'GG4L'"
       [subtitle]="'Sync accounts automatically from any SIS through GG4L.'"
       [learnMoreLink]="'https://www.smartpass.app/gg4l'"
-      (setUp)="openSettings('gg4l')"
+      (setUp)="openSettings($event,'gg4l')"
     >
     </app-integration-card>
     <app-integration-card
       [style.margin-top]="'16px'"
       [icon]="'./assets/Google (Color).svg'"
       [title]="'G Suite'"
-      [subtitle]="'Sync accounts from your org units.'"
+      [status]="!!(schoolSyncInfo$ |async).is_gsuite_enabled ? 'done' : 'disconnect'"
+      [subtitle]="(schoolSyncInfo$ |async).is_gsuite_enabled ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : 'Sync accounts from your org units.'"
       [learnMoreLink]="'https://www.smartpass.app/gsuite'"
-      (setUp)="openSettings('g_suite')"
+      (setUp)="openSettings($event,'g_suite')"
     >
     </app-integration-card>
   </div>

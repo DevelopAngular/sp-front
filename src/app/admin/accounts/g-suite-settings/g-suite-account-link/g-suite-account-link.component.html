@@ -1,0 +1,20 @@
+<div class="wrapper">
+  <div class="header">
+    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <div class="back-button" *ngIf="false">Cancel</div>
+    <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
+    <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Account Link</div>
+    <div class="save-button" *ngIf="false">
+      <app-gradient-button
+        [width]="'85px'"
+        [minHeight]="'30px'"
+        [fontSize]="'14px'"
+        [cursor]="'pointer'"
+        [gradient]="'#FFFFFF, #FFFFFF'"
+      >
+        <span *ngIf="true">Save</span>
+        <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
+      </app-gradient-button>
+    </div>
+  </div>
+</div>

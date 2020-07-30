@@ -4,7 +4,7 @@
   </div>
 
   <div class="accounts-wrapper ds-h-100" *ngIf="splash !== undefined && splash">
-    <app-accounts-sync [currentSchool]="currentSchool"></app-accounts-sync>
+    <app-accounts-sync></app-accounts-sync>
   </div>
 
   <div class="accounts-wrapper" *ngIf="splash !== undefined && !splash">
@@ -13,7 +13,7 @@
           <div class="header-content">
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
-              <div class="count">
+              <div class="count" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">
                 <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async).total_count}} accounts</div>
               </div>
             </div>
@@ -41,7 +41,17 @@
                                    (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
                 <span>Delete Account & Data</span>
               </app-gradient-button>
-
+<!--              <app-gradient-button-->
+<!--                [size]="'medium'"-->
+<!--                [style.margin-left]="'15px'"-->
+<!--                [gradient]="'#484CE6, #484CE6'"-->
+<!--                [hoverColor]="'#5B5FE3'"-->
+<!--                [cursor]="'pointer'"-->
+<!--                [leftIcon]="'./assets/GG4L Icon (White).svg'"-->
+<!--                (buttonClick)="openSyncSettings()"-->
+<!--              >-->
+<!--                Settings-->
+<!--              </app-gradient-button>-->
               <app-gradient-button *ngIf="openTable"
                                    [style.margin-left]="'15px'"
                                    [size]="'medium'"
@@ -92,18 +102,20 @@
 
     <div class="accounts-content" *ngIf="!openTable">
       <div class="content-wrapper">
-        <div class="top-buttons">
+        <div class="top-buttons" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">
           <app-admin-card-button
                   [leftIcon]="'./assets/google/google_logo.svg'"
                   [title]="'G Suite'"
-                  [subtitle]=" gSuiteOrgs.last_successful_sync ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : '-'"
+                  [subtitle]="gSuiteOrgs.last_successful_sync ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : '-'"
                   (onClick)="router.navigate(['/admin/accounts', 'g_suite'])"
           ></app-admin-card-button>
 
           <app-admin-card-button
-                  [title]="'Integrations'"
-                  [subtitle]="'More coming soon'"
-                  [integrations]="true"
+                  [title]="'More Integrations'"
+                  [subtitle]="'Easier and more reliable sync'"
+                  [leftIcon]="'./assets/GG4L Icon.svg'"
+                  [isNew]="true"
+                  (onClick)="openNewTab('https://www.smartpass.app/gg4l')"
           ></app-admin-card-button>
         </div>
 

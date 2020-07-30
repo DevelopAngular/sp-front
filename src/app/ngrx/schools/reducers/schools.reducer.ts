@@ -10,7 +10,10 @@ export const schoolsInitialState: SchoolsState = {
   ids: [],
   loading: false,
   loaded: false,
-  currentSchoolId: null
+  currentSchoolId: null,
+  gg4lInfo: null,
+  syncInfo: null,
+  gSuiteInfo: null
 };
 
 const reducer = createReducer(
@@ -21,8 +24,37 @@ const reducer = createReducer(
   on(schoolsActions.getSchoolsSuccess, (state, {schools}) => {
     return schoolAdapter.addAll(schools, {...state, loading: false, loaded: true});
   }),
+  on(schoolsActions.getSchoolsGG4LInfoSuccess, (state, {gg4lInfo}) => {
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      gg4lInfo
+    };
+  }),
+  on(schoolsActions.updateSchoolsGG4LInfoSuccess, (state, {gg4lInfo}) => {
+    return {...state};
+  }),
+  on(schoolsActions.getSchoolSyncInfoSuccess,
+    schoolsActions.updateSchoolSyncInfoSuccess,
+    (state, {syncInfo}) => {
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      syncInfo
+    };
+  }),
   on(schoolsActions.updateSchoolSuccess, (state, {school}) => {
     return schoolAdapter.upsertOne(school, { ...state, loading: false, loaded: true, currentSchoolId: school.id });
+  }),
+  on(schoolsActions.getGSuiteSyncInfoSuccess, (state, {gSuiteInfo}) => {
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      gSuiteInfo
+    };
   })
 );
 

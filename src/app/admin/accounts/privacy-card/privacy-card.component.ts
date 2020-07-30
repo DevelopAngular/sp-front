@@ -14,6 +14,8 @@ export class PrivacyCardComponent implements OnInit {
   @Input() infoText: string;
   @Input() buttonColor: string;
   @Input() buttonLink: string;
+  @Input() buttonText: string = 'Learn more';
+  @Input() rightLogo: boolean;
 
   constructor(public darkTheme: DarkThemeSwitch) { }
 

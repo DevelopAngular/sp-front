@@ -1,0 +1,32 @@
+.wrapper {
+  background-color: #FFFFFF;
+  width: 425px;
+  height: 100%;
+  position: relative;
+  .header {
+    height: 70px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    background: #484CE6;
+
+    .back-button {
+      width: 28px;
+      cursor: pointer;
+      position: absolute;
+      font-size: 15px;
+      font-weight: 500;
+      color: #FFFFFF;
+      left: 15px;
+
+    }
+
+    .save-button {
+      width: 85px;
+      position: absolute;
+      right: 27px;
+    }
+  }
+}

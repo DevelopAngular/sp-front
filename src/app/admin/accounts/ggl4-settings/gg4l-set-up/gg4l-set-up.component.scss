@@ -32,7 +32,10 @@
     }
   }
   .content {
-    padding: 32px;
+
+    .no-connect {
+      padding: 32px;
+    }
 
     .title {
       font-size: 15px;
@@ -69,6 +72,48 @@
         color: $blue-gray;
         margin-top: 5px;
         width: 356px;
+      }
+    }
+
+    .content-enabled {
+      .active-top {
+        display: flex;
+        justify-content: space-between;
+        padding: 32px 95px 0px 32px;
+        .sync-title {
+          color: $navy;
+          font-size: 15px;
+          font-weight: bold;
+          margin-bottom: 4px;
+        }
+
+        .sync-subtitle {
+          color: $blue-gray;
+          font-size: 15px;
+
+        }
+        .right {
+        }
+      }
+
+      .center {
+        padding: 20px 54px 0 32px;
+
+        .prov-title {
+          color: $navy;
+          font-size: 15px;
+          font-weight: bold;
+          margin-bottom: 4px;
+        }
+        .prov-subtitle {
+          font-size: 15px;
+          color: $blue-gray;
+        }
+
+        .buttons {
+          width: 228px;
+          margin-top: 23px;
+        }
       }
     }
   }

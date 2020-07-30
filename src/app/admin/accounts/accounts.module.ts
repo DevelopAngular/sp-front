@@ -13,6 +13,10 @@ import { InfoDialogComponent } from './ggl4-settings/info-dialog/info-dialog.com
 import { GSuiteSettingsComponent } from './g-suite-settings/g-suite-settings.component';
 import { GSuiteInfoComponent } from './g-suite-settings/g-suite-info/g-suite-info.component';
 import { Gg4lSetUpComponent } from './ggl4-settings/gg4l-set-up/gg4l-set-up.component';
+import { SyncSettingsComponent } from './sync-settings/sync-settings.component';
+import { SyncProviderComponent } from './sync-provider/sync-provider.component';
+import { GSuiteSetUpComponent } from './g-suite-settings/g-suite-set-up/g-suite-set-up.component';
+import { GSuiteAccountLinkComponent } from './g-suite-settings/g-suite-account-link/g-suite-account-link.component';
 
 @NgModule({
   declarations: [
@@ -25,14 +29,24 @@ import { Gg4lSetUpComponent } from './ggl4-settings/gg4l-set-up/gg4l-set-up.comp
     InfoDialogComponent,
     GSuiteSettingsComponent,
     GSuiteInfoComponent,
-    Gg4lSetUpComponent
+    Gg4lSetUpComponent,
+    SyncSettingsComponent,
+    SyncProviderComponent,
+    GSuiteSetUpComponent,
+    GSuiteAccountLinkComponent,
   ],
   imports: [
     CommonModule,
     AccountsRoutingModule,
     AdminSharedModule,
   ],
-  entryComponents: [IntegrationsDialogComponent, Ggl4SettingsComponent, GSuiteSettingsComponent]
+  entryComponents: [
+    IntegrationsDialogComponent,
+    Ggl4SettingsComponent,
+    GSuiteSettingsComponent,
+    SyncSettingsComponent,
+    SyncProviderComponent
+  ]
 })
 export class AccountsModule {
 }

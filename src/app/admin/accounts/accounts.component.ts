@@ -23,6 +23,11 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {LocationsService} from '../../services/locations.service';
+import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
+import {SyncProviderComponent} from './sync-provider/sync-provider.component';
+import {GG4LSync} from '../../models/GG4LSync';
+import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
+declare const window;
 import * as moment from 'moment';
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {IntegrationsDialogComponent} from './integrations-dialog/integrations-dialog.component';
@@ -46,6 +51,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   openTable: boolean;
 
+  gg4lSettingsData: GG4LSync;
+  schoolSyncInfoData: SchoolSyncInfo;
+  isOpenModal: boolean;
+
   userList: User[] = [];
   lazyUserList: User[] = [];
   selectedUsers = [];
@@ -56,9 +65,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   querySubscriber$ = new Subject();
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
-  currentSchool = this.http.getSchool();
-  loadingAccountsLimit: number = 50;
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -99,7 +105,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
         this.tableRenderer(users);
     });
 
-   this.adminService.getGSuiteOrgs().pipe(takeUntil(this.destroy$)).subscribe(res => this.gSuiteOrgs = res);
+   this.adminService.getGSuiteOrgsRequest()
+     .pipe(
+       filter(res => !!res),
+       takeUntil(this.destroy$)
+     )
+     .subscribe(res => {
+       this.gSuiteOrgs = res;
+     });
 
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
@@ -111,10 +124,39 @@ export class AccountsComponent implements OnInit, OnDestroy {
       }),
       switchMap(() => this.adminService.getCountAccountsRequest()),
       switchMap(() => this.gsProgress.onboardProgress$),
+      switchMap((op) => {
+        return zip(
+          this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
+          this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
+          .pipe(
+            map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
+              this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+              // this.splash = false;
+              this.gg4lSettingsData = gg4l;
+              this.schoolSyncInfoData = sync;
+              if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
+                this.openSyncProvider();
+              }
+              return gg4l;
+            }));
+      })
     )
     .subscribe((op: any) => {
-      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-      // this.splash = false;
+      // debugger;
+      // return zip(
+      //   this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
+      //   this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
+      //   .pipe(
+      //     map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
+      //       this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+      //       // this.splash = false;
+      //       this.gg4lSettingsData = gg4l;
+      //       this.schoolSyncInfoData = sync;
+      //       if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
+      //         this.openSyncProvider();
+      //       }
+      //       return gg4l;
+      //     }));
     });
 
     this.userService.userData.pipe(
@@ -225,8 +267,35 @@ export class AccountsComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       data: {
         role: '_all',
+        syncInfo: this.schoolSyncInfoData
       }
     });
+  }
+
+  openSyncSettings() {
+    const SS = this.matDialog.open(SyncSettingsComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      data: {gg4lInfo: this.gg4lSettingsData}
+    });
+  }
+
+  openSyncProvider() {
+    if (!this.isOpenModal) {
+      this.isOpenModal = true;
+      const SP = this.matDialog.open(SyncProviderComponent, {
+        width: '425px',
+        height: '425px',
+        panelClass: 'accounts-profiles-dialog',
+        disableClose: true,
+        backdropClass: 'custom-bd',
+        data: {gg4lInfo: this.gg4lSettingsData}
+      });
+
+      SP.afterClosed().subscribe(res => {
+        this.isOpenModal = false;
+      });
+    }
   }
 
   findProfileByRole(evt) {
@@ -505,6 +574,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 
+  openNewTab(url) {
+    window.open(url);
+  }
+
   goToAccountsSetup() {
     this.updateAcoountsOnboardProgress('start');
     this.adminService
@@ -554,6 +627,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',
+      data: {'gSuiteOrgs': this.gSuiteOrgs}
     });
 
     ID.afterClosed()

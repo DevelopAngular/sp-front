@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {AdminService} from '../../../services/admin.service';
+import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-g-suite-settings',
@@ -7,9 +10,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GSuiteSettingsComponent implements OnInit {
 
-  constructor() { }
+  gSuiteInfo$: Observable<GSuiteOrgs>;
+  isEditMode: boolean;
+
+  constructor(
+    private adminService: AdminService
+  ) { }
 
   ngOnInit() {
+    this.gSuiteInfo$ = this.adminService.gSuiteInfoData$;
   }
 
 }

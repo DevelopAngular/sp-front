@@ -1,5 +1,11 @@
 <div class="wrapper">
-  <div class="info">
+  <div class="info" *ngIf="!(gSuiteInfo$ | async).is_enabled; else settings">
     <app-g-suite-info></app-g-suite-info>
   </div>
+  <ng-template #settings>
+    <div class="settings">
+      <app-g-suite-set-up *ngIf="!isEditMode" (openEditMode)="isEditMode = true" [gSuiteInfo]="gSuiteInfo$ | async"></app-g-suite-set-up>
+      <app-g-suite-account-link *ngIf="isEditMode"></app-g-suite-account-link>
+    </div>
+  </ng-template>
 </div>
