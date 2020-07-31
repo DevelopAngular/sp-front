@@ -35,7 +35,7 @@ export class IntegrationsDialogComponent implements OnInit {
   }
 
   openSettings(status, action) {
-    this.dialogRef.close(action);
+    this.dialogRef.close({action, status});
   }
 
 }

@@ -11,8 +11,18 @@
     position: relative;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-    background: #484CE6;
+
+    .background-header {
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #484CE6;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    }
 
     .back-button {
       width: 28px;
@@ -32,7 +42,6 @@
     }
   }
   .content {
-
     .no-connect {
       padding: 32px;
     }
@@ -41,6 +50,7 @@
       font-size: 15px;
       color: $navy;
       font-weight: bold;
+      z-index: 10;
     }
 
     .subtitle {
@@ -49,6 +59,7 @@
       line-height: 22px;
       width: 295px;
       margin-top: 5px;
+      z-index: 10;
     }
 
     .button {
@@ -64,6 +75,7 @@
         font-size: 15px;
         color: #E48C15;
         font-weight: bold;
+        z-index: 10;
       }
 
       .subtitle {
@@ -72,6 +84,7 @@
         color: $blue-gray;
         margin-top: 5px;
         width: 356px;
+        z-index: 10;
       }
     }
 
@@ -85,11 +98,13 @@
           font-size: 15px;
           font-weight: bold;
           margin-bottom: 4px;
+          z-index: 10;
         }
 
         .sync-subtitle {
           color: $blue-gray;
           font-size: 15px;
+          z-index: 10;
 
         }
         .right {
@@ -104,10 +119,12 @@
           font-size: 15px;
           font-weight: bold;
           margin-bottom: 4px;
+          z-index: 10;
         }
         .prov-subtitle {
           font-size: 15px;
           color: $blue-gray;
+          z-index: 10;
         }
 
         .buttons {

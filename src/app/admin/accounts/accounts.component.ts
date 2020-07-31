@@ -130,13 +130,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
           this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
           .pipe(
             map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
-              this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-              // this.splash = false;
+              // this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+              this.splash = false;
               this.gg4lSettingsData = gg4l;
               this.schoolSyncInfoData = sync;
-              if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
-                this.openSyncProvider();
-              }
+              // if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
+              //   this.openSyncProvider();
+              // }
               return gg4l;
             }));
       })
@@ -632,18 +632,19 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     ID.afterClosed()
       .pipe(filter(res => !!res))
-      .subscribe(action => {
-        this.openSettingsDialog(action);
+      .subscribe(({action, status}) => {
+        this.openSettingsDialog(action, status);
       });
   }
 
-  openSettingsDialog(action) {
+  openSettingsDialog(action, status) {
     if (action === 'gg4l') {
       const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
+        data: { status }
       });
     } else if (action === 'g_suite') {
       const g_suite = this.matDialog.open(GSuiteSettingsComponent, {

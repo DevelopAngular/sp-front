@@ -1,7 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {GG4LSync} from '../../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../../models/SchoolSyncInfo';
+import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
+import {AdminService} from '../../../../services/admin.service';
+import {MatDialogRef} from '@angular/material';
+import {Ggl4SettingsComponent} from '../ggl4-settings.component';
 
 declare const window;
 
@@ -17,9 +21,15 @@ export class Gg4lSetUpComponent implements OnInit {
 
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
 
+  frameMotion$: BehaviorSubject<any>;
+
   selectedProvider: string;
 
-  constructor() { }
+  constructor(
+    private formService: CreateFormService,
+    private adminService: AdminService,
+    private dialogRef: MatDialogRef<Ggl4SettingsComponent>
+  ) { }
 
   get normalizeProvider(): string {
     if (this.schoolSyncInfo.is_gg4l_enabled) {
@@ -32,6 +42,7 @@ export class Gg4lSetUpComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
   }
 
   selectProvider(provider) {
@@ -48,6 +59,13 @@ export class Gg4lSetUpComponent implements OnInit {
 
   openLink(link) {
     window.open(link, '_blank');
+  }
+
+  setProvider() {
+    this.adminService.updateSpSyncingRequest({ login_provider: this.selectedProvider })
+      .subscribe(res => {
+      this.dialogRef.close();
+    });
   }
 
 }

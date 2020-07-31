@@ -1,15 +1,21 @@
 <div class="wrapper">
   <div class="header">
-    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
-    <div class="back-button" *ngIf="false" (click)="close()">Cancel</div>
+    <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+    <img class="back-button" *ngIf="schoolSyncInfo.login_provider" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
+    <div class="back-button" *ngIf="!schoolSyncInfo.login_provider && this.selectedProvider" (click)="close()">Cancel</div>
     <img width="21" height="21" [src]="'./assets/GG4L (White).svg' | resolveAsset" alt="Options">
-    <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Set-up</div>
-    <div class="save-button" *ngIf="false">
+    <div class="ds-dialog-title-white"
+         [style.margin-left]="'12px'"
+         [style.z-index]="10"
+         [attr.data-motion-translate]="(frameMotion$ | async).direction"
+    >Set-up</div>
+    <div class="save-button" *ngIf="!schoolSyncInfo.login_provider && this.selectedProvider">
       <app-gradient-button
         [width]="'85px'"
         [minHeight]="'30px'"
         [fontSize]="'14px'"
         [cursor]="'pointer'"
+        (buttonClick)="setProvider()"
       >
         <span *ngIf="true">Save</span>
         <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
@@ -17,8 +23,8 @@
     </div>
   </div>
 
-  <div class="content">
-    <div class="no-connect" *ngIf="false">
+  <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+    <div class="no-connect" *ngIf="!schoolSyncInfo.is_gg4l_enabled">
       <div class="top-block">
         <div class="title">Add SmartPass in GG4L</div>
         <div class="subtitle">You’ll need to be a GG4L admin to add an application.</div>
@@ -38,7 +44,7 @@
       </div>
     </div>
 
-    <div class="content-enabled" *ngIf="true">
+    <div class="content-enabled" *ngIf="schoolSyncInfo.is_gg4l_enabled">
       <div class="active-top">
         <div class="left">
           <div class="sync-title">Last Sync</div>
@@ -57,10 +63,12 @@
       <div class="center">
         <div class="prov-title">Sign-in authentication (SSO)</div>
         <div class="prov-subtitle">How should users be authenticated when they sign in to SmartPass?</div>
-        <div class="buttons" style="width: 228px">
+        <div class="buttons" style="width: 228px" [matTooltip]="schoolSyncInfo.is_gg4l_enabled && !!schoolSyncInfo.login_provider ? 'Contact us to change your sign-in provider.' : null"
+             matTooltipClass="tooltip">
           <app-restriction-picker
             [choices]="['Sign in with Google', 'GG4L \n Passport']"
             [selectedChoice]="normalizeProvider"
+            [disabled]="schoolSyncInfo.is_gg4l_enabled && !!schoolSyncInfo.login_provider"
             [padding]="15"
             [width]="228"
             [height]="48"

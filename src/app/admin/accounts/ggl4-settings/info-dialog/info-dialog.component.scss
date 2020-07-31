@@ -1,9 +1,17 @@
 .wrapper {
   width: 425px;
   height: 500px;
-  border-radius: 14px;
-  background: radial-gradient(circle at 73% 71%, #5C4AE3, #336DE4);
   position: relative;
+
+  .background {
+    border-radius: 14px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: radial-gradient(circle at 73% 71%, #5C4AE3, #336DE4);
+  }
 
   .back-button {
     position: absolute;
@@ -40,6 +48,7 @@
       line-height: 29px;
       text-align: center;
       margin-top: 19px;
+      z-index: 10;
     }
 
     .info-list {
@@ -47,7 +56,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-
+      z-index: 10;
       .info {
         display: flex;
         width: 280px;

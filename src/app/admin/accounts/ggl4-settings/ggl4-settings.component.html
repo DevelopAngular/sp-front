@@ -1,12 +1,12 @@
 <div class="wrapper">
-  <div class="info" *ngIf="page === 1">
-    <app-info-dialog (nextPage)="page = 2"></app-info-dialog>
+  <div *ngIf="page === 1" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <app-info-dialog (nextPage)="nextPage()"></app-info-dialog>
   </div>
-  <div class="set-up" *ngIf="page === 2">
+  <div *ngIf="page === 2" class="next-step set-up" [@NextStep]="{ value: '', params: frameMotion$ | async}">
     <app-gg4l-set-up
       [gg4lSyncInfo]="gg4lSyncInfo$ | async"
       [schoolSyncInfo]="schoolSyncInfo$ | async"
-      (back)="page = 1"
+      (back)="back()"
     >
     </app-gg4l-set-up>
   </div>

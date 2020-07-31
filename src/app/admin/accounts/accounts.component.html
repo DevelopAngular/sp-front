@@ -102,22 +102,22 @@
 
     <div class="accounts-content" *ngIf="!openTable">
       <div class="content-wrapper">
-        <div class="top-buttons" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">
-          <app-admin-card-button
-                  [leftIcon]="'./assets/google/google_logo.svg'"
-                  [title]="'G Suite'"
-                  [subtitle]="gSuiteOrgs.last_successful_sync ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : '-'"
-                  (onClick)="router.navigate(['/admin/accounts', 'g_suite'])"
-          ></app-admin-card-button>
+<!--        <div class="top-buttons" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">-->
+<!--          <app-admin-card-button-->
+<!--                  [leftIcon]="'./assets/google/google_logo.svg'"-->
+<!--                  [title]="'G Suite'"-->
+<!--                  [subtitle]="gSuiteOrgs.last_successful_sync ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : '-'"-->
+<!--                  (onClick)="router.navigate(['/admin/accounts', 'g_suite'])"-->
+<!--          ></app-admin-card-button>-->
 
-          <app-admin-card-button
-                  [title]="'More Integrations'"
-                  [subtitle]="'Easier and more reliable sync'"
-                  [leftIcon]="'./assets/GG4L Icon.svg'"
-                  [isNew]="true"
-                  (onClick)="openNewTab('https://www.smartpass.app/gg4l')"
-          ></app-admin-card-button>
-        </div>
+<!--          <app-admin-card-button-->
+<!--                  [title]="'More Integrations'"-->
+<!--                  [subtitle]="'Easier and more reliable sync'"-->
+<!--                  [leftIcon]="'./assets/GG4L Icon.svg'"-->
+<!--                  [isNew]="true"-->
+<!--                  (onClick)="openNewTab('https://www.smartpass.app/gg4l')"-->
+<!--          ></app-admin-card-button>-->
+<!--        </div>-->
 
         <div class="groups">
           <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
