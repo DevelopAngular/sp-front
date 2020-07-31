@@ -1,9 +1,13 @@
 <div class="wrapper">
   <div class="header">
-    <img class="back-button" *ngIf="!showSave" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-    <div class="back-button" *ngIf="showSave">Cancel</div>
-    <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
-    <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Account Link</div>
+    <div class="background-header"></div>
+    <img class="back-button" *ngIf="!showSave" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back.emit()">
+    <div class="back-button" *ngIf="showSave" (click)="back.emit()">Cancel</div>
+    <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
+      <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Account Link</div>
+    </div>
+
     <div class="save-button" *ngIf="showSave">
       <app-gradient-button
         [width]="'85px'"
@@ -18,7 +22,7 @@
     </div>
   </div>
 
-  <div class="content">
+  <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="block">
       <div class="label" [style.color]="users.students.length ? '#1F195E' : '#7f879d'">Students</div>
       <app-sp-search

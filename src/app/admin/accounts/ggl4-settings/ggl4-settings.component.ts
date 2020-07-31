@@ -38,11 +38,11 @@ export class Ggl4SettingsComponent implements OnInit {
   }
 
   nextPage() {
-      this.formService.setFrameMotionDirection();
-      setTimeout(() => {
-        this.page = 2;
-      }, 100);
-    }
+    this.formService.setFrameMotionDirection();
+    setTimeout(() => {
+      this.page = 2;
+    }, 100);
+  }
 
   back() {
     if (this.data['status'] === 'disconnect') {

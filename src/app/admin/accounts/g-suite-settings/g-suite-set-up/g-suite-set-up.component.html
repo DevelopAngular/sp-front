@@ -1,11 +1,15 @@
 <div class="wrapper">
   <div class="header">
-    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
-    <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
-    <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Settings</div>
+    <div class="background-header"></div>
+    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
+      <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Settings</div>
+    </div>
+
   </div>
 
-  <div class="content">
+  <div class="content" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="active-top">
       <div class="left">
         <div class="sync-title">Last Sync</div>
@@ -17,7 +21,7 @@
         <div class="sync-subtitle">{{ gSuiteInfo.num_accounts }} accounts</div>
       </div>
     </div>
-    <div class="active-top">
+    <div class="active-top" [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <div class="left">
         <div class="sync-title">Next Sync</div>
         <div class="sync-subtitle">{{ formatDate(gSuiteInfo.next_sync) }}</div>
@@ -26,7 +30,7 @@
 
     <mat-divider [style.margin-top]="'34px'"></mat-divider>
 
-    <div class="center">
+    <div class="center" [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <div class="prov-title">G Suite Account Link</div>
       <div class="prov-subtitle">Which G Suite organization units and groups get linked to SmartPass user roles.</div>
       <div class="button">

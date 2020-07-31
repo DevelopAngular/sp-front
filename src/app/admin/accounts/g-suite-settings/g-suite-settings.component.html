@@ -4,8 +4,12 @@
   </div>
   <ng-template #settings>
     <div class="settings">
-      <app-g-suite-set-up *ngIf="!isEditMode" (openEditMode)="isEditMode = true" [gSuiteInfo]="gSuiteInfo$ | async"></app-g-suite-set-up>
-      <app-g-suite-account-link *ngIf="isEditMode"></app-g-suite-account-link>
+      <div *ngIf="!isEditMode" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+        <app-g-suite-set-up (openEditMode)="nextPage()" [gSuiteInfo]="gSuiteInfo$ | async"></app-g-suite-set-up>
+      </div>
+      <div *ngIf="isEditMode" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+        <app-g-suite-account-link (back)="back()"></app-g-suite-account-link>
+      </div>
     </div>
   </ng-template>
 </div>
