@@ -8,7 +8,7 @@
         <app-g-suite-set-up (openEditMode)="nextPage()" [gSuiteInfo]="gSuiteInfo$ | async"></app-g-suite-set-up>
       </div>
       <div *ngIf="isEditMode" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-        <app-g-suite-account-link (back)="back()"></app-g-suite-account-link>
+        <app-g-suite-account-link [gSuiteInfo]="gSuiteInfo$ | async" (back)="back()"></app-g-suite-account-link>
       </div>
     </div>
   </ng-template>

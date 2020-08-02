@@ -5,7 +5,7 @@
     [style.opacity]="chip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
     [style.background-color]="getBackground(chip)"
     [style.color]="textColor(chip)">
-    <span [style.cursor]="'default'" [style.user-select]="'none'">{{teacher.display_name}}</span>
+    <span [style.cursor]="'default'" [style.user-select]="'none'">{{selectedTarget === 'users' ? teacher.display_name : teacher.as}}</span>
     <div *ngIf="chip.hovered" class="delete">
 
       <img

@@ -15,7 +15,9 @@
         [fontSize]="'14px'"
         [cursor]="'pointer'"
         [gradient]="'#FFFFFF, #FFFFFF'"
-        [textColor]="'#1976D2'">
+        [textColor]="'#1976D2'"
+        (buttonClick)="save()"
+      >
         <span *ngIf="true">Save</span>
         <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
       </app-gradient-button>
@@ -27,6 +29,7 @@
       <div class="label" [style.color]="users.students.length ? '#1F195E' : '#7f879d'">Students</div>
       <app-sp-search
         [chipsMode]="true"
+        [searchTarget]="'orgunits'"
         [selectedOptions]="users.students"
         (onUpdate)="users.students = $event"
         [placeholder]="'Search G Suite org units'"
@@ -37,8 +40,8 @@
       <app-sp-search
         [chipsMode]="true"
         [selectedOptions]="users.teachers"
+        [searchTarget]="'orgunits'"
         (onUpdate)="users.teachers = $event"
-        [role]="'_profile_teacher'"
         [placeholder]="'Search G Suite org units'"
       ></app-sp-search>
     </div>
@@ -47,8 +50,8 @@
       <app-sp-search
         [chipsMode]="true"
         [selectedOptions]="users.admins"
+        [searchTarget]="'orgunits'"
         (onUpdate)="users.admins = $event"
-        [role]="'_profile_admin'"
         [placeholder]="'Search G Suite org units'"
       ></app-sp-search>
     </div>
@@ -57,8 +60,8 @@
       <app-sp-search
         [chipsMode]="true"
         [selectedOptions]="users.assistants"
+        [searchTarget]="'orgunits'"
         (onUpdate)="users.assistants = $event"
-        [role]="'_profile_assistant'"
         [placeholder]="'Search G Suite org units'"
       ></app-sp-search>
     </div>
