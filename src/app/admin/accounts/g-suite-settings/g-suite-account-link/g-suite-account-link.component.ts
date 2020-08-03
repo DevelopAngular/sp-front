@@ -55,12 +55,11 @@ export class GSuiteAccountLinkComponent implements OnInit {
   }
 
   save() {
-    // console.log(this.users);
     const syncBody = {};
     for (const item in this.users) {
       syncBody[`selector_${item}`] = this.users[item].map((s: GSuiteSelector) => s.as);
     }
-    this.adminService.updateSpSyncing(syncBody).subscribe(res => {
+    this.adminService.updateSpSyncingRequest(syncBody).subscribe(res => {
       this.dialogRef.close();
     });
   }

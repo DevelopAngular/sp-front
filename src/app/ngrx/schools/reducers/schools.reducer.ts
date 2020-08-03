@@ -55,6 +55,9 @@ const reducer = createReducer(
       loaded: true,
       gSuiteInfo
     };
+  }),
+  on(schoolsActions.updateGSuiteInfoSelectorsSuccess, (state, {selectors}) => {
+    return {...state, gSuiteInfo: {...state.gSuiteInfo, selectors}};
   })
 );
 

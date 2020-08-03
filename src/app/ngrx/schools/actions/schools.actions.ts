@@ -35,3 +35,6 @@ export const updateSchoolsGG4LInfoFailure = createAction(`[${COMPONENT}] Update 
 export const getGSuiteSyncInfo = createAction(`[${COMPONENT}] Get GSuite Info`);
 export const getGSuiteSyncInfoSuccess = createAction(`[${COMPONENT}] Get GSuite Info Success`, props<{gSuiteInfo: GSuiteOrgs}>());
 export const getGSuiteSyncInfoFailure = createAction(`[${COMPONENT}] Get GSuite Info Failure`, props<{errorMessage: string}>());
+
+export const updateGSuiteInfoSelectors = createAction(`[${COMPONENT}] Update GSuite Selectors`, props<{selectors: any}>());
+export const updateGSuiteInfoSelectorsSuccess = createAction(`[${COMPONENT}] Update GSuite Selectors Success`, props<{selectors: any}>());

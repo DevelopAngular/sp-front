@@ -101,6 +101,9 @@ export class SchoolsEffects {
           return this.adminService.updateSpSyncing(action.data)
             .pipe(
               map((syncInfo: any) => {
+                if (action.data.selector_students) {
+                  return schoolsActions.updateGSuiteInfoSelectors({selectors: action.data});
+                }
                 return schoolsActions.updateSchoolSyncInfoSuccess({syncInfo});
               }),
               catchError(error => of(schoolsActions.updateSchoolSyncInfoFailure({errorMessage: error.message})))
@@ -151,6 +154,30 @@ export class SchoolsEffects {
               }),
               catchError(error => of(schoolsActions.getGSuiteSyncInfoFailure({errorMessage: error.message})))
             );
+        })
+      );
+  });
+
+  updateGSuiteInfoSelectors$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateGSuiteInfoSelectors),
+        map((action) =>  {
+          const selectors = {
+            admin: {
+              selector: action.selectors.selector_admins,
+            },
+            student: {
+              selector: action.selectors.selector_students
+            },
+            teacher: {
+              selector: action.selectors.selector_teachers
+            },
+            assistant: {
+              selector: action.selectors.selector_assistants
+            }
+          };
+          return schoolsActions.updateGSuiteInfoSelectorsSuccess({selectors});
         })
       );
   });
