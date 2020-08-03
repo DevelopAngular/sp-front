@@ -69,52 +69,52 @@ export class MySchoolComponent implements OnInit, OnDestroy {
         this.selectedDate = this.currentSchool.launch_date ? moment(this.currentSchool.launch_date) : null;
         this.buildLaunchDay();
       }),
-      switchMap(() => this.adminService.onboardProcessData$),
-      filter((res: any[]) => !!res.length),
-      switchMap((res: any[]) => {
-        const start = res.find(setting => setting.name === 'launch_day_prep:start');
-        const end = res.find(setting => setting.name === 'launch_day_prep:end');
-        if (!start.done) {
-          return this.gsProgress.updateProgress(start.name);
-        } else if (!!start.done && !!end.done) {
-          this.openSchoolPage = true;
-          return of(true);
-        }
-        // this.openSchoolPage = false;
-        return of(null);
-      })
+      // switchMap(() => this.adminService.onboardProcessData$),
+      // filter((res: any[]) => !!res.length),
+      // switchMap((res: any[]) => {
+      //   const start = res.find(setting => setting.name === 'launch_day_prep:start');
+      //   const end = res.find(setting => setting.name === 'launch_day_prep:end');
+      //   if (!start.done) {
+      //     return this.gsProgress.updateProgress(start.name);
+      //   } else if (!!start.done && !!end.done) {
+      //     this.openSchoolPage = true;
+      //     return of(true);
+      //   }
+      //   // this.openSchoolPage = false;
+      //   return of(null);
+      // })
     ).subscribe(() => {
         this.loaded = true;
     });
 
-    this.updateProgress$
-      .pipe(
-        filter(res => !!res),
-        switchMap(isOpen => {
-          return this.adminService.onboardProcessData$;
-        }),
-        switchMap((res: any[]) => {
-          const end = res.find(setting => setting.name === 'launch_day_prep:end');
-          if (!end.done) {
-            return this.gsProgress.updateProgress(end.name);
-          } else {
-            return of(null);
-          }
-        })
-      ).subscribe();
+    // this.updateProgress$
+    //   .pipe(
+    //     filter(res => !!res),
+    //     switchMap(isOpen => {
+    //       return this.adminService.onboardProcessData$;
+    //     }),
+    //     switchMap((res: any[]) => {
+    //       const end = res.find(setting => setting.name === 'launch_day_prep:end');
+    //       if (!end.done) {
+    //         return this.gsProgress.updateProgress(end.name);
+    //       } else {
+    //         return of(null);
+    //       }
+    //     })
+    //   ).subscribe();
 
-    this.updateLaunchDate$
-      .pipe(
-        switchMap(() => {
-          return this.adminService.updateSchoolSettingsRequest(this.currentSchool, {launch_date: this.selectedDate.toISOString()});
-        }),
-        filter(res => !!res)
-      )
-      .subscribe(res => {
-      this.http.currentSchoolSubject.next(res);
-      this.buildLaunchDay();
-      this.updateProgress$.next(true);
-    });
+    // this.updateLaunchDate$
+    //   .pipe(
+    //     switchMap(() => {
+    //       return this.adminService.updateSchoolSettingsRequest(this.currentSchool, {launch_date: this.selectedDate.toISOString()});
+    //     }),
+    //     filter(res => !!res)
+    //   )
+    //   .subscribe(res => {
+    //   this.http.currentSchoolSubject.next(res);
+    //   this.buildLaunchDay();
+    //   this.updateProgress$.next(true);
+    // });
   }
 
   buildLaunchDay() {
@@ -142,14 +142,30 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   }
 
   redirect(button) {
-    window.open(button.link);
+    window.open(button, '_blank');
   }
 
   openSettings() {
-      const setDialog = this.dialog.open(SchoolSettingsComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-bd'
-      });
+    const setDialog = this.dialog.open(SchoolSettingsComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd'
+    });
+  }
+
+  openChat(event) {
+    event.stopPropagation();
+    const chat = document.querySelector('#hubspot-messages-iframe-container');
+    (chat as HTMLElement).setAttribute('style', 'opacity: 1 !important');
+    window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+  }
+
+  closeChat(event) {
+    event.stopPropagation();
+    const chat = document.querySelector('#hubspot-messages-iframe-container');
+    if (chat) {
+      window.HubSpotConversations.widget.close();
+      (chat as HTMLElement).setAttribute('style', 'opacity: 0 !important');
+    }
   }
 
 }
