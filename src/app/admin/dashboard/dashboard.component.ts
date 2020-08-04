@@ -271,6 +271,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     interval(60000)
       .pipe(
+        filter(() => false),
         takeUntil(this.shareChartData$),
         switchMap(() => {
           return this.adminService.getDashboardDataRequest();
@@ -283,90 +284,92 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }];
       });
 
-    this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
-    this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
-    this.gradient.addColorStop(1, 'rgba(0,180, 118, 0.8)');
-    this.lineChartColors = [
-      {
-        backgroundColor: this.gradient,
-        pointBackgroundColor: 'transparent',
-        borderColor: 'rgba(0,159,0,1)',
-        pointHoverBackgroundColor: '#FFFFFF',
-        pointBorderColor: 'transparent',
-        pointBorderWidth: 3,
-        pointHoverRadius: 6,
-        pointHoverBorderColor: '#134482'
-      }
-    ];
-    this.lineChartOptions = {
-      scales: {
-        yAxes: [{
-          ticks: this.lineChartTicks,
-          gridLines: {
-            display: true,
-            borderDash: [10, 10],
-            drawBorder: true
-          },
-          scaleLabel: {
-            display: true,
-            fontColor: '#134482',
-            fontSize: 14,
-            labelString: 'Number of active passes',
-            padding: 20
-          }
-        }],
-        xAxes: [{
-          ticks: {
-            fontColor: this.darkTheme.getColor({white: '#999999', dark: '#FFFFFF'})
-          },
-          gridLines: {
-            display: false,
-          },
-          scaleLabel: {
-            display: true,
-            fontColor: '#134482',
-            fontSize: 14,
-            labelString: 'Time',
-            padding: 10,
-          },
-        }]
-      },
-      tooltips: {
-        mode: 'index',
-        intersect: false,
-        position: 'nearest',
-        x: 10,
-        y: 10,
-        displayColors: false,
-        backgroundColor: '#FFFFFF',
-        borderColor: 'rgba(0, 0, 0, .1)',
-        borderWidth: 1,
-        bodyFontColor: '#134482',
-        bodyFontSize: 22,
-        footerFontSize: 14,
-        footerFontColor: '#134482',
-        footerFontStyle: 'normal',
-        xPadding: 22,
-        yPadding: 14,
-        callbacks: {
-          labelColor: (tooltipItem, chart) => {
-            return {
-              borderColor: 'rgb(100, 0, 0)',
-              backgroundColor: 'rgba(100, 0, 0, .4)'
-            };
-          },
-          label: (tooltipItems, data) => {
+    if (false) {
+      this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
+      this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
+      this.gradient.addColorStop(1, 'rgba(0,180, 118, 0.8)');
+      this.lineChartColors = [
+        {
+          backgroundColor: this.gradient,
+          pointBackgroundColor: 'transparent',
+          borderColor: 'rgba(0,159,0,1)',
+          pointHoverBackgroundColor: '#FFFFFF',
+          pointBorderColor: 'transparent',
+          pointBorderWidth: 3,
+          pointHoverRadius: 6,
+          pointHoverBorderColor: '#134482'
+        }
+      ];
+      this.lineChartOptions = {
+        scales: {
+          yAxes: [{
+            ticks: this.lineChartTicks,
+            gridLines: {
+              display: true,
+              borderDash: [10, 10],
+              drawBorder: true
+            },
+            scaleLabel: {
+              display: true,
+              fontColor: '#134482',
+              fontSize: 14,
+              labelString: 'Number of active passes',
+              padding: 20
+            }
+          }],
+          xAxes: [{
+            ticks: {
+              fontColor: this.darkTheme.getColor({white: '#999999', dark: '#FFFFFF'})
+            },
+            gridLines: {
+              display: false,
+            },
+            scaleLabel: {
+              display: true,
+              fontColor: '#134482',
+              fontSize: 14,
+              labelString: 'Time',
+              padding: 10,
+            },
+          }]
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false,
+          position: 'nearest',
+          x: 10,
+          y: 10,
+          displayColors: false,
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(0, 0, 0, .1)',
+          borderWidth: 1,
+          bodyFontColor: '#134482',
+          bodyFontSize: 22,
+          footerFontSize: 14,
+          footerFontColor: '#134482',
+          footerFontStyle: 'normal',
+          xPadding: 22,
+          yPadding: 14,
+          callbacks: {
+            labelColor: (tooltipItem, chart) => {
+              return {
+                borderColor: 'rgb(100, 0, 0)',
+                backgroundColor: 'rgba(100, 0, 0, .4)'
+              };
+            },
+            label: (tooltipItems, data) => {
 
-            let _label = new String(tooltipItems.yLabel);
-            _label = _label.padStart(7, ' ');
-            return _label;
-          },
-          footer: (tooltipItems, data) => {
-            return 'active passes';
+              let _label = new String(tooltipItems.yLabel);
+              _label = _label.padStart(7, ' ');
+              return _label;
+            },
+            footer: (tooltipItems, data) => {
+              return 'active passes';
+            }
           }
         }
-      }
-    };
+      };
+    }
   }
 
   private drawChartXaxis() {

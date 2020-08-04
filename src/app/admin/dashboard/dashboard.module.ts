@@ -4,10 +4,14 @@ import { CommonModule } from '@angular/common';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import {AdminSharedModule} from '../shared/admin-shared.module';
+import { StartPageComponent } from './start-page/start-page.component';
+import { StartCardComponent } from './start-page/start-card/start-card.component';
 
 @NgModule({
   declarations: [
-    DashboardComponent
+    DashboardComponent,
+    StartPageComponent,
+    StartCardComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,33 @@
+@import "../../../../sp-colors";
+
+
+.wrapper {
+  width: 100%;
+  .content {
+    padding: 90px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    .poster {
+      color: $navy;
+      font-size: 55px;
+      text-align: center;
+    }
+    .description {
+      padding: 0 200px;
+      margin-top: 23px;
+      font-size: 17px;
+      color: $blue-gray;
+      text-align: center;
+      line-height: 22px;
+    }
+
+    .cards {
+      display: flex;
+      margin-top: 66px;
+      width: 100%;
+      justify-content: space-around;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+@import "../../../../../sp-colors";
+
+.wrapper {
+  box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.0616259);
+  border-radius: 12px;
+  background: #FFFFFF;
+  width: 220px;
+  padding: 30px;
+  position: relative;
+  .content {
+    .close {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+    }
+
+    .title {
+      color: $navy;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: $blue-gray;
+      font-size: 17px;
+      margin-top: 9px;
+    }
+    .button {
+      margin-top: 33px;
+    }
+  }
+}

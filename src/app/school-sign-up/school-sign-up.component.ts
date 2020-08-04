@@ -266,7 +266,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             this.pending.next(false);
             if (res) {
               this._zone.run(() => {
-                this.router.navigate(['admin', 'gettingstarted']);
+                this.router.navigate(['admin', 'dashboard']);
               });
             }
           });

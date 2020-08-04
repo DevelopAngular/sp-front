@@ -1,6 +1,8 @@
-
- <div class="host" appSafariScroll #scrollableArea>
-   <div class="dashboard-wrapper">
+<div class="host" appSafariScroll #scrollableArea>
+  <div class="start-page-wrapper" *ngIf="true">
+    <app-start-page></app-start-page>
+  </div>
+   <div class="dashboard-wrapper" *ngIf="false">
      <div class="left">
        <div class="">
          <div class="card card__role ds-flex-end-between ds-mr-10">
@@ -13,7 +15,7 @@
                       [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})"
                  >{{ numActivePasses >= 0 ? numActivePasses : ''}}</div>
                  <div *ngIf="numActivePasses === -1" class="loading-theme spinner ds-flex-center-center">
-                   <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
+                   <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
                  </div>
                </div>
              </div>
@@ -137,6 +139,5 @@
          </div>
        </div>
      </div>
-
    </div>
- </div>
+</div>

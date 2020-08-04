@@ -44,19 +44,39 @@
     .buttons-block {
       display: flex;
       width: 930px;
-      margin-top: 95px;
       justify-content: space-around;
       align-items: center;
       .started-pack {
-        width: 461px;
-        height: 269px;
+        position: relative;
+        width: 519px;
+        height: 283px;
         border-radius: 16px;
-        background-color: #F4F4F4;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 0 29px;
+
+        .close {
+          position: absolute;
+          right: 8px;
+          top: 8px;
+          cursor: pointer;
+          width: 16px;
+          height: 16px;
+          z-index: 10;
+        }
+
+        .content {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          top: 0;
+          right: 0;
+          z-index: 9;
+          border-radius: 16px;
+          background-color: #F4F4F4;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 0 29px;
+        }
 
         .collection {
           display: flex;
@@ -105,7 +125,7 @@
 
       .title {
         font-size: 17px;
-        color: $blue-gray;
+        display: flex;
         //margin-left: 7.5px;
         font-weight: bold;
       }

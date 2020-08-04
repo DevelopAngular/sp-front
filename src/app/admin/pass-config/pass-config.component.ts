@@ -147,29 +147,30 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         map(([onboard, pinnables]) => {
           this.pinnables = pinnables;
-          if (onboard && (onboard as any[]).length && !pinnables.length) {
-            const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
-            this.showRooms = !!end.done;
-          } else {
-              const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
-              const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
-              if (!start.done) {
-                  return 'setup_rooms:start';
-              }
-              if (!end.done) {
-                  return 'setup_rooms:end';
-              }
-            this.showRooms = true;
-          }
+          // if (onboard && (onboard as any[]).length && !pinnables.length) {
+          //   const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
+          //   this.showRooms = !!end.done;
+          // } else {
+          //     const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
+          //     const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
+          //     if (!start.done) {
+          //         return 'setup_rooms:start';
+          //     }
+          //     if (!end.done) {
+          //         return 'setup_rooms:end';
+          //     }
+          //   this.showRooms = true;
+          // }
         }),
-      switchMap((action) => {
-        this.onboardLoaded = true;
-        if (action) {
-          return this.gsProgress.updateProgress(action);
-        } else {
-          return of(null);
-        }
-      })).subscribe();
+      // switchMap((action) => {
+      //   this.onboardLoaded = true;
+      //   if (action) {
+      //     return this.gsProgress.updateProgress(action);
+      //   } else {
+      //     return of(null);
+      //   }
+      // })
+      ).subscribe();
 
     this.activatedRoute.queryParams.pipe(
       filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
