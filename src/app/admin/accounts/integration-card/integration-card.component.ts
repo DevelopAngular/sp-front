@@ -12,6 +12,7 @@ export class IntegrationCardComponent implements OnInit {
   @Input() subtitle: string;
   @Input() learnMoreLink: string;
   @Input() status: 'disconnect' | 'approved' | 'done' = 'disconnect';
+  @Input() isIntegration: boolean = true;
 
   @Output() setUp: EventEmitter<any> = new EventEmitter<any>();
 

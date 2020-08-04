@@ -102,6 +102,23 @@
 
     <div class="accounts-content" *ngIf="!openTable">
       <div class="content-wrapper">
+        <div class="groups" style="margin-top: 0; margin-bottom: 48px">
+          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Quick Add</div>
+          <div class="groups-buttons">
+            <app-integration-card
+              [title]="'Demo Accounts'"
+              [subtitle]="'Get started quickly with fake accounts to pilot how SmartPass works.'"
+              [isIntegration]="false"
+            >
+            </app-integration-card>
+            <app-integration-card
+              [title]="'Bulk upload accounts'"
+              [subtitle]="'Add accounts quickly from a CSV and set-up integration later.'"
+              [isIntegration]="false"
+            >
+            </app-integration-card>
+          </div>
+        </div>
         <div class="groups" style="margin-top: 0">
           <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Integrations</div>
           <div class="groups-buttons">
