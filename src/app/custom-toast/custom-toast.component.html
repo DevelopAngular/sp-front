@@ -1,0 +1,22 @@
+<div class="toast-container" [ngStyle]="{'opacity': toggleToast ? '1' : '0'}">
+  <div class="content" [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}">
+    <div class="text">
+      <div class="text_header">{{ (data$ | async).title }}</div>
+      <div class="text_message">
+        {{ (data$ | async).subtitle }}
+      </div>
+    </div>
+    <div class="button">
+      <app-gradient-button
+        [gradient]="'#F4F4F4, #F4F4F4'"
+        [leftIcon]="'./assets/Download (Navy).svg'"
+        [textColor]="'#1F195E'"
+        (buttonClick)="download()"
+      >Download</app-gradient-button>
+    </div>
+
+    <div class="close-btn" (click)="close($event)">
+      <img [src]="'./assets/Close.svg' | resolveAsset" alt="Cancel (Blue-Gray).svg">
+    </div>
+  </div>
+</div>

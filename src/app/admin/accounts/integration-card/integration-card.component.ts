@@ -14,6 +14,7 @@ export class IntegrationCardComponent implements OnInit {
   @Input() status: 'disconnect' | 'approved' | 'done' = 'disconnect';
 
   @Output() setUp: EventEmitter<any> = new EventEmitter<any>();
+  @Output() clickButton: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }
 

@@ -30,6 +30,7 @@ import { User } from './models/User';
 import { UserService } from './services/user.service';
 import { NextReleaseService } from './next-release/services/next-release.service';
 import { ScreenService } from './services/screen.service';
+import {ToastService} from './services/toast.service';
 
 declare const window;
 
@@ -72,6 +73,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public isKioskMode: boolean;
   public showSupportButton: boolean;
   private openConnectionDialog: boolean;
+  public customToastOpen$: Observable<boolean>;
 
   private subscriber$ = new Subject();
 
@@ -96,11 +98,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private googleAnalytics: GoogleAnalyticsService,
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
+    private toastService: ToastService
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
+    this.customToastOpen$ = this.toastService.isOpen$;
     this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
       if (event instanceof NavigationEnd) {
         window.history.pushState({}, '');

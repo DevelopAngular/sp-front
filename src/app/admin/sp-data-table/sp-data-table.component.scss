@@ -197,7 +197,7 @@
   text-overflow: ellipsis;
 }
 
-::ng-deep .mat-column-Pass {
+::ng-deep .mat-column-Pass, .mat-column-Passes {
   word-wrap: break-word !important;
   white-space: unset !important;
   flex: 0 0 40px !important;

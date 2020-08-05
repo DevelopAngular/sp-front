@@ -14,6 +14,7 @@ import { onboardProcessReducer } from '../onboard-process/reducers/process.reduc
 import { passLimitsReducer } from '../pass-limits/reducers';
 import { passesReducer } from '../passes/reducers/passes.reducer';
 import { contactTraceReducer } from '../contact-trace/reducers';
+import { toastReducer } from '../toast/reducers';
 
 
 export interface AppState {
@@ -33,6 +34,7 @@ export interface AppState {
   readonly pass_limits;
   readonly passes;
   readonly contactTrace;
+  readonly toast;
 }
 
 export const reducers = {
@@ -51,5 +53,6 @@ export const reducers = {
   onboardProcess: onboardProcessReducer,
   pass_limits: passLimitsReducer,
   passes: passesReducer,
-  contactTrace: contactTraceReducer
+  contactTrace: contactTraceReducer,
+  toast: toastReducer
 };

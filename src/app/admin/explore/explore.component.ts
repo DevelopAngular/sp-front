@@ -237,7 +237,7 @@ export class ExploreComponent implements OnInit {
                 'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min',
                 // 'Pass': this.domSanitizer
                 //   .bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(contact.contact_passes[0].contact_pass.gradient_color)}"></div>`)
-                'Pass': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
+                'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
                   contact.contact_passes
                     .map(({contact_pass, student_pass}, index) => {
                     return `<div style="display: flex; ${(index > 0 ? 'margin-left: 5px' : '')}"><div class="pass-icon" style="background: ${this.getGradient(contact_pass.gradient_color)}"></div><div class="pass-icon" style="background: ${this.getGradient(student_pass.gradient_color)}; margin-left: 5px"></div></div>`;

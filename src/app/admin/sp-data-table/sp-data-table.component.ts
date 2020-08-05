@@ -18,11 +18,13 @@ import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
-import {cloneDeep} from 'lodash';
+import {cloneDeep, omit} from 'lodash';
 import {debounceTime, delay, filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {GeneratedTableDialogComponent} from './generated-table-dialog/generated-table-dialog.component';
+import {ToastService} from '../../services/toast.service';
+import {XlsxGeneratorService} from '../xlsx-generator.service';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
@@ -162,7 +164,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private dialog: MatDialog,
     private tableService: TableService,
-    private hallpassService: HallPassesService
+    private hallpassService: HallPassesService,
+    private toastService: ToastService,
+    public xlsx: XlsxGeneratorService
   ) {}
 
   get viewportDataItems(): number {
@@ -206,6 +210,12 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
           this.selection.clear();
         }
         this.tableInitialColumns = cloneDeep(this.columnsToDisplay);
+      });
+
+    this.toastService.toastButtonClick$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.generateCSV();
       });
 
     this.dataSource.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe((sort: Sort) => {
@@ -303,7 +313,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   cellClick(element, column?) {
     if (column === 'Pass') {
-      debugger;
       this.disableRowClick = true;
       this.hallpassService.passesEntities$
         .pipe(
@@ -347,23 +356,34 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv' && this.selection.selected.length) {
-      UNANIMATED_CONTAINER.next(true);
-      const csv = this.dialog.open(GeneratedTableDialogComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        disableClose: true,
-        data: {
-          'trigger': event.currentTarget,
-          'header': 'CSV Generated',
-          'subtitle': 'Download it to your computer now.',
-          'selected': this.selection.selected
-        }
-      });
-
-      csv.afterClosed().subscribe(res => {
-        UNANIMATED_CONTAINER.next(false);
-        this.cdr.detectChanges();
-      });
+      this.toastService.openToast(
+        {title: 'CSV Generated', subtitle: 'Download it to your computer now.'}
+        );
+      // debugger;
+      // UNANIMATED_CONTAINER.next(true);
+      // const csv = this.dialog.open(GeneratedTableDialogComponent, {
+      //   panelClass: 'consent-dialog-container',
+      //   backdropClass: 'invis-backdrop',
+      //   disableClose: true,
+      //   data: {
+      //     'trigger': event.currentTarget,
+      //     'header': 'CSV Generated',
+      //     'subtitle': 'Download it to your computer now.',
+      //     'selected': this.selection.selected
+      //   }
+      // });
+      //
+      // csv.afterClosed().subscribe(res => {
+      //   UNANIMATED_CONTAINER.next(false);
+      //   this.cdr.detectChanges();
+      // });
     }
+  }
+
+  generateCSV() {
+    const exceptPass = this.selection.selected.map(row => {
+      return omit(row, ['Pass']);
+    });
+    this.xlsx.generate(exceptPass);
   }
 }

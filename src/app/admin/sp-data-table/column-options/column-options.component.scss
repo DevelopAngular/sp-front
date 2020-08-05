@@ -5,35 +5,35 @@
   width: 200px;
   padding: 25px;
   border-radius: 9px;
+}
 
-  .columns {
-    background-color: #FFFFFF;
-    display: flex;
-    flex-direction: column;
-    .column {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 40px;
-      cursor: move;
+.columns {
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
 
-      .left {
-        display: flex;
-        align-items: center;
+.column {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+  cursor: move;
+}
 
-        .label {
-          font-size: 14px;
-          color: $blue-gray;
-          margin-left: 9px;
-        }
-      }
-    }
-  }
+.left {
+  display: flex;
+  align-items: center;
+}
+.label {
+  font-size: 14px;
+  color: $blue-gray;
+  margin-left: 9px;
+}
 
-  .buttons {
-    display: flex;
-    margin-top: 11px;
-  }
+.buttons {
+  display: flex;
+  margin-top: 11px;
 }
 
 //.example-list {
