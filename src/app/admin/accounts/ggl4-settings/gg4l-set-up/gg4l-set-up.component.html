@@ -1,9 +1,9 @@
 <div class="wrapper">
   <div class="header">
     <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-    <img class="back-button" *ngIf="schoolSyncInfo.login_provider" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
+    <img class="back-button" *ngIf="schoolSyncInfo.login_provider" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="close()">
     <div class="back-button" *ngIf="!schoolSyncInfo.login_provider && this.selectedProvider" (click)="close()">Cancel</div>
-    <img width="21" height="21" [src]="'./assets/GG4L (White).svg' | resolveAsset" alt="Options">
+    <img width="21" height="21" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction" [src]="'./assets/GG4L (White).svg' | resolveAsset" alt="Options">
     <div class="ds-dialog-title-white"
          [style.margin-left]="'12px'"
          [style.z-index]="10"

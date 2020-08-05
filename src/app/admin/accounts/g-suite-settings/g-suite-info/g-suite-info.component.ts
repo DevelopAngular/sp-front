@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {MatDialogRef} from '@angular/material';
+import {GSuiteSettingsComponent} from '../g-suite-settings.component';
 
 @Component({
   selector: 'app-g-suite-info',
@@ -7,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GSuiteInfoComponent implements OnInit {
 
-  constructor() { }
+  constructor(public dialogRef: MatDialogRef<GSuiteSettingsComponent>) { }
 
   ngOnInit() {
   }

@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="header">
     <div class="background-header"></div>
-    <img class="back-button" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <img class="back-button" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close()" [src]="'./assets/Back Button (White).svg' | resolveAsset">
     <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
       <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Settings</div>
