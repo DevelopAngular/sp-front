@@ -1,6 +1,8 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
+import {MatDialogRef} from '@angular/material';
+import {Ggl4SettingsComponent} from '../ggl4-settings.component';
 
 @Component({
   selector: 'app-info-dialog',
@@ -21,7 +23,10 @@ export class InfoDialogComponent implements OnInit {
     './assets/integrations/100s more.png'
   ];
 
-  constructor(private formService: CreateFormService) { }
+  constructor(
+    public dialogRef: MatDialogRef<Ggl4SettingsComponent>,
+    private formService: CreateFormService
+  ) { }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
