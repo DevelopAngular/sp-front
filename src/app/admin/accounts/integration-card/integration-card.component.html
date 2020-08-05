@@ -23,7 +23,7 @@
       </app-gradient-button>
     </div>
     <div class="buttons" *ngIf="!isIntegration">
-      <app-gradient-button>Add</app-gradient-button>
+      <app-gradient-button (buttonClick)="clickButton.emit()">Add</app-gradient-button>
     </div>
   </div>
 </div>

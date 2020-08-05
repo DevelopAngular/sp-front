@@ -27,13 +27,13 @@ import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
 import {SyncProviderComponent} from './sync-provider/sync-provider.component';
 import {GG4LSync} from '../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
-declare const window;
-import * as moment from 'moment';
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {IntegrationsDialogComponent} from './integrations-dialog/integrations-dialog.component';
-import {act} from '@ngrx/effects';
 import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
+import {ToastService} from '../../services/toast.service';
+
+declare const window;
 
 @Component({
   selector: 'app-accounts',
@@ -89,7 +89,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService,
     private domSanitizer: DomSanitizer,
-    private locationService: LocationsService
+    private locationService: LocationsService,
+    private toastService: ToastService
   ) {}
 
   formatDate(date) {
@@ -157,6 +158,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
       //       }
       //       return gg4l;
       //     }));
+    });
+
+    this.toastService.toastButtonClick$.subscribe(res => {
+      // debugger;
     });
 
     this.userService.userData.pipe(
@@ -435,9 +440,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
-    console.log(this.selectedUsers);
-    debugger;
-
       if (!eventTarget.classList.contains('button')) {
         (eventTarget as any) = eventTarget.closest('.button');
       }
@@ -671,5 +673,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
       data: data
     });
 
+  }
+
+  openBulkUpload() {
+    this.toastService.openToast(
+      {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.'});
   }
 }

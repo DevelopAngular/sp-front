@@ -15,6 +15,7 @@ export class IntegrationCardComponent implements OnInit {
   @Input() isIntegration: boolean = true;
 
   @Output() setUp: EventEmitter<any> = new EventEmitter<any>();
+  @Output() clickButton: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }
 

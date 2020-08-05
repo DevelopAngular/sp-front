@@ -1,6 +1,6 @@
-<div class="host" #scrollableArea *ngIf="false">
-  <app-rooms-set-up (setUpResult)="onboard($event)"></app-rooms-set-up>
-</div>
+<!--<div class="host" #scrollableArea *ngIf="false">-->
+<!--  <app-rooms-set-up (setUpResult)="onboard($event)"></app-rooms-set-up>-->
+<!--</div>-->
 
   <div class="host" appSafariScroll>
     <div class="pass-config-wrapper" #scrollableArea>
@@ -16,14 +16,15 @@
 
             <div class="header-settings">
               <app-gradient-button
-                [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
+                (click)="openSettings()"
+                [cursor]="'pointer'"
+                [gradient]="'#F4F4F4, #F4F4F4'"
+                [hoverColor]="'#F5F5F5'"
+                [textColor]="'#1F195E'"
                 [size]="'medium'"
-                [hoverColor]="'#00B476'"
-                [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
-                (buttonClick)="buttonClicked($event)"
-                [leftIcon]="headerButtonIcon"
-                [disabled]="bulkSelect && !selectedPinnables.length">
-                {{headerButtonText}}
+                [leftIcon]="'./assets/Options (Navy).svg'"
+              >
+                Options
               </app-gradient-button>
               <app-gradient-button
                 (click)="toggleBulk()"
@@ -37,15 +38,14 @@
                 {{ (bulkSelect ? 'Done' : 'Edit') }}
               </app-gradient-button>
               <app-gradient-button
-                (click)="openSettings()"
-                [cursor]="'pointer'"
-                [gradient]="'#F4F4F4, #F4F4F4'"
-                [hoverColor]="'#F5F5F5'"
-                [textColor]="'#1F195E'"
+                [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
                 [size]="'medium'"
-                [leftIcon]="'./assets/Options (Navy).svg'"
-              >
-                Options
+                [hoverColor]="'#00B476'"
+                [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
+                (buttonClick)="buttonClicked($event)"
+                [leftIcon]="headerButtonIcon"
+                [disabled]="bulkSelect && !selectedPinnables.length">
+                {{headerButtonText}}
               </app-gradient-button>
             </div>
 

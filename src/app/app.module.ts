@@ -68,6 +68,7 @@ import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
 import {PassLimitEffects} from './ngrx/pass-limits/effects';
+import { CustomToastComponent } from './custom-toast/custom-toast.component';
 
 
 const appRoutes: Routes = [
@@ -130,7 +131,8 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     ScrollHolderDirective,
-    SupportButtonComponent
+    SupportButtonComponent,
+    CustomToastComponent
   ],
   imports: [
     BrowserModule,
