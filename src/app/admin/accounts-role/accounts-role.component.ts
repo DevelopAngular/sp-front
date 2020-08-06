@@ -129,6 +129,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   querySubscriber$ = new Subject();
 
+  schoolSyncInfoData;
+
   isLoading$: Observable<boolean>;
   isLoaded$: Observable<boolean>;
 
@@ -175,26 +177,34 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.tableRenderer(userList);
       });
 
-    interval(1758)
+    this.adminService.getSpSyncingRequest()
       .pipe(
-        filter(() => this.role === 'g_suite'),
-        switchMap((res) => {
-          return this.adminService.getGSuiteOrgs();
-        }),
         takeUntil(this.destroy$)
-      )
-      .subscribe((res: any) => {
-        if (res.is_syncing) {
-          this.syncing.start();
-        } else if (!res.is_syncing) {
-          this.syncing.end();
-        }
-        for (const key in res) {
-          if (this.GSuiteOrgs[key] !== res[key]) {
-            this.GSuiteOrgs[key] = res[key];
-          }
-        }
-      });
+      ).subscribe(res => {
+      this.schoolSyncInfoData = res;
+    });
+
+    // interval(1758)
+    //   .pipe(
+    //     filter(() => this.role === 'g_suite'),
+    //     switchMap((res) => {
+    //       return this.adminService.getGSuiteOrgs();
+    //     }),
+    //     takeUntil(this.destroy$)
+    //   )
+    //   .subscribe((res: any) => {
+    //     if (res.is_syncing) {
+    //       this.syncing.start();
+    //     } else if (!res.is_syncing) {
+    //       this.syncing.end();
+    //     }
+    //     for (const key in res) {
+    //       if (this.GSuiteOrgs[key] !== res[key]) {
+    //         this.GSuiteOrgs[key] = res[key];
+    //       }
+    //     }
+    //   });
+
 
     this.http.globalReload$.pipe(
       tap(() => {
@@ -582,7 +592,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         data: {
           role: this.role,
           selectedUsers: this.selectedUsers,
-          permissions: this.profilePermissions
+          permissions: this.profilePermissions,
+          syncInfo: this.schoolSyncInfoData
         }
       });
     DR.afterClosed().pipe(
