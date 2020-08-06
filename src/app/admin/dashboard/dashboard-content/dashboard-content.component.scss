@@ -1,0 +1,116 @@
+:host {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.host {
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+  padding: 25px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  background-color: #FBFEFF;
+  //background-color: #a8a8a8;
+  .dashboard-wrapper{
+    display: flex;
+    -ms-flex: 1 1 auto;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+  }
+
+  .start-page-wrapper {
+    min-width: 1100px;
+  }
+
+}
+
+
+
+.card{
+  box-sizing: border-box;
+  padding: 28px 38px 37px 31px ;
+  border-radius: 12px;
+  font-size: 17px;
+  color: #1F195E;
+  //box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+  background-color: #FFFFFF;
+  &_header{
+    font-size: 24px;
+    color: #3D396B;
+    font-weight: bold;
+  }
+  &_title{
+    font-size: 14px;
+    color: #7F879D;
+  }
+  &__role{
+    position: relative;
+    width: 465px;
+    margin: 15px;
+    .label-icon{
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      color: #7F879D;
+    }
+  }
+}
+
+.calendar-icon-container {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  .calendar-icon {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
+}
+.active-calendar-icon {
+  background-color: rgb(228, 235, 255);
+  animation: active-calenar .2s ease forwards;
+}
+
+@keyframes active-calenar {
+  0%{
+    box-shadow: 0 0 0 0px rgb(228, 235, 255);
+  }
+  100%{
+    box-shadow: 0 0 0 10px rgb(228, 235, 255);
+  }
+}
+.active-calendar-icon__dark {
+  background-color: #354DFF;
+  animation: active-calenar__dark .2s ease forwards;
+}
+
+@keyframes active-calenar__dark {
+  0%{
+    box-shadow: 0 0 0 0px #354DFF;
+  }
+  100%{
+    box-shadow: 0 0 0 10px #354DFF;
+  }
+}
+
+.chart-container{
+  position: relative;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.chart-spinner{
+  //background-color: rgba(255,255,255,.9);
+  position: absolute;
+  width: 460px;
+  height: 358px;
+  top: 0;
+  left: 0;
+}

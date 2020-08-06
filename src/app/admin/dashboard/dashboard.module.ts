@@ -6,12 +6,14 @@ import { DashboardComponent } from './dashboard.component';
 import {AdminSharedModule} from '../shared/admin-shared.module';
 import { StartPageComponent } from './start-page/start-page.component';
 import { StartCardComponent } from './start-page/start-card/start-card.component';
+import { DashboardContentComponent } from './dashboard-content/dashboard-content.component';
 
 @NgModule({
   declarations: [
     DashboardComponent,
     StartPageComponent,
-    StartCardComponent
+    StartCardComponent,
+    DashboardContentComponent
   ],
   imports: [
     CommonModule,
