@@ -6,7 +6,7 @@
   </div>
   <div class="empty-state" *ngIf="showEmptyState">
     <div class="empty-content">
-      <img width="135" [src]="emptyIcon | resolveAsset" alt="Empty">
+      <img width="135" style="opacity: 0.2" [src]="emptyIcon | resolveAsset" alt="Empty">
       <div class="empty-description">
         <span *ngIf="emptyText">{{ emptyText }}</span>
       </div>

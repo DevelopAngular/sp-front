@@ -210,7 +210,7 @@ export class ExploreComponent implements OnInit {
                 'Contact connection': null,
                 'Contact date': null,
                 'Duration': null,
-                'Pass': null
+                'Passes': null
               }];
             }
             this.contactTraceState.isEmpty = false;
