@@ -124,7 +124,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
         this.showDisabledBanner$.next(!this.http.getSchool().launch_date);
       }),
       switchMap(() => this.adminService.getCountAccountsRequest()),
-      switchMap(() => this.gsProgress.onboardProgress$),
       switchMap((op) => {
         return zip(
           this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
@@ -143,21 +142,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
       })
     )
     .subscribe((op: any) => {
-      // debugger;
-      // return zip(
-      //   this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
-      //   this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
-      //   .pipe(
-      //     map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
-      //       this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-      //       // this.splash = false;
-      //       this.gg4lSettingsData = gg4l;
-      //       this.schoolSyncInfoData = sync;
-      //       if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
-      //         this.openSyncProvider();
-      //       }
-      //       return gg4l;
-      //     }));
     });
 
     this.toastService.toastButtonClick$.subscribe(res => {

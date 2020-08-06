@@ -73,23 +73,23 @@ export class NavComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.globalReload$
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap(() => {
-          return this.gsProgress.onboardProgress$;
-        }),
-      ).subscribe(res => {
-        this.process = res.progress;
-        setTimeout(() => {
-          this.hidePointer = this.router.url === '/admin/gettingstarted' && this.process === 100;
-        }, 100);
-      if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
-          this.buttons.splice(0, 1);
-        } else if (res.progress < 100 && !this.buttons.find(button => button.title === 'Get Started')) {
-          this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
-        }
-      });
+    // this.http.globalReload$
+    //   .pipe(
+    //     takeUntil(this.destroy$),
+    //     switchMap(() => {
+    //       return this.gsProgress.onboardProgress$;
+    //     }),
+    //   ).subscribe(res => {
+    //     this.process = res.progress;
+    //     setTimeout(() => {
+    //       this.hidePointer = this.router.url === '/admin/gettingstarted' && this.process === 100;
+    //     }, 100);
+    //   if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
+    //       this.buttons.splice(0, 1);
+    //     } else if (res.progress < 100 && !this.buttons.find(button => button.title === 'Get Started')) {
+    //       this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
+    //     }
+    //   });
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );

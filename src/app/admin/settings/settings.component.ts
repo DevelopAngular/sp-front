@@ -55,11 +55,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.gsProgress.onboardProgress$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(res => {
-        this.showGetStarted = res.progress === 100;
-      });
+    // this.gsProgress.onboardProgress$
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(res => {
+    //     this.showGetStarted = res.progress === 100;
+    //   });
     this.triggerElementRef = this.data['trigger'];
     this.isSwitchOption = this.data['isSwitch'];
     this.updateSettingsPosition();
