@@ -1,0 +1,26 @@
+<div class="wrapper">
+    <div class="header">
+      <img [src]="icon | resolveAsset" width="37" alt="Integration-icon">
+      <div class="title">{{ title }}</div>
+    </div>
+  <div class="content">
+    <div class="subtitle">{{ subtitle }}</div>
+    <div class="buttons">
+      <app-gradient-button
+        [style.margin-right]="'10px'"
+        [gradient]="(status === 'disconnect' ? '#7F879D, #7F879D' : (title === 'G Suite' ? '#1976D2, #1976D2' : '#5352E4, #5352E4'))"
+        (buttonClick)="setUp.emit(status)"
+      >{{ status === 'disconnect' ? 'Set up' : (status === 'approved' ? 'Finish set-up' : 'Settings')  }}
+      </app-gradient-button>
+
+      <app-gradient-button
+        *ngIf="status === 'disconnect' || status === 'done'"
+        [gradient]="'#F4F4F4'"
+        [linkType]="'_blank'"
+        [textColor]="'#7f879d'"
+        [buttonLink]="learnMoreLink"
+        [text]="'Learn more'">
+      </app-gradient-button>
+    </div>
+  </div>
+</div>

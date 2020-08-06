@@ -1,0 +1,47 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="title">
+      <img [src]="'./assets/GG4L Icon (White).svg' | resolveAsset" alt="GG4L"/>
+      <div style="margin-left: 12px">Settings</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="top-content">
+      <div class="subtitle">Sync Information</div>
+      <div class="info">Last sync: Dec. 4, 5:34 PM (Successful)</div>
+      <div class="info">Next sync: Dec. 4, 8:34 PM</div>
+      <div class="info">
+        <div style="margin-bottom: 5px">Accounts:</div>
+        <div>{{ gg4lInfo.num_admins }} Admins</div>
+        <div>{{ gg4lInfo.num_teachers }} Teachers</div>
+        <div>{{ gg4lInfo.num_students }} Students</div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="bottom-content">
+      <div class="sign-in">
+        <div class="subtitle">Sign-in provider</div>
+        <div
+          class="picker"
+          [matTooltip]="'Contact us to change your sign-in provider.'"
+          matTooltipClass="tooltip"
+        >
+          <app-restriction-picker
+            [choices]="['Sign in with Google', 'GG4L \n Passport']"
+            [selectedChoice]="selectedProvider"
+            [backgroundColor]="'#7f879d'"
+            [disabled]="true"
+            [padding]="15"
+            [width]="228"
+            [height]="48"
+          ></app-restriction-picker>
+        </div>
+      </div>
+      <div class="info" style="margin-top: 17px">
+        The method of authentication accounts will use when signing into SmartPass.
+      </div>
+    </div>
+  </div>
+</div>

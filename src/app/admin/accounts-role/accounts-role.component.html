@@ -353,7 +353,13 @@
             </div>
           </div>
 
-          <app-privacy-card></app-privacy-card>
+          <app-privacy-card
+            [title]="'Note on Privacy'"
+            [infoText]="'We take student privacy very seriously, continuously working with schools to make sure student data is kept safe and secure.'"
+            [leftIcon]="'./assets/Shield (Blue-Gray).svg'"
+            [buttonColor]="'#FFFFFF, #7F879D'"
+            [buttonLink]="'https://www.smartpass.app/privacy'"
+          ></app-privacy-card>
 
         </div>
 

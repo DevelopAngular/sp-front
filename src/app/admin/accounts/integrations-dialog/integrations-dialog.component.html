@@ -1,0 +1,28 @@
+<div class="wrapper">
+  <div class="header">
+    <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <img width="21" height="21" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" alt="Options">
+    <div class="ds-dialog-title" [style.margin-left]="'12px'">Integrations</div>
+  </div>
+  <div class="content" *ngIf="schoolSyncInfo$ | async as schoolSyncInfo">
+    <app-integration-card
+      [icon]="'./assets/GG4L (Blue).svg'"
+      [title]="'GG4L'"
+      [status]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'approved' : 'done') : 'disconnect'"
+      [subtitle]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate((gg4lSyncInfo$ | async).last_successful_sync)) : 'Sync accounts automatically from any SIS through GG4L.'"
+      [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+      (setUp)="openSettings($event,'gg4l')"
+    >
+    </app-integration-card>
+    <app-integration-card
+      [style.margin-top]="'16px'"
+      [icon]="'./assets/Google (Color).svg'"
+      [title]="'G Suite'"
+      [status]="schoolSyncInfo.is_gsuite_enabled ? 'done' : 'disconnect'"
+      [subtitle]="schoolSyncInfo.is_gsuite_enabled ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : 'Sync accounts from your org units.'"
+      [learnMoreLink]="'https://www.smartpass.app/gsuite'"
+      (setUp)="openSettings($event,'g_suite')"
+    >
+    </app-integration-card>
+  </div>
+</div>

@@ -403,6 +403,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   addUnit(unit) {
     this.selectedOptions.push(unit);
     this.orgunits.next(null);
+    this.inputField = false;
     this.onUpdate.emit(this.selectedOptions);
   }
 

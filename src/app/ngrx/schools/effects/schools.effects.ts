@@ -6,10 +6,13 @@ import { catchError, concatMap, map } from 'rxjs/operators';
 import { School } from '../../../models/School';
 import { of } from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
+import {GG4LSync} from '../../../models/GG4LSync';
+import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {GoogleLoginService} from '../../../services/google-login.service';
 import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {StorageService} from '../../../services/storage.service';
+import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 
 declare const window;
 
@@ -70,6 +73,111 @@ export class SchoolsEffects {
           this.userService.clearUser();
           this.userService.userData.next(null);
           return schoolsActions.errorToastSuccess();
+        })
+      );
+  });
+
+  getSchoolSyncInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.getSchoolSyncInfo),
+        concatMap((action: any) => {
+          return this.adminService.getSpSyncing()
+            .pipe(
+              map((syncInfo: SchoolSyncInfo) => {
+                return schoolsActions.getSchoolSyncInfoSuccess({syncInfo});
+              }),
+              catchError(error => of(schoolsActions.getSchoolSyncInfoFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateSchoolSyncInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateSchoolSyncInfo),
+        concatMap((action) => {
+          return this.adminService.updateSpSyncing(action.data)
+            .pipe(
+              map((syncInfo: any) => {
+                if (action.data.selector_students) {
+                  return schoolsActions.updateGSuiteInfoSelectors({selectors: action.data});
+                }
+                return schoolsActions.updateSchoolSyncInfoSuccess({syncInfo});
+              }),
+              catchError(error => of(schoolsActions.updateSchoolSyncInfoFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  getGG4LInfo$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(schoolsActions.getSchoolsGG4LInfo),
+      concatMap(action => {
+        return this.adminService.getGG4LSyncInfo()
+          .pipe(
+            map((gg4lInfo: GG4LSync) => {
+              return schoolsActions.getSchoolsGG4LInfoSuccess({gg4lInfo});
+            }),
+            catchError(error => of(schoolsActions.getSchoolsGG4LInfoFailure({errorMessage: error.message})))
+          );
+      })
+    );
+  });
+
+  updateGG4LInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateSchoolsGG4LInfo),
+        concatMap((action: any) => {
+          return of('').pipe(
+            map((gg4lInfo: any) => {
+              return schoolsActions.updateSchoolsGG4LInfoSuccess({gg4lInfo});
+            }),
+            catchError(error => of(schoolsActions.updateSchoolsGG4LInfoFailure({errorMessage: error.message})))
+          );
+        })
+      );
+  });
+
+  getGSuiteInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.getGSuiteSyncInfo),
+        concatMap((action) => {
+          return this.adminService.getGSuiteOrgs()
+            .pipe(
+              map((gSuiteInfo: GSuiteOrgs) => {
+                return schoolsActions.getGSuiteSyncInfoSuccess({gSuiteInfo});
+              }),
+              catchError(error => of(schoolsActions.getGSuiteSyncInfoFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateGSuiteInfoSelectors$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateGSuiteInfoSelectors),
+        map((action) =>  {
+          const selectors = {
+            admin: {
+              selector: action.selectors.selector_admins,
+            },
+            student: {
+              selector: action.selectors.selector_students
+            },
+            teacher: {
+              selector: action.selectors.selector_teachers
+            },
+            assistant: {
+              selector: action.selectors.selector_assistants
+            }
+          };
+          return schoolsActions.updateGSuiteInfoSelectorsSuccess({selectors});
         })
       );
   });

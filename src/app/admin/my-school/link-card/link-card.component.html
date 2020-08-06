@@ -1,0 +1,13 @@
+<div class="wrapper">
+  <div class="title">{{ title }}</div>
+  <div class="subtitle">{{ subtitle }}</div>
+  <div class="button">
+    <app-gradient-button
+      [gradient]="buttonColor"
+      [rightIcon]="rightIcon ? rightIcon : null"
+      [leftIcon]="leftIcon ? leftIcon : null"
+      (buttonClick)="buttonClick.emit($event)">
+      {{ buttonText }}
+    </app-gradient-button>
+  </div>
+</div>

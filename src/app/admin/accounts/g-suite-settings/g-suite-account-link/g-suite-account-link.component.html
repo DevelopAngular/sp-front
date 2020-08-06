@@ -1,0 +1,78 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="background-header"></div>
+    <img class="back-button" *ngIf="!showSave" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back.emit()">
+    <div class="back-button" *ngIf="showSave" (click)="back.emit()">Cancel</div>
+    <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
+      <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Account Link</div>
+    </div>
+
+    <div class="save-button" *ngIf="showSave">
+      <app-gradient-button
+        [width]="'85px'"
+        [minHeight]="'30px'"
+        [fontSize]="'14px'"
+        [cursor]="'pointer'"
+        [gradient]="'#FFFFFF, #FFFFFF'"
+        [textColor]="'#1976D2'"
+        (buttonClick)="save()"
+      >
+        <span *ngIf="true">Save</span>
+        <mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
+      </app-gradient-button>
+    </div>
+  </div>
+
+  <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+    <div class="block">
+      <div class="label" [style.color]="users.students.length ? '#1F195E' : '#7f879d'">Students</div>
+      <app-sp-search
+        [chipsMode]="true"
+        [searchTarget]="'orgunits'"
+        [selectedOptions]="users.students"
+        (onUpdate)="users.students = $event"
+        [placeholder]="'Search G Suite org units'"
+      ></app-sp-search>
+    </div>
+    <div class="block">
+      <div class="label" [style.color]="users.teachers.length ? '#1F195E' : '#7f879d'">Teachers</div>
+      <app-sp-search
+        [chipsMode]="true"
+        [selectedOptions]="users.teachers"
+        [searchTarget]="'orgunits'"
+        (onUpdate)="users.teachers = $event"
+        [placeholder]="'Search G Suite org units'"
+      ></app-sp-search>
+    </div>
+    <div class="block">
+      <div class="label" [style.color]="users.admins.length ? '#1F195E' : '#7f879d'">Admins</div>
+      <app-sp-search
+        [chipsMode]="true"
+        [selectedOptions]="users.admins"
+        [searchTarget]="'orgunits'"
+        (onUpdate)="users.admins = $event"
+        [placeholder]="'Search G Suite org units'"
+      ></app-sp-search>
+    </div>
+    <div class="block">
+      <div class="label" [style.color]="users.admins.length ? '#1F195E' : '#7f879d'">Assistants</div>
+      <app-sp-search
+        [chipsMode]="true"
+        [selectedOptions]="users.assistants"
+        [searchTarget]="'orgunits'"
+        (onUpdate)="users.assistants = $event"
+        [placeholder]="'Search G Suite org units'"
+      ></app-sp-search>
+    </div>
+  </div>
+
+  <div class="footer">
+    <mat-divider></mat-divider>
+
+    <div class="footer-content">
+      <div style="color: #7f879d">Need more help?</div>
+      <div style="color: #7f879d">Email <a style="color: #7f879d" href="https://www.smartpass.app/support" target="_blank">support@smartpass.app</a></div>
+    </div>
+  </div>
+</div>

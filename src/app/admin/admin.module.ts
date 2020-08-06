@@ -86,5 +86,4 @@ import { GeneratedTableDialogComponent } from './sp-data-table/generated-table-d
     SpDataTableComponent
   ]
 })
-export class AdminModule {
-}
+export class AdminModule {}

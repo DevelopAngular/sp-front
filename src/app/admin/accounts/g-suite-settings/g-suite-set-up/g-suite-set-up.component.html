@@ -1,0 +1,51 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="background-header"></div>
+    <img class="back-button" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close()" [src]="'./assets/Back Button (White).svg' | resolveAsset">
+    <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
+      <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Settings</div>
+    </div>
+
+  </div>
+
+  <div class="content" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+    <div class="active-top">
+      <div class="left">
+        <div class="sync-title">Last Sync</div>
+        <div class="sync-subtitle">{{ formatDate(gSuiteInfo.last_successful_sync) }}</div>
+        <div style="color: #00B476">Successful</div>
+      </div>
+      <div class="right">
+        <div class="sync-title">Accounts synced</div>
+        <div class="sync-subtitle">{{ gSuiteInfo.num_accounts }} accounts</div>
+      </div>
+    </div>
+    <div class="active-top" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <div class="left">
+        <div class="sync-title">Next Sync</div>
+        <div class="sync-subtitle">{{ formatDate(gSuiteInfo.next_sync) }}</div>
+      </div>
+    </div>
+
+    <mat-divider [style.margin-top]="'34px'"></mat-divider>
+
+    <div class="center" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <div class="prov-title">G Suite Account Link</div>
+      <div class="prov-subtitle">Which G Suite organization units and groups get linked to SmartPass user roles.</div>
+      <div class="button">
+        <app-gradient-button [gradient]="'#1976D2, #1976D2'" (buttonClick)="openEditMode.emit()">
+          Open Editor
+        </app-gradient-button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <mat-divider></mat-divider>
+
+    <div class="footer-content">
+      <div style="color: #7f879d">Need more help?</div>
+      <div style="color: #7f879d;">Email <a style="color: #7f879d; outline: none" href="https://www.smartpass.app/support" target="_blank">support@smartpass.app</a></div>
+    </div>
+  </div>
+</div>
