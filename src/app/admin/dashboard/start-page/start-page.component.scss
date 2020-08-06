@@ -25,9 +25,13 @@
 
     .cards {
       display: flex;
-      margin-top: 66px;
+      margin-top: 56px;
       width: 100%;
-      justify-content: space-around;
+      justify-content: center;
+
+      .card {
+        margin: 10px;
+      }
     }
   }
 }

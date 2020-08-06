@@ -1,8 +1,8 @@
-<div class="host" appSafariScroll #scrollableArea>
-  <div class="start-page-wrapper" *ngIf="true">
-    <app-start-page></app-start-page>
+<div class="host" appSafariScroll #scrollableArea *ngIf="onboardProgress$ | async as onboard">
+  <div class="start-page-wrapper" *ngIf="showStartPage(onboard)">
+    <app-start-page [onboardProcess]="onboard"></app-start-page>
   </div>
-   <div class="dashboard-wrapper" *ngIf="false">
+   <div class="dashboard-wrapper" *ngIf="!showStartPage(onboard)">
      <div class="left">
        <div class="">
          <div class="card card__role ds-flex-end-between ds-mr-10">

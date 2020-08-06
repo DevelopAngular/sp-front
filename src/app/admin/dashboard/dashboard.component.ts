@@ -1,6 +1,6 @@
 import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {combineLatest, interval, of, Subject} from 'rxjs';
-import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {combineLatest, interval, Observable, of, Subject} from 'rxjs';
+import {delay, filter, map, share, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DataService } from '../../services/data-service';
 import { HttpService } from '../../services/http-service';
 import { HallPassFilter, LiveDataService } from '../../live-data/live-data.service';
@@ -16,6 +16,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ThemeService} from 'ng2-charts';
 import {ScrollPositionService} from '../../scroll-position.service';
 import {UserService} from '../../services/user.service';
+import {Onboard} from '../../models/Onboard';
 
 
 @Component({
@@ -92,6 +93,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public hiddenChart: boolean = true;
   public devices: HTMLElement[];
 
+  public onboardProgress$: Observable<{[id: string]: Onboard}>;
+  public onboardProcessLoaded$: Observable<boolean>;
+
   public lineChartTicks: any = {
     suggestedMin: 0,
     precision: 0,
@@ -113,7 +117,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     private chartTheming: ThemeService,
     private scrollPosition: ScrollPositionService,
-    private userService: UserService
+    public userService: UserService
 
   ) {
     // this.darkTheme.preloader.next(true);
@@ -147,6 +151,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
+    this.onboardProgress$ = this.http.globalReload$
+      .pipe(
+        switchMap(() => {
+          return this.adminService.getOnboardProcessRequest();
+        })
+      );
 
     this.drawChartXaxis();
     this.darkTheme.isEnabled$.subscribe(() => {
@@ -284,7 +295,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }];
       });
 
-    if (false) {
       this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
       this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
       this.gradient.addColorStop(1, 'rgba(0,180, 118, 0.8)');
@@ -369,7 +379,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }
       };
-    }
   }
 
   private drawChartXaxis() {
@@ -468,5 +477,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     this.shareChartData$.next();
     this.shareChartData$.complete();
+  }
+
+  showStartPage(progress: {[id: string]: Onboard}): boolean {
+    return progress && !progress['2.landing:first_room'].done || !progress['2.landing:first_account'].done || !progress['2.landing:support_dismiss'].done;
   }
 }

@@ -137,15 +137,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           return res;
         }),
         switchMap((res) => {
-          return combineLatest(
-            this.adminService.onboardProcessData$.pipe(filter((r: any[]) => !!r.length)),
-            this.pinnables$
-          ).pipe(
-              filter(() => navigator.onLine)
-            );
+          return this.pinnables$;
         }),
         takeUntil(this.destroy$),
-        map(([onboard, pinnables]) => {
+        map((pinnables) => {
           this.pinnables = pinnables;
           // if (onboard && (onboard as any[]).length && !pinnables.length) {
           //   const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
@@ -424,10 +419,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           filter(() => navigator.onLine),
           takeUntil(this.destroy$),
           switchMap((res) => {
-            return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
-          }),
-          take(1),
-          switchMap((res) => {
             const order = res.map((v: any) => v.id).join(',');
             return this.hallPassService.createArrangedPinnable({order});
           }),
@@ -440,11 +431,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           this.pinnables.push(...res);
           this.showRooms = true;
         });
-      } else {
-        this.gsProgress.updateProgress('setup_rooms:end').pipe(filter(() => navigator.onLine))
-          .subscribe(() => {
-            this.showRooms = true;
-          });
       }
   }
 }

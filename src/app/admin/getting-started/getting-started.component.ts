@@ -40,24 +40,24 @@ export class GettingStartedComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.gsProgress.onboardProgress$
-      .pipe(
-        switchMap((op: any) => {
-          if (op.create_school && !op.create_school.start.value) {
-            return this.gsProgress.updateProgress('create_school:start').pipe(take(1));
-          }
-          if (op.create_school && !op.create_school.end.value) {
-            return this.gsProgress.updateProgress('create_school:end').pipe(take(1));
-          }
-          return of(op);
-        })
-      )
-      .subscribe((op: any) => {
-        if (op.create_school && (!op.create_school.start.value || !op.create_school.end.value)) {
-          this.bannerVissible = true;
-        }
-        this.OnboardProgres = op;
-      });
+    // this.gsProgress.onboardProgress$
+    //   .pipe(
+    //     switchMap((op: any) => {
+    //       if (op.create_school && !op.create_school.start.value) {
+    //         return this.gsProgress.updateProgress('create_school:start').pipe(take(1));
+    //       }
+    //       if (op.create_school && !op.create_school.end.value) {
+    //         return this.gsProgress.updateProgress('create_school:end').pipe(take(1));
+    //       }
+    //       return of(op);
+    //     })
+    //   )
+    //   .subscribe((op: any) => {
+    //     if (op.create_school && (!op.create_school.start.value || !op.create_school.end.value)) {
+    //       this.bannerVissible = true;
+    //     }
+    //     this.OnboardProgres = op;
+    //   });
 
   }
 
