@@ -22,16 +22,22 @@
     </div>
 
     <div class="right-button">
-      <app-gradient-button *ngIf="showPublishButton"
-                           [minHeight]="'40px'"
-                           [style.width]="'120px'"
-                           [gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
-                           [textColor]="color_profile ? color_profile.solid_color : 'White'"
-                           [cursor]="'pointer'"
-                           [fontSize]="'14px'"
-                           (buttonClick)="onPublish()"
-        >{{ (showPublishSpinner ? null : 'Save') }}
-        <mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="30"></mat-spinner>
+      <app-gradient-button
+        *ngIf="showPublishButton"
+       [minHeight]="'40px'"
+       [style.width]="'120px'"
+       [gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
+       [textColor]="color_profile ? color_profile.solid_color : 'White'"
+       [cursor]="'pointer'"
+       [fontSize]="'14px'"
+       (buttonClick)="onPublish()"
+        [matTooltip]="showPublishSpinner ? 'Please wait, rooms are still being uploaded.' : null"
+        matTooltipClass="tooltip"
+        >
+        <span *ngIf="!showPublishSpinner">Save</span>
+        <div class="loading-theme_blue-gray" [style.color]="'red'" *ngIf="showPublishSpinner" >
+          <mat-spinner  [diameter]="30"></mat-spinner>
+        </div>
       </app-gradient-button>
 
       <div *ngIf="showIncompleteButton" [style.color]="titleColor">Incomplete</div>
