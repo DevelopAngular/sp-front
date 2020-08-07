@@ -215,7 +215,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           }
       } else {
-        if (this.validForm) {
+        if (this.validForm && this.data.travelType.length) {
             this.roomValidButtons = {
                 publish: true,
                 incomplete: false,
