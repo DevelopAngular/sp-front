@@ -533,11 +533,12 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   onPublish() {
-    if (this.roomValidButtons.getValue().incomplete || !this.selectedIcon && !this.color_profile) {
+    if (this.roomValidButtons.getValue().incomplete || !this.selectedIcon || !this.color_profile) {
       this.setFormErrors();
       return;
     }
     this.showPublishSpinner = true;
+
     if (this.currentPage === Pages.NewRoom) {
        const location = {
                 title: this.roomData.roomName,
@@ -750,6 +751,9 @@ export class OverlayContainerComponent implements OnInit {
         ...this.normalizeAdvOptData(room),
         isEdit: true
       });
+      this.form.get('roomName').reset();
+      this.form.get('roomNumber').reset();
+      this.form.get('timeLimit').reset();
       this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData, pinnable: this.pinnable});
   }
 
@@ -780,7 +784,7 @@ export class OverlayContainerComponent implements OnInit {
   bulkEditInFolder({roomData, rooms}) {
     this.oldFolderData = cloneDeep(this.folderData);
     this.folderData.roomsInFolder = differenceBy(this.folderData.roomsInFolder, rooms, 'id');
-    let editingRooms = this.editRooms(roomData, rooms);
+    const editingRooms = this.editRooms(roomData, rooms);
     // editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.folderData.roomsInFolder = [...editingRooms, ...this.folderData.roomsInFolder];
     if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
@@ -795,7 +799,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   bulkEditResult({roomData, rooms, buttonState}) {
-    let editingRooms = this.editRooms(roomData, rooms);
+    const editingRooms = this.editRooms(roomData, rooms);
     // editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.bulkEditData = {roomData, rooms: editingRooms};
     this.roomValidButtons.next(buttonState);
@@ -812,20 +816,19 @@ export class OverlayContainerComponent implements OnInit {
 
   editRooms(roomData, rooms) {
     return rooms.map(room => {
-      if (!isNull(roomData.restricted)) {
-        room.restricted = roomData.restricted;
-      }
-      if (!isNull(roomData.scheduling_restricted)) {
-        room.scheduling_restricted = roomData.scheduling_restricted;
-      }
+      room.restricted = !!roomData.restricted;
+      room.scheduling_restricted = !!roomData.scheduling_restricted;
       if (roomData.travelType.length) {
-        room.travel_types = roomData.travelType;
+        room.travelType = roomData.travelType;
       }
       if (roomData.timeLimit) {
-        room.max_allowed_time = roomData.timeLimit;
+        room.timeLimit = roomData.timeLimit;
       }
+      room.roomName = room.title;
+      room.roomNumber = room.room;
+      room.selectedTeachers = room.teachers;
       return {
-        ...room,
+        ...this.normalizeRoomData(room),
         ...this.normalizeAdvOptData(roomData),
         isEdit: true
       };

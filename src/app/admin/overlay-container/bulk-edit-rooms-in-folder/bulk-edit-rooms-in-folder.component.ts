@@ -73,21 +73,18 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
     if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
       if (
         (this.roomData.travelType.length &&
-        !isNull(this.roomData.restricted) &&
-        !isNull(this.roomData.scheduling_restricted) &&
         this.roomData.timeLimit) && !this.advOptionsButtons
       ) {
         this.roomsValidButtons.next({publish: true, cancel: true, incomplete: false});
       } else if ((this.roomData.travelType.length &&
-        !isNull(this.roomData.restricted) &&
-        !isNull(this.roomData.scheduling_restricted) &&
+        // !isNull(this.roomData.restricted) &&
+        // !isNull(this.roomData.scheduling_restricted) &&
         this.roomData.timeLimit) && this.advOptionsButtons) {
-
-        if (this.advOptionsButtons.incomplete) {
-          this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
-        } else {
+        // if (this.advOptionsButtons.incomplete) {
+        //   this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
+        // } else {
           this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
-        }
+        // }
 
       } else {
         this.roomsValidButtons.next({publish: false, cancel: true, incomplete: true });
