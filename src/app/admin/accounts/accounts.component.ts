@@ -68,6 +68,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   onboardProcess$: Observable<{[id: string]: Onboard}>;
+  onboardProcessLoaded$: Observable<boolean>;
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -108,6 +109,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     ).subscribe(users => {
         this.tableRenderer(users);
     });
+    this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
 
    this.adminService.getGSuiteOrgsRequest()
      .pipe(
@@ -147,8 +149,18 @@ export class AccountsComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.toastService.toastButtonClick$.subscribe(res => {
-      // debugger;
+    this.toastService.toastButtonClick$
+      .pipe(
+        switchMap(() => {
+          return this.onboardProcess$;
+        }),
+        map((onboard) => {
+          return onboard['2.accounts:create_demo_accounts'].extras.accounts;
+        })
+      )
+      .subscribe(res => {
+        console.log(res);
+        debugger;
     });
 
     this.userService.userData.pipe(
@@ -603,11 +615,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   }
   private updateAcoountsOnboardProgress(ticket: 'start' | 'end') {
-    if (ticket === 'start') {
-      this.gsProgress.updateProgress('setup_accounts:start');
-    } else if (ticket === 'end') {
-      this.gsProgress.updateProgress('setup_accounts:end');
-    }
+    // if (ticket === 'start') {
+    //   this.gsProgress.updateProgress('setup_accounts:start');
+    // } else if (ticket === 'end') {
+    //   this.gsProgress.updateProgress('setup_accounts:end');
+    // }
   }
 
   openIntegrations() {
@@ -663,9 +675,12 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   openBulkUpload() {
-    this.adminService.updateOnboardProgressRequest('2.accounts:create_demo_accounts').subscribe(() => {
-      this.toastService.openToast(
-        {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.'});
-    });
+    this.adminService.updateOnboardProgressRequest('2.accounts:create_demo_accounts');
+    this.onboardProcessLoaded$.pipe(filter(res => !!res))
+      .subscribe(() => {
+        this.adminService.getCountAccountsRequest();
+        this.toastService.openToast(
+          {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.'});
+      });
   }
 }

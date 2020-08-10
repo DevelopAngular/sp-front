@@ -55,7 +55,7 @@ export class StartPageComponent implements OnInit {
   }
 
   removeCard(card) {
-    this.adminService.updateOnboardProgressRequest(card.onboardName).subscribe();
+    this.adminService.updateOnboardProgressRequest(card.onboardName);
     this.cards = this.cards.filter(c => card.title !== c.title);
   }
 

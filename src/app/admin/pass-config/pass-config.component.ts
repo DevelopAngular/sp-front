@@ -86,6 +86,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     pinnables$: Observable<Pinnable[]>;
     pinnables: Pinnable[] = [];
     onboardProcess$: Observable<{[id: string]: Onboard}>;
+    onboardLoading$: Observable<boolean>;
 
     arrangedOrderForUpdating: number[];
 
@@ -128,6 +129,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.loading$ = this.hallPassService.isLoadingPinnables$;
     this.loaded$ = this.hallPassService.loadedPinnables$;
     this.isLoadingArranged$ = this.hallPassService.isLoadingArranged$;
+    this.onboardLoading$ = this.adminService.loadingOnboardProcess$;
 
     this.httpService.globalReload$
       .pipe(
@@ -407,6 +409,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           this.showRooms = true;
         });
       }
-    this.adminService.updateOnboardProgress('2.landing:first_room');
+    this.adminService.updateOnboardProgressRequest('2.landing:first_room');
   }
 }

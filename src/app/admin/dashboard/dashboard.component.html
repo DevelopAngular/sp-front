@@ -1,8 +1,8 @@
-<div class="host" appSafariScroll #scrollableArea *ngIf="onboardProgress$ | async as onboard">
-  <div class="start-page-wrapper" *ngIf="showStartPage(onboard)">
+<div class="host" appSafariScroll #scrollableArea *ngIf="(onboardProgress$ | async) as onboard">
+  <div class="start-page-wrapper" *ngIf="(onboardProcessLoaded$ | async) && showStartPage(onboard)">
     <app-start-page [onboardProcess]="onboard"></app-start-page>
   </div>
-  <div class="dashboard-page" *ngIf="!showStartPage(onboard)">
+  <div class="dashboard-page" *ngIf="(onboardProcessLoaded$ | async) && !showStartPage(onboard)">
     <app-dashboard-content></app-dashboard-content>
   </div>
 </div>
