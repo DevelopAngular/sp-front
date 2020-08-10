@@ -7,7 +7,7 @@
     <app-accounts-sync></app-accounts-sync>
   </div>
 
-  <div class="accounts-wrapper" *ngIf="splash !== undefined && !splash">
+  <div class="accounts-wrapper" *ngIf="onboardProcess$ | async as onboardProcess">
       <div class="header-wrapper">
         <div class="accounts-header" [style.background-color]="darkTheme.getBackground('high', true)">
           <div class="header-content">
@@ -102,45 +102,47 @@
 
     <div class="accounts-content" *ngIf="!openTable">
       <div class="content-wrapper">
-        <div class="groups" style="margin-top: 0; margin-bottom: 48px">
-          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Quick Add</div>
-          <div class="groups-buttons">
-            <app-integration-card
-              [title]="'Demo Accounts'"
-              [subtitle]="'Get started quickly with fake accounts to pilot how SmartPass works.'"
-              [isIntegration]="false"
-              (clickButton)="openBulkUpload()"
-            >
-            </app-integration-card>
-            <app-integration-card
-              [title]="'Bulk upload accounts'"
-              [subtitle]="'Add accounts quickly from a CSV and set-up integration later.'"
-              [isIntegration]="false"
-            >
-            </app-integration-card>
+        <div class="start-page" *ngIf="!onboardProcess['2.landing:first_account'].done">
+          <div class="groups" style="margin-top: 0; margin-bottom: 48px">
+            <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Quick Add</div>
+            <div class="groups-buttons">
+              <app-integration-card
+                [title]="'Demo Accounts'"
+                [subtitle]="'Get started quickly with fake accounts to pilot how SmartPass works.'"
+                [isIntegration]="false"
+                (clickButton)="openBulkUpload()"
+              >
+              </app-integration-card>
+              <app-integration-card
+                [title]="'Bulk upload accounts'"
+                [subtitle]="'Add accounts quickly from a CSV and set-up integration later.'"
+                [isIntegration]="false"
+              >
+              </app-integration-card>
+            </div>
           </div>
-        </div>
-        <div class="groups" style="margin-top: 0">
-          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Integrations</div>
-          <div class="groups-buttons">
-            <app-integration-card
-              [icon]="'./assets/GG4L (Blue).svg'"
-              [title]="'GG4L'"
-              [status]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'approved' : 'done') : 'disconnect'"
-              [subtitle]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate(gg4lSettingsData.last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
-              [learnMoreLink]="'https://www.smartpass.app/gg4l'"
-              (setUp)="openSettingsDialog('gg4l', $event)"
-            >
-            </app-integration-card>
-            <app-integration-card
-              [icon]="'./assets/Google (Color).svg'"
-              [title]="'G Suite'"
-              [status]="schoolSyncInfoData.is_gsuite_enabled ? 'done' : 'disconnect'"
-              [subtitle]="schoolSyncInfoData.is_gsuite_enabled ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : 'Sync accounts from your org units.'"
-              [learnMoreLink]="'https://www.smartpass.app/gsuite'"
-              (setUp)="openSettingsDialog('g_suite', $event)"
-            >
-            </app-integration-card>
+          <div class="groups" style="margin-top: 0">
+            <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Integrations</div>
+            <div class="groups-buttons">
+              <app-integration-card
+                [icon]="'./assets/GG4L (Blue).svg'"
+                [title]="'GG4L'"
+                [status]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'approved' : 'done') : 'disconnect'"
+                [subtitle]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate(gg4lSettingsData.last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
+                [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+                (setUp)="openSettingsDialog('gg4l', $event)"
+              >
+              </app-integration-card>
+              <app-integration-card
+                [icon]="'./assets/Google (Color).svg'"
+                [title]="'G Suite'"
+                [status]="schoolSyncInfoData.is_gsuite_enabled ? 'done' : 'disconnect'"
+                [subtitle]="schoolSyncInfoData.is_gsuite_enabled ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : 'Sync accounts from your org units.'"
+                [learnMoreLink]="'https://www.smartpass.app/gsuite'"
+                (setUp)="openSettingsDialog('g_suite', $event)"
+              >
+              </app-integration-card>
+            </div>
           </div>
         </div>
 <!--        <div class="top-buttons" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">-->

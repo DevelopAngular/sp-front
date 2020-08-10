@@ -27,6 +27,7 @@
                 Options
               </app-gradient-button>
               <app-gradient-button
+                *ngIf="onboardProcess['2.landing:first_room'].done"
                 (click)="toggleBulk()"
                 [style.margin]="'0 15px 0 15px'"
                 [cursor]="'pointer'"

@@ -32,6 +32,7 @@ import {IntegrationsDialogComponent} from './integrations-dialog/integrations-di
 import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
 import {ToastService} from '../../services/toast.service';
+import {Onboard} from '../../models/Onboard';
 
 declare const window;
 
@@ -65,6 +66,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   querySubscriber$ = new Subject();
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  onboardProcess$: Observable<{[id: string]: Onboard}>;
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -115,8 +118,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
        this.gSuiteOrgs = res;
      });
 
-    this.http.globalReload$.pipe(
-      takeUntil(this.destroy$),
+    this.onboardProcess$ = this.http.globalReload$.pipe(
       tap(() => {
         this.querySubscriber$.next(this.getUserList());
       }),
@@ -139,10 +141,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
               // }
               return gg4l;
             }));
+      }),
+      switchMap(() => {
+        return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
-    )
-    .subscribe((op: any) => {
-    });
+    );
 
     this.toastService.toastButtonClick$.subscribe(res => {
       // debugger;
@@ -647,7 +650,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     const data = {
       bulkPermissions: null,
       gSuiteSettings: true,
-    }
+    };
 
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
       panelClass: 'admin-form-dialog-container-white',
@@ -660,7 +663,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   openBulkUpload() {
-    this.toastService.openToast(
-      {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.'});
+    this.adminService.updateOnboardProgressRequest('2.accounts:create_demo_accounts').subscribe(() => {
+      this.toastService.openToast(
+        {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.'});
+    });
   }
 }
