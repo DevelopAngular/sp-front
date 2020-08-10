@@ -33,6 +33,7 @@ import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
 import {ToastService} from '../../services/toast.service';
 import {Onboard} from '../../models/Onboard';
+import {XlsxGeneratorService} from '../xlsx-generator.service';
 
 declare const window;
 
@@ -94,7 +95,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private gsProgress: GettingStartedProgressService,
     private domSanitizer: DomSanitizer,
     private locationService: LocationsService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private xlsxGeneratorService: XlsxGeneratorService
   ) {}
 
   formatDate(date) {
@@ -156,11 +158,19 @@ export class AccountsComponent implements OnInit, OnDestroy {
         }),
         map((onboard) => {
           return onboard['2.accounts:create_demo_accounts'].extras.accounts;
+        }),
+        map(accounts => {
+          return accounts.map(account => {
+            return {
+              'Role': account.type,
+              'Username': account.username,
+              'Password': account.password
+            };
+          });
         })
       )
       .subscribe(res => {
-        console.log(res);
-        debugger;
+        this.xlsxGeneratorService.generate(res);
     });
 
     this.userService.userData.pipe(
