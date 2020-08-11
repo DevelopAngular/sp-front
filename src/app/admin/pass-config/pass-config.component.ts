@@ -19,7 +19,6 @@ import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {ScrollPositionService} from '../../scroll-position.service';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {Onboard} from '../../models/Onboard';
 
 @Component({
@@ -406,9 +405,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         )
         .subscribe((res: Pinnable[]) => {
           this.pinnables.push(...res);
-          this.showRooms = true;
         });
-      }
-    this.adminService.updateOnboardProgressRequest('2.landing:first_room');
+        this.adminService.updateOnboardProgressRequest('2.landing:first_room');
+      } else {
+        this.showRooms = true;
+    }
   }
 }

@@ -15,12 +15,12 @@
         [@pressState]="buttonStatePack"
       >
         <div class="close" (click)="$event.stopPropagation(); onClick(false)">
-          <img width="16" [src]="'./assets/Cancel (Blue-Gray).svg' | resolveAsset">
+          <img width="16" height="16" [src]="'./assets/Cancel (Blue-Gray).svg' | resolveAsset">
         </div>
         <div class="content" (mousedown)="onPress(true, 'pack')"
              (mouseup)="onPress(false, 'pack')" (click)="onClick(true)">
           <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})">
-            <img style="margin-right: 6px" width="13" [src]="'./assets/Plus (Navy).svg' | resolveAsset">
+            <img style="margin-right: 6px" width="13" height="13" [src]="'./assets/Plus (Navy).svg' | resolveAsset">
             Add Starter Pack
           </div>
           <div class="collection">

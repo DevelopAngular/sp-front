@@ -686,7 +686,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   openBulkUpload() {
     this.adminService.updateOnboardProgressRequest('2.accounts:create_demo_accounts');
-    this.onboardProcessLoaded$.pipe(filter(res => !!res))
+    this.onboardProcessLoaded$.pipe(
+      filter(res => !!res),
+      takeUntil(this.destroy$)
+    )
       .subscribe(() => {
         this.adminService.getCountAccountsRequest();
         this.toastService.openToast(
