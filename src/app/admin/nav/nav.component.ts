@@ -1,4 +1,15 @@
-import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  NgZone,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  ChangeDetectorRef,
+  QueryList, ViewChildren
+} from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import { LoadingService } from '../../services/loading.service';
@@ -23,11 +34,11 @@ declare const window;
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements OnInit {
+export class NavComponent implements OnInit, AfterViewInit {
 
   @ViewChild('settingsButton') settingsButton: ElementRef;
   @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
-  @ViewChild('tabRef') tabRef: ElementRef;
+  @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
@@ -45,6 +56,7 @@ export class NavComponent implements OnInit {
 
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
+  currentTab: string;
   public pts: string;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -72,6 +84,10 @@ export class NavComponent implements OnInit {
     return this.pts;
   }
 
+  ngAfterViewInit() {
+    this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef);
+  }
+
   ngOnInit() {
     // this.http.globalReload$
     //   .pipe(
@@ -90,14 +106,16 @@ export class NavComponent implements OnInit {
     //       this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
     //     }
     //   });
-    let urlSplit: string[] = location.pathname.split('/');
-    this.tab = urlSplit.slice(1);
+    const url: string[] = this.router.url.split('/');
+    this.currentTab = url[url.length - 1];
+    this.tab = url.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
     this.router.events
       .pipe(takeUntil(this.destroy$))
       .subscribe(value => {
       if ( value instanceof NavigationEnd ) {
-        let urlSplit: string[] = value.url.split('/');
+        const urlSplit: string[] = value.url.split('/');
+        this.currentTab = urlSplit[urlSplit.length - 1];
         this.tab = urlSplit.slice(1);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
         this.hidePointer = this.process === 100 && this.tab.indexOf('gettingstarted') !== -1;
@@ -161,7 +179,7 @@ export class NavComponent implements OnInit {
           const currentButton = this.buttons.find(button => button.route === route[key[0]]);
           this.route(currentButton);
           if (!this.router.url.includes(currentButton.route)) {
-            this.selectTab(this.tabRef.nativeElement, this.navButtonsContainterRef.nativeElement);
+            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef.nativeElement);
           }
         }
     });
@@ -234,6 +252,16 @@ export class NavComponent implements OnInit {
         }
       });
     }
+  }
+
+  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 50) {
+    setTimeout(() => {
+      const tabRefsArray = refsArray.toArray();
+      const selectedTabRef = this.buttons.findIndex((button) => button.route === this.currentTab);
+      if (tabRefsArray[selectedTabRef]) {
+        this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
+      }
+    }, timeout);
   }
 
   selectTab(evt: HTMLElement, container: HTMLElement) {
