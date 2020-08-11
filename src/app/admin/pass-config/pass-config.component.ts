@@ -20,6 +20,7 @@ import {AdminService} from '../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {ScrollPositionService} from '../../scroll-position.service';
 import {Onboard} from '../../models/Onboard';
+import {SupportService} from '../../services/support.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -114,6 +115,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       public darkTheme: DarkThemeSwitch,
       private adminService: AdminService,
       private scrollPosition: ScrollPositionService,
+      private supportService: SupportService
   ) { }
 
   get headerButtonText() {
@@ -410,5 +412,13 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       } else {
         this.showRooms = true;
     }
+  }
+
+  openChat(event) {
+    this.supportService.openChat(event);
+  }
+
+  closeChat(event) {
+    this.supportService.closeChat(event);
   }
 }

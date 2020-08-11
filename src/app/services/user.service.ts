@@ -129,8 +129,6 @@ export class UserService {
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
   isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
 
-  openSupportTrigger$: Subject<any> = new Subject<any>(); // needs for open support button
-
   constructor(
     private http: HttpService,
     private pollingService: PollingService,

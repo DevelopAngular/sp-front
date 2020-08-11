@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AdminService} from '../../../services/admin.service';
 import {UserService} from '../../../services/user.service';
+import {SupportService} from '../../../services/support.service';
 
 declare const window;
 
@@ -44,7 +45,7 @@ export class StartPageComponent implements OnInit {
   constructor(
     private router: Router,
     private adminService: AdminService,
-    private userService: UserService
+    private supportService: SupportService
     ) { }
 
   ngOnInit() {
@@ -55,7 +56,7 @@ export class StartPageComponent implements OnInit {
     if (card.url) {
       this.router.navigate([card.url]);
     } else {
-      this.userService.openSupportTrigger$.next();
+      this.supportService.openSupportTrigger$.next();
       this.removeCard(card);
     }
   }

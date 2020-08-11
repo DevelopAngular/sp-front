@@ -57,14 +57,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onboardProgress$: Observable<{[id: string]: Onboard}>;
+  public onboardProgress$: Observable<{ [id: string]: Onboard }>;
   public onboardProcessLoaded$: Observable<boolean>;
 
   constructor(
     private http: HttpService,
     private adminService: AdminService,
     private scrollPosition: ScrollPositionService,
-
   ) {
   }
 
@@ -78,8 +77,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
   }
 
-  showStartPage(progress: {[id: string]: Onboard}): boolean {
-    return progress && !progress['2.landing:first_room'].done || !progress['2.landing:first_account'].done || !progress['2.landing:support_dismiss'].done;
+  showStartPage(progress: { [id: string]: Onboard }): boolean {
+    return progress && !progress['2.landing:first_room'].done || !progress['2.landing:first_account'].done;
   }
 
   ngOnDestroy() {
