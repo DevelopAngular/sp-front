@@ -80,7 +80,7 @@ export class LocationsEffects {
       .pipe(
         ofType(locationsActions.updateLocation),
         concatMap((action: any) => {
-          return this.locService.updateLocation(action.id, action.data)
+        return this.locService.updateLocation(action.id, action.data)
             .pipe(
               map((location: Location) => {
                 return locationsActions.updateLocationSuccess({location});
