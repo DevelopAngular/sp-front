@@ -11,7 +11,7 @@ import {
   take,
   debounceTime,
   distinctUntilChanged,
-  tap
+  tap, finalize, concatAll, switchMapTo, takeLast
 } from 'rxjs/operators';
 
 import { NextStep } from '../../animations';
@@ -604,8 +604,7 @@ export class OverlayContainerComponent implements OnInit {
           if (isString(location.id)) {
             location.category = this.folderData.folderName + salt;
             location.teachers = location.teachers.map(t => t.id);
-            return this.locationService.createLocationRequest(location)
-              .pipe(filter(res => !!res));
+            return this.locationService.createLocation(location);
           } else {
             id = location.id;
             data = location;
@@ -614,9 +613,7 @@ export class OverlayContainerComponent implements OnInit {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
 
-            return this.locationService.updateLocationRequest(id, data).pipe(
-              filter(res => !!res)
-            );
+            return this.locationService.updateLocation(id, data);
           }
         });
       } else {
@@ -624,7 +621,6 @@ export class OverlayContainerComponent implements OnInit {
       }
 
       zip(...locationsToDb$).pipe(
-        take(1),
         switchMap(locations => {
         const newFolder = {
           title: this.folderData.folderName,
@@ -640,7 +636,6 @@ export class OverlayContainerComponent implements OnInit {
             this.hallPassService.pinnables$,
             this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
           ).pipe(
-            take(1),
             switchMap((result: any[]) => {
               const arrengedSequence = result[0].map(item => item.id);
               arrengedSequence.push(result[1].id);
@@ -648,7 +643,6 @@ export class OverlayContainerComponent implements OnInit {
             })
           );
       }),
-        take(1),
         switchMap((res) => {
           if (this.pinnableToDeleteIds.length) {
             const deleteRequests = this.pinnableToDeleteIds.map(id => {
@@ -660,7 +654,9 @@ export class OverlayContainerComponent implements OnInit {
           }
         })
       )
-      .subscribe(() => this.dialogRef.close(true));
+      .subscribe(() => {
+        this.dialogRef.close(true);
+      });
     }
 
     if (this.currentPage === Pages.EditRoom) {
