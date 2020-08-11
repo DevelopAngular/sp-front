@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { SupportOptionsComponent } from '../support-options/support-options.component';
 import { MatDialog } from '@angular/material';
+import {UserService} from '../services/user.service';
 
 declare const window;
 
@@ -11,11 +12,19 @@ declare const window;
 })
 export class SupportButtonComponent implements OnInit {
 
+  @ViewChild('wrapper') container: ElementRef;
+
   isOpenOptions: boolean;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(
+    private dialog: MatDialog,
+    private userService: UserService
+  ) { }
 
   ngOnInit() {
+    this.userService.openSupportTrigger$.subscribe(() => {
+      this.container.nativeElement.click();
+    });
   }
 
   openSupportOptions(event) {

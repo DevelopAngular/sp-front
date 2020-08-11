@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-import {interval, race, Observable, ReplaySubject, of} from 'rxjs';
+import {interval, race, Observable, ReplaySubject, of, Subject} from 'rxjs';
 import { SentryErrorHandler } from '../error-handler';
 import { HttpService } from './http-service';
 import { constructUrl } from '../live-data/helpers';
@@ -128,6 +128,8 @@ export class UserService {
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
   isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
+
+  openSupportTrigger$: Subject<any> = new Subject<any>(); // needs for open support button
 
   constructor(
     private http: HttpService,

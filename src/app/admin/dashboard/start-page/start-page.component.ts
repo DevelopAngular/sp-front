@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AdminService} from '../../../services/admin.service';
+import {UserService} from '../../../services/user.service';
 
 declare const window;
 
@@ -40,17 +41,22 @@ export class StartPageComponent implements OnInit {
   ];
 
 
-  constructor(private router: Router, private adminService: AdminService) { }
+  constructor(
+    private router: Router,
+    private adminService: AdminService,
+    private userService: UserService
+    ) { }
 
   ngOnInit() {
+
   }
 
   redirectTo(card) {
     if (card.url) {
       this.router.navigate([card.url]);
     } else {
+      this.userService.openSupportTrigger$.next();
       this.removeCard(card);
-      window.open('https://www.smartpass.app/support', '_blank');
     }
   }
 
