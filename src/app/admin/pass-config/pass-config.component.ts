@@ -93,6 +93,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     buttonMenuOpen: boolean;
     bulkSelect: boolean;
 
+    chatBackdrop: boolean;
+
     // // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
 

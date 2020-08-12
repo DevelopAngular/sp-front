@@ -1,4 +1,5 @@
-<div class="host" appSafariScroll>
+<div class="host" appSafariScroll (click)="closeChat($event)">
+<!--  <div class="backdrop" *ngIf="chatBackdrop" (click)="closeChat($event)"></div>-->
 <!--  <div class="set-day-wrapper" *ngIf="!openSchoolPage && loaded; else mySchool">-->
 <!--    <div class="set-day-header">-->
 <!--      <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Prepare for Launch</div>-->
@@ -64,7 +65,7 @@
       </div>
 
 
-      <div class="content" (click)="closeChat($event)">
+      <div class="content">
         <div class="left">
           <div class="title">Prep Guides</div>
           <div class="button">

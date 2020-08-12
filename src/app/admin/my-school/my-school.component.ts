@@ -44,6 +44,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   countLaunchDay: number;
   loaded: boolean;
 
+  chatBackdrop: boolean;
+
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
