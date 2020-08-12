@@ -319,14 +319,14 @@ export class OverlayContainerComponent implements OnInit {
         (this.pinnable && this.pinnable.location ? this.pinnable.location.max_passes_from_active : false)
       ),
       from: new FormControl(
-        (this.pinnable && this.pinnable.location ? '' + this.pinnable.location.max_passes_from : 0),
+        (this.pinnable && this.pinnable.location ? '' + this.pinnable.location.max_passes_from : ''),
         [Validators.required, Validators.pattern('^[0-9]*?[0-9]+$')]
       ),
       toEnabled: new FormControl(
         (this.pinnable && this.pinnable.location ? this.pinnable.location.max_passes_to_active : false)
       ),
       to: new FormControl(
-        (this.pinnable && this.pinnable.location ? '' + this.pinnable.location.max_passes_to : 0),
+        (this.pinnable && this.pinnable.location ? '' + this.pinnable.location.max_passes_to : ''),
         [Validators.required, Validators.pattern('^[0-9]*?[0-9]+$')]
       )
     });
