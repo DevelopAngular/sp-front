@@ -113,6 +113,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
     this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
 
+    this.adminService.onboardProcessData$.pipe(
+      filter(res => !!res.length),
+      takeUntil(this.destroy$)
+    ).subscribe(res => {
+      this.splash = !!res.find(progress => progress.name === '2.landing:first_account').done;
+    });
+
    this.adminService.getGSuiteOrgsRequest()
      .pipe(
        filter(res => !!res),
@@ -137,7 +144,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
           .pipe(
             map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
               // this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-              this.splash = false;
+              // this.splash = false;
               this.gg4lSettingsData = gg4l;
               this.schoolSyncInfoData = sync;
               // if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {

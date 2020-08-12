@@ -117,12 +117,6 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
         });
         this.buildData();
         this.passLimitForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
-          // if (!res.fromEnabled && res.from !== 0) {
-          //   this.passLimitForm.get('from').setValue(null);
-          // }
-          // if (!res.toEnabled && res.to !== 0) {
-          //   this.passLimitForm.get('to').setValue(null);
-          // }
           this.checkValidOptions();
           this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
         });
@@ -216,8 +210,9 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
                 };
                 if (this.passLimitForm.value.from || this.passLimitForm.value.to) {
                   if (
-                    (this.passLimitForm.value.from && (this.passLimitForm.value.toEnabled && !this.passLimitForm.value.to) || this.passLimitForm.get('from').invalid) ||
-                    (this.passLimitForm.value.to && (this.passLimitForm.value.fromEnabled && !this.passLimitForm.value.from) || this.passLimitForm.get('from').invalid)
+                    (this.passLimitForm.value.toEnabled && !this.passLimitForm.value.to) && this.passLimitForm.get('to').invalid
+                    // (this.passLimitForm.value.from && (this.passLimitForm.value.toEnabled && !this.passLimitForm.value.to) || this.passLimitForm.get('from').invalid) ||
+                    // (this.passLimitForm.value.to && (this.passLimitForm.value.fromEnabled && !this.passLimitForm.value.from) || this.passLimitForm.get('from').invalid)
                   ) {
                     this.isShowButtons = {
                       publish: false,
