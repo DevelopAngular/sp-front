@@ -105,6 +105,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
         this.tableRenderer(users);
     });
 
+    this.adminService.onboardProcessData$.pipe(
+      filter(res => !!res.length),
+      takeUntil(this.destroy$)
+    ).subscribe(res => {
+      this.splash = !!res.find(progress => progress.name === '2.landing:first_account').done;
+    });
+
    this.adminService.getGSuiteOrgsRequest()
      .pipe(
        filter(res => !!res),
@@ -131,7 +138,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
           .pipe(
             map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
               // this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-              this.splash = false;
+              // this.splash = false;
               this.gg4lSettingsData = gg4l;
               this.schoolSyncInfoData = sync;
               // if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
@@ -435,9 +442,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
-    console.log(this.selectedUsers);
-    debugger;
-
       if (!eventTarget.classList.contains('button')) {
         (eventTarget as any) = eventTarget.closest('.button');
       }
@@ -511,7 +515,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
             const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-                'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
+                'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : raw.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
                 'Group(s)': partOf.length ? partOf : [`<span style="cursor: not-allowed; color: #999999;">No profile</span>`]
             };
             for (const key in rawObj) {
