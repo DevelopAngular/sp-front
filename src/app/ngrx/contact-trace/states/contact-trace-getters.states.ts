@@ -1,6 +1,7 @@
 import {AppState} from '../../app-state/app-state';
 import {createSelector} from '@ngrx/store';
 import {IContactTraceStates} from './contact-trace.states';
+import {ContactTrace} from '../../../models/ContactTrace';
 
 export const getContactTraceState = (state: AppState) => state.contactTrace;
 
@@ -17,4 +18,9 @@ export const getContactTraceLoaded = createSelector(
 export const getContactTraceLoading = createSelector(
   getContactTraceState,
   (state: IContactTraceStates) => state.loading
+);
+
+export const getContactTraceTotal = createSelector(
+  getContactTraceCollection,
+  (traces: ContactTrace[]) => traces.length
 );

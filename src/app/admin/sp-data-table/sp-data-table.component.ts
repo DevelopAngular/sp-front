@@ -303,6 +303,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   cellClick(element, column?) {
     if (column === 'Pass') {
+      debugger;
       this.disableRowClick = true;
       this.hallpassService.passesEntities$
         .pipe(

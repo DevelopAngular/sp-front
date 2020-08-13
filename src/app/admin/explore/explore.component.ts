@@ -66,6 +66,7 @@ export class ExploreComponent implements OnInit {
   contactTraceState: {
     loading$: Observable<boolean>,
     loaded$: Observable<boolean>,
+    length$: Observable<number>,
     isEmpty?: boolean
   };
   isSearched: boolean;
@@ -80,11 +81,11 @@ export class ExploreComponent implements OnInit {
   };
   contactTraceData: SearchData = {
     selectedStudents: null,
-    selectedDate: {start: moment().subtract(3, 'days').startOf('day'), end: moment()}
+    selectedDate: null
   };
 
-  searchedPassData$: any;
-  contactTraceData$: any;
+  searchedPassData$: Observable<any[]>;
+  contactTraceData$: Observable<any[]>;
 
   adminCalendarOptions;
 
@@ -127,8 +128,10 @@ export class ExploreComponent implements OnInit {
     };
     this.contactTraceState = {
       loading$: this.contactTraceService.contactTraceLoading$,
-      loaded$: this.contactTraceService.contactTraceLoaded$
+      loaded$: this.contactTraceService.contactTraceLoaded$,
+      length$: this.contactTraceService.contactTraceTotalLength$
     };
+
     this.currentView$.asObservable()
       .subscribe((view: string) => {
         if (view === 'pass_search') {
@@ -142,15 +145,15 @@ export class ExploreComponent implements OnInit {
           return this.hallPassService.passesLoaded$;
         } else if (view === 'contact_trace') {
           this.showContactTraceTable = false;
-          this.contactTraceService.clearContactTraceDataRequest();
+          this.clearContactTraceData();
           this.contactTraceData = {
             selectedStudents: null,
-            selectedDate: {start: moment().subtract(3, 'days').startOf('day'), end: moment()}
+            selectedDate: null
           };
-          this.adminCalendarOptions = {
-            rangeId: 'range_5',
-            toggleResult: 'Range'
-          };
+          // this.adminCalendarOptions = {
+          //   rangeId: 'range_5',
+          //   toggleResult: 'Range'
+          // };
           return this.contactTraceService.contactTraceLoaded$;
         }
       });
@@ -417,6 +420,11 @@ export class ExploreComponent implements OnInit {
       this.contactTraceData.selectedStudents.map(s => s.id),
       this.contactTraceData.selectedDate['start'].toISOString()
     );
+  }
+
+  clearContactTraceData() {
+    this.contactTraceService.clearContactTraceDataRequest();
+    this.showContactTraceTable = false;
   }
 
 }
