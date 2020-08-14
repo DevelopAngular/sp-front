@@ -145,6 +145,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     this.toastService.toastButtonClick$
       .pipe(
+        takeUntil(this.destroy$),
         switchMap(() => {
           return this.onboardProcess$;
         }),

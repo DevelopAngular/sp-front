@@ -1,11 +1,10 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {interval, Observable, Subject} from 'rxjs';
-import {filter, switchMap, takeUntil } from 'rxjs/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
 import {ScrollPositionService} from '../../scroll-position.service';
 import {Onboard} from '../../models/Onboard';
-
 
 @Component({
   selector: 'app-dashboard',
@@ -78,7 +77,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   showStartPage(progress: { [id: string]: Onboard }): boolean {
-    return progress && !progress['2.landing:first_room'].done || !progress['2.landing:first_account'].done;
+    return progress && (progress['2.landing:first_room'] &&
+      !progress['2.landing:first_room'].done) || (progress['2.landing:first_account'] &&
+      !progress['2.landing:first_account'].done);
   }
 
   ngOnDestroy() {
