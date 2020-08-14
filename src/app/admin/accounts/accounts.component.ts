@@ -145,7 +145,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     this.toastService.toastButtonClick$
       .pipe(
-        takeUntil(this.destroy$),
         switchMap(() => {
           return this.onboardProcess$;
         }),
@@ -160,7 +159,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
               'Password': account.password
             };
           });
-        })
+        }),
+        takeUntil(this.destroy$),
       )
       .subscribe(res => {
         this.xlsxGeneratorService.generate(res);
