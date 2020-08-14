@@ -24,7 +24,8 @@
              (buttonClick)="openFilter($event, 'students')"
              [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'"
              [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
-             (clearData)="contactTraceData.selectedStudents = null;">
+             [showClearIcon]="false"
+          >
           </app-filter-button>
         </ng-template>
       </div>
@@ -49,14 +50,14 @@
           [title]="passSearchData.selectedDate ? dateText(passSearchData.selectedDate) : 'Pass start time'"
           (buttonClick)="openFilter($event, 'calendar')"
           [filter]="!!passSearchData.selectedDate"
-          (clearData)="passSearchData.selectedDate = null; autoSearch()">
+          (clearData)="passSearchData.selectedDate = null; adminCalendarOptions = null; autoSearch()">
         </app-filter-button>
         <ng-template #traceDate>
           <app-filter-button
             [title]="contactTraceData.selectedDate ? dateText(contactTraceData.selectedDate) : 'Time range'"
             (buttonClick)="openFilter($event, 'calendar')"
             [filter]="!!contactTraceData.selectedDate"
-            (clearData)="contactTraceData.selectedDate = null">
+            (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;">
           </app-filter-button>
         </ng-template>
       </div>
@@ -65,7 +66,7 @@
     <div class="search-button" *ngIf="views[currentView].id === 3">
       <div class="buttons">
         <app-gradient-button
-          *ngIf="contactTraceData.selectedStudents && contactTraceData.selectedDate && !(contactTraceState.length$ | async)"
+          *ngIf="contactTraceData.selectedStudents && contactTraceData.selectedDate && !(contactTraceState.length$ | async) && !this.contactTraceState.isEmpty"
           [gradient]="views[currentView].color + ', ' + views[currentView].color"
           [rightIcon]="'./assets/Chevron Right (White).svg'"
           [size]="'medium'"
@@ -73,7 +74,7 @@
         >{{ views[currentView].title }}
         </app-gradient-button>
         <app-gradient-button
-          *ngIf="(contactTraceState.length$ | async)"
+          *ngIf="(contactTraceState.length$ | async) || this.contactTraceState.isEmpty"
           [gradient]="'#F4F4F4, #F4F4F4'"
           [rightIcon]="'./assets/Close.svg'"
           [minWidth]="'100px'"

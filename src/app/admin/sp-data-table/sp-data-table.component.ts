@@ -151,7 +151,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   currentSort: {active: string, direction: string}[] = [];
   tableOptionButtons = [
     { icon: 'Columns', action: 'column' },
-    { icon: 'Print', action: 'print' },
+    // { icon: 'Print', action: 'print' },
     { icon: 'CSV', action: 'csv'}
   ];
   selectedRows: any[];
@@ -220,11 +220,12 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
     this.dataSource.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe((sort: Sort) => {
       const activeSort = this.currentSort.find(curr => curr.active === sort.active);
-      if (!activeSort) {
-        this.currentSort.push(sort);
-      } else {
-        activeSort.direction = sort.direction;
-      }
+      // debugger;
+      // if (!activeSort) {
+        this.currentSort = [sort];
+      // } else {
+      //   activeSort.direction = sort.direction;
+      // }
 
       const data = this.dataSource.allData;
       if (!sort.active || sort.direction === '') {

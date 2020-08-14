@@ -37,7 +37,7 @@
           <ng-container *ngIf="column !== 'Pass'; else passNoSort">
             <th
               [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
-              [style.background-color]="getColumnSort(column) === 'asc' || getColumnSort(column) === 'desc' ? 'rgba(255,255,255, .4)' : '#D3D6DE'"
+              [style.background-color]="getColumnSort(column) === 'asc' || getColumnSort(column) === 'desc' ? '#e5e6eb' : '#D3D6DE'"
               mat-sort-header
               mat-header-cell
               *matHeaderCellDef

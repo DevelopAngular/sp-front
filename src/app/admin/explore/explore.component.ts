@@ -15,6 +15,7 @@ import {ContactTraceService} from '../../services/contact-trace.service';
 import {ContactTrace} from '../../models/ContactTrace';
 import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filter.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
+import {StorageService} from '../../services/storage.service';
 
 export interface View {
   [view: string]: CurrentView;
@@ -89,7 +90,7 @@ export class ExploreComponent implements OnInit {
 
   adminCalendarOptions;
 
-  currentView$: BehaviorSubject<string> = new BehaviorSubject<string>('pass_search');
+  currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
   constructor(
     private dialog: MatDialog,
@@ -97,7 +98,8 @@ export class ExploreComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private domSanitizer: DomSanitizer,
     private http: HttpService,
-    private contactTraceService: ContactTraceService
+    private contactTraceService: ContactTraceService,
+    private storage: StorageService
     ) { }
 
   dateText({start, end}): string {
@@ -146,6 +148,7 @@ export class ExploreComponent implements OnInit {
         } else if (view === 'contact_trace') {
           this.showContactTraceTable = false;
           this.clearContactTraceData();
+          this.adminCalendarOptions = null;
           this.contactTraceData = {
             selectedStudents: null,
             selectedDate: null
@@ -280,6 +283,7 @@ export class ExploreComponent implements OnInit {
       )
       .subscribe(action => {
         this.currentView$.next(action);
+        this.storage.setItem('explore_page', action);
         this.cdr.detectChanges();
     });
   }
@@ -425,6 +429,11 @@ export class ExploreComponent implements OnInit {
   clearContactTraceData() {
     this.contactTraceService.clearContactTraceDataRequest();
     this.showContactTraceTable = false;
+    this.contactTraceState.isEmpty = false;
+    this.contactTraceData = {
+      selectedStudents: null,
+      selectedDate: null
+    };
   }
 
 }
