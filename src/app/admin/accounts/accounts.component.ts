@@ -151,6 +151,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         map((onboard) => {
           return onboard['2.accounts:create_demo_accounts'].extras.accounts;
         }),
+        take(1),
         map(accounts => {
           return accounts.map(account => {
             return {
@@ -160,7 +161,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
             };
           });
         }),
-        takeUntil(this.destroy$),
+        takeUntil(this.destroy$)
       )
       .subscribe(res => {
         this.xlsxGeneratorService.generate(res);
