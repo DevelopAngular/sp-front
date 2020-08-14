@@ -1,11 +1,11 @@
 <div class="wrapper">
     <div class="header">
-      <img [src]="icon | resolveAsset" width="37" alt="Integration-icon">
+      <img style="margin-right: 12px" *ngIf="!!icon" [src]="icon | resolveAsset" width="37" alt="Integration-icon">
       <div class="title">{{ title }}</div>
     </div>
   <div class="content">
     <div class="subtitle">{{ subtitle }}</div>
-    <div class="buttons">
+    <div class="buttons" *ngIf="isIntegration">
       <app-gradient-button
         [style.margin-right]="'10px'"
         [gradient]="(status === 'disconnect' ? '#7F879D, #7F879D' : (title === 'G Suite' ? '#1976D2, #1976D2' : '#5352E4, #5352E4'))"
@@ -21,6 +21,9 @@
         [buttonLink]="learnMoreLink"
         [text]="'Learn more'">
       </app-gradient-button>
+    </div>
+    <div class="buttons" *ngIf="!isIntegration">
+      <app-gradient-button (buttonClick)="clickButton.emit()">Add</app-gradient-button>
     </div>
   </div>
 </div>

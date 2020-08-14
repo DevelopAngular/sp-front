@@ -22,12 +22,18 @@ import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters
 import {ColorProfile} from '../models/ColorProfile';
 import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
 import {getColorProfiles} from '../ngrx/color-profiles/actions';
-import {getLoadedProcess, getLoadingProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
+import {
+  getLoadedProcess,
+  getLoadingProcess,
+  getProcessData,
+  getProcessEntities
+} from '../ngrx/onboard-process/states/process-getters.state';
 import {getOnboardProcess, updateOnboardProcess} from '../ngrx/onboard-process/actions';
 import {getGSuiteSyncInfo, getSchoolsGG4LInfo, getSchoolSyncInfo, updateSchool, updateSchoolSyncInfo} from '../ngrx/schools/actions';
 import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolSyncInfoData} from '../ngrx/schools/states';
 import {GG4LSync} from '../models/GG4LSync';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
+import {Onboard} from '../models/Onboard';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +51,7 @@ export class AdminService {
   loadingColorProfiles$: Observable<boolean> = this.store.select(getLoadingColors);
   loadedColorProfiles$: Observable<boolean> = this.store.select(getLoadedColors);
 
-  onboardProcessData$ = this.store.select(getProcessData);
+  onboardProcessData$: Observable<{[id: string]: Onboard}> = this.store.select(getProcessEntities);
   loadedOnboardProcess$: Observable<boolean> = this.store.select(getLoadedProcess);
   loadingOnboardProcess$: Observable<boolean> = this.store.select(getLoadingProcess);
 

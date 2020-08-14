@@ -11,6 +11,7 @@ import {SchoolSettingsComponent} from './school-settings/school-settings.compone
 import {bumpIn} from '../../animations';
 import * as moment from 'moment';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {SupportService} from '../../services/support.service';
 
 declare const window;
 
@@ -43,6 +44,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   countLaunchDay: number;
   loaded: boolean;
 
+  chatBackdrop: boolean;
+
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -50,7 +53,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
       private adminService: AdminService,
       public darkTheme: DarkThemeSwitch,
       private gsProgress: GettingStartedProgressService,
-      private dialog: MatDialog
+      private dialog: MatDialog,
+      private supportService: SupportService
   ) {
   }
 
@@ -153,19 +157,11 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   }
 
   openChat(event) {
-    event.stopPropagation();
-    const chat = document.querySelector('#hubspot-messages-iframe-container');
-    (chat as HTMLElement).setAttribute('style', 'opacity: 1 !important');
-    window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+    this.supportService.openChat(event);
   }
 
   closeChat(event) {
-    event.stopPropagation();
-    const chat = document.querySelector('#hubspot-messages-iframe-container');
-    if (chat) {
-      window.HubSpotConversations.widget.close();
-      (chat as HTMLElement).setAttribute('style', 'opacity: 0 !important');
-    }
+    this.supportService.closeChat(event);
   }
 
 }

@@ -1,48 +1,54 @@
 <div class="host" appSafariScroll>
   <div class="wrapper">
-    <div class="info-block">
-      <img [src]="'./assets/admin-images/Rooms-set-up.svg' | resolveAsset" alt="RST">
-      <div class="info">
-        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms set-up</div>
-        <div class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Paper to digital is seamless. Add a starter pack of rooms or start from scratch.</div>
-      </div>
-    </div>
+<!--    <div class="info-block">-->
+<!--      <img [src]="'./assets/admin-images/Rooms-set-up.svg' | resolveAsset" alt="RST">-->
+<!--      <div class="info">-->
+<!--        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms set-up</div>-->
+<!--        <div class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Paper to digital is seamless. Add a starter pack of rooms or start from scratch.</div>-->
+<!--      </div>-->
+<!--    </div>-->
 
     <div class="buttons-block">
       <div
         class="started-pack"
         [style.background-color]="darkTheme.getColor({dark: '#134482', white: '#F4F4F4'})"
-        (mousedown)="onPress(true, 'pack')"
-        (mouseup)="onPress(false, 'pack')"
         [@pressState]="buttonStatePack"
-        (click)="onClick(true)"
       >
-        <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Add Starter Pack</div>
-        <div class="collection">
-          <div class="pinnable"
-               *ngFor="let pinnable of mockPinnables; let i = index"
-               [style.background]="'radial-gradient(circle at 73% 71%, ' + pinnable.gradient + ')'"
-               [style.margin-bottom]="i !== 3 && i !== 4 && i !== 5 ? '15px' : 0"
-          >
-            <img width="30" height="30" [src]="pinnable.icon" alt="Icon">
-            <div class="pinnable-title">{{ pinnable.title }}</div>
+        <div class="close" (click)="$event.stopPropagation(); onClick(false)">
+          <img width="16" height="16" [src]="'./assets/Cancel (Blue-Gray).svg' | resolveAsset">
+        </div>
+        <div class="content" (mousedown)="onPress(true, 'pack')"
+             (mouseup)="onPress(false, 'pack')" (click)="onClick(true)">
+          <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})">
+            <img style="margin-right: 6px" width="13" height="13" [src]="'./assets/Plus (Navy).svg' | resolveAsset">
+            Add Starter Pack
+          </div>
+          <div class="collection">
+            <div class="pinnable"
+                 *ngFor="let pinnable of mockPinnables; let i = index"
+                 [style.background]="'radial-gradient(circle at 73% 71%, ' + pinnable.gradient + ')'"
+                 [style.margin-bottom]="i !== 3 && i !== 4 && i !== 5 ? '15px' : 0"
+            >
+              <img width="30" height="30" [src]="pinnable.icon" alt="Icon">
+              <div class="pinnable-title">{{ pinnable.title }}</div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">OR</div>
-      <div
-         class="started-scratch"
-         [style.background-color]="darkTheme.getColor({dark: '#134482', white: '#F4F4F4'})"
-         (mousedown)="onPress(true, 'scratch')"
-         (mouseup)="onPress(false, 'scratch')"
-         [@pressState]="buttonStateScratch"
-         (click)="onClick(false)"
-      >
-        <div class="started-scratch-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Start from scratch</div>
-        <div class="img">
-          <img width="185" height="144" [src]="'./assets/emptyStates/Rooms empty.svg'" alt="">
-        </div>
-      </div>
+<!--      <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">OR</div>-->
+<!--      <div-->
+<!--         class="started-scratch"-->
+<!--         [style.background-color]="darkTheme.getColor({dark: '#134482', white: '#F4F4F4'})"-->
+<!--         (mousedown)="onPress(true, 'scratch')"-->
+<!--         (mouseup)="onPress(false, 'scratch')"-->
+<!--         [@pressState]="buttonStateScratch"-->
+<!--         (click)="onClick(false)"-->
+<!--      >-->
+<!--        <div class="started-scratch-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Start from scratch</div>-->
+<!--        <div class="img">-->
+<!--          <img width="185" height="144" [src]="'./assets/emptyStates/Rooms empty.svg'" alt="">-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
   </div>
 </div>
