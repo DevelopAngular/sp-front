@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Injectable, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
-import {filter, map, startWith, switchMap, tap} from 'rxjs/operators';
+import {filter, map, takeUntil, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
@@ -16,6 +16,9 @@ import {ContactTrace} from '../../models/ContactTrace';
 import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filter.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {StorageService} from '../../services/storage.service';
+import {PassCardComponent} from '../../pass-card/pass-card.component';
+
+declare const window;
 
 export interface View {
   [view: string]: CurrentView;
@@ -49,7 +52,7 @@ export interface SearchData {
   styleUrls: ['./explore.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExploreComponent implements OnInit {
+export class ExploreComponent implements OnInit, OnDestroy {
 
   views: View = {
     'pass_search': {id: 1, title: 'Pass Search', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
@@ -92,6 +95,8 @@ export class ExploreComponent implements OnInit {
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
+  destroy$ = new Subject();
+
   constructor(
     private dialog: MatDialog,
     private hallPassService: HallPassesService,
@@ -100,7 +105,11 @@ export class ExploreComponent implements OnInit {
     private http: HttpService,
     private contactTraceService: ContactTraceService,
     private storage: StorageService
-    ) { }
+    ) {
+    window.passClick = (id) => {
+      this.passClick(id);
+    };
+  }
 
   dateText({start, end}): string {
     if (start.isSame(moment().subtract(3, 'days'), 'day')) {
@@ -181,7 +190,7 @@ export class ExploreComponent implements OnInit {
             this.passSearchState.isEmpty = false;
             return passes.map(pass => {
               const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
-              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" (click)="cellClick(element, column)" style="background: ${this.getGradient(pass.gradient_color)}">
+              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" onClick="passClick(${pass.id})" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
 <!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
               const rawObj = {
@@ -243,7 +252,10 @@ export class ExploreComponent implements OnInit {
                 'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
                   contact.contact_passes
                     .map(({contact_pass, student_pass}, index) => {
-                    return `<div style="display: flex; ${(index > 0 ? 'margin-left: 5px' : '')}"><div class="pass-icon" style="background: ${this.getGradient(contact_pass.gradient_color)}"></div><div class="pass-icon" style="background: ${this.getGradient(student_pass.gradient_color)}; margin-left: 5px"></div></div>`;
+                    return `<div style="display: flex; ${(index > 0 ? 'margin-left: 5px' : '')}">
+                            <div class="pass-icon" onClick="passClick(${contact_pass.id})" style="background: ${this.getGradient(contact_pass.gradient_color)}; cursor: pointer"></div>
+                            <div class="pass-icon" onClick="passClick(${student_pass.id})" style="background: ${this.getGradient(student_pass.gradient_color)}; margin-left: 5px; cursor: pointer"></div>
+                        </div>`;
                   }).join('') + `</div>`
                 )
               };
@@ -257,6 +269,11 @@ export class ExploreComponent implements OnInit {
             });
           })
         );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getGradient(gradient: string) {
@@ -285,6 +302,31 @@ export class ExploreComponent implements OnInit {
         this.currentView$.next(action);
         this.storage.setItem('explore_page', action);
         this.cdr.detectChanges();
+    });
+  }
+
+  passClick(id) {
+    this.hallPassService.passesEntities$
+      .pipe(
+        takeUntil(this.destroy$),
+        map(passes => {
+          return passes[id];
+        })).subscribe(pass => {
+      pass.start_time = new Date(pass.start_time);
+      pass.end_time = new Date(pass.end_time);
+      const data = {
+        pass: pass,
+        fromPast: true,
+        forFuture: false,
+        forMonitor: false,
+        isActive: false,
+        forStaff: true,
+      };
+      const dialogRef = this.dialog.open(PassCardComponent, {
+        panelClass: 'search-pass-card-dialog-container',
+        backdropClass: 'custom-bd',
+        data: data,
+      });
     });
   }
 

@@ -71,6 +71,10 @@
       }
     }
   }
+
+  .shadow {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.254999);
+  }
 }
 
 .example-viewport {
@@ -274,6 +278,12 @@
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
+//
+//@media all and (max-width: 1200px) {
+//  .table-options-screen {
+//    box-shadow: 0 0 15px rgba(0, 0, 0, 0.254999);
+//  }
+//}
 
 //.no-container .cdk-virtual-scroll-content-wrapper {
 //  contain: none;

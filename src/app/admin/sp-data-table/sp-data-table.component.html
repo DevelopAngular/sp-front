@@ -34,7 +34,7 @@
         </ng-container>
 
         <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns; last as isLast; first as isFirst" [sticky]="isFirst">
-          <ng-container *ngIf="column !== 'Pass'; else passNoSort">
+          <ng-container *ngIf="column !== 'Pass' && column !== 'Passes'; else passNoSort">
             <th
               [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
               [style.background-color]="getColumnSort(column) === 'asc' || getColumnSort(column) === 'desc' ? '#e5e6eb' : '#D3D6DE'"
@@ -66,9 +66,6 @@
             [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
             *matCellDef="let element"
             [innerHTML]="element[column]"
-            appCrossPointerEventTarget
-            [style.cursor]="column === 'Pass' ? 'pointer' : 'default'"
-            (pointerClickEvent)="column === 'Pass' ? cellClick(element, column) : null"
           ></td>
         </ng-container>
 
@@ -84,7 +81,7 @@
       </table>
     </cdk-virtual-scroll-viewport>
 
-  <div class="table-options-screen">
+  <div class="table-options-screen" [ngClass]="{'shadow': hasHorizontalScroll}">
     <div class="buttons">
       <div class="button" appCrossPointerEventTarget (pointerClickEvent)="openOption(option.action, $event)" *ngFor="let option of tableOptionButtons; first as isFirst" [style.margin-top]="isFirst ? 0 : '25px'">
         <img width="20" [src]="'./assets/' + option.icon + ' ('+ (selection.selected.length && !isFirst ? 'Navy' : 'Blue-Gray') +').svg' | resolveAsset">

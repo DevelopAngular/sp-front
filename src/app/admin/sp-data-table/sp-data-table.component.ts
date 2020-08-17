@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  EventEmitter,
+  Component, ElementRef,
+  EventEmitter, HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable, of, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import {MatDialog, MatSort, Sort} from '@angular/material';
 import * as moment from 'moment';
@@ -155,9 +155,15 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     { icon: 'CSV', action: 'csv'}
   ];
   selectedRows: any[];
-  disableRowClick: boolean;
+  hasHorizontalScroll: boolean;
 
   destroy$ = new Subject();
+
+  @HostListener('window:resize', ['$event'])
+  resize(event) {
+    const doc = document.querySelector('.example-viewport');
+    this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
+  }
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -177,7 +183,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.dataSource.sort = this.sort;
     this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
-      .subscribe(offset => this.placeholderHeight = offset);
+      .subscribe(offset => {
+        this.placeholderHeight = offset;
+        const doc = document.querySelector('.example-viewport');
+        this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
+      });
 
     this.viewport.scrolledIndexChange.subscribe(res => {
       if (res === (this.dataSource.allData.length - this.viewportDataItems)) {
@@ -305,41 +315,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
-  rowOnClick(row) {
-    if (!this.disableRowClick) {
-      this.selection.toggle(row);
-    }
-    this.disableRowClick = false;
-  }
-
-  cellClick(element, column?) {
-    if (column === 'Pass') {
-      this.disableRowClick = true;
-      this.hallpassService.passesEntities$
-        .pipe(
-          takeUntil(this.destroy$),
-          map(passes => {
-          return passes[element.id];
-        })).subscribe(pass => {
-        pass.start_time = new Date(pass.start_time);
-        pass.end_time = new Date(pass.end_time);
-        const data = {
-          pass: pass,
-          fromPast: true,
-          forFuture: false,
-          forMonitor: false,
-          isActive: false,
-          forStaff: true,
-        };
-        const dialogRef = this.dialog.open(PassCardComponent, {
-          panelClass: 'search-pass-card-dialog-container',
-          backdropClass: 'custom-bd',
-          data: data,
-        });
-      });
-    }
-  }
-
   openOption(action: string, event) {
     if (action === 'column') {
       UNANIMATED_CONTAINER.next(true);
@@ -360,24 +335,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       this.toastService.openToast(
         {title: 'CSV Generated', subtitle: 'Download it to your computer now.'}
         );
-      // debugger;
-      // UNANIMATED_CONTAINER.next(true);
-      // const csv = this.dialog.open(GeneratedTableDialogComponent, {
-      //   panelClass: 'consent-dialog-container',
-      //   backdropClass: 'invis-backdrop',
-      //   disableClose: true,
-      //   data: {
-      //     'trigger': event.currentTarget,
-      //     'header': 'CSV Generated',
-      //     'subtitle': 'Download it to your computer now.',
-      //     'selected': this.selection.selected
-      //   }
-      // });
-      //
-      // csv.afterClosed().subscribe(res => {
-      //   UNANIMATED_CONTAINER.next(false);
-      //   this.cdr.detectChanges();
-      // });
     }
   }
 
