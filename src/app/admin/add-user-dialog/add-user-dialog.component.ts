@@ -75,7 +75,7 @@ export class AddUserDialogComponent implements OnInit {
 
   ) {
     this.syncInfo = this.data['syncInfo'];
-    this.accountTypes = this.syncInfo.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G_Suite', 'Standard'];
+    this.accountTypes = this.syncInfo.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G Suite', 'Standard'];
     this.typeChoosen = this.accountTypes[0];
     if (this.data.role === '_profile_assistant' || this.data.role === '_all') {
       this.assistantLike = {

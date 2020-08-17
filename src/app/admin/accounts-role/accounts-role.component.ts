@@ -716,7 +716,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
         if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
-        const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
+        // const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
 
         const rawObj = {
           'Name': raw.display_name,
@@ -726,7 +726,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : '',
-          'Sign-in status': raw.active && !disabledSignIn ? 'Enabled' : 'Disabled',
+          'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
           'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
           'Group(s)': partOf.length ? partOf : [{title: 'No profile'}],
           'Permissions': (function() {

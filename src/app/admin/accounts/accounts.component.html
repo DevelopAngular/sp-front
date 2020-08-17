@@ -13,7 +13,7 @@
           <div class="header-content">
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
-              <div class="count" *ngIf="!schoolSyncInfoData.is_gg4l_enabled && (onboardProcess['2.landing:first_account'].done && onboardProcess['2.accounts:create_demo_accounts'].done)">
+              <div class="count" *ngIf="!schoolSyncInfoData.is_gg4l_enabled && (onboardProcess['2.landing:first_account']?.done && onboardProcess['2.accounts:create_demo_accounts']?.done)">
                 <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async).total_count}} accounts</div>
               </div>
             </div>
@@ -102,7 +102,7 @@
 
       <div class="accounts-content" *ngIf="!openTable">
         <div class="content-wrapper" *ngIf="(onboardProcessLoaded$ | async)">
-          <div class="start-page" style="width: 760px" *ngIf="!onboardProcess['2.landing:first_account'].done && !onboardProcess['2.accounts:create_demo_accounts'].done">
+          <div class="start-page" style="width: 760px" *ngIf="!onboardProcess['2.landing:first_account']?.done && !onboardProcess['2.accounts:create_demo_accounts']?.done">
             <div class="groups" style="margin-top: 0; margin-bottom: 48px">
               <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Quick Add</div>
               <div class="groups-buttons">
@@ -162,7 +162,7 @@
           <!--          ></app-admin-card-button>-->
           <!--        </div>-->
 
-          <div class="groups" *ngIf="onboardProcess['2.landing:first_account'].done || onboardProcess['2.accounts:create_demo_accounts'].done">
+          <div class="groups" *ngIf="onboardProcess['2.landing:first_account']?.done || onboardProcess['2.accounts:create_demo_accounts']?.done">
             <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
             <div class="groups-buttons">
               <app-admin-card-button
