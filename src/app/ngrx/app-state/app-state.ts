@@ -11,6 +11,8 @@ import { colorsReducer } from '../color-profiles/reducers';
 import { schoolsReducer } from '../schools/reducers';
 import { userReducer } from '../user/reducers/user.reducer';
 import { onboardProcessReducer } from '../onboard-process/reducers/process.reducer';
+import { passLimitsReducer } from '../pass-limits/reducers';
+import { toastReducer } from '../toast/reducers';
 
 
 export interface AppState {
@@ -27,6 +29,8 @@ export interface AppState {
   readonly schools;
   readonly user;
   readonly onboardProcess;
+  readonly pass_limits;
+  readonly toast;
 }
 
 export const reducers = {
@@ -42,5 +46,7 @@ export const reducers = {
   colorProfiles: colorsReducer,
   schools: schoolsReducer,
   user: userReducer,
-  onboardProcess: onboardProcessReducer
+  onboardProcess: onboardProcessReducer,
+  pass_limits: passLimitsReducer,
+  toast: toastReducer
 };

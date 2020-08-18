@@ -18,6 +18,10 @@ export class BulkEditRoomsComponent implements OnInit {
 
   @Input() form: FormGroup;
 
+  @Input() passLimitForm: FormGroup;
+
+  @Input() showErrors: boolean;
+
   @Output()
   bulkEditResult: EventEmitter<{
     rooms: Location[],

@@ -12,7 +12,8 @@ export const schoolsInitialState: SchoolsState = {
   loaded: false,
   currentSchoolId: null,
   gg4lInfo: null,
-  syncInfo: null
+  syncInfo: null,
+  gSuiteInfo: null
 };
 
 const reducer = createReducer(
@@ -46,6 +47,17 @@ const reducer = createReducer(
   }),
   on(schoolsActions.updateSchoolSuccess, (state, {school}) => {
     return schoolAdapter.upsertOne(school, { ...state, loading: false, loaded: true, currentSchoolId: school.id });
+  }),
+  on(schoolsActions.getGSuiteSyncInfoSuccess, (state, {gSuiteInfo}) => {
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      gSuiteInfo
+    };
+  }),
+  on(schoolsActions.updateGSuiteInfoSelectorsSuccess, (state, {selectors}) => {
+    return {...state, gSuiteInfo: {...state.gSuiteInfo, selectors}};
   })
 );
 

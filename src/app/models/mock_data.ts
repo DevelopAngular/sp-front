@@ -85,9 +85,9 @@ function constructTestInvitations(student: User, issuer: User, origin: Location,
 
 export const testStudent = new User('testStudent', new Date(), new Date(), 'Kyle', 'Cook', 'Kyle Cook', 'mail@mail.com', []);
 export const testIssuer = new User('141', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
-export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, '', true, true, [], false, '', true, true, [], [], [], [], 15, false);
+export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, '', true, true, [], false, '', true, true, [], [], [], [], 15, false, 0, false, 0, false);
 export const testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, '', true, true, [], false, '', true, true, [], [],
-  ['round_trip', 'one_way'], [], 15, false);
+  ['round_trip', 'one_way'], [], 15, false, 0, false, 0, false);
 export const testColorProfile = new ColorProfile('testColorProfile', 'Light-blue', '#0B9FC1,#00C0C7', '#07ABC3',
   '#11CFE5', '#0B9FC1', '#18EEF7');
 

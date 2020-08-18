@@ -4,92 +4,79 @@
     <div class="settings-content">
       <div class="profile-switch">
         <div class="option"  *ngIf="isSwitchOption"
-             [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
+              #switch
+             [style.background]="switch.pressed ? 'rgba(127, 135, 157, .15)' : (hoveredProfile ? 'rgba(127, 135, 157, .1)' : 'transparent')"
              (mouseenter)="hoveredProfile = true"
-             (mouseleave)="hoveredProfile = false"
+             (mouseleave)="hoveredProfile = false; switch.pressed = false"
              appCrossPointerEventTarget
              (pointerClickEvent)="hoveredProfile = false; dialogRef.close('switch')"
-             (pointerDownEvent)="hoveredProfile = true; dialogRef.close('switch')"
-             (pointerCancelEvent)="hoveredProfile = false"
+             (pointerDownEvent)="switch.pressed = true; hoveredProfile = true"
+             (pointerCancelEvent)="switch.pressed = false; hoveredProfile = false"
         >
-          <img class="switch-icon" [src]="getIcon('Profile Switch', null, hoveredProfile) | resolveAsset">
-          <div class="option-title" [style.color]="getColor(null, hoveredProfile)">Teacher View</div>
-          <img class="arrow-icon" [src]="getIcon('Chevron Right', null, hoveredProfile) | resolveAsset">
+          <img class="switch-icon" [src]="getIcon('Profile Switch', null) | resolveAsset">
+          <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">Teacher View</div>
+          <img class="arrow-icon" [src]="getIcon('Chevron Right', null) | resolveAsset">
 
         </div>
 
         <div class="option"
-             *ngIf="showGetStarted"
-             [style.background]="started.hovered ? '#00B476' : 'transparent'"
-             #started
-             (mouseenter)="started.hovered = true"
-             (mouseleave)="started.hovered = false"
+             *ngFor="let setting of settings"
+             #option
+             [style.background]="option.pressed ? 'rgba(127, 135, 157, .15)' : (option.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"
+             (mouseenter)="option.hovered = true"
+             (mouseleave)="option.hovered = false; option.pressed = false"
              appCrossPointerEventTarget
-             (pointerClickEvent)="started.pressed = false; handleAction({action: 'getStarted'})"
-             (pointerDownEvent)="started.pressed = true"
-             (pointerCancelEvent)="started.pressed = false;"
+             (pointerClickEvent)="dialogRef.close(setting.action)"
+             (pointerDownEvent)="option.pressed = true"
+             (pointerCancelEvent)="option.pressed = false; option.hovered = false;"
         >
-
-          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && started.hovered ? './assets/lamp (White).svg' : getIcon('lamp', null, started.hovered) | resolveAsset">
-          <div class="option-title" [style.color]="!darkTheme.isEnabled$.value && started.hovered ? 'white' : getColor(null, started.hovered)">
+          <img class="switch-icon" [src]="getIcon(setting.icon, null) | resolveAsset">
+          <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
             <div>
-              <span>Get Started</span>
+              <span>{{ setting.title }}</span>
             </div>
           </div>
 
         </div>
 
-        <div class="option"
-             [style.background]="_themeBackground"
-             (mouseenter)="hoveredTheme = true"
-             (mouseleave)="hoveredTheme = false"
-             appCrossPointerEventTarget
-             (pointerClickEvent)="dialogRef.close('appearance')"
-             (pointerDownEvent)="pressedTheme = true"
-             (pointerCancelEvent)="pressedTheme = false;"
-        >
-          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Glasses (White).svg' : getIcon('Glasses', null, hoveredTheme) | resolveAsset">
-          <div class="option-title" [style.color]="!darkTheme.isEnabled$.value && hoveredTheme ? 'white' : getColor(null, hoveredTheme)">
-            <div>
-              <span>Appearance</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-<!--      <div class="links">-->
-<!--        <div class="link"-->
-<!--             *ngFor="let setting of settings"-->
-<!--             [style.background]="hovered && hoveredColor === setting.background ? setting.background : 'none'"-->
-<!--             (mouseenter)="onHover(setting.background)"-->
-<!--             (mouseleave)="hovered = false"-->
+<!--        <div class="option"-->
+<!--             *ngIf="showGetStarted"-->
+<!--             [style.background]="started.pressed ? 'rgba(127, 135, 157, .15)' : (started.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"-->
+<!--             #started-->
+<!--             (mouseenter)="started.hovered = true"-->
+<!--             (mouseleave)="started.hovered = false; started.pressed = false;"-->
 <!--             appCrossPointerEventTarget-->
-<!--             (pointerClickEvent)="hovered = false; handleAction(setting)"-->
-<!--             (pointerDownEvent)="hovered = true"-->
-<!--             (pointerCancelEvent)="hovered = false"-->
+<!--             (pointerClickEvent)="started.pressed = false; handleAction({action: 'getStarted'})"-->
+<!--             (pointerDownEvent)="started.pressed = true"-->
+<!--             (pointerCancelEvent)="started.pressed = false;"-->
 <!--        >-->
-<!--          <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">-->
-<!--          <div class="setting-name"-->
-<!--               [style.color]="getColor(setting, hovered, hoveredColor)"-->
-<!--          >{{ setting.title }}</div>-->
+
+<!--          <img class="switch-icon" [src]="getIcon('lamp', null) | resolveAsset">-->
+<!--          <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">-->
+<!--            <div>-->
+<!--              <span>Get Started</span>-->
+<!--            </div>-->
+<!--          </div>-->
+
 <!--        </div>-->
-<!--      </div>-->
-      <mat-divider style="margin: 10px 0 10px 0"></mat-divider>
+      </div>
+<!--      <mat-divider style="margin: 10px 0 10px 0"></mat-divider>-->
     </div>
     <div class="footer">
       <div class="sign-out"
-           [style.background-color]="hoveredSignout ? 'rgb(228, 235, 255)' : 'transparent'"
-           [style.color]="getColor(null, hoveredSignout)"
+           #out
+           [style.background]="out.pressed ? 'rgba(127, 135, 157, .15)' : (hoveredSignout ? 'rgba(127, 135, 157, .1)' : 'transparent')"
+           [style.color]="getColor('#FFFFFF', '#7f879d')"
            (mouseenter)="hoveredSignout = true"
-           (mouseleave)="hoveredSignout = false"
+           (mouseleave)="hoveredSignout = false; out.pressed = false;"
            appCrossPointerEventTarget
            (pointerClickEvent)="hoveredSignout = false; signOut()"
-           (pointerDownEvent)="hoveredSignout = true"
-           (pointerCancelEvent)="hoveredSignout = false"
+           (pointerDownEvent)="out.pressed = true; hoveredSignout = true"
+           (pointerCancelEvent)="out.pressed = false; hoveredSignout = false"
       >
         <span>Sign out</span>
       </div>
-      <div class="options" [style.color]="getColor(null, null)">
+      <div class="options" [style.color]="getColor('#FFFFFF', '#7f879d')">
         <span class="option"
               appCrossPointerEventTarget
               (pointerClickEvent)="dialogRef.close('privacy')"
@@ -100,11 +87,11 @@
         >Terms</span>
       </div>
     </div>
-    <div class="bottom-arrow-container"
-         appCrossPointerEventTarget
-         (pointerClickEvent)="dialogRef.close()"
-    >
-      <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
-    </div>
+<!--    <div class="bottom-arrow-container"-->
+<!--         appCrossPointerEventTarget-->
+<!--         (pointerClickEvent)="dialogRef.close()"-->
+<!--    >-->
+<!--      <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>-->
+<!--    </div>-->
 </div>
 

@@ -3,6 +3,7 @@ import {FormGroup} from '@angular/forms';
 import { Observable, fromEvent } from 'rxjs';
 import {startWith} from 'rxjs/operators';
 
+export type ToggleInputSize = 'small' | 'regular' | 'large';
 
 @Component({
   selector: 'app-toggle-input',
@@ -14,10 +15,13 @@ export class ToggleInputComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() controlName: string;
   @Input() controlLabel: string;
-  @Input() controlSize: string = 'regular'; // Can be small, regular or large ;
+  @Input() controlSize: ToggleInputSize = 'regular';
   @Input() disabled: boolean = false;
   @Input() delimiter: boolean = true;
   @Input() mock: boolean = false;
+  @Input() color: string = '#00B476';
+  @Input() icon: string = './assets/Hand (Jade).svg';
+  @Input() hasIcon: boolean = false;
 
   @ViewChild('inp') set inputField(inputField: ElementRef) {
     this.inp = inputField;
@@ -37,6 +41,7 @@ export class ToggleInputComponent implements OnInit {
   constructor(
     private _zone: NgZone
   ) {}
+
   ngOnInit() {
 
     this._zone.run(() => {

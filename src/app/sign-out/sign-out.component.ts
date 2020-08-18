@@ -21,9 +21,9 @@ export class SignOutComponent implements AfterContentInit {
   ) {
     this.http.setSchool(null);
     this.userService.clearUser();
-    if (this.darkSwitch.isEnabled$.value) {
-      this.darkSwitch.switchTheme('Light');
-    }
+    // if (this.darkSwitch.isEnabled$.value) {
+    //   this.darkSwitch.isEnabled$.next(false);
+    // }
   }
 
   ngAfterContentInit() {

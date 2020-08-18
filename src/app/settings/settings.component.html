@@ -1,97 +1,90 @@
 <div class="settings-wrapper" (scroll)="$event.stopPropagation()"  *ngIf="data || dataSideNav" [style.background-color]="darkTheme.getBackground('high', true)">
-  <div class="top-arrow-container"
-       appCrossPointerEventTarget
-       (pointerClickEvent)="dialogRef.close()"
-  >
-    <div class="top-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
-  </div>
+<!--  <div class="top-arrow-container"-->
+<!--       appCrossPointerEventTarget-->
+<!--       (pointerClickEvent)="dialogRef.close()"-->
+<!--  >-->
+<!--    <div class="top-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>-->
+<!--  </div>-->
   <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
   <div class="settings-content">
     <div class="profile-switch" *ngIf="kioskMode.currentRoom$ | async">
       <div class="option"
+           #kiosk
            (mouseenter)="hoveredMasterOption = true"
-           (mouseleave)="hoveredMasterOption = false"
-           [style.background-color]="hoveredMasterOption ? 'rgb(228, 235, 255)' : 'transparent'"
+           (mouseleave)="hoveredMasterOption = false; kiosk.pressed = false"
+           [style.background]="hoveredMasterOption ? (kiosk.pressed ? 'rgba(127, 135, 157, .15)' : 'rgba(127, 135, 157, .1)') : 'transparent'"
            appCrossPointerEventTarget
            (pointerClickEvent)="hoveredMasterOption = false; signOutAction()"
-           (pointerDownEvent)="hoveredMasterOption = true"
-           (pointerCancelEvent)="hoveredMasterOption = false;"
+           (pointerDownEvent)="kiosk.pressed = true; hoveredMasterOption = true"
+           (pointerCancelEvent)="kiosk.pressed = false; hoveredMasterOption = false;"
 
       >
-        <img class="switch-icon" [src]="getIcon('Tablet', null,  hoveredMasterOption) | resolveAsset">
-        <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Exit Kiosk Mode</div>
-        <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredMasterOption) | resolveAsset">
+        <img class="switch-icon" [src]="getIcon('Tablet', null) | resolveAsset">
+        <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">Exit Kiosk Mode</div>
+        <img class="arrow-icon" [src]="getIcon('Chevron Right', null) | resolveAsset">
       </div>
 
-      <mat-divider class="divider"></mat-divider>
+<!--      <mat-divider class="divider"></mat-divider>-->
     </div>
 
     <div class="profile-switch" *ngIf="isSwitch">
       <div class="option"
+           #switch
            (mouseenter)="hoveredMasterOption = true"
            (mouseleave)="hoveredMasterOption = false"
-           [style.background-color]="hoveredMasterOption ? 'rgb(228, 235, 255)' : 'transparent'"
+           [style.background]="hoveredMasterOption ? (switch.pressed ? 'rgba(127, 135, 157, .15)' : 'rgba(127, 135, 157, .1)') : 'transparent'"
            appCrossPointerEventTarget
            (pointerClickEvent)="hoveredMasterOption = false; switchAction()"
-           (pointerDownEvent)="hoveredMasterOption = true"
-           (pointerCancelEvent)="hoveredMasterOption = false;"
+           (pointerDownEvent)="switch.pressed = true; hoveredMasterOption = true"
+           (pointerCancelEvent)="switch.pressed = false; hoveredMasterOption = false;"
       >
-        <img class="switch-icon" [src]="getIcon('Profile Switch', null,  hoveredMasterOption) | resolveAsset">
-        <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Admin View</div>
-        <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredMasterOption) | resolveAsset">
+        <img class="switch-icon" [src]="getIcon('Profile Switch', null) | resolveAsset">
+        <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">Admin View</div>
+        <img class="arrow-icon" [src]="getIcon('Chevron Right', null) | resolveAsset">
       </div>
 
-      <mat-divider class="divider"></mat-divider>
+<!--      <mat-divider class="divider"></mat-divider>-->
     </div>
 
     <div class="setting" *ngFor="let setting of settings; let i = index">
       <div *ngIf="!setting.hidden">
         <div class="content"
+             #set
              appCrossPointerEventTarget
-             (pointerClickEvent)="handleAction(setting); hovered = false"
-             (pointerDownEvent)="onHover(setting.background)"
-             (pointerCancelEvent)="hovered = false;"
-             (mouseenter)="onHover(setting.background)"
-             (mouseleave)="hovered = false"
-             [style.background]="
-              hovered && hoveredColor === setting.background
-              ?
-                setting.action === 'appearance'
-                  ?
-                  (darkTheme.isEnabled$.value
-                    ?
-                      'rgb(228, 235, 255)' : setting.background)
-                        : setting.background: 'none'"
+             (pointerClickEvent)="handleAction(setting); set.hovered = false"
+             (pointerDownEvent)="set.pressed = true"
+             (pointerCancelEvent)="set.pressed = false; set.hovered = false;"
+             (mouseenter)="set.hovered = true"
+             (mouseleave)="set.hovered = false; set.pressed = false"
+             [style.background]="set.hovered ? (set.pressed ? 'rgba(127, 135, 157, .15)' : 'rgba(127, 135, 157, .1)') : 'transparent'"
         >
           <img class="setting-icon"
                [title]="setting.tooltip"
-               [src]="setting.action === 'appearance'
-                ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background)
-                  ? './assets/Glasses (Navy).svg'
-                    : getIcon(setting.icon, setting, hovered, hoveredColor))
-                      : (getIcon(setting.icon, setting, hovered, hoveredColor)) | resolveAsset" alt="SET">
+               [src]="getIcon(setting.icon, setting) | resolveAsset" alt="SET"
+          >
           <div class="setting-title"
-               [style.color]="setting.action === 'appearance' ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.background) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
+               [style.color]="getColor('#FFFFFF', '#7f879d')"
           > {{setting.title}} </div>
         </div>
-        <mat-divider class="divider"
-                     [style.border-top-color]="darkTheme.isEnabled$.value ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)'"
-                     *ngIf="i === 3 || i === 6 || (setting.action === 'appearance' && !!this.kioskMode.currentRoom$.value)">
-        </mat-divider>
+<!--        <mat-divider class="divider"-->
+<!--                     [style.border-top-color]="darkTheme.isEnabled$.value ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)'"-->
+<!--                     *ngIf="i === 3 || i === 6 || (setting.action === 'appearance' && !!this.kioskMode.currentRoom$.value)">-->
+<!--        </mat-divider>-->
       </div>
     </div>
   </div>
   <div class="footer">
     <div class="sign-out"
-         [style.background-color]="hoveredSignout ? 'rgb(228, 235, 255)' : 'transparent'"
-         [style.color]="getColor(null, hoveredSignout)"
+         #signOut
+         [style.background-color]="hoveredSignout ? (signOut.pressed ? 'rgba(127, 135, 157, .15)' : 'rgba(127, 135, 157, .1)') : 'transparent'"
+         [style.color]="getColor('#FFFFFF', '#7f879d')"
          (mouseenter)="hoveredSignout = true"
          (mouseleave)="hoveredSignout = false"
 
          appCrossPointerEventTarget
          (pointerClickEvent)="hoveredSignout = false; signOutAction()"
-         (pointerDownEvent)="hoveredSignout = true"
-         (pointerCancelEvent)="hoveredSignout = false;"
+         (pointerDownEvent)="signOut.pressed = true; hoveredSignout = true"
+         (pointerCancelEvent)="signOut.pressed = false; hoveredSignout = false;"
     >Sign out</div>
     <div class="options" [style.color]="getColor(null, null)">
       <span class="option"

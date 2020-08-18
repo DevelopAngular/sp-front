@@ -1,6 +1,8 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { SupportOptionsComponent } from '../support-options/support-options.component';
 import { MatDialog } from '@angular/material';
+import {UserService} from '../services/user.service';
+import {SupportService} from '../services/support.service';
 
 declare const window;
 
@@ -11,14 +13,23 @@ declare const window;
 })
 export class SupportButtonComponent implements OnInit {
 
+  @ViewChild('wrapper') container: ElementRef;
+
   isOpenOptions: boolean;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(
+    private dialog: MatDialog,
+    private supportService: SupportService
+  ) { }
 
   ngOnInit() {
+    this.supportService.openSupportTrigger$.subscribe(() => {
+      this.container.nativeElement.click();
+    });
   }
 
   openSupportOptions(event) {
+    const chat = document.querySelector('#hubspot-messages-iframe-container');
     if (!this.isOpenOptions) {
       this.isOpenOptions = true;
       const SPO = this.dialog.open(SupportOptionsComponent, {
@@ -34,6 +45,7 @@ export class SupportButtonComponent implements OnInit {
     } else {
       this.isOpenOptions = false;
       window.HubSpotConversations.widget.close();
+      (chat as HTMLElement).setAttribute('style', 'opacity: 0 !important');
       if (this.dialog.getDialogById('support')) {
         this.dialog.getDialogById('support').close();
       }

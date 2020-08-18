@@ -48,6 +48,7 @@ export class InvitationCardComponent implements OnInit {
   fromHistory;
   fromHistoryIndex;
   dateEditOpen: boolean;
+  locationChangeOpen: boolean;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -101,11 +102,11 @@ export class InvitationCardComponent implements OnInit {
         return this.invitation.student.primary_email.split('@', 1)[0];
     }
 
-  get status(){
+  get status() {
     return this.invitation.status.charAt(0).toUpperCase() + this.invitation.status.slice(1);
   }
 
-  get durationPlural(){
+  get durationPlural() {
     return this.selectedStudents && this.selectedStudents.length > 1;
   }
 
@@ -142,6 +143,35 @@ export class InvitationCardComponent implements OnInit {
 
   formatDateTime(date: Date) {
     return Util.formatDateTime(date);
+  }
+
+  changeLocation(){
+    if(!this.locationChangeOpen){
+      const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
+        panelClass: 'form-dialog-container',
+        maxWidth: '100vw',
+        backdropClass: 'invis-backdrop',
+        data: {
+          'forInput': false,
+          'hasClose': true,
+          'entryState': { step: 3, state: 1 },
+          'originalToLocation': this.invitation.destination,
+          'colorProfile': this.invitation.color_profile,
+          'originalFromLocation': this.invitation['default_origin']}
+      });
+
+      locationDialog.afterOpen().subscribe(() => {
+        this.locationChangeOpen = true;
+      });
+
+      locationDialog.beforeClose().subscribe(() => {
+        this.locationChangeOpen = false;
+      });
+
+      locationDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
+        this.setLocation((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.invitation['default_origin']);
+      });
+    }
   }
 
   setLocation(location: Location) {
@@ -211,11 +241,11 @@ export class InvitationCardComponent implements OnInit {
         });
 
         dateDialog.afterClosed().pipe(
-          filter((res) => res.data.date && resend_request && this.forStaff),
+          filter((res) => res && res.data.date && resend_request && this.forStaff),
             switchMap((state) => {
               const body = {
                   'students' : this.invitation.student.id,
-                  'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+                  'default_origin' : this.invitation.default_origin ? this.invitation.default_origin.id : null,
                   'destination' : +this.invitation.destination.id,
                   'date_choices' : [new Date(state.data.date.date).toISOString()],
                   'duration' : this.invitation.duration,
@@ -236,21 +266,25 @@ export class InvitationCardComponent implements OnInit {
       this.options = [];
       this.header = '';
       if (this.forInput) {
-        if (this.isSeen) {
-            this.formState.step = 3;
-            this.formState.previousStep = 4;
-            this.createFormService.setFrameMotionDirection('disable');
-            this.cardEvent.emit(this.formState);
-        }
+        this.formState.step = 3;
+        this.formState.previousStep = 4;
+        this.createFormService.setFrameMotionDirection('disable');
+        this.cardEvent.emit(this.formState);
           return false;
       } else if (!this.forStaff) {
-        this.options.push(this.genOption('Decline Pass Request', '#E32C66', 'decline'));
-        this.header = 'Are you sure you want to decline this pass request you received?'
+        this.options.push(
+          this.genOption('Decline Pass Request', '#E32C66', 'decline', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)' )
+        );
+        this.header = 'Are you sure you want to decline this pass request you received?';
       } else {
         if (this.invalidDate) {
-            this.options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'resend'));
+            this.options.push(
+              this.genOption('Change Date & Time to Resend', '#7f879d', 'resend')
+            );
         }
-        this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete'));
+        this.options.push(
+          this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)')
+        );
         this.header = 'Are you sure you want to delete this pass request you sent?';
       }
 
@@ -262,7 +296,7 @@ export class InvitationCardComponent implements OnInit {
           data: {'header': this.header, 'options': this.options, 'trigger': target}
         });
 
-        consentDialog.afterOpen().subscribe( () =>{
+        consentDialog.afterOpen().subscribe( () => {
           this.denyOpen = true;
         });
 
@@ -280,7 +314,7 @@ export class InvitationCardComponent implements OnInit {
 
   chooseAction(action) {
     this.denyOpen = false;
-    if(action === 'cancel') {
+    if (action === 'cancel') {
       this.dialogRef.close();
     } else if (action === 'decline') {
       const body = {
@@ -301,8 +335,8 @@ export class InvitationCardComponent implements OnInit {
     }
   }
 
-  genOption(display, color, action){
-    return {display: display, color: color, action: action}
+  genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {
+    return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
   cancelClick() {

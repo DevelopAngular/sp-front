@@ -71,5 +71,4 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
         PdfGeneratorService,
     ],
 })
-export class AdminModule {
-}
+export class AdminModule {}

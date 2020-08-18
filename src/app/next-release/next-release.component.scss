@@ -3,21 +3,29 @@
 :host {
   .next-release-container {
     position: relative;
-    height: 500px;
     background-color: #FFFFFF;
     border-radius: 14px;
     overflow: auto;
+
+    &.desktop-width {
+      max-height: 450px;
+    }
+
+    .mobile-icon {
+      width: 157px;
+      height: 140px;
+    }
     .release-version {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       position: sticky;
-      top: 0px;
+      top: 0;
       background-color: inherit;
       height: 70px;
       min-height: 70px;
-      font-size: 28px;
+      //font-size: 28px;
       transition: font-size .25s ease-in-out;
     //cubic-bezier(0, 0, 0, 0)
       &_number {
@@ -42,7 +50,7 @@
     .release-items {
       width: 100%;
       box-sizing: border-box;
-      padding: 30px 40px;
+      padding: 0 40px;
       &_item {
         margin: 35px 0;
         width: inherit;
@@ -65,8 +73,9 @@
             color: #FFFFFF;
             border-radius: 20px;
             height: 24px;
-            padding: 0px 12px;
+            padding: 0 12px;
             font-size: 14px;
+            text-transform: capitalize;
           }
           .item_description {
             margin-top: 10px;

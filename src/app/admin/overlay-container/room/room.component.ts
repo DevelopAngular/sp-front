@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output} f
 import { FormGroup } from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material';
 
-import { merge, Subject } from 'rxjs';
+import {merge, Observable, Subject} from 'rxjs';
 import {debounceTime, filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
@@ -26,6 +26,10 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
+
+  @Input() showErrors: boolean;
+
+  @Input() passLimitForm: FormGroup;
 
   @Output() back = new EventEmitter();
 
@@ -114,7 +118,7 @@ export class RoomComponent implements OnInit, OnDestroy {
        page === Pages.NewRoomInFolder ||
        page === Pages.EditRoomInFolder)
    ) {
-     return ['Any teachers assigned', 'All teachers assigned'];
+     return ['Any teachers in room', 'All teachers in room'];
    }
   }
 
@@ -130,7 +134,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.tooltipText = this.overlayService.tooltipText;
       this.currentPage = this.overlayService.pageState.getValue().currentPage;
 
-      if (this.overlayService.pageState.getValue().data) {
+    if (this.overlayService.pageState.getValue().data) {
           if (this.currentPage === Pages.EditRoom) {
               const pinnable = this.overlayService.pageState.getValue().data.pinnable;
               this.data = {
@@ -138,13 +142,19 @@ export class RoomComponent implements OnInit, OnDestroy {
                   roomNumber: pinnable.location.room,
                   travelType: pinnable.location.travel_types,
                   selectedTeachers: pinnable.location.teachers,
-                  restricted: pinnable.location.restricted,
-                  scheduling_restricted: pinnable.location.scheduling_restricted,
+                  restricted: !!pinnable.location.restricted,
+                  scheduling_restricted: !!pinnable.location.scheduling_restricted,
                   timeLimit: pinnable.location.max_allowed_time,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
+              this.passLimitForm.patchValue({
+                to: data.max_passes_to,
+                toEnabled: data.max_passes_to_active,
+                from: data.max_passes_from,
+                fromEnabled: data.max_passes_from_active
+              });
               this.data = {
                   id: data.id,
                   roomName: data.title,
@@ -152,8 +162,8 @@ export class RoomComponent implements OnInit, OnDestroy {
                   timeLimit: data.max_allowed_time,
                   selectedTeachers: data.teachers,
                   travelType: data.travel_types,
-                  restricted: data.restricted,
-                  scheduling_restricted: data.scheduling_restricted,
+                  restricted: !!data.restricted,
+                  scheduling_restricted: !!data.scheduling_restricted,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions
               };
           }
@@ -191,7 +201,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   checkValidRoomOptions() {
       if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
-          if (this.validForm && this.isValidRestrictions) {
+          if (this.validForm) {
               this.roomValidButtons = {
                   publish: false,
                   incomplete: false,
@@ -205,7 +215,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           }
       } else {
-        if (this.validForm && this.isValidRestrictions) {
+        if (this.validForm && this.data.travelType.length) {
             this.roomValidButtons = {
                 publish: true,
                 incomplete: false,
@@ -248,8 +258,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.data.selectedTeachers = teachers;
     if (!this.data.selectedTeachers.length) {
       this.data.advOptState = {
-        now: { state: 'Any teacher (default)', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
-        future: { state: 'Any teacher (default)', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
+        now: { state: 'Any teacher', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+        future: { state: 'Any teacher', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
       };
       this.resetadvOpt$.next(this.data.advOptState);
     }
@@ -270,21 +280,13 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   restrictedEvent(isRestricted) {
-      this.data.restricted = isRestricted === 'Restricted';
+      this.data.restricted = isRestricted;
       this.change$.next();
   }
 
   schedulingRestrictedEvent(isRestricted) {
-      this.data.scheduling_restricted = isRestricted === 'Restricted';
+      this.data.scheduling_restricted = isRestricted;
       this.change$.next();
-  }
-
-  advancedOptionsOpened(event: boolean, advancedOptionsRef: HTMLElement) {
-    if (event) {
-        setTimeout(() => {
-            advancedOptionsRef.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
-        }, 10);
-    }
   }
 
   advancedOptions({options, validButtons}) {
@@ -315,9 +317,5 @@ export class RoomComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  focus() {
-
   }
 }

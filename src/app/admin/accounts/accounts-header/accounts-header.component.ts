@@ -23,6 +23,10 @@ import { UserService } from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
+import {IntegrationsDialogComponent} from '../integrations-dialog/integrations-dialog.component';
+import {Ggl4SettingsComponent} from '../ggl4-settings/ggl4-settings.component';
+import {GSuiteSettingsComponent} from '../g-suite-settings/g-suite-settings.component';
+import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 
 @Component({
   selector: 'app-accounts-header',
@@ -34,6 +38,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   @Input() pending$: Subject<boolean>;
   @Input() schoolSyncInfoData: SchoolSyncInfo;
   @Input() selectedUsers: User[];
+  @Input() gSuiteOrgs: GSuiteOrgs;
+  @Input() showTabs: boolean = true;
 
   @Output() tableStateEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() searchValueEmit: EventEmitter<any> = new EventEmitter<any>();
@@ -154,6 +160,41 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
   search(value) {
     this.adminService.searchAccountEmit$.next(value);
+  }
+
+  openIntegrations() {
+    const ID = this.matDialog.open(IntegrationsDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: {'gSuiteOrgs': this.gSuiteOrgs}
+    });
+
+    ID.afterClosed()
+      .pipe(filter(res => !!res))
+      .subscribe(({action, status}) => {
+        this.openSettingsDialog(action, status);
+      });
+  }
+
+  openSettingsDialog(action, status) {
+    if (action === 'gg4l') {
+      const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+        data: { status }
+      });
+    } else if (action === 'g_suite') {
+      const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+      });
+    }
   }
 
   promptConfirmation(eventTarget: HTMLElement, option: string = '') {

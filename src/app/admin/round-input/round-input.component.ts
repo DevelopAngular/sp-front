@@ -110,7 +110,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     if (this.focused) {
       setTimeout(() => {
         this.input.nativeElement.focus();
-      }, 100);
+      }, 500);
     }
 
       fromEvent(this.input.nativeElement, 'input')
@@ -126,7 +126,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
               this.showCloseIcon.next(false);
             }, 220);
           }
-          this.ontextupdate.emit(event.target.value);
+          this.ontextupdate.emit(event.target.value.trim());
         });
 
     if (!this.type.includes('multi') && this.type !== 'text') {

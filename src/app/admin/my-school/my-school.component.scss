@@ -10,6 +10,16 @@
     min-width: 1030px;
     background-color: #FBFEFF;
     -webkit-overflow-scrolling: touch;
+    position: relative;
+
+    .backdrop {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      z-index: 100;
+    }
 
     .set-day-wrapper {
       padding: 70px 0 0 70px;
@@ -113,19 +123,32 @@
         padding: 60px;
         display: flex;
         width: 950px;
-        justify-content: space-between;
+        overflow: auto;
+        justify-content: space-around;
         height: calc(100vh - 190px);
+
+        .title {
+          color: $navy;
+          font-weight: bold;
+          font-size: 24px;
+          line-height: 29px;
+        }
+        .button {
+          margin: 20px 0;
+        }
+
+        .left {
+
+        }
+        .right {
+
+        }
         .left-block {
           min-width: 355px;
           width: 355px;
           display: flex;
           flex-direction: column;
-          .title {
-            color: $navy;
-            font-weight: bold;
-            font-size: 24px;
-            line-height: 29px;
-          }
+
 
           .download-button {
             margin: 21px 0;

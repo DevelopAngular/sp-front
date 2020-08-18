@@ -22,16 +22,22 @@
     </div>
 
     <div class="right-button">
-      <app-gradient-button *ngIf="showPublishButton"
-                           [minHeight]="'40px'"
-                           [style.width]="'120px'"
-                           [gradient]="currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
-                           [textColor]="color_profile ? color_profile.solid_color : 'White'"
-                           [cursor]="'pointer'"
-                           [fontSize]="'14px'"
-                           (buttonClick)="onPublish()"
-        >{{ (showPublishSpinner ? null : 'Save') }}
-        <mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+      <app-gradient-button
+        *ngIf="showPublishButton"
+       [minHeight]="'40px'"
+       [style.width]="'120px'"
+       [gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
+       [textColor]="color_profile ? color_profile.solid_color : 'White'"
+       [cursor]="'pointer'"
+       [fontSize]="'14px'"
+       (buttonClick)="onPublish()"
+        [matTooltip]="showPublishSpinner ? 'Please wait, rooms are still being uploaded.' : null"
+        matTooltipClass="tooltip"
+        >
+        <span *ngIf="!showPublishSpinner">Save</span>
+        <div class="loading-theme_blue-gray" [style.color]="'red'" *ngIf="showPublishSpinner" >
+          <mat-spinner  [diameter]="30"></mat-spinner>
+        </div>
       </app-gradient-button>
 
       <div *ngIf="showIncompleteButton" [style.color]="titleColor">Incomplete</div>
@@ -42,18 +48,18 @@
   <div class="content">
     <div class="left-block">
       <div class="block" *ngIf="currentPage === 1 || currentPage === 2">
-        <app-room [form]="form" (roomDataResult)="roomResult($event)"></app-room>
+        <app-room [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (roomDataResult)="roomResult($event)"></app-room>
       </div>
       <div class="block" *ngIf="currentPage === 3 || currentPage === 4">
         <app-folder [form]="form" (folderDataResult)="folderResult($event)"></app-folder>
       </div>
 
       <div class="block" *ngIf="currentPage === 5">
-        <app-new-room-in-folder [form]="form" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
+        <app-new-room-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (errorsEmit)="setFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
       </div>
 
       <div class="block" *ngIf="currentPage === 6">
-        <app-edit-room-in-folder (deleteRoom)="deleteRoomInFolder($event)" [form]="form" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
+        <app-edit-room-in-folder (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="setFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
       </div>
 
       <div class="block" *ngIf="currentPage === 8">
@@ -69,11 +75,11 @@
       </div>
 
       <div class="block" *ngIf="currentPage === 9">
-        <app-bulk-edit-rooms (bulkEditResult)="bulkEditResult($event)" [form]="form"></app-bulk-edit-rooms>
+        <app-bulk-edit-rooms (bulkEditResult)="bulkEditResult($event)" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors"></app-bulk-edit-rooms>
       </div>
 
       <div class="block" *ngIf="currentPage === 10">
-        <app-bulk-edit-rooms-in-folder [form]="form" (bulkEditResult)="bulkEditInFolder($event)" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
+        <app-bulk-edit-rooms-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (bulkEditResult)="bulkEditInFolder($event)" (errorsEmit)="setFormErrors()" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
       </div>
 
 
@@ -90,7 +96,7 @@
           <div class="inactive" *ngIf="disabledRightBlock"></div>
           <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>
           <div class="color-picker">
-            <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
+            <app-color-pallet-picker [selectedColorProfile]="color_profile" [showError]="showErrors" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
           </div>
           <div class="icon-picker">
             <app-icon-picker
@@ -98,6 +104,7 @@
               [icons$]="icons$"
               [selectedIconPicker]="selectedIcon"
               [changeTextResult]="iconTextResult$"
+              [showError]="showErrors"
               (selectedEvent)="changeIcon($event)"
             ></app-icon-picker>
           </div>

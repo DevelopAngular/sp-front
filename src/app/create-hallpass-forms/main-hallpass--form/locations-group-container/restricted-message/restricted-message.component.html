@@ -20,7 +20,7 @@
       <div class="rest-mes-content"
            [attr.data-motion-translate]="(frameMotion$ | async).direction"
       >
-        <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
+        <div class="selected-teacher-header" *ngIf="(formState.forInput || formState.missedRequest) && !isStaff">
           <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
             <div class="teacher" *ngFor="let teacher of filteredTeachers; let i = index">
         <span class="" style="color: #7F879D; font-size: 16px; font-weight: normal; margin-right: 3px">

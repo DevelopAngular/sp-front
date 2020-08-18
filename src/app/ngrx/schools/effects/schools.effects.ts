@@ -9,10 +9,10 @@ import {AdminService} from '../../../services/admin.service';
 import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {GoogleLoginService} from '../../../services/google-login.service';
-import {environment} from '../../../../environments/environment';
 import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {StorageService} from '../../../services/storage.service';
+import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 
 declare const window;
 
@@ -101,6 +101,9 @@ export class SchoolsEffects {
           return this.adminService.updateSpSyncing(action.data)
             .pipe(
               map((syncInfo: any) => {
+                if (action.data.selector_students) {
+                  return schoolsActions.updateGSuiteInfoSelectors({selectors: action.data});
+                }
                 return schoolsActions.updateSchoolSyncInfoSuccess({syncInfo});
               }),
               catchError(error => of(schoolsActions.updateSchoolSyncInfoFailure({errorMessage: error.message})))
@@ -135,6 +138,46 @@ export class SchoolsEffects {
             }),
             catchError(error => of(schoolsActions.updateSchoolsGG4LInfoFailure({errorMessage: error.message})))
           );
+        })
+      );
+  });
+
+  getGSuiteInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.getGSuiteSyncInfo),
+        concatMap((action) => {
+          return this.adminService.getGSuiteOrgs()
+            .pipe(
+              map((gSuiteInfo: GSuiteOrgs) => {
+                return schoolsActions.getGSuiteSyncInfoSuccess({gSuiteInfo});
+              }),
+              catchError(error => of(schoolsActions.getGSuiteSyncInfoFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateGSuiteInfoSelectors$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.updateGSuiteInfoSelectors),
+        map((action) =>  {
+          const selectors = {
+            admin: {
+              selector: action.selectors.selector_admins,
+            },
+            student: {
+              selector: action.selectors.selector_students
+            },
+            teacher: {
+              selector: action.selectors.selector_teachers
+            },
+            assistant: {
+              selector: action.selectors.selector_assistants
+            }
+          };
+          return schoolsActions.updateGSuiteInfoSelectorsSuccess({selectors});
         })
       );
   });

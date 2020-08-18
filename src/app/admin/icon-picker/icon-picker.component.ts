@@ -26,6 +26,8 @@ export class IconPickerComponent implements OnInit {
 
   @Input() changeTextResult: Subject<string>;
 
+  @Input() showError: boolean;
+
   public selectedIconLocalUrl: string;
 
   icons: Icon[] = [];

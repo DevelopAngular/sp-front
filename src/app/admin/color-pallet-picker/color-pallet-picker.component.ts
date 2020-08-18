@@ -13,6 +13,8 @@ export class ColorPalletPickerComponent implements OnInit {
 
   @Input() selectedColorProfile;
 
+  @Input() showError: boolean;
+
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('col') pickColor;

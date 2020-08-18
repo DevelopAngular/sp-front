@@ -50,14 +50,17 @@ import {CoreModule} from '../core/core.module';
 import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
+import {TeacherPinStudentComponent} from '../teacher-pin-student/teacher-pin-student.component';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-info.component';
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
-import {ViewProfileComponent} from '../admin/profile-card-dialog/view-profile/view-profile.component';
-
+import {ViewProfileComponent} from '../admin/profile-card-dialog/view-profile/view-profile.component';;
+import { CustomToolTipComponent } from './shared-components/custom-tool-tip/custom-tool-tip.component'
+;
+import { PassLimitTooltipComponent } from './shared-components/pass-limit-tooltip/pass-limit-tooltip.component'
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -120,11 +123,14 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ReportSuccessToastComponent,
     RestrictionPickerComponent,
     SpAppearanceComponent,
+    TeacherPinStudentComponent,
     MyProfileDialogComponent,
     ProfileInfoComponent,
     ChangePasswordComponent,
-    ViewProfileComponent
-  ],
+    ViewProfileComponent,
+    CustomToolTipComponent
+,
+    PassLimitTooltipComponent  ],
   entryComponents: [
     PassCardComponent,
     CalendarComponent,
@@ -135,7 +141,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConsentMenuMobileComponent,
     ReportSuccessToastComponent,
     SpAppearanceComponent,
-    MyProfileDialogComponent
+    MyProfileDialogComponent,
+    CustomToolTipComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -186,7 +193,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RestrictionPickerComponent,
     ProfileInfoComponent,
     ChangePasswordComponent,
-    ViewProfileComponent
+    ViewProfileComponent,
+    TeacherPinStudentComponent,
+    PassLimitTooltipComponent
   ],
   providers: [
     {

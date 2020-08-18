@@ -125,6 +125,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   querySubscriber$ = new Subject();
 
+  schoolSyncInfoData;
+
   isLoading$: Observable<boolean>;
   isLoaded$: Observable<boolean>;
 
@@ -172,26 +174,34 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.tableRenderer(userList);
       });
 
-    interval(1758)
+    this.adminService.getSpSyncingRequest()
       .pipe(
-        filter(() => this.role === 'g_suite'),
-        switchMap((res) => {
-          return this.adminService.getGSuiteOrgs();
-        }),
         takeUntil(this.destroy$)
-      )
-      .subscribe((res: any) => {
-        if (res.is_syncing) {
-          this.syncing.start();
-        } else if (!res.is_syncing) {
-          this.syncing.end();
-        }
-        for (const key in res) {
-          if (this.GSuiteOrgs[key] !== res[key]) {
-            this.GSuiteOrgs[key] = res[key];
-          }
-        }
-      });
+      ).subscribe(res => {
+      this.schoolSyncInfoData = res;
+    });
+
+    // interval(1758)
+    //   .pipe(
+    //     filter(() => this.role === 'g_suite'),
+    //     switchMap((res) => {
+    //       return this.adminService.getGSuiteOrgs();
+    //     }),
+    //     takeUntil(this.destroy$)
+    //   )
+    //   .subscribe((res: any) => {
+    //     if (res.is_syncing) {
+    //       this.syncing.start();
+    //     } else if (!res.is_syncing) {
+    //       this.syncing.end();
+    //     }
+    //     for (const key in res) {
+    //       if (this.GSuiteOrgs[key] !== res[key]) {
+    //         this.GSuiteOrgs[key] = res[key];
+    //       }
+    //     }
+    //   });
+
 
     merge(this.http.globalReload$, this.router.events.pipe(filter(event => event instanceof NavigationEnd))).pipe(
       tap(() => {
@@ -268,9 +278,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
           switch (this.role) {
             case '_profile_teacher':
-              this.dataTableHeaders['Rooms'] = {
+              this.dataTableHeaders['rooms'] = {
                 value: true,
-                label: 'Rooms',
+                label: 'rooms',
                 disabled: false
               };
               this.dataTableHeaders['Permissions'] = {
@@ -427,9 +437,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.tableHeaders['Sign-in status'].index = 4;
       this.tableHeaders['Last sign-in'].index = 5;
       this.tableHeaders['Account Type'].index = 3;
-      this.tableHeaders['Rooms'] = {
+      this.tableHeaders['rooms'] = {
         index: 2,
-        label: 'Rooms',
+        label: 'rooms',
       };
       this.tableHeaders['Permissions'] = {
         index: 6,
@@ -587,7 +597,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         data: {
           role: this.role,
           selectedUsers: this.selectedUsers,
-          permissions: this.profilePermissions
+          permissions: this.profilePermissions,
+          syncInfo: this.schoolSyncInfoData
         }
       });
     DR.afterClosed().pipe(
@@ -713,17 +724,17 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
         if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
-        const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
+        // const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
 
         const rawObj = {
           'Name': raw.display_name,
           'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-          'Rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
-          'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
+          'rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
+          'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : raw.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : '',
-          'Sign-in status': raw.active && !disabledSignIn ? 'Enabled' : 'Disabled',
+          'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
           'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
           'Group(s)': partOf.length ? partOf : [{title: 'No profile'}],
           'Permissions': (function() {

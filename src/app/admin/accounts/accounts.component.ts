@@ -25,6 +25,13 @@ import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
 import {SyncProviderComponent} from './sync-provider/sync-provider.component';
 import {GG4LSync} from '../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
+import {TotalAccounts} from '../../models/TotalAccounts';
+import {IntegrationsDialogComponent} from './integrations-dialog/integrations-dialog.component';
+import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
+import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
+import {ToastService} from '../../services/toast.service';
+import {Onboard} from '../../models/Onboard';
+import {XlsxGeneratorService} from '../xlsx-generator.service';
 
 declare const window;
 
@@ -58,6 +65,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   currentPage: string;
 
+  onboardProcess$: Observable<{[id: string]: Onboard}>;
+  onboardProcessLoaded$: Observable<boolean>;
+
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -81,7 +91,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService,
     private domSanitizer: DomSanitizer,
-    private locationService: LocationsService
+    private locationService: LocationsService,
+    private toastService: ToastService,
+    private xlsxGeneratorService: XlsxGeneratorService
   ) {}
 
   formatDate(date) {
@@ -96,34 +108,58 @@ export class AccountsComponent implements OnInit, OnDestroy {
     // ).subscribe(users => {
     //     this.tableRenderer(users);
     // });
+    this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
 
-   this.adminService.getGSuiteOrgs().pipe(takeUntil(this.destroy$)).subscribe(res => this.gSuiteOrgs = res);
+   this.adminService.getGSuiteOrgsRequest()
+     .pipe(
+       filter(res => !!res),
+       takeUntil(this.destroy$)
+     )
+     .subscribe(res => {
+       this.gSuiteOrgs = res;
+     });
 
-    this.http.globalReload$.pipe(
-      takeUntil(this.destroy$),
-      tap(() => {
-        this.showDisabledBanner$.next(!this.http.getSchool().launch_date);
-      }),
+    this.onboardProcess$ = this.http.globalReload$.pipe(
       switchMap(() => this.adminService.getCountAccountsRequest()),
-      switchMap(() => this.gsProgress.onboardProgress$),
       switchMap((op) => {
         return zip(
           this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
           this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
           .pipe(
             map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
-              // this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-              this.splash = false;
               this.gg4lSettingsData = gg4l;
               this.schoolSyncInfoData = sync;
-              if (!!gg4l.last_successful_sync && !sync.login_provider && !this.splash) {
-                this.openSyncProvider();
-              }
               return gg4l;
             }));
+      }),
+      switchMap(() => {
+        return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
-    )
-    .subscribe();
+    );
+
+    this.toastService.toastButtonClick$
+      .pipe(
+        switchMap(() => {
+          return this.onboardProcess$;
+        }),
+        map((onboard) => {
+          return onboard['2.accounts:create_demo_accounts'].extras.accounts;
+        }),
+        take(1),
+        map(accounts => {
+          return accounts.map(account => {
+            return {
+              'Role': account.type,
+              'Username': account.username,
+              'Password': account.password
+            };
+          });
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(res => {
+        this.xlsxGeneratorService.generate(res);
+    });
 
     this.userService.userData.pipe(
       takeUntil(this.destroy$))
@@ -517,12 +553,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   }
   private updateAcoountsOnboardProgress(ticket: 'start' | 'end') {
-    if (ticket === 'start') {
-      this.gsProgress.updateProgress('setup_accounts:start');
-    } else if (ticket === 'end') {
-      this.gsProgress.updateProgress('setup_accounts:end');
-    }
+    // if (ticket === 'start') {
+    //   this.gsProgress.updateProgress('setup_accounts:start');
+    // } else if (ticket === 'end') {
+    //   this.gsProgress.updateProgress('setup_accounts:end');
+    // }
   }
+
   showSettings() {
 
     const data = {
@@ -538,5 +575,37 @@ export class AccountsComponent implements OnInit, OnDestroy {
       data: data
     });
 
+  }
+
+  openSettingsDialog(action, status) {
+    if (action === 'gg4l') {
+      const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+        data: { status }
+      });
+    } else if (action === 'g_suite') {
+      const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+      });
+    }
+  }
+
+  openBulkUpload() {
+    this.adminService.updateOnboardProgressRequest('2.accounts:create_demo_accounts');
+    this.onboardProcessLoaded$.pipe(
+      filter(res => !!res),
+      takeUntil(this.destroy$)
+    )
+      .subscribe(() => {
+        this.adminService.getCountAccountsRequest();
+        this.toastService.openToast(
+          {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.'});
+      });
   }
 }

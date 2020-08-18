@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, mergeAll, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -39,6 +39,7 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
+import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import { filter as _filter } from 'lodash';
@@ -480,6 +481,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   settingsAction(action: string) {
       if (action === 'signout') {
         this.router.navigate(['sign-out']);
+      } else if (action === 'myPin') {
+        const teachPinDialog = this.dialog.open(TeacherPinComponent, {
+          panelClass: 'sp-form-dialog',
+          backdropClass: 'custom-backdrop',
+        });
       } else if (action === 'profile') {
         this.dialog.open(MyProfileDialogComponent, {
           panelClass: 'sp-form-dialog',
@@ -522,7 +528,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           });
         }
       } else if (action === 'intro') {
-          // this.router.navigate(['main/intro']);
         this.dialog.open(IntroDialogComponent, {
           width: '100vw',
           height: '100vh',
@@ -560,7 +565,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   updateTab(route: string) {
     this.tab = route;
-    console.log('[updateTab()]: ', this.tab);
+    // console.log('[updateTab()]: ', this.tab);
     this.router.navigateByUrl('/main/' + this.tab);
   }
 
@@ -582,22 +587,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyer$.next();
     this.destroyer$.complete();
-  }
-
-  shrinkTab(tab) {
-      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');
-  }
-
-  expandTab(tab) {
-    const isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
-    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isSafari && iOS) {
-      setTimeout( () => {
-        this.rendered.setStyle(tab, 'webkitTransform', 'unset');
-      }, 200);
-    } else {
-      this.rendered.setStyle(tab, 'webkitTransform', 'unset');
-    }
   }
 
   changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {

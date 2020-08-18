@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { School } from '../../../models/School';
 import { GG4LSync } from '../../../models/GG4LSync';
 import { SchoolSyncInfo } from '../../../models/SchoolSyncInfo';
+import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 
 const COMPONENT = 'Schools';
 
@@ -30,3 +31,10 @@ export const getSchoolsGG4LInfoFailure = createAction(`[${COMPONENT}] Get GG4L I
 export const updateSchoolsGG4LInfo = createAction(`[${COMPONENT}] Update GG4L Info`, props<{data: any}>());
 export const updateSchoolsGG4LInfoSuccess = createAction(`[${COMPONENT}] Update GG4L Info Success`, props<{gg4lInfo: GG4LSync}>());
 export const updateSchoolsGG4LInfoFailure = createAction(`[${COMPONENT}] Update GG4L Info Failure`, props<{errorMessage: string}>());
+
+export const getGSuiteSyncInfo = createAction(`[${COMPONENT}] Get GSuite Info`);
+export const getGSuiteSyncInfoSuccess = createAction(`[${COMPONENT}] Get GSuite Info Success`, props<{gSuiteInfo: GSuiteOrgs}>());
+export const getGSuiteSyncInfoFailure = createAction(`[${COMPONENT}] Get GSuite Info Failure`, props<{errorMessage: string}>());
+
+export const updateGSuiteInfoSelectors = createAction(`[${COMPONENT}] Update GSuite Selectors`, props<{selectors: any}>());
+export const updateGSuiteInfoSelectorsSuccess = createAction(`[${COMPONENT}] Update GSuite Selectors Success`, props<{selectors: any}>());

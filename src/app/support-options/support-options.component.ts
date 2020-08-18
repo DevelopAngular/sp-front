@@ -18,7 +18,7 @@ export class SupportOptionsComponent implements OnInit {
   targetElementRef: ElementRef;
 
   constructor(
-    private darkTheme: DarkThemeSwitch,
+    public darkTheme: DarkThemeSwitch,
     private dialogRef: MatDialogRef<SupportOptionsComponent>,
     private userService: UserService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
@@ -47,6 +47,10 @@ export class SupportOptionsComponent implements OnInit {
     });
   }
 
+  getColor(dark, white) {
+    return this.darkTheme.getColor({ dark, white });
+  }
+
   updateDialogPosition(user) {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     if (this.targetElementRef && this.dialogRef) {
@@ -58,6 +62,8 @@ export class SupportOptionsComponent implements OnInit {
 
   openHubspot() {
     this.dialogRef.close(true);
+    const chat = document.querySelector('#hubspot-messages-iframe-container');
+    (chat as HTMLElement).setAttribute('style', 'opacity: 1 !important');
     window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
   }
 

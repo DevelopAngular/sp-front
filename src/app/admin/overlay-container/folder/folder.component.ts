@@ -220,11 +220,12 @@ export class FolderComponent implements OnInit, OnDestroy {
             this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
           }
         } else {
-          if (this.roomsImFolder.length) {
-            this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
-          } else {
-              this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
-          }
+          // if (this.roomsImFolder.length) {
+          //   this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
+          // } else {
+          //     this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
+          // }
+          this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
         }
       } else {
         this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
@@ -358,22 +359,22 @@ export class FolderComponent implements OnInit, OnDestroy {
         }
 
         if (loc.request_mode === 'any_teacher') {
-            this.advOptState.now.state = 'Any teacher (default)';
+            this.advOptState.now.state = 'Any teacher';
         } else if (loc.request_mode === 'teacher_in_room') {
-            this.advOptState.now.state = 'Any teachers assigned';
+            this.advOptState.now.state = 'Any teachers in room';
         } else if (loc.request_mode === 'all_teachers_in_room') {
-            this.advOptState.now.state = 'All teachers assigned';
+            this.advOptState.now.state = 'All teachers in room';
         } else if (loc.request_mode === 'specific_teachers') {
-            this.advOptState.now.state = 'Certain \n teacher(s)';
+            this.advOptState.now.state = 'Certain \n teachers';
         }
         if (loc.scheduling_request_mode === 'any_teacher') {
-            this.advOptState.future.state = 'Any teacher (default)';
+            this.advOptState.future.state = 'Any teacher';
         } else if (loc.scheduling_request_mode === 'teacher_in_room') {
-            this.advOptState.future.state = 'Any teachers assigned';
+            this.advOptState.future.state = 'Any teachers in room';
         } else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
-            this.advOptState.future.state = 'All teachers assigned';
+            this.advOptState.future.state = 'All teachers in room';
         } else if (loc.scheduling_request_mode === 'specific_teachers') {
-            this.advOptState.future.state = 'Certain \n teacher(s)';
+            this.advOptState.future.state = 'Certain \n teachers';
         }
         return this.advOptState;
     }

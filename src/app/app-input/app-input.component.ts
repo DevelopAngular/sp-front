@@ -2,6 +2,7 @@
 import { MatDialog } from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
 import {merge, of, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -32,7 +33,8 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() forceFocus$: Subject<boolean> = new Subject<boolean>();
   @Input() autocomplete: string = 'off';
   @Input() showPasswordButton: boolean;
-  @Input() timeInput: boolean = false;
+  @Input() timeInput: boolean;
+  @Input() pattern: string;
 
   @Input() formGroup;
   @Input() controlName;
@@ -63,22 +65,26 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   get showMin() {
-    return this.timeInput && !this.isFocus && !!this.formGroup.get('timeLimit').value && this.controlName.valid;
+    return this.timeInput && !this.isFocus &&
+      (!!this.formGroup.get('timeLimit') || !!this.formGroup.get('from') || !!this.formGroup.get('to')) &&
+      this.controlName.valid;
   }
 
   get minLeftMargin() {
-    const value = this.formGroup.get('timeLimit').value;
+    const value = this.controlName.value;
     if (value < 10) {
-      return 30;
+      return 32;
     } else if (value >= 10 && value < 100) {
-      return 39;
-    } else if (value >= 100) {
-      return 48;
+      return 41;
+    } else if (value >= 100 && value < 1000) {
+      return 50;
+    } else if (value >= 1000) {
+      return 59;
     }
   }
 
   ngOnInit() {
-    merge(of(''), this.forceFocus$)
+    merge(of(''), this.forceFocus$).pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         setTimeout(() => {
           if (this.isFocus) {
@@ -93,7 +99,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
       this.controlName.setValue(this.input_value);
     }, 50);
 
-    this.controlName.valueChanges
+    this.controlName.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(res => {
       this.onUpdate.emit(res);
     });
@@ -105,9 +111,9 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(sc: SimpleChanges) {
-    if ('forcedFocus' in sc && !sc.forcedFocus.isFirstChange() && sc.forcedFocus.currentValue) {
-      this.input.nativeElement.focus();
-    }
+    // if ('forcedFocus' in sc && !sc.forcedFocus.isFirstChange() && sc.forcedFocus.currentValue) {
+    //   this.input.nativeElement.focus();
+    // }
   }
 
   updateFocus(el) {

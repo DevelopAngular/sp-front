@@ -1,4 +1,4 @@
-image: docker:latest
+image: docker:19.03.10
 
 variables:
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
@@ -11,11 +11,11 @@ variables:
   SENTRY_PROJECT: "hall-pass-web"
 
 stages:
-  - deploy_staging
-  - deploy_prod
+  - build
+  - deploy
 
 testing:
-  stage: deploy_staging
+  stage: build
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
@@ -46,8 +46,8 @@ testing:
   tags:
     - "docker-passthrough"
 
-feature_testing:
-  stage: deploy_staging
+feature_build:
+  stage: build
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
@@ -59,12 +59,6 @@ feature_testing:
     - pwd
     - source scripts/auto_devops.sh
     - scripts/build.sh
-    - install_dependencies
-    - download_chart
-    - ensure_namespace
-    - install_tiller
-    - create_secret
-    - deploy
   variables:
     AUTO_DEVOPS_DOMAIN: "smartpass-feature.lavanote.com"
     IMAGE_TAG_SUFFIX: "feature-testing"
@@ -78,8 +72,41 @@ feature_testing:
   tags:
     - "docker-passthrough"
 
+feature_deploy:
+  stage: deploy
+  script:
+    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
+    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
+    - apk add --no-cache bash tree git python make g++ nodejs@old npm@old yarn@old
+    - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.49.0/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
+    - chmod +x /usr/local/bin/sentry-cli
+    - ls -l / ; pwd
+    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
+    - pwd
+    - source scripts/auto_devops.sh
+    # no build command. This causes it to reuse the pre-built images because IMAGE_TAG_SUFFIX is shared.
+    - install_dependencies
+    - download_chart
+    - ensure_namespace
+    - install_tiller
+    - create_secret
+    - deploy
+  variables:
+    AUTO_DEVOPS_DOMAIN: "smartpass-feature.lavanote.com"
+    IMAGE_TAG_SUFFIX: "feature-testing"
+  environment:
+    name: feature-testing
+    url: "https://smartpass-feature.lavanote.com"
+  when: manual
+  only:
+    refs:
+      - /^feat\/.*$/
+    kubernetes: active
+  tags:
+    - "docker-passthrough"
+
 staging:
-  stage: deploy_staging
+  stage: build
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
@@ -110,8 +137,9 @@ staging:
   tags:
       - "docker-passthrough"
 
+# Deploys from the staging build
 production:
-  stage: deploy_prod
+  stage: deploy
   script:
   - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
   - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
@@ -140,7 +168,7 @@ production:
 
 
 staging_local:
-  stage: deploy_staging
+  stage: build
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'

@@ -34,4 +34,9 @@ export const getCurrentSchool = createSelector(
   (entities, id) => entities[id]
 );
 
+export const getGSuiteSyncInfoData = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.gSuiteInfo
+);
+
 export const getSchoolsLength = schoolAdapter.getSelectors(getSchoolsState).selectTotal;

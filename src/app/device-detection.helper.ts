@@ -53,6 +53,10 @@ export class DeviceDetection {
             ;
   }
 
+  static isMobile(): boolean {
+    return this.isAndroid() || this.isIOSMobile();
+  }
+
   static platform(): SPPlatform {
     let platform: SPPlatform;
 
