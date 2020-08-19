@@ -26,7 +26,7 @@ import {ScreenService} from '../services/screen.service';
 
 declare const window;
 
-export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local';
+export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local' | 'roles';
 
 export type selectorIndicator = '+' | '-';
 
@@ -113,7 +113,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = true;
   @Input() showOptions: boolean = true;
-  @Input() selectedOptions: Array<User | School | GSuiteSelector> = [];
+  @Input() selectedOptions: Array<User | School | GSuiteSelector | {id: number, role: string, icon: string}[]> = [];
   @Input() selectedOrgUnits: any[] = [];
   @Input() height: string = '40px';
   @Input() width: string = '280px';
@@ -134,6 +134,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() proposedSearchString: string;
 
   @Input() searchingTeachers: User[];
+  @Input() searchingRoles: { id: number, role: string, icon: string }[];
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -371,6 +372,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   addUnit(unit) {
     this.selectedOptions.push(unit);
     this.orgunits.next(null);
+    this.inputField = false;
+    this.onUpdate.emit(this.selectedOptions);
+  }
+
+  addRole(role) {
+    this.selectedOptions.push(role);
     this.inputField = false;
     this.onUpdate.emit(this.selectedOptions);
   }

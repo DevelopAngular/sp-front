@@ -45,6 +45,7 @@ export class ViewProfileComponent implements OnInit {
   }
   public profile: any;
   public teacherAssignedTo: Location[] = [];
+  profilePermissions: {label: string, permission: string, icon: string}[] = [];
 
   public assistantFor: User[];
   public assistantForEditState: boolean = false;
@@ -54,6 +55,8 @@ export class ViewProfileComponent implements OnInit {
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
   private permissionsFormInitialState;
+
+  studentForm: FormGroup = new FormGroup({pass_approval: new FormControl()});
 
   public controlsIteratable: any[];
   public disabledState: boolean = false;
@@ -70,6 +73,15 @@ export class ViewProfileComponent implements OnInit {
     value: boolean,
     initialValue: boolean
   };
+  user: User;
+  roles: { id: number, role: string, icon: string }[] = [
+    {id: 1, role: 'Student', icon: './assets/Student (Blue-Gray).svg'},
+    {id: 2, role: 'Teacher', icon: './assets/Teacher (Blue-Gray).svg'},
+    {id: 3, role: 'Admin', icon: './assets/Admin (Blue-Gray).svg'},
+    {id: 4, role: 'Assistant', icon: './assets/Assistant (Blue-Gray).svg'}
+  ];
+  initialRoles: { id: number, role: string, icon: string }[];
+  userRoles: { role: string, icon: string }[] = [];
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -104,8 +116,23 @@ export class ViewProfileComponent implements OnInit {
     }
 
     if (this.data.profile) {
-
       this.profile = this.data.profile;
+      this.user = User.fromJSON(this.profile._originalUserProfile);
+      if (this.user.isStudent()) {
+        this.userRoles.push(this.roles[0]);
+      }
+      if (this.user.isTeacher()) {
+        this.userRoles.push(this.roles[1]);
+      }
+      if (this.user.isAdmin()) {
+        this.userRoles.push(this.roles[2]);
+      }
+      if (this.user.isAssistant()) {
+        this.userRoles.push(this.roles[3]);
+      }
+      this.initialRoles = cloneDeep(this.roles);
+      this.roles = differenceBy(this.initialRoles, this.userRoles, 'id');
+
       this.signInStatus = {
         touched: false,
         value: false,
@@ -192,6 +219,7 @@ export class ViewProfileComponent implements OnInit {
       });
     }
 
+    this.buildPermissions();
 
     this.dialogRef.backdropClick().subscribe((evt) => {
       this.back();
@@ -273,6 +301,21 @@ export class ViewProfileComponent implements OnInit {
         }
       });
 
+  }
+
+  buildPermissions() {
+    if (this.user.isTeacher()) {
+      this.profilePermissions.push(
+        {label: 'Passes', permission: 'access_passes', icon: 'Passes'},
+        {label: 'Hall Monitor', permission: 'access_hall_monitor', icon: 'Walking'},
+        {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
+        );
+    }
+  }
+
+  updateRoles(roles) {
+    this.userRoles = roles;
+    this.roles = differenceBy(this.initialRoles, this.userRoles, 'id');
   }
 
   back() {

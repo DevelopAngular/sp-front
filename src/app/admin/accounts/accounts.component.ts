@@ -270,23 +270,23 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 
-  openSyncProvider() {
-    if (!this.isOpenModal) {
-      this.isOpenModal = true;
-      const SP = this.matDialog.open(SyncProviderComponent, {
-        width: '425px',
-        height: '425px',
-        panelClass: 'accounts-profiles-dialog',
-        disableClose: true,
-        backdropClass: 'custom-bd',
-        data: {gg4lInfo: this.gg4lSettingsData}
-      });
-
-      SP.afterClosed().subscribe(res => {
-        this.isOpenModal = false;
-      });
-    }
-  }
+  // openSyncProvider() {
+  //   if (!this.isOpenModal) {
+  //     this.isOpenModal = true;
+  //     const SP = this.matDialog.open(SyncProviderComponent, {
+  //       width: '425px',
+  //       height: '425px',
+  //       panelClass: 'accounts-profiles-dialog',
+  //       disableClose: true,
+  //       backdropClass: 'custom-bd',
+  //       data: {gg4lInfo: this.gg4lSettingsData}
+  //     });
+  //
+  //     SP.afterClosed().subscribe(res => {
+  //       this.isOpenModal = false;
+  //     });
+  //   }
+  // }
 
   // findProfileByRole(evt) {
   //   if (evt.name && evt.role) {
@@ -496,86 +496,86 @@ export class AccountsComponent implements OnInit, OnDestroy {
     //     });
     // }
 
-  showColumnSettings(evt: Event) {
-    UNANIMATED_CONTAINER.next(true);
-    const dialogRef = this.matDialog.open(ColumnsConfigDialogComponent, {
-          panelClass: 'consent-dialog-container',
-          backdropClass: 'invis-backdrop',
-          data: {
-              'trigger': evt.currentTarget,
-              'form': this.dataTableHeaders,
-              'role': '_all',
-              'tableHeaders': this.dataTableHeaders
-          }
-      });
-    dialogRef.afterClosed().subscribe(() => {
-      UNANIMATED_CONTAINER.next(false);
-    });
-  }
+  // showColumnSettings(evt: Event) {
+  //   UNANIMATED_CONTAINER.next(true);
+  //   const dialogRef = this.matDialog.open(ColumnsConfigDialogComponent, {
+  //         panelClass: 'consent-dialog-container',
+  //         backdropClass: 'invis-backdrop',
+  //         data: {
+  //             'trigger': evt.currentTarget,
+  //             'form': this.dataTableHeaders,
+  //             'role': '_all',
+  //             'tableHeaders': this.dataTableHeaders
+  //         }
+  //     });
+  //   dialogRef.afterClosed().subscribe(() => {
+  //     UNANIMATED_CONTAINER.next(false);
+  //   });
+  // }
 
   openNewTab(url) {
     window.open(url);
   }
 
-  goToAccountsSetup() {
-    this.updateAcoountsOnboardProgress('start');
-    this.adminService
-      .getAccountSyncLink(+this.http.getSchool().id)
-      .subscribe((link: {authorization_url: string}) => {
+  // goToAccountsSetup() {
+  //   this.updateAcoountsOnboardProgress('start');
+  //   this.adminService
+  //     .getAccountSyncLink(+this.http.getSchool().id)
+  //     .subscribe((link: {authorization_url: string}) => {
+  //
+  //       this.router.navigate(['accounts_setup'], { queryParams: { googleAuth: link.authorization_url } });
+  //     });
+  //
+  // }
 
-        this.router.navigate(['accounts_setup'], { queryParams: { googleAuth: link.authorization_url } });
-      });
+  // showAccountsSetupLink() {
+  //   this.updateAcoountsOnboardProgress('start');
+  //   this.pending$.next(true);
+  //   this.adminService
+  //     .getAccountSyncLink(+this.http.getSchool().id)
+  //     .pipe(
+  //       switchMap((link: {authorization_url: string}) => {
+  //         const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+  //           panelClass: 'admin-form-dialog-container-white',
+  //           backdropClass: 'custom-bd',
+  //           width: '425px',
+  //           height: '500px',
+  //           data: {
+  //             setupLink: `${window.location.origin}/${environment.production ? 'app/' : ''}accounts_setup?googleAuth=${encodeURIComponent(link.authorization_url)}`,
+  //           }
+  //         });
+  //         return dialogRef.afterClosed();
+  //       })
+  //     )
+  //     .subscribe(() => {
+  //       this.pending$.next(false);
+  //     });
+  //
+  // }
+  // private updateAcoountsOnboardProgress(ticket: 'start' | 'end') {
+  //   // if (ticket === 'start') {
+  //   //   this.gsProgress.updateProgress('setup_accounts:start');
+  //   // } else if (ticket === 'end') {
+  //   //   this.gsProgress.updateProgress('setup_accounts:end');
+  //   // }
+  // }
 
-  }
-
-  showAccountsSetupLink() {
-    this.updateAcoountsOnboardProgress('start');
-    this.pending$.next(true);
-    this.adminService
-      .getAccountSyncLink(+this.http.getSchool().id)
-      .pipe(
-        switchMap((link: {authorization_url: string}) => {
-          const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-            panelClass: 'admin-form-dialog-container-white',
-            backdropClass: 'custom-bd',
-            width: '425px',
-            height: '500px',
-            data: {
-              setupLink: `${window.location.origin}/${environment.production ? 'app/' : ''}accounts_setup?googleAuth=${encodeURIComponent(link.authorization_url)}`,
-            }
-          });
-          return dialogRef.afterClosed();
-        })
-      )
-      .subscribe(() => {
-        this.pending$.next(false);
-      });
-
-  }
-  private updateAcoountsOnboardProgress(ticket: 'start' | 'end') {
-    // if (ticket === 'start') {
-    //   this.gsProgress.updateProgress('setup_accounts:start');
-    // } else if (ticket === 'end') {
-    //   this.gsProgress.updateProgress('setup_accounts:end');
-    // }
-  }
-
-  showSettings() {
-
-    const data = {
-      bulkPermissions: null,
-      gSuiteSettings: true,
-    };
-
-    const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-      panelClass: 'admin-form-dialog-container-white',
-      backdropClass: 'custom-bd',
-      width: '425px',
-      height: '500px',
-      data: data
-    });
-
-  }
+  // showSettings() {
+  //
+  //   const data = {
+  //     bulkPermissions: null,
+  //     gSuiteSettings: true,
+  //   };
+  //
+  //   const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+  //     panelClass: 'admin-form-dialog-container-white',
+  //     backdropClass: 'custom-bd',
+  //     width: '425px',
+  //     height: '500px',
+  //     data: data
+  //   });
+  //
+  // }
 
   openSettingsDialog(action, status) {
     if (action === 'gg4l') {

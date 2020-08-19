@@ -42,7 +42,7 @@ import { BulkAddComponent } from './bulk-add/bulk-add.component';
     AccountsHeaderComponent,
     TabButtonComponent,
     AddAccountPopupComponent,
-    BulkAddComponent,
+    BulkAddComponent
   ],
   imports: [
     CommonModule,

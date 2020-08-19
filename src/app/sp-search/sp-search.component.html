@@ -103,6 +103,24 @@
       </ng-template>
     </div>
 
+    <div *ngIf="showOptions && searchTarget === 'roles'" [ngClass]="{'options-wrapper': searchingRoles?.length}" [style.height]="searchingRoles?.length ? '235px' : '0px'">
+      <div *ngIf="searchingRoles?.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+        <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+          <div #cell *ngFor="let role of searchingRoles" class="option-list_item"
+               (mouseenter)="changeColor(true, $event)"
+               (mouseleave)="changeColor(false, $event)"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="changeColor(true, $event)"
+               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); addRole(role)"
+               [style.color]="textColor(cell)"
+          >
+            <span>
+              {{role.role}}
+            </span>
+          </div>
+        </div>
+    </div>
+
     <div *ngIf="showOptions && searchTarget === 'local'" [ngClass]="{'options-wrapper': ( teacherCollection$ | async)}" [style.height]="( teacherCollection$ | async) ? '235px' : '0px'">
       <div *ngIf="( teacherCollection$ | async)" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
