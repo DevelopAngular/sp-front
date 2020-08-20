@@ -13,6 +13,8 @@ import { CreateFormService } from '../../../create-hallpass-forms/create-form.se
 import { cloneDeep, differenceBy, isEqual } from 'lodash';
 import { mapTo, switchMap } from 'rxjs/operators';
 import { ProfileCardDialogComponent } from '../profile-card-dialog.component';
+import {stream} from 'xlsx';
+import {StatusPopupComponent} from '../status-popup/status-popup.component';
 
 @Component({
   selector: 'app-view-profile',
@@ -43,9 +45,13 @@ export class ViewProfileComponent implements OnInit {
       });
     }
   }
+  @ViewChild('status') statusButton: ElementRef;
+
   public profile: any;
   public teacherAssignedTo: Location[] = [];
-  profilePermissions: {label: string, permission: string, icon: string}[] = [];
+  profilePermissions: {
+    [profile: string]: {label: string, permission: string, icon: string}[]
+  } = {teacher: [], admin: []};
 
   public assistantFor: User[];
   public assistantForEditState: boolean = false;
@@ -203,23 +209,21 @@ export class ViewProfileComponent implements OnInit {
       }
     }
 
-    if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
-      const permissions = this.data.permissions;
-      this.controlsIteratable = permissions ? Object.values(permissions) : [];
-      const group: any = {};
-      for (const key in permissions) {
-        const value = (this.profile._originalUserProfile as User).roles.includes(key);
-        group[key] = new FormControl(value);
-      }
-      this.permissionsForm = new FormGroup(group);
-      this.permissionsFormInitialState = cloneDeep(this.permissionsForm.value);
-      this.permissionsForm.valueChanges.subscribe((formValue) => {
-        this.permissionsFormEditState = !isEqual(Object.values(this.permissionsFormInitialState), Object.values(formValue));
-
-      });
-    }
-
+    // if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
+    //   const permissions = this.data.permissions;
+    //   this.controlsIteratable = permissions ? Object.values(permissions) : [];
+    //   const group: any = {};
+    //   for (const key in permissions) {
+    //     const value = (this.profile._originalUserProfile as User).roles.includes(key);
+    //     group[key] = new FormControl(value);
+    //   }
     this.buildPermissions();
+    // this.permissionsForm = new FormGroup(group);
+    this.permissionsFormInitialState = cloneDeep(this.permissionsForm.value);
+    this.permissionsForm.valueChanges.subscribe((formValue) => {
+      this.permissionsFormEditState = !isEqual(Object.values(this.permissionsFormInitialState), Object.values(formValue));
+    });
+    // }
 
     this.dialogRef.backdropClick().subscribe((evt) => {
       this.back();
@@ -305,12 +309,27 @@ export class ViewProfileComponent implements OnInit {
 
   buildPermissions() {
     if (this.user.isTeacher()) {
-      this.profilePermissions.push(
+      this.profilePermissions.teacher.push(
         {label: 'Passes', permission: 'access_passes', icon: 'Passes'},
         {label: 'Hall Monitor', permission: 'access_hall_monitor', icon: 'Walking'},
         {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
         );
     }
+    if (this.user.isAdmin()) {
+      this.profilePermissions.admin.push(
+        {label: 'Dashboard', permission: 'access_admin_dashboard', icon: 'Dashboard'},
+        {label: 'Hall Monitor', permission: 'admin_hall_monitor', icon: 'Walking'},
+        {label: 'Explore', permission: 'access_admin_search', icon: 'Search Eye'},
+        {label: 'Rooms', permission: 'access_pass_config', icon: 'Room'},
+        {label: 'Accounts', permission: 'access_user_config', icon: 'Users'}
+      );
+    }
+    const controls = {};
+    this.profilePermissions.teacher.concat(this.profilePermissions.admin).forEach(perm => {
+      controls[perm.permission] = new FormControl(this.user.roles.includes(perm.permission));
+    });
+    this.permissionsForm = new FormGroup(controls);
+
   }
 
   updateRoles(roles) {
@@ -331,6 +350,14 @@ export class ViewProfileComponent implements OnInit {
     } else {
       this.close.emit(false);
     }
+  }
+
+  openStatusPopup() {
+    this.matDialog.open(StatusPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {'trigger': this.statusButton.nativeElement, 'profile': this.user}
+    });
   }
 
 }

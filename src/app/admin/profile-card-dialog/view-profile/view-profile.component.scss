@@ -55,7 +55,7 @@
         height: 28px;
       }
     }
-    .save-button {
+    .save-button, .status-button {
       position: absolute;
       top: 0;
       bottom: 0;
@@ -97,12 +97,39 @@
       .avatar {
         width: 88px;
         height: 88px;
+        overflow: hidden;
         border-radius: 50%;
         background: wheat;
+        position: relative;
+
+        .add-avatar {
+          position: absolute;
+          z-index: 10;
+          left: 30px;
+          top: 30px;
+          width: 28px;
+          height: 25px;
+          cursor: pointer;
+        }
+
+        .hover-backdrop {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: $blue-gray;
+          opacity: .2;
+          z-index: 5;
+        }
       }
       .status {
         color: $jade;
         margin-top: 14px;
+        cursor: pointer;
       }
     }
 

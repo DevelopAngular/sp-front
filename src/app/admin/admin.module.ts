@@ -24,7 +24,8 @@ import {EditRoomInFolderComponent} from './overlay-container/edit-room-in-folder
 import {BulkEditRoomsComponent} from './overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
 import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
 import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
-import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
+import {OverlayContainerComponent} from './overlay-container/overlay-container.component';;
+import { StatusPopupComponent } from './profile-card-dialog/status-popup/status-popup.component'
 
 @NgModule({
     imports: [
@@ -54,7 +55,8 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
         BulkEditRoomsComponent,
         BulkEditRoomsInFolderComponent,
         ImportRoomsComponent,
-        OverlayContainerComponent
+        OverlayContainerComponent,
+        StatusPopupComponent
     ],
     entryComponents: [
         LinkGeneratedDialogComponent,
@@ -65,6 +67,7 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
         SearchFilterDialogComponent,
         DateTimeFilterComponent,
         OverlayContainerComponent,
+      StatusPopupComponent
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

@@ -36,6 +36,9 @@
         <span>{{headerText}}</span>
 
       </div>
+      <div class="status-button" #status>
+        <app-icon-button [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button>
+      </div>
     </div>
 
     <div class="content-scrollable-box" [attr.data-motion-translate]="(frameMotion$ | async).direction">
@@ -46,8 +49,16 @@
           <div class="subtitle">{{ profile['Email/Username'] }}</div>
         </div>
         <div class="avatar-info">
-          <div class="avatar"></div>
-          <div class="status">Active</div>
+          <div class="avatar"
+             #avatarContainer
+             (mouseenter)="avatarContainer.hover = true"
+             (mouseleave)="avatarContainer.hover = false"
+          >
+            <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="avatar">
+            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
+            <img *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">
+          </div>
+          <div class="status" (click)="openStatusPopup()">Active</div>
         </div>
         <div class="role-info">
           <div class="title">Role</div>
@@ -99,26 +110,43 @@
 
       </div>
       <mat-divider></mat-divider>
-      <div class="block">
+      <div class="block" *ngIf="user.isTeacher()">
         <div class="permissions">
           <div class="title">Teacher Permissions</div>
-          <div class="permission" *ngFor="let permission of profilePermissions">
+          <div class="permission" *ngFor="let permission of profilePermissions.teacher">
             <div class="subtitle" style="display: flex">
               <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
               {{ permission.label }}
             </div>
             <app-toggle-input
               style="width: auto"
-              [form]="studentForm"
+              [form]="permissionsForm"
               [controlName]="permission.permission"
               [controlSize]="'small'"
               [delimiter]="false"
             ></app-toggle-input>
           </div>
         </div>
-
       </div>
       <mat-divider></mat-divider>
+      <div class="block" *ngIf="user.isAdmin()">
+        <div class="permissions">
+          <div class="title">Admin Permissions</div>
+          <div class="permission" *ngFor="let permission of profilePermissions.admin">
+            <div class="subtitle" style="display: flex">
+              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+              {{ permission.label }}
+            </div>
+            <app-toggle-input
+              style="width: auto"
+              [form]="permissionsForm"
+              [controlName]="permission.permission"
+              [controlSize]="'small'"
+              [delimiter]="false"
+            ></app-toggle-input>
+          </div>
+        </div>
+      </div>
 
 <!--      <ng-container *ngSwitchCase="'bulkPermissions'" #rc>-->
 <!--        <div class="card-body">-->
