@@ -9,7 +9,7 @@
      (click)="selectedOption(option)"
     >
       <img style="margin-left: 30px" width="18" [src]="option.icon | resolveAsset" alt="opt-icon">
-      <div class="label">{{ option.label }}</div>
+      <div class="label" [style.color]="option.textColor">{{ option.label }}</div>
     </div>
   </div>
   <mat-divider *ngIf="hoverOption || showConfirmButton"></mat-divider>
@@ -19,6 +19,7 @@
       <app-gradient-button
         *ngIf="showConfirmButton"
         [gradient]="'#E32C66, #E32C66'"
+        (buttonClick)="dialogRef.close('delete')"
       >Confirm delete</app-gradient-button>
     </div>
   </div>

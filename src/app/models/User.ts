@@ -2,6 +2,7 @@ import { BaseModel } from './base';
 
 export class User extends BaseModel {
   constructor(public id: string,
+              public active: boolean,
               public created: Date,
               public last_updated: Date,
               public first_name: string,
@@ -21,6 +22,7 @@ export class User extends BaseModel {
 
     const
       id: string = '' + JSON['id'],
+      active: boolean = !!JSON['active'],
       created: Date = new Date(JSON['created']),
       last_updated: Date = new Date(JSON['last_updated']),
       first_name: string = JSON['first_name'],
@@ -39,7 +41,7 @@ export class User extends BaseModel {
       sync_types.push(sync_types_json[i]);
     }
 
-    return new User(id, created, last_updated, first_name, last_name, display_name, primary_email, roles, sync_types);
+    return new User(id, active, created, last_updated, first_name, last_name, display_name, primary_email, roles, sync_types);
   }
 
   isHead() {

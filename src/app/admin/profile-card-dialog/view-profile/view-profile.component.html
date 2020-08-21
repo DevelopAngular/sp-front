@@ -58,7 +58,12 @@
             <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
             <img *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">
           </div>
-          <div class="status" (click)="openStatusPopup()">Active</div>
+          <div class="status"
+               (click)="openStatusPopup()"
+               [style.color]="profileStatusActive ? '#00B476' : '#7f879d'"
+          >
+            {{ profileStatusActive ? 'Active' : 'Disabled' }}
+          </div>
         </div>
         <div class="role-info">
           <div class="title">Role</div>
@@ -74,9 +79,25 @@
           </div>
         </div>
 
+        <div class="role-info" *ngIf="user.isAssistant()">
+          <div class="title">Act on behalf of</div>
+          <app-sp-search
+            [preventRemovingLast]="data.role === '_profile_assistant'"
+            [selectedOptions]="assistantFor"
+            [chipsMode]="true"
+            [focused]="true"
+            [role]="'_profile_teacher'"
+            [dummyRoleText]="'teachers'"
+            [rollUpAfterSelection]="true"
+            [cancelButton]="true"
+            [placeholder]="'Search Teachers'"
+            (onUpdate)="assistantForUpdate$.next($event)"
+          ></app-sp-search>
+        </div>
+
       </div>
       <mat-divider></mat-divider>
-      <div class="block" *ngIf="data.role === '_profile_student'">
+      <div class="block" *ngIf="user.isStudent()">
         <div class="title">Student Permissions</div>
         <div class="permissions">
           <div class="permission">
@@ -114,7 +135,7 @@
         <div class="permissions">
           <div class="title">Teacher Permissions</div>
           <div class="permission" *ngFor="let permission of profilePermissions.teacher">
-            <div class="subtitle" style="display: flex">
+            <div class="subtitle" style="display: flex; align-items: center">
               <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
               {{ permission.label }}
             </div>
@@ -133,7 +154,25 @@
         <div class="permissions">
           <div class="title">Admin Permissions</div>
           <div class="permission" *ngFor="let permission of profilePermissions.admin">
-            <div class="subtitle" style="display: flex">
+            <div class="subtitle" style="display: flex; align-items: center">
+              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+              {{ permission.label }}
+            </div>
+            <app-toggle-input
+              style="width: auto"
+              [form]="permissionsForm"
+              [controlName]="permission.permission"
+              [controlSize]="'small'"
+              [delimiter]="false"
+            ></app-toggle-input>
+          </div>
+        </div>
+      </div>
+      <div class="block" *ngIf="user.isAssistant()">
+        <div class="permissions">
+          <div class="title">Assistant Permissions</div>
+          <div class="permission" *ngFor="let permission of profilePermissions.assistant">
+            <div class="subtitle" style="display: flex; align-items: center">
               <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
               {{ permission.label }}
             </div>
