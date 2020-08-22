@@ -88,8 +88,8 @@ export class ViewProfileComponent implements OnInit {
   ];
   initialRoles: { id: number, role: string, icon: string }[];
   userRoles: { role: string, icon: string }[] = [];
-  profileStatusActive: boolean;
-  profileStatusInitial: boolean;
+  profileStatusActive: string;
+  profileStatusInitial: string;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -126,7 +126,7 @@ export class ViewProfileComponent implements OnInit {
     if (this.data.profile) {
       this.profile = this.data.profile;
       this.user = User.fromJSON(this.profile._originalUserProfile);
-      this.profileStatusActive = this.user.active;
+      this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
       if (this.user.isStudent()) {
         this.userRoles.push(this.roles[0]);
@@ -241,7 +241,7 @@ export class ViewProfileComponent implements OnInit {
 
     this.disabledState = true;
     if (this.profileStatusInitial !== this.profileStatusActive) {
-      this.userService.setUserActivityRequest(this.user, this.signInStatus.value, this.data.role);
+      this.userService.updateUserRequest(this.user, {status: this.profileStatusActive});
     }
 
     if ( this.data.bulkPermissions) {
@@ -266,6 +266,7 @@ export class ViewProfileComponent implements OnInit {
         );
       }
     }
+    return of(null);
   }
 
   promptConfirmation(eventTarget: HTMLElement, option: string = '') {
@@ -366,7 +367,7 @@ export class ViewProfileComponent implements OnInit {
       data: {
         'trigger': this.statusButton.nativeElement,
         'profile': this.user,
-        'active': this.profileStatusActive
+        'profileStatus': this.profileStatusActive
       }
     });
 
@@ -375,7 +376,7 @@ export class ViewProfileComponent implements OnInit {
        this.userService.deleteUserRequest(this.profile.id, this.data.role);
        this.close.emit(false);
      }
-     this.profileStatusActive = res === 'active';
+     this.profileStatusActive = res;
    });
   }
 

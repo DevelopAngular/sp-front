@@ -60,9 +60,9 @@
           </div>
           <div class="status"
                (click)="openStatusPopup()"
-               [style.color]="profileStatusActive ? '#00B476' : '#7f879d'"
+               [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'"
           >
-            {{ profileStatusActive ? 'Active' : 'Disabled' }}
+            {{ profileStatusActive }}
           </div>
         </div>
         <div class="role-info">

@@ -493,78 +493,78 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       .subscribe(res => console.log(res));
   }
 
-  promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-
-    if (!eventTarget.classList.contains('button')) {
-      (eventTarget as any) = eventTarget.closest('.button');
-    }
-
-    eventTarget.style.opacity = '0.75';
-    let header: string;
-    let options: any[];
-    const profile: string =
-      this.role === '_profile_admin' ? 'administrator' :
-      this.role === '_profile_teacher' ? 'teacher' :
-      this.role === '_profile_student' ? 'student' :
-      this.role === '_profile_assistant' ? 'assistant' : 'unknown';
-
-    switch (option) {
-      case 'delete_from_profile':
-        if (this.role === '_all') {
-          header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
-        } else {
-          header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} group will remove them from this group, but it will not delete all data associated with the account.`;
-        }
-        options = [{display: `Confirm  ${this.role === '_all' ? 'Delete' : 'Remove'}`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
-        break;
-      case 'disable_sign_in':
-        header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} group.`;
-        options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
-        break;
-      case 'enable_sign_in':
-        header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} group.`;
-        options = [{display: 'Enable sign-in', color: '#00B476', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
-        break;
-    }
-    UNANIMATED_CONTAINER.next(true);
-      const DR = this.matDialog.open(ConsentMenuComponent,
-        {
-          data: {
-            role: this.role,
-            selectedUsers: this.selectedUsers,
-            restrictions: this.profilePermissions,
-            header: header,
-            options: options,
-            trigger: new ElementRef(eventTarget)
-          },
-          panelClass: 'consent-dialog-container',
-          backdropClass: 'invis-backdrop',
-        });
-      DR.afterClosed()
-        .pipe(
-          switchMap((action): Observable<any> => {
-            eventTarget.style.opacity = '1';
-
-            switch (action) {
-              case 'delete_from_profile':
-               return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], this.role)));
-              case 'disable_sign_in':
-                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, false, this.role)));
-              case 'enable_sign_in':
-                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, true, this.role)));
-
-              default:
-                return of(false);
-            }
-          }),
-          tap(() => UNANIMATED_CONTAINER.next(false))
-        )
-        .subscribe(() => {
-          this.selectedUsers = [];
-          this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
-        });
-
-  }
+  // promptConfirmation(eventTarget: HTMLElement, option: string = '') {
+  //
+  //   if (!eventTarget.classList.contains('button')) {
+  //     (eventTarget as any) = eventTarget.closest('.button');
+  //   }
+  //
+  //   eventTarget.style.opacity = '0.75';
+  //   let header: string;
+  //   let options: any[];
+  //   const profile: string =
+  //     this.role === '_profile_admin' ? 'administrator' :
+  //     this.role === '_profile_teacher' ? 'teacher' :
+  //     this.role === '_profile_student' ? 'student' :
+  //     this.role === '_profile_assistant' ? 'assistant' : 'unknown';
+  //
+  //   switch (option) {
+  //     case 'delete_from_profile':
+  //       if (this.role === '_all') {
+  //         header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
+  //       } else {
+  //         header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} group will remove them from this group, but it will not delete all data associated with the account.`;
+  //       }
+  //       options = [{display: `Confirm  ${this.role === '_all' ? 'Delete' : 'Remove'}`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+  //       break;
+  //     case 'disable_sign_in':
+  //       header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} group.`;
+  //       options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
+  //       break;
+  //     case 'enable_sign_in':
+  //       header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} group.`;
+  //       options = [{display: 'Enable sign-in', color: '#00B476', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
+  //       break;
+  //   }
+  //   UNANIMATED_CONTAINER.next(true);
+  //     const DR = this.matDialog.open(ConsentMenuComponent,
+  //       {
+  //         data: {
+  //           role: this.role,
+  //           selectedUsers: this.selectedUsers,
+  //           restrictions: this.profilePermissions,
+  //           header: header,
+  //           options: options,
+  //           trigger: new ElementRef(eventTarget)
+  //         },
+  //         panelClass: 'consent-dialog-container',
+  //         backdropClass: 'invis-backdrop',
+  //       });
+  //     DR.afterClosed()
+  //       .pipe(
+  //         switchMap((action): Observable<any> => {
+  //           eventTarget.style.opacity = '1';
+  //
+  //           switch (action) {
+  //             case 'delete_from_profile':
+  //              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], this.role)));
+  //             case 'disable_sign_in':
+  //               return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, false, this.role)));
+  //             case 'enable_sign_in':
+  //               return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, true, this.role)));
+  //
+  //             default:
+  //               return of(false);
+  //           }
+  //         }),
+  //         tap(() => UNANIMATED_CONTAINER.next(false))
+  //       )
+  //       .subscribe(() => {
+  //         this.selectedUsers = [];
+  //         this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
+  //       });
+  //
+  // }
 
   ngOnDestroy() {
     this.destroy$.next();

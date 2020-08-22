@@ -10,7 +10,8 @@ export class User extends BaseModel {
               public display_name: string,
               public primary_email: string,
               public roles: string[],
-              public sync_types?: string[]
+              public status: string,
+              public sync_types?: string[],
               ) {
     super();
   }
@@ -30,6 +31,7 @@ export class User extends BaseModel {
       display_name: string = JSON['display_name'],
       primary_email: string = JSON['primary_email'],
       roles: string[] = [],
+      status: string = JSON['status'],
       sync_types: string[] = [];
 
     const rolesJSON = JSON['roles'];
@@ -41,7 +43,19 @@ export class User extends BaseModel {
       sync_types.push(sync_types_json[i]);
     }
 
-    return new User(id, active, created, last_updated, first_name, last_name, display_name, primary_email, roles, sync_types);
+    return new User(
+      id,
+      active,
+      created,
+      last_updated,
+      first_name,
+      last_name,
+      display_name,
+      primary_email,
+      roles,
+      status,
+      sync_types
+    );
   }
 
   isHead() {
