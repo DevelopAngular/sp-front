@@ -15,6 +15,7 @@ import {filter, mapTo, switchMap} from 'rxjs/operators';
 import { ProfileCardDialogComponent } from '../profile-card-dialog.component';
 import {stream} from 'xlsx';
 import {StatusPopupComponent} from '../status-popup/status-popup.component';
+import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
 
 @Component({
   selector: 'app-view-profile',
@@ -378,6 +379,14 @@ export class ViewProfileComponent implements OnInit {
      }
      this.profileStatusActive = res;
    });
+  }
+
+  openEditAvatar(event) {
+    const ED = this.matDialog.open(EditAvatarComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: { 'trigger': event.currentTarget }
+    });
   }
 
 }

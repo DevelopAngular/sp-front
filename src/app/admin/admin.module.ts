@@ -24,8 +24,9 @@ import {EditRoomInFolderComponent} from './overlay-container/edit-room-in-folder
 import {BulkEditRoomsComponent} from './overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
 import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
 import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
-import {OverlayContainerComponent} from './overlay-container/overlay-container.component';;
-import { StatusPopupComponent } from './profile-card-dialog/status-popup/status-popup.component'
+import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
+import { StatusPopupComponent } from './profile-card-dialog/status-popup/status-popup.component';
+import { EditAvatarComponent } from './profile-card-dialog/edit-avatar/edit-avatar.component';
 
 @NgModule({
     imports: [
@@ -56,18 +57,20 @@ import { StatusPopupComponent } from './profile-card-dialog/status-popup/status-
         BulkEditRoomsInFolderComponent,
         ImportRoomsComponent,
         OverlayContainerComponent,
-        StatusPopupComponent
+        StatusPopupComponent,
+        EditAvatarComponent,
     ],
     entryComponents: [
-        LinkGeneratedDialogComponent,
-        ColumnsConfigDialogComponent,
-        SchoolSettingDialogComponent,
-        AddUserDialogComponent,
-        SettingsComponent,
-        SearchFilterDialogComponent,
-        DateTimeFilterComponent,
-        OverlayContainerComponent,
-      StatusPopupComponent
+      LinkGeneratedDialogComponent,
+      ColumnsConfigDialogComponent,
+      SchoolSettingDialogComponent,
+      AddUserDialogComponent,
+      SettingsComponent,
+      SearchFilterDialogComponent,
+      DateTimeFilterComponent,
+      OverlayContainerComponent,
+      StatusPopupComponent,
+      EditAvatarComponent
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

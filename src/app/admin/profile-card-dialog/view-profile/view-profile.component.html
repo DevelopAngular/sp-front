@@ -56,7 +56,7 @@
           >
             <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="avatar">
             <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
-            <img *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">
+            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">
           </div>
           <div class="status"
                (click)="openStatusPopup()"
