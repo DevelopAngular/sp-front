@@ -27,15 +27,17 @@ import {ImportRoomsComponent} from './overlay-container/import-rooms/import-room
 import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
 import { StatusPopupComponent } from './profile-card-dialog/status-popup/status-popup.component';
 import { EditAvatarComponent } from './profile-card-dialog/edit-avatar/edit-avatar.component';
+import {AccountsModule} from './accounts/accounts.module';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        SharedModule,
-        AdminRoutingModule,
-        FormsModule,
-        AdminSharedModule,
-    ],
+  imports: [
+    CommonModule,
+    SharedModule,
+    AdminRoutingModule,
+    FormsModule,
+    AdminSharedModule,
+    AccountsModule,
+  ],
     declarations: [
         AdminPageComponent,
         SettingsComponent,

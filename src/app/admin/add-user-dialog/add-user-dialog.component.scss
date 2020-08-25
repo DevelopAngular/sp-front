@@ -103,7 +103,7 @@
       .content_rest {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        //align-items: center;
         //justify-content: center;
         padding: 15px 25px;
         box-sizing: border-box;
@@ -163,10 +163,11 @@
         }
         .profile-search {
           //margin-right: 33px;
-          &_label {
+          .label {
             font-weight: bold;
             font-size: 15px;
             margin-bottom: 15px;
+            color: $blue-gray;
           }
           .user {
             background-color: #F7F7F7;

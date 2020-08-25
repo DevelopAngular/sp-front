@@ -70,10 +70,13 @@
 
     <div>
       <div class="content_rest" *ngIf="typeChosen === accountTypes[0] || typeChosen === accountTypes[2]">
-        <div class="ds-w-100 ds-flex-start-center" style="position: relative;">
+        <div class="roles" style="margin-bottom: 25px">
+          <app-select-role [selectedRoles]="[{role: 'Teacher', icon: './assets/Teacher (Blue-Gray).svg'}]"></app-select-role>
+        </div>
 
+        <div class="ds-w-100 ds-flex-start" style="position: relative;">
           <div class="profile-search">
-
+            <div class="label">G Suite Accounts</div>
             <app-sp-search
               [selectedOptions]="selectedUsers"
               [placeholder]="'Search syncing accounts'"

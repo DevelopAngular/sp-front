@@ -301,7 +301,7 @@ export class UserService {
       switch (type) {
         case 'alternative':
           return this.http.get(constructUrl(`v1/users`, {search: search}), );
-        case 'G_Suite':
+        case 'G Suite':
           return this.http.currentSchool$.pipe(
             take(1),
             switchMap((currentSchool: School) => {

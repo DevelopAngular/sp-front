@@ -1,0 +1,26 @@
+<div class="wrapper">
+  <div class="label">Role</div>
+  <div class="content">
+    <div class="active-roles" *ngIf="selectedRoles.length">
+      <div class="role"
+           *ngFor="let role of selectedRoles"
+           #r
+           (mouseenter)="r.hover = true"
+           (mouseleave)="r.hover = false"
+      >
+        <img width="12" [src]="role.icon | resolveAsset" alt="ii">
+        <span class="title">{{ role.role }}</span>
+
+        <div *ngIf="r.hover" class="delete">
+          <img
+            [src]="'./assets/Cancel (Navy).svg'" width="16" alt="Check.svg">
+        </div>
+
+      </div>
+    </div>
+    <div class="role" (click)="openAddRole($event)">
+      <img width="12" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset" alt="Plus">
+      <div class="title">Choose</div>
+    </div>
+  </div>
+</div>

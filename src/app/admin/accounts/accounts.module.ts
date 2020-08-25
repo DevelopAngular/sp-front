@@ -21,6 +21,8 @@ import { AccountsHeaderComponent } from './accounts-header/accounts-header.compo
 import { TabButtonComponent } from './accounts-header/tab-button/tab-button.component';
 import { AddAccountPopupComponent } from './add-account-popup/add-account-popup.component';
 import { BulkAddComponent } from './bulk-add/bulk-add.component';
+import { SelectRoleComponent } from './select-role/select-role.component';
+import { AddRolePopupComponent } from './select-role/add-role-popup/add-role-popup.component';
 
 @NgModule({
   declarations: [
@@ -42,12 +44,17 @@ import { BulkAddComponent } from './bulk-add/bulk-add.component';
     AccountsHeaderComponent,
     TabButtonComponent,
     AddAccountPopupComponent,
-    BulkAddComponent
+    BulkAddComponent,
+    SelectRoleComponent,
+    AddRolePopupComponent
   ],
   imports: [
     CommonModule,
     AccountsRoutingModule,
     AdminSharedModule,
+  ],
+  exports: [
+    SelectRoleComponent
   ],
   entryComponents: [
     IntegrationsDialogComponent,
@@ -56,7 +63,8 @@ import { BulkAddComponent } from './bulk-add/bulk-add.component';
     SyncSettingsComponent,
     SyncProviderComponent,
     AddAccountPopupComponent,
-    BulkAddComponent
+    BulkAddComponent,
+    AddRolePopupComponent
   ]
 })
 export class AccountsModule {

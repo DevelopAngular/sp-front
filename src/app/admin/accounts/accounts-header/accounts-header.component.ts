@@ -111,7 +111,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
             title: (action === 'gg4l' ? 'Add GG4L' : action === 'g_suite' ? 'Add G_Suite' : 'Add') + ' Account',
             syncInfo: this.schoolSyncInfoData,
             icon: action === 'gg4l' ? './assets/GG4L Icon.svg' : action === 'g_suite' ? './assets/Google (Color).svg' : './assets/Add Account (White).svg',
-            type: action === 'gg4l' ? 'GG4L' : action === 'g_suite' ? 'G_Suite' : 'Standard'
+            type: action === 'gg4l' ? 'GG4L' : action === 'g_suite' ? 'G Suite' : 'Standard'
           }
         });
       } else if (action === 'bulk') {
