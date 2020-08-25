@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-import {interval, race, Observable, ReplaySubject, of} from 'rxjs';
+import {interval, race, Observable, ReplaySubject, of, Subject} from 'rxjs';
 import { SentryErrorHandler } from '../error-handler';
 import { HttpService } from './http-service';
 import { constructUrl } from '../live-data/helpers';

@@ -129,6 +129,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   querySubscriber$ = new Subject();
 
+  schoolSyncInfoData;
+
   isLoading$: Observable<boolean>;
   isLoaded$: Observable<boolean>;
 
@@ -175,26 +177,34 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.tableRenderer(userList);
       });
 
-    interval(1758)
+    this.adminService.getSpSyncingRequest()
       .pipe(
-        filter(() => this.role === 'g_suite'),
-        switchMap((res) => {
-          return this.adminService.getGSuiteOrgs();
-        }),
         takeUntil(this.destroy$)
-      )
-      .subscribe((res: any) => {
-        if (res.is_syncing) {
-          this.syncing.start();
-        } else if (!res.is_syncing) {
-          this.syncing.end();
-        }
-        for (const key in res) {
-          if (this.GSuiteOrgs[key] !== res[key]) {
-            this.GSuiteOrgs[key] = res[key];
-          }
-        }
-      });
+      ).subscribe(res => {
+      this.schoolSyncInfoData = res;
+    });
+
+    // interval(1758)
+    //   .pipe(
+    //     filter(() => this.role === 'g_suite'),
+    //     switchMap((res) => {
+    //       return this.adminService.getGSuiteOrgs();
+    //     }),
+    //     takeUntil(this.destroy$)
+    //   )
+    //   .subscribe((res: any) => {
+    //     if (res.is_syncing) {
+    //       this.syncing.start();
+    //     } else if (!res.is_syncing) {
+    //       this.syncing.end();
+    //     }
+    //     for (const key in res) {
+    //       if (this.GSuiteOrgs[key] !== res[key]) {
+    //         this.GSuiteOrgs[key] = res[key];
+    //       }
+    //     }
+    //   });
+
 
     this.http.globalReload$.pipe(
       tap(() => {
@@ -582,7 +592,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         data: {
           role: this.role,
           selectedUsers: this.selectedUsers,
-          permissions: this.profilePermissions
+          permissions: this.profilePermissions,
+          syncInfo: this.schoolSyncInfoData
         }
       });
     DR.afterClosed().pipe(
@@ -705,7 +716,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
         if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
-        const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
+        // const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
 
         const rawObj = {
           'Name': raw.display_name,
@@ -715,7 +726,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : '',
-          'Sign-in status': raw.active && !disabledSignIn ? 'Enabled' : 'Disabled',
+          'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
           'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
           'Group(s)': partOf.length ? partOf : [{title: 'No profile'}],
           'Permissions': (function() {
@@ -797,7 +808,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
     // console.log(syncBody);
 
-    this.adminService.updateGSuiteOrgs(syncBody)
+    this.adminService.updateSpSyncing(syncBody)
       .pipe(
         switchMap(() => {
           return this.gsProgress.updateProgress('setup_accounts:end');

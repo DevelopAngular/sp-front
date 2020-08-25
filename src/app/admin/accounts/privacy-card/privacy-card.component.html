@@ -7,13 +7,16 @@
     <div class="ds-mt-15" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
       {{ infoText }}
     </div>
-    <div class="ds-mt-15">
+    <div class="ds-mt-15" [style.margin-top]="rightLogo ? '35px' : '15px'">
       <app-gradient-button
               [gradient]="buttonColor"
               [linkType]="'_blank'"
               [buttonLink]="buttonLink"
-              [text]="'Learn more'">
+              [text]="buttonText">
       </app-gradient-button>
     </div>
+  </div>
+  <div class="right-logo" *ngIf="rightLogo">
+    <img [src]="'./assets/google/Group 6.png' | resolveAsset" width="150" height="60">
   </div>
 </div>

@@ -59,15 +59,16 @@ import {FavoriteLocationsEffects} from './ngrx/favorite-locations/effects';
 import {ColorsEffects} from './ngrx/color-profiles/effects';
 import {SchoolsEffects} from './ngrx/schools/effects';
 import {UserEffects} from './ngrx/user/effects';
-import {SchoolsResolver} from './core/resolvers/schools-resolver';
 import {ProcessEffects} from './ngrx/onboard-process/effects';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CoreModule } from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
+import {OAuthModule} from 'angular-oauth2-oidc';
 import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
 import {PassLimitEffects} from './ngrx/pass-limits/effects';
+import { CustomToastComponent } from './custom-toast/custom-toast.component';
 
 
 const appRoutes: Routes = [
@@ -131,6 +132,7 @@ const appRoutes: Routes = [
     AppComponent,
     ScrollHolderDirective,
     SupportButtonComponent,
+    CustomToastComponent
   ],
   imports: [
     BrowserModule,
@@ -149,6 +151,7 @@ const appRoutes: Routes = [
                 enableTracing: false,
             }
         ),
+        OAuthModule.forRoot(),
         AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
         AngularFireMessagingModule,
         AgmCoreModule.forRoot({

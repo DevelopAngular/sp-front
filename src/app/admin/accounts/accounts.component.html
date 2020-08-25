@@ -1,19 +1,19 @@
 <div class="host" appSafariScroll>
-  <div *ngIf="splash === undefined" class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center">
+  <div *ngIf="!(onboardProcessLoaded$ | async)" class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center">
     <mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>
   </div>
 
-  <div class="accounts-wrapper ds-h-100" *ngIf="splash !== undefined && splash">
-    <app-accounts-sync [currentSchool]="currentSchool"></app-accounts-sync>
-  </div>
-
-  <div class="accounts-wrapper" *ngIf="splash !== undefined && !splash">
-      <div class="header-wrapper">
+<!--  <div class="accounts-wrapper ds-h-100" *ngIf="splash !== undefined && splash">-->
+<!--    <app-accounts-sync></app-accounts-sync>-->
+<!--  </div>-->
+  <div class="container" *ngIf="onboardProcess$ | async as onboardProcess" >
+    <div class="accounts-wrapper" *ngIf="(onboardProcessLoaded$ | async)">
+      <div class="header-wrapper" *ngIf="(onboardProcessLoaded$ | async)">
         <div class="accounts-header" [style.background-color]="darkTheme.getBackground('high', true)">
           <div class="header-content">
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
-              <div class="count">
+              <div class="count" *ngIf="!schoolSyncInfoData.is_gg4l_enabled && (onboardProcess['2.landing:first_account']?.done && onboardProcess['2.accounts:create_demo_accounts']?.done)">
                 <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async).total_count}} accounts</div>
               </div>
             </div>
@@ -21,13 +21,13 @@
             <div class="header-buttons">
               <div class="ds-mx-10" *ngIf="openTable && !dataTableEditState.value">
                 <app-round-input
-                        [minWidth]="'230px'"
-                        [width]="'230px'"
-                        [type]="'text'"
-                        [pending$]="pending$"
-                        [placeholder]="'Search'"
-                        (ontextupdate)="findRelevantAccounts($event)"
-                        [isSearch]="true">
+                  [minWidth]="'230px'"
+                  [width]="'230px'"
+                  [type]="'text'"
+                  [pending$]="pending$"
+                  [placeholder]="'Search'"
+                  (ontextupdate)="findRelevantAccounts($event)"
+                  [isSearch]="true">
                 </app-round-input>
               </div>
               <app-gradient-button *ngIf="openTable && dataTableEditState.value"
@@ -41,7 +41,17 @@
                                    (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
                 <span>Delete Account & Data</span>
               </app-gradient-button>
-
+              <!--              <app-gradient-button-->
+              <!--                [size]="'medium'"-->
+              <!--                [style.margin-left]="'15px'"-->
+              <!--                [gradient]="'#484CE6, #484CE6'"-->
+              <!--                [hoverColor]="'#5B5FE3'"-->
+              <!--                [cursor]="'pointer'"-->
+              <!--                [leftIcon]="'./assets/GG4L Icon (White).svg'"-->
+              <!--                (buttonClick)="openSyncSettings()"-->
+              <!--              >-->
+              <!--                Settings-->
+              <!--              </app-gradient-button>-->
               <app-gradient-button *ngIf="openTable"
                                    [style.margin-left]="'15px'"
                                    [size]="'medium'"
@@ -56,12 +66,22 @@
               </app-gradient-button>
 
               <app-gradient-button
-                      [style.margin-left]="'15px'"
-                      [size]="'medium'"
-                      [hoverColor]="'#00B476'"
-                      [cursor]="'pointer'"
-                      [leftIcon]="'./assets/Plus (White).svg'"
-                      (buttonClick)="addUser()"
+                [style.margin-left]="'15px'"
+                [gradient]="'#F4F4F4, #F4F4F4'"
+                [leftIcon]="'./assets/Integrations (Navy).svg'"
+                [size]="'medium'"
+                [cursor]="'pointer'"
+                [textColor]="'#1F194E'"
+                (buttonClick)="openIntegrations()"
+              >Integrations</app-gradient-button>
+
+              <app-gradient-button
+                [style.margin-left]="'15px'"
+                [size]="'medium'"
+                [hoverColor]="'#00B476'"
+                [cursor]="'pointer'"
+                [leftIcon]="'./assets/Plus (White).svg'"
+                (buttonClick)="addUser()"
               >
                 Add
               </app-gradient-button>
@@ -80,60 +100,105 @@
       </div>
 
 
-    <div class="accounts-content" *ngIf="!openTable">
-      <div class="content-wrapper">
-        <div class="top-buttons">
-          <app-admin-card-button
-                  [leftIcon]="'./assets/google/google_logo.svg'"
+      <div class="accounts-content" *ngIf="!openTable">
+        <div class="content-wrapper" *ngIf="(onboardProcessLoaded$ | async)">
+          <div class="start-page" style="width: 760px" *ngIf="!onboardProcess['2.landing:first_account']?.done && !onboardProcess['2.accounts:create_demo_accounts']?.done">
+            <div class="groups" style="margin-top: 0; margin-bottom: 48px">
+              <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Quick Add</div>
+              <div class="groups-buttons">
+                <app-integration-card
+                  [title]="'Demo Accounts'"
+                  [subtitle]="'Get started quickly with fake accounts to pilot how SmartPass works.'"
+                  [isIntegration]="false"
+                  (clickButton)="openBulkUpload()"
+                >
+                </app-integration-card>
+                <!--              <app-integration-card-->
+                <!--                [title]="'Bulk upload accounts'"-->
+                <!--                [subtitle]="'Add accounts quickly from a CSV and set-up integration later.'"-->
+                <!--                [isIntegration]="false"-->
+                <!--              >-->
+                <!--              </app-integration-card>-->
+              </div>
+            </div>
+            <div class="groups" style="margin-top: 0">
+              <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Integrations</div>
+              <div class="groups-buttons">
+                <app-integration-card
+                  [icon]="'./assets/GG4L (Blue).svg'"
+                  [title]="'GG4L'"
+                  [status]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'approved' : 'done') : 'disconnect'"
+                  [subtitle]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate(gg4lSettingsData.last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
+                  [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+                  (setUp)="openSettingsDialog('gg4l', $event)"
+                >
+                </app-integration-card>
+                <app-integration-card
+                  [icon]="'./assets/Google (Color).svg'"
                   [title]="'G Suite'"
-                  [subtitle]=" gSuiteOrgs.last_successful_sync ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : '-'"
-                  (onClick)="router.navigate(['/admin/accounts', 'g_suite'])"
-          ></app-admin-card-button>
+                  [status]="schoolSyncInfoData.is_gsuite_enabled ? 'done' : 'disconnect'"
+                  [subtitle]="schoolSyncInfoData.is_gsuite_enabled ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : 'Sync accounts from your org units.'"
+                  [learnMoreLink]="'https://www.smartpass.app/gsuite'"
+                  (setUp)="openSettingsDialog('g_suite', $event)"
+                >
+                </app-integration-card>
+              </div>
+            </div>
+          </div>
+          <!--        <div class="top-buttons" *ngIf="!schoolSyncInfoData.is_gg4l_enabled">-->
+          <!--          <app-admin-card-button-->
+          <!--                  [leftIcon]="'./assets/google/google_logo.svg'"-->
+          <!--                  [title]="'G Suite'"-->
+          <!--                  [subtitle]="gSuiteOrgs.last_successful_sync ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : '-'"-->
+          <!--                  (onClick)="router.navigate(['/admin/accounts', 'g_suite'])"-->
+          <!--          ></app-admin-card-button>-->
 
-          <app-admin-card-button
-                  [title]="'Integrations'"
-                  [subtitle]="'More coming soon'"
-                  [integrations]="true"
-          ></app-admin-card-button>
-        </div>
+          <!--          <app-admin-card-button-->
+          <!--                  [title]="'More Integrations'"-->
+          <!--                  [subtitle]="'Easier and more reliable sync'"-->
+          <!--                  [leftIcon]="'./assets/GG4L Icon.svg'"-->
+          <!--                  [isNew]="true"-->
+          <!--                  (onClick)="openNewTab('https://www.smartpass.app/gg4l')"-->
+          <!--          ></app-admin-card-button>-->
+          <!--        </div>-->
 
-        <div class="groups">
-          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
-          <div class="groups-buttons">
-            <app-admin-card-button
-                    *ngFor="let button of accountsButtons"
-                    [title]="button.title"
-                    [leftIcon]="button.leftIcon"
-                    [subtitle]="(accounts$ | async)[button.role] + ((accounts$ | async)[button.role] > 1 || (accounts$ | async)[button.role] === 0 ? ' users' : ' user')"
-                    [subtitleIcon]="button.subIcon"
-                    [isBanner]="button.banner | async"
-                    (onClick)="router.navigate(['/admin/accounts', button.param])"
-            >
-            </app-admin-card-button>
+          <div class="groups" *ngIf="onboardProcess['2.landing:first_account']?.done || onboardProcess['2.accounts:create_demo_accounts']?.done">
+            <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
+            <div class="groups-buttons">
+              <app-admin-card-button
+                *ngFor="let button of accountsButtons"
+                [title]="button.title"
+                [leftIcon]="button.leftIcon"
+                [subtitle]="(accounts$ | async)[button.role] + ((accounts$ | async)[button.role] > 1 || (accounts$ | async)[button.role] === 0 ? ' users' : ' user')"
+                [subtitleIcon]="button.subIcon"
+                (onClick)="router.navigate(['/admin/accounts', button.param])"
+              >
+              </app-admin-card-button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="user-table" *ngIf="openTable && userList.length && !(pending$ | async)">
-      <div class="column-settings">
-        <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
+      <div class="user-table" *ngIf="openTable && userList.length && !(pending$ | async)">
+        <div class="column-settings">
+          <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
+        </div>
+        <app-data-table
+          class="ds-my-10"
+          [data]="userList"
+          [lazyData]="lazyUserList"
+          [isCheckbox]="dataTableEditState"
+          (loadMoreAccounts)="loadMore($event)"
+          [textColor]="'#7E879D'"
+          [marginTopStickyHeader]="'147px'"
+          [disallowHover]="!(dataTableEditState | async)"
+          [displayedColumns]="dataTableHeadersToDisplay"
+          (selectedCell)="findProfileByRole($event)"
+          (selectedUsers)="setSelected($event)"
+          (selectedRow)="prepareData($event)"
+        >
+        </app-data-table>
       </div>
-      <app-data-table
-              class="ds-my-10"
-              [data]="userList"
-              [lazyData]="lazyUserList"
-              [isCheckbox]="dataTableEditState"
-              (loadMoreAccounts)="loadMore($event)"
-              [textColor]="'#7E879D'"
-              [marginTopStickyHeader]="'147px'"
-              [disallowHover]="!(dataTableEditState | async)"
-              [displayedColumns]="dataTableHeadersToDisplay"
-              (selectedCell)="findProfileByRole($event)"
-              (selectedUsers)="setSelected($event)"
-              (selectedRow)="prepareData($event)"
-      >
-      </app-data-table>
     </div>
   </div>
 </div>

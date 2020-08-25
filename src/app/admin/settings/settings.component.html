@@ -39,26 +39,26 @@
 
         </div>
 
-        <div class="option"
-             *ngIf="showGetStarted"
-             [style.background]="started.pressed ? 'rgba(127, 135, 157, .15)' : (started.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"
-             #started
-             (mouseenter)="started.hovered = true"
-             (mouseleave)="started.hovered = false; started.pressed = false;"
-             appCrossPointerEventTarget
-             (pointerClickEvent)="started.pressed = false; handleAction({action: 'getStarted'})"
-             (pointerDownEvent)="started.pressed = true"
-             (pointerCancelEvent)="started.pressed = false;"
-        >
+<!--        <div class="option"-->
+<!--             *ngIf="showGetStarted"-->
+<!--             [style.background]="started.pressed ? 'rgba(127, 135, 157, .15)' : (started.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"-->
+<!--             #started-->
+<!--             (mouseenter)="started.hovered = true"-->
+<!--             (mouseleave)="started.hovered = false; started.pressed = false;"-->
+<!--             appCrossPointerEventTarget-->
+<!--             (pointerClickEvent)="started.pressed = false; handleAction({action: 'getStarted'})"-->
+<!--             (pointerDownEvent)="started.pressed = true"-->
+<!--             (pointerCancelEvent)="started.pressed = false;"-->
+<!--        >-->
 
-          <img class="switch-icon" [src]="getIcon('lamp', null) | resolveAsset">
-          <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
-            <div>
-              <span>Get Started</span>
-            </div>
-          </div>
+<!--          <img class="switch-icon" [src]="getIcon('lamp', null) | resolveAsset">-->
+<!--          <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">-->
+<!--            <div>-->
+<!--              <span>Get Started</span>-->
+<!--            </div>-->
+<!--          </div>-->
 
-        </div>
+<!--        </div>-->
       </div>
 <!--      <mat-divider style="margin: 10px 0 10px 0"></mat-divider>-->
     </div>

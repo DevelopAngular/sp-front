@@ -1,9 +1,9 @@
 <div class="accounts-setup">
   <div class="g-header">
-    <img [src]="'./assets/google/Accounts-sync.svg' | resolveAsset">
+    <img [src]="'./assets/google/GG4L-logo.svg' | resolveAsset">
     <div class="g-header-title">
       <div class="g-title">Accounts sync</div>
-      <div class="g-subtitle">Set up your admin, teacher, and student accounts.</div>
+      <div class="g-subtitle">Set up all of your SmartPass accounts with GG4L.</div>
     </div>
   </div>
   <div class="g-content">
@@ -16,11 +16,8 @@
         </div>
         <div class="content">
           <div class="header">
-            <div class="title">Request G Suite Authorization Link</div>
-            <div class="subtitle">
-              Send us an email at support@smartpass.app with the subject "Requesting Onboarding Link." <br/>
-              This link allows us to sync students, teachers, and admins by organizational units or by Google groups.
-            </div>
+            <div class="title">Add SmartPass in GG4L</div>
+            <div class="subtitle">You’ll need to be a GG4L admin to add an application.</div>
           </div>
           <div class="buttons">
             <app-gradient-button
@@ -29,10 +26,22 @@
               [fontWeight]="'normal'"
               [width]="'176px'"
               [minHeight]="'50px'"
+              [gradient]="'#FFFFFF, #7F879D'"
+              [linkType]="'_blank'"
+              [buttonLink]="'https://www.smartpass.app/gg4l'"
+              [text]="'We don’t use GG4L'">
+            </app-gradient-button>
+            <app-gradient-button
+              [size]="'editable'"
+              [width]="'176px'"
+              [fontSize]="'15px'"
+              [fontWeight]="'normal'"
+              [minHeight]="'50px'"
+              [gradient]="'#484CE6, #484CE6'"
               [rightIcon]="'./assets/Chevron Right (White).svg'"
-              (buttonClick)="openMail()"
-            >
-              Send an email
+              [linkType]="'_blank'"
+              [buttonLink]="'https://www.smartpass.app/gg4l-goto'"
+              [text]="'Go to GG4L'">
             </app-gradient-button>
           </div>
         </div>
@@ -46,13 +55,24 @@
         <div class="content">
           <div class="header">
             <div class="title">Sit Back and Relax</div>
-            <div class="subtitle">We’ll handle the account syncing on our end. It may take a few days for all the accounts to get entered properly.</div>
+            <div class="subtitle">It might take a few hours to process your data activation request. We’ll send you an email once accounts are synced.</div>
           </div>
         </div>
       </div>
     </div>
     <div class="right-side">
       <div class="privacy">
+        <app-privacy-card
+          [title]="'What is GG4L?'"
+          [infoText]="'GG4L syncs all of your accounts to SmartPass from your existing SIS.'"
+          [leftIcon]="'./assets/GG4L Icon.svg'"
+          [buttonColor]="'#484CE6, #484CE6'"
+          [buttonLink]="'https://www.smartpass.app/gg4l'"
+          [buttonText]="'More info'"
+          [rightLogo]="true"
+        ></app-privacy-card>
+      </div>
+      <div class="privacy" style="margin-top: 25px">
         <app-privacy-card
           [title]="'Note on Privacy'"
           [infoText]="'We take student privacy very seriously, continuously working with schools to make sure student data is kept safe and secure.'"

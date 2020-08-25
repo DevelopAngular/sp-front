@@ -22,9 +22,18 @@ import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters
 import {ColorProfile} from '../models/ColorProfile';
 import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
 import {getColorProfiles} from '../ngrx/color-profiles/actions';
-import {getLoadedProcess, getLoadingProcess, getProcessData} from '../ngrx/onboard-process/states/process-getters.state';
-import {updateSchool} from '../ngrx/schools/actions';
+import {
+  getLoadedProcess,
+  getLoadingProcess,
+  getProcessData,
+  getProcessEntities
+} from '../ngrx/onboard-process/states/process-getters.state';
 import {getOnboardProcess, updateOnboardProcess} from '../ngrx/onboard-process/actions';
+import {getGSuiteSyncInfo, getSchoolsGG4LInfo, getSchoolSyncInfo, updateSchool, updateSchoolSyncInfo} from '../ngrx/schools/actions';
+import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolSyncInfoData} from '../ngrx/schools/states';
+import {GG4LSync} from '../models/GG4LSync';
+import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
+import {Onboard} from '../models/Onboard';
 
 @Injectable({
   providedIn: 'root'
@@ -42,12 +51,15 @@ export class AdminService {
   loadingColorProfiles$: Observable<boolean> = this.store.select(getLoadingColors);
   loadedColorProfiles$: Observable<boolean> = this.store.select(getLoadedColors);
 
-  onboardProcessData$ = this.store.select(getProcessData);
+  onboardProcessData$: Observable<{[id: string]: Onboard}> = this.store.select(getProcessEntities);
   loadedOnboardProcess$: Observable<boolean> = this.store.select(getLoadedProcess);
   loadingOnboardProcess$: Observable<boolean> = this.store.select(getLoadingProcess);
 
   countAccounts$ = this.store.select(getCountAccountsResult);
   dashboardData$ = this.store.select(getDashboardDataResult);
+  gg4lInfo$: Observable<GG4LSync> = this.store.select(getGG4LInfoData);
+  schoolSyncInfo$: Observable<SchoolSyncInfo> = this.store.select(getSchoolSyncInfoData);
+  gSuiteInfoData$: Observable<GSuiteOrgs> = this.store.select(getGSuiteSyncInfoData);
 
   constructor(private http: HttpService,  private store: Store<AppState>) {}
 
@@ -112,16 +124,27 @@ export class AdminService {
     return this.http.get('v1/admin/onboard_progress');
   }
 
-  getGSuiteOrgs(): Observable<GSuiteOrgs> {
-      return this.http.currentSchool$.pipe(
-          switchMap(school => this.http.get(`v1/schools/${school.id}/syncing/gsuite/status`)));
-  }
-
   syncNow() {
     return this.http.currentSchool$.pipe(
           switchMap(school => this.http.post(`v1/schools/${school.id}/syncing/manual_sync`)));
   }
-  updateGSuiteOrgs(body) {
+
+  getSpSyncingRequest() {
+    this.store.dispatch(getSchoolSyncInfo());
+    return this.schoolSyncInfo$;
+  }
+
+  updateSpSyncingRequest(data) {
+    this.store.dispatch(updateSchoolSyncInfo({data}));
+    return this.schoolSyncInfo$;
+  }
+
+  getSpSyncing() {
+    return this.http.currentSchool$.pipe(
+      switchMap(school => this.http.get(`v1/schools/${school.id}/syncing`)));
+  }
+
+  updateSpSyncing(body) {
     return this.http.currentSchool$.pipe(
           switchMap(school => this.http.patch(`v1/schools/${school.id}/syncing`, body)));
   }
@@ -164,5 +187,26 @@ export class AdminService {
 
   updateSchoolSettings(id, settings) {
     return this.http.patch(`v1/schools/${id}`, settings);
+  }
+
+  getGG4LSyncInfoRequest() {
+    this.store.dispatch(getSchoolsGG4LInfo());
+    return this.gg4lInfo$;
+  }
+
+  getGG4LSyncInfo() {
+    return this.http.currentSchool$.pipe(
+      switchMap(school => this.http.get(`v1/schools/${school.id}/syncing/gg4l/status`))
+    );
+  }
+
+  getGSuiteOrgsRequest() {
+    this.store.dispatch(getGSuiteSyncInfo());
+    return this.gSuiteInfoData$;
+  }
+
+  getGSuiteOrgs(): Observable<GSuiteOrgs> {
+    return this.http.currentSchool$.pipe(
+      switchMap(school => this.http.get(`v1/schools/${school.id}/syncing/gsuite/status`)));
   }
 }

@@ -71,22 +71,22 @@ export class GettingStartedProgressService {
     private adminService: AdminService,
     private httpService: HttpService
   ) {
-    this.httpService.globalReload$
-      .pipe(
-
-        switchMap(() => {
-          return this.adminService.onboardProcessData$;
-        })
-      )
-      .pipe(
-        filter((res: any[]) => !!res.length),
-        map((data: Array<OnboardItem>) => {
-          return this.buildProcessData(data);
-        })
-      )
-      .subscribe((op) => {
-        this.onboardProgressSubject.next(op as any);
-      });
+    // this.httpService.globalReload$
+    //   .pipe(
+    //
+    //     switchMap(() => {
+    //       return this.adminService.onboardProcessData$;
+    //     })
+    //   )
+    //   .pipe(
+    //     filter((res: any[]) => !!res.length),
+    //     map((data: Array<OnboardItem>) => {
+    //       return this.buildProcessData(data);
+    //     })
+    //   )
+    //   .subscribe((op) => {
+    //     this.onboardProgressSubject.next(op as any);
+    //   });
   }
 
   buildProcessData(data: Array<OnboardItem>) {
@@ -113,11 +113,7 @@ export class GettingStartedProgressService {
   }
 
   updateProgress(ticket) {
-    return this.adminService.updateOnboardProgressRequest(ticket)
-      .pipe(
-        filter(res => !!res.length),
-        map(data => this.buildProcessData(data))
-      );
+    return this.adminService.updateOnboardProgressRequest(ticket);
   }
 
 }

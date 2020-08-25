@@ -77,7 +77,7 @@ export class ViewProfileComponent implements OnInit {
   assistantToRemove: User[];
 
   constructor(
-    private dialogRef: MatDialogRef<ProfileCardDialogComponent>,
+    public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
     private matDialog: MatDialog,
     private router: Router,
     private dataService: DataService,

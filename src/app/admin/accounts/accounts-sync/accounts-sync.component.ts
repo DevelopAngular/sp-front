@@ -1,8 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {School} from '../../../models/School';
-import {GettingStartedProgressService} from '../../getting-started-progress.service';
-
-declare const window;
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-accounts-sync',
@@ -11,16 +7,9 @@ declare const window;
 })
 export class AccountsSyncComponent implements OnInit {
 
-  @Input() currentSchool: School;
-
-  constructor(private process: GettingStartedProgressService) { }
+  constructor() { }
 
   ngOnInit() {
-    // this.process.updateProgress('setup_accounts:end').subscribe();
-  }
-
-  openMail() {
-    window.location.href = `mailto:support@smartpass.app?subject=${this.currentSchool.name} G Suite Authorization Link`;
   }
 
 }

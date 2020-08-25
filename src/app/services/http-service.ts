@@ -263,7 +263,7 @@ export class HttpService {
     return this.accessTokenSubject.pipe(filter(e => !!e));
   }
 
-  private getLoginServers(data: FormData, gg4l: string = ''): Observable<LoginChoice> {
+  private getLoginServers(data: FormData): Observable<LoginChoice> {
     const preferredEnvironment = environment.preferEnvironment;
 
     if (preferredEnvironment && typeof preferredEnvironment === 'object') {
@@ -420,7 +420,7 @@ export class HttpService {
     c.append('provider', 'gg4l-sso');
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c, code).pipe(flatMap((response: LoginChoice) => {
+    return this.getLoginServers(c).pipe(flatMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));

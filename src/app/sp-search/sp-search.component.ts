@@ -19,7 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {distinctUntilChanged, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
@@ -219,6 +219,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
 
       this.query
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           (v1: any[]) => {
             this.schools.next(v1);
@@ -227,12 +228,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           });
     } else if (this.searchTarget === 'orgunits') {
       this.httpService.currentSchool$.pipe(
+        takeUntil(this.destroy$),
         map((school: School) => {
           return `${school.id}`;
         }),
         switchMap((schoolId: string) => {
           return this.httpService.get(`v1/schools/${schoolId}/gsuite/org_units`);
-
         }),
         map((gss: any[]) => {
           return gss
@@ -371,6 +372,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   addUnit(unit) {
     this.selectedOptions.push(unit);
     this.orgunits.next(null);
+    this.inputField = false;
     this.onUpdate.emit(this.selectedOptions);
   }
 

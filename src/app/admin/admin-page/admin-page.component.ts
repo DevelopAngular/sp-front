@@ -59,12 +59,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.schoolsLength$ = this.httpService.schoolsLength$;
-    this.httpService.globalReload$
-      .pipe(
-        switchMap(() => {
-          return this.adminService.getOnboardProcessRequest();
-        })
-      ).subscribe();
 
     this.adminPageReload$.pipe(
       takeUntil(this.destroy$),

@@ -23,8 +23,19 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {LocationsService} from '../../services/locations.service';
-import * as moment from 'moment';
+import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
+import {SyncProviderComponent} from './sync-provider/sync-provider.component';
+import {GG4LSync} from '../../models/GG4LSync';
+import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 import {TotalAccounts} from '../../models/TotalAccounts';
+import {IntegrationsDialogComponent} from './integrations-dialog/integrations-dialog.component';
+import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
+import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
+import {ToastService} from '../../services/toast.service';
+import {Onboard} from '../../models/Onboard';
+import {XlsxGeneratorService} from '../xlsx-generator.service';
+
+declare const window;
 
 @Component({
   selector: 'app-accounts',
@@ -42,6 +53,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   openTable: boolean;
 
+  gg4lSettingsData: GG4LSync;
+  schoolSyncInfoData: SchoolSyncInfo;
+  isOpenModal: boolean;
+
   userList: User[] = [];
   lazyUserList: User[] = [];
   selectedUsers = [];
@@ -53,8 +68,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
   querySubscriber$ = new Subject();
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  currentSchool = this.http.getSchool();
-  loadingAccountsLimit: number = 50;
+  onboardProcess$: Observable<{[id: string]: Onboard}>;
+  onboardProcessLoaded$: Observable<boolean>;
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -79,7 +94,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService,
     private domSanitizer: DomSanitizer,
-    private locationService: LocationsService
+    private locationService: LocationsService,
+    private toastService: ToastService,
+    private xlsxGeneratorService: XlsxGeneratorService
   ) {}
 
   formatDate(date) {
@@ -94,23 +111,53 @@ export class AccountsComponent implements OnInit, OnDestroy {
     ).subscribe(users => {
         this.tableRenderer(users);
     });
+  this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
 
-   this.adminService.getGSuiteOrgs().pipe(takeUntil(this.destroy$)).subscribe(res => this.gSuiteOrgs = res);
-
-    this.http.globalReload$.pipe(
-      takeUntil(this.destroy$),
+    this.onboardProcess$ = this.http.globalReload$.pipe(
       tap(() => {
         this.querySubscriber$.next(this.getUserList());
       }),
-      tap(() => {
-        this.showDisabledBanner$.next(!this.http.getSchool().launch_date);
-      }),
       switchMap(() => this.adminService.getCountAccountsRequest()),
-      switchMap(() => this.gsProgress.onboardProgress$),
-    )
-    .subscribe((op: any) => {
-      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
-      // this.splash = false;
+      switchMap((op) => {
+        return this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res));
+      }),
+      switchMap(gg4l => {
+        this.gg4lSettingsData = gg4l;
+        return this.adminService.getSpSyncingRequest().pipe(filter(res => !!res));
+      }),
+      switchMap(sync => {
+        this.schoolSyncInfoData = sync;
+        return this.adminService.getSpSyncingRequest().pipe(filter(res => !!res));
+      }),
+      switchMap(() => this.adminService.getGSuiteOrgsRequest().pipe(filter(res => !!res))),
+      switchMap((orgs) => {
+        this.gSuiteOrgs = orgs;
+        return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
+      })
+    );
+
+    this.toastService.toastButtonClick$
+      .pipe(
+        switchMap(() => {
+          return this.onboardProcess$;
+        }),
+        map((onboard) => {
+          return onboard['2.accounts:create_demo_accounts'].extras.accounts;
+        }),
+        take(1),
+        map(accounts => {
+          return accounts.map(account => {
+            return {
+              'Role': account.type,
+              'Username': account.username,
+              'Password': account.password
+            };
+          });
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(res => {
+        this.xlsxGeneratorService.generate(res);
     });
 
     this.userService.userData.pipe(
@@ -221,8 +268,35 @@ export class AccountsComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       data: {
         role: '_all',
+        syncInfo: this.schoolSyncInfoData
       }
     });
+  }
+
+  openSyncSettings() {
+    const SS = this.matDialog.open(SyncSettingsComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      data: {gg4lInfo: this.gg4lSettingsData}
+    });
+  }
+
+  openSyncProvider() {
+    if (!this.isOpenModal) {
+      this.isOpenModal = true;
+      const SP = this.matDialog.open(SyncProviderComponent, {
+        width: '425px',
+        height: '425px',
+        panelClass: 'accounts-profiles-dialog',
+        disableClose: true,
+        backdropClass: 'custom-bd',
+        data: {gg4lInfo: this.gg4lSettingsData}
+      });
+
+      SP.afterClosed().subscribe(res => {
+        this.isOpenModal = false;
+      });
+    }
   }
 
   findProfileByRole(evt) {
@@ -498,6 +572,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 
+  openNewTab(url) {
+    window.open(url);
+  }
+
   goToAccountsSetup() {
     this.updateAcoountsOnboardProgress('start');
     this.adminService
@@ -534,18 +612,54 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   }
   private updateAcoountsOnboardProgress(ticket: 'start' | 'end') {
-    if (ticket === 'start') {
-      this.gsProgress.updateProgress('setup_accounts:start');
-    } else if (ticket === 'end') {
-      this.gsProgress.updateProgress('setup_accounts:end');
+    // if (ticket === 'start') {
+    //   this.gsProgress.updateProgress('setup_accounts:start');
+    // } else if (ticket === 'end') {
+    //   this.gsProgress.updateProgress('setup_accounts:end');
+    // }
+  }
+
+  openIntegrations() {
+    const ID = this.matDialog.open(IntegrationsDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: {'gSuiteOrgs': this.gSuiteOrgs}
+    });
+
+    ID.afterClosed()
+      .pipe(filter(res => !!res))
+      .subscribe(({action, status}) => {
+        this.openSettingsDialog(action, status);
+      });
+  }
+
+  openSettingsDialog(action, status) {
+    if (action === 'gg4l') {
+      const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+        data: { status }
+      });
+    } else if (action === 'g_suite') {
+      const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+      });
     }
   }
+
   showSettings() {
 
     const data = {
       bulkPermissions: null,
       gSuiteSettings: true,
-    }
+    };
 
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
       panelClass: 'admin-form-dialog-container-white',
@@ -555,5 +669,18 @@ export class AccountsComponent implements OnInit, OnDestroy {
       data: data
     });
 
+  }
+
+  openBulkUpload() {
+    this.adminService.updateOnboardProgressRequest('2.accounts:create_demo_accounts');
+    this.onboardProcessLoaded$.pipe(
+      filter(res => !!res),
+      takeUntil(this.destroy$)
+    )
+      .subscribe(() => {
+        this.adminService.getCountAccountsRequest();
+        this.toastService.openToast(
+          {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.'});
+      });
   }
 }

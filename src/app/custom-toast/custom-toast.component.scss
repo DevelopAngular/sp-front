@@ -1,0 +1,70 @@
+@import "../../sp-colors";
+
+:host {
+  //position: fixed;
+  //z-index: 5;
+  //height: 100vh;
+  //width: 100vw;
+  //background-color: rgba(0, 0, 0, .3);
+  //top: 0;
+  //left: 0;
+  //transition: all .5s ease;
+  .toast-container{
+    position: fixed;
+    z-index: 999999999;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, .3);
+    top: 0;
+    left: 0;
+    transition: all .5s ease;
+    .content {
+      position: absolute;
+      height: auto;
+      top: 15px;
+      border-radius: 20px;
+      box-shadow: 0 3px 10px 2px rgba(0,0,0,.3);
+      background-color: #FFFFFF;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      padding: 35px;
+      transition: all .3s ease;
+      .text {
+        &_header {
+          font-weight: bold;
+          color: $navy;
+          font-size: 16px;
+        }
+        &_message {
+          color: $blue-gray;
+          font-size: 14px;
+          margin-top: 9px;
+          width: 170px;
+        }
+      }
+      .button {
+        margin-left: 48px;
+      }
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+        img {
+          width: 11px;
+        }
+      }
+    }
+    @keyframes slide {
+      0% {
+        opacity: 0;
+        left: 450px;
+      }
+      100% {
+        opacity: 1;
+        left: 0;
+      }
+    }
+  }
+}

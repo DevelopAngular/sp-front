@@ -96,7 +96,7 @@ export class AccountGroupsComponent implements OnInit {
       });
 
       this.pending = true;
-      this.adminService.updateGSuiteOrgs(syncBody)
+      this.adminService.updateSpSyncing(syncBody)
         .pipe(
           switchMap(() => {
             return this.gsProgress.updateProgress('setup_accounts:end');
