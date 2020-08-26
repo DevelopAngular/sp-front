@@ -9,7 +9,9 @@ import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material'
 export class AddRolePopupComponent implements OnInit {
 
   triggerElementRef: HTMLElement;
-  options: {role: string, icon: string};
+  options: {id: number, role: string, icon: string, description: string}[] = [];
+  selectedRoles: {id: number, role: string, icon: string, description: string}[] = [];
+  hoverOption;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -17,9 +19,14 @@ export class AddRolePopupComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.updatePosition();
     this.triggerElementRef = this.data['trigger'];
     this.options = this.data['options'];
+    this.selectedRoles = this.data['selectedRoles'];
+    this.updatePosition();
+  }
+
+  isSelectedRole(role) {
+    return this.selectedRoles.find(r => r.id === role.id);
   }
 
   updatePosition() {

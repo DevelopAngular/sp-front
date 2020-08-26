@@ -13,10 +13,11 @@
     flex-wrap: wrap;
 
     .active-roles {
-      margin-right: 15px;
+      display: flex;
     }
 
     .role {
+      margin-right: 10px;
       display: flex;
       align-items: center;
       padding: 10px;

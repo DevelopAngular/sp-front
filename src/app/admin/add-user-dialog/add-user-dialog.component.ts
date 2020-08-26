@@ -60,6 +60,7 @@ export class AddUserDialogComponent implements OnInit {
   ];
   public title: string;
   public icon: string;
+  public userRoles: any[] = [];
   private pendingSubject = new BehaviorSubject(false);
   public pending$ = this.pendingSubject.asObservable();
 
@@ -93,17 +94,26 @@ export class AddUserDialogComponent implements OnInit {
     return _filter(this.accounts, ['selected', true]);
   }
 
+  get isAssistant() {
+    return this.userRoles.find(acc => acc.role === 'Assistant');
+  }
+
   get showNextButton() {
-    if (this.typeChosen === this.accountTypes[0] && !this.state) {
-        return (this.data.role === '_profile_assistant' && ((this.assistantLike.user || this.newAlternativeAccount.valid))) ||
-            (this.data.role === '_all' && (this.newAlternativeAccount.valid || this.selectedUsers.length));
-    } else if (this.data.role === '_profile_assistant' && this.typeChosen === this.accountTypes[1] && !this.state) {
+    if (this.typeChosen === this.accountTypes[0]) {
+        return (this.isAssistant && ((this.assistantLike.user || this.newAlternativeAccount.valid)));
+    } else if (this.isAssistant && this.typeChosen === this.accountTypes[1]) {
       return this.newAlternativeAccount.valid;
-    } else if (this.data.role === '_all' && !this.state) {
-      return this.newAlternativeAccount.valid;
-    } else {
+    }
+    // else if (this.data.role === '_all' && !this.state) {
+    //   return this.newAlternativeAccount.valid;
+    // }
+    else {
       return false;
     }
+  }
+
+  get isAccessAdd() {
+    return !this.userRoles.find(role => role.role === 'Student');
   }
 
   ngOnInit() {
@@ -120,6 +130,7 @@ export class AddUserDialogComponent implements OnInit {
         Validators.minLength(8)
       ]),
     });
+    this.generateUserRoles();
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
@@ -141,6 +152,23 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe(() => {
         this.pendingSubject.next(false);
       });
+  }
+
+
+  generateUserRoles() {
+    if (this.data.role === '_profile_student') {
+      this.userRoles.push({id: 1, role: 'Student', icon: './assets/Student (Blue-Gray).svg', description: 'Students can create passes, schedule passes for the future, and send pass requests to teachers.'});
+    }
+    if (this.data.role === '_profile_teacher') {
+      this.userRoles.push({id: 2, role: 'Teacher', icon: './assets/Teacher (Blue-Gray).svg', description: 'Teachers can manage passes in his/her room, see hallway activity, create passes, and more.'});
+    }
+    if (this.data.role === '_profile_admin') {
+      this.userRoles.push({id: 3, role: 'Admin', icon: './assets/Admin (Blue-Gray).svg', description: 'Admins can explore pass history, reports, manage rooms, set-up accounts, and more.'});
+    }
+    if (this.data.role === '_profile_assistant') {
+      this.userRoles.push({id: 4, role: 'Assistant', icon: './assets/Assistant (Blue-Gray).svg', description: 'Assistants can act on behalf of other teachers: manage passes, create passes, and more.'});
+    }
+
   }
 
   uniqueEmailValidator(control: FormControl) {
@@ -174,10 +202,10 @@ export class AddUserDialogComponent implements OnInit {
       if (this.data.role === '_profile_assistant' && this.state) {
           return this.assistantLike.user && this.assistantLike.behalfOf.length;
       } else if (this.data.role === '_all' && this.state) {
-        if (this.selectedRoles.length && this.selectedRoles.find(acc => acc.role === '_profile_assistant')) {
+        if (this.userRoles.length && this.isAssistant) {
           return this.assistantLike.behalfOf.length;
         } else {
-            return this.selectedUsers && this.selectedUsers.length && this.selectedRoles.length;
+            return this.selectedUsers && this.selectedUsers.length && this.userRoles.length;
         }
       } else {
           return this.selectedUsers && this.selectedUsers.length;
@@ -189,30 +217,30 @@ export class AddUserDialogComponent implements OnInit {
         if (this.data.role !== '_all') {
             return this.newAlternativeAccount.valid && this.assistantLike.behalfOf.length;
         } else {
-          if (this.selectedRoles.length && this.selectedRoles.find(acc => acc.role === '_profile_assistant')) {
+          if (this.userRoles.length && this.isAssistant) {
             return this.assistantLike.behalfOf.length;
           } else {
-              return this.selectedRoles.length;
+              return this.userRoles.length;
           }
         }
       }
     }
   }
 
-  isDisabled(role) {
-    if ((role === '_profile_assistant' || role === '_profile_student') &&
-        this.selectedRoles.find(account => account.role === '_profile_admin' || account.role === '_profile_teacher')) {
-      return true;
-    } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student') &&
-        this.selectedRoles.find(account => account.role === '_profile_assistant')) {
-      return true;
-    } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_assistant') &&
-        this.selectedRoles.find(account => account.role === '_profile_student')) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  // isDisabled(role) {
+  //   if ((role === '_profile_assistant' || role === '_profile_student') &&
+  //       this.selectedRoles.find(account => account.role === '_profile_admin' || account.role === '_profile_teacher')) {
+  //     return true;
+  //   } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student') &&
+  //       this.selectedRoles.find(account => account.role === '_profile_assistant')) {
+  //     return true;
+  //   } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_assistant') &&
+  //       this.selectedRoles.find(account => account.role === '_profile_student')) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   showIncomplete() {
     if (this.typeChosen === this.accountTypes[1]) {
@@ -235,8 +263,6 @@ export class AddUserDialogComponent implements OnInit {
   next() {
     if (this.data.role === '_profile_assistant') {
       this.state = 'assistant';
-    } else if (this.data.role === '_all') {
-      this.state = 'selectRole';
     }
   }
 
@@ -303,9 +329,9 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe((res) => {
         this.pendingSubject.next(false);
         this.dialogRef.close(res);
-        if (this.selectedRoles.length) {
-          this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
-        }
+        // if (this.selectedRoles.length) {
+        //   this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
+        // }
       });
   }
 
