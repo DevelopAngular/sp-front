@@ -70,6 +70,7 @@
       }
     }
     .content {
+      overflow: auto;
       .content_top{
         display: flex;
         justify-content: space-between;
@@ -234,8 +235,6 @@
     }
 
     .assistant-content {
-      padding: 15px 25px;
-
       .info {
         font-size: 14px;
         color: $blue-gray;

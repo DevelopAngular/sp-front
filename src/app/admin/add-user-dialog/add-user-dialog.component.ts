@@ -53,8 +53,8 @@ export class AddUserDialogComponent implements OnInit {
   public accountTypes: string[];
   public state: string;
   public accounts = [
-      { title: 'Admin', icon: 'Admin', selected: false, role: '_profile_admin', disabled: false},
-      { title: 'Teacher', icon: 'Teacher', selected: false, role: '_profile_teacher', disabled: false },
+      { title: 'Admin', icon: 'Admin', selected: true, role: '_profile_admin', disabled: false},
+      { title: 'Teacher', icon: 'Teacher', selected: true, role: '_profile_teacher', disabled: false },
       { title: 'Assistant', icon: 'Assistant', selected: false, role: '_profile_assistant', disabled: false },
       { title: 'Student', icon: 'Student', selected: false, role: '_profile_student', disabled: false }
   ];
@@ -227,24 +227,10 @@ export class AddUserDialogComponent implements OnInit {
     }
   }
 
-  // isDisabled(role) {
-  //   if ((role === '_profile_assistant' || role === '_profile_student') &&
-  //       this.selectedRoles.find(account => account.role === '_profile_admin' || account.role === '_profile_teacher')) {
-  //     return true;
-  //   } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student') &&
-  //       this.selectedRoles.find(account => account.role === '_profile_assistant')) {
-  //     return true;
-  //   } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_assistant') &&
-  //       this.selectedRoles.find(account => account.role === '_profile_student')) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
 
   showIncomplete() {
     if (this.typeChosen === this.accountTypes[1]) {
-      return this.newAlternativeAccount.dirty && !this.showSaveButton() && !this.showNextButton;
+      return this.newAlternativeAccount.dirty && !this.showSaveButton();
     }
   }
 
@@ -273,11 +259,9 @@ export class AddUserDialogComponent implements OnInit {
       .pipe(
         tap(() => this.pendingSubject.next(true)),
         map(() => {
-          const selectedRoles = this.selectedRoles.map(acc => {
-            const oneRole = acc.role.split('_');
-            return oneRole[oneRole.length - 1];
+          return this.userRoles.map(acc => {
+            return acc.role.toLowerCase();
           });
-          return role === 'all' ? selectedRoles : [role];
         }),
         switchMap((rolesToDb) => {
           if (this.typeChosen === this.accountTypes[0]) {

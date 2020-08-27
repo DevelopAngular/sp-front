@@ -1,6 +1,7 @@
 import { Component, ElementRef, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
+import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 
 @Component({
   selector: 'app-add-account-popup',
@@ -10,7 +11,7 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 export class AddAccountPopupComponent implements OnInit {
 
   triggerElementRef: ElementRef;
-  isGG4L: boolean;
+  syncData: SchoolSyncInfo;
 
   options = [
     { title: 'Add basic account', icon: `./assets/Admin`, action: 'standard'},
@@ -25,12 +26,13 @@ export class AddAccountPopupComponent implements OnInit {
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
-    this.isGG4L = this.data['gg4l_enabled'];
+    this.syncData = this.data['syncData'];
 
-    if (this.isGG4L) {
-      this.options.unshift({ title: 'Add GG4L account', icon: './assets/GG4L Icon.svg', action: 'gg4l' });
-    } else {
-      this.options.unshift({title: 'Add G_Suite Account', icon: './assets/Google (Color).svg', action: 'g_suite'});
+    if (this.syncData.is_gg4l_enabled) {
+      this.options.push({ title: 'Add GG4L account', icon: './assets/GG4L Icon.svg', action: 'gg4l' });
+    }
+    if (this.syncData.is_gsuite_enabled) {
+      this.options.push({title: 'Add G_Suite Account', icon: './assets/Google (Color).svg', action: 'g_suite'});
     }
     this.updateSettingsPosition();
   }

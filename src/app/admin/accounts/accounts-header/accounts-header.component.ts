@@ -97,7 +97,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
       backdropClass: 'invis-backdrop',
       data: {
         trigger: new ElementRef(element.currentTarget),
-        gg4l_enabled: this.schoolSyncInfoData.is_gg4l_enabled
+        syncData: this.schoolSyncInfoData
       }
     });
     AAD.afterClosed().pipe(filter(res => !!res)).subscribe(action => {
