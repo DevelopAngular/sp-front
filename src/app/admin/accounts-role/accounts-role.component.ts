@@ -34,6 +34,7 @@ import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
 import { uniqBy } from 'lodash';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
+import {observableToBeFn} from 'rxjs/internal/testing/TestScheduler';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -71,54 +72,54 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
     ////// G_Suite
 
-  public syncing = {
-    intervalId: null,
-    enabled: false,
-    syncingDots: '',
-    // destroyer$: new Subject<any>(),
-    start() {
-      if (this.enabled) {
-        return;
-      }
-      this.enabled = true;
-      let dot = 0;
-      this.intervalId = interval(250)
-        .pipe(
-          map(() => {
-            dot += 1;
-            if (dot > 3) {
-              dot = 0;
-            }
-            return dot;
-          }),
-        )
-        .subscribe((res) => {
-          // console.log(res);
-          switch (res) {
-            case 0:
-              this.syncingDots = '';
-              break;
-            case 1:
-              this.syncingDots = '.';
-              break;
-            case 2:
-              this.syncingDots = '..';
-              break;
-            case 3:
-              this.syncingDots = '...';
-              break;
-          }
-        });
-    },
-    end() {
-      if (!this.enabled) {
-        return;
-      }
-      this.enabled = false;
-      this.syncingDots = '';
-      this.intervalId.unsubscribe();
-    }
-  };
+  // public syncing = {
+  //   intervalId: null,
+  //   enabled: false,
+  //   syncingDots: '',
+  //   // destroyer$: new Subject<any>(),
+  //   start() {
+  //     if (this.enabled) {
+  //       return;
+  //     }
+  //     this.enabled = true;
+  //     let dot = 0;
+  //     this.intervalId = interval(250)
+  //       .pipe(
+  //         map(() => {
+  //           dot += 1;
+  //           if (dot > 3) {
+  //             dot = 0;
+  //           }
+  //           return dot;
+  //         }),
+  //       )
+  //       .subscribe((res) => {
+  //         // console.log(res);
+  //         switch (res) {
+  //           case 0:
+  //             this.syncingDots = '';
+  //             break;
+  //           case 1:
+  //             this.syncingDots = '.';
+  //             break;
+  //           case 2:
+  //             this.syncingDots = '..';
+  //             break;
+  //           case 3:
+  //             this.syncingDots = '...';
+  //             break;
+  //         }
+  //       });
+  //   },
+  //   end() {
+  //     if (!this.enabled) {
+  //       return;
+  //     }
+  //     this.enabled = false;
+  //     this.syncingDots = '';
+  //     this.intervalId.unsubscribe();
+  //   }
+  // };
 
   public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
   public searchValue: string;
@@ -126,6 +127,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   querySubscriber$ = new Subject();
 
   schoolSyncInfoData;
+
+  accountRoleData$: Observable<any[]>;
 
   isLoading$: Observable<boolean>;
   isLoaded$: Observable<boolean>;
@@ -174,12 +177,19 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.tableRenderer(userList);
       });
 
-    this.adminService.getSpSyncingRequest()
+    this.http.globalReload$
       .pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(res => {
-      this.schoolSyncInfoData = res;
+        switchMap(() => this.route.params)
+      ).subscribe(r => {
+        // debugger;
     });
+
+    // this.adminService.schoolSyncInfo$
+    //   .pipe(
+    //     takeUntil(this.destroy$)
+    //   ).subscribe(res => {
+    //   this.schoolSyncInfoData = res;
+    // });
 
     // interval(1758)
     //   .pipe(
@@ -203,175 +213,169 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     //   });
 
 
-    merge(this.http.globalReload$, this.router.events.pipe(filter(event => event instanceof NavigationEnd))).pipe(
-      tap(() => {
-        this.role = null;
-        this.selectedUsers = [];
-        this.userList = [];
-        this.lazyUserList = [];
-        this.placeholder = false;
-      }),
-      tap(() => {
-        this.showDisabledChip = !this.http.getSchool().launch_date;
-      }),
-      switchMap(() => {
-        return this.adminService.getCountAccountsRequest().pipe(take(1));
-      }),
-      switchMap(() => {
-        return this.route.params.pipe(takeUntil(this.destroy$));
-      }),
-      map((params) => {
-        this.role = params.role;
-        if (this.role !== 'g_suite') {
-          this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
-          this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
-        }
-        return params;
-      }),
-      filter(() => this.role !== 'g_suite'),
-      takeUntil(this.destroy$)
-    )
-    .subscribe((qp) => {
-      const {profileName} = qp;
-      this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
-      this.tabVisibility = true;
-      this.buildTableHeaders();
-        const headers = this.storage.getItem(`${this.role}_columns`);
-        if ( headers ) {
-          this.dataTableHeaders = JSON.parse(headers);
+    // merge(this.http.globalReload$, this.router.events.pipe(filter(event => event instanceof NavigationEnd))).pipe(
+    //   tap(() => {
+    //     this.role = null;
+    //     this.selectedUsers = [];
+    //     this.userList = [];
+    //     this.lazyUserList = [];
+    //     this.placeholder = false;
+    //   }),
+    //   switchMap(() => {
+    //     return this.route.params.pipe(takeUntil(this.destroy$));
+    //   }),
+    //   map((params) => {
+    //     this.role = params.role;
+    //     if (this.role !== 'g_suite') {
+    //       this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
+    //       this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
+    //     }
+    //     return params;
+    //   }),
+    //   filter(() => this.role !== 'g_suite'),
+    //   takeUntil(this.destroy$)
+    // )
+    // .subscribe((qp) => {
+    //   const {profileName} = qp;
+    //   this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
+    //   this.tabVisibility = true;
+    //   this.buildTableHeaders();
+    //     const headers = this.storage.getItem(`${this.role}_columns`);
+    //     if ( headers ) {
+    //       this.dataTableHeaders = JSON.parse(headers);
+    //
+    //       if (!this.dataTableHeaders['Account Type']) {
+    //         this.dataTableHeaders['Account Type'] = {
+    //           value: true,
+    //           label: 'Account Type',
+    //           disabled: false
+    //         };
+    //       }
+    //     } else {
+    //       this.dataTableHeaders = {
+    //         'Name': {
+    //           value: true,
+    //           label: 'Name',
+    //           disabled: true
+    //         },
+    //         'Email/Username': {
+    //           value: true,
+    //           label: 'Email/Username',
+    //           disabled: true
+    //         },
+    //         'Account Type': {
+    //           value: true,
+    //           label: 'Account Type',
+    //           disabled: false
+    //         },
+    //         'Sign-in status': {
+    //           value: true,
+    //           label: 'Sign-in status',
+    //           disabled: false
+    //         },
+    //         'Last sign-in': {
+    //           value: true,
+    //           label: 'Last sign-in',
+    //           disabled: false
+    //         }
+    //       };
+    //
+    //       switch (this.role) {
+    //         case '_profile_teacher':
+    //           this.dataTableHeaders['rooms'] = {
+    //             value: true,
+    //             label: 'rooms',
+    //             disabled: false
+    //           };
+    //           this.dataTableHeaders['Permissions'] = {
+    //             value: false,
+    //             label: 'Permissions',
+    //             disabled: false
+    //           };
+    //           break;
+    //         case '_profile_assistant':
+    //           this.dataTableHeaders['Acting on Behalf Of'] = {
+    //             value: true,
+    //             label: 'Acting on Behalf Of',
+    //             disabled: false
+    //           };
+    //           this.dataTableHeaders['Permissions'] = {
+    //             value: false,
+    //             label: 'Permissions',
+    //             disabled: false
+    //           };
+    //           break;
+    //         case '_profile_admin':
+    //           this.dataTableHeaders['Permissions'] = {
+    //             value: false,
+    //             label: 'Permissions',
+    //             disabled: false
+    //           };
+    //           break;
+    //       }
+    //     }
+    //
+    //   this.profilePermissions =
+    //     this.role === '_profile_admin'
+    //                ?
+    //     {
+    //       'access_admin_dashboard': {
+    //         controlName: 'access_admin_dashboard',
+    //         controlLabel: 'Dashboard tab Access',
+    //       },
+    //       'access_hall_monitor': {
+    //         controlName: 'access_hall_monitor',
+    //         controlLabel: 'Hall Monitor tab Access',
+    //       },
+    //       'access_admin_search': {
+    //         controlName: 'access_admin_search',
+    //         controlLabel: 'Search tab Access',
+    //       },
+    //       'access_pass_config': {
+    //         controlName: 'access_pass_config',
+    //         controlLabel: 'Rooms tab Access',
+    //       },
+    //       'access_user_config': {
+    //         controlName: 'access_user_config',
+    //         controlLabel: 'Accounts tab Access',
+    //       },
+    //     }
+    //                :
+    //     this.role === '_profile_teacher'
+    //                ?
+    //     {
+    //       'access_hall_monitor': {
+    //         controlName: 'access_hall_monitor',
+    //         controlLabel: 'Access to Hall Monitor'
+    //       },
+    //     }
+    //                :
+    //     this.role === '_profile_assistant'
+    //                ?
+    //     {
+    //       'access_passes': {
+    //         controlName: 'access_passes',
+    //         controlLabel: 'Passes tab Access'
+    //       },
+    //       'access_hall_monitor': {
+    //         controlName: 'access_hall_monitor',
+    //         controlLabel: 'Hall Monitor tab Access'
+    //       },
+    //       'access_teacher_room': {
+    //         controlName: 'access_teacher_room',
+    //         controlLabel: 'My Room tab Access'
+    //       },
+    //     }
+    //                :
+    //     {};
+    //   this.querySubscriber$.next(this.getUserList(this.initialSearchString));
+    // });
 
-          if (!this.dataTableHeaders['Account Type']) {
-            this.dataTableHeaders['Account Type'] = {
-              value: true,
-              label: 'Account Type',
-              disabled: false
-            };
-          }
-        } else {
-          this.dataTableHeaders = {
-            'Name': {
-              value: true,
-              label: 'Name',
-              disabled: true
-            },
-            'Email/Username': {
-              value: true,
-              label: 'Email/Username',
-              disabled: true
-            },
-            'Account Type': {
-              value: true,
-              label: 'Account Type',
-              disabled: false
-            },
-            'Sign-in status': {
-              value: true,
-              label: 'Sign-in status',
-              disabled: false
-            },
-            'Last sign-in': {
-              value: true,
-              label: 'Last sign-in',
-              disabled: false
-            }
-          };
-
-          switch (this.role) {
-            case '_profile_teacher':
-              this.dataTableHeaders['rooms'] = {
-                value: true,
-                label: 'rooms',
-                disabled: false
-              };
-              this.dataTableHeaders['Permissions'] = {
-                value: false,
-                label: 'Permissions',
-                disabled: false
-              };
-              break;
-            case '_profile_assistant':
-              this.dataTableHeaders['Acting on Behalf Of'] = {
-                value: true,
-                label: 'Acting on Behalf Of',
-                disabled: false
-              };
-              this.dataTableHeaders['Permissions'] = {
-                value: false,
-                label: 'Permissions',
-                disabled: false
-              };
-              break;
-            case '_profile_admin':
-              this.dataTableHeaders['Permissions'] = {
-                value: false,
-                label: 'Permissions',
-                disabled: false
-              };
-              break;
-          }
-        }
-
-      this.profilePermissions =
-        this.role === '_profile_admin'
-                   ?
-        {
-          'access_admin_dashboard': {
-            controlName: 'access_admin_dashboard',
-            controlLabel: 'Dashboard tab Access',
-          },
-          'access_hall_monitor': {
-            controlName: 'access_hall_monitor',
-            controlLabel: 'Hall Monitor tab Access',
-          },
-          'access_admin_search': {
-            controlName: 'access_admin_search',
-            controlLabel: 'Search tab Access',
-          },
-          'access_pass_config': {
-            controlName: 'access_pass_config',
-            controlLabel: 'Rooms tab Access',
-          },
-          'access_user_config': {
-            controlName: 'access_user_config',
-            controlLabel: 'Accounts tab Access',
-          },
-        }
-                   :
-        this.role === '_profile_teacher'
-                   ?
-        {
-          'access_hall_monitor': {
-            controlName: 'access_hall_monitor',
-            controlLabel: 'Access to Hall Monitor'
-          },
-        }
-                   :
-        this.role === '_profile_assistant'
-                   ?
-        {
-          'access_passes': {
-            controlName: 'access_passes',
-            controlLabel: 'Passes tab Access'
-          },
-          'access_hall_monitor': {
-            controlName: 'access_hall_monitor',
-            controlLabel: 'Hall Monitor tab Access'
-          },
-          'access_teacher_room': {
-            controlName: 'access_teacher_room',
-            controlLabel: 'My Room tab Access'
-          },
-        }
-                   :
-        {};
-      this.querySubscriber$.next(this.getUserList(this.initialSearchString));
-    });
-
-    TABLE_RELOADING_TRIGGER.pipe(
-      switchMap(() => this.userService.getAccountsRole(this.role))
-    ).subscribe((userList) => {
-      this.tableRenderer(userList);
-    });
+    // TABLE_RELOADING_TRIGGER.pipe(
+    //   switchMap(() => this.userService.getAccountsRole(this.role))
+    // ).subscribe((userList) => {
+    //   this.tableRenderer(userList);
+    // });
 
     this.userService.userData.subscribe((user) => {
       this.user = user;
@@ -588,33 +592,33 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     });
   }
 
-  addUser() {
-    const DR = this.matDialog.open(AddUserDialogComponent,
-      {
-        width: '425px', height: '500px',
-        panelClass: 'accounts-profiles-dialog',
-        backdropClass: 'custom-bd',
-        data: {
-          role: this.role,
-          selectedUsers: this.selectedUsers,
-          permissions: this.profilePermissions,
-          syncInfo: this.schoolSyncInfoData
-        }
-      });
-    DR.afterClosed().pipe(
-      switchMap(() => this.userService.nextRequests$[this.role]),
-      take(1),
-      filter(next => !next),
-      switchMap((next) => {
-        return this.userService.getAccountsRole(this.role);
-      }),
-      take(2)
-    )
-      .subscribe((userList) => {
-        this.selectedUsers = [];
-        this.tableRenderer(userList);
-    });
-  }
+  // addUser() {
+  //   const DR = this.matDialog.open(AddUserDialogComponent,
+  //     {
+  //       width: '425px', height: '500px',
+  //       panelClass: 'accounts-profiles-dialog',
+  //       backdropClass: 'custom-bd',
+  //       data: {
+  //         role: this.role,
+  //         selectedUsers: this.selectedUsers,
+  //         permissions: this.profilePermissions,
+  //         syncInfo: this.schoolSyncInfoData
+  //       }
+  //     });
+  //   DR.afterClosed().pipe(
+  //     switchMap(() => this.userService.nextRequests$[this.role]),
+  //     take(1),
+  //     filter(next => !next),
+  //     switchMap((next) => {
+  //       return this.userService.getAccountsRole(this.role);
+  //     }),
+  //     take(2)
+  //   )
+  //     .subscribe((userList) => {
+  //       this.selectedUsers = [];
+  //       this.tableRenderer(userList);
+  //   });
+  // }
 
   findProfileByRole(evt) {
     this.tabVisibility = false;
@@ -806,26 +810,26 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.userService.getMoreUserListRequest(this.role);
   }
 
-  syncOrgUnits(evt: OrgUnit[]) {
-
-    const syncBody = {};
-          syncBody['is_enabled'] = true;
-
-    evt.forEach((item: OrgUnit) => {
-      syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
-    });
-    // console.log(syncBody);
-
-    this.adminService.updateSpSyncing(syncBody)
-      .pipe(
-        switchMap(() => {
-          return this.gsProgress.updateProgress('setup_accounts:end');
-        })
-      )
-      .subscribe((res) => {
-        // console.log(res);
-      });
-
-
-  }
+  // syncOrgUnits(evt: OrgUnit[]) {
+  //
+  //   const syncBody = {};
+  //         syncBody['is_enabled'] = true;
+  //
+  //   evt.forEach((item: OrgUnit) => {
+  //     syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
+  //   });
+  //   // console.log(syncBody);
+  //
+  //   this.adminService.updateSpSyncing(syncBody)
+  //     .pipe(
+  //       switchMap(() => {
+  //         return this.gsProgress.updateProgress('setup_accounts:end');
+  //       })
+  //     )
+  //     .subscribe((res) => {
+  //       // console.log(res);
+  //     });
+  //
+  //
+  // }
 }

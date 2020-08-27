@@ -110,29 +110,22 @@ export class AccountsComponent implements OnInit, OnDestroy {
     // });
     this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
 
-   this.adminService.getGSuiteOrgsRequest()
-     .pipe(
-       filter(res => !!res),
-       takeUntil(this.destroy$)
-     )
-     .subscribe(res => {
-       this.gSuiteOrgs = res;
-     });
-
     this.onboardProcess$ = this.http.globalReload$.pipe(
       switchMap(() => this.adminService.getCountAccountsRequest()),
       switchMap((op) => {
-        return zip(
-          this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res)),
-          this.adminService.getSpSyncingRequest().pipe(filter(res => !!res)))
-          .pipe(
-            map(([gg4l, sync]: [GG4LSync, SchoolSyncInfo]) => {
-              this.gg4lSettingsData = gg4l;
-              this.schoolSyncInfoData = sync;
-              return gg4l;
-            }));
+        return this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res));
       }),
-      switchMap(() => {
+      switchMap(gg4l => {
+        this.gg4lSettingsData = gg4l;
+        return this.adminService.getSpSyncingRequest().pipe(filter(res => !!res));
+      }),
+      switchMap(sync => {
+        this.schoolSyncInfoData = sync;
+        return of(null);
+      }),
+      switchMap(() => this.adminService.getGSuiteOrgsRequest().pipe(filter(res => !!res))),
+      switchMap((orgs) => {
+        this.gSuiteOrgs = orgs;
         return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
     );

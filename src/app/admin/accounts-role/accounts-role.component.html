@@ -1,5 +1,5 @@
 <div class="host" appSafariScroll>
-  <div class="accounts-role-wrapper"  *ngIf="role !== 'g_suite'">
+  <div class="accounts-role-wrapper">
 <!--    <div class="header-wrapper">-->
 <!--      <div class="card card__top-bar ds-flex-start-between ds-w-100">-->
 <!--        <div class="ds-flex-start-start ds-h-100">-->
@@ -235,138 +235,138 @@
 <!--      </div>-->
 <!--    </div>-->
 
-    <div class="table" *ngIf="role !== 'g_suite'">
-      <div class="loading-theme_blue-gray spinner ds-flex-center-center" *ngIf="(isLoading$ | async) && !userList.length">
-        <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
-      </div>
-      <div *ngIf="!userList.length && (noUsersDummyVisibility | async)" class="loading-theme_blue-gray spinner ds-flex-center-center">
-        <div *ngIf="placeholder" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-          <img [src]="'./assets/emptyStates/no-matches-found.svg'" class="ds-py-25 ds-mt-25 ds-mb-10" alt="no-users.svg">
-          <div class="ds-empty-text-title">No users found</div>
-          <p class="ds-my-10 ds-empty-text-info" style="text-align: center;">Spellcheck? Wrong profile?</p>
-        </div>
-      </div>
-      <div *ngIf="!userList.length && (isLoaded$ | async)" class="ds-flex-center-center ds-flex-column" style="position: absolute" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-        <img [src]="'./assets/emptyStates/no-users.svg'" class="" alt="no-users.svg">
-        <div class="ds-empty-text-title">No Users</div>
-        <p class="ds-my-10 ds-empty-text-info" style="text-align: center;">Add users one-by-one above or set up G Suite <br>
-          syncing to automatically add users to this profile.</p>
-      </div>
-      <div *ngIf="userList.length && placeholder" style="display: flex; flex-direction: column; flex: 1 1 auto; width: 100%;">
-        <div class="column-settings">
-          <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
-        </div>
-        <app-data-table
-          class="ds-my-10"
-          [scrollableAreaName]="'Table' + role"
-          [data]="userList"
-          [lazyData]="lazyUserList"
-          (loadMoreAccounts)="loadMore($event)"
-          [isCheckbox]="dataTableEditState"
-          [marginTopStickyHeader]="'147px'"
-          [textColor]="'#7E879D'"
-          [disallowHover]="!(dataTableEditState | async)"
-          [displayedColumns]="dataTableHeadersToDisplay"
-          (selectedCell)="findProfileByRole($event)"
-          (selectedRow)="showProfileCard($event)"
-          (selectedUsers)="setSelected($event)"
-          >
-        </app-data-table>
-      </div>
+    <div class="table">
+<!--      <div class="loading-theme_blue-gray spinner ds-flex-center-center" *ngIf="(isLoading$ | async) && !userList.length">-->
+<!--        <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>-->
+<!--      </div>-->
+<!--      <div *ngIf="!userList.length && (noUsersDummyVisibility | async)" class="loading-theme_blue-gray spinner ds-flex-center-center">-->
+<!--        <div *ngIf="placeholder" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">-->
+<!--          <img [src]="'./assets/emptyStates/no-matches-found.svg'" class="ds-py-25 ds-mt-25 ds-mb-10" alt="no-users.svg">-->
+<!--          <div class="ds-empty-text-title">No users found</div>-->
+<!--          <p class="ds-my-10 ds-empty-text-info" style="text-align: center;">Spellcheck? Wrong profile?</p>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div *ngIf="!userList.length && (isLoaded$ | async)" class="ds-flex-center-center ds-flex-column" style="position: absolute" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">-->
+<!--        <img [src]="'./assets/emptyStates/no-users.svg'" class="" alt="no-users.svg">-->
+<!--        <div class="ds-empty-text-title">No Users</div>-->
+<!--        <p class="ds-my-10 ds-empty-text-info" style="text-align: center;">Add users one-by-one above or set up G Suite <br>-->
+<!--          syncing to automatically add users to this profile.</p>-->
+<!--      </div>-->
+<!--      <div *ngIf="userList.length && placeholder" style="display: flex; flex-direction: column; flex: 1 1 auto; width: 100%;">-->
+<!--        <div class="column-settings">-->
+<!--          <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>-->
+<!--        </div>-->
+<!--        <app-data-table-->
+<!--          class="ds-my-10"-->
+<!--          [scrollableAreaName]="'Table' + role"-->
+<!--          [data]="userList"-->
+<!--          [lazyData]="lazyUserList"-->
+<!--          (loadMoreAccounts)="loadMore($event)"-->
+<!--          [isCheckbox]="dataTableEditState"-->
+<!--          [marginTopStickyHeader]="'147px'"-->
+<!--          [textColor]="'#7E879D'"-->
+<!--          [disallowHover]="!(dataTableEditState | async)"-->
+<!--          [displayedColumns]="dataTableHeadersToDisplay"-->
+<!--          (selectedCell)="findProfileByRole($event)"-->
+<!--          (selectedRow)="showProfileCard($event)"-->
+<!--          (selectedUsers)="setSelected($event)"-->
+<!--          >-->
+<!--        </app-data-table>-->
+<!--      </div>-->
     </div>
   </div>
 
-  <div class="gsuite-wrapper" *ngIf="role === 'g_suite'">
-    <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
-      <div class="gsuite-header" [style.background-color]="darkTheme.getBackground('high', true)">
-        <div class="header-content">
-          <div class="left-block">
-            <div class="back-button" routerLink="/admin/accounts">
-              <app-icon-button [size]="17" [srcString]="'Chevron Left'" (clickEvent)="router.navigate(['/admin/accounts'])"></app-icon-button>
-            </div>
-            <div class="title-content">
-              <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">
-              <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">
-                G Suite
+<!--  <div class="gsuite-wrapper" *ngIf="role === 'g_suite'">-->
+<!--    <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">-->
+<!--      <div class="gsuite-header" [style.background-color]="darkTheme.getBackground('high', true)">-->
+<!--        <div class="header-content">-->
+<!--          <div class="left-block">-->
+<!--            <div class="back-button" routerLink="/admin/accounts">-->
+<!--              <app-icon-button [size]="17" [srcString]="'Chevron Left'" (clickEvent)="router.navigate(['/admin/accounts'])"></app-icon-button>-->
+<!--            </div>-->
+<!--            <div class="title-content">-->
+<!--              <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">-->
+<!--              <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">-->
+<!--                G Suite-->
 
 
-                <div *ngIf="GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Last sync: {{syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.last_successful_sync) }}</div>
-                <div *ngIf="!GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Last sync: - </div>
-              </div>
-            </div>
-          </div>
+<!--                <div *ngIf="GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Last sync: {{syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.last_successful_sync) }}</div>-->
+<!--                <div *ngIf="!GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Last sync: - </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
 
-          <div class="right-block" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-<!--            <div class="count-accounts">{{ GSuiteOrgs.num_accounts + ' accounts' }}</div>-->
-            <div class="count-accounts">
-              <span *ngIf="GSuiteOrgs.num_accounts">{{ GSuiteOrgs.num_accounts }} </span>
-              <span *ngIf="!GSuiteOrgs.num_accounts">-</span>
-              <span> accounts</span></div>
-            <div class="text">syncing from G Suite</div>
-          </div>
-        </div>
-      </div>
-    </div>
+<!--          <div class="right-block" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">-->
+<!--&lt;!&ndash;            <div class="count-accounts">{{ GSuiteOrgs.num_accounts + ' accounts' }}</div>&ndash;&gt;-->
+<!--            <div class="count-accounts">-->
+<!--              <span *ngIf="GSuiteOrgs.num_accounts">{{ GSuiteOrgs.num_accounts }} </span>-->
+<!--              <span *ngIf="!GSuiteOrgs.num_accounts">-</span>-->
+<!--              <span> accounts</span></div>-->
+<!--            <div class="text">syncing from G Suite</div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 
-    <div class="gsuite-content">
-      <div class="content-wrapper">
+<!--    <div class="gsuite-content">-->
+<!--      <div class="content-wrapper">-->
 
-        <div class="left-side">
-          <div class="sync">
-            <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Sync</div>
-            <div *ngIf="GSuiteOrgs.last_successful_sync && GSuiteOrgs.next_sync; else empty" class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-              <div>Last sync: {{syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.last_successful_sync) }}</div>
-              <div>Next scheduled sync: {{ syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.next_sync) }}</div>
-            </div>
-            <ng-template #empty>
-              <div class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-                <div>Last sync: -</div>
-                <div>Next scheduled sync: -</div>
-              </div>
-            </ng-template>
-            <div class="info" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-              Syncs happen automatically every four hours, but you can also sync manually now.
-            </div>
-            <app-gradient-button
-                    [size]="'small'"
-                    [gradient]="'#022F68, #2F66AB'"
-                    [hoverColor]="'#022F68'"
-                    [fontSize]="'13px'"
-                    [cursor]="'pointer'"
-                    (buttonClick)="syncNow()"
-            >
-              <span>
-                Sync Now
-              </span>
-            </app-gradient-button>
-          </div>
+<!--        <div class="left-side">-->
+<!--          <div class="sync">-->
+<!--            <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Sync</div>-->
+<!--            <div *ngIf="GSuiteOrgs.last_successful_sync && GSuiteOrgs.next_sync; else empty" class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">-->
+<!--              <div>Last sync: {{syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.last_successful_sync) }}</div>-->
+<!--              <div>Next scheduled sync: {{ syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.next_sync) }}</div>-->
+<!--            </div>-->
+<!--            <ng-template #empty>-->
+<!--              <div class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">-->
+<!--                <div>Last sync: -</div>-->
+<!--                <div>Next scheduled sync: -</div>-->
+<!--              </div>-->
+<!--            </ng-template>-->
+<!--            <div class="info" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">-->
+<!--              Syncs happen automatically every four hours, but you can also sync manually now.-->
+<!--            </div>-->
+<!--            <app-gradient-button-->
+<!--                    [size]="'small'"-->
+<!--                    [gradient]="'#022F68, #2F66AB'"-->
+<!--                    [hoverColor]="'#022F68'"-->
+<!--                    [fontSize]="'13px'"-->
+<!--                    [cursor]="'pointer'"-->
+<!--                    (buttonClick)="syncNow()"-->
+<!--            >-->
+<!--              <span>-->
+<!--                Sync Now-->
+<!--              </span>-->
+<!--            </app-gradient-button>-->
+<!--          </div>-->
 
-          <div class="about-sync">
-            <div class="about-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">About G Suite Sync</div>
-            <div class="about-content" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-              When a new account is created in G Suite,
-              if they are added to a syncing organizational unit they will automatically be added to the specified SmartPass Group.
-              <br/><br/>
-              Sync automatically updates existing user details.
-            </div>
-          </div>
+<!--          <div class="about-sync">-->
+<!--            <div class="about-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">About G Suite Sync</div>-->
+<!--            <div class="about-content" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">-->
+<!--              When a new account is created in G Suite,-->
+<!--              if they are added to a syncing organizational unit they will automatically be added to the specified SmartPass Group.-->
+<!--              <br/><br/>-->
+<!--              Sync automatically updates existing user details.-->
+<!--            </div>-->
+<!--          </div>-->
 
-          <app-privacy-card
-            [title]="'Note on Privacy'"
-            [infoText]="'We take student privacy very seriously, continuously working with schools to make sure student data is kept safe and secure.'"
-            [leftIcon]="'./assets/Shield (Blue-Gray).svg'"
-            [buttonColor]="'#FFFFFF, #7F879D'"
-            [buttonLink]="'https://www.smartpass.app/privacy'"
-          ></app-privacy-card>
+<!--          <app-privacy-card-->
+<!--            [title]="'Note on Privacy'"-->
+<!--            [infoText]="'We take student privacy very seriously, continuously working with schools to make sure student data is kept safe and secure.'"-->
+<!--            [leftIcon]="'./assets/Shield (Blue-Gray).svg'"-->
+<!--            [buttonColor]="'#FFFFFF, #7F879D'"-->
+<!--            [buttonLink]="'https://www.smartpass.app/privacy'"-->
+<!--          ></app-privacy-card>-->
 
-        </div>
+<!--        </div>-->
 
-        <div class="right-side">
-          <app-account-groups
-            (accountsToSync)="syncOrgUnits($event)"
-          ></app-account-groups>
-        </div>
-      </div>
-    </div>
-  </div>
+<!--        <div class="right-side">-->
+<!--          <app-account-groups-->
+<!--            (accountsToSync)="syncOrgUnits($event)"-->
+<!--          ></app-account-groups>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
 </div>
