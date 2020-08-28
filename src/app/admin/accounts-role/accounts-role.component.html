@@ -236,6 +236,11 @@
 <!--    </div>-->
 
     <div class="table">
+
+        <app-sp-data-table
+          [data$]="accountRoleData$"
+          [loading$]="isLoading$"
+        ></app-sp-data-table>
 <!--      <div class="loading-theme_blue-gray spinner ds-flex-center-center" *ngIf="(isLoading$ | async) && !userList.length">-->
 <!--        <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>-->
 <!--      </div>-->

@@ -168,21 +168,47 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.querySubscriber$.pipe(
-      // take(1),
-      switchAll(),
-      filter((res: any) => res.length),
-      takeUntil(this.destroy$))
-      .subscribe((userList: any) => {
-          this.tableRenderer(userList);
-      });
+    // this.querySubscriber$.pipe(
+    //   // take(1),
+    //   switchAll(),
+    //   filter((res: any) => res.length),
+    //   takeUntil(this.destroy$))
+    //   .subscribe((userList: any) => {
+    //       this.tableRenderer(userList);
+    //   });
 
-    this.http.globalReload$
+    this.accountRoleData$ = this.http.globalReload$
       .pipe(
-        switchMap(() => this.route.params)
-      ).subscribe(r => {
-        // debugger;
-    });
+        switchMap(() => this.route.params),
+        tap(params => {
+          this.role = params.role;
+          this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
+          this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
+        }),
+        switchMap(() => {
+          return this.userService.getAccountsRoles(this.role, '', 50);
+        }),
+        map((accounts: any[]) => {
+          if (!accounts.length) {
+           return [{
+              'Name': null,
+              'Email/username': null,
+              'Status': null,
+              'Last sign-in': 'Never signed in',
+              'Type': 'Basic'
+           }];
+          }
+          return accounts.map(account => {
+            return {
+              'Name': account.display_name,
+              'Email/username': account.primary_email,
+              'Status': account.status,
+              'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+              'Type': 'Basic'
+            };
+          });
+        })
+      );
 
     // this.adminService.schoolSyncInfo$
     //   .pipe(

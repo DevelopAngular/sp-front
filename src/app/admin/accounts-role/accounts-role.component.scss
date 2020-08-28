@@ -2,7 +2,7 @@
 @import '../../../sp-colors';
 
 :host {
-  width: 100%;
+  width: 1000px;
   height: 100%;
   overflow: hidden;
 }
@@ -16,7 +16,7 @@
   background-color: #FBFEFF;
   .accounts-role-wrapper{
     min-width: 850px;
-    width: 100%;
+    width: 900px;
     height: 100%;
     @extend .ds-flex-center-center, .ds-flex-column, .ds-w-100;
     flex: 1 1 auto;
@@ -119,6 +119,7 @@
       //padding-top: 20px;
       @extend .ds-flex-center-center, .ds-flex-column, .ds-w-100;
       flex: 1 1 auto;
+      width: 100%;
       .spinner{
         height: 568px;
       }
