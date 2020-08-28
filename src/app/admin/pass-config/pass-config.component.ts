@@ -410,10 +410,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         .subscribe((res: Pinnable[]) => {
           this.pinnables.push(...res);
         });
-        this.adminService.updateOnboardProgressRequest('2.landing:first_room');
       } else {
         this.showRooms = true;
     }
+    this.adminService.updateOnboardProgressRequest('2.landing:first_room');
   }
 
   openChat(event) {
