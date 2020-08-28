@@ -55,8 +55,8 @@ export class GradientButtonComponent implements OnInit {
   @Input() minHeight: string; // > editable
   @Input() fontSize: string = '20px'; // > editable
   @Input() fontWeight: string = '500'; // > editable
-  @Input() leftImageWidth: string; // > editable
-  @Input() leftImageHeight: string; // > editable
+  @Input() leftImageWidth: string = '25px'; // > editable
+  @Input() leftImageHeight: string = '25px'; // > editable
   @Input() cursor: string = 'pointer';
   @Input() cornerRadius: string;
   @Input() padding: string;

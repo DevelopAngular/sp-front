@@ -14,6 +14,7 @@ import {NoAccountComponent} from '../no-account/no-account.component';
 import { CheckUserInputDirective } from './directives/check-user-input.directive';
 import {SupportOptionsComponent} from '../support-options/support-options.component';
 import { ToolTipRendererDirective } from './directives/tool-tip-renderer.directive';
+import { PassClickDirective } from './directives/pass-click.directive';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { ToolTipRendererDirective } from './directives/tool-tip-renderer.directi
     NoAccountComponent,
     CheckUserInputDirective,
     SupportOptionsComponent,
-    ToolTipRendererDirective
+    ToolTipRendererDirective,
+    PassClickDirective
   ],
   imports: [
     CommonModule,

@@ -25,19 +25,22 @@ import {BulkEditRoomsComponent} from './overlay-container/bulk-edit-rooms/bulk-e
 import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
 import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
 import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
+import { ColumnOptionsComponent } from './sp-data-table/column-options/column-options.component';
+import { GeneratedTableDialogComponent } from './sp-data-table/generated-table-dialog/generated-table-dialog.component';
+
 import { StatusPopupComponent } from './profile-card-dialog/status-popup/status-popup.component';
 import { EditAvatarComponent } from './profile-card-dialog/edit-avatar/edit-avatar.component';
 import {AccountsModule} from './accounts/accounts.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    AdminRoutingModule,
-    FormsModule,
-    AdminSharedModule,
-    AccountsModule,
-  ],
+    imports: [
+        CommonModule,
+        SharedModule,
+        AdminRoutingModule,
+        FormsModule,
+        AdminSharedModule,
+        AccountsModule,
+    ],
     declarations: [
         AdminPageComponent,
         SettingsComponent,
@@ -59,20 +62,23 @@ import {AccountsModule} from './accounts/accounts.module';
         BulkEditRoomsInFolderComponent,
         ImportRoomsComponent,
         OverlayContainerComponent,
+        GeneratedTableDialogComponent,
         StatusPopupComponent,
         EditAvatarComponent,
     ],
     entryComponents: [
-      LinkGeneratedDialogComponent,
-      ColumnsConfigDialogComponent,
-      SchoolSettingDialogComponent,
-      AddUserDialogComponent,
-      SettingsComponent,
-      SearchFilterDialogComponent,
-      DateTimeFilterComponent,
-      OverlayContainerComponent,
-      StatusPopupComponent,
-      EditAvatarComponent
+        LinkGeneratedDialogComponent,
+        ColumnsConfigDialogComponent,
+        SchoolSettingDialogComponent,
+        AddUserDialogComponent,
+        SettingsComponent,
+        SearchFilterDialogComponent,
+        DateTimeFilterComponent,
+        OverlayContainerComponent,
+        ColumnOptionsComponent,
+        GeneratedTableDialogComponent,
+        StatusPopupComponent,
+        EditAvatarComponent
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

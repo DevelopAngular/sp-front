@@ -114,10 +114,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     this.onboardProcess$ = this.http.globalReload$.pipe(
       tap(() => this.adminService.getCountAccountsRequest()),
-      tap((op) => this.adminService.getGG4LSyncInfoRequest()),
-      tap(gg4l => this.adminService.getSpSyncingRequest()),
+      tap(() => this.adminService.getGG4LSyncInfoRequest()),
+      tap(() => this.adminService.getSpSyncingRequest()),
       tap(() => this.adminService.getGSuiteOrgsRequest()),
-      switchMap((orgs) => {
+      switchMap(() => {
         return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
     );

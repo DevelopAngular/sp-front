@@ -23,10 +23,12 @@ import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
+import {LocationsService} from '../services/locations.service';
+import {Location} from '../models/Location';
 
 declare const window;
 
-export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local' | 'roles';
+export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local' | 'roles' | 'rooms';
 
 export type selectorIndicator = '+' | '-';
 
@@ -113,7 +115,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = true;
   @Input() showOptions: boolean = true;
-  @Input() selectedOptions: Array<User | School | GSuiteSelector | {id: number, role: string, icon: string}[]> = [];
+  @Input() selectedOptions: Array<User | School | GSuiteSelector | {id: number, role: string, icon: string}[] | Location> = [];
   @Input() selectedOrgUnits: any[] = [];
   @Input() height: string = '40px';
   @Input() width: string = '280px';
@@ -132,6 +134,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() type: string = 'alternative'; // Can be alternative or G_Suite or GG4L, endpoint will depend on that.
   @Input() isProposed: boolean;
   @Input() proposedSearchString: string;
+  @Input() displaySelectedTitle: boolean = true;
 
   @Input() searchingTeachers: User[];
   @Input() searchingRoles: { id: number, role: string, icon: string }[];
@@ -165,6 +168,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   firstSearchItem: User | GSuiteSelector;
   currentSchool: School;
   suggestedTeacher: User;
+  foundLocations: Location[];
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -175,7 +179,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private mapsApi: MapsAPILoader,
     private shortcutsService: KeyboardShortcutsService,
     private renderer: Renderer2,
-    public screenService: ScreenService
+    public screenService: ScreenService,
+    private locationService: LocationsService
   ) {}
 
   private getEmitedValue() {
@@ -360,13 +365,40 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           this.pending$.next(false);
           this.teacherCollection$.next(null);
         }
+        break;
+      case 'rooms':
+        if (search !== '') {
+          const url = `v1/locations?limit=100&search=${search}&starred=false`;
+          this.locationService.searchLocationsRequest(url)
+            .pipe(filter(res => !!res.length))
+            .subscribe((locs) => {
+                this.foundLocations = locs;
+                this.showDummy = !locs.length;
+                this.pending$.next(false);
+          });
+        } else {
+            this.showDummy = false;
+            this.inputValue$.next('');
+            this.pending$.next(false);
+        }
 
+        break;
     }
   }
   selectSchool(school) {
     this.selectedSchool = school;
     this.onUpdate.emit(school);
     this.schools.next(null);
+  }
+
+  addLocation(location) {
+    this.foundLocations = null;
+    this.inputValue$.next('');
+    this.onSearch('');
+    if (!this.selectedOptions.includes(location)) {
+      this.selectedOptions.push(location);
+      this.onUpdate.emit(this.getEmitedValue());
+    }
   }
 
   addUnit(unit) {
@@ -414,18 +446,18 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       return [];
     }
     if (students[0] instanceof User || this.searchTarget === 'users') {
-      let fixedStudents: User[] = <User[]>students;
-      let studentsToRemove: User[] = [];
-      for (let selectedStudent of <Array<User>>this.selectedOptions) {
-        for (let student of fixedStudents) {
+      const fixedStudents: User[] = <User[]>students;
+      const studentsToRemove: User[] = [];
+      for (const selectedStudent of <Array<User>>this.selectedOptions) {
+        for (const student of fixedStudents) {
           if (selectedStudent.id === student.id) {
             studentsToRemove.push(student);
           }
         }
       }
 
-      for (let studentToRemove of studentsToRemove) {
-        var index = fixedStudents.indexOf(studentToRemove, 0);
+      for (const studentToRemove of studentsToRemove) {
+        const index = fixedStudents.indexOf(studentToRemove, 0);
         if (index > -1) {
           fixedStudents.splice(index, 1);
         }
