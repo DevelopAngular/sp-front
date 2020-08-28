@@ -147,7 +147,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
         return this.http.get<any>(discovery);
       }),
-      retryWhen((errors) => errors)
+      retryWhen((errors) => {
+        this.error$.next('Couldn’t find that username or email');
+        return errors;
+      })
     ).subscribe(({auth_types}) => {
       if (!auth_types.length) {
         this.showError = true;
