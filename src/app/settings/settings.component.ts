@@ -64,6 +64,10 @@ export class SettingsComponent implements OnInit {
     // this.initializeSettings();
   }
 
+  get isKioskMode(): boolean {
+    return !!this.kioskMode.currentRoom$.value;
+  }
+
   ngOnInit() {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
@@ -185,7 +189,7 @@ export class SettingsComponent implements OnInit {
 
   initializeSettings() {
     this.settings.push({
-      'hidden': false,
+      'hidden': this.isKioskMode,
       'background': '#6651FF',
       'icon': 'Username',
       'action': 'profile',
@@ -200,7 +204,7 @@ export class SettingsComponent implements OnInit {
     });
     if (this.isStaff) {
       this.settings.push({
-        'hidden': !!this.kioskMode.currentRoom$.value,
+        'hidden': this.isKioskMode,
         'background': '#12C29E',
         'icon': 'Lock dots',
         'action': 'myPin',
@@ -208,14 +212,14 @@ export class SettingsComponent implements OnInit {
       });
     }
     this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value,
+      'hidden': this.isKioskMode,
       'background': '#EBBB00',
       'icon': 'Star',
       'action': 'favorite',
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid() || DeviceDetection.isIOSTablet(),
+      'hidden': this.isKioskMode || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid() || DeviceDetection.isIOSTablet(),
       'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',
