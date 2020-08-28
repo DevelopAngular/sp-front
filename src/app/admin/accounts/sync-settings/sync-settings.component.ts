@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { GG4LSync } from '../../../models/GG4LSync';
 import {AdminService} from '../../../services/admin.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-sync-settings',
@@ -10,7 +11,7 @@ import {AdminService} from '../../../services/admin.service';
 })
 export class SyncSettingsComponent implements OnInit {
 
-  gg4lInfo: GG4LSync;
+  gg4lInfo$: Observable<GG4LSync>;
   selectedProvider: string;
 
   constructor(
@@ -19,7 +20,7 @@ export class SyncSettingsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.gg4lInfo = this.data['gg4lInfo'];
+    this.gg4lInfo$ = this.adminService.gg4lInfo$;
     this.adminService.schoolSyncInfo$.subscribe(res => {
       if (res.login_provider === 'google-auth-token') {
         this.selectedProvider = 'Sign in with Google';

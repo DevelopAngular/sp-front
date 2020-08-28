@@ -49,8 +49,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   openTable: boolean;
 
-  gg4lSettingsData: GG4LSync;
-  schoolSyncInfoData: SchoolSyncInfo;
+  gg4lSettingsData$: Observable<GG4LSync>;
+  schoolSyncInfoData$: Observable<SchoolSyncInfo>;
   isOpenModal: boolean;
 
   userList: User[] = [];
@@ -59,7 +59,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   destroy$ = new Subject();
 
-  gSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
+  gSuiteOrgs$: Observable<GSuiteOrgs> = of({});
 
   querySubscriber$ = new Subject();
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -109,23 +109,15 @@ export class AccountsComponent implements OnInit, OnDestroy {
     //     this.tableRenderer(users);
     // });
     this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
+    this.gg4lSettingsData$ = this.adminService.gg4lInfo$;
+    this.schoolSyncInfoData$ = this.adminService.schoolSyncInfo$;
 
     this.onboardProcess$ = this.http.globalReload$.pipe(
-      switchMap(() => this.adminService.getCountAccountsRequest()),
-      switchMap((op) => {
-        return this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res));
-      }),
-      switchMap(gg4l => {
-        this.gg4lSettingsData = gg4l;
-        return this.adminService.getSpSyncingRequest().pipe(filter(res => !!res));
-      }),
-      switchMap(sync => {
-        this.schoolSyncInfoData = sync;
-        return of(null);
-      }),
-      switchMap(() => this.adminService.getGSuiteOrgsRequest().pipe(filter(res => !!res))),
+      tap(() => this.adminService.getCountAccountsRequest()),
+      tap((op) => this.adminService.getGG4LSyncInfoRequest()),
+      tap(gg4l => this.adminService.getSpSyncingRequest()),
+      tap(() => this.adminService.getGSuiteOrgsRequest()),
       switchMap((orgs) => {
-        this.gSuiteOrgs = orgs;
         return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
     );
@@ -259,7 +251,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     const SS = this.matDialog.open(SyncSettingsComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
-      data: {gg4lInfo: this.gg4lSettingsData}
+      data: {gg4lInfo: this.gg4lSettingsData$}
     });
   }
 

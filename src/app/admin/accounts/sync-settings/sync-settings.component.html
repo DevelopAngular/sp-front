@@ -10,7 +10,7 @@
       <div class="subtitle">Sync Information</div>
       <div class="info">Last sync: Dec. 4, 5:34 PM (Successful)</div>
       <div class="info">Next sync: Dec. 4, 8:34 PM</div>
-      <div class="info">
+      <div class="info" *ngIf="gg4lInfo$ | async as gg4lInfo">
         <div style="margin-bottom: 5px">Accounts:</div>
         <div>{{ gg4lInfo.num_admins }} Admins</div>
         <div>{{ gg4lInfo.num_teachers }} Teachers</div>
