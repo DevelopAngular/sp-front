@@ -1,5 +1,18 @@
 <div class="wrapper">
   <div class="accounts-header" [style.background-color]="darkTheme.getBackground('high', true)">
+    <div class="selected" *ngIf="selectedUsers.length">
+      <div class="selected-content">
+        <div class="count">
+          {{ selectedUsers.length }} Selected accounts
+        </div>
+        <div class="buttons">
+          <app-gradient-button [size]="'medium'" [gradient]="'#7F879D, #7F879D'">Edit Status</app-gradient-button>
+          <app-gradient-button [size]="'medium'" [style.margin]="'0 13px'" [gradient]="'#7F879D, #7F879D'">Edit Permissions</app-gradient-button>
+          <app-gradient-button [size]="'medium'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="selectedUsers = []">Done</app-gradient-button>
+        </div>
+      </div>
+
+    </div>
 
     <div class="header-content">
       <div [ngSwitch]="currentTab">

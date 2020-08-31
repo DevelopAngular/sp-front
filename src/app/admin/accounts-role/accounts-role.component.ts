@@ -35,6 +35,7 @@ import { uniqBy } from 'lodash';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {observableToBeFn} from 'rxjs/internal/testing/TestScheduler';
+import {School} from '../../models/School';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -70,68 +71,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
-    ////// G_Suite
-
-  // public syncing = {
-  //   intervalId: null,
-  //   enabled: false,
-  //   syncingDots: '',
-  //   // destroyer$: new Subject<any>(),
-  //   start() {
-  //     if (this.enabled) {
-  //       return;
-  //     }
-  //     this.enabled = true;
-  //     let dot = 0;
-  //     this.intervalId = interval(250)
-  //       .pipe(
-  //         map(() => {
-  //           dot += 1;
-  //           if (dot > 3) {
-  //             dot = 0;
-  //           }
-  //           return dot;
-  //         }),
-  //       )
-  //       .subscribe((res) => {
-  //         // console.log(res);
-  //         switch (res) {
-  //           case 0:
-  //             this.syncingDots = '';
-  //             break;
-  //           case 1:
-  //             this.syncingDots = '.';
-  //             break;
-  //           case 2:
-  //             this.syncingDots = '..';
-  //             break;
-  //           case 3:
-  //             this.syncingDots = '...';
-  //             break;
-  //         }
-  //       });
-  //   },
-  //   end() {
-  //     if (!this.enabled) {
-  //       return;
-  //     }
-  //     this.enabled = false;
-  //     this.syncingDots = '';
-  //     this.intervalId.unsubscribe();
-  //   }
-  // };
-
   public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
   public searchValue: string;
 
   querySubscriber$ = new Subject();
 
-  schoolSyncInfoData;
-
   accountRoleData$: Observable<any[]>;
+  selectedAccounts: User[];
 
   isLoading$: Observable<boolean>;
   isLoaded$: Observable<boolean>;
+
+  schools$: Observable<School[]>;
 
   tableHeaders;
   showDisabledChip: boolean;
@@ -149,7 +100,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     private locService: LocationsService,
     private domSanitizer: DomSanitizer,
-    private gsProgress: GettingStartedProgressService,
     private cdr: ChangeDetectorRef
   ) {
 
@@ -168,6 +118,60 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.schools$ = this.http.schoolsCollection$;
+    this.profilePermissions =
+      this.role === '_profile_admin'
+        ?
+        {
+          'access_admin_dashboard': {
+            controlName: 'access_admin_dashboard',
+            controlLabel: 'Dashboard tab Access',
+          },
+          'access_hall_monitor': {
+            controlName: 'access_hall_monitor',
+            controlLabel: 'Hall Monitor tab Access',
+          },
+          'access_admin_search': {
+            controlName: 'access_admin_search',
+            controlLabel: 'Explore tab Access',
+          },
+          'access_pass_config': {
+            controlName: 'access_pass_config',
+            controlLabel: 'Rooms tab Access',
+          },
+          'access_user_config': {
+            controlName: 'access_user_config',
+            controlLabel: 'Accounts tab Access',
+          },
+        }
+        :
+        this.role === '_profile_teacher'
+          ?
+          {
+            'access_hall_monitor': {
+              controlName: 'access_hall_monitor',
+              controlLabel: 'Access to Hall Monitor'
+            },
+          }
+          :
+          this.role === '_profile_assistant'
+            ?
+            {
+              'access_passes': {
+                controlName: 'access_passes',
+                controlLabel: 'Passes tab Access'
+              },
+              'access_hall_monitor': {
+                controlName: 'access_hall_monitor',
+                controlLabel: 'Hall Monitor tab Access'
+              },
+              'access_teacher_room': {
+                controlName: 'access_teacher_room',
+                controlLabel: 'My Room tab Access'
+              },
+            }
+            :
+            {};
     // this.querySubscriber$.pipe(
     //   // take(1),
     //   switchAll(),
@@ -188,27 +192,50 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         switchMap(() => {
           return this.userService.getAccountsRoles(this.role, '', 50);
         }),
-        map((accounts: any[]) => {
+        map((accounts: User[]) => {
           if (!accounts.length) {
            return [{
               'Name': null,
               'Email/username': null,
               'Status': null,
-              'Last sign-in': 'Never signed in',
-              'Type': 'Basic'
+              'Last sign-in': null,
+              'Type': null,
+              'Permissions': null
            }];
           }
           return accounts.map(account => {
-            return {
+            const permissionsRef = this.profilePermissions;
+            const rowObj = {
               'Name': account.display_name,
               'Email/username': account.primary_email,
               'Status': account.status,
               'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-              'Type': 'Basic'
+              'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Basic',
+              'Permissions': (function() {
+                const tabs = Object.values(permissionsRef).map((tab: any) => {
+                  tab.allowed = account.roles.includes(tab.controlName);
+                  return tab;
+                });
+                if (tabs.every((item: any): boolean => item.allowed)) {
+                  return 'No restrictions';
+                } else {
+                  const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
+                  if (restrictedTabs.length > 1) {
+                    return `${restrictedTabs.length} tabs restricted`;
+                  } else {
+                    return `${restrictedTabs[0].controlLabel} restricted`;
+                  }
+                }
+              }())
             };
+
+            Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id});
+
+            return rowObj;
           });
         })
       );
+
 
     // this.adminService.schoolSyncInfo$
     //   .pipe(
@@ -341,59 +368,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     //       }
     //     }
     //
-    //   this.profilePermissions =
-    //     this.role === '_profile_admin'
-    //                ?
-    //     {
-    //       'access_admin_dashboard': {
-    //         controlName: 'access_admin_dashboard',
-    //         controlLabel: 'Dashboard tab Access',
-    //       },
-    //       'access_hall_monitor': {
-    //         controlName: 'access_hall_monitor',
-    //         controlLabel: 'Hall Monitor tab Access',
-    //       },
-    //       'access_admin_search': {
-    //         controlName: 'access_admin_search',
-    //         controlLabel: 'Search tab Access',
-    //       },
-    //       'access_pass_config': {
-    //         controlName: 'access_pass_config',
-    //         controlLabel: 'Rooms tab Access',
-    //       },
-    //       'access_user_config': {
-    //         controlName: 'access_user_config',
-    //         controlLabel: 'Accounts tab Access',
-    //       },
-    //     }
-    //                :
-    //     this.role === '_profile_teacher'
-    //                ?
-    //     {
-    //       'access_hall_monitor': {
-    //         controlName: 'access_hall_monitor',
-    //         controlLabel: 'Access to Hall Monitor'
-    //       },
-    //     }
-    //                :
-    //     this.role === '_profile_assistant'
-    //                ?
-    //     {
-    //       'access_passes': {
-    //         controlName: 'access_passes',
-    //         controlLabel: 'Passes tab Access'
-    //       },
-    //       'access_hall_monitor': {
-    //         controlName: 'access_hall_monitor',
-    //         controlLabel: 'Hall Monitor tab Access'
-    //       },
-    //       'access_teacher_room': {
-    //         controlName: 'access_teacher_room',
-    //         controlLabel: 'My Room tab Access'
-    //       },
-    //     }
-    //                :
-    //     {};
     //   this.querySubscriber$.next(this.getUserList(this.initialSearchString));
     // });
 
@@ -407,90 +381,92 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.user = user;
     });
 
-    this.route.params.pipe(
-      switchMap(params => {
-        return this.userService.lastAddedAccounts$[params.role];
-      }),
-      filter((res: any) => !!res && res.length)
-    ).subscribe(res => {
-        this.dataTableHeadersToDisplay = [];
-        this.lazyUserList = this.buildUserListData(res);
-    });
+    // this.route.params.pipe(
+    //   switchMap(params => {
+    //     return this.userService.lastAddedAccounts$[params.role];
+    //   }),
+    //   filter((res: any) => !!res && res.length)
+    // ).subscribe(res => {
+    //     this.dataTableHeadersToDisplay = [];
+    //     this.lazyUserList = this.buildUserListData(res);
+    // });
 
     this.adminService.searchAccountEmit$.asObservable()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        tap((value) => this.userService.getAccountsRoles(this.role, value, 1000))
+      )
       .subscribe(value => {
       this.searchValue = value;
-      this.findRelevantAccounts(value);
     });
 
   }
 
-  tableRenderer(userList: User[]) {
-    this.dataTableHeadersToDisplay = [];
-    this.userList = this.buildUserListData(userList);
-    this.pending$.next(false);
-    this.cdr.detectChanges();
-    this.placeholder = !!userList.length;
-  }
-
-  buildTableHeaders() {
-    this.tableHeaders = {
-      'Name': {
-        index: 0,
-        label: 'Name',
-      },
-      'Email/Username': {
-        index: 1,
-        label: 'Email/Username',
-      },
-      'Account Type': {
-        index: 2,
-        label: 'Account Type',
-      },
-      'Sign-in status': {
-        label: 'Sign-in status',
-      },
-      'Last sign-in': {
-        label: 'Last sign-in',
-      }
-    };
-    if (this.role === '_profile_admin') {
-      this.tableHeaders['Sign-in status'].index = 3;
-      this.tableHeaders['Last sign-in'].index = 4;
-      this.tableHeaders['Permissions'] = {
-        index: 5,
-        label: 'Permissions',
-      };
-
-    } else if (this.role === '_profile_teacher') {
-      this.tableHeaders['Sign-in status'].index = 4;
-      this.tableHeaders['Last sign-in'].index = 5;
-      this.tableHeaders['Account Type'].index = 3;
-      this.tableHeaders['rooms'] = {
-        index: 2,
-        label: 'rooms',
-      };
-      this.tableHeaders['Permissions'] = {
-        index: 6,
-        label: 'Permissions',
-      };
-    } else if (this.role === '_profile_assistant') {
-      this.tableHeaders['Sign-in status'].index = 4;
-      this.tableHeaders['Last sign-in'].index = 5;
-      this.tableHeaders['Acting on Behalf Of'] = {
-        index: 3,
-        label: 'Acting on Behalf Of',
-      };
-      this.tableHeaders['Permissions'] = {
-        index: 6,
-        label: 'Permissions',
-      };
-    } else if (this.role === '_profile_student') {
-      this.tableHeaders['Sign-in status'].index = 3;
-      this.tableHeaders['Last sign-in'].index = 4;
-    }
-  }
+  // tableRenderer(userList: User[]) {
+  //   this.dataTableHeadersToDisplay = [];
+  //   this.userList = this.buildUserListData(userList);
+  //   this.pending$.next(false);
+  //   this.cdr.detectChanges();
+  //   this.placeholder = !!userList.length;
+  // }
+  //
+  // buildTableHeaders() {
+  //   this.tableHeaders = {
+  //     'Name': {
+  //       index: 0,
+  //       label: 'Name',
+  //     },
+  //     'Email/Username': {
+  //       index: 1,
+  //       label: 'Email/Username',
+  //     },
+  //     'Account Type': {
+  //       index: 2,
+  //       label: 'Account Type',
+  //     },
+  //     'Sign-in status': {
+  //       label: 'Sign-in status',
+  //     },
+  //     'Last sign-in': {
+  //       label: 'Last sign-in',
+  //     }
+  //   };
+  //   if (this.role === '_profile_admin') {
+  //     this.tableHeaders['Sign-in status'].index = 3;
+  //     this.tableHeaders['Last sign-in'].index = 4;
+  //     this.tableHeaders['Permissions'] = {
+  //       index: 5,
+  //       label: 'Permissions',
+  //     };
+  //
+  //   } else if (this.role === '_profile_teacher') {
+  //     this.tableHeaders['Sign-in status'].index = 4;
+  //     this.tableHeaders['Last sign-in'].index = 5;
+  //     this.tableHeaders['Account Type'].index = 3;
+  //     this.tableHeaders['rooms'] = {
+  //       index: 2,
+  //       label: 'rooms',
+  //     };
+  //     this.tableHeaders['Permissions'] = {
+  //       index: 6,
+  //       label: 'Permissions',
+  //     };
+  //   } else if (this.role === '_profile_assistant') {
+  //     this.tableHeaders['Sign-in status'].index = 4;
+  //     this.tableHeaders['Last sign-in'].index = 5;
+  //     this.tableHeaders['Acting on Behalf Of'] = {
+  //       index: 3,
+  //       label: 'Acting on Behalf Of',
+  //     };
+  //     this.tableHeaders['Permissions'] = {
+  //       index: 6,
+  //       label: 'Permissions',
+  //     };
+  //   } else if (this.role === '_profile_student') {
+  //     this.tableHeaders['Sign-in status'].index = 3;
+  //     this.tableHeaders['Last sign-in'].index = 4;
+  //   }
+  // }
 
   findRelevantAccounts(searchValue) {
     of(searchValue)
@@ -833,6 +809,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   loadMore($event) {
+    // debugger;
     this.userService.getMoreUserListRequest(this.role);
   }
 

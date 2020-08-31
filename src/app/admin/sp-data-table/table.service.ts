@@ -8,5 +8,7 @@ export class TableService {
 
   updateTableColumns$: Subject<string[]> = new Subject<string[]>();
 
+  selectRow: Subject<any> = new Subject<any>();
+
   constructor() { }
 }

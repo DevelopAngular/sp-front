@@ -142,7 +142,12 @@
 .mat-column-Destination,
 .mat-column-Duration,
 .mat-column-Contact-date,
-.mat-column-Pass-start-time {
+.mat-column-Pass-start-time,
+.mat-column-Status,
+.mat-column-Last-sign-in,
+.mat-column-Type,
+.mat-column-Permissions
+{
   word-wrap: break-word !important;
   white-space: unset !important;
   flex: 0 0 145px !important;
@@ -158,7 +163,23 @@
   text-overflow: ellipsis;
 }
 
-::ng-deep .mat-column-Student-Name {
+::ng-deep .mat-column-Email-username {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 200px !important;
+  min-width: 200px !important;
+  overflow-wrap: break-word;
+
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  //hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Student-Name, .mat-column-Name {
   word-wrap: break-word !important;
   white-space: unset !important;
   flex: 0 0 145px !important;

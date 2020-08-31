@@ -18,7 +18,7 @@ import { AddUserDialogComponent } from '../../add-user-dialog/add-user-dialog.co
 import { User } from '../../../models/User';
 import { UNANIMATED_CONTAINER } from '../../../consent-menu-overlay';
 import { ConsentMenuComponent } from '../../../consent-menu/consent-menu.component';
-import {filter, mapTo, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
 import { UserService } from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
@@ -27,6 +27,8 @@ import {IntegrationsDialogComponent} from '../integrations-dialog/integrations-d
 import {Ggl4SettingsComponent} from '../ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from '../g-suite-settings/g-suite-settings.component';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
+import {xorBy} from 'lodash';
+import {TableService} from '../../sp-data-table/table.service';
 
 @Component({
   selector: 'app-accounts-header',
@@ -37,7 +39,6 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
   @Input() pending$: Subject<boolean>;
   @Input() schoolSyncInfoData: SchoolSyncInfo;
-  @Input() selectedUsers: User[];
   @Input() gSuiteOrgs: GSuiteOrgs;
   @Input() showTabs: boolean = true;
 
@@ -53,6 +54,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   openTable: boolean;
   pts: string;
   currentTab: string;
+
+  selectedUsers: User[] = [];
 
   destroy$ = new Subject();
 
@@ -72,13 +75,29 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
     private matDialog: MatDialog,
     private userService: UserService,
     private router: Router,
+    private tableService: TableService
   ) { }
 
   ngOnInit() {
     this.getCurrentTab();
     this.router.events.pipe(takeUntil(this.destroy$)).subscribe(value => {
-        this.getCurrentTab();
+      this.selectedUsers = [];
+      this.getCurrentTab();
     });
+
+    this.tableService.selectRow.asObservable()
+      .pipe(
+        takeUntil(this.destroy$),
+        tap(() => console.log(this.currentTab)),
+        withLatestFrom(this.userService.getAccountsRole(this.currentTab)),
+        map(([selected, users]) => {
+          const ids = selected.map(u => u.id);
+          return users.filter(user => user.id === ids.find(id => id === user.id));
+        })
+      )
+      .subscribe(res => {
+        this.selectedUsers = res;
+      });
   }
 
   ngAfterViewInit(): void {

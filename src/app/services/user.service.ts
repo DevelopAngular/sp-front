@@ -475,7 +475,6 @@ export class UserService {
   }
 
   getUsersList(role: string = '', search: string = '', limit: number = 0) {
-
     const params: any = {};
     if (role !== '' && role !== '_all') {
       params.role = role;

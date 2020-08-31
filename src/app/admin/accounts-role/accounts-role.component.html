@@ -240,6 +240,8 @@
         <app-sp-data-table
           [data$]="accountRoleData$"
           [loading$]="isLoading$"
+          [height]="(schools$ | async).length > 1 ? 'calc(100vh - 280px)' : 'calc(100vh - 150px)'"
+          (loadMoreData)="loadMore()"
         ></app-sp-data-table>
 <!--      <div class="loading-theme_blue-gray spinner ds-flex-center-center" *ngIf="(isLoading$ | async) && !userList.length">-->
 <!--        <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>-->

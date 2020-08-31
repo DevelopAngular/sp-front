@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, ElementRef,
+  Component,
   EventEmitter, HostListener,
   Input,
   OnDestroy,
@@ -19,10 +19,8 @@ import {ColumnOptionsComponent} from './column-options/column-options.component'
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
 import {cloneDeep, omit} from 'lodash';
-import {debounceTime, delay, filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {HallPassesService} from '../../services/hall-passes.service';
-import {PassCardComponent} from '../../pass-card/pass-card.component';
-import {GeneratedTableDialogComponent} from './generated-table-dialog/generated-table-dialog.component';
 import {ToastService} from '../../services/toast.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 
@@ -34,7 +32,7 @@ export class GridTableDataSource extends DataSource<any> {
   loadedData$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   get allData(): any[] {
-    return this._data.slice();
+    return this._data ? this._data.slice() : [];
   }
 
   set allData(data: any[]) {
@@ -279,6 +277,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   select(row) {
     this.selection.toggle(row);
     this.cdr.detectChanges();
+    this.tableService.selectRow.next(this.selection.selected);
   }
 
   placeholderWhen(index: number, _: any) {
@@ -305,6 +304,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.allData.forEach(row => this.selection.select(row));
+    this.tableService.selectRow.next(this.selection.selected);
     // console.log(this.selection.selected.length);
   }
 
