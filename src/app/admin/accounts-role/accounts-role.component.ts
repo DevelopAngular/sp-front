@@ -808,7 +808,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   }
 
-  loadMore($event) {
+  loadMore() {
     // debugger;
     this.userService.getMoreUserListRequest(this.role);
   }
