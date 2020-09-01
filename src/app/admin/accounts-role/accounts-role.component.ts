@@ -105,17 +105,17 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   }
 
-  get noUsersDummyVisibility() {
-    return this.userService.countAccounts$[this.role];
-  }
-
-  get bulkSignInStatus() {
-    return this.selectedUsers.every(profile => profile._originalUserProfile.active);
-  }
-
-  formatDate(date) {
-    return Util.formatDateTime(new Date(date));
-  }
+  // get noUsersDummyVisibility() {
+  //   return this.userService.countAccounts$[this.role];
+  // }
+  //
+  // get bulkSignInStatus() {
+  //   return this.selectedUsers.every(profile => profile._originalUserProfile.active);
+  // }
+  //
+  // formatDate(date) {
+  //   return Util.formatDateTime(new Date(date));
+  // }
 
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
@@ -172,14 +172,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             }
             :
             {};
-    // this.querySubscriber$.pipe(
-    //   // take(1),
-    //   switchAll(),
-    //   filter((res: any) => res.length),
-    //   takeUntil(this.destroy$))
-    //   .subscribe((userList: any) => {
-    //       this.tableRenderer(userList);
-    //   });
 
     this.accountRoleData$ = this.http.globalReload$
       .pipe(
@@ -194,40 +186,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }),
         map((accounts: User[]) => {
           if (!accounts.length) {
-           return [{
-              'Name': null,
-              'Email/username': null,
-              'Status': null,
-              'Last sign-in': null,
-              'Type': null,
-              'Permissions': null
-           }];
+           return this.emptyRoleObject();
           }
           return accounts.map(account => {
-            const permissionsRef = this.profilePermissions;
-            const rowObj = {
-              'Name': account.display_name,
-              'Email/username': account.primary_email,
-              'Status': account.status,
-              'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-              'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Basic',
-              'Permissions': (function() {
-                const tabs = Object.values(permissionsRef).map((tab: any) => {
-                  tab.allowed = account.roles.includes(tab.controlName);
-                  return tab;
-                });
-                if (tabs.every((item: any): boolean => item.allowed)) {
-                  return 'No restrictions';
-                } else {
-                  const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
-                  if (restrictedTabs.length > 1) {
-                    return `${restrictedTabs.length} tabs restricted`;
-                  } else {
-                    return `${restrictedTabs[0].controlLabel} restricted`;
-                  }
-                }
-              }())
-            };
+            const rowObj = this.buildDataForRole(account);
 
             Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id});
 
@@ -236,160 +198,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         })
       );
 
-
-    // this.adminService.schoolSyncInfo$
-    //   .pipe(
-    //     takeUntil(this.destroy$)
-    //   ).subscribe(res => {
-    //   this.schoolSyncInfoData = res;
-    // });
-
-    // interval(1758)
-    //   .pipe(
-    //     filter(() => this.role === 'g_suite'),
-    //     switchMap((res) => {
-    //       return this.adminService.getGSuiteOrgs();
-    //     }),
-    //     takeUntil(this.destroy$)
-    //   )
-    //   .subscribe((res: any) => {
-    //     if (res.is_syncing) {
-    //       this.syncing.start();
-    //     } else if (!res.is_syncing) {
-    //       this.syncing.end();
-    //     }
-    //     for (const key in res) {
-    //       if (this.GSuiteOrgs[key] !== res[key]) {
-    //         this.GSuiteOrgs[key] = res[key];
-    //       }
-    //     }
-    //   });
-
-
-    // merge(this.http.globalReload$, this.router.events.pipe(filter(event => event instanceof NavigationEnd))).pipe(
-    //   tap(() => {
-    //     this.role = null;
-    //     this.selectedUsers = [];
-    //     this.userList = [];
-    //     this.lazyUserList = [];
-    //     this.placeholder = false;
-    //   }),
-    //   switchMap(() => {
-    //     return this.route.params.pipe(takeUntil(this.destroy$));
-    //   }),
-    //   map((params) => {
-    //     this.role = params.role;
-    //     if (this.role !== 'g_suite') {
-    //       this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
-    //       this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
-    //     }
-    //     return params;
-    //   }),
-    //   filter(() => this.role !== 'g_suite'),
-    //   takeUntil(this.destroy$)
-    // )
-    // .subscribe((qp) => {
-    //   const {profileName} = qp;
-    //   this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
-    //   this.tabVisibility = true;
-    //   this.buildTableHeaders();
-    //     const headers = this.storage.getItem(`${this.role}_columns`);
-    //     if ( headers ) {
-    //       this.dataTableHeaders = JSON.parse(headers);
-    //
-    //       if (!this.dataTableHeaders['Account Type']) {
-    //         this.dataTableHeaders['Account Type'] = {
-    //           value: true,
-    //           label: 'Account Type',
-    //           disabled: false
-    //         };
-    //       }
-    //     } else {
-    //       this.dataTableHeaders = {
-    //         'Name': {
-    //           value: true,
-    //           label: 'Name',
-    //           disabled: true
-    //         },
-    //         'Email/Username': {
-    //           value: true,
-    //           label: 'Email/Username',
-    //           disabled: true
-    //         },
-    //         'Account Type': {
-    //           value: true,
-    //           label: 'Account Type',
-    //           disabled: false
-    //         },
-    //         'Sign-in status': {
-    //           value: true,
-    //           label: 'Sign-in status',
-    //           disabled: false
-    //         },
-    //         'Last sign-in': {
-    //           value: true,
-    //           label: 'Last sign-in',
-    //           disabled: false
-    //         }
-    //       };
-    //
-    //       switch (this.role) {
-    //         case '_profile_teacher':
-    //           this.dataTableHeaders['rooms'] = {
-    //             value: true,
-    //             label: 'rooms',
-    //             disabled: false
-    //           };
-    //           this.dataTableHeaders['Permissions'] = {
-    //             value: false,
-    //             label: 'Permissions',
-    //             disabled: false
-    //           };
-    //           break;
-    //         case '_profile_assistant':
-    //           this.dataTableHeaders['Acting on Behalf Of'] = {
-    //             value: true,
-    //             label: 'Acting on Behalf Of',
-    //             disabled: false
-    //           };
-    //           this.dataTableHeaders['Permissions'] = {
-    //             value: false,
-    //             label: 'Permissions',
-    //             disabled: false
-    //           };
-    //           break;
-    //         case '_profile_admin':
-    //           this.dataTableHeaders['Permissions'] = {
-    //             value: false,
-    //             label: 'Permissions',
-    //             disabled: false
-    //           };
-    //           break;
-    //       }
-    //     }
-    //
-    //   this.querySubscriber$.next(this.getUserList(this.initialSearchString));
-    // });
-
-    // TABLE_RELOADING_TRIGGER.pipe(
-    //   switchMap(() => this.userService.getAccountsRole(this.role))
-    // ).subscribe((userList) => {
-    //   this.tableRenderer(userList);
-    // });
-
-    this.userService.userData.subscribe((user) => {
-      this.user = user;
+    this.userService.userData
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.user = user;
     });
-
-    // this.route.params.pipe(
-    //   switchMap(params => {
-    //     return this.userService.lastAddedAccounts$[params.role];
-    //   }),
-    //   filter((res: any) => !!res && res.length)
-    // ).subscribe(res => {
-    //     this.dataTableHeadersToDisplay = [];
-    //     this.lazyUserList = this.buildUserListData(res);
-    // });
 
     this.adminService.searchAccountEmit$.asObservable()
       .pipe(
@@ -402,101 +215,90 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   }
 
-  // tableRenderer(userList: User[]) {
-  //   this.dataTableHeadersToDisplay = [];
-  //   this.userList = this.buildUserListData(userList);
-  //   this.pending$.next(false);
-  //   this.cdr.detectChanges();
-  //   this.placeholder = !!userList.length;
-  // }
-  //
-  // buildTableHeaders() {
-  //   this.tableHeaders = {
-  //     'Name': {
-  //       index: 0,
-  //       label: 'Name',
-  //     },
-  //     'Email/Username': {
-  //       index: 1,
-  //       label: 'Email/Username',
-  //     },
-  //     'Account Type': {
-  //       index: 2,
-  //       label: 'Account Type',
-  //     },
-  //     'Sign-in status': {
-  //       label: 'Sign-in status',
-  //     },
-  //     'Last sign-in': {
-  //       label: 'Last sign-in',
-  //     }
-  //   };
-  //   if (this.role === '_profile_admin') {
-  //     this.tableHeaders['Sign-in status'].index = 3;
-  //     this.tableHeaders['Last sign-in'].index = 4;
-  //     this.tableHeaders['Permissions'] = {
-  //       index: 5,
-  //       label: 'Permissions',
-  //     };
-  //
-  //   } else if (this.role === '_profile_teacher') {
-  //     this.tableHeaders['Sign-in status'].index = 4;
-  //     this.tableHeaders['Last sign-in'].index = 5;
-  //     this.tableHeaders['Account Type'].index = 3;
-  //     this.tableHeaders['rooms'] = {
-  //       index: 2,
-  //       label: 'rooms',
-  //     };
-  //     this.tableHeaders['Permissions'] = {
-  //       index: 6,
-  //       label: 'Permissions',
-  //     };
-  //   } else if (this.role === '_profile_assistant') {
-  //     this.tableHeaders['Sign-in status'].index = 4;
-  //     this.tableHeaders['Last sign-in'].index = 5;
-  //     this.tableHeaders['Acting on Behalf Of'] = {
-  //       index: 3,
-  //       label: 'Acting on Behalf Of',
-  //     };
-  //     this.tableHeaders['Permissions'] = {
-  //       index: 6,
-  //       label: 'Permissions',
-  //     };
-  //   } else if (this.role === '_profile_student') {
-  //     this.tableHeaders['Sign-in status'].index = 3;
-  //     this.tableHeaders['Last sign-in'].index = 4;
-  //   }
-  // }
+  emptyRoleObject() {
+    if (this.role === '_profile_admin' || this.role === '_profile_student') {
+      return [{
+        'Name': null,
+        'Email/username': null,
+        'Status': null,
+        'Last sign-in': null,
+        'Type': null,
+        'Permissions': null
+      }];
+    } else if (this.role === '_profile_teacher') {
+      return [{
+        'Name': null,
+        'Email/username': null,
+        'Rooms': null,
+        'Status': null,
+        'Last sign-in': null,
+        'Type': null,
+        'Permissions': null
+      }];
+    } else if (this.role === '_profile_assistant') {
+      return [{
+        'Name': null,
+        'Email/username': null,
+        'Acting on Behalf Of': null,
+        'Status': null,
+        'Last sign-in': null,
+        'Type': null,
+        'Permissions': null
+      }];
+    }
+  }
 
-  findRelevantAccounts(searchValue) {
-    of(searchValue)
-      .pipe(
-        distinctUntilChanged(),
-        debounceTime(200),
-        switchMap(value => {
-          if (value) {
-            return this.userService.getUsersList(this.role, value);
-          } else {
-            return this.userService.getAccountsRole(this.role);
-          }
-        })
-      )
-      .subscribe(userList => {
-        this.dataTableHeadersToDisplay = [];
-        this.userList = this.buildUserListData(userList);
-        this.pending$.next(false);
-        this.placeholder = !!userList.length;
+  buildDataForRole(account) {
+    const permissionsRef = this.profilePermissions;
+    const permissions = (function() {
+      const tabs = Object.values(permissionsRef).map((tab: any) => {
+        tab.allowed = account.roles.includes(tab.controlName);
+        return tab;
       });
-  }
+      if (tabs.every((item: any): boolean => item.allowed)) {
+        return 'No restrictions';
+      } else {
+        const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
+        if (restrictedTabs.length > 1) {
+          return `${restrictedTabs.length} tabs restricted`;
+        } else {
+          return `${restrictedTabs[0].controlLabel} restricted`;
+        }
+      }
+    }());
+    const roleObject = {
+      'Name': account.display_name,
+      'Email/username': account.primary_email,
+    };
+    let objectToTable;
+    if (this.role === '_profile_admin' || this.role === '_profile_student') {
+      objectToTable = {...roleObject, ...{
+          'Status': account.status,
+          'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Basic',
+          'Permissions': permissions
+      }};
+    } else if (this.role === '_profile_teacher') {
+      objectToTable = {...roleObject, ...{
+          'Rooms': account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned',
+          'Status': account.status,
+          'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Basic',
+          'Permissions': permissions
+      }};
+    } else if (this.role === '_profile_assistant') {
+      objectToTable = {...roleObject, ...{
+          'Acting on Behalf Of': account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
+            return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
+          }).join(', ') : 'No Teachers',
+          'Status': account.status,
+          'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Basic',
+          'Permissions': permissions
+      }};
+    }
 
-
-  setSelected(e) {
-    this.selectedUsers = e;
-  }
-
-  exportAccountData() {
-    this.userService.exportUserData(this.selectedUsers[0].id)
-      .subscribe(res => console.log(res));
+    return objectToTable;
   }
 
   // promptConfirmation(eventTarget: HTMLElement, option: string = '') {

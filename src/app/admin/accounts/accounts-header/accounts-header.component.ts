@@ -29,6 +29,7 @@ import {GSuiteSettingsComponent} from '../g-suite-settings/g-suite-settings.comp
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {xorBy} from 'lodash';
 import {TableService} from '../../sp-data-table/table.service';
+import {PermissionsDialogComponent} from '../../accounts-role/permissions-dialog/permissions-dialog.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -145,6 +146,17 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
       }
     });
 
+  }
+
+  openPermissions(event) {
+    const permissions = this.matDialog.open(PermissionsDialogComponent, {
+      width: '425px', height: '500px',
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      data: {
+        'users': this.selectedUsers
+      }
+    });
   }
 
   updateTab(route) {

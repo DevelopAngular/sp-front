@@ -23,6 +23,7 @@ import { AddAccountPopupComponent } from './add-account-popup/add-account-popup.
 import { BulkAddComponent } from './bulk-add/bulk-add.component';
 import { SelectRoleComponent } from './select-role/select-role.component';
 import { AddRolePopupComponent } from './select-role/add-role-popup/add-role-popup.component';
+import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { AddRolePopupComponent } from './select-role/add-role-popup/add-role-pop
     AddAccountPopupComponent,
     BulkAddComponent,
     SelectRoleComponent,
-    AddRolePopupComponent
+    AddRolePopupComponent,
+    PermissionsDialogComponent
   ],
   imports: [
     CommonModule,
@@ -64,7 +66,8 @@ import { AddRolePopupComponent } from './select-role/add-role-popup/add-role-pop
     SyncProviderComponent,
     AddAccountPopupComponent,
     BulkAddComponent,
-    AddRolePopupComponent
+    AddRolePopupComponent,
+    PermissionsDialogComponent
   ]
 })
 export class AccountsModule {

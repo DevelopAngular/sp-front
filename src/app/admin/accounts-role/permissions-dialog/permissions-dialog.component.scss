@@ -1,0 +1,59 @@
+@import "../../../../sp-colors";
+
+
+.wrapper {
+  width: 425px;
+  height: 500px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  overflow: hidden;
+  border-radius: 14px;
+
+  .card-header {
+    min-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    .background-header {
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    }
+    .role-icon {
+      width: 21px;
+      height: 21px;
+      margin-right: 12px;
+    }
+    .back-button {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 15px;
+      margin: auto 0;
+      cursor: pointer;
+      color: $blue-gray;
+      img {
+        width: 28px;
+        height: 28px;
+      }
+    }
+    .save-button, .status-button {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 20px;
+      margin: auto 0px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
