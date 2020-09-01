@@ -133,6 +133,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() showEmptyState: boolean;
   @Input() emptyIcon: string;
   @Input() emptyText: string;
+  @Input() currentPage: string;
 
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
   @ViewChild(MatSort) sort: MatSort;
@@ -206,7 +207,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
           // });
         }
         this.displayedColumns = Object.keys(this.dataSource.allData[0]);
-        this.columnsToDisplay = this.displayedColumns.slice();
+        const savedColumns = JSON.parse(this.storage.getItem(this.currentPage));
+        this.columnsToDisplay = this.storage.getItem(this.currentPage) ? [this.displayedColumns[0], ...this.displayedColumns.slice(1).filter(col => {
+          return savedColumns[col];
+        })] : this.displayedColumns.slice();
         return this.isCheckbox;
       }),
       takeUntil(this.destroy$)
@@ -323,7 +327,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': event.currentTarget,
-          'columns': this.displayedColumns.slice(1)
+          'columns': this.displayedColumns.slice(1),
+          'currentPage': this.currentPage
         }
       });
 
