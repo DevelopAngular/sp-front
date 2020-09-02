@@ -9,7 +9,7 @@ import {
   QueryList,
   ViewChild, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of, Subject, zip} from 'rxjs';
+import {combineLatest, forkJoin, from, Observable, of, Subject, zip} from 'rxjs';
 import { TotalAccounts } from '../../../models/TotalAccounts';
 import { AdminService } from '../../../services/admin.service';
 import { DarkThemeSwitch } from '../../../dark-theme-switch';
@@ -30,6 +30,7 @@ import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {xorBy} from 'lodash';
 import {TableService} from '../../sp-data-table/table.service';
 import {PermissionsDialogComponent} from '../../accounts-role/permissions-dialog/permissions-dialog.component';
+import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/status-popup.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -88,17 +89,20 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
     this.tableService.selectRow.asObservable()
       .pipe(
-        takeUntil(this.destroy$),
-        tap(() => console.log(this.currentTab)),
-        withLatestFrom(this.userService.getAccountsRole(this.currentTab)),
+        switchMap((selected) => {
+          return combineLatest(
+            of(selected),
+            this.userService.accountsEntities[this.currentTab]
+          );
+        }),
         map(([selected, users]) => {
-          const ids = selected.map(u => u.id);
-          return users.filter(user => user.id === ids.find(id => id === user.id));
+          return selected.map(user => users[user.id]);
         })
       )
       .subscribe(res => {
         this.selectedUsers = res;
       });
+
   }
 
   ngAfterViewInit(): void {
@@ -187,6 +191,39 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
           this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
         }
       }, timeout);
+  }
+
+  openStatusPopup(event) {
+    const SPC = this.matDialog.open(StatusPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': event.currentTarget,
+        'profileStatus': true,
+        'bulkEdit': true
+      }
+    });
+
+    SPC.afterClosed()
+      .pipe(
+        filter(res => !!res),
+        switchMap(res => {
+          if (res === 'delete') {
+            return zip(...this.selectedUsers.map(user => {
+              return this.userService.deleteUserRequest(user.id, this.currentTab);
+            }));
+          } else {
+            return zip(...this.selectedUsers.map(user => {
+              return this.userService.updateUserRequest(user, {status: res});
+            }));
+          }
+        })
+      ).subscribe(res => {
+        setTimeout(() => {
+          this.selectedUsers = [];
+          this.adminService.getCountAccountsRequest();
+        }, 500);
+    });
   }
 
   search(value) {

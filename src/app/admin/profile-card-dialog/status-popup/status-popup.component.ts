@@ -14,6 +14,7 @@ export class StatusPopupComponent implements OnInit {
   profileStatus: string;
   hoverOption;
   showConfirmButton: boolean;
+  isBulkEdit: boolean;
 
   options: {label: string, textColor: string, hoverColor: string, icon: string, description: string, status?: string}[];
 
@@ -25,11 +26,12 @@ export class StatusPopupComponent implements OnInit {
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
     this.profile = this.data['profile'];
+    this.isBulkEdit = this.data['bulkEdit'];
     this.profileStatus = this.data['profileStatus'];
     this.updatePosition();
     this.options = [
       {
-        label: this.profileStatus === 'active' ? 'Disable account' : 'Active Account',
+        label: this.profileStatus === 'active' ? 'Disable account' + (this.isBulkEdit ? 's' : '') : 'Activate Account' + (this.isBulkEdit ? 's' : ''),
         textColor: this.profileStatus === 'active' ? '#7f879d' : '#00B476',
         hoverColor: this.profileStatus === 'active' ? '#f1f2f4' : '#D1E8E0',
         icon: this.profileStatus === 'active' ? './assets/Stop (Blue-Gray).svg' : './assets/Check (Navy).svg',
@@ -37,7 +39,7 @@ export class StatusPopupComponent implements OnInit {
         status: this.profileStatus === 'active' ? 'disabled' : 'active'
       },
       {
-        label: 'Suspend account',
+        label: 'Suspend account' + (this.isBulkEdit ? 's' : ''),
         textColor: '#7f879d',
         hoverColor: '#ededfc',
         icon: './assets/Sleep (Blue-Gray).svg',
@@ -45,7 +47,7 @@ export class StatusPopupComponent implements OnInit {
         status: 'suspended'
       },
       {
-        label: 'Delete account',
+        label: 'Delete account' + (this.isBulkEdit ? 's' : ''),
         textColor: '#E32C66',
         hoverColor: '#fce9ef',
         icon: './assets/Delete (Red).svg',
@@ -64,7 +66,7 @@ export class StatusPopupComponent implements OnInit {
   }
 
   selectedOption(option) {
-    if (option.label === 'Delete account') {
+    if (option.label === 'Delete account' || option.label === 'Delete accounts') {
       this.showConfirmButton = true;
     } else {
       this.profileStatus = option.status;

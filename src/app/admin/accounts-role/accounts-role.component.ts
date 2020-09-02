@@ -36,6 +36,7 @@ import {GettingStartedProgressService} from '../getting-started-progress.service
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {observableToBeFn} from 'rxjs/internal/testing/TestScheduler';
 import {School} from '../../models/School';
+import {StatusPopupComponent} from '../profile-card-dialog/status-popup/status-popup.component';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 

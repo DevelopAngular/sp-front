@@ -13,4 +13,63 @@
       <app-gradient-button>Save</app-gradient-button>
     </div>
   </div>
+
+  <div class="content">
+    <div class="block" *ngIf="profilePermissions.teacher.length">
+      <div class="permissions">
+        <div class="title">Teacher Permissions</div>
+        <div class="permission" *ngFor="let permission of profilePermissions.teacher">
+          <div class="subtitle" style="display: flex; align-items: center">
+            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+            {{ permission.label }}
+          </div>
+          <app-toggle-input
+            style="width: auto"
+            [form]="permissionsForm"
+            [controlName]="permission.permission"
+            [controlSize]="'small'"
+            [delimiter]="false"
+          ></app-toggle-input>
+        </div>
+      </div>
+    </div>
+    <mat-divider *ngIf="profilePermissions.admin.length"></mat-divider>
+    <div class="block" *ngIf="profilePermissions.admin.length">
+      <div class="permissions">
+        <div class="title">Admin Permissions</div>
+        <div class="permission" *ngFor="let permission of profilePermissions.admin">
+          <div class="subtitle" style="display: flex; align-items: center">
+            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+            {{ permission.label }}
+          </div>
+          <app-toggle-input
+            style="width: auto"
+            [form]="permissionsForm"
+            [controlName]="permission.permission"
+            [controlSize]="'small'"
+            [delimiter]="false"
+          ></app-toggle-input>
+        </div>
+      </div>
+    </div>
+    <mat-divider *ngIf="profilePermissions.assistant.length"></mat-divider>
+    <div class="block" *ngIf="profilePermissions.assistant.length">
+      <div class="permissions">
+        <div class="title">Assistant Permissions</div>
+        <div class="permission" *ngFor="let permission of profilePermissions.assistant">
+          <div class="subtitle" style="display: flex; align-items: center">
+            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+            {{ permission.label }}
+          </div>
+          <app-toggle-input
+            style="width: auto"
+            [form]="permissionsForm"
+            [controlName]="permission.permission"
+            [controlSize]="'small'"
+            [delimiter]="false"
+          ></app-toggle-input>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

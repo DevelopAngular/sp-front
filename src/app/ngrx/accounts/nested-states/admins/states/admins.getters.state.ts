@@ -29,5 +29,6 @@ export const getLastAddedAdminsAccounts = createSelector(
 );
 
 export const getCountAdmins = adapter.getSelectors(getAdminsAccountsProfiles).selectTotal;
+export const getAdminsAccountsEntities = adapter.getSelectors(getAdminsAccountsProfiles).selectEntities;
 
 export const getAdminsCollections = adapter.getSelectors(getAdminsAccountsProfiles).selectAll;

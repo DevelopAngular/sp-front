@@ -29,5 +29,6 @@ export const getLastAddedTeachers = createSelector(
 );
 
 export const getCountTeachers = adapter.getSelectors(getTeachersAccountsProfiles).selectTotal;
+export const getTeachersAccountsEntities = adapter.getSelectors(getTeachersAccountsProfiles).selectEntities;
 
 export const getTeacherAccountsCollection = adapter.getSelectors(getTeachersAccountsProfiles).selectAll;

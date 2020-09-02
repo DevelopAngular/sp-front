@@ -20,10 +20,11 @@ import {
   updateAccountPermissions
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
-  getAllAccountsCollection, getCountAllAccounts, getLastAddedAllAccounts,
+  getAllAccountsCollection, getAllAccountsEntities, getCountAllAccounts, getLastAddedAllAccounts,
   getLoadedAllAccounts, getLoadingAllAccounts, getNextRequestAllAccounts
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
+  getAdminsAccountsEntities,
   getAdminsCollections, getCountAdmins, getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
   getLoadingAdminsAccounts, getNextRequestAdminsAccounts
@@ -32,10 +33,10 @@ import {
   getCountTeachers, getLastAddedTeachers,
   getLoadedTeachers,
   getLoadingTeachers, getNextRequestTeachers,
-  getTeacherAccountsCollection
+  getTeacherAccountsCollection, getTeachersAccountsEntities
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
-  getAssistantsAccountsCollection,
+  getAssistantsAccountsCollection, getAssistantsAccountsEntities,
   getCountAssistants, getLastAddedAssistants,
   getLoadedAssistants,
   getLoadingAssistants, getNextRequestAssistants
@@ -44,7 +45,7 @@ import {
   getCountStudents, getLastAddedStudents,
   getLoadedStudents,
   getLoadingStudents, getNextRequestStudents,
-  getStudentsAccountsCollection
+  getStudentsAccountsCollection, getStudentsAccountsEntities
 } from '../ngrx/accounts/nested-states/students/states';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
@@ -86,6 +87,14 @@ export class UserService {
     _profile_student: this.store.select(getCountStudents),
     _profile_teacher: this.store.select(getCountTeachers),
     _profile_assistant: this.store.select(getCountAssistants)
+  };
+
+  accountsEntities = {
+    _all: this.store.select(getAllAccountsEntities),
+    _profile_admin: this.store.select(getAdminsAccountsEntities),
+    _profile_teacher: this.store.select(getTeachersAccountsEntities),
+    _profile_student: this.store.select(getStudentsAccountsEntities),
+    _profile_assistant: this.store.select(getAssistantsAccountsEntities)
   };
 
   isLoadedAccounts$ = {
@@ -222,6 +231,11 @@ export class UserService {
     } else if (role === '_profile_assistant') {
       return this.accounts.assistantAccounts;
     }
+  }
+
+  getAccountsEntities(role) {
+    debugger;
+    return role ? this.accountsEntities[role] : of(null);
   }
 
   getUserRequest() {

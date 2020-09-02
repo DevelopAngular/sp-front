@@ -56,4 +56,33 @@
       align-items: center;
     }
   }
+
+  .content {
+    overflow: auto;
+    height: 430px;
+    .title {
+      font-size: 15px;
+      color: $navy;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: $blue-gray;
+      font-size: 15px;
+      margin-top: 4px;
+    }
+
+    .block {
+      padding: 30px;
+      position: relative;
+      .permissions {
+        .permission {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+        }
+      }
+    }
+  }
 }

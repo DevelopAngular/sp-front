@@ -90,6 +90,7 @@ function makeUrl(server: LoginServer, endpoint: string) {
       const proxyPath = new URL(server.api_root).pathname;
       url = proxyPath + endpoint;
     } else {
+      // url = 'https://smartpass.app/api/prod-us-central' + endpoint;
       url = server.api_root + endpoint;
     }
   }
