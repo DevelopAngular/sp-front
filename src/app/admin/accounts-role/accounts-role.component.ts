@@ -37,6 +37,7 @@ import {TotalAccounts} from '../../models/TotalAccounts';
 import {observableToBeFn} from 'rxjs/internal/testing/TestScheduler';
 import {School} from '../../models/School';
 import {StatusPopupComponent} from '../profile-card-dialog/status-popup/status-popup.component';
+import {TableService} from '../sp-data-table/table.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -97,11 +98,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private adminService: AdminService,
     private matDialog: MatDialog,
     private _zone: NgZone,
-    private storage: StorageService,
     public darkTheme: DarkThemeSwitch,
-    private locService: LocationsService,
-    private domSanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef
+    private tableService: TableService
   ) {
 
   }
@@ -193,6 +191,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             const rowObj = this.buildDataForRole(account);
 
             Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id});
+            Object.defineProperty(rowObj, 'me', { enumerable: false, value: +account.id === +this.user.id });
+            Object.defineProperty(rowObj, 'last_sign_in', {enumerable: false, value: account.last_login });
+            Object.defineProperty(rowObj, '_originalUserProfile', {
+              enumerable: false,
+              configurable: false,
+              writable: false,
+              value: account
+            });
+            Object.defineProperty(rowObj, '_data', { enumerable: false, value: rowObj });
 
             return rowObj;
           });
@@ -302,128 +309,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     return objectToTable;
   }
 
-  // promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-  //
-  //   if (!eventTarget.classList.contains('button')) {
-  //     (eventTarget as any) = eventTarget.closest('.button');
-  //   }
-  //
-  //   eventTarget.style.opacity = '0.75';
-  //   let header: string;
-  //   let options: any[];
-  //   const profile: string =
-  //     this.role === '_profile_admin' ? 'administrator' :
-  //     this.role === '_profile_teacher' ? 'teacher' :
-  //     this.role === '_profile_student' ? 'student' :
-  //     this.role === '_profile_assistant' ? 'assistant' : 'unknown';
-  //
-  //   switch (option) {
-  //     case 'delete_from_profile':
-  //       if (this.role === '_all') {
-  //         header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
-  //       } else {
-  //         header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} group will remove them from this group, but it will not delete all data associated with the account.`;
-  //       }
-  //       options = [{display: `Confirm  ${this.role === '_all' ? 'Delete' : 'Remove'}`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
-  //       break;
-  //     case 'disable_sign_in':
-  //       header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} group.`;
-  //       options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
-  //       break;
-  //     case 'enable_sign_in':
-  //       header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} group.`;
-  //       options = [{display: 'Enable sign-in', color: '#00B476', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
-  //       break;
-  //   }
-  //   UNANIMATED_CONTAINER.next(true);
-  //     const DR = this.matDialog.open(ConsentMenuComponent,
-  //       {
-  //         data: {
-  //           role: this.role,
-  //           selectedUsers: this.selectedUsers,
-  //           restrictions: this.profilePermissions,
-  //           header: header,
-  //           options: options,
-  //           trigger: new ElementRef(eventTarget)
-  //         },
-  //         panelClass: 'consent-dialog-container',
-  //         backdropClass: 'invis-backdrop',
-  //       });
-  //     DR.afterClosed()
-  //       .pipe(
-  //         switchMap((action): Observable<any> => {
-  //           eventTarget.style.opacity = '1';
-  //
-  //           switch (action) {
-  //             case 'delete_from_profile':
-  //              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], this.role)));
-  //             case 'disable_sign_in':
-  //               return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, false, this.role)));
-  //             case 'enable_sign_in':
-  //               return zip(...this.selectedUsers.map((user) => this.userService.setUserActivityRequest(user._originalUserProfile, true, this.role)));
-  //
-  //             default:
-  //               return of(false);
-  //           }
-  //         }),
-  //         tap(() => UNANIMATED_CONTAINER.next(false))
-  //       )
-  //       .subscribe(() => {
-  //         this.selectedUsers = [];
-  //         this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
-  //       });
-  //
-  // }
-
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  showColumnSettings(evt: Event) {
-    UNANIMATED_CONTAINER.next(true);
-    const dialogRef = this.matDialog.open(ColumnsConfigDialogComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {
-        'trigger': evt.currentTarget,
-        'form': this.dataTableHeaders,
-        'role': this.role,
-        'tableHeaders': this.tableHeaders
-       }
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      UNANIMATED_CONTAINER.next(false);
-    });
-  }
-
-  // addUser() {
-  //   const DR = this.matDialog.open(AddUserDialogComponent,
-  //     {
-  //       width: '425px', height: '500px',
-  //       panelClass: 'accounts-profiles-dialog',
-  //       backdropClass: 'custom-bd',
-  //       data: {
-  //         role: this.role,
-  //         selectedUsers: this.selectedUsers,
-  //         permissions: this.profilePermissions,
-  //         syncInfo: this.schoolSyncInfoData
-  //       }
-  //     });
-  //   DR.afterClosed().pipe(
-  //     switchMap(() => this.userService.nextRequests$[this.role]),
-  //     take(1),
-  //     filter(next => !next),
-  //     switchMap((next) => {
-  //       return this.userService.getAccountsRole(this.role);
-  //     }),
-  //     take(2)
-  //   )
-  //     .subscribe((userList) => {
-  //       this.selectedUsers = [];
-  //       this.tableRenderer(userList);
-  //   });
-  // }
 
   findProfileByRole(evt) {
     this.tabVisibility = false;
@@ -441,10 +330,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }, 250);
   }
 
-  showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
-    if (this.role === '_profile_admin') {
-      this.profilePermissions['access_user_config'].disabled = evt.id === +this.user.id;
-    }
+  showProfileCard(evt) {
+    // if (this.role === '_profile_admin') {
+    //   this.profilePermissions['access_user_config'].disabled = evt.id === +this.user.id;
+    // }
     const profileTitle =
       this.role === '_profile_admin' ? 'administrator' :
         this.role === '_profile_teacher' ? 'teacher' :
@@ -454,21 +343,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       profile: evt,
       profileTitle: profileTitle,
       bulkPermissions: null,
-      gSuiteSettings: gSuite,
       role: this.role,
       permissions: this.profilePermissions,
-      disabledSignIn: this.showDisabledChip && this.role === '_profile_student'
     };
-
-    if (this.selectedUsers.length && !bulk || this.role === '_all' && !gSuite)  {
-      return false;
-    }
-    if (bulk && this.selectedUsers.length) {
-      data.bulkPermissions = this.selectedUsers;
-    }
-    if (gSuite) {
-      data.gSuiteSettings = gSuite;
-    }
 
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
       panelClass: 'overlay-dialog',
@@ -480,139 +357,135 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed()
       .subscribe((userListReloadTrigger) => {
-        if (userListReloadTrigger) {
-          if (data.profile.id === +this.user.id) {
-            this.userService.getUserRequest()
-              .pipe(
-                filter(res => !!res),
-                map(raw => User.fromJSON(raw))
-              )
-              .subscribe((user) => {
-                this.userService.userData.next(user);
-              });
-
-          }
-          this.selectedUsers = [];
-        }
-        if (!this.searchValue) {
-          this.querySubscriber$.next(this.userService.getAccountsRole(this.role));
-        }
+        // if (userListReloadTrigger) {
+        //   if (data.profile.id === +this.user.id) {
+        //     this.userService.getUserRequest()
+        //       .pipe(
+        //         filter(res => !!res),
+        //         map(raw => User.fromJSON(raw))
+        //       )
+        //       .subscribe((user) => {
+        //         this.userService.userData.next(user);
+        //       });
+        //
+        //   }
+        //   this.selectedUsers = [];
+        // }
     });
   }
 
-  private getUserList(query: string = '') {
-    this.loaded = false;
-    this.placeholder = false;
-    this.userList = [];
-    return this.userService
-      .getAccountsRoles(this.role, query, 50)
-      .pipe(
-        tap((res) => {
-          this.dataTableHeadersToDisplay = [];
-        })
-      );
-  }
+  // private getUserList(query: string = '') {
+  //   this.loaded = false;
+  //   this.placeholder = false;
+  //   this.userList = [];
+  //   return this.userService
+  //     .getAccountsRoles(this.role, query, 50)
+  //     .pipe(
+  //       tap((res) => {
+  //         this.dataTableHeadersToDisplay = [];
+  //       })
+  //     );
+  // }
+  //
+  // syncNow() {
+  //     this.adminService.syncNow().subscribe();
+  //     this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
+  // }
 
-  syncNow() {
-      this.adminService.syncNow().subscribe();
-      this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
-  }
-
-  private wrapToHtml(data, htmlTag, dataIndex?) {
-    const wrapper =  wrapToHtml.bind(this);
-    return wrapper(data, htmlTag, dataIndex);
-  }
-
-  private buildUserListData(userList) {
-    this.isLoadUsers = this.limitCounter === userList.length;
-    return userList.map((raw, index) => {
-      const permissionsRef: any = this.profilePermissions;
-        const partOf = [];
-        if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
-        if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
-        if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
-        if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
-
-        // const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
-
-        const rawObj = {
-          'Name': raw.display_name,
-          'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-          'rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
-          'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : raw.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
-          'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
-            return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
-          }).join(', ') : '',
-          'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
-          'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
-          'Group(s)': partOf.length ? partOf : [{title: 'No profile'}],
-          'Permissions': (function() {
-            const tabs = Object.values(permissionsRef).map((tab: any) => {
-              tab.allowed = raw.roles.includes(tab.controlName);
-              return tab;
-            });
-            if (tabs.every((item: any): boolean => item.allowed)) {
-              return 'No restrictions';
-            } else {
-              const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
-              if (restrictedTabs.length > 1) {
-                return `${restrictedTabs.length} tabs restricted`;
-              } else {
-                return `${restrictedTabs[0].controlLabel} restricted`;
-              }
-            }
-          }())
-        };
-
-        for (const key in rawObj) {
-          if (!this.dataTableHeaders[key]) {
-            delete rawObj[key];
-          }
-          if (index === 0) {
-            if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
-              this.dataTableHeadersToDisplay.push(key);
-            }
-          }
-        }
-
-        const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
-
-        if (+raw.id === +this.user.id) {
-          record['Name'] = this.wrapToHtml(`
-          ${raw.display_name} <span style="
-          position: absolute;
-          margin-left: 10px;
-          display: inline-block;
-          width: 50px;
-          height: 20px;
-          background-color: rgba(0, 180, 118, .6);
-          color: #ffffff;
-          text-align: center;
-          vertical-align: middle;
-          line-height: 20px;
-          border-radius: 4px;">Me</span>`, 'span');
-        }
-
-        Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
-        Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
-        Object.defineProperty(rawObj, 'last_sign_in', {enumerable: false, value: raw.last_login });
-        Object.defineProperty(rawObj, '_originalUserProfile', {
-          enumerable: false,
-          configurable: false,
-          writable: false,
-          value: raw
-        });
-        Object.defineProperty(record, '_data', { enumerable: false, value: rawObj });
-
-        this.loaded = true;
-
-      return record;
-    });
-
-  }
+  // private wrapToHtml(data, htmlTag, dataIndex?) {
+  //   const wrapper =  wrapToHtml.bind(this);
+  //   return wrapper(data, htmlTag, dataIndex);
+  // }
+  //
+  // private buildUserListData(userList) {
+  //   this.isLoadUsers = this.limitCounter === userList.length;
+  //   return userList.map((raw, index) => {
+  //     const permissionsRef: any = this.profilePermissions;
+  //       const partOf = [];
+  //       if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
+  //       if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
+  //       if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
+  //       if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
+  //
+  //       // const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
+  //
+  //       const rawObj = {
+  //         'Name': raw.display_name,
+  //         'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
+  //         'rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
+  //         'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : raw.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
+  //         'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
+  //           return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
+  //         }).join(', ') : '',
+  //         'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
+  //         'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
+  //         'Group(s)': partOf.length ? partOf : [{title: 'No profile'}],
+  //         'Permissions': (function() {
+  //           const tabs = Object.values(permissionsRef).map((tab: any) => {
+  //             tab.allowed = raw.roles.includes(tab.controlName);
+  //             return tab;
+  //           });
+  //           if (tabs.every((item: any): boolean => item.allowed)) {
+  //             return 'No restrictions';
+  //           } else {
+  //             const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
+  //             if (restrictedTabs.length > 1) {
+  //               return `${restrictedTabs.length} tabs restricted`;
+  //             } else {
+  //               return `${restrictedTabs[0].controlLabel} restricted`;
+  //             }
+  //           }
+  //         }())
+  //       };
+  //
+  //       for (const key in rawObj) {
+  //         if (!this.dataTableHeaders[key]) {
+  //           delete rawObj[key];
+  //         }
+  //         if (index === 0) {
+  //           if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
+  //             this.dataTableHeadersToDisplay.push(key);
+  //           }
+  //         }
+  //       }
+  //
+  //       const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
+  //
+  //       if (+raw.id === +this.user.id) {
+  //         record['Name'] = this.wrapToHtml(`
+  //         ${raw.display_name} <span style="
+  //         position: absolute;
+  //         margin-left: 10px;
+  //         display: inline-block;
+  //         width: 50px;
+  //         height: 20px;
+  //         background-color: rgba(0, 180, 118, .6);
+  //         color: #ffffff;
+  //         text-align: center;
+  //         vertical-align: middle;
+  //         line-height: 20px;
+  //         border-radius: 4px;">Me</span>`, 'span');
+  //       }
+  //
+  //       Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
+  //       Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
+  //       Object.defineProperty(rawObj, 'last_sign_in', {enumerable: false, value: raw.last_login });
+  //       Object.defineProperty(rawObj, '_originalUserProfile', {
+  //         enumerable: false,
+  //         configurable: false,
+  //         writable: false,
+  //         value: raw
+  //       });
+  //       Object.defineProperty(record, '_data', { enumerable: false, value: rawObj });
+  //
+  //       this.loaded = true;
+  //
+  //     return record;
+  //   });
+  //
+  // }
 
   loadMore() {
-    // debugger;
     this.userService.getMoreUserListRequest(this.role);
   }
 

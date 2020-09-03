@@ -10,7 +10,6 @@ import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
-import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 import { IosComponentComponent } from './ios-component/ios-component.component';
 import {SearchFilterDialogComponent} from './search/search-filter-dialog/search-filter-dialog.component';
 import {DateTimeFilterComponent} from './search/date-time-filter/date-time-filter.component';
@@ -31,6 +30,10 @@ import { GeneratedTableDialogComponent } from './sp-data-table/generated-table-d
 import { StatusPopupComponent } from './profile-card-dialog/status-popup/status-popup.component';
 import { EditAvatarComponent } from './profile-card-dialog/edit-avatar/edit-avatar.component';
 import {AccountsModule} from './accounts/accounts.module';
+import {ProfileCardDialogComponent} from './profile-card-dialog/profile-card-dialog.component';
+import {AddUserDialogComponent} from './add-user-dialog/add-user-dialog.component';
+import {SelectRoleComponent} from './accounts/select-role/select-role.component';
+import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-profile.component';
 
 @NgModule({
     imports: [
@@ -47,7 +50,6 @@ import {AccountsModule} from './accounts/accounts.module';
         LinkGeneratedDialogComponent,
         ColumnsConfigDialogComponent,
         SchoolSettingDialogComponent,
-        AddUserDialogComponent,
         IosComponentComponent,
         SearchFilterDialogComponent,
         DateTimeFilterComponent,
@@ -65,12 +67,16 @@ import {AccountsModule} from './accounts/accounts.module';
         GeneratedTableDialogComponent,
         StatusPopupComponent,
         EditAvatarComponent,
+        ProfileCardDialogComponent,
+        AddUserDialogComponent,
+        SelectRoleComponent,
+        ViewProfileComponent,
+
     ],
     entryComponents: [
         LinkGeneratedDialogComponent,
         ColumnsConfigDialogComponent,
         SchoolSettingDialogComponent,
-        AddUserDialogComponent,
         SettingsComponent,
         SearchFilterDialogComponent,
         DateTimeFilterComponent,
@@ -78,7 +84,9 @@ import {AccountsModule} from './accounts/accounts.module';
         ColumnOptionsComponent,
         GeneratedTableDialogComponent,
         StatusPopupComponent,
-        EditAvatarComponent
+        EditAvatarComponent,
+        ProfileCardDialogComponent,
+        AddUserDialogComponent
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

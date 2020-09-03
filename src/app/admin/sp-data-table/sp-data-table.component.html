@@ -76,7 +76,9 @@
         <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>
 
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
-            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : '#FFFFFF'">
+            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : '#FFFFFF'"
+            [style.cursor]="isRowClick ? 'pointer' : 'default'"
+            appCrossPointerEventTarget (pointerClickEvent)="isRowClick ? rowOnClick(row) : null">
         </tr>
       </table>
     </cdk-virtual-scroll-viewport>

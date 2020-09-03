@@ -29,7 +29,7 @@ import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-opt
       ColorComponent,
       DisabledChipComponent,
       SpDataTableComponent,
-    ColumnOptionsComponent
+      ColumnOptionsComponent,
   ],
   exports: [
       ColorPalletPickerComponent,
@@ -42,7 +42,7 @@ import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-opt
       SharedModule,
       DisabledChipComponent,
       SpDataTableComponent,
-    ColumnOptionsComponent
+      ColumnOptionsComponent,
   ]
 })
 export class AdminSharedModule { }

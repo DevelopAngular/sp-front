@@ -134,11 +134,13 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() emptyIcon: string;
   @Input() emptyText: string;
   @Input() currentPage: string;
+  @Input() isRowClick: boolean;
 
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
   @ViewChild(MatSort) sort: MatSort;
 
   @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rowClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   placeholderHeight = 0;
   displayedColumns: string[];
@@ -271,6 +273,13 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.columnsToDisplay = ['select', this.displayedColumns[0], ...columns];
         this.cdr.detectChanges();
     });
+
+    this.tableService.clearSelectedUsers
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.selection.clear();
+        this.cdr.detectChanges();
+      });
   }
 
   ngOnDestroy() {
@@ -317,6 +326,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
+
+  rowOnClick(row) {
+    this.rowClickEvent.emit(row);
   }
 
   openOption(action: string, event) {

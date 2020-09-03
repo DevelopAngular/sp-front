@@ -8,7 +8,7 @@
         <div class="buttons">
           <app-gradient-button [size]="'medium'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openStatusPopup($event)">Edit Status</app-gradient-button>
           <app-gradient-button [size]="'medium'" [style.margin]="'0 13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openPermissions($event)">Edit Permissions</app-gradient-button>
-          <app-gradient-button [size]="'medium'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="selectedUsers = []">Done</app-gradient-button>
+          <app-gradient-button [size]="'medium'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="clearData()">Done</app-gradient-button>
         </div>
       </div>
 
@@ -47,33 +47,33 @@
             [isSearch]="true">
           </app-round-input>
         </div>
-        <app-gradient-button
-          *ngIf="openTable && tableState"
-           [size]="'small'"
-           [disabled]="!selectedUsers.length"
-           [cursor]="'pointer'"
-           [fontSize]="'14px'"
-           [minHeight]="'50px'"
-           [gradient]="'#DA2370, #FB434A'"
-           [hoverColor]="'#DA2370'"
-           (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')"
-        >
-          <span>Delete Account & Data</span>
-        </app-gradient-button>
-        <app-gradient-button
-          *ngIf="openTable"
-           [style.margin-left]="'15px'"
-           [size]="'medium'"
-           [cursor]="'pointer'"
-           [gradient]="'#F4F4F4, #F4F4F4'"
-           [hoverColor]="'#F4F4F4'"
-           [textColor]="'#1F194E'"
-           (buttonClick)="editTableState()"
-        >
-          <div class="ds-flex-center-center">
-            <span>{{(!tableState ? 'Edit' : 'Done' )}}</span>
-          </div>
-        </app-gradient-button>
+<!--        <app-gradient-button-->
+<!--          *ngIf="openTable && tableState"-->
+<!--           [size]="'small'"-->
+<!--           [disabled]="!selectedUsers.length"-->
+<!--           [cursor]="'pointer'"-->
+<!--           [fontSize]="'14px'"-->
+<!--           [minHeight]="'50px'"-->
+<!--           [gradient]="'#DA2370, #FB434A'"-->
+<!--           [hoverColor]="'#DA2370'"-->
+<!--           (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')"-->
+<!--        >-->
+<!--          <span>Delete Account & Data</span>-->
+<!--        </app-gradient-button>-->
+<!--        <app-gradient-button-->
+<!--          *ngIf="openTable"-->
+<!--           [style.margin-left]="'15px'"-->
+<!--           [size]="'medium'"-->
+<!--           [cursor]="'pointer'"-->
+<!--           [gradient]="'#F4F4F4, #F4F4F4'"-->
+<!--           [hoverColor]="'#F4F4F4'"-->
+<!--           [textColor]="'#1F194E'"-->
+<!--           (buttonClick)="editTableState()"-->
+<!--        >-->
+<!--          <div class="ds-flex-center-center">-->
+<!--            <span>{{(!tableState ? 'Edit' : 'Done' )}}</span>-->
+<!--          </div>-->
+<!--        </app-gradient-button>-->
 
         <app-gradient-button
           [style.margin-left]="'15px'"

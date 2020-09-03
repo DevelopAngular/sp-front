@@ -35,7 +35,6 @@ import {XsButtonComponent} from '../xs-button/xs-button.component';
 import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
-import {ProfileCardDialogComponent} from '../admin/profile-card-dialog/profile-card-dialog.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {IosCalendarWheelComponent} from '../ios-calendar/ios-calendar-wheel/ios-calendar-wheel.component';
 import {IosCalendarComponent} from '../ios-calendar/ios-calendar.component';
@@ -108,7 +107,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IconButtonComponent,
     XsButtonComponent,
     CreatePassButtonComponent,
-    ProfileCardDialogComponent,
     IosCalendarWheelComponent,
     IosCalendarComponent,
     NavbarElementSenderDirective,
@@ -127,14 +125,11 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     MyProfileDialogComponent,
     ProfileInfoComponent,
     ChangePasswordComponent,
-    ViewProfileComponent,
-    CustomToolTipComponent
-,
-    PassLimitTooltipComponent  ],
+    CustomToolTipComponent,
+    PassLimitTooltipComponent],
   entryComponents: [
     PassCardComponent,
     CalendarComponent,
-    ProfileCardDialogComponent,
     ConsentMenuComponent,
     IntroDialogComponent,
     SortMenuComponent,
@@ -177,7 +172,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IconButtonComponent,
     XsButtonComponent,
     CreatePassButtonComponent,
-    ProfileCardDialogComponent,
     IosCalendarWheelComponent,
     IosCalendarComponent,
     ChartsModule,
@@ -193,7 +187,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RestrictionPickerComponent,
     ProfileInfoComponent,
     ChangePasswordComponent,
-    ViewProfileComponent,
     TeacherPinStudentComponent,
     PassLimitTooltipComponent
   ],

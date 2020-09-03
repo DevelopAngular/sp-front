@@ -2,6 +2,10 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {User} from '../../../models/User';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup} from '@angular/forms';
+import { cloneDeep, isEqual } from 'lodash';
+import {UserService} from '../../../services/user.service';
+import {switchMap} from 'rxjs/operators';
+import {zip} from 'rxjs';
 
 @Component({
   selector: 'app-permissions-dialog',
@@ -17,20 +21,26 @@ export class PermissionsDialogComponent implements OnInit {
     assistant: []
   };
   permissionsForm: FormGroup;
+  permissionsInitialState;
+  isDirtyForm: boolean;
 
   constructor(
-    private dialogRef: MatDialogRef<PermissionsDialogComponent>,
+    public dialogRef: MatDialogRef<PermissionsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
-    this.selectedUsers = this.data['users'];
+    this.selectedUsers = this.data['users'].map(user => User.fromJSON(user));
     this.buildPermissions();
+
+    this.permissionsForm.valueChanges.subscribe(value => {
+      this.isDirtyForm = !isEqual(this.permissionsInitialState, value);
+    });
   }
 
   buildPermissions() {
     this.selectedUsers.forEach(user => {
-      user = User.fromJSON(user);
       if (user.isTeacher() && !this.profilePermissions.teacher.length) {
         this.profilePermissions.teacher.push(
           {label: 'Passes', permission: 'access_passes', icon: 'Passes'},
@@ -60,7 +70,36 @@ export class PermissionsDialogComponent implements OnInit {
       controls[perm.permission] = new FormControl(true);
     });
     this.permissionsForm = new FormGroup(controls);
+    this.permissionsInitialState = cloneDeep(this.permissionsForm.value);
 
+  }
+
+  save() {
+    if (this.isDirtyForm) {
+      const requests$ = this.selectedUsers.map(user => {
+        if (user.isAdmin() && user.isTeacher()) {
+          return this.userService
+            .createUserRolesRequest(user, this.permissionsForm.value, '_profile_admin')
+            .pipe(
+              switchMap(() => this.userService
+            .createUserRolesRequest(user, this.permissionsForm.value, '_profile_teacher'))
+            );
+        } else if (user.isAdmin()) {
+          return this.userService
+            .createUserRolesRequest(user, this.permissionsForm.value, '_profile_admin');
+        } else if (user.isTeacher()) {
+          return this.userService
+            .createUserRolesRequest(user, this.permissionsForm.value, '_profile_teacher');
+        } else if (user.isAssistant()) {
+          return this.userService
+            .createUserRolesRequest(user, this.permissionsForm.value, '_profile_assistant');
+        }
+      });
+
+      zip(...requests$).subscribe(() => {
+        this.dialogRef.close(true);
+      });
+    }
   }
 
 }

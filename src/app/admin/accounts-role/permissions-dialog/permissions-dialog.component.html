@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="card-header">
     <div class="background-header"></div>
-    <div class="back-button ds-flex-center-center">
+    <div class="back-button ds-flex-center-center" (click)="dialogRef.close()">
       <span>Cancel</span>
     </div>
     <div class="ds-flex-center-center ds-dialog-title" style="z-index: 10">
@@ -10,7 +10,7 @@
 
     </div>
     <div class="status-button">
-      <app-gradient-button>Save</app-gradient-button>
+      <app-gradient-button (buttonClick)="save()">Save</app-gradient-button>
     </div>
   </div>
 

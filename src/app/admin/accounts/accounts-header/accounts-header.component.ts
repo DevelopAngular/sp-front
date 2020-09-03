@@ -18,7 +18,7 @@ import { AddUserDialogComponent } from '../../add-user-dialog/add-user-dialog.co
 import { User } from '../../../models/User';
 import { UNANIMATED_CONTAINER } from '../../../consent-menu-overlay';
 import { ConsentMenuComponent } from '../../../consent-menu/consent-menu.component';
-import {filter, map, mapTo, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, take, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
 import { UserService } from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
@@ -89,10 +89,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
     this.tableService.selectRow.asObservable()
       .pipe(
+        takeUntil(this.destroy$),
         switchMap((selected) => {
           return combineLatest(
             of(selected),
-            this.userService.accountsEntities[this.currentTab]
+            this.userService.accountsEntities[this.currentTab].pipe(take(1))
           );
         }),
         map(([selected, users]) => {
@@ -161,6 +162,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
         'users': this.selectedUsers
       }
     });
+
+    permissions.afterClosed().pipe(filter(res => !!res)).subscribe(() => {
+      this.selectedUsers = [];
+      this.tableService.clearSelectedUsers.next();
+    });
   }
 
   updateTab(route) {
@@ -219,8 +225,9 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
           }
         })
       ).subscribe(res => {
+      this.selectedUsers = [];
+      this.tableService.clearSelectedUsers.next();
         setTimeout(() => {
-          this.selectedUsers = [];
           this.adminService.getCountAccountsRequest();
         }, 500);
     });
@@ -311,6 +318,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
       .subscribe(() => {
         this.selectedUsers = [];
       });
+  }
+
+  clearData() {
+    this.selectedUsers = [];
+    this.tableService.clearSelectedUsers.next();
   }
 
 }

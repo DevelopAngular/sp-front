@@ -13,7 +13,6 @@ import { CreateFormService } from '../../../create-hallpass-forms/create-form.se
 import { cloneDeep, differenceBy, isEqual } from 'lodash';
 import {filter, mapTo, switchMap} from 'rxjs/operators';
 import { ProfileCardDialogComponent } from '../profile-card-dialog.component';
-import {stream} from 'xlsx';
 import {StatusPopupComponent} from '../status-popup/status-popup.component';
 import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
 
@@ -349,14 +348,7 @@ export class ViewProfileComponent implements OnInit {
       this.updateProfile().subscribe(() => {
         this.close.emit(true);
       });
-    }
-    // else if (this.signInStatus.touched && this.signInStatus.value !== this.signInStatus.initialValue) {
-    //   this.userService.setUserActivityRequest(this.profile._originalUserProfile, this.signInStatus.value, this.data.role)
-    //     .subscribe(() => {
-    //       this.close.emit(false);
-    //     });
-    // }
-    else {
+    } else {
       this.close.emit(false);
     }
   }

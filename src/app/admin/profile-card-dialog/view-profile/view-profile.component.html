@@ -66,17 +66,21 @@
           </div>
         </div>
         <div class="role-info">
-          <div class="title">Role</div>
-          <div class="roles">
-            <app-sp-search
-              [searchTarget]="'roles'"
-              [selectedOptions]="userRoles"
-              [searchingRoles]="roles"
-              [showOptions]="true"
-              [chipsMode]="true"
-              (onUpdate)="updateRoles($event)"
-            ></app-sp-search>
-          </div>
+          <app-select-role
+            [selectedRoles]="userRoles"
+            (onSelect)="userRoles = $event"
+          ></app-select-role>
+<!--          <div class="title">Role</div>-->
+<!--          <div class="roles">-->
+<!--            <app-sp-search-->
+<!--              [searchTarget]="'roles'"-->
+<!--              [selectedOptions]="userRoles"-->
+<!--              [searchingRoles]="roles"-->
+<!--              [showOptions]="true"-->
+<!--              [chipsMode]="true"-->
+<!--              (onUpdate)="updateRoles($event)"-->
+<!--            ></app-sp-search>-->
+<!--          </div>-->
         </div>
 
         <div class="role-info" *ngIf="user.isAssistant()">
