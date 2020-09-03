@@ -68,19 +68,9 @@
         <div class="role-info">
           <app-select-role
             [selectedRoles]="userRoles"
+            [isAccessAdd]="isAccessAdd"
             (onSelect)="userRoles = $event"
           ></app-select-role>
-<!--          <div class="title">Role</div>-->
-<!--          <div class="roles">-->
-<!--            <app-sp-search-->
-<!--              [searchTarget]="'roles'"-->
-<!--              [selectedOptions]="userRoles"-->
-<!--              [searchingRoles]="roles"-->
-<!--              [showOptions]="true"-->
-<!--              [chipsMode]="true"-->
-<!--              (onUpdate)="updateRoles($event)"-->
-<!--            ></app-sp-search>-->
-<!--          </div>-->
         </div>
 
         <div class="role-info" *ngIf="user.isAssistant()">
@@ -104,12 +94,15 @@
       <div class="block" *ngIf="user.isStudent()">
         <div class="title">Student Permissions</div>
         <div class="permissions">
-          <div class="permission">
-            <div class="subtitle">Make passes without approval</div>
+          <div class="permission" *ngFor="let permission of profilePermissions.student">
+            <div class="subtitle" style="display: flex; align-items: center">
+<!--              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">-->
+              {{ permission.label }}
+            </div>
             <app-toggle-input
               style="width: auto"
-              [form]="studentForm"
-              [controlName]="'pass_approval'"
+              [form]="permissionsForm"
+              [controlName]="permission.permission"
               [controlSize]="'small'"
               [delimiter]="false"
             ></app-toggle-input>
@@ -134,7 +127,7 @@
         </div>
 
       </div>
-      <mat-divider></mat-divider>
+      <mat-divider *ngIf="user.isTeacher()"></mat-divider>
       <div class="block" *ngIf="user.isTeacher()">
         <div class="permissions">
           <div class="title">Teacher Permissions</div>

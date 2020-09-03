@@ -50,8 +50,8 @@ export class ViewProfileComponent implements OnInit {
   public profile: any;
   public teacherAssignedTo: Location[] = [];
   profilePermissions: {
-    [profile: string]: {label: string, permission: string, icon: string}[]
-  } = {teacher: [], admin: [], assistant: []};
+    [profile: string]: {label: string, permission: string, icon?: string}[]
+  } = {teacher: [], admin: [], assistant: [], student: []};
 
   public assistantFor: User[];
   public assistantForEditState: boolean = false;
@@ -61,8 +61,6 @@ export class ViewProfileComponent implements OnInit {
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
   private permissionsFormInitialState;
-
-  studentForm: FormGroup = new FormGroup({pass_approval: new FormControl()});
 
   public controlsIteratable: any[];
   public disabledState: boolean = false;
@@ -105,6 +103,10 @@ export class ViewProfileComponent implements OnInit {
     private locationService: LocationsService,
     private formService: CreateFormService
   ) {}
+
+  get isAccessAdd() {
+    return !this.userRoles.find(role => role.role === 'Student');
+  }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
@@ -330,8 +332,13 @@ export class ViewProfileComponent implements OnInit {
         {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
       );
     }
+    if (this.user.isStudent()) {
+      this.profilePermissions.student.push(
+        {label: 'Make passes without approval', permission: 'pass_approval'}
+      );
+    }
     const controls = {};
-    this.profilePermissions.teacher.concat([...this.profilePermissions.admin, ...this.profilePermissions.assistant]).forEach(perm => {
+    this.profilePermissions.teacher.concat([...this.profilePermissions.admin, ...this.profilePermissions.assistant, ...this.profilePermissions.student]).forEach(perm => {
       controls[perm.permission] = new FormControl(this.user.roles.includes(perm.permission));
     });
     this.permissionsForm = new FormGroup(controls);

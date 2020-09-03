@@ -135,26 +135,6 @@
     .role-info {
       margin-top: 30px;
       width: 75%;
-
-      .roles {
-        display: flex;
-        flex-wrap: wrap;
-        width: 70%;
-        .role {
-          margin: 5px;
-          padding: 10px;
-          border-radius: 6px;
-          background: #F4F4F4;
-          display: flex;
-          align-items: center;
-
-          .role-name {
-            color: $blue-gray;
-            font-size: 14px;
-            margin-left: 5px;
-          }
-        }
-      }
     }
 
     .permissions {

@@ -18,7 +18,8 @@ export class PermissionsDialogComponent implements OnInit {
   profilePermissions = {
     admin: [],
     teacher: [],
-    assistant: []
+    assistant: [],
+    student: []
   };
   permissionsForm: FormGroup;
   permissionsInitialState;
@@ -62,6 +63,11 @@ export class PermissionsDialogComponent implements OnInit {
           {label: 'Passes', permission: 'access_passes', icon: 'Passes'},
           {label: 'Hall Monitor', permission: 'access_hall_monitor', icon: 'Walking'},
           {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
+        );
+      }
+      if (user.isStudent() && !this.profilePermissions.student.length) {
+        this.profilePermissions.student.push(
+          {label: 'Make passes without approval', permission: 'pass_approval'}
         );
       }
     });
