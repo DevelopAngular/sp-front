@@ -13,6 +13,8 @@ export const postSelectedAccountsSuccess = createAction(`[Accounts] Post Selecte
 
 export const removeAccount = createAction(`[Accounts] Remove Account`, props<{id: number | string, role: string}>());
 
+export const updateAccounts = createAction(`[Accounts] Update Account`, props<{account: User}>());
+
 export const updateAccountActivity = createAction(`[Accounts] Update Account Activity`,
   props<{profile: User, active: boolean, role: string}>());
 

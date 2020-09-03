@@ -83,7 +83,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.schoolSyncInfoData$ = this.adminService.schoolSyncInfo$;
 
     this.onboardProcess$ = this.http.globalReload$.pipe(
-      tap(() => this.adminService.getCountAccountsRequest()),
+      tap(() => this.adminService.getCountAccountsRequest().pipe(take(1))),
       tap(() => this.adminService.getGG4LSyncInfoRequest()),
       tap(() => this.adminService.getSpSyncingRequest()),
       tap(() => this.adminService.getGSuiteOrgsRequest()),

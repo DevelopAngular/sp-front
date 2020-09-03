@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
+import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
 import {concatMap, map} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
@@ -79,6 +80,24 @@ export class AccountsEffects {
         })
       );
   });
+
+  updateAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.updateAccounts),
+        map((action) => {
+          if (action.account.isAdmin()) {
+            return nestedStates.updateAdminAccount({profile: action.account});
+          } else if (action.account.isTeacher()) {
+            return nestedStates.updateTeacherAccount({profile: action.account});
+          } else if (action.account.isStudent()) {
+            return nestedStates.updateStudentAccount({profile: action.account});
+          } else if (action.account.isAssistant()) {
+            return nestedStates.updateAssistantAccount({profile: action.account});
+          }
+        })
+      )
+  })
 
   postSelectedAccounts$ = createEffect(() => {
     return this.actions$

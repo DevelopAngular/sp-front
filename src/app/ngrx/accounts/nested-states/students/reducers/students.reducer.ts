@@ -25,7 +25,9 @@ const reducer = createReducer(
   on(studentsActions.removeStudentSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});
   }),
-  on(studentsActions.updateStudentActivitySuccess, (state, {profile}) => {
+  on(studentsActions.updateStudentActivitySuccess,
+    studentsActions.updateStudentAccount,
+    (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   }),
   on(studentsActions.getMoreStudentsSuccess, (state, {moreStudents, next}) => {

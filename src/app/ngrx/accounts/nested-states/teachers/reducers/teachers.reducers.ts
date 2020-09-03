@@ -26,6 +26,7 @@ const reducer = createReducer(
   }),
   on(teachersActions.updateTeacherActivitySuccess,
     teachersActions.updateTeacherPermissionsSuccess,
+    teachersActions.updateTeacherAccount,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   }),

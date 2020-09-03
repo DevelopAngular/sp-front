@@ -26,6 +26,7 @@ const reducer = createReducer(
   }),
   on(adminsActions.updateAdminActivitySuccess,
     adminsActions.updateAdminPermissionsSuccess,
+    adminsActions.updateAdminAccount,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   }),

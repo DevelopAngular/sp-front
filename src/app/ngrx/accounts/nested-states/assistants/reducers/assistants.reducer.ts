@@ -26,6 +26,7 @@ const reducer = createReducer(
   }),
   on(
     assistantsActions.updateAssistantActivitySuccess,
+    assistantsActions.updateAssistantAccount,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   }),

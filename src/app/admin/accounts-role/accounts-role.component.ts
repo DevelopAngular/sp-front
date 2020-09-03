@@ -86,9 +86,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   schools$: Observable<School[]>;
 
-  tableHeaders;
-  showDisabledChip: boolean;
-
 
   constructor(
     public router: Router,
@@ -181,7 +178,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
         }),
         switchMap(() => {
-          return this.userService.getAccountsRoles(this.role, '', 50);
+          return this.userService.getAccountsRoles(this.role, '', 50).pipe(filter(res => !!res.length));
         }),
         map((accounts: User[]) => {
           if (!accounts.length) {
