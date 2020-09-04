@@ -64,10 +64,10 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
   public accountsButtons = [
-    { title: 'Overview', param: '', icon_id: '#Overview' },
-    { title: 'Admins', param: '_profile_admin', icon_id: '#Admin', role: 'admin_count' },
-    { title: 'Teachers', param: '_profile_teacher', icon_id: '#Teacher', role: 'teacher_count' },
+    // { title: 'Overview', param: '', icon_id: '#Overview' },
     { title: 'Students', param: '_profile_student', icon_id: '#Student', role: 'student_count' },
+    { title: 'Teachers', param: '_profile_teacher', icon_id: '#Teacher', role: 'teacher_count' },
+    { title: 'Admins', param: '_profile_admin', icon_id: '#Admin', role: 'admin_count' },
     { title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count' }
   ];
 
@@ -82,6 +82,9 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCurrentTab();
+    if (this.showTabs && this.currentTab === '') {
+      this.router.navigate(['admin/accounts', '_profile_student']);
+    }
     this.router.events.pipe(takeUntil(this.destroy$)).subscribe(value => {
       this.selectedUsers = [];
       this.getCurrentTab();
@@ -114,6 +117,18 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
     const urlSplit: string[] = this.router.url.split('/');
     this.currentTab = urlSplit[urlSplit.length - 1] === 'accounts' ? '' : urlSplit[urlSplit.length - 1];
     this.currentPageEmit.emit(this.currentTab);
+  }
+
+  getCountAccounts(count: TotalAccounts) {
+    if (this.currentTab === '_profile_admin') {
+      return count.admin_count + ' admins';
+    } else if (this.currentTab === '_profile_teacher') {
+      return count.teacher_count + ' teachers';
+    } else if (this.currentTab === '_profile_student') {
+      return count.student_count + ' students';
+    } else if (this.currentTab === '_profile_assistant') {
+      return count.assistant_count + ' assistants';
+    }
   }
 
   addUser(element) {
@@ -170,11 +185,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   updateTab(route) {
-    if (route) {
+    // if (route) {
       this.router.navigate(['/admin/accounts/', route]);
-    } else {
-      this.router.navigate(['/admin/accounts']);
-    }
+    // } else {
+    //   this.router.navigate(['/admin/accounts']);
+    // }
   }
 
   selectTab(event: HTMLElement, container: HTMLElement) {
@@ -182,11 +197,6 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
     const selectedTabRect = event.getBoundingClientRect();
     const tabPointerHalfWidth = this.tabPointer.nativeElement.getBoundingClientRect().width / 2;
     this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) + 'px';
-  }
-
-  editTableState() {
-    this.tableState = !this.tableState;
-    this.tableStateEmit.emit(this.tableState);
   }
 
   setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 50) {

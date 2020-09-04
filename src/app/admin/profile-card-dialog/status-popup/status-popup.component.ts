@@ -31,18 +31,19 @@ export class StatusPopupComponent implements OnInit {
     this.updatePosition();
     this.options = [
       {
-        label: this.profileStatus === 'active' ? 'Disable account' + (this.isBulkEdit ? 's' : '') : 'Activate Account' + (this.isBulkEdit ? 's' : ''),
+        label: this.profileStatus === 'active' ? 'Disable account' + (this.isBulkEdit ? 's' : '') : 'Activate account' + (this.isBulkEdit ? 's' : ''),
         textColor: this.profileStatus === 'active' ? '#7f879d' : '#00B476',
         hoverColor: this.profileStatus === 'active' ? '#f1f2f4' : '#D1E8E0',
-        icon: this.profileStatus === 'active' ? './assets/Stop (Blue-Gray).svg' : './assets/Check (Navy).svg',
-        description: 'Disabling an account prevents them from signing in. They’ll still show up in SmartPass search, can make passes, etc.',
+        icon: this.profileStatus === 'active' ? './assets/Stop (Blue-Gray).svg' : './assets/Check (Jade).svg',
+        description: this.profileStatus === 'active' ? 'Disabling an account prevents them from signing in. They’ll still show up in SmartPass search, can make passes, etc.' :
+          'Contact us at support@smartpass.app to activate your students and start your subscription.',
         status: this.profileStatus === 'active' ? 'disabled' : 'active'
       },
       {
         label: 'Suspend account' + (this.isBulkEdit ? 's' : ''),
-        textColor: '#7f879d',
+        textColor: '#6651F1',
         hoverColor: '#ededfc',
-        icon: './assets/Sleep (Blue-Gray).svg',
+        icon: './assets/Sleep (Purple).svg',
         description: 'Suspending an account will not delete any data association, but no-one will see or be able to interact with this account.',
         status: 'suspended'
       },
@@ -54,6 +55,17 @@ export class StatusPopupComponent implements OnInit {
         description: 'Deleting an account will permanently delete any data associated with this account. This action cannot be undone.',
       }
     ];
+
+    if (this.isBulkEdit) {
+      this.options.splice(1, 0, {
+        label: 'Disable account',
+        textColor: '#7f879d',
+        hoverColor: '#f1f2f4',
+        icon: './assets/Stop (Blue-Gray).svg',
+        description: 'Disabling an account prevents them from signing in. They’ll still show up in SmartPass search, can make passes, etc.',
+        status: 'disabled'
+      });
+    }
   }
 
   updatePosition() {

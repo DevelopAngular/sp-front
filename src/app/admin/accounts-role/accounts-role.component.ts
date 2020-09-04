@@ -96,7 +96,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private _zone: NgZone,
     public darkTheme: DarkThemeSwitch,
-    private tableService: TableService
+    private tableService: TableService,
+    private sanitizer: DomSanitizer
   ) {
 
   }
@@ -278,17 +279,17 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     let objectToTable;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
       objectToTable = {...roleObject, ...{
-          'Status': account.status,
-          'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Basic',
+          'Status': `<span class="status">${account.status}</span>`,
+          'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
           'Permissions': permissions
       }};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
           'Rooms': account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned',
-          'Status': account.status,
+          'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Basic',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
           'Permissions': permissions
       }};
     } else if (this.role === '_profile_assistant') {
@@ -296,9 +297,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Acting on Behalf Of': account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : 'No Teachers',
-          'Status': account.status,
-          'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Basic',
+          'Status': `<span class="status">${account.status}</span>`,
+          'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
           'Permissions': permissions
       }};
     }

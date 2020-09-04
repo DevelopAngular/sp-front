@@ -7,6 +7,7 @@ import {concatMap, map} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {PostRoleProps, RoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
+import {User} from '../../../models/User';
 
 @Injectable()
 export class AccountsEffects {
@@ -86,18 +87,19 @@ export class AccountsEffects {
       .pipe(
         ofType(accountsActions.updateAccounts),
         map((action) => {
-          if (action.account.isAdmin()) {
+          const account = User.fromJSON(action.account);
+          if (account.isAdmin()) {
             return nestedStates.updateAdminAccount({profile: action.account});
-          } else if (action.account.isTeacher()) {
+          } else if (account.isTeacher()) {
             return nestedStates.updateTeacherAccount({profile: action.account});
-          } else if (action.account.isStudent()) {
+          } else if (account.isStudent()) {
             return nestedStates.updateStudentAccount({profile: action.account});
-          } else if (action.account.isAssistant()) {
+          } else if (account.isAssistant()) {
             return nestedStates.updateAssistantAccount({profile: action.account});
           }
         })
-      )
-  })
+      );
+  });
 
   postSelectedAccounts$ = createEffect(() => {
     return this.actions$
