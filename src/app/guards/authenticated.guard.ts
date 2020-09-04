@@ -4,13 +4,19 @@ import { Observable } from 'rxjs';
 import { GoogleLoginService } from '../services/google-login.service';
 import { HttpService } from '../services/http-service';
 import {map, tap} from 'rxjs/operators';
+import {StorageService} from '../services/storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticatedGuard implements CanActivate {
 
-  constructor(private loginService: GoogleLoginService, private httpService: HttpService, private router: Router) {
+  constructor(
+    private loginService: GoogleLoginService,
+    private httpService: HttpService,
+    private router: Router,
+    private storage: StorageService
+  ) {
   }
 
   canActivate(
@@ -29,6 +35,10 @@ export class AuthenticatedGuard implements CanActivate {
         map((v) => {
           if (!v) {
             this.router.navigate(['']);
+          } else {
+            if (this.storage.getItem('gg4l_invalidate')) {
+              this.storage.removeItem('gg4l_invalidate');
+            }
           }
           return v;
         })
