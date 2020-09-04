@@ -23,6 +23,7 @@ import {HttpClient} from '@angular/common/http';
 import {FormControl, FormGroup} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {QueryParams} from '../live-data/helpers';
+import {StorageService} from '../services/storage.service';
 
 declare const window;
 
@@ -72,6 +73,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private dialog: MatDialog,
     private shortcuts: KeyboardShortcutsService,
+    private storage: StorageService
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
     this.loginService.isAuthLoaded()
@@ -167,7 +169,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.isStandardLogin = false;
         this.isGoogleLogin = true;
       } else if (auth.indexOf('gg4l') !== -1) {
-        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+        if (this.storage.getItem('gg4l_invalidate')) {
+          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
+        } else {
+          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+        }
       } else
         if (auth.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
