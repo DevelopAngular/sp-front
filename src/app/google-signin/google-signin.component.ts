@@ -23,6 +23,7 @@ import {HttpClient} from '@angular/common/http';
 import {FormControl, FormGroup} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {QueryParams} from '../live-data/helpers';
+import {StorageService} from '../services/storage.service';
 
 declare const window;
 
@@ -72,6 +73,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private dialog: MatDialog,
     private shortcuts: KeyboardShortcutsService,
+    private storage: StorageService
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
     this.loginService.isAuthLoaded()
@@ -141,8 +143,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
     this.changeUserName$.pipe(
       filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
-      tap(() => this.disabledButton = true),
-      debounceTime(500),
+      tap(() => this.disabledButton = false),
+      debounceTime(1000),
       switchMap(userName => {
         const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
         return this.http.get<any>(discovery);
@@ -152,8 +154,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         return errors;
       })
     ).subscribe(({auth_types}) => {
+      // debugger;
       if (!auth_types.length) {
         this.showError = true;
+        this.error$.next('Couldn’t find that username or email');
         this.isGoogleLogin = true;
         return;
       } else {
@@ -167,7 +171,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.isStandardLogin = false;
         this.isGoogleLogin = true;
       } else if (auth.indexOf('gg4l') !== -1) {
-        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+        if (this.storage.getItem('gg4l_invalidate')) {
+          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
+        } else {
+          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+        }
       } else
         if (auth.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
