@@ -66,7 +66,7 @@ export class UserEffects {
       .pipe(
         ofType(userActions.updateUserSuccess),
         map((action: any) => {
-          return accountsActions.updateAccounts({account: User.fromJSON(action.user)});
+          return accountsActions.updateAccounts({account: action.user});
         })
       );
   });

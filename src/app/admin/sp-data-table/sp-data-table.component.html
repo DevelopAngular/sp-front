@@ -76,7 +76,10 @@
         <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>
 
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
-            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : '#FFFFFF'"
+            #rowCont
+            (mouseenter)="rowCont.hover = true"
+            (mouseleave)="rowCont.hover = false"
+            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick ? '#F1F2F4' : '#FFFFFF'"
             [style.cursor]="isRowClick ? 'pointer' : 'default'"
             appCrossPointerEventTarget (pointerClickEvent)="isRowClick ? rowOnClick(row) : null">
         </tr>

@@ -91,6 +91,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
     );
+    // this.router.navigate(['admin/accounts', '_profile_student']);
 
     this.toastService.toastButtonClick$
       .pipe(
