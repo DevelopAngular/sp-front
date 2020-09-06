@@ -20,10 +20,11 @@ import {
   updateAccountPermissions
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
-  getAllAccountsCollection, getCountAllAccounts, getLastAddedAllAccounts,
+  getAllAccountsCollection, getAllAccountsEntities, getCountAllAccounts, getLastAddedAllAccounts,
   getLoadedAllAccounts, getLoadingAllAccounts, getNextRequestAllAccounts
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
+  getAdminsAccountsEntities,
   getAdminsCollections, getCountAdmins, getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
   getLoadingAdminsAccounts, getNextRequestAdminsAccounts
@@ -32,10 +33,10 @@ import {
   getCountTeachers, getLastAddedTeachers,
   getLoadedTeachers,
   getLoadingTeachers, getNextRequestTeachers,
-  getTeacherAccountsCollection
+  getTeacherAccountsCollection, getTeachersAccountsEntities
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
-  getAssistantsAccountsCollection,
+  getAssistantsAccountsCollection, getAssistantsAccountsEntities,
   getCountAssistants, getLastAddedAssistants,
   getLoadedAssistants,
   getLoadingAssistants, getNextRequestAssistants
@@ -44,7 +45,7 @@ import {
   getCountStudents, getLastAddedStudents,
   getLoadedStudents,
   getLoadingStudents, getNextRequestStudents,
-  getStudentsAccountsCollection
+  getStudentsAccountsCollection, getStudentsAccountsEntities
 } from '../ngrx/accounts/nested-states/students/states';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
@@ -86,6 +87,14 @@ export class UserService {
     _profile_student: this.store.select(getCountStudents),
     _profile_teacher: this.store.select(getCountTeachers),
     _profile_assistant: this.store.select(getCountAssistants)
+  };
+
+  accountsEntities = {
+    _all: this.store.select(getAllAccountsEntities),
+    _profile_admin: this.store.select(getAdminsAccountsEntities),
+    _profile_teacher: this.store.select(getTeachersAccountsEntities),
+    _profile_student: this.store.select(getStudentsAccountsEntities),
+    _profile_assistant: this.store.select(getAssistantsAccountsEntities)
   };
 
   isLoadedAccounts$ = {
@@ -224,6 +233,11 @@ export class UserService {
     }
   }
 
+  getAccountsEntities(role) {
+    debugger;
+    return role ? this.accountsEntities[role] : of(null);
+  }
+
   getUserRequest() {
     this.store.dispatch(getUser());
     return this.user$;
@@ -301,7 +315,7 @@ export class UserService {
       switch (type) {
         case 'alternative':
           return this.http.get(constructUrl(`v1/users`, {search: search}), );
-        case 'gsuite':
+        case 'G Suite':
           return this.http.currentSchool$.pipe(
             take(1),
             switchMap((currentSchool: School) => {
@@ -314,6 +328,22 @@ export class UserService {
                   return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
                       search: search
                   }));
+              }
+            })
+          );
+        case 'GG4L':
+          return this.http.currentSchool$.pipe(
+            take(1),
+            switchMap((currentSchool: School) => {
+              if (excludeProfile) {
+                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
+                  search: search,
+                  profile: excludeProfile
+                }));
+              } else {
+                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
+                  search
+                }));
               }
             })
           );
@@ -353,7 +383,7 @@ export class UserService {
       });
     } else if (userType === 'username') {
         return this.http.post(`v1/schools/${id}/add_user`, {
-            type:  'username',
+            type: 'username',
             username: user.email,
             password: user.password,
             first_name: user.first_name,
@@ -459,7 +489,6 @@ export class UserService {
   }
 
   getUsersList(role: string = '', search: string = '', limit: number = 0) {
-
     const params: any = {};
     if (role !== '' && role !== '_all') {
       params.role = role;

@@ -1,0 +1,16 @@
+<div class="wrapper"
+     #button
+     (mouseenter)="button.hover = true"
+     (mouseleave)="button.hover = false; button.pressed = false"
+     appCrossPointerEventTarget
+     (pointerDownEvent)="button.pressed = true"
+     (pointerCancelEvent)="button.pressed = false"
+     (pointerClickEvent)="buttonClick.emit($event); button.pressed = false"
+     [style.background-color]="background(button.hover, button.pressed)"
+>
+  <div class="content-button">
+    <div class="title" [style.color]="filter ? '#1F195E' : '#7f879d'">{{ title }}</div>
+    <img width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
+    <img *ngIf="filter && showClearIcon" appCrossPointerEventTarget (pointerClickEvent)="clear($event)" class="close-button" [src]="'./assets/Close.svg' | resolveAsset" alt="Close">
+  </div>
+</div>

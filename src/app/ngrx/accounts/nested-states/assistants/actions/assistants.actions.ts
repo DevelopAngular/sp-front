@@ -24,6 +24,8 @@ export const updateAssistantActivitySuccess = createAction(`[${ASSISTANTS}] Upda
 export const updateAssistantActivityFailure =
   createAction(`[${ASSISTANTS}] Update Assistant Activity Failure`, props<{errorMessage: string}>());
 
+export const updateAssistantAccount = createAction(`[${ASSISTANTS}] Update Assistant Account`, props<{profile: User}>());
+
 export const updateAssistantPermissions = createAction(`[${ASSISTANTS}] Update Assistant Permissions`, props<{profile: User, permissions: any}>());
 export const updateAssistantPermissionsSuccess = createAction(`[${ASSISTANTS}] Update Assistant Permissions Success`, props<{profile: User}>());
 export const updateAssistantPermissionsFailure =

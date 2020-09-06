@@ -27,3 +27,6 @@ export const updateTeacherPermissions = createAction(`[${TEACHER}] Update Teache
 export const updateTeacherPermissionsSuccess = createAction(`[${TEACHER}] Update Teacher Permissions Success`, props<{profile: User}>());
 export const updateTeacherPermissionsFailure = createAction(`[${TEACHER}] Update Teacher Permissions Failure`, props<{errorMessage: string}>());
 
+export const updateTeacherAccount = createAction(`[${TEACHER}] Update Teacher Account`, props<{profile: User}>());
+
+

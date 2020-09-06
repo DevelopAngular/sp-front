@@ -32,5 +32,6 @@ export const getLastAddedStudents = createSelector(
 );
 
 export const getCountStudents = adapter.getSelectors(getStudentsAccountsProfiles).selectTotal;
+export const getStudentsAccountsEntities = adapter.getSelectors(getStudentsAccountsProfiles).selectEntities;
 
 export const getStudentsAccountsCollection = adapter.getSelectors(getStudentsAccountsProfiles).selectAll;

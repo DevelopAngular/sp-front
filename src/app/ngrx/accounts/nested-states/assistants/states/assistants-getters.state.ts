@@ -30,5 +30,6 @@ export const getLastAddedAssistants = createSelector(
 );
 
 export const getCountAssistants = adapter.getSelectors(getAssistantsAccountsProfiles).selectTotal;
+export const getAssistantsAccountsEntities = adapter.getSelectors(getAssistantsAccountsProfiles).selectEntities;
 
 export const getAssistantsAccountsCollection = adapter.getSelectors(getAssistantsAccountsProfiles).selectAll;

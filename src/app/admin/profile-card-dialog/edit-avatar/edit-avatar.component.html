@@ -1,0 +1,26 @@
+<div class="wrapper"
+     (dragenter)="handleDragEvent($event, '#00B476')"
+     (dragover)="handleDragEvent($event, '#00B476')"
+     (dragleave)="handleDragEvent($event, '#7F879D')"
+     (drop)="catchFile($event)"
+>
+  <div class="title">Add Profile Picture</div>
+  <div class="drag-content">
+    <input type="file" [formControl]="form.get('file')"  #file style="display: none"/>
+
+    <div #dropArea class="uploading-area" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed; else img">
+      <span class="ds-pb-10">Drop image here</span>
+      <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
+    </div>
+    <ng-template #img>
+      <div class="set-content">
+        <img class="set-img" [src]="imageUrl" alt="">
+        <div class="buttons">
+          <div class="cancel" (click)="back()">Cancel</div>
+          <app-gradient-button>Set picture</app-gradient-button>
+        </div>
+      </div>
+    </ng-template>
+
+  </div>
+</div>

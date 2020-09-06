@@ -1,0 +1,28 @@
+@import "../../../../sp-colors";
+
+.wrapper {
+  background-color: #FFFFFF;
+  width: 244px;
+  border-radius: 9px;
+
+  .options {
+    margin: 6px 0;
+    border-radius: 9px;
+    .option {
+      display: flex;
+      padding: 14px;
+      color: $blue-gray;
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgb(228, 235, 255);
+        color: $navy;
+      }
+
+      .title {
+        margin-left: 9px;
+        font-size: 14px;
+      }
+    }
+  }
+}

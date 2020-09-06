@@ -39,12 +39,11 @@ export class AddUserDialogComponent implements OnInit {
       });
     }
   }
-  public typeChoosen: string;
+  public typeChosen: string;
   public newAlternativeAccount: FormGroup;
   public selectedUsers: User[] = [];
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
-  public controlsIteratable: any[];
   public assistantLike: {
     user: User,
     behalfOf: User[]
@@ -54,11 +53,14 @@ export class AddUserDialogComponent implements OnInit {
   public accountTypes: string[];
   public state: string;
   public accounts = [
-      { title: 'Admin', icon: 'Admin', selected: false, role: '_profile_admin', disabled: false},
-      { title: 'Teacher', icon: 'Teacher', selected: false, role: '_profile_teacher', disabled: false },
+      { title: 'Admin', icon: 'Admin', selected: true, role: '_profile_admin', disabled: false},
+      { title: 'Teacher', icon: 'Teacher', selected: true, role: '_profile_teacher', disabled: false },
       { title: 'Assistant', icon: 'Assistant', selected: false, role: '_profile_assistant', disabled: false },
       { title: 'Student', icon: 'Student', selected: false, role: '_profile_student', disabled: false }
   ];
+  public title: string;
+  public icon: string;
+  public userRoles: any[] = [];
   private pendingSubject = new BehaviorSubject(false);
   public pending$ = this.pendingSubject.asObservable();
 
@@ -75,8 +77,10 @@ export class AddUserDialogComponent implements OnInit {
 
   ) {
     this.syncInfo = this.data['syncInfo'];
-    this.accountTypes = this.syncInfo.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G Suite', 'Standard'];
-    this.typeChoosen = this.accountTypes[0];
+    this.title = this.data['title'];
+    this.icon = this.data['icon'];
+    this.accountTypes = ['G Suite', 'Standard', 'GG4L'];
+    this.typeChosen = this.data['type'];
     if (this.data.role === '_profile_assistant' || this.data.role === '_all') {
       this.assistantLike = {
         user: null,
@@ -90,17 +94,26 @@ export class AddUserDialogComponent implements OnInit {
     return _filter(this.accounts, ['selected', true]);
   }
 
+  get isAssistant() {
+    return this.userRoles.find(acc => acc.role === 'Assistant');
+  }
+
   get showNextButton() {
-    if (this.typeChoosen === this.accountTypes[0] && !this.state) {
-        return (this.data.role === '_profile_assistant' && ((this.assistantLike.user || this.newAlternativeAccount.valid))) ||
-            (this.data.role === '_all' && (this.newAlternativeAccount.valid || this.selectedUsers.length));
-    } else if (this.data.role === '_profile_assistant' && this.typeChoosen === this.accountTypes[1] && !this.state) {
+    if (this.typeChosen === this.accountTypes[0]) {
+        return (this.isAssistant && ((this.assistantLike.user || this.newAlternativeAccount.valid)));
+    } else if (this.isAssistant && this.typeChosen === this.accountTypes[1]) {
       return this.newAlternativeAccount.valid;
-    } else if (this.data.role === '_all' && !this.state) {
-      return this.newAlternativeAccount.valid;
-    } else {
+    }
+    // else if (this.data.role === '_all' && !this.state) {
+    //   return this.newAlternativeAccount.valid;
+    // }
+    else {
       return false;
     }
+  }
+
+  get isAccessAdd() {
+    return !this.userRoles.find(role => role.role === 'Student');
   }
 
   ngOnInit() {
@@ -117,10 +130,10 @@ export class AddUserDialogComponent implements OnInit {
         Validators.minLength(8)
       ]),
     });
+    this.generateUserRoles();
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
-      this.controlsIteratable = Object.values(permissions);
       const group: any = {};
       for (const key in permissions) {
         group[key] = new FormControl(true);
@@ -139,6 +152,23 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe(() => {
         this.pendingSubject.next(false);
       });
+  }
+
+
+  generateUserRoles() {
+    if (this.data.role === '_profile_student') {
+      this.userRoles.push({id: 1, role: 'Student', icon: './assets/Student (Blue-Gray).svg', description: 'Students can create passes, schedule passes for the future, and send pass requests to teachers.'});
+    }
+    if (this.data.role === '_profile_teacher') {
+      this.userRoles.push({id: 2, role: 'Teacher', icon: './assets/Teacher (Blue-Gray).svg', description: 'Teachers can manage passes in his/her room, see hallway activity, create passes, and more.'});
+    }
+    if (this.data.role === '_profile_admin') {
+      this.userRoles.push({id: 3, role: 'Admin', icon: './assets/Admin (Blue-Gray).svg', description: 'Admins can explore pass history, reports, manage rooms, set-up accounts, and more.'});
+    }
+    if (this.data.role === '_profile_assistant') {
+      this.userRoles.push({id: 4, role: 'Assistant', icon: './assets/Assistant (Blue-Gray).svg', description: 'Assistants can act on behalf of other teachers: manage passes, create passes, and more.'});
+    }
+
   }
 
   uniqueEmailValidator(control: FormControl) {
@@ -168,53 +198,39 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   showSaveButton() {
-    if (this.typeChoosen === this.accountTypes[0]) {
+    if (this.typeChosen === this.accountTypes[0]) {
       if (this.data.role === '_profile_assistant' && this.state) {
           return this.assistantLike.user && this.assistantLike.behalfOf.length;
       } else if (this.data.role === '_all' && this.state) {
-        if (this.selectedRoles.length && this.selectedRoles.find(acc => acc.role === '_profile_assistant')) {
+        if (this.userRoles.length && this.isAssistant) {
           return this.assistantLike.behalfOf.length;
         } else {
-            return this.selectedUsers && this.selectedUsers.length && this.selectedRoles.length;
+            return this.selectedUsers && this.selectedUsers.length && this.userRoles.length;
         }
       } else {
           return this.selectedUsers && this.selectedUsers.length;
       }
-    } else if (this.typeChoosen === this.accountTypes[1]) {
+    } else if (this.typeChosen === this.accountTypes[1]) {
       if (this.data.role !== '_profile_assistant' && this.data.role !== '_all') {
           return this.newAlternativeAccount.valid;
       } else {
         if (this.data.role !== '_all') {
             return this.newAlternativeAccount.valid && this.assistantLike.behalfOf.length;
         } else {
-          if (this.selectedRoles.length && this.selectedRoles.find(acc => acc.role === '_profile_assistant')) {
+          if (this.userRoles.length && this.isAssistant) {
             return this.assistantLike.behalfOf.length;
           } else {
-              return this.selectedRoles.length;
+              return this.userRoles.length;
           }
         }
       }
     }
   }
 
-  isDisabled(role) {
-    if ((role === '_profile_assistant' || role === '_profile_student') &&
-        this.selectedRoles.find(account => account.role === '_profile_admin' || account.role === '_profile_teacher')) {
-      return true;
-    } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student') &&
-        this.selectedRoles.find(account => account.role === '_profile_assistant')) {
-      return true;
-    } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_assistant') &&
-        this.selectedRoles.find(account => account.role === '_profile_student')) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   showIncomplete() {
-    if (this.typeChoosen === this.accountTypes[1]) {
-      return this.newAlternativeAccount.dirty && !this.showSaveButton() && !this.showNextButton;
+    if (this.typeChosen === this.accountTypes[1]) {
+      return this.newAlternativeAccount.dirty && !this.showSaveButton();
     }
   }
 
@@ -233,8 +249,6 @@ export class AddUserDialogComponent implements OnInit {
   next() {
     if (this.data.role === '_profile_assistant') {
       this.state = 'assistant';
-    } else if (this.data.role === '_all') {
-      this.state = 'selectRole';
     }
   }
 
@@ -245,19 +259,17 @@ export class AddUserDialogComponent implements OnInit {
       .pipe(
         tap(() => this.pendingSubject.next(true)),
         map(() => {
-          const selectedRoles = this.selectedRoles.map(acc => {
-            const oneRole = acc.role.split('_');
-            return oneRole[oneRole.length - 1];
+          return this.userRoles.map(acc => {
+            return acc.role.toLowerCase();
           });
-          return role === 'all' ? selectedRoles : [role];
         }),
         switchMap((rolesToDb) => {
-          if (this.typeChoosen === this.accountTypes[0]) {
+          if (this.typeChosen === this.accountTypes[0]) {
             return zip(
               ...this.selectedUsers
                 .map((user) => this.userService.addAccountRequest(this.school.id, user, 'gsuite', rolesToDb, this.data.role))
             );
-          } else if (this.typeChoosen === this.accountTypes[1]) {
+          } else if (this.typeChosen === this.accountTypes[1]) {
 
             const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
             const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
@@ -301,9 +313,9 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe((res) => {
         this.pendingSubject.next(false);
         this.dialogRef.close(res);
-        if (this.selectedRoles.length) {
-          this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
-        }
+        // if (this.selectedRoles.length) {
+        //   this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
+        // }
       });
   }
 
@@ -323,7 +335,7 @@ export class AddUserDialogComponent implements OnInit {
     } else {
         this.selectedUsers = evt;
     }
-    console.log(evt);
+    // console.log(evt);
   }
   setSecretary(evtUser, evtBehalfOf) {
     if (evtUser) {
