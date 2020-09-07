@@ -49,7 +49,7 @@ export class TeachersEffects {
         concatMap(action => {
           return this.userService.nextRequests$._profile_teacher.pipe(take(1));
         }),
-        filter(res => !!res),
+        // filter(res => !!res),
         switchMap(next => this.http.get(next)
           .pipe(
             switchMap((moreTeachers: any) => {

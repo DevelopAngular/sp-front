@@ -35,7 +35,8 @@ const reducer = createReducer(
   }),
   on(studentsActions.postStudentSuccess, (state, {student}) => {
     return adapter.addOne(student, {...state, loading: false, loaded: true});
-  })
+  }),
+  on(studentsActions.getMoreStudentsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))
 );
 
 export function studentsReducer(state: any | undefined, action: Action) {

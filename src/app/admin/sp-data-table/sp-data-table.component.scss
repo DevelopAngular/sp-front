@@ -78,6 +78,22 @@
     }
   }
 
+  .column-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 40px;
+    width: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 6px 0 0;
+    border-left: 1px solid #7E879D;
+    background-color: #D3D6DE;
+    z-index: 10;
+    cursor: pointer;
+  }
+
   .shadow {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.254999);
   }

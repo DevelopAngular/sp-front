@@ -34,7 +34,7 @@ export class AdminsEffects {
         concatMap(action => {
           return this.userService.nextRequests$._profile_admin.pipe(take(1));
         }),
-        filter(res => !!res),
+        // filter(res => !!res),
         switchMap(next => this.http.get(next)
           .pipe(
             map((users: any) => {

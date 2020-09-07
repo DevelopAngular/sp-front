@@ -35,7 +35,8 @@ const reducer = createReducer(
   }),
   on(adminsActions.getMoreAdminsSuccess, (state, {admins, next}) => {
     return adapter.addMany(admins, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAdmins: admins});
-  })
+  }),
+  on(adminsActions.getMoreAdminsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))
 );
 
 export function adminsReducer(state: any | undefined, action: Action) {

@@ -35,7 +35,8 @@ const reducer = createReducer(
   }),
   on(teachersActions.postTeacherSuccess, (state, {teacher}) => {
     return adapter.addOne(teacher, {...state, loading: false, loaded: true});
-  })
+  }),
+  on(teachersActions.getMoreTeachersFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))
 );
 
 export function teachersReducer(state: any | undefined, action: Action) {

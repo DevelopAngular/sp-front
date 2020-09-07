@@ -135,6 +135,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() emptyText: string;
   @Input() currentPage: string;
   @Input() isRowClick: boolean;
+  @Input() showPrintButtons: boolean = true;
 
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
   @ViewChild(MatSort) sort: MatSort;

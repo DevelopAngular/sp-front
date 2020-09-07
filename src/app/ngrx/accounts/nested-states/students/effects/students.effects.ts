@@ -35,7 +35,7 @@ export class StudentsEffects {
         concatMap((action: any) => {
           return this.userService.nextRequests$._profile_student.pipe(take(1));
         }),
-        filter(res => !!res),
+        // filter(res => !!res),
         switchMap(next => {
           return this.http.get(next)
             .pipe(

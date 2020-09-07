@@ -42,7 +42,8 @@ const reducer = createReducer(
   }),
   on(assistantsActions.postAssistantSuccess, (state, {assistant}) => {
     return adapter.addOne(assistant, {...state, loading: false, loaded: true});
-  })
+  }),
+  on(assistantsActions.getMoreAssistantsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))
 );
 
 export function assistantsReducer(state: any | undefined, action: Action) {
