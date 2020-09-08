@@ -116,65 +116,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
-    this.profilePermissions =
-      this.role === '_profile_admin'
-        ?
-        {
-          'access_admin_dashboard': {
-            controlName: 'access_admin_dashboard',
-            controlLabel: 'Dashboard tab Access',
-          },
-          'access_hall_monitor': {
-            controlName: 'access_hall_monitor',
-            controlLabel: 'Hall Monitor tab Access',
-          },
-          'access_admin_search': {
-            controlName: 'access_admin_search',
-            controlLabel: 'Explore tab Access',
-          },
-          'access_pass_config': {
-            controlName: 'access_pass_config',
-            controlLabel: 'Rooms tab Access',
-          },
-          'access_user_config': {
-            controlName: 'access_user_config',
-            controlLabel: 'Accounts tab Access',
-          },
-        }
-        :
-        this.role === '_profile_teacher'
-          ?
-          {
-            'access_hall_monitor': {
-              controlName: 'access_hall_monitor',
-              controlLabel: 'Access to Hall Monitor'
-            },
-          }
-          :
-          this.role === '_profile_assistant'
-            ?
-            {
-              'access_passes': {
-                controlName: 'access_passes',
-                controlLabel: 'Passes tab Access'
-              },
-              'access_hall_monitor': {
-                controlName: 'access_hall_monitor',
-                controlLabel: 'Hall Monitor tab Access'
-              },
-              'access_teacher_room': {
-                controlName: 'access_teacher_room',
-                controlLabel: 'My Room tab Access'
-              },
-            }
-            :
-            {};
 
     this.accountRoleData$ = this.http.globalReload$
       .pipe(
         switchMap(() => this.route.params),
         tap(params => {
           this.role = params.role;
+          this.buildPermissions();
           this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
           this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
         }),
@@ -219,6 +167,46 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.searchValue = value;
     });
 
+  }
+
+  buildPermissions() {
+    this.profilePermissions = {};
+    if (this.role === '_profile_admin') {
+      this.profilePermissions['access_admin_dashboard'] = {
+        controlName: 'access_admin_dashboard',
+        controlLabel: 'Dashboard tab Access',
+      };
+      this.profilePermissions['access_hall_monitor'] = {
+        controlName: 'access_hall_monitor',
+        controlLabel: 'Hall Monitor tab Access',
+      };
+      this.profilePermissions['access_admin_search'] = {
+        controlName: 'access_admin_search',
+        controlLabel: 'Explore tab Access',
+      };
+      this.profilePermissions['access_pass_config'] = {
+        controlName: 'access_pass_config',
+        controlLabel: 'Rooms tab Access',
+      };
+      this.profilePermissions['access_user_config'] = {
+        controlName: 'access_user_config',
+        controlLabel: 'Accounts tab Access',
+      };
+    }
+    if (this.role === '_profile_teacher' || this.role === '_profile_assistant') {
+      this.profilePermissions['access_passes'] = {
+        controlName: 'access_passes',
+        controlLabel: 'Passes tab Access'
+      };
+      this.profilePermissions['access_hall_monitor'] = {
+        controlName: 'access_hall_monitor',
+        controlLabel: 'Hall Monitor tab Access'
+      };
+      this.profilePermissions['access_teacher_room'] = {
+        controlName: 'access_teacher_room',
+        controlLabel: 'My Room tab Access'
+      };
+    }
   }
 
   emptyRoleObject() {
@@ -353,8 +341,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       data: data
     });
 
-    dialogRef.afterClosed()
-      .subscribe((userListReloadTrigger) => {
+    // dialogRef.afterClosed()
+    //   .subscribe((userListReloadTrigger) => {
         // if (userListReloadTrigger) {
         //   if (data.profile.id === +this.user.id) {
         //     this.userService.getUserRequest()
@@ -369,7 +357,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         //   }
         //   this.selectedUsers = [];
         // }
-    });
+    // });
   }
 
   // private getUserList(query: string = '') {

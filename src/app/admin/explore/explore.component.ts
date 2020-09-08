@@ -95,6 +95,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
+  destroyPassClick = new Subject();
   destroy$ = new Subject();
 
   constructor(
@@ -144,7 +145,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     };
 
     this.currentView$.asObservable()
+      .pipe(takeUntil(this.destroy$))
       .subscribe((view: string) => {
+        this.destroyPassClick.next();
         if (view === 'pass_search') {
           this.passSearchData = {
             selectedStudents: null,
@@ -274,6 +277,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.destroyPassClick.next();
+    this.destroyPassClick.complete();
   }
 
   getGradient(gradient: string) {
@@ -308,7 +313,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   passClick(id) {
     this.hallPassService.passesEntities$
       .pipe(
-        takeUntil(this.destroy$),
+        takeUntil(this.destroyPassClick),
         map(passes => {
           return passes[id];
         })).subscribe(pass => {
