@@ -80,6 +80,10 @@ export class PermissionsDialogComponent implements OnInit {
 
   }
 
+  getIsPermissionOn(permission) {
+    return this.permissionsForm.get(permission).value;
+  }
+
   save() {
     if (this.isDirtyForm) {
       const requests$ = this.selectedUsers.map(user => {

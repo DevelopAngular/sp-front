@@ -40,7 +40,7 @@ const reducer = createReducer(
   on(assistantsActions.getMoreAssistantsSuccess, (state, {assistants, next}) => {
     return adapter.addMany(assistants, {...state, lastAddedAssistants: assistants, nextRequest: next});
   }),
-  on(assistantsActions.postAssistantSuccess, (state, {assistant}) => {
+  on(assistantsActions.postAssistantSuccess, assistantsActions.addUserToAssistantProfileSuccess, (state, {assistant}) => {
     return adapter.addOne(assistant, {...state, loading: false, loaded: true});
   }),
   on(assistantsActions.getMoreAssistantsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))

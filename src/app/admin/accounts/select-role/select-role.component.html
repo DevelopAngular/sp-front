@@ -20,7 +20,7 @@
     </div>
     <div class="role" *ngIf="isAccessAdd" (click)="openAddRole($event)">
       <img width="12" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset" alt="Plus">
-      <div class="title">Choose</div>
+      <div class="title">{{ selectedRoles.length ? 'Add' : 'Choose' }}</div>
     </div>
   </div>
 </div>

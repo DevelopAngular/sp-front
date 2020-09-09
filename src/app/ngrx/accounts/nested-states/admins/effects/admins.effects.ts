@@ -126,6 +126,22 @@ export class AdminsEffects {
       );
   });
 
+  addUserToAdminProfile$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(adminsActions.addUserToAdminProfile),
+        concatMap((action: any) => {
+          return this.userService.addUserToProfile(action.user.id, action.role)
+            .pipe(
+              map(user => {
+                return adminsActions.addUserToAdminProfileSuccess({admin: action.user});
+              }),
+              catchError(error => of(adminsActions.addUserToAdminProfileFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService,

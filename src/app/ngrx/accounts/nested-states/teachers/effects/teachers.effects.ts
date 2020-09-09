@@ -154,6 +154,25 @@ export class TeachersEffects {
       );
   });
 
+  addUserToTeacherProfile$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.addUserToTeacherProfile),
+        concatMap((action: any) => {
+          return this.userService.addUserToProfile(action.user.id, action.role)
+            .pipe(
+              switchMap(user => {
+                return [
+                  teachersActions.updateTeacherAccount({profile: action.user}),
+                  teachersActions.addUserToTeacherProfileSuccess({teacher: action.user})
+                ];
+              }),
+              catchError(error => of(teachersActions.addUserToTeacherProfileFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService,

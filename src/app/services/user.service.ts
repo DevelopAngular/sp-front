@@ -13,6 +13,7 @@ import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
+  addUserToProfile,
   getAccounts, getMoreAccounts,
   postAccounts,
   removeAccount,
@@ -393,8 +394,14 @@ export class UserService {
         });
     }
   }
+
+  addUserToProfileRequest(user, role) {
+    this.store.dispatch(addUserToProfile({user, role}));
+    return of(null);
+  }
+
   addUserToProfile(id, role) {
-      return this.http.put(`v1/users/${id}/profiles/${role}`);
+    return this.http.put(`v1/users/${id}/profiles/${role}`);
   }
 
   createUserRolesRequest(profile, permissions, role) {

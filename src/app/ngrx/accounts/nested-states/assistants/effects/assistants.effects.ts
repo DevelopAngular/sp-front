@@ -230,6 +230,22 @@ export class AssistantsEffects {
       );
   });
 
+  addUserToAssistantProfile$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.addUserToAssistantProfile),
+        concatMap((action: any) => {
+          return this.userService.addUserToProfile(action.user.id, action.role)
+            .pipe(
+              map(user => {
+                return assistantsActions.addUserToAssistantProfileSuccess({assistant: action.user});
+              }),
+              catchError(error => of(assistantsActions.addUserToAssistantProfileFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService,

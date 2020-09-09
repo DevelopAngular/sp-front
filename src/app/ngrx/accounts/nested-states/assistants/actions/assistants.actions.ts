@@ -45,5 +45,9 @@ export const removeRepresentedUserSuccess =
 export const removeRepresentedUserFailure =
   createAction(`[${ASSISTANTS}] Remove Represented AU Failure`, props<{errorMessage: string}>());
 
+export const addUserToAssistantProfile = createAction(`[${ASSISTANTS}] Add User To Assistant Profile`, props<{user: User, role: string}>());
+export const addUserToAssistantProfileSuccess = createAction(`[${ASSISTANTS}] Add User To Assistant Profile Success`, props<{assistant: User}>());
+export const addUserToAssistantProfileFailure = createAction(`[${ASSISTANTS}] Add User To Assistant Profile Failure`, props<{errorMessage: string}>());
+
 
 

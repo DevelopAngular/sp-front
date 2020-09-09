@@ -3,6 +3,7 @@ import {TeachersStates} from '../states';
 import * as teachersActions from '../actions';
 import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 import {User} from '../../../../../models/User';
+import {addUserToTeacherProfileSuccess} from '../actions';
 
 export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
@@ -33,7 +34,7 @@ const reducer = createReducer(
   on(teachersActions.getMoreTeachersSuccess, (state, {moreTeachers, next}) => {
     return adapter.addMany(moreTeachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: moreTeachers});
   }),
-  on(teachersActions.postTeacherSuccess, (state, {teacher}) => {
+  on(teachersActions.postTeacherSuccess, addUserToTeacherProfileSuccess, (state, {teacher}) => {
     return adapter.addOne(teacher, {...state, loading: false, loaded: true});
   }),
   on(teachersActions.getMoreTeachersFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))

@@ -49,15 +49,15 @@
           <div class="subtitle">{{ profile['Email/Username'] }}</div>
         </div>
         <div class="avatar-info">
-          <div class="avatar"
-             #avatarContainer
-             (mouseenter)="avatarContainer.hover = true"
-             (mouseleave)="avatarContainer.hover = false"
-          >
-            <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="avatar">
-            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
-            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">
-          </div>
+<!--          <div class="avatar"-->
+<!--             #avatarContainer-->
+<!--             (mouseenter)="avatarContainer.hover = true"-->
+<!--             (mouseleave)="avatarContainer.hover = false"-->
+<!--          >-->
+<!--            <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="avatar">-->
+<!--            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>-->
+<!--            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">-->
+<!--          </div>-->
           <div class="status"
                (click)="openStatusPopup()"
                [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'"
@@ -118,9 +118,9 @@
           </div>
           <div class="info">
             <div class="title">Type</div>
-            <div class="subtitle">{{ profile['Account Type'] }}</div>
+            <div class="subtitle">{{ profile['Type'] }}</div>
           </div>
-          <div class="info">
+          <div class="info" *ngIf="profile['Type'] === 'Standard'">
             <div class="title">Password</div>
             <div class="subtitle"><span style="text-decoration: underline; cursor: pointer" (click)="nextStep.emit()">Change</span></div>
           </div>
@@ -133,7 +133,7 @@
           <div class="title">Teacher Permissions</div>
           <div class="permission" *ngFor="let permission of profilePermissions.teacher">
             <div class="subtitle" style="display: flex; align-items: center">
-              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
               {{ permission.label }}
             </div>
             <app-toggle-input
@@ -152,7 +152,7 @@
           <div class="title">Admin Permissions</div>
           <div class="permission" *ngFor="let permission of profilePermissions.admin">
             <div class="subtitle" style="display: flex; align-items: center">
-              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
               {{ permission.label }}
             </div>
             <app-toggle-input
@@ -170,7 +170,7 @@
           <div class="title">Assistant Permissions</div>
           <div class="permission" *ngFor="let permission of profilePermissions.assistant">
             <div class="subtitle" style="display: flex; align-items: center">
-              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
               {{ permission.label }}
             </div>
             <app-toggle-input

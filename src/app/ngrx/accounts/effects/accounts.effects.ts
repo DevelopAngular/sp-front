@@ -184,6 +184,24 @@ export class AccountsEffects {
       );
   });
 
+   addUserToProfile$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.addUserToProfile),
+         map((action: any) => {
+            if (action.role === 'admin') {
+              return nestedStates.addUserToAdminProfile({user: action.user, role: action.role});
+            } else if (action.role === 'teacher') {
+              return nestedStates.addUserToTeacherProfile({user: action.user, role: action.role});
+            } else if (action.role === 'student') {
+              return nestedStates.addUserToStudentProfile({user: action.user, role: action.role});
+            } else if (action.role === 'assistant') {
+              return nestedStates.addUserToAssistantProfile({user: action.user, role: action.role});
+            }
+         })
+       );
+   });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

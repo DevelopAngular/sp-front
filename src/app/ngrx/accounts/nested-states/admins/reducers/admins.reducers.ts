@@ -3,6 +3,7 @@ import {AdminsState} from '../states/admins.state';
 import * as adminsActions from '../actions';
 import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 import {User} from '../../../../../models/User';
+import {addUserToAdminProfileSuccess} from '../actions';
 
 export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
@@ -30,7 +31,7 @@ const reducer = createReducer(
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   }),
-  on(adminsActions.postAdminSuccess, (state, {admin}) => {
+  on(adminsActions.postAdminSuccess, addUserToAdminProfileSuccess, (state, {admin}) => {
     return adapter.addOne(admin, {...state, loading: false, loaded: true});
   }),
   on(adminsActions.getMoreAdminsSuccess, (state, {admins, next}) => {

@@ -38,7 +38,7 @@
         <div class="title">Teacher Permissions</div>
         <div class="permission" *ngFor="let permission of profilePermissions.teacher">
           <div class="subtitle" style="display: flex; align-items: center">
-            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
             {{ permission.label }}
           </div>
           <app-toggle-input
@@ -57,7 +57,7 @@
         <div class="title">Admin Permissions</div>
         <div class="permission" *ngFor="let permission of profilePermissions.admin">
           <div class="subtitle" style="display: flex; align-items: center">
-            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
             {{ permission.label }}
           </div>
           <app-toggle-input
@@ -76,7 +76,7 @@
         <div class="title">Assistant Permissions</div>
         <div class="permission" *ngFor="let permission of profilePermissions.assistant">
           <div class="subtitle" style="display: flex; align-items: center">
-            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">
+            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
             {{ permission.label }}
           </div>
           <app-toggle-input

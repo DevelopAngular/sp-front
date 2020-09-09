@@ -112,6 +112,22 @@ export class StudentsEffects {
       );
   });
 
+  addUserToStudentProfile$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(studentsActions.addUserToStudentProfile),
+        concatMap((action: any) => {
+          return this.userService.addUserToProfile(action.user.id, action.role)
+            .pipe(
+              map(user => {
+                return studentsActions.addUserToStudentProfileSuccess({student: action.user});
+              }),
+              catchError(error => of(studentsActions.addUserToStudentProfileFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService,

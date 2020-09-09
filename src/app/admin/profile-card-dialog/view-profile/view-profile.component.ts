@@ -86,6 +86,7 @@ export class ViewProfileComponent implements OnInit {
   ];
   initialRoles: { id: number, role: string, icon: string }[];
   userRoles: { role: string, icon: string }[] = [];
+  initialSelectedRoles: { role: string, icon: string }[];
   profileStatusActive: string;
   profileStatusInitial: string;
 
@@ -143,6 +144,7 @@ export class ViewProfileComponent implements OnInit {
         this.userRoles.push(this.roles[3]);
       }
       this.initialRoles = cloneDeep(this.roles);
+      this.initialSelectedRoles = cloneDeep(this.userRoles);
       this.roles = differenceBy(this.initialRoles, this.userRoles, 'id');
 
       this.signInStatus = {
@@ -227,6 +229,18 @@ export class ViewProfileComponent implements OnInit {
     });
   }
 
+  getUserRole(role: string) {
+    if (role === 'Teacher') {
+      return '_profile_teacher';
+    } else if (role === 'Admin') {
+      return '_profile_admin';
+    } else if (role === 'Student') {
+      return '_profile_student';
+    } else if (role === 'Assistant') {
+      return '_profile_assistant';
+    }
+  }
+
   goToSearch() {
     window.open(`admin/search?profileId=${this.profile.id}&profileName=${this.profile['Name']}&role=${this.data.role}`, '_blank');
   }
@@ -246,11 +260,13 @@ export class ViewProfileComponent implements OnInit {
       this.userService.updateUserRequest(this.user, {status: this.profileStatusActive});
     }
 
-    if ( this.data.bulkPermissions) {
-      return zip(
-        ...this.data.bulkPermissions.map((user) => this.userService.createUserRolesRequest(user, this.permissionsForm.value, this.data.role))
-      );
-    } else if (this.permissionsFormEditState && this.assistantForEditState) {
+    if (!isEqual(this.initialSelectedRoles, this.userRoles)) {
+      zip(...this.userRoles.map(role => {
+        return this.userService.addUserToProfileRequest(this.user, role.role.toLowerCase());
+      })).subscribe();
+    }
+
+   if (this.permissionsFormEditState && this.assistantForEditState) {
       return zip(
         this.userService.createUserRolesRequest(this.profile, this.permissionsForm.value, this.data.role),
         ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile.id, user)),
@@ -269,43 +285,6 @@ export class ViewProfileComponent implements OnInit {
       }
     }
     return of(null);
-  }
-
-  promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-    if (!eventTarget.classList.contains('button')) {
-      (eventTarget as any) = eventTarget.closest('.button');
-    }
-
-    eventTarget.style.opacity = '0.75';
-
-    of(option)
-      .pipe(
-        switchMap((action): Observable<any> => {
-          eventTarget.style.opacity = '1';
-
-          switch (action) {
-            case 'delete_from_profile':
-              return this.userService.deleteUserRequest(this.profile.id, this.data.role).pipe(mapTo('close'));
-            case 'disable_sign_in':
-              this.signInStatus.touched = true;
-              this.signInStatus.value = false;
-              return of(false);
-            case 'enable_sign_in':
-              this.signInStatus.touched = true;
-              this.signInStatus.value = true;
-              return of(true);
-            default:
-              return of( 'close');
-          }
-        }),
-      )
-      .subscribe((res) => {
-        this.profile._originalUserProfile.active = res;
-        if (res === 'close') {
-          this.close.emit(res);
-        }
-      });
-
   }
 
   buildPermissions() {
@@ -351,13 +330,22 @@ export class ViewProfileComponent implements OnInit {
   }
 
   back() {
-    if (this.permissionsFormEditState || this.assistantForEditState || this.profileStatusInitial !== this.profileStatusActive) {
+    if (
+      this.permissionsFormEditState ||
+      this.assistantForEditState ||
+      this.profileStatusInitial !== this.profileStatusActive ||
+      !isEqual(this.initialSelectedRoles, this.userRoles)
+    ) {
       this.updateProfile().subscribe(() => {
         this.close.emit(true);
       });
     } else {
       this.close.emit(false);
     }
+  }
+
+  getIsPermissionOn(permission) {
+    return this.permissionsForm.get(permission).value;
   }
 
   openStatusPopup() {
