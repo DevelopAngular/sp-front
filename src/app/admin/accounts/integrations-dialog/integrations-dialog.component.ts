@@ -16,7 +16,7 @@ export class IntegrationsDialogComponent implements OnInit {
 
   gg4lSyncInfo$: Observable<GG4LSync>;
   schoolSyncInfo$: Observable<SchoolSyncInfo>;
-  gSuiteOrgs: GSuiteOrgs;
+  gSuiteOrgs$: Observable<GSuiteOrgs>;
 
   constructor(
     public dialogRef: MatDialogRef<IntegrationsDialogComponent>,
@@ -25,7 +25,7 @@ export class IntegrationsDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.gSuiteOrgs = this.data['gSuiteOrgs'];
+    this.gSuiteOrgs$ = this.adminService.gSuiteInfoData$;
     this.gg4lSyncInfo$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
   }

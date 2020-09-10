@@ -53,8 +53,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   openTable: boolean;
 
-  gg4lSettingsData: GG4LSync;
-  schoolSyncInfoData: SchoolSyncInfo;
+  gg4lSettingsData$: Observable<GG4LSync>;
+  schoolSyncInfoData$: Observable<SchoolSyncInfo>;
   isOpenModal: boolean;
 
   userList: User[] = [];
@@ -63,7 +63,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   destroy$ = new Subject();
 
-  gSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
+  gSuiteOrgs$: Observable<GSuiteOrgs> = of({});
 
   querySubscriber$ = new Subject();
   showDisabledBanner$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -111,27 +111,16 @@ export class AccountsComponent implements OnInit, OnDestroy {
     ).subscribe(users => {
         this.tableRenderer(users);
     });
-  this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
+    this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
+    this.schoolSyncInfoData$ = this.adminService.schoolSyncInfo$;
 
     this.onboardProcess$ = this.http.globalReload$.pipe(
-      tap(() => {
-        this.querySubscriber$.next(this.getUserList());
-      }),
-      switchMap(() => this.adminService.getCountAccountsRequest()),
-      switchMap((op) => {
-        return this.adminService.getGG4LSyncInfoRequest().pipe(filter(res => !!res));
-      }),
-      switchMap(gg4l => {
-        this.gg4lSettingsData = gg4l;
-        return this.adminService.getSpSyncingRequest().pipe(filter(res => !!res));
-      }),
-      switchMap(sync => {
-        this.schoolSyncInfoData = sync;
-        return this.adminService.getSpSyncingRequest().pipe(filter(res => !!res));
-      }),
-      switchMap(() => this.adminService.getGSuiteOrgsRequest().pipe(filter(res => !!res))),
-      switchMap((orgs) => {
-        this.gSuiteOrgs = orgs;
+      tap(() => this.querySubscriber$.next(this.getUserList())),
+      tap(() => this.adminService.getCountAccountsRequest().pipe(take(1))),
+      tap(() => this.adminService.getGG4LSyncInfoRequest()),
+      tap(() => this.adminService.getSpSyncingRequest()),
+      tap(() => this.adminService.getGSuiteOrgsRequest()),
+      switchMap(() => {
         return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
     );
@@ -267,37 +256,36 @@ export class AccountsComponent implements OnInit, OnDestroy {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
       data: {
-        role: '_all',
-        syncInfo: this.schoolSyncInfoData
+        role: '_all'
       }
     });
   }
 
-  openSyncSettings() {
-    const SS = this.matDialog.open(SyncSettingsComponent, {
-      panelClass: 'accounts-profiles-dialog',
-      backdropClass: 'custom-bd',
-      data: {gg4lInfo: this.gg4lSettingsData}
-    });
-  }
+  // openSyncSettings() {
+  //   const SS = this.matDialog.open(SyncSettingsComponent, {
+  //     panelClass: 'accounts-profiles-dialog',
+  //     backdropClass: 'custom-bd',
+  //     data: {gg4lInfo: this.gg4lSettingsData}
+  //   });
+  // }
 
-  openSyncProvider() {
-    if (!this.isOpenModal) {
-      this.isOpenModal = true;
-      const SP = this.matDialog.open(SyncProviderComponent, {
-        width: '425px',
-        height: '425px',
-        panelClass: 'accounts-profiles-dialog',
-        disableClose: true,
-        backdropClass: 'custom-bd',
-        data: {gg4lInfo: this.gg4lSettingsData}
-      });
-
-      SP.afterClosed().subscribe(res => {
-        this.isOpenModal = false;
-      });
-    }
-  }
+  // openSyncProvider() {
+  //   if (!this.isOpenModal) {
+  //     this.isOpenModal = true;
+  //     const SP = this.matDialog.open(SyncProviderComponent, {
+  //       width: '425px',
+  //       height: '425px',
+  //       panelClass: 'accounts-profiles-dialog',
+  //       disableClose: true,
+  //       backdropClass: 'custom-bd',
+  //       data: {gg4lInfo: this.gg4lSettingsData}
+  //     });
+  //
+  //     SP.afterClosed().subscribe(res => {
+  //       this.isOpenModal = false;
+  //     });
+  //   }
+  // }
 
   findProfileByRole(evt) {
     if (evt.name && evt.role) {
@@ -624,8 +612,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
-      height: '500px',
-      data: {'gSuiteOrgs': this.gSuiteOrgs}
+      height: '500px'
     });
 
     ID.afterClosed()
