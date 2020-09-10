@@ -189,6 +189,7 @@ export class ToWhereComponent implements OnInit {
             this.formState.step = 2;
             this.formState.state = 4;
           } else {
+              this.formState.data.direction.from = null;
               this.formState.state -= 1;
           }
         }

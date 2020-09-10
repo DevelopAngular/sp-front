@@ -23,7 +23,7 @@
         [title]="'G Suite'"
         [style.padding]="'10px'"
         [status]="schoolSyncInfo.is_gsuite_enabled ? 'done' : 'disconnect'"
-        [subtitle]="schoolSyncInfo.is_gsuite_enabled ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : 'Sync accounts from your org units.'"
+        [subtitle]="schoolSyncInfo.is_gsuite_enabled ? 'Last Sync: ' + formatDate((gSuiteOrgs$ | async).last_successful_sync) : 'Sync accounts from your org units.'"
         [learnMoreLink]="'https://www.smartpass.app/gsuite'"
         (setUp)="openSettings($event,'g_suite')"
       >

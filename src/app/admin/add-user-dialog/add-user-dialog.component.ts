@@ -1,14 +1,27 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
-import {BehaviorSubject, fromEvent, of, throwError, zip} from 'rxjs';
+import {BehaviorSubject, fromEvent, of, Subject, throwError, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, mapTo, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  mapTo,
+  skip,
+  switchMap,
+  take,
+  takeLast,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
@@ -20,7 +33,7 @@ import {AdminService} from '../../services/admin.service';
   templateUrl: './add-user-dialog.component.html',
   styleUrls: ['./add-user-dialog.component.scss']
 })
-export class AddUserDialogComponent implements OnInit {
+export class AddUserDialogComponent implements OnInit, OnDestroy {
   @ViewChild('header') header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
@@ -62,6 +75,7 @@ export class AddUserDialogComponent implements OnInit {
   private pendingSubject = new BehaviorSubject(false);
   public pending$ = this.pendingSubject.asObservable();
 
+  private destroy$ = new Subject();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -75,8 +89,11 @@ export class AddUserDialogComponent implements OnInit {
 
   ) {
     this.syncInfo = this.data['syncInfo'];
-    this.accountTypes = this.syncInfo.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G Suite', 'Standard'];
-    this.typeChoosen = this.accountTypes[0];
+    this.adminService.schoolSyncInfo$.pipe(takeUntil(this.destroy$)).subscribe(sync => {
+      this.accountTypes = sync.is_gg4l_enabled ? ['GG4L', 'Standard'] : ['G Suite', 'Standard'];
+      this.typeChoosen = this.accountTypes[0];
+    });
+
     if (this.data.role === '_profile_assistant' || this.data.role === '_all') {
       this.assistantLike = {
         user: null,
@@ -139,6 +156,11 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe(() => {
         this.pendingSubject.next(false);
       });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   uniqueEmailValidator(control: FormControl) {

@@ -89,7 +89,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.pinnableService.loadedPinnables$.pipe(
-      filter(res => res),
+      filter(res => res && !this.isFavoriteForm),
       switchMap(value => {
         return this.pinnableService.pinnables$;
       }),
@@ -155,12 +155,13 @@ export class LocationTableComponent implements OnInit, OnDestroy {
               this.choices = res.filter(loc => !loc.restricted);
           });
         } else {
-          const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url) :
-            this.locationService.getLocationsFromCategory(url, this.category);
+          const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
+            this.locationService.getLocationsFromCategory(url, this.category).pipe(filter((res) => !!res.length));
 
                 request$.subscribe(p => {
                   this.choices = p;
                   this.noChoices = !this.choices.length;
+                  this.pinnablesLoaded = true;
                   this.mainContentVisibility = true;
             });
         }
@@ -168,7 +169,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         this.isFocused = !this.isFavoriteForm && !(!this.forStaff && this.screenService.isDeviceLargeExtra);
     }
     if (this.type === 'location') {
-      this.locationService.favoriteLocations$.subscribe((stars: any[]) => {
+      this.locationService.favoriteLocations$.pipe(filter((res) => !!res.length)).subscribe((stars: any[]) => {
+        this.pinnablesLoaded = true;
         this.starredChoices = this.kioskModeFilter(stars.map(val => Location.fromJSON(val)));
         if (this.isFavoriteForm) {
             this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
@@ -200,7 +202,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
   normalizeLocations(loc) {
-    if (this.currentPage !== 'from') {
+    if (this.currentPage !== 'from' && !this.isFavoriteForm) {
       if (loc.category) {
         if (!this.pinnables[loc.category] || !this.pinnables[loc.category].gradient_color) {
           loc.gradient = '#7f879d, #7f879d';

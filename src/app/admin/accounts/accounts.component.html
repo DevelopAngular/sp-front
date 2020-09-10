@@ -13,7 +13,7 @@
           <div class="header-content">
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
-              <div class="count" *ngIf="!schoolSyncInfoData.is_gg4l_enabled && (onboardProcess['2.landing:first_account']?.done && onboardProcess['2.accounts:create_demo_accounts']?.done)">
+              <div class="count" *ngIf="!(schoolSyncInfoData$ | async)?.is_gg4l_enabled && (onboardProcess['2.landing:first_account']?.done && onboardProcess['2.accounts:create_demo_accounts']?.done)">
                 <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async).total_count}} accounts</div>
               </div>
             </div>
@@ -123,12 +123,12 @@
             </div>
             <div class="groups" style="margin-top: 0">
               <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Integrations</div>
-              <div class="groups-buttons">
+              <div class="groups-buttons" *ngIf="schoolSyncInfoData$ | async as schoolSyncInfoData">
                 <app-integration-card
                   [icon]="'./assets/GG4L (Blue).svg'"
                   [title]="'GG4L'"
-                  [status]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'approved' : 'done') : 'disconnect'"
-                  [subtitle]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate(gg4lSettingsData.last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
+                  [status]="schoolSyncInfoData?.is_gg4l_enabled ? (!schoolSyncInfoData?.login_provider ? 'approved' : 'done') : 'disconnect'"
+                  [subtitle]="schoolSyncInfoData?.is_gg4l_enabled ? (!schoolSyncInfoData?.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate((gg4lSettingsData$ | async).last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
                   [learnMoreLink]="'https://www.smartpass.app/gg4l'"
                   (setUp)="openSettingsDialog('gg4l', $event)"
                 >
@@ -136,8 +136,8 @@
                 <app-integration-card
                   [icon]="'./assets/Google (Color).svg'"
                   [title]="'G Suite'"
-                  [status]="schoolSyncInfoData.is_gsuite_enabled ? 'done' : 'disconnect'"
-                  [subtitle]="schoolSyncInfoData.is_gsuite_enabled ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : 'Sync accounts from your org units.'"
+                  [status]="schoolSyncInfoData?.is_gsuite_enabled ? 'done' : 'disconnect'"
+                  [subtitle]="schoolSyncInfoData?.is_gsuite_enabled ? 'Last Sync: ' + formatDate((gSuiteOrgs$ | async)?.last_successful_sync) : 'Sync accounts from your org units.'"
                   [learnMoreLink]="'https://www.smartpass.app/gsuite'"
                   (setUp)="openSettingsDialog('g_suite', $event)"
                 >
@@ -188,7 +188,7 @@
           [data]="userList"
           [lazyData]="lazyUserList"
           [isCheckbox]="dataTableEditState"
-          (loadMoreAccounts)="loadMore($event)"
+          (loadMoreAccounts)="loadMore()"
           [textColor]="'#7E879D'"
           [marginTopStickyHeader]="'147px'"
           [disallowHover]="!(dataTableEditState | async)"
