@@ -49,6 +49,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   };
   public isGoogleLogin: boolean;
   public isStandardLogin: boolean;
+  public isGG4L: boolean;
 
   public inputFocusNumber: number = 1;
   public forceFocus$ = new Subject();
@@ -154,7 +155,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         return errors;
       })
     ).subscribe(({auth_types}) => {
-      // debugger;
       if (!auth_types.length) {
         this.showError = true;
         this.error$.next('Couldn’t find that username or email');
@@ -169,13 +169,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       if (auth.indexOf('google') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
+        this.isGG4L = false;
         this.isGoogleLogin = true;
       } else if (auth.indexOf('gg4l') !== -1) {
-        if (this.storage.getItem('gg4l_invalidate')) {
-          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
-        } else {
-          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
-        }
+        this.loginData.demoLoginEnabled = false;
+        this.isStandardLogin = false;
+        this.isGoogleLogin = false;
+        this.isGG4L = true;
       } else
         if (auth.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
@@ -226,6 +226,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       return false;
     } else if (this.isGoogleLogin) {
       this.initLogin();
+    } else if (this.isGG4L) {
+      debugger;
+      if (this.storage.getItem('gg4l_invalidate')) {
+        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
+      } else {
+        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+      }
     } else if (this.isStandardLogin) {
       this.inputFocusNumber = 2;
       this.forceFocus$.next();
