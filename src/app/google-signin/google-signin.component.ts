@@ -157,7 +157,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     ).subscribe(({auth_types}) => {
       if (!auth_types.length) {
         this.showError = true;
-        this.error$.next('Couldn’t find that username or email');
+        // this.error$.next('Couldn’t find that username or email');
         this.isGoogleLogin = true;
         return;
       } else {
@@ -227,7 +227,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     } else if (this.isGoogleLogin) {
       this.initLogin();
     } else if (this.isGG4L) {
-      debugger;
       if (this.storage.getItem('gg4l_invalidate')) {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
       } else {
