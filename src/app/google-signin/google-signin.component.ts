@@ -151,7 +151,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         return this.http.get<any>(discovery);
       }),
       retryWhen((errors) => {
-        this.error$.next('Couldn’t find that username or email');
+        this.showError = true;
         return errors;
       })
     ).subscribe(({auth_types}) => {
@@ -197,6 +197,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     return this.httpService.loginGG4L(code).pipe(
       tap((auth: AuthContext) => {
         if (auth.gg4l_token) {
+          window.waitForAppLoaded(true);
           this.loginService.updateAuth({ gg4l_token: auth.gg4l_token, type: 'gg4l-login'});
         }
       })
@@ -220,6 +221,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   checkUserAuthType() {
+    this.storage.removeItem('authType');
     this.httpService.schoolSignInRegisterText$.next(null);
     if (this.showError) {
       this.error$.next('Couldn’t find that username or email');
@@ -227,6 +229,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     } else if (this.isGoogleLogin) {
       this.initLogin();
     } else if (this.isGG4L) {
+      this.storage.setItem('authType', this.loginData.authType);
       if (this.storage.getItem('gg4l_invalidate')) {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
       } else {
