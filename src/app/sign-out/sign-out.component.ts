@@ -20,13 +20,9 @@ export class SignOutComponent implements AfterContentInit {
     private userService: UserService,
     private storage: StorageService
   ) {
-    this.userService.user$
-      .pipe(take(1))
-      .subscribe(user => {
-      if (user.sync_types.includes('gg4l')) {
-        this.storage.setItem(`gg4l_invalidate`, true);
-      }
-    });
+    if (this.storage.getItem('authType') === 'gg4l') {
+      this.storage.setItem('gg4l_invalidate', true);
+    }
     this.http.setSchool(null);
     this.userService.clearUser();
   }
