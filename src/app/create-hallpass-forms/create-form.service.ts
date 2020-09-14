@@ -53,7 +53,7 @@ export class CreateFormService {
           if (filter) {
             return zip(...pinnables.map((pin: any) => {
               if (pin.type === 'category') {
-                return this.locService.getLocationsWithCategory(pin.title)
+                return this.locService.getLocationsWithCategory(pin.category)
                   .pipe(
                     map(locations => {
                       pin.myLocations = locations;
