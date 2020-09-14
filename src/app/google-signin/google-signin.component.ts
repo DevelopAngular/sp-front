@@ -49,6 +49,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   };
   public isGoogleLogin: boolean;
   public isStandardLogin: boolean;
+  public isGG4L: boolean;
 
   public inputFocusNumber: number = 1;
   public forceFocus$ = new Subject();
@@ -150,14 +151,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         return this.http.get<any>(discovery);
       }),
       retryWhen((errors) => {
-        this.error$.next('Couldn’t find that username or email');
+        this.showError = true;
         return errors;
       })
     ).subscribe(({auth_types}) => {
-      // debugger;
       if (!auth_types.length) {
         this.showError = true;
-        this.error$.next('Couldn’t find that username or email');
+        // this.error$.next('Couldn’t find that username or email');
         this.isGoogleLogin = true;
         return;
       } else {
@@ -169,13 +169,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       if (auth.indexOf('google') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
+        this.isGG4L = false;
         this.isGoogleLogin = true;
       } else if (auth.indexOf('gg4l') !== -1) {
-        if (this.storage.getItem('gg4l_invalidate')) {
-          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
-        } else {
-          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
-        }
+        this.loginData.demoLoginEnabled = false;
+        this.isStandardLogin = false;
+        this.isGoogleLogin = false;
+        this.isGG4L = true;
       } else
         if (auth.indexOf('password') !== -1) {
         this.isGoogleLogin = false;
@@ -197,6 +197,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     return this.httpService.loginGG4L(code).pipe(
       tap((auth: AuthContext) => {
         if (auth.gg4l_token) {
+          window.waitForAppLoaded(true);
           this.loginService.updateAuth({ gg4l_token: auth.gg4l_token, type: 'gg4l-login'});
         }
       })
@@ -220,12 +221,20 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   checkUserAuthType() {
+    this.storage.removeItem('authType');
     this.httpService.schoolSignInRegisterText$.next(null);
     if (this.showError) {
       this.error$.next('Couldn’t find that username or email');
       return false;
     } else if (this.isGoogleLogin) {
       this.initLogin();
+    } else if (this.isGG4L) {
+      this.storage.setItem('authType', this.loginData.authType);
+      if (this.storage.getItem('gg4l_invalidate')) {
+        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
+      } else {
+        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
+      }
     } else if (this.isStandardLogin) {
       this.inputFocusNumber = 2;
       this.forceFocus$.next();
