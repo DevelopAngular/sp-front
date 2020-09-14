@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
 import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {concatMap, map} from 'rxjs/operators';
+import {concatMap, map, switchMap} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {PostRoleProps, RoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
@@ -86,16 +86,21 @@ export class AccountsEffects {
     return this.actions$
       .pipe(
         ofType(accountsActions.updateAccounts),
-        map((action) => {
+        switchMap((action) => {
           const account = User.fromJSON(action.account);
-          if (account.isAdmin()) {
-            return nestedStates.updateAdminAccount({profile: action.account});
+          if (account.isAdmin() && account.isTeacher()) {
+            return [
+              nestedStates.updateAdminAccount({profile: action.account}),
+              nestedStates.updateTeacherAccount({profile: action.account})
+            ];
+          } else if (account.isAdmin()) {
+            return [nestedStates.updateAdminAccount({profile: action.account})];
           } else if (account.isTeacher()) {
-            return nestedStates.updateTeacherAccount({profile: action.account});
+            return [nestedStates.updateTeacherAccount({profile: action.account})];
           } else if (account.isStudent()) {
-            return nestedStates.updateStudentAccount({profile: action.account});
+            return [nestedStates.updateStudentAccount({profile: action.account})];
           } else if (account.isAssistant()) {
-            return nestedStates.updateAssistantAccount({profile: action.account});
+            return [nestedStates.updateAssistantAccount({profile: action.account})];
           }
         })
       );

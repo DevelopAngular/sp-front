@@ -18,9 +18,25 @@
 
       </div>
     </div>
-    <div class="role" *ngIf="isAccessAdd" (click)="openAddRole($event)">
-      <img width="12" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset" alt="Plus">
-      <div class="title">{{ selectedRoles.length ? 'Add' : 'Choose' }}</div>
-    </div>
+<!--    <div class="role" *ngIf="isAccessAdd" (click)="">-->
+<!--      <img width="12" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset" alt="Plus">-->
+<!--      <div class="title">{{ selectedRoles.length ? 'Add' : 'Choose' }}</div>-->
+<!--    </div>-->
+    <app-gradient-button
+      *ngIf="isAccessAdd"
+     [style.margin]="'10px 10px 0 0'"
+     [size]="'editable'"
+     [minWidth]="'100px'"
+     [minHeight]="'31px'"
+     [textColor]="'#7F879D'"
+     [gradient]="'#F4F4F4, #F4F4F4'"
+     [hoverColor]="'#F4F4F4'"
+     [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
+     [leftImageWidth]="'16px'"
+     [leftImageHeight]="'16px'"
+     [withShadow]="false"
+     [fontSize]="'14px'"
+     (buttonClick)="openAddRole($event)"
+    >{{ selectedRoles.length ? 'Add' : 'Choose' }}</app-gradient-button>
   </div>
 </div>

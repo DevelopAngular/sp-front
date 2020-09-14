@@ -162,6 +162,7 @@ export class TeachersEffects {
           return this.userService.addUserToProfile(action.user.id, action.role)
             .pipe(
               switchMap(user => {
+                debugger;
                 return [
                   teachersActions.updateTeacherAccount({profile: action.user}),
                   teachersActions.addUserToTeacherProfileSuccess({teacher: action.user})

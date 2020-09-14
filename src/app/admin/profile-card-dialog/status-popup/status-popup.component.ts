@@ -40,12 +40,13 @@ export class StatusPopupComponent implements OnInit {
         status: this.profileStatus === 'active' ? 'disabled' : 'active'
       },
       {
-        label: 'Suspend account' + (this.isBulkEdit ? 's' : ''),
-        textColor: '#6651F1',
-        hoverColor: '#ededfc',
-        icon: './assets/Sleep (Purple).svg',
-        description: 'Suspending an account will not delete any data association, but no-one will see or be able to interact with this account.',
-        status: 'suspended'
+        label: this.profileStatus === 'suspended' ? 'Disable account' : 'Suspend account' + (this.isBulkEdit ? 's' : ''),
+        textColor: this.profileStatus === 'suspended' ? '#7f879d' : '#6651F1',
+        hoverColor: this.profileStatus === 'suspended' ? '#f1f2f4' : '#ededfc',
+        icon: this.profileStatus === 'suspended' ? './assets/Stop (Blue-Gray).svg' : './assets/Sleep (Purple).svg',
+        description: this.profileStatus === 'suspended' ? 'Disabling an account prevents them from signing in. They’ll still show up in SmartPass search, can make passes, etc.' :
+          'Suspending an account will not delete any data association, but no-one will see or be able to interact with this account.',
+        status: this.profileStatus === 'suspended' ? 'disabled' : 'suspended'
       },
       {
         label: 'Delete account' + (this.isBulkEdit ? 's' : ''),

@@ -65,11 +65,11 @@ export class PermissionsDialogComponent implements OnInit {
           {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
         );
       }
-      if (user.isStudent() && !this.profilePermissions.student.length) {
-        this.profilePermissions.student.push(
-          {label: 'Make passes without approval', permission: 'pass_approval'}
-        );
-      }
+      // if (user.isStudent() && !this.profilePermissions.student.length) {
+      //   this.profilePermissions.student.push(
+      //     {label: 'Make passes without approval', permission: 'pass_approval'}
+      //   );
+      // }
     });
     const controls = {};
     this.profilePermissions.teacher.concat([...this.profilePermissions.admin, ...this.profilePermissions.assistant]).forEach(perm => {

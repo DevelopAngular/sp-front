@@ -88,6 +88,10 @@ export class ViewProfileComponent implements OnInit {
   userRoles: { role: string, icon: string }[] = [];
   initialSelectedRoles: { role: string, icon: string }[];
   profileStatusActive: string;
+  statusDescriptions: {[status: string]: string} = {
+    'suspended': 'Suspending an account will not delete any data association, but no-one will see or be able to interact with this account.',
+    'disabled': 'Disabling an account prevents them from signing in. They’ll still show up in SmartPass search, can make passes, etc.'
+  };
   profileStatusInitial: string;
 
   frameMotion$: BehaviorSubject<any>;
@@ -311,11 +315,11 @@ export class ViewProfileComponent implements OnInit {
         {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
       );
     }
-    if (this.user.isStudent()) {
-      this.profilePermissions.student.push(
-        {label: 'Make passes without approval', permission: 'pass_approval'}
-      );
-    }
+    // if (this.user.isStudent()) {
+    //   this.profilePermissions.student.push(
+    //     {label: 'Make passes without approval', permission: 'pass_approval'}
+    //   );
+    // }
     const controls = {};
     this.profilePermissions.teacher.concat([...this.profilePermissions.admin, ...this.profilePermissions.assistant, ...this.profilePermissions.student]).forEach(perm => {
       controls[perm.permission] = new FormControl(this.user.roles.includes(perm.permission));
@@ -359,12 +363,12 @@ export class ViewProfileComponent implements OnInit {
       }
     });
 
-   SPC.afterClosed().pipe(filter(res => !!res)).subscribe(res => {
-     if (res === 'delete') {
+   SPC.afterClosed().pipe(filter(res => !!res)).subscribe((status) => {
+     if (status === 'delete') {
        this.userService.deleteUserRequest(this.profile.id, this.data.role);
        this.close.emit(false);
      }
-     this.profileStatusActive = res;
+     this.profileStatusActive = status;
    });
   }
 

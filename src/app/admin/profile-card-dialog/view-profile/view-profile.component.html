@@ -59,6 +59,8 @@
 <!--            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">-->
 <!--          </div>-->
           <div class="status"
+               [matTooltip]="statusDescriptions[profileStatusActive] || null"
+               matTooltipClass="tooltip"
                (click)="openStatusPopup()"
                [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'"
           >
@@ -84,14 +86,14 @@
             [dummyRoleText]="'teachers'"
             [rollUpAfterSelection]="true"
             [cancelButton]="true"
-            [placeholder]="'Search Teachers'"
+            [placeholder]="'Search teachers'"
             (onUpdate)="assistantForUpdate$.next($event)"
           ></app-sp-search>
         </div>
 
       </div>
-      <mat-divider></mat-divider>
-      <div class="block" *ngIf="user.isStudent()">
+      <mat-divider *ngIf="profilePermissions.student.length"></mat-divider>
+      <div class="block" *ngIf="profilePermissions.student.length">
         <div class="title">Student Permissions</div>
         <div class="permissions">
           <div class="permission" *ngFor="let permission of profilePermissions.student">

@@ -6,8 +6,8 @@
           {{ selectedUsers.length }} Selected account{{selectedUsers.length === 0 || selectedUsers.length > 1 ? 's' : ''}}
         </div>
         <div class="buttons">
-          <app-gradient-button [size]="'medium'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openStatusPopup($event)">Edit Status</app-gradient-button>
-          <app-gradient-button [size]="'medium'" [style.margin]="'0 13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openPermissions($event)">Edit Permissions</app-gradient-button>
+          <app-gradient-button [size]="'medium'" [style.margin-right]="'13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openStatusPopup($event)">Edit Status</app-gradient-button>
+          <app-gradient-button *ngIf="currentTab !== '_profile_student'" [size]="'medium'" [style.margin-right]="'13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openPermissions($event)">Edit Permissions</app-gradient-button>
           <app-gradient-button [size]="'medium'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="clearData()">Done</app-gradient-button>
         </div>
       </div>
