@@ -127,8 +127,8 @@ export class AdminService {
   }
 
   syncNow() {
-    return this.http.currentSchool$.pipe(
-          switchMap(school => this.http.post(`v1/schools/${school.id}/syncing/manual_sync`)));
+    const school = this.http.getSchool();
+    return this.http.post(`v1/schools/${school.id}/syncing/manual_sync`);
   }
 
   getSpSyncingRequest() {
@@ -142,13 +142,13 @@ export class AdminService {
   }
 
   getSpSyncing() {
-    return this.http.currentSchool$.pipe(
-      switchMap(school => this.http.get(`v1/schools/${school.id}/syncing`)));
+    const school = this.http.getSchool();
+    return this.http.get(`v1/schools/${school.id}/syncing`);
   }
 
   updateSpSyncing(body) {
-    return this.http.currentSchool$.pipe(
-          switchMap(school => this.http.patch(`v1/schools/${school.id}/syncing`, body)));
+    const school = this.http.getSchool();
+    return this.http.patch(`v1/schools/${school.id}/syncing`, body);
   }
 
   updateOnboardProgressRequest(data) {
