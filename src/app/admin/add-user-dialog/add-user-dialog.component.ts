@@ -61,6 +61,8 @@ export class AddUserDialogComponent implements OnInit {
   public title: string;
   public icon: string;
   public userRoles: any[] = [];
+  public roleErrors: boolean;
+  public selectedUserErrors: boolean;
   private pendingSubject = new BehaviorSubject(false);
   public pending$ = this.pendingSubject.asObservable();
 
@@ -157,16 +159,16 @@ export class AddUserDialogComponent implements OnInit {
 
   generateUserRoles() {
     if (this.data.role === '_profile_student') {
-      this.userRoles.push({id: 1, role: 'Student', icon: './assets/Student (Blue-Gray).svg', description: 'Students can create passes, schedule passes for the future, and send pass requests to teachers.'});
+      this.userRoles.push({id: 1, role: 'Student', icon: './assets/Student (Navy).svg', description: 'Students can create passes, schedule passes for the future, and send pass requests to teachers.'});
     }
     if (this.data.role === '_profile_teacher') {
-      this.userRoles.push({id: 2, role: 'Teacher', icon: './assets/Teacher (Blue-Gray).svg', description: 'Teachers can manage passes in his/her room, see hallway activity, create passes, and more.'});
+      this.userRoles.push({id: 2, role: 'Teacher', icon: './assets/Teacher (Navy).svg', description: 'Teachers can manage passes in his/her room, see hallway activity, create passes, and more.'});
     }
     if (this.data.role === '_profile_admin') {
-      this.userRoles.push({id: 3, role: 'Admin', icon: './assets/Admin (Blue-Gray).svg', description: 'Admins can explore pass history, reports, manage rooms, set-up accounts, and more.'});
+      this.userRoles.push({id: 3, role: 'Admin', icon: './assets/Admin (Navy).svg', description: 'Admins can explore pass history, reports, manage rooms, set-up accounts, and more.'});
     }
     if (this.data.role === '_profile_assistant') {
-      this.userRoles.push({id: 4, role: 'Assistant', icon: './assets/Assistant (Blue-Gray).svg', description: 'Assistants can act on behalf of other teachers: manage passes, create passes, and more.'});
+      this.userRoles.push({id: 4, role: 'Assistant', icon: './assets/Assistant (Navy).svg', description: 'Assistants can act on behalf of other teachers: manage passes, create passes, and more.'});
     }
 
   }
@@ -252,71 +254,97 @@ export class AddUserDialogComponent implements OnInit {
     }
   }
 
+  formSetErrors() {
+    if (this.newAlternativeAccount.get('name').invalid) {
+      this.newAlternativeAccount.get('name').markAsDirty();
+      this.newAlternativeAccount.get('name').setErrors(this.newAlternativeAccount.get('name').errors);
+    }
+    if (this.newAlternativeAccount.get('addUsername').invalid) {
+      this.newAlternativeAccount.get('addUsername').markAsDirty();
+      this.newAlternativeAccount.get('addUsername').setErrors(this.newAlternativeAccount.get('addUsername').errors);
+    }
+    if (this.newAlternativeAccount.get('addPassword').invalid) {
+      this.newAlternativeAccount.get('addPassword').markAsDirty();
+      this.newAlternativeAccount.get('addPassword').setErrors(this.newAlternativeAccount.get('addPassword').errors);
+    }
+    if (!this.userRoles.length) {
+      this.roleErrors = true;
+    }
+    if (!this.selectedUsers.length) {
+      this.selectedUserErrors = true;
+    }
+  }
+
   addUser() {
-    const role: any = this.data.role.split('_').reverse()[0];
+    if (this.newAlternativeAccount.invalid || !this.userRoles.length) {
+      this.formSetErrors();
+    } else {
+      const role: any = this.data.role.split('_').reverse()[0];
 
-    of(null)
-      .pipe(
-        tap(() => this.pendingSubject.next(true)),
-        map(() => {
-          return this.userRoles.map(acc => {
-            return acc.role.toLowerCase();
-          });
-        }),
-        switchMap((rolesToDb) => {
-          if (this.typeChosen === this.accountTypes[0]) {
-            return zip(
-              ...this.selectedUsers
-                .map((user) => this.userService.addAccountRequest(this.school.id, user, 'gsuite', rolesToDb, this.data.role))
-            );
-          } else if (this.typeChosen === this.accountTypes[1]) {
+      of(null)
+        .pipe(
+          tap(() => this.pendingSubject.next(true)),
+          map(() => {
+            return this.userRoles.map(acc => {
+              return acc.role.toLowerCase();
+            });
+          }),
+          switchMap((rolesToDb) => {
+            if (this.typeChosen === this.accountTypes[0]) {
+              return zip(
+                ...this.selectedUsers
+                  .map((user) => this.userService.addAccountRequest(this.school.id, user, 'gsuite', rolesToDb, this.data.role))
+              );
+            } else if (this.typeChosen === this.accountTypes[1]) {
 
-            const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
-            const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+              const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
+              const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
 
-            if (regexpUsername.test(this.newAlternativeAccount.get('addUsername').value)) {
-              const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
-              if (role !== 'assistant') {
-                return this.userService
-                            .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
+              if (regexpUsername.test(this.newAlternativeAccount.get('addUsername').value)) {
+                const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
+                if (role !== 'assistant') {
+                  return this.userService
+                    .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
+                } else {
+                  return this.userService
+                    .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role, this.assistantLike.behalfOf);
+                }
+              } else if (regexpEmail.test(this.newAlternativeAccount.get('addUsername').value)) {
+                const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
+                if (role !== 'assistant') {
+                  return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
+                } else {
+                  return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role, this.assistantLike.behalfOf);
+                }
               } else {
-                return this.userService
-                  .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role, this.assistantLike.behalfOf);
+                throw new Error('Format Error');
               }
-            } else if (regexpEmail.test(this.newAlternativeAccount.get('addUsername').value)) {
-              const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
-              if (role !== 'assistant') {
-               return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
-              } else {
-                return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role, this.assistantLike.behalfOf);
-              }
-            } else {
-              throw new Error('Format Error');
             }
-          }
-        }),
-        catchError((err) => {
-          if (err instanceof HttpErrorResponse) {
-            this.http.errorToast$.next({
-              header: 'Format Error',
-              message: err.error.errors[0]
-            });
-          } else if (err.message === 'Format Error') {
-            this.http.errorToast$.next({
-              header: 'Format Error',
-              message: 'User name should be at least 6 symbols length.'
-            });
-          }
-          return throwError(err);
-        })
-      )
-      .subscribe((res) => {
-        this.pendingSubject.next(false);
-        this.dialogRef.close(res);
-        // if (this.selectedRoles.length) {
-        //   this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
-        // }
-      });
+          }),
+          catchError((err) => {
+            if (err instanceof HttpErrorResponse) {
+              this.http.errorToast$.next({
+                header: 'Format Error',
+                message: err.error.errors[0]
+              });
+            } else if (err.message === 'Format Error') {
+              this.http.errorToast$.next({
+                header: 'Format Error',
+                message: 'User name should be at least 6 symbols length.'
+              });
+            }
+            return throwError(err);
+          })
+        )
+        .subscribe((res) => {
+          this.pendingSubject.next(false);
+          this.dialogRef.close(res);
+          // if (this.selectedRoles.length) {
+          //   this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
+          // }
+        });
+    }
+
   }
 
   buildUserDataToDB(control) {
@@ -334,6 +362,9 @@ export class AddUserDialogComponent implements OnInit {
         this.assistantLike.user = evt[0];
     } else {
         this.selectedUsers = evt;
+        if (this.selectedUsers.length) {
+          this.selectedUserErrors = false;
+        }
     }
     // console.log(evt);
   }
@@ -345,6 +376,13 @@ export class AddUserDialogComponent implements OnInit {
       this.assistantLike.behalfOf = evtBehalfOf;
     }
     // console.log(this.assistantLike);
+  }
+
+  selectRole(roles) {
+    this.userRoles = roles;
+    if (this.roleErrors && this.userRoles.length) {
+      this.roleErrors = false;
+    }
   }
 
   showInstructions(role) {

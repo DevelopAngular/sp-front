@@ -14,8 +14,8 @@ export class AddAccountPopupComponent implements OnInit {
   syncData: SchoolSyncInfo;
 
   options = [
-    { title: 'Add basic account', icon: `./assets/Admin`, action: 'standard'},
-    { title: 'Bulk add basic accounts', icon: './assets/Bulk Accounts', action: 'bulk' }
+    { title: 'Add standard account', icon: `./assets/Admin`, action: 'standard'},
+    { title: 'Bulk add standard accounts', icon: './assets/Bulk Accounts', action: 'bulk' }
   ];
 
   constructor(
@@ -32,7 +32,7 @@ export class AddAccountPopupComponent implements OnInit {
       this.options.push({ title: 'Add GG4L account', icon: './assets/GG4L Icon.svg', action: 'gg4l' });
     }
     if (this.syncData.is_gsuite_enabled) {
-      this.options.push({title: 'Add G_Suite Account', icon: './assets/Google (Color).svg', action: 'g_suite'});
+      this.options.push({title: 'Add G Suite Account', icon: './assets/Google (Blue-Gray).svg', action: 'g_suite'});
     }
     this.updateSettingsPosition();
   }

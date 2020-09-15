@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <div class="label">Role</div>
+  <div class="label" [style.color]="invalid ? '#E32C66' : (selectedRoles ? '#1F195E' : '#7f879d')">Role</div>
   <div class="content">
     <div class="active-roles" *ngIf="selectedRoles.length">
       <div class="role"

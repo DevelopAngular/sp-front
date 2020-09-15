@@ -5,7 +5,7 @@
            #opt
            (mouseenter)="opt.hover = true; hoverOption = option"
            (mouseleave)="opt.hover = false; hoverOption = null"
-           [style.background-color]="opt.hover ? '#ededfc' : 'transparent'"
+           [style.background-color]="opt.hover ? 'rgba(127, 135, 157, .1)' : 'transparent'"
            (click)="dialogRef.close(option)"
       >
         <img style="margin-left: 30px" width="18" [src]="option.icon | resolveAsset" alt="opt-icon">

@@ -19,11 +19,11 @@
       <span>{{ title }}</span>
     </div>
     <div class="save-button">
-      <app-gradient-button *ngIf="showSaveButton()"
+      <app-gradient-button
         [size]="'small'"
         [gradient]="'#FFFFFF, #FFFFFF'"
         [hoverColor]="'#FCFDFF'"
-        [textColor]="'#04CD33'"
+        [textColor]="'#00B476'"
         [cursor]="'pointer'"
         (buttonClick)="addUser()"
       >
@@ -31,7 +31,7 @@
           <span>Add</span>
         </div>
       </app-gradient-button>
-      <div class="incomplete" *ngIf="showIncomplete()">Incomplete</div>
+      <div class="incomplete" *ngIf="false">Incomplete</div>
     </div>
   </div>
   <div class="content">
@@ -40,14 +40,13 @@
         <div class="roles" style="margin-bottom: 25px">
           <app-select-role
             [selectedRoles]="userRoles"
-            [isAccessAdd]="isAccessAdd"
             (onSelect)="userRoles = $event"
           ></app-select-role>
         </div>
 
         <div class="ds-w-100 ds-flex-start" style="position: relative;">
           <div class="profile-search">
-            <div class="label">G Suite Accounts</div>
+            <div class="label" [style.color]="selectedUserErrors ? '#E32C66' : (selectedUsers.length ? '#1F195E' : '#7f879d')">G Suite Accounts</div>
             <app-sp-search
               [selectedOptions]="selectedUsers"
               [placeholder]="'Search syncing accounts'"
@@ -115,8 +114,8 @@
         <div class="roles" style="margin-bottom: 25px">
           <app-select-role
             [selectedRoles]="userRoles"
-            [isAccessAdd]="isAccessAdd"
-            (onSelect)="userRoles = $event"
+            [invalid]="roleErrors"
+            (onSelect)="selectRole($event)"
           ></app-select-role>
         </div>
 

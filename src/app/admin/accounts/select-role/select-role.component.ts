@@ -12,6 +12,7 @@ export class SelectRoleComponent implements OnInit {
 
   @Input() selectedRoles: {id: number, role: string, icon: string, description: string}[] = [];
   @Input() isAccessAdd: boolean = true;
+  @Input() invalid: boolean;
 
   @Output() onSelect: EventEmitter<{id: number, role: string, icon: string, description: string}[]> = new EventEmitter<{id: number, role: string, icon: string, description: string}[]>();
 
@@ -36,7 +37,7 @@ export class SelectRoleComponent implements OnInit {
     });
 
     ADDR.afterClosed().pipe(filter(res => !!res)).subscribe(option => {
-      if (option.role === 'Student') {
+      if (option.role === 'Student' || this.selectedRoles.find(role => role.role === 'Student')) {
         this.selectedRoles = [option];
       } else {
         this.selectedRoles.push(option);

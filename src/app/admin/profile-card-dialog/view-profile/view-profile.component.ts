@@ -79,10 +79,10 @@ export class ViewProfileComponent implements OnInit {
   };
   user: User;
   roles: { id: number, role: string, icon: string }[] = [
-    {id: 1, role: 'Student', icon: './assets/Student (Blue-Gray).svg'},
-    {id: 2, role: 'Teacher', icon: './assets/Teacher (Blue-Gray).svg'},
-    {id: 3, role: 'Admin', icon: './assets/Admin (Blue-Gray).svg'},
-    {id: 4, role: 'Assistant', icon: './assets/Assistant (Blue-Gray).svg'}
+    {id: 1, role: 'Student', icon: './assets/Student (Navy).svg'},
+    {id: 2, role: 'Teacher', icon: './assets/Teacher (Navy).svg'},
+    {id: 3, role: 'Admin', icon: './assets/Admin (Navy).svg'},
+    {id: 4, role: 'Assistant', icon: './assets/Assistant (Navy).svg'}
   ];
   initialRoles: { id: number, role: string, icon: string }[];
   userRoles: { role: string, icon: string }[] = [];
