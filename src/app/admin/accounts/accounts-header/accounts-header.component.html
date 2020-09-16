@@ -43,6 +43,9 @@
             [width]="'240px'"
             [type]="'text'"
             [pending$]="pending$"
+            [closeIcon]="true"
+            [focused]="true"
+            [forceFocused$]="forceFocus$"
             [placeholder]="'Search ' + getCountAccounts(accounts$ | async)"
             (ontextupdate)="search($event)"
             [isSearch]="true">

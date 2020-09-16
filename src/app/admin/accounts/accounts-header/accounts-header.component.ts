@@ -56,6 +56,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   openTable: boolean;
   pts: string;
   currentTab: string;
+  forceFocus$: Subject<boolean> = new Subject<boolean>();
 
   selectedUsers: User[] = [];
 
@@ -187,6 +188,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   updateTab(route) {
     // if (route) {
       this.router.navigate(['/admin/accounts/', route]);
+      this.forceFocus$.next(true);
     // } else {
     //   this.router.navigate(['/admin/accounts']);
     // }
@@ -195,7 +197,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   selectTab(event: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = event.getBoundingClientRect();
-    const tabPointerHalfWidth = this.tabPointer.nativeElement.getBoundingClientRect().width / 2;
+    const tabPointerHalfWidth = this.tabPointer.nativeElement.getBoundingClientRect().width / 4;
     this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) + 'px';
   }
 

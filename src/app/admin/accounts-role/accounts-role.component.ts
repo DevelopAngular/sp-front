@@ -274,7 +274,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
-          'Rooms': account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned',
+          'rooms': account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned',
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
