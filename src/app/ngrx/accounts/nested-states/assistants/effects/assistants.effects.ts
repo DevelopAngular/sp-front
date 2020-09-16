@@ -237,8 +237,11 @@ export class AssistantsEffects {
         concatMap((action: any) => {
           return this.userService.addUserToProfile(action.user.id, action.role)
             .pipe(
-              map(user => {
-                return assistantsActions.addUserToAssistantProfileSuccess({assistant: action.user});
+              switchMap((user: User) => {
+                return [
+                  assistantsActions.updateAssistantAccount({profile: user}),
+                  assistantsActions.addUserToAssistantProfileSuccess({assistant: user})
+                ];
               }),
               catchError(error => of(assistantsActions.addUserToAssistantProfileFailure({errorMessage: error.message})))
             );

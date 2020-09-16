@@ -161,11 +161,10 @@ export class TeachersEffects {
         concatMap((action: any) => {
           return this.userService.addUserToProfile(action.user.id, action.role)
             .pipe(
-              switchMap(user => {
-                debugger;
+              switchMap((user: User) => {
                 return [
-                  teachersActions.updateTeacherAccount({profile: action.user}),
-                  teachersActions.addUserToTeacherProfileSuccess({teacher: action.user})
+                  teachersActions.updateTeacherAccount({profile: user}),
+                  teachersActions.addUserToTeacherProfileSuccess({teacher: user})
                 ];
               }),
               catchError(error => of(teachersActions.addUserToTeacherProfileFailure({errorMessage: error.message})))

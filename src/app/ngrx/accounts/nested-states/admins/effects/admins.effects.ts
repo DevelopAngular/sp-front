@@ -133,8 +133,11 @@ export class AdminsEffects {
         concatMap((action: any) => {
           return this.userService.addUserToProfile(action.user.id, action.role)
             .pipe(
-              map(user => {
-                return adminsActions.addUserToAdminProfileSuccess({admin: action.user});
+              switchMap((user: User) => {
+                return [
+                  adminsActions.updateAdminAccount({profile: user}),
+                  adminsActions.addUserToAdminProfileSuccess({admin: user})
+                ];
               }),
               catchError(error => of(adminsActions.addUserToAdminProfileFailure({errorMessage: error.message})))
             );
