@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter, HostListener,
+  EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -10,7 +11,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {BehaviorSubject, fromEvent, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import {MatDialog, MatSort, Sort} from '@angular/material';
 import * as moment from 'moment';
