@@ -71,7 +71,8 @@
             [input_value]="newAlternativeAccount.get('name').value"
             [width]="'222px'"
             [height]="'40px'"
-
+            [isFocus]="inputFocusNumber === 1"
+            [forceFocus$]="forceFocus$"
           ></app-input>
         </div>
         <div class="ds-flex-start-start ds-w-100 ds-mt-10" style="height: 170px">
@@ -87,7 +88,8 @@
                 [input_value]="newAlternativeAccount.get('addUsername').value"
                 [width]="'222px'"
                 [height]="'40px'"
-
+                [isFocus]="inputFocusNumber === 2"
+                [forceFocus$]="forceFocus$"
               ></app-input>
             </div>
             <div style="padding-bottom: 20px;">
@@ -105,6 +107,8 @@
                 [input_value]="newAlternativeAccount.get('addPassword').value"
                 [width]="'222px'"
                 [height]="'40px'"
+                [isFocus]="inputFocusNumber === 3"
+                [forceFocus$]="forceFocus$"
               ></app-input>
             </div>
 
@@ -115,6 +119,7 @@
           <app-select-role
             [selectedRoles]="userRoles"
             [invalid]="roleErrors"
+            [isAccessAdd]="isAccessAdd"
             (onSelect)="selectRole($event)"
           ></app-select-role>
         </div>

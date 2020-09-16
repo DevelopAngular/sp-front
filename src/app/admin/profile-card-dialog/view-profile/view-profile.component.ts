@@ -110,7 +110,10 @@ export class ViewProfileComponent implements OnInit {
   ) {}
 
   get isAccessAdd() {
-    return !this.userRoles.find(role => role.role === 'Student');
+    if (this.userRoles.find(role => role.role === 'Admin') && this.userRoles.find(role => role.role === 'Teacher')) {
+      return false;
+    }
+    return true;
   }
 
   ngOnInit() {

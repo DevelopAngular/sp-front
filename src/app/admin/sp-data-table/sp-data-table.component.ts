@@ -228,7 +228,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       });
 
     this.toastService.toastButtonClick$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(() => !!this.selection.selected.length)
+      )
       .subscribe(() => {
         this.generateCSV();
       });

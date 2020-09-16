@@ -1,26 +1,40 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
-import {BehaviorSubject, fromEvent, of, throwError, zip} from 'rxjs';
+import {BehaviorSubject, fromEvent, of, Subject, throwError, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, mapTo, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  mapTo, pluck,
+  skip,
+  switchMap,
+  take,
+  takeLast,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { filter as _filter } from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 import {AdminService} from '../../services/admin.service';
+import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-add-user-dialog',
   templateUrl: './add-user-dialog.component.html',
   styleUrls: ['./add-user-dialog.component.scss']
 })
-export class AddUserDialogComponent implements OnInit {
+export class AddUserDialogComponent implements OnInit, OnDestroy {
   @ViewChild('header') header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
@@ -65,6 +79,10 @@ export class AddUserDialogComponent implements OnInit {
   public selectedUserErrors: boolean;
   private pendingSubject = new BehaviorSubject(false);
   public pending$ = this.pendingSubject.asObservable();
+  public inputFocusNumber: number = 1;
+  public forceFocus$ = new Subject();
+
+  private destroy$ = new Subject();
 
 
   constructor(
@@ -75,7 +93,8 @@ export class AddUserDialogComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private http: HttpService,
     private adminService: AdminService,
-    private router: Router
+    private router: Router,
+    private shortcuts: KeyboardShortcutsService
 
   ) {
     this.syncInfo = this.data['syncInfo'];
@@ -115,7 +134,10 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   get isAccessAdd() {
-    return !this.userRoles.find(role => role.role === 'Student');
+    if (this.userRoles.find(role => role.role === 'Admin') && this.userRoles.find(role => role.role === 'Teacher')) {
+      return false;
+    }
+    return true;
   }
 
   ngOnInit() {
@@ -154,6 +176,27 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe(() => {
         this.pendingSubject.next(false);
       });
+
+    this.shortcuts.onPressKeyEvent$
+      .pipe(
+        takeUntil(this.destroy$),
+        pluck('key')
+      )
+      .subscribe(key => {
+        if (key[0] === 'tab') {
+          if (this.inputFocusNumber < 3) {
+            this.inputFocusNumber += 1;
+          } else if (this.inputFocusNumber === 3) {
+            this.inputFocusNumber = 1;
+          }
+          this.forceFocus$.next();
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
