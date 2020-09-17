@@ -1,10 +1,9 @@
-import { Injectable, NgZone } from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 
-import { of ,  Observable } from 'rxjs';
-import { mergeMap, take } from 'rxjs/operators';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Subject } from 'rxjs/Subject';
-import { GoogleApiService } from './google-api.service';
+import {mergeMap, take} from 'rxjs/operators';
+import {ReplaySubject} from 'rxjs/ReplaySubject';
+import {Subject} from 'rxjs/Subject';
+import {GoogleApiService} from './google-api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,10 @@ export class GoogleAuthService {
 
   auth$: Subject<any> = null;
 
-  constructor(private googleApi: GoogleApiService, private _zone: NgZone) {
+  constructor(
+    private googleApi: GoogleApiService,
+    private _zone: NgZone,
+  ) {
     this.googleApi.onLoad().subscribe(() => {
       console.log('Google api loaded');
       this.loadGapiAuth().subscribe();
@@ -44,7 +46,9 @@ export class GoogleAuthService {
           // console.log('Google auth api loaded', auth);
           this.auth$.next(auth);
         });
-      }).catch(e => console.error(e));
+      }).catch(e => {
+        console.error(e);
+      });
     });
 
     return this.auth$.pipe(take(1));

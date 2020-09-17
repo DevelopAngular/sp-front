@@ -1,13 +1,10 @@
-import { Injectable, NgZone } from '@angular/core';
-import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
-import {delay, filter, map, take, tap} from 'rxjs/operators';
-import { GoogleAuthService } from './google-auth.service';
-import { StorageService } from './storage.service';
+import {Injectable, NgZone} from '@angular/core';
+import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
+import {filter, map, take} from 'rxjs/operators';
+import {GoogleAuthService} from './google-auth.service';
+import {StorageService} from './storage.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
-import GoogleApi = gapi.auth2;
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../../environments/environment';
 
 declare const window;
 
@@ -194,6 +191,7 @@ export class GoogleLoginService {
     const auth: any = this.GoogleOauth;
 
     if (!auth) {
+      this.storage.showError$.next(true);
       console.error('Auth not loaded!');
       return;
     }

@@ -1,8 +1,8 @@
 <div class="error-toast-container" [ngStyle]="{'opacity': toggleToast ? '1' : '0'}" (click)="close($event)">
   <div class="error-text" [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}">
     <div class="error-text_header">{{errorHeader}}</div>
-    <div class="error-text_message">
-      {{errorMessage}}
+    <div class="error-text_message" [innerHTML]="errorMessage">
+<!--      {{errorMessage}}-->
     </div>
     <div class="error-close-btn" (click)="close($event)">
       <img [src]="'./assets/Cancel (Blue-Gray).svg' | resolveAsset" alt="Cancel (Blue-Gray).svg">
