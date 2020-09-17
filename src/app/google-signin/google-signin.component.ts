@@ -1,21 +1,9 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import { GoogleLoginService } from '../services/google-login.service';
+import {GoogleLoginService} from '../services/google-login.service';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  finalize,
-  flatMap,
-  pluck,
-  retryWhen,
-  switchMap,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
+import {debounceTime, filter, finalize, pluck, retryWhen, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {AuthContext, HttpService} from '../services/http-service';
-import {Meta, Title} from '@angular/platform-browser';
+import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
@@ -74,7 +62,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private dialog: MatDialog,
     private shortcuts: KeyboardShortcutsService,
-    private storage: StorageService
+    private storage: StorageService,
+    private domSanitizer: DomSanitizer
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
     this.loginService.isAuthLoaded()
@@ -184,6 +173,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.loginData.demoLoginEnabled = false;
       }
       this.disabledButton = false;
+    });
+
+    this.storage.showError$.subscribe(res => {
+      this.httpService.errorToast$.next({
+        header: 'Cookies are blocked',
+        message: this.domSanitizer.bypassSecurityTrustHtml('<div>Please un-block your cookies so you can sign into SmartPass. <a style="color: #E32C66" href="https://www.smartpass.app/cookies-error" target="_blank">Need help?</a></div>')
+      });
     });
   }
 

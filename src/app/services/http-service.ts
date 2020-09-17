@@ -1,17 +1,18 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { LocalStorage } from '@ngx-pwa/local-storage';
-import { BehaviorSubject, interval, Observable, of, ReplaySubject, throwError } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Store} from '@ngrx/store';
+import {LocalStorage} from '@ngx-pwa/local-storage';
+import {BehaviorSubject, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
 import {catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
-import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
-import { environment } from '../../environments/environment';
-import { School } from '../models/School';
-import { AppState } from '../ngrx/app-state/app-state';
-import { getSchools } from '../ngrx/schools/actions';
-import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
-import { GoogleLoginService, isDemoLogin, isGg4lLogin } from './google-login.service';
-import { StorageService } from './storage.service';
+import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
+import {environment} from '../../environments/environment';
+import {School} from '../models/School';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getSchools} from '../ngrx/schools/actions';
+import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
+import {GoogleLoginService, isDemoLogin, isGg4lLogin} from './google-login.service';
+import {StorageService} from './storage.service';
+import {SafeHtml} from '@angular/platform-browser';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -127,7 +128,7 @@ export interface AuthContext {
 
 export interface SPError {
   header: string;
-  message: string;
+  message: string | SafeHtml;
 }
 
 class LoginServerError extends Error {
