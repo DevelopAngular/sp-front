@@ -1,49 +1,62 @@
-import { ErrorHandler, Injectable } from '@angular/core';
-import {interval, race, Observable, ReplaySubject, of, Subject} from 'rxjs';
-import { SentryErrorHandler } from '../error-handler';
-import { HttpService } from './http-service';
-import { constructUrl } from '../live-data/helpers';
-import { Logger } from './logger.service';
-import { User } from '../models/User';
-import { PollingService } from './polling-service';
+import {ErrorHandler, Injectable} from '@angular/core';
+import {interval, Observable, of, race, ReplaySubject} from 'rxjs';
+import {SentryErrorHandler} from '../error-handler';
+import {HttpService} from './http-service';
+import {constructUrl} from '../live-data/helpers';
+import {Logger} from './logger.service';
+import {User} from '../models/User';
+import {PollingService} from './polling-service';
 import {filter, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
-import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
-  getAccounts, getMoreAccounts,
+  getAccounts,
+  getMoreAccounts,
   postAccounts,
   removeAccount,
   updateAccountActivity,
   updateAccountPermissions
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
-  getAllAccountsCollection, getCountAllAccounts, getLastAddedAllAccounts,
-  getLoadedAllAccounts, getLoadingAllAccounts, getNextRequestAllAccounts
+  getAllAccountsCollection,
+  getCountAllAccounts,
+  getLastAddedAllAccounts,
+  getLoadedAllAccounts,
+  getLoadingAllAccounts,
+  getNextRequestAllAccounts
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
-  getAdminsCollections, getCountAdmins, getLastAddedAdminsAccounts,
+  getAdminsCollections,
+  getCountAdmins,
+  getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
-  getLoadingAdminsAccounts, getNextRequestAdminsAccounts
+  getLoadingAdminsAccounts,
+  getNextRequestAdminsAccounts
 } from '../ngrx/accounts/nested-states/admins/states/admins.getters.state';
 import {
-  getCountTeachers, getLastAddedTeachers,
+  getCountTeachers,
+  getLastAddedTeachers,
   getLoadedTeachers,
-  getLoadingTeachers, getNextRequestTeachers,
+  getLoadingTeachers,
+  getNextRequestTeachers,
   getTeacherAccountsCollection
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
   getAssistantsAccountsCollection,
-  getCountAssistants, getLastAddedAssistants,
+  getCountAssistants,
+  getLastAddedAssistants,
   getLoadedAssistants,
-  getLoadingAssistants, getNextRequestAssistants
+  getLoadingAssistants,
+  getNextRequestAssistants
 } from '../ngrx/accounts/nested-states/assistants/states';
 import {
-  getCountStudents, getLastAddedStudents,
+  getCountStudents,
+  getLastAddedStudents,
   getLoadedStudents,
-  getLoadingStudents, getNextRequestStudents,
+  getLoadingStudents,
+  getNextRequestStudents,
   getStudentsAccountsCollection
 } from '../ngrx/accounts/nested-states/students/states';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
@@ -302,21 +315,16 @@ export class UserService {
         case 'alternative':
           return this.http.get(constructUrl(`v1/users`, {search: search}), );
         case 'gsuite':
-          return this.http.currentSchool$.pipe(
-            take(1),
-            switchMap((currentSchool: School) => {
-              if (excludeProfile) {
-                  return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
-                      search: search,
-                      profile: excludeProfile
-                  }));
-              } else {
-                  return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
-                      search: search
-                  }));
-              }
-            })
-          );
+          if (excludeProfile) {
+            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
+              search: search,
+              profile: excludeProfile
+            }));
+          } else {
+            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
+              search: search
+            }));
+          }
       }
   }
 
