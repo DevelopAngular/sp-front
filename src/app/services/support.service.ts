@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 
 declare const window;
@@ -16,7 +16,8 @@ export class SupportService {
     event.stopPropagation();
     const chat = document.querySelector('#hubspot-messages-iframe-container');
     (chat as HTMLElement).setAttribute('style', 'opacity: 1 !important');
-    window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+    // window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+    window.HubSpotConversations.widget.open();
   }
 
   closeChat(event) {
