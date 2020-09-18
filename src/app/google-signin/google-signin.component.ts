@@ -236,6 +236,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.forceFocus$.next();
       this.loginData.demoLoginEnabled = true;
     }
+    this.isGoogleLogin = false;
+    this.isGG4L = false;
+    this.isStandardLogin = false;
   }
 
   demoLogin() {
