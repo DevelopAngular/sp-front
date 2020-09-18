@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, OnInit, Optional} from '@angular/core';
-import { DarkThemeSwitch } from '../dark-theme-switch';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {UserService} from '../services/user.service';
 import {map} from 'rxjs/operators';
@@ -64,7 +64,8 @@ export class SupportOptionsComponent implements OnInit {
     this.dialogRef.close(true);
     const chat = document.querySelector('#hubspot-messages-iframe-container');
     (chat as HTMLElement).setAttribute('style', 'opacity: 1 !important');
-    window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+    // window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+    window.HubSpotConversations.widget.open();
   }
 
 }

@@ -4,7 +4,7 @@ import {UserService} from '../services/user.service';
 import {Observable, of} from 'rxjs';
 import {User} from '../models/User';
 import {MatDialogRef} from '@angular/material';
-import {filter, skip, switchMap, take} from 'rxjs/operators';
+import {switchMap, take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-teacher-pin',
