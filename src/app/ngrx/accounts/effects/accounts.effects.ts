@@ -3,11 +3,12 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
 import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {concatMap, map, switchMap} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
-import {PostRoleProps, RoleProps} from '../states';
+import {PostRoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
 import {User} from '../../../models/User';
+import {of} from 'rxjs';
 
 @Injectable()
 export class AccountsEffects {
@@ -203,6 +204,57 @@ export class AccountsEffects {
             } else if (action.role === 'assistant') {
               return nestedStates.addUserToAssistantProfile({user: action.user, role: action.role});
             }
+         })
+       );
+   });
+
+   bulkAddAccounts$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.bulkAddAccounts),
+         concatMap((action: any) => {
+           return this.userService.addBulkAccounts(action.accounts)
+             .pipe(
+               map((users: User[]) => {
+                 return accountsActions.bulkAddAccountsSuccess({accounts: users});
+               }),
+              catchError(error => of(accountsActions.bulkAddAccountsFailure({errorMessage: error.message})))
+             );
+         })
+       );
+   });
+
+   bulkAddAccountsSuccess$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.bulkAddAccountsSuccess),
+         switchMap((action: any) => {
+           const accounts: {admins: User[], teachers: User[], students: User[], assistants: User[]} = {
+             admins: [],
+             teachers: [],
+             students: [],
+             assistants: []
+           };
+           action.accounts.forEach(account => {
+             if (User.fromJSON(account).isAdmin()) {
+               accounts.admins.push(account);
+             }
+             if (User.fromJSON(account).isTeacher()) {
+               accounts.teachers.push(account);
+             }
+             if (User.fromJSON(account).isStudent()) {
+               accounts.students.push(account);
+             }
+             if (User.fromJSON(account).isAssistant()) {
+               accounts.assistants.push(account);
+             }
+           });
+           return [
+             nestedStates.bulkAddAdminAccounts({admins: accounts.admins}),
+             nestedStates.bulkAddTeacherAccounts({teachers: accounts.teachers}),
+             nestedStates.bulkAddStudentAccounts({students: accounts.students}),
+             nestedStates.bulkAddAssistantAccounts({assistants: accounts.assistants})
+           ];
          })
        );
    });

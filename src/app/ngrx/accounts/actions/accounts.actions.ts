@@ -1,6 +1,6 @@
-import { createAction, props } from '@ngrx/store';
-import { PostRoleProps, RoleProps } from '../states';
-import { User } from '../../../models/User';
+import {createAction, props} from '@ngrx/store';
+import {PostRoleProps, RoleProps} from '../states';
+import {User} from '../../../models/User';
 
 export const getAccounts = createAction(`[Accounts] Get Accounts`, props<RoleProps>());
 
@@ -22,4 +22,8 @@ export const updateAccountActivity = createAction(`[Accounts] Update Account Act
 
 export const updateAccountPermissions =
   createAction(`[Accounts] Update Permissions`, props<{profile: User, permissions: any, role: string}>());
+
+export const bulkAddAccounts = createAction('[Accounts] Bulk Add Accounts', props<{accounts: any[]}>());
+export const bulkAddAccountsSuccess = createAction('[Accounts] Bulk Add Accounts Success', props<{accounts: User[]}>());
+export const bulkAddAccountsFailure = createAction('[Accounts] Bulk Add Accounts Failure', props<{errorMessage: string}>());
 

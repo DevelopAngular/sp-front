@@ -14,6 +14,7 @@ import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
   addUserToProfile,
+  bulkAddAccounts,
   getAccounts,
   getMoreAccounts,
   postAccounts,
@@ -77,6 +78,7 @@ import {
 import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
+import {HttpHeaders} from '@angular/common/http';
 
 @Injectable()
 export class UserService {
@@ -534,5 +536,19 @@ export class UserService {
 
   checkUserEmail(email) {
     return this.http.post('v1/check-email', {email});
+  }
+
+  addBulkAccountsRequest(accounts) {
+    this.store.dispatch(bulkAddAccounts({accounts}));
+    return of(null);
+  }
+
+  addBulkAccounts(accounts) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+      })
+    };
+    return this.http.post('v1/users/bulk-add?should_commit=true', accounts, httpOptions, false);
   }
 }

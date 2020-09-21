@@ -8,7 +8,7 @@ import {differenceBy} from 'lodash';
 import * as XLSX from 'xlsx';
 
 import {UserService} from '../../../services/user.service';
-import {HttpService} from '../../../services/http-service';
+import {AdminService} from '../../../services/admin.service';
 
 export interface ImportAccount {
   id: string;
@@ -43,9 +43,10 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
           existsEmail: isValidEmail[index].exists,
           invalidEmail: !user.primary_email,
           invalidType: !user.type ||
-            (user.type.toLowerCase() !== '_profile_admin' &&
-            user.type.toLowerCase() !== '_profile_teacher' &&
-            user.type.toLowerCase() !== '_profile_student')
+            (user.type.toLowerCase() !== 'admin' &&
+            user.type.toLowerCase() !== 'teacher' &&
+            user.type.toLowerCase() !== 'student' &&
+            user.type.toLowerCase() !== 'assistant')
         };
       });
     })
@@ -109,7 +110,7 @@ export class BulkAddComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     public dialogRef: MatDialogRef<BulkAddComponent>,
-    private http: HttpService
+    private adminService: AdminService
   ) {}
 
   ngOnInit() {
@@ -178,7 +179,7 @@ export class BulkAddComponent implements OnInit, OnDestroy {
     return rows.map((row, index) => {
       return {
         id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
-        type: row[0] ? ('_profile_' + row[0]).toLowerCase().trim() : null,
+        type: row[0] ? ('' + row[0]).toLowerCase().trim() : null,
         first_name: row[1] ? ('' + row[1]).trim() : null,
         last_name: row[2] ? ('' + row[2]).trim() : null,
         primary_email: row[3] ? ('' + row[3]).trim() : null,
@@ -232,14 +233,17 @@ export class BulkAddComponent implements OnInit, OnDestroy {
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.primary_email,
-        username: `${user.first_name} ${user.last_name}`,
+        // username: `${user.first_name} ${user.last_name}`,
         profiles: [user.type]
       };
       return userData;
       // const userType = emailExp.test(user.primary_email) ? 'email' : 'username';
       // return this.userService.addAccountRequest(this.http.getSchool().id, userData, userType, [user.type.toLowerCase()], `_profile_${user.type.toLowerCase()}`);
     });
-    debugger;
+    this.userService.addBulkAccountsRequest(accounts)
+      .subscribe(res => {
+        this.adminService.updateOnboardProgressRequest('2.landing:first_account');
+    });
     // zip(...requests$).subscribe(res => {
     //   console.log(res);
     // });

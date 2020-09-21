@@ -33,4 +33,6 @@ export const addUserToTeacherProfile = createAction(`[${TEACHER}] Add User To Te
 export const addUserToTeacherProfileSuccess = createAction(`[${TEACHER}] Add User To Teacher Profile Success`, props<{teacher: User}>());
 export const addUserToTeacherProfileFailure = createAction(`[${TEACHER}] Add User To Teacher Profile`, props<{errorMessage: string}>());
 
+export const bulkAddTeacherAccounts = createAction(`[${TEACHER}] Bulk Add Teacher Accounts`, props<{teachers: User[]}>());
+
 

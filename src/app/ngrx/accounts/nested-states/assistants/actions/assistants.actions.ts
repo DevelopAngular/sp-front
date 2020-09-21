@@ -49,5 +49,7 @@ export const addUserToAssistantProfile = createAction(`[${ASSISTANTS}] Add User 
 export const addUserToAssistantProfileSuccess = createAction(`[${ASSISTANTS}] Add User To Assistant Profile Success`, props<{assistant: User}>());
 export const addUserToAssistantProfileFailure = createAction(`[${ASSISTANTS}] Add User To Assistant Profile Failure`, props<{errorMessage: string}>());
 
+export const bulkAddAssistantAccounts = createAction(`[${ASSISTANTS}] Bulk Add Assistants Accounts`, props<{assistants: User[]}>());
+
 
 

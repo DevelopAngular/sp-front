@@ -36,7 +36,10 @@ const reducer = createReducer(
   on(studentsActions.postStudentSuccess, studentsActions.addUserToStudentProfileSuccess, (state, {student}) => {
     return adapter.addOne(student, {...state, loading: false, loaded: true});
   }),
-  on(studentsActions.getMoreStudentsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))
+  on(studentsActions.getMoreStudentsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
+  on(studentsActions.bulkAddStudentAccounts, (state, {students}) => {
+    return adapter.addMany(students, {...state});
+  })
 );
 
 export function studentsReducer(state: any | undefined, action: Action) {

@@ -550,8 +550,8 @@ export class HttpService {
     });
   }
 
-  post<T>(url: string, body?: any, config?: Config): Observable<T> {
-    if (body && !(body instanceof FormData)) {
+  post<T>(url: string, body?: any, config?: Config, isFormData = true): Observable<T> {
+    if (body && !(body instanceof FormData) && isFormData) {
       const formData: FormData = new FormData();
       for (const prop in body) {
         if (body.hasOwnProperty(prop)) {

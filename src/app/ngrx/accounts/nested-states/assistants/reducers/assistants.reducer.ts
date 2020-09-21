@@ -43,7 +43,10 @@ const reducer = createReducer(
   on(assistantsActions.postAssistantSuccess, assistantsActions.addUserToAssistantProfileSuccess, (state, {assistant}) => {
     return adapter.addOne(assistant, {...state, loading: false, loaded: true});
   }),
-  on(assistantsActions.getMoreAssistantsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))
+  on(assistantsActions.getMoreAssistantsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
+  on(assistantsActions.bulkAddAssistantAccounts, (state, {assistants}) => {
+    return adapter.addMany(assistants, {...state});
+  })
 );
 
 export function assistantsReducer(state: any | undefined, action: Action) {

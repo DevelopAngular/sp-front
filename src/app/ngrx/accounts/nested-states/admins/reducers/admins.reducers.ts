@@ -1,9 +1,9 @@
 import {Action, createReducer, on} from '@ngrx/store';
 import {AdminsState} from '../states/admins.state';
 import * as adminsActions from '../actions';
+import {addUserToAdminProfileSuccess} from '../actions';
 import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 import {User} from '../../../../../models/User';
-import {addUserToAdminProfileSuccess} from '../actions';
 
 export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
@@ -37,7 +37,10 @@ const reducer = createReducer(
   on(adminsActions.getMoreAdminsSuccess, (state, {admins, next}) => {
     return adapter.addMany(admins, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAdmins: admins});
   }),
-  on(adminsActions.getMoreAdminsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true}))
+  on(adminsActions.getMoreAdminsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
+  on(adminsActions.bulkAddAdminAccounts, (state, {admins}) => {
+    return adapter.addMany(admins, {...state});
+  })
 );
 
 export function adminsReducer(state: any | undefined, action: Action) {
