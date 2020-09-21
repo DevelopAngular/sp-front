@@ -1,13 +1,13 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
+import {FormControl, FormGroup} from '@angular/forms';
+import {MatDialogRef} from '@angular/material';
 
 import {map, switchMap, takeUntil} from 'rxjs/operators';
-import { forkJoin, fromEvent, MonoTypeOperatorFunction, of, Subject, zip } from 'rxjs';
-import { differenceBy } from 'lodash';
+import {forkJoin, fromEvent, MonoTypeOperatorFunction, of, Subject, zip} from 'rxjs';
+import {differenceBy} from 'lodash';
 import * as XLSX from 'xlsx';
 
-import { UserService } from '../../../services/user.service';
+import {UserService} from '../../../services/user.service';
 import {HttpService} from '../../../services/http-service';
 
 export interface ImportAccount {
@@ -43,9 +43,9 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
           existsEmail: isValidEmail[index].exists,
           invalidEmail: !user.primary_email,
           invalidType: !user.type ||
-            (user.type.toLowerCase() !== 'admin' &&
-            user.type.toLowerCase() !== 'teacher' &&
-            user.type.toLowerCase() !== 'student')
+            (user.type.toLowerCase() !== '_profile_admin' &&
+            user.type.toLowerCase() !== '_profile_teacher' &&
+            user.type.toLowerCase() !== '_profile_student')
         };
       });
     })
@@ -178,7 +178,7 @@ export class BulkAddComponent implements OnInit, OnDestroy {
     return rows.map((row, index) => {
       return {
         id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
-        type: row[0] ? ('' + row[0]).trim() : null,
+        type: row[0] ? ('_profile_' + row[0]).toLowerCase().trim() : null,
         first_name: row[1] ? ('' + row[1]).trim() : null,
         last_name: row[2] ? ('' + row[2]).trim() : null,
         primary_email: row[3] ? ('' + row[3]).trim() : null,
@@ -225,21 +225,24 @@ export class BulkAddComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    const requests$ = this.validAccountsToDb.map(user => {
+    const accounts = this.validAccountsToDb.map(user => {
       const emailExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
       const userData: any = {
         password: user.password,
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.primary_email,
-        display_name: `${user.first_name} ${user.last_name}`
+        username: `${user.first_name} ${user.last_name}`,
+        profiles: [user.type]
       };
-      const userType = emailExp.test(user.primary_email) ? 'email' : 'username';
-      return this.userService.addAccountRequest(this.http.getSchool().id, userData, userType, [user.type.toLowerCase()], `_profile_${user.type.toLowerCase()}`);
+      return userData;
+      // const userType = emailExp.test(user.primary_email) ? 'email' : 'username';
+      // return this.userService.addAccountRequest(this.http.getSchool().id, userData, userType, [user.type.toLowerCase()], `_profile_${user.type.toLowerCase()}`);
     });
-    zip(...requests$).subscribe(res => {
-      console.log(res);
-    });
+    debugger;
+    // zip(...requests$).subscribe(res => {
+    //   console.log(res);
+    // });
   }
 
 }
