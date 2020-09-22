@@ -1,42 +1,22 @@
-import {ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {
-  debounceTime,
-  distinctUntilChanged, exhaust,
-  filter,
-  map,
-  mergeAll, skip, switchAll,
-  switchMap, take,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
+import {ActivatedRoute, Router} from '@angular/router';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
-import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
-import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-config-dialog.component';
-import {StorageService} from '../../services/storage.service';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
-import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
-import {LocationsService} from '../../services/locations.service';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
-import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
-import {wrapToHtml} from '../helpers';
-import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
-import {GSuiteSelector, OrgUnit} from '../../sp-search/sp-search.component';
-import { uniqBy } from 'lodash';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {DomSanitizer} from '@angular/platform-browser';
+import {uniqBy} from 'lodash';
 import {TotalAccounts} from '../../models/TotalAccounts';
-import {observableToBeFn} from 'rxjs/internal/testing/TestScheduler';
 import {School} from '../../models/School';
-import {StatusPopupComponent} from '../profile-card-dialog/status-popup/status-popup.component';
 import {TableService} from '../sp-data-table/table.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
@@ -274,7 +254,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
-          'rooms': account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned',
+          'rooms': account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned',
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
@@ -282,7 +262,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }};
     } else if (this.role === '_profile_assistant') {
       objectToTable = {...roleObject, ...{
-          'Acting on Behalf Of': account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
+          'Acting on Behalf Of': account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : 'No Teachers',
           'Status': `<span class="status">${account.status}</span>`,
