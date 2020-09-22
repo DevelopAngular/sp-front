@@ -159,6 +159,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   ];
   selectedRows: any[];
   hasHorizontalScroll: boolean;
+  loadingCSV$: Observable<boolean>;
 
   destroy$ = new Subject();
 
@@ -198,6 +199,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         console.log('loading data ==>>>>');
       }
     });
+
+    this.loadingCSV$ = this.tableService.loadingCSV$.asObservable();
 
     this.dataSource.loadedData$.pipe(
       filter(value => value && this.dataSource.allData[0]),

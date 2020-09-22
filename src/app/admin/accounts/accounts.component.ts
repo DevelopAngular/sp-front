@@ -1,19 +1,19 @@
-import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { HttpService } from '../../services/http-service';
-import { UserService } from '../../services/user.service';
-import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
-import { AdminService } from '../../services/admin.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {HttpService} from '../../services/http-service';
+import {UserService} from '../../services/user.service';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
-import {ActivatedRoute, Route, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Util} from '../../../Util';
 import {User} from '../../models/User';
 import {StorageService} from '../../services/storage.service';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
-import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../services/locations.service';
 import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
 import {GG4LSync} from '../../models/GG4LSync';
@@ -24,7 +24,6 @@ import {ToastService} from '../../services/toast.service';
 import {Onboard} from '../../models/Onboard';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {TableService} from '../sp-data-table/table.service';
-import { xorBy } from 'lodash';
 
 declare const window;
 
@@ -95,6 +94,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     this.toastService.toastButtonClick$
       .pipe(
+        tap(() => this.tableService.loadingCSV$.next(true)),
         switchMap(() => {
           return this.onboardProcess$;
         }),
@@ -115,6 +115,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       )
       .subscribe(res => {
         this.xlsxGeneratorService.generate(res);
+        // this.tableService.loadingCSV$.next(false);
     });
 
     this.userService.userData.pipe(

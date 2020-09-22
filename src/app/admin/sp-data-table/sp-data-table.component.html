@@ -12,7 +12,7 @@
       </div>
     </div>
   </div>
-    <cdk-virtual-scroll-viewport class="example-viewport" [itemSize]="itemSize" [style.height]="height" appSafariScroll>
+    <cdk-virtual-scroll-viewport class="example-viewport" [itemSize]="itemSize" [style.height]="height">
       <table class="table" mat-table [dataSource]="dataSource" [multiTemplateDataRows]="true" matSort>
         <ng-container matColumnDef="select" *ngIf="isCheckbox | async" sticky>
           <th mat-header-cell *matHeaderCellDef style="padding: 0 15px;">
@@ -89,7 +89,12 @@
   <div class="table-options-screen" *ngIf="showPrintButtons" [ngClass]="{'shadow': hasHorizontalScroll}">
     <div class="buttons">
       <div class="button" appCrossPointerEventTarget (pointerClickEvent)="openOption(option.action, $event)" *ngFor="let option of tableOptionButtons; first as isFirst" [style.margin-top]="isFirst ? 0 : '25px'">
-        <img width="20" [src]="'./assets/' + option.icon + ' ('+ (selection.selected.length && !isFirst ? 'Navy' : 'Blue-Gray') +').svg' | resolveAsset">
+        <div *ngIf="loadingCSV$ | async; else image" class="loading-theme_blue-gray spinner ds-flex-center-center">
+          <mat-spinner [diameter]="25" [color]="'primary'"></mat-spinner>
+        </div>
+        <ng-template #image>
+          <img width="20" [src]="'./assets/' + option.icon + ' ('+ (selection.selected.length && !isFirst ? 'Navy' : 'Blue-Gray') +').svg' | resolveAsset">
+        </ng-template>
       </div>
     </div>
   </div>
