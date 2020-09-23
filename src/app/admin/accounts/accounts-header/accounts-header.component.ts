@@ -39,7 +39,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   @Output() currentPageEmit: EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild('tabPointer') tabPointer: ElementRef;
-  @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
+  @ViewChild('navButtonsContainer') navButtonsContainerRef: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   tableState: boolean;
@@ -104,7 +104,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer);
+    this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);
   }
 
   getCurrentTab() {
@@ -190,11 +190,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   selectTab(event: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = event.getBoundingClientRect();
-    const tabPointerHalfWidth = this.tabPointer.nativeElement.getBoundingClientRect().width / 4;
-    this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) + 'px';
+    const tabPointerHalfWidth = (this.tabPointer.nativeElement.getBoundingClientRect().width / 4);
+    this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) - (this.currentTab === '_profile_admin' ? 7 : 0) + 'px';
   }
 
-  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 50) {
+  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 200) {
       setTimeout(() => {
         const tabRefsArray = refsArray.toArray();
         const selectedTabRef = this.accountsButtons.findIndex((button) => button.param === this.currentTab);

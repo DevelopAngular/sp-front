@@ -126,7 +126,7 @@
           [title]="tab.title"
           [icon_url]="tab.icon_id"
           [selected]="currentTab === tab.param"
-          (buttonClick)="updateTab(tab.param); selectTab(tabRef, navButtonsContainer)"
+          (buttonClick)="updateTab(tab.param); this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);"
         ></app-tab-button>
       </div>
       <div class="selected-tab-pointer" #tabPointer [style.left]="pts"></div>
