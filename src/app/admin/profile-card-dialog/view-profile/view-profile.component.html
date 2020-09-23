@@ -46,18 +46,20 @@
       <div class="block">
         <div class="email-info">
           <div class="title">Email/username</div>
-          <div class="subtitle">{{ profile['Email/Username'] }}</div>
+          <div class="subtitle">{{ user.primary_email }}</div>
         </div>
         <div class="avatar-info">
-<!--          <div class="avatar"-->
-<!--             #avatarContainer-->
-<!--             (mouseenter)="avatarContainer.hover = true"-->
-<!--             (mouseleave)="avatarContainer.hover = false"-->
-<!--          >-->
-<!--            <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="avatar">-->
+          <div class="avatar"
+             #avatarContainer
+             (mouseenter)="avatarContainer.hover = true"
+             (mouseleave)="avatarContainer.hover = false"
+               [matTooltip]="'Profile pictures are coming soon!'"
+               matTooltipClass="tooltip"
+          >
+            <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="avatar">
 <!--            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>-->
 <!--            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">-->
-<!--          </div>-->
+          </div>
           <div class="status"
                [matTooltip]="statusDescriptions[profileStatusActive] || null"
                matTooltipClass="tooltip"
