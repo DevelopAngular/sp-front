@@ -1,17 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import {Injectable} from '@angular/core';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {HttpService} from '../../../services/http-service';
 import * as schoolsActions from '../actions';
-import { catchError, concatMap, map } from 'rxjs/operators';
-import { School } from '../../../models/School';
-import { of } from 'rxjs';
+import {catchError, concatMap, map} from 'rxjs/operators';
+import {School} from '../../../models/School';
+import {of} from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
 import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {GoogleLoginService} from '../../../services/google-login.service';
 import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
-import {StorageService} from '../../../services/storage.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 
 declare const window;
@@ -30,7 +29,7 @@ export class SchoolsEffects {
               return schoolsActions.getSchoolsSuccess({schools});
             }),
             catchError(error => {
-              return of(schoolsActions.getSchoolsFailure({errorMessage: error.message}));
+              return of(schoolsActions.getSchoolsFailure({errorMessage: error.error.detail}));
             })
           );
       })
@@ -51,7 +50,9 @@ export class SchoolsEffects {
                 };
                 return schoolsActions.updateSchoolSuccess({school: updatedSchool});
               }),
-              catchError(error => of(schoolsActions.updateSchoolFailure({errorMessage: error.message})))
+              catchError(error => {
+                return of(schoolsActions.updateSchoolFailure({errorMessage: error.message}));
+              })
             );
         })
       );
@@ -65,7 +66,7 @@ export class SchoolsEffects {
           window.appLoaded();
           this.http.errorToast$.next({
             header: 'Oops! Sign in error',
-            message: 'School has not been yet launched'
+            message: action.errorMessage
           });
           this.http.clearInternal();
           this.loginService.clearInternal(true);
@@ -188,7 +189,6 @@ export class SchoolsEffects {
     private adminService: AdminService,
     private router: Router,
     private userService: UserService,
-    private loginService: GoogleLoginService,
-    private storage: StorageService
+    private loginService: GoogleLoginService
   ) {}
 }

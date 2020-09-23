@@ -47,6 +47,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public disabledButton: boolean = true;
   public showError: boolean;
   public schoolAlreadyText$: Observable<string>;
+  public passwordError: boolean;
 
   private changeUserName$: Subject<string> = new Subject<string>();
   private destroy$ = new Subject();
@@ -72,22 +73,27 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.isLoaded = isLoaded;
       });
     });
-    this.httpService.errorToast$.subscribe(v => {
+    this.httpService.errorToast$.subscribe((v: any) => {
       this.showSpinner = !!v;
       if (!v) {
         this.loginForm.get('password').setValue('');
       }
+      this.error$.next(v.message);
     });
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
-        const errMessage = this.loggedWith === 1
-          ? 'G Suite authentication failed. Please check your password or contact your school admin.'
-          : 'Standard sign-in authentication failed. Please check your password or contact your school admin.';
-
-        this.httpService.errorToast$.next({
-          header: 'Oops! Sign in error.',
-          message: errMessage
-        });
+        this.error$.next('Incorrect password. Try again or contact your school admin to reset it.');
+        this.passwordError = true;
+        this.showSpinner = false;
+        // debugger;
+        // const errMessage = this.loggedWith === 1
+        //   ? 'G Suite authentication failed. Please check your password or contact your school admin.'
+        //   : 'Standard sign-in authentication failed. Please check your password or contact your school admin.';
+        //
+        // this.httpService.errorToast$.next({
+        //   header: 'Oops! Sign in error.',
+        //   message: errMessage
+        // });
       }
     });
   }
@@ -209,6 +215,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     }
     this.loginData.demoUsername = event;
     this.error$.next(null);
+    this.passwordError = false;
     this.changeUserName$.next(event);
   }
 
@@ -268,7 +275,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       })
       .catch((err) => {
         if (err && err.error !== 'popup_closed_by_user') {
-          this.loginService.showLoginError$.next(true);
+          debugger;
+          // this.loginService.showLoginError$.next(true);
         }
         this.showSpinner = false;
       });

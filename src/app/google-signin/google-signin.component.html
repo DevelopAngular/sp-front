@@ -26,10 +26,10 @@
           [input_label]="'Password'"
           [input_type]="'password'"
           [width]="loginData.demoLoginEnabled ? '250px' : '0'"
-          (onUpdate)="loginData.demoPassword ? updateDemoPassword($event) : null"
+          (onUpdate)="loginData.demoPassword ? updateDemoPassword($event) : null; error$.next(null); passwordError = false;"
         ></app-input>
       </div>
-      <div class="error" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>
+      <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>
       <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div>
       <div class="button" style="margin-top: 97px;" *ngIf="!loginData.demoLoginEnabled">
         <app-gradient-button
