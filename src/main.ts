@@ -1,16 +1,15 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import {enableProdMode} from '@angular/core';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import {AppModule} from './app/app.module';
+import {environment} from './environments/environment';
 
 import 'hammerjs';
+import './monkey-patches';
 
 if (environment.production) {
   enableProdMode();
 }
-
-import './monkey-patches';
 
 console.log(`Frontend build type: ${environment.buildType}`);
 
@@ -23,19 +22,19 @@ function registerSW() {
 platformBrowserDynamic().bootstrapModule(AppModule)
   .then(module => {
     console.log('Module loaded');
-    console.log('ONLINE:', navigator.onLine);
-    if (navigator.onLine) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for (const registration of registrations) {
-          registration.unregister();
-          console.log('UNREGISTERED');
-        }
-        registerSW();
-      });
-    } else {
-      registerSW();
-      console.log('REGISTERED');
-    }
-      registerSW();
+    console.log('Future ONLINE:', navigator.onLine);
+    // if (navigator.onLine) {
+    //   navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    //     for (const registration of registrations) {
+    //       registration.unregister();
+    //       console.log('UNREGISTERED');
+    //     }
+    //     // registerSW();
+    //   });
+    // } else {
+    //   // registerSW();
+    //   console.log('REGISTERED');
+    // }
+      // registerSW();
   })
   .catch(err => console.log(err));
