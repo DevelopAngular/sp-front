@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Observable, of, throwError} from 'rxjs';
-import {catchError, finalize, tap} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {HttpService} from './services/http-service';
 
@@ -14,7 +14,10 @@ export class ProgressInterceptor implements HttpInterceptor {
   ) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return next.handle(req)
+      const nextReq = req.clone({
+        headers: req.headers.set('Cache-Control', 'public, max-age=86400')
+      });
+        return next.handle(nextReq)
                     .pipe(
                       catchError((error: any) => {
                                   // debugger;
