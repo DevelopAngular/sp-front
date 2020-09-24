@@ -14,10 +14,7 @@ export class ProgressInterceptor implements HttpInterceptor {
   ) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-      const nextReq = req.clone({
-        headers: req.headers.set('Cache-Control', 'public, max-age=86400')
-      });
-        return next.handle(nextReq)
+        return next.handle(req)
                     .pipe(
                       catchError((error: any) => {
                                   // debugger;
