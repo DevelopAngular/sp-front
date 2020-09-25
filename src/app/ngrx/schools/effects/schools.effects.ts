@@ -12,6 +12,7 @@ import {GoogleLoginService} from '../../../services/google-login.service';
 import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
+import {StorageService} from '../../../services/storage.service';
 
 declare const window;
 
@@ -64,10 +65,7 @@ export class SchoolsEffects {
         ofType(schoolsActions.getSchoolsFailure),
         map((action: any) => {
           window.appLoaded();
-          this.http.errorToast$.next({
-            header: 'Oops! Sign in error',
-            message: action.errorMessage
-          });
+          this.loginService.loginErrorMessage$.next(action.errorMessage);
           this.http.clearInternal();
           this.loginService.clearInternal(true);
           this.http.setSchool(null);
@@ -189,6 +187,7 @@ export class SchoolsEffects {
     private adminService: AdminService,
     private router: Router,
     private userService: UserService,
-    private loginService: GoogleLoginService
+    private loginService: GoogleLoginService,
+    private storage: StorageService
   ) {}
 }

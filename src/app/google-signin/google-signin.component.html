@@ -26,7 +26,7 @@
           [input_label]="'Password'"
           [input_type]="'password'"
           [width]="loginData.demoLoginEnabled ? '250px' : '0'"
-          (onUpdate)="loginData.demoPassword ? updateDemoPassword($event) : null; error$.next(null); passwordError = false;"
+          (onUpdate)="updateDemoPassword($event)"
         ></app-input>
       </div>
       <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>

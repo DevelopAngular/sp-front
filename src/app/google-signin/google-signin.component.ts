@@ -73,13 +73,22 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.isLoaded = isLoaded;
       });
     });
-    this.httpService.errorToast$.subscribe((v: any) => {
-      this.showSpinner = !!v;
-      if (!v) {
-        this.loginForm.get('password').setValue('');
+    this.loginService.loginErrorMessage$.subscribe(message => {
+      if (message === 'this user is suspended') {
+        this.error$.next('Account is suspended. Please contact your school admin.');
+      } else if (message === 'this user is disabled') {
+        this.error$.next('Account is disabled. Please contact your school admin.');
       }
-      this.error$.next(v.message);
+      this.passwordError = !!message;
+      this.showSpinner = false;
     });
+    // this.httpService.errorToast$.subscribe((v: any) => {
+    //   this.showSpinner = !!v;
+    //   if (!v) {
+    //     this.loginForm.get('password').setValue('');
+    //   }
+    //   this.error$.next(v.message);
+    // });
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
         this.error$.next('Incorrect password. Try again or contact your school admin to reset it.');
@@ -206,6 +215,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     );
   }
   updateDemoUsername(event) {
+    this.showSpinner = false;
     if (!event) {
       this.loginData.demoLoginEnabled = false;
       this.loginData.demoUsername = '';
@@ -220,7 +230,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   updateDemoPassword(event) {
-    this.loginData.demoPassword = event;
+    this.error$.next(null);
+    this.passwordError = false;
+    this.showSpinner = false;
+    // this.loginData.demoPassword = event;
   }
 
   checkUserAuthType() {
@@ -254,6 +267,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
+      // this.loginService.loginErrorMessage$.next(null);
 
       of(this.loginService.signInDemoMode(this.loginForm.get('username').value, this.loginForm.get('password').value))
       .pipe(
@@ -267,6 +281,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.loggedWith = LoginMethod.OAuth;
     this.showSpinner = true;
     this.loginService.showLoginError$.next(false);
+    this.loginService.loginErrorMessage$.next(null);
     this.loginService
       .signIn(this.loginData.demoUsername)
       .then(() => {
@@ -275,8 +290,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       })
       .catch((err) => {
         if (err && err.error !== 'popup_closed_by_user') {
-          debugger;
-          // this.loginService.showLoginError$.next(true);
+          this.loginService.showLoginError$.next(true);
         }
         this.showSpinner = false;
       });
