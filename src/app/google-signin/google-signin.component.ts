@@ -67,18 +67,19 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
     this.loginService.isAuthLoaded()
+      .pipe(takeUntil(this.destroy$))
       .subscribe(isLoaded => {
       this._ngZone.run(() => {
         this.isLoaded = isLoaded;
       });
     });
-    this.httpService.errorToast$.subscribe(v => {
+    this.httpService.errorToast$.pipe(takeUntil(this.destroy$)).subscribe(v => {
       this.showSpinner = !!v;
       if (!v) {
         this.loginForm.get('password').setValue('');
       }
     });
-    this.loginService.showLoginError$.subscribe((show: boolean) => {
+    this.loginService.showLoginError$.pipe(takeUntil(this.destroy$)).subscribe((show: boolean) => {
       if (show) {
         const errMessage = this.loggedWith === 1
           ? 'G Suite authentication failed. Please check your password or contact your school admin.'
