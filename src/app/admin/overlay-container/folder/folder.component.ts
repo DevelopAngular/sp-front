@@ -1,20 +1,20 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
+import {FormGroup} from '@angular/forms';
+import {DomSanitizer} from '@angular/platform-browser';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 import {BehaviorSubject, interval, merge, Subject, zip} from 'rxjs';
 
-import { Location } from '../../../models/Location';
-import { Pinnable } from '../../../models/Pinnable';
-import { LocationsService } from '../../../services/locations.service';
-import { OverlayContainerComponent } from '../overlay-container.component';
-import { HallPassesService } from '../../../services/hall-passes.service';
-import { FolderData, OverlayDataService, Pages } from '../overlay-data.service';
-import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
-import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
+import {Location} from '../../../models/Location';
+import {Pinnable} from '../../../models/Pinnable';
+import {LocationsService} from '../../../services/locations.service';
+import {OverlayContainerComponent} from '../overlay-container.component';
+import {HallPassesService} from '../../../services/hall-passes.service';
+import {FolderData, OverlayDataService, Pages} from '../overlay-data.service';
+import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
+import {OptionState, ValidButtons} from '../advanced-options/advanced-options.component';
 
-import { sortBy, cloneDeep, differenceBy, isEqual } from 'lodash';
+import {cloneDeep, differenceBy, isEqual, sortBy} from 'lodash';
 import {NextStep} from '../../../animations';
 import {filter, mapTo, takeUntil, tap} from 'rxjs/operators';
 import {ScrollPositionService} from '../../../scroll-position.service';
@@ -311,7 +311,11 @@ export class FolderComponent implements OnInit, OnDestroy {
       data: { trigger: new ElementRef(target), header, options }
     });
 
-    confirmDialog.afterClosed().pipe(tap(res => UNANIMATED_CONTAINER.next(false), filter(action => !!action)))
+    confirmDialog.afterClosed()
+      .pipe(
+        tap(res => UNANIMATED_CONTAINER.next(false)),
+        filter(action => !!action)
+      )
       .subscribe(() => {
         const pinnable = this.overlayService.pageState.getValue().data.pinnable;
         const deletions = [
