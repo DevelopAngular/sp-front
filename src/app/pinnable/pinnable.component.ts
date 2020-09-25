@@ -1,15 +1,7 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output, SimpleChanges
-} from '@angular/core';
-import { bumpIn } from '../animations';
-import { Pinnable } from '../models/Pinnable';
-import { DomSanitizer } from '@angular/platform-browser';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {bumpIn} from '../animations';
+import {Pinnable} from '../models/Pinnable';
+import {DomSanitizer} from '@angular/platform-browser';
 import {interval, of, Subject} from 'rxjs';
 import {delay, takeUntil} from 'rxjs/operators';
 import {TooltipDataService} from '../services/tooltip-data.service';
@@ -128,7 +120,7 @@ export class PinnableComponent implements OnInit, OnChanges {
 
   get tooltipDescription(): string {
     if (this.passLimit) {
-      return this.passLimit && this.tooltipService.tooltipDescription('to', this.passLimit, this.forStaff);
+      return this.passLimit && this.tooltipService.tooltipDescription('to', this.passLimit);
     }
   }
 

@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
-import { Location } from '../models/Location';
-import { HttpService } from '../services/http-service';
-import { DomSanitizer } from '@angular/platform-browser';
+import {Location} from '../models/Location';
+import {HttpService} from '../services/http-service';
+import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {School} from '../models/School';
@@ -78,20 +78,23 @@ export class LocationCellComponent implements OnInit {
 
   get tooltipDescription(): string {
     if (this.passLimit && this.currentPage !== 'from') {
-      return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit, this.forStaff);
+      return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit);
     }
   }
 
   get show_max_passes() {
     if (this.passLimit && this.passLimit.to_count && this.currentPage !== 'from') {
-      return (!this.forStaff && this.currentSchool.show_active_passes_number);
+      return (
+          // !this.forStaff &&
+          this.currentSchool.show_active_passes_number
+      );
     }
   }
 
   get showTooltip() {
     if (this.passLimit && this.passLimit.to_count && this.currentPage !== 'from') {
-      return !this.forStaff &&
-        this.currentSchool.show_active_passes_number ||
+      // return !this.forStaff &&
+      return this.currentSchool.show_active_passes_number ||
         (
           // TODO uncomment when branch SP-1050 is available
           // (this.currentPage === 'from' && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||

@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Location } from '../models/Location';
-import { HttpService } from './http-service';
+import {Injectable} from '@angular/core';
+import {HttpService} from './http-service';
 import {PassLimit} from '../models/PassLimit';
-import {debounce} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +20,7 @@ export class TooltipDataService {
     return true;
   }
 
-  tooltipDescription(currentPage: 'from' | 'to', passLimit: PassLimit, isStaff?: boolean): string {
+  tooltipDescription(currentPage: 'from' | 'to', passLimit: PassLimit): string {
     // TODO uncomment when branch SP-1050 is available
     // if (currentPage === 'from') {
     //   if (this.http.getSchool().show_active_passes_number) {
