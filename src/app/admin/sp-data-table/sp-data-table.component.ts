@@ -86,7 +86,7 @@ export class GridTableDataSource extends DataSource<any> {
   sortingDataAccessor(item, property) {
     switch (property) {
       case 'Student Name':
-        return item[property];
+        return item['sortStudentName'];
       case 'Pass start time':
       case 'Contact date':
         return moment(item['date']).milliseconds;
@@ -189,6 +189,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
       .subscribe(offset => {
         this.placeholderHeight = offset;
+        debugger;
         const doc = document.querySelector('.example-viewport');
         this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
       });

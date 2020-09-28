@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Injectable, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {BehaviorSubject, iif, Observable, of, Subject} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
-import {filter, map, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
@@ -87,6 +87,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     selectedStudents: null,
     selectedDate: null
   };
+  contact_trace_passes: {
+    [id: number]: HallPass
+  } = {};
 
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
@@ -144,8 +147,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
       length$: this.contactTraceService.contactTraceTotalLength$
     };
 
-    this.currentView$.asObservable()
-      .pipe(takeUntil(this.destroy$))
+    this.http.globalReload$.pipe(
+      switchMap(() => {
+        return this.currentView$.asObservable();
+      }),
+      takeUntil(this.destroy$)
+    )
       .subscribe((view: string) => {
         this.destroyPassClick.next();
         if (view === 'pass_search') {
@@ -202,10 +209,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 'Origin': pass.origin.title,
                 'Destination': pass.destination.title,
                 'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
-                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
+                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2).toString().replace('.', ':')) + ' min'
               };
 
               Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
+              Object.defineProperty(rawObj, 'sortStudentName', { enumerable: false, value: pass.student.last_name});
               Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
               Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
               Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
@@ -232,8 +240,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
               }];
             }
             this.contactTraceState.isEmpty = false;
+            this.contact_trace_passes = {};
             return contacts.map(contact => {
-              const duration = moment.duration(contact.total_contact_duration);
+              const duration = moment.duration(contact.total_contact_duration, 'seconds');
 
               const result = {
                 'Student Name': contact.student.display_name,
@@ -249,12 +258,17 @@ export class ExploreComponent implements OnInit, OnDestroy {
                   }
                 }).join() + `</div>`),
                 'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
-                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min',
+                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)).toString().replace('.', ':') + ' min',
                 // 'Pass': this.domSanitizer
                 //   .bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(contact.contact_passes[0].contact_pass.gradient_color)}"></div>`)
                 'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
                   contact.contact_passes
                     .map(({contact_pass, student_pass}, index) => {
+                      this.contact_trace_passes = {
+                        ...this.contact_trace_passes,
+                        [contact_pass.id]: contact_pass,
+                        [student_pass.id]: student_pass
+                      };
                     return `<div style="display: flex; ${(index > 0 ? 'margin-left: 5px' : '')}">
                             <div class="pass-icon" onClick="passClick(${contact_pass.id})" style="background: ${this.getGradient(contact_pass.gradient_color)}; cursor: pointer"></div>
                             <div class="pass-icon" onClick="passClick(${student_pass.id})" style="background: ${this.getGradient(student_pass.gradient_color)}; margin-left: 5px; cursor: pointer"></div>
@@ -264,10 +278,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
               };
 
               Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
+              Object.defineProperty(result, 'sortStudentName', { enumerable: false, value: contact.student.last_name});
               Object.defineProperty(result, 'date', {enumerable: false, value: moment(contact.initial_contact_date) });
               Object.defineProperty(result, 'sortDuration', {enumerable: false, value: duration });
-              Object.defineProperty(result, '_data', {enumerable: false, value: contact });
-
+              Object.defineProperty(result, '_data', {enumerable: false, value: result });
               return result;
             });
           })
@@ -311,7 +325,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   passClick(id) {
-    this.hallPassService.passesEntities$
+    iif(() => this.currentView$.getValue() === 'pass_search', this.hallPassService.passesEntities$, of(this.contact_trace_passes))
       .pipe(
         takeUntil(this.destroyPassClick),
         map(passes => {
@@ -477,6 +491,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.contactTraceService.clearContactTraceDataRequest();
     this.showContactTraceTable = false;
     this.contactTraceState.isEmpty = false;
+    this.adminCalendarOptions = null;
     this.contactTraceData = {
       selectedStudents: null,
       selectedDate: null
