@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Router} from '@angular/router';
-import {Observable, of, Subject, zip} from 'rxjs';
+import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
 import {TotalAccounts} from '../../../models/TotalAccounts';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
@@ -9,7 +9,7 @@ import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.comp
 import {User} from '../../../models/User';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
-import {filter, map, mapTo, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
@@ -85,13 +85,13 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
       .pipe(
         takeUntil(this.destroy$),
         switchMap((selected) => {
-          return this.userService.accountsEntities[this.currentTab].pipe(
-            withLatestFrom(of(selected))
-          );
-          // return combineLatest(
-          //   of(selected),
-          //   this.userService.accountsEntities[this.currentTab].pipe(take(1))
+          // return this.userService.accountsEntities[this.currentTab].pipe(
+          //   withLatestFrom(of(selected))
           // );
+          return combineLatest(
+            of(selected),
+            this.userService.accountsEntities[this.currentTab].pipe(take(1))
+          );
         }),
         map(([selected, users]) => {
           return selected.map(user => users[user.id]);

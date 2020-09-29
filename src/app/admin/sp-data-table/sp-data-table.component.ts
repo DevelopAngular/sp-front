@@ -47,6 +47,8 @@ export class GridTableDataSource extends DataSource<any> {
   offset = 0;
   offsetChange = new BehaviorSubject(0);
 
+  destroy$ = new Subject();
+
   constructor(
     private initialData$: Observable<any[]>,
     private viewport: CdkVirtualScrollViewport,
@@ -54,29 +56,33 @@ export class GridTableDataSource extends DataSource<any> {
   ) {
     super();
     this.initialData$
+      // .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
           this.allData = res;
           this.loadedData$.next(true);
       });
 
     this.viewport.elementScrolled().subscribe((ev: any) => {
-      const start = Math.floor(ev.currentTarget.scrollTop / ROW_HEIGHT);
-      const prevExtraData = start > 5 ? 5 : 0;
-      const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
-      this.offset = ROW_HEIGHT * (start - prevExtraData);
-      this.viewport.setRenderedContentOffset(this.offset);
-      this.offsetChange.next(this.offset);
-      this.visibleData.next(slicedData);
+      // const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
+      // const prevExtraData = start > 0 ? 5 : 0;
+      // const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE));
+      // this.visibleData.next(slicedData);
+      // this.offset = ROW_HEIGHT * (start - prevExtraData);
+      // this.viewport.setRenderedContentOffset(this.offset);
+      // this.offsetChange.next(this.offset);
     });
   }
 
   private readonly visibleData: BehaviorSubject<any[]> = new BehaviorSubject([]);
 
   connect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): Observable<any[] | ReadonlyArray<any>> {
-    return this.visibleData.asObservable();
+    // return this.visibleData.asObservable();
+    return this.initialData$;
   }
 
   disconnect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): void {
+    // this.destroy$.next();
+    // this.destroy$.complete();
   }
 
   compare(a: number | string, b: number | string, isAsc: boolean) {
@@ -186,15 +192,16 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.dataSource.sort = this.sort;
-    this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
-      .subscribe(offset => {
-        this.placeholderHeight = offset;
-        debugger;
-        const doc = document.querySelector('.example-viewport');
-        this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
-      });
+    // this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
+    //   .subscribe(offset => {
+    //     this.placeholderHeight = offset;
+    //     const doc = document.querySelector('.example-viewport');
+    //     this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
+    //   });
 
-    this.viewport.scrolledIndexChange.subscribe(res => {
+    this.viewport.scrolledIndexChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
       if (res === (this.dataSource.allData.length - this.viewportDataItems)) {
         this.loadMoreData.emit();
         console.log('loading data ==>>>>');
@@ -325,7 +332,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   masterToggle() {
     this.isAllSelected() ?
       this.selection.clear() :
-      this.dataSource.allData.forEach(row => this.selection.select(row));
+      this.dataSource.allData.forEach(row => {
+        this.selection.select(row);
+        row.selected = true;
+      });
     this.tableService.selectRow.next(this.selection.selected);
     // console.log(this.selection.selected.length);
   }
