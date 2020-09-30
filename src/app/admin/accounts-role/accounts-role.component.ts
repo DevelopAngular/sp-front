@@ -1,9 +1,9 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -15,7 +15,6 @@ import {RepresentedUser} from '../../navbar/navbar.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {DomSanitizer} from '@angular/platform-browser';
 import {uniqBy} from 'lodash';
-import {TotalAccounts} from '../../models/TotalAccounts';
 import {School} from '../../models/School';
 import {TableService} from '../sp-data-table/table.service';
 
@@ -30,36 +29,20 @@ export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   private destroy$: Subject<any> = new Subject();
-  private searchChangeObserver$: Subject<string> = new Subject<string>();
 
   public role: string;
-  public dataTableHeadersToDisplay: string[] = [];
-  public userList: any[] = [];
-  public selectedUsers: any[] = [];
   public placeholder: boolean;
   public loaded: boolean = false;
-  public dataTableHeaders: any;
   public profilePermissions: any;
-  public initialSearchString: string;
   public tabVisibility: boolean = false;
-  public isLoadUsers: boolean = true;
   public user: User;
-  private limitCounter: number = 20;
-  public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Subject<boolean> = new Subject<boolean>();
-  public lazyUserList: User[] = [];
-
-  public syncingDots: string;
-
-  public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
+  public userEmptyState: boolean;
 
   public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
   public searchValue: string;
 
-  querySubscriber$ = new Subject();
-
   accountRoleData$: Observable<any[]>;
-  selectedAccounts: User[];
 
   isLoading$: Observable<boolean>;
   isLoaded$: Observable<boolean>;
@@ -82,18 +65,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   }
 
-  // get noUsersDummyVisibility() {
-  //   return this.userService.countAccounts$[this.role];
-  // }
-  //
-  // get bulkSignInStatus() {
-  //   return this.selectedUsers.every(profile => profile._originalUserProfile.active);
-  // }
-  //
-  // formatDate(date) {
-  //   return Util.formatDateTime(new Date(date));
-  // }
-
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
 
@@ -107,12 +78,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
         }),
         switchMap(() => {
-          return this.userService.getAccountsRoles(this.role, '', 50).pipe(filter(res => !!res.length));
+          return this.userService.getAccountsRoles(this.role, '', 50);
         }),
         map((accounts: User[]) => {
           if (!accounts.length) {
+            this.userEmptyState = true;
            return this.emptyRoleObject();
           }
+          this.userEmptyState = false;
           return accounts.map(account => {
             const rowObj = this.buildDataForRole(account);
 

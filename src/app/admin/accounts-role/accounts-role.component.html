@@ -10,6 +10,9 @@
           [showPrintButtons]="false"
           (rowClickEvent)="showProfileCard($event)"
           (loadMoreData)="loadMore()"
+          [showEmptyState]="userEmptyState && (isLoaded$ | async)"
+          [emptyIcon]="'./assets/Users (Blue-Gray).svg'"
+          [emptyText]="'There are no students in this school yet'"
         ></app-sp-data-table>
     </div>
   </div>
