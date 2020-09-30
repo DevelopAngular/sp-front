@@ -15,9 +15,8 @@
   <mat-divider *ngIf="hoverOption || showConfirmButton"></mat-divider>
   <div class="description" *ngIf="hoverOption || showConfirmButton">
     {{ hoverOption.description }}
-    <div class="button">
+    <div class="button" *ngIf="showConfirmButton">
       <app-gradient-button
-        *ngIf="showConfirmButton"
         [gradient]="'#E32C66, #E32C66'"
         (buttonClick)="dialogRef.close('delete')"
       >Confirm delete</app-gradient-button>

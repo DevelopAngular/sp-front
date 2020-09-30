@@ -8,21 +8,8 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  mapTo, pluck,
-  skip,
-  switchMap,
-  take,
-  takeLast,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
-import { filter as _filter } from 'lodash';
+import {catchError, debounceTime, distinctUntilChanged, filter, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter as _filter} from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
@@ -134,7 +121,11 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   }
 
   get isAccessAdd() {
-    if (this.userRoles.find(role => role.role === 'Admin') && this.userRoles.find(role => role.role === 'Teacher')) {
+    if (
+      this.userRoles.find(role => role.role === 'Admin') &&
+      this.userRoles.find(role => role.role === 'Teacher') ||
+      this.userRoles.find(role => role.role === 'Student'))
+    {
       return false;
     }
     return true;

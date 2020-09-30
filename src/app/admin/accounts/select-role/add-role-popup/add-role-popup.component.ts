@@ -22,6 +22,12 @@ export class AddRolePopupComponent implements OnInit {
     this.triggerElementRef = this.data['trigger'];
     this.options = this.data['options'];
     this.selectedRoles = this.data['selectedRoles'];
+    if (
+      this.selectedRoles.find(role => role.role === 'Teacher') ||
+      this.selectedRoles.find(role => role.role === 'Admin') ||
+      this.selectedRoles.find(role => role.role === 'Assistant')) {
+      this.options = this.options.filter(role => role.role !== 'Student');
+    }
     this.updatePosition();
   }
 

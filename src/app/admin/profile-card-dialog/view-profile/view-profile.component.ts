@@ -1,18 +1,18 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
-import { BehaviorSubject, fromEvent, Observable, of, Subject, zip } from 'rxjs';
-import { Location } from '../../../models/Location';
-import { User } from '../../../models/User';
-import { FormControl, FormGroup } from '@angular/forms';
-import { GSuiteSelector } from '../../../sp-search/sp-search.component';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
-import { Router } from '@angular/router';
-import { DataService } from '../../../services/data-service';
-import { UserService } from '../../../services/user.service';
-import { LocationsService } from '../../../services/locations.service';
-import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
-import { cloneDeep, differenceBy, isEqual } from 'lodash';
-import {filter, mapTo, switchMap} from 'rxjs/operators';
-import { ProfileCardDialogComponent } from '../profile-card-dialog.component';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {BehaviorSubject, fromEvent, Observable, of, Subject, zip} from 'rxjs';
+import {Location} from '../../../models/Location';
+import {User} from '../../../models/User';
+import {FormControl, FormGroup} from '@angular/forms';
+import {GSuiteSelector} from '../../../sp-search/sp-search.component';
+import {MatDialog, MatDialogRef} from '@angular/material';
+import {Router} from '@angular/router';
+import {DataService} from '../../../services/data-service';
+import {UserService} from '../../../services/user.service';
+import {LocationsService} from '../../../services/locations.service';
+import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
+import {cloneDeep, differenceBy, isEqual} from 'lodash';
+import {filter} from 'rxjs/operators';
+import {ProfileCardDialogComponent} from '../profile-card-dialog.component';
 import {StatusPopupComponent} from '../status-popup/status-popup.component';
 import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
 
@@ -110,7 +110,11 @@ export class ViewProfileComponent implements OnInit {
   ) {}
 
   get isAccessAdd() {
-    if (this.userRoles.find(role => role.role === 'Admin') && this.userRoles.find(role => role.role === 'Teacher')) {
+    if (
+      this.userRoles.find(role => role.role === 'Admin') &&
+      this.userRoles.find(role => role.role === 'Teacher') ||
+      this.userRoles.find(role => role.role === 'Student'))
+    {
       return false;
     }
     return true;
@@ -268,6 +272,17 @@ export class ViewProfileComponent implements OnInit {
     }
 
     if (!isEqual(this.initialSelectedRoles, this.userRoles)) {
+      const rolesToRemove = [];
+      this.initialSelectedRoles.forEach(role => {
+        if (!this.userRoles.find(r => r.role === role.role)) {
+          rolesToRemove.push(role);
+        }
+      });
+      if (rolesToRemove.length) {
+        zip(...rolesToRemove.map(role => {
+          return this.userService.deleteUserRequest(this.user.id, `_profile_${role.role.toLowerCase()}`);
+        })).subscribe();
+      }
       zip(...this.userRoles.map(role => {
         return this.userService.addUserToProfileRequest(this.user, role.role.toLowerCase());
       })).subscribe();

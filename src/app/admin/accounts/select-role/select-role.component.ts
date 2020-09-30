@@ -26,7 +26,12 @@ export class SelectRoleComponent implements OnInit {
   constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.onSelect.next(this.selectedRoles);
+    this.onSelect.emit(this.selectedRoles);
+  }
+
+  deleteRole(role) {
+    this.selectedRoles = this.selectedRoles.filter(r => r.role !== role.role);
+    this.onSelect.emit(this.selectedRoles);
   }
 
   openAddRole(event) {
