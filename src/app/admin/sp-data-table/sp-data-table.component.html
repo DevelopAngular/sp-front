@@ -24,7 +24,7 @@
             </mat-checkbox>
           </th>
           <td mat-cell *matCellDef="let row" style="padding: 0 15px;" (click)="$event.stopPropagation(); select(row)">
-            <mat-checkbox (click)="$event.stopPropagation(); select(row)"
+            <mat-checkbox (click)="$event.stopPropagation();"
                           (change)="$event ? select(row) : null"
                           [checked]="selection.isSelected(row)"
                           [style.color]="selection.isSelected(row) ? '#1F195E' : '#7F879D'"

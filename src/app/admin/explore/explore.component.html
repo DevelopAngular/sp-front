@@ -50,14 +50,17 @@
           [title]="passSearchData.selectedDate ? dateText(passSearchData.selectedDate) : 'Pass start time'"
           (buttonClick)="openFilter($event, 'calendar')"
           [filter]="!!passSearchData.selectedDate"
-          (clearData)="passSearchData.selectedDate = null; adminCalendarOptions = null; autoSearch()">
+          (clearData)="passSearchData.selectedDate = null; adminCalendarOptions = null; autoSearch()"
+        >
         </app-filter-button>
         <ng-template #traceDate>
           <app-filter-button
             [title]="contactTraceData.selectedDate ? dateText(contactTraceData.selectedDate) : 'Time range'"
             (buttonClick)="openFilter($event, 'calendar')"
             [filter]="!!contactTraceData.selectedDate"
-            (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;">
+            (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;"
+            [showClearIcon]="false"
+          >
           </app-filter-button>
         </ng-template>
       </div>

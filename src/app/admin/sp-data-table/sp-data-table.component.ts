@@ -65,7 +65,7 @@ export class GridTableDataSource extends DataSource<any> {
     this.viewport.elementScrolled().subscribe((ev: any) => {
       // const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
       // const prevExtraData = start > 0 ? 5 : 0;
-      // const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE));
+      // const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
       // this.visibleData.next(slicedData);
       // this.offset = ROW_HEIGHT * (start - prevExtraData);
       // this.viewport.setRenderedContentOffset(this.offset);
@@ -192,12 +192,12 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.dataSource.sort = this.sort;
-    // this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
-    //   .subscribe(offset => {
-    //     this.placeholderHeight = offset;
-    //     const doc = document.querySelector('.example-viewport');
-    //     this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
-    //   });
+    this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
+      .subscribe(offset => {
+        this.placeholderHeight = offset;
+        const doc = document.querySelector('.example-viewport');
+        this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
+      });
 
     this.viewport.scrolledIndexChange
       .pipe(takeUntil(this.destroy$))
@@ -334,7 +334,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       this.selection.clear() :
       this.dataSource.allData.forEach(row => {
         this.selection.select(row);
-        row.selected = true;
       });
     this.tableService.selectRow.next(this.selection.selected);
     // console.log(this.selection.selected.length);
