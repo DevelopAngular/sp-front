@@ -41,7 +41,7 @@
           [minWidth]="'90px'"
           [minHeight]="'30px'"
           [fontSize]="'14px'"
-          (buttonClick)="checkUserAuthType()"
+          (buttonClick)="!showSpinner ? checkUserAuthType() : null"
           [style.width]="'90px'"
         >
           <div *ngIf="!showSpinner">
@@ -54,7 +54,7 @@
       </div>
       <div class="button" style="margin-top: 21px;" *ngIf="loginData.demoLoginEnabled">
           <app-gradient-button
-            [disabled]="!loginData.demoUsername || !this.loginForm.get('password').value"
+            [disabled]="!loginData.demoUsername || !this.loginForm.get('password').value || !!(error$ | async)"
             [size]="'medium'"
             [cursor]="'pointer'"
             [hoverColor]="'#FFFFFF'"
