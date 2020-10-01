@@ -227,15 +227,26 @@ export class BulkAddComponent implements OnInit, OnDestroy {
 
   save() {
     const accounts = this.validAccountsToDb.map(user => {
-      const emailExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-      const userData: any = {
-        password: user.password,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.primary_email,
-        // username: `${user.first_name} ${user.last_name}`,
-        profiles: [user.type]
-      };
+      const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
+      const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+      let userData = {};
+      if (regexpEmail.test(user.primary_email)) {
+        userData = {
+          password: user.password,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.primary_email,
+          profiles: [user.type]
+        };
+      } else if (regexpUsername.test(user.primary_email)) {
+        userData = {
+          password: user.password,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          username: user.primary_email,
+          profiles: [user.type]
+        };
+      }
       return userData;
       // const userType = emailExp.test(user.primary_email) ? 'email' : 'username';
       // return this.userService.addAccountRequest(this.http.getSchool().id, userData, userType, [user.type.toLowerCase()], `_profile_${user.type.toLowerCase()}`);
@@ -243,6 +254,7 @@ export class BulkAddComponent implements OnInit, OnDestroy {
     this.userService.addBulkAccountsRequest(accounts)
       .subscribe(res => {
         this.adminService.updateOnboardProgressRequest('2.landing:first_account');
+        this.dialogRef.close();
     });
     // zip(...requests$).subscribe(res => {
     //   console.log(res);
