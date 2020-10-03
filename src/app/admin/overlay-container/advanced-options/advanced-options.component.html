@@ -82,7 +82,7 @@
               <app-sp-search
                 [selectedOptions]="selectedOpt.nowTeachers"
                 [chipsMode]="true"
-                [overrideChipsInputField]="true"
+                [overrideChipsInputField]="selectedOpt?.nowTeachers.length === 0"
                 [focused]="true"
                 [role]="'_profile_teacher'"
                 [dummyRoleText]="'teachers'"
@@ -183,7 +183,7 @@
               <app-sp-search
                 [selectedOptions]="selectedOpt.futTeachers"
                 [chipsMode]="true"
-                [overrideChipsInputField]="true"
+                [overrideChipsInputField]="selectedOpt?.futTeachers.length === 0"
                 [focused]="true"
                 [role]="'_profile_teacher'"
                 [dummyRoleText]="'teachers'"
