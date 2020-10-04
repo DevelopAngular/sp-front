@@ -23,15 +23,16 @@
 
     <div class="right-button">
       <app-gradient-button
-        *ngIf="showPublishButton"
        [minHeight]="'40px'"
        [style.width]="'120px'"
        [gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
        [textColor]="color_profile ? color_profile.solid_color : 'White'"
        [cursor]="'pointer'"
        [fontSize]="'14px'"
+       [disabled]="isFormIncomplete"
        (buttonClick)="onPublish()"
-        [matTooltip]="showPublishSpinner ? 'Please wait, rooms are still being uploaded.' : null"
+       (disabledButtonClick)="showFormErrors()"
+        [matTooltip]="saveButtonToolTip"
         matTooltipClass="tooltip"
         >
         <span *ngIf="!showPublishSpinner">Save</span>
@@ -55,11 +56,11 @@
       </div>
 
       <div class="block" *ngIf="currentPage === 5">
-        <app-new-room-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (errorsEmit)="setFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
+        <app-new-room-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (errorsEmit)="showFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
       </div>
 
       <div class="block" *ngIf="currentPage === 6">
-        <app-edit-room-in-folder (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="setFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
+        <app-edit-room-in-folder (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="showFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
       </div>
 
       <div class="block" *ngIf="currentPage === 8">
@@ -79,7 +80,7 @@
       </div>
 
       <div class="block" *ngIf="currentPage === 10">
-        <app-bulk-edit-rooms-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (bulkEditResult)="bulkEditInFolder($event)" (errorsEmit)="setFormErrors()" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
+        <app-bulk-edit-rooms-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (bulkEditResult)="bulkEditInFolder($event)" (errorsEmit)="showFormErrors()" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
       </div>
 
 
