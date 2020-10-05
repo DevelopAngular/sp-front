@@ -210,19 +210,17 @@ export class HttpService {
         switchMap(() => of(this.accessTokenSubject.value)),
         filter(v => !!v),
         switchMap(({auth, server}) => {
-          // this.http.post('https://sso.gg4l.com/oauth/token', {
-          //   refresh_token: auth.refresh_token,
-          //   grant_type: 'refresh_token'
-          // }, {
-          //   headers: new HttpHeaders({
-          //     'Authorization': 'Basic ' + btoa(server.client_id + ':' + server.client_secret)
-          //   })
-          // }).pipe(catchError(err => {
-          //   debugger;
-          //   return of(err);
-          // })).subscribe(res => {
-          //   debugger;
-          // });
+          debugger;
+          this.http.post('https://sso.gg4l.com/oauth/token', {
+            'refresh_token': auth.refresh_token,
+            'grant_type': 'refresh_token'
+          }, {
+            headers: new HttpHeaders({
+              'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSg=='
+            })
+          }).subscribe(res => {
+            debugger;
+          });
           if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
             const authType = this.storage.getItem('authType');
             if (authType === 'password') {
@@ -254,7 +252,7 @@ export class HttpService {
                   grant_type: 'refresh_token'
                 }, {
                   headers: new HttpHeaders({
-                    'Authorization': 'Basic ' + environment.gg4l.clientId + ':' + environment.gg4l.secretKey
+                    'Authorization': 'Basic ' + btoa(environment.gg4l.clientId + ':' + environment.gg4l.secretKey)
                   })
                 }).subscribe(res => {
                   debugger;
