@@ -111,6 +111,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.user = user;
     });
 
+
     this.adminService.searchAccountEmit$.asObservable()
       .pipe(
         takeUntil(this.destroy$),
@@ -293,161 +294,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       height: '500px',
       data: data
     });
-
-    // dialogRef.afterClosed()
-    //   .subscribe((userListReloadTrigger) => {
-        // if (userListReloadTrigger) {
-        //   if (data.profile.id === +this.user.id) {
-        //     this.userService.getUserRequest()
-        //       .pipe(
-        //         filter(res => !!res),
-        //         map(raw => User.fromJSON(raw))
-        //       )
-        //       .subscribe((user) => {
-        //         this.userService.userData.next(user);
-        //       });
-        //
-        //   }
-        //   this.selectedUsers = [];
-        // }
-    // });
   }
-
-  // private getUserList(query: string = '') {
-  //   this.loaded = false;
-  //   this.placeholder = false;
-  //   this.userList = [];
-  //   return this.userService
-  //     .getAccountsRoles(this.role, query, 50)
-  //     .pipe(
-  //       tap((res) => {
-  //         this.dataTableHeadersToDisplay = [];
-  //       })
-  //     );
-  // }
-  //
-  // syncNow() {
-  //     this.adminService.syncNow().subscribe();
-  //     this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
-  // }
-
-  // private wrapToHtml(data, htmlTag, dataIndex?) {
-  //   const wrapper =  wrapToHtml.bind(this);
-  //   return wrapper(data, htmlTag, dataIndex);
-  // }
-  //
-  // private buildUserListData(userList) {
-  //   this.isLoadUsers = this.limitCounter === userList.length;
-  //   return userList.map((raw, index) => {
-  //     const permissionsRef: any = this.profilePermissions;
-  //       const partOf = [];
-  //       if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
-  //       if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
-  //       if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
-  //       if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
-  //
-  //       // const disabledSignIn = raw.roles.includes('_profile_student') && this.showDisabledChip;
-  //
-  //       const rawObj = {
-  //         'Name': raw.display_name,
-  //         'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-  //         'rooms': raw.assignedTo && raw.assignedTo.length ? uniqBy(raw.assignedTo, 'id').map((room: any) => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
-  //         'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : raw.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
-  //         'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
-  //           return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
-  //         }).join(', ') : '',
-  //         'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
-  //         'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
-  //         'Group(s)': partOf.length ? partOf : [{title: 'No profile'}],
-  //         'Permissions': (function() {
-  //           const tabs = Object.values(permissionsRef).map((tab: any) => {
-  //             tab.allowed = raw.roles.includes(tab.controlName);
-  //             return tab;
-  //           });
-  //           if (tabs.every((item: any): boolean => item.allowed)) {
-  //             return 'No restrictions';
-  //           } else {
-  //             const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
-  //             if (restrictedTabs.length > 1) {
-  //               return `${restrictedTabs.length} tabs restricted`;
-  //             } else {
-  //               return `${restrictedTabs[0].controlLabel} restricted`;
-  //             }
-  //           }
-  //         }())
-  //       };
-  //
-  //       for (const key in rawObj) {
-  //         if (!this.dataTableHeaders[key]) {
-  //           delete rawObj[key];
-  //         }
-  //         if (index === 0) {
-  //           if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
-  //             this.dataTableHeadersToDisplay.push(key);
-  //           }
-  //         }
-  //       }
-  //
-  //       const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
-  //
-  //       if (+raw.id === +this.user.id) {
-  //         record['Name'] = this.wrapToHtml(`
-  //         ${raw.display_name} <span style="
-  //         position: absolute;
-  //         margin-left: 10px;
-  //         display: inline-block;
-  //         width: 50px;
-  //         height: 20px;
-  //         background-color: rgba(0, 180, 118, .6);
-  //         color: #ffffff;
-  //         text-align: center;
-  //         vertical-align: middle;
-  //         line-height: 20px;
-  //         border-radius: 4px;">Me</span>`, 'span');
-  //       }
-  //
-  //       Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
-  //       Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
-  //       Object.defineProperty(rawObj, 'last_sign_in', {enumerable: false, value: raw.last_login });
-  //       Object.defineProperty(rawObj, '_originalUserProfile', {
-  //         enumerable: false,
-  //         configurable: false,
-  //         writable: false,
-  //         value: raw
-  //       });
-  //       Object.defineProperty(record, '_data', { enumerable: false, value: rawObj });
-  //
-  //       this.loaded = true;
-  //
-  //     return record;
-  //   });
-  //
-  // }
 
   loadMore() {
     this.userService.getMoreUserListRequest(this.role);
   }
-
-  // syncOrgUnits(evt: OrgUnit[]) {
-  //
-  //   const syncBody = {};
-  //         syncBody['is_enabled'] = true;
-  //
-  //   evt.forEach((item: OrgUnit) => {
-  //     syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
-  //   });
-  //   // console.log(syncBody);
-  //
-  //   this.adminService.updateSpSyncing(syncBody)
-  //     .pipe(
-  //       switchMap(() => {
-  //         return this.gsProgress.updateProgress('setup_accounts:end');
-  //       })
-  //     )
-  //     .subscribe((res) => {
-  //       // console.log(res);
-  //     });
-  //
-  //
-  // }
 }

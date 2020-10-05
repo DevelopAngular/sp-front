@@ -200,7 +200,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       });
 
     this.viewport.scrolledIndexChange
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$)
+      )
       .subscribe(res => {
       if (res === (this.dataSource.allData.length - this.viewportDataItems)) {
         this.loadMoreData.emit();

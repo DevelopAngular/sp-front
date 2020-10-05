@@ -18,6 +18,7 @@ const reducer = createReducer(
   adminsInitialState,
   on(adminsActions.getAdmins,
     adminsActions.removeAdminAccount,
+    adminsActions.getMoreAdmins,
       state => ({...state, loading: true, loaded: false})),
   on(adminsActions.getAdminsSuccess, (state, {admins, next}) => {
     return adapter.addAll(admins, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAdmins: []});

@@ -18,6 +18,7 @@ const reducer = createReducer(
   teachersInitialState,
   on(teachersActions.getTeachers,
     teachersActions.removeTeacher,
+    teachersActions.getMoreTeachers,
     (state) => ({...state, loading: true, loaded: false})),
   on(teachersActions.getTeachersSuccess, (state, {teachers, next}) => {
     return adapter.addAll(teachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: []});
