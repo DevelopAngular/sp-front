@@ -205,6 +205,15 @@ export class GoogleLoginService {
 
   }
 
+  updateGoogleToken() {
+    const auth: any = this.GoogleOauth;
+    auth.signIn().then(googleUser => {
+      this._zone.run(() => {
+        console.log('UUUSSEERRR', googleUser.reloadAuthResponse());
+      });
+    });
+  }
+
   signInDemoMode(username: string, password: string) {
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
   }

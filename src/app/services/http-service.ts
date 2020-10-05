@@ -1,4 +1,4 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
@@ -210,28 +210,56 @@ export class HttpService {
         switchMap(() => of(this.accessTokenSubject.value)),
         filter(v => !!v),
         switchMap(({auth, server}) => {
+          // this.http.post('https://sso.gg4l.com/oauth/token', {
+          //   refresh_token: auth.refresh_token,
+          //   grant_type: 'refresh_token'
+          // }, {
+          //   headers: new HttpHeaders({
+          //     'Authorization': 'Basic ' + btoa(server.client_id + ':' + server.client_secret)
+          //   })
+          // }).pipe(catchError(err => {
+          //   debugger;
+          //   return of(err);
+          // })).subscribe(res => {
+          //   debugger;
+          // });
           if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
-            const config = new FormData();
-            const user = JSON.parse(this.storage.getItem('google_auth'));
-            config.append('client_id', server.client_id);
-            config.append('grant_type', 'refresh_token');
-            config.append('token', auth.refresh_token);
+            const authType = this.storage.getItem('authType');
+            if (authType === 'password') {
+              const config = new FormData();
+              config.append('client_id', server.client_id);
+              config.append('grant_type', 'refresh_token');
+              config.append('token', auth.refresh_token);
 
-            return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-              map((data: any) => {
-                // don't use TimeService for auth because auth is required for time service
-                // to be useful
-                data['expires'] = new Date(new Date() + data['expires_in']);
+              return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+                map((data: any) => {
+                  // don't use TimeService for auth because auth is required for time service
+                  // to be useful
+                  data['expires'] = new Date(new Date() + data['expires_in']);
 
-                ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-                const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
-                this.accessTokenSubject.next(updatedAuthContext);
-              }),
-              catchError((err) => {
-                this.loginService.isAuthenticated$.next(false);
-                return of(null);
-              })
-            );                    // return this.fetchServerAuth();
+                  ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+                  const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+                  this.accessTokenSubject.next(updatedAuthContext);
+                }),
+                catchError((err) => {
+                  this.loginService.isAuthenticated$.next(false);
+                  return of(null);
+                })
+              );
+            } else if (authType === 'google') {
+
+            } else if (authType === 'gg4l') {
+                this.http.post('https://sso.gg4l.com/oauth/token', {
+                  refresh_token: auth.refresh_token,
+                  grant_type: 'refresh_token'
+                }, {
+                  headers: new HttpHeaders({
+                    'Authorization': 'Basic ' + environment.gg4l.clientId + ':' + environment.gg4l.secretKey
+                  })
+                }).subscribe(res => {
+                  debugger;
+                });
+            }
           } else {
             return of(null);
           }

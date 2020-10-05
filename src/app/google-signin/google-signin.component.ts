@@ -223,6 +223,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.error$.next('Couldn’t find that username or email');
       return false;
     } else if (this.isGoogleLogin) {
+      this.storage.setItem('authType', this.loginData.authType);
       this.initLogin();
     } else if (this.isGG4L) {
       this.storage.setItem('authType', this.loginData.authType);
@@ -232,6 +233,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
       }
     } else if (this.isStandardLogin) {
+      this.storage.setItem('authType', this.loginData.authType);
       this.inputFocusNumber = 2;
       this.forceFocus$.next();
       this.loginData.demoLoginEnabled = true;
