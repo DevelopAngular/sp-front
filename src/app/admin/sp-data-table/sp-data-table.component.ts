@@ -204,7 +204,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(res => {
-      if (res === (this.dataSource.allData.length - this.viewportDataItems)) {
+      if (res && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
         this.loadMoreData.emit();
         console.log('loading data ==>>>>');
       }
