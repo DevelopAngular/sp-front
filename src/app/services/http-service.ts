@@ -214,13 +214,12 @@ export class HttpService {
         switchMap(({auth, server}) => {
           console.log('Sending Request');
           const refresh_token = this.storage.getItem('refresh_token');
-          const c = new URLSearchParams();
+          const c = new FormData();
           c.append('refresh_token', refresh_token);
           c.append('grant_type', 'refresh_token');
           return this.http.post('https://sso.gg4l.com/oauth/token', c, {
             headers: new HttpHeaders({
               // 'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSg=='
-              'Content-Type': 'application/x-www-form-urlencoded',
               'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSitic2xLOUo1RERQeHZtTWJKZCtnPQ=='
             })
           });
@@ -328,7 +327,6 @@ export class HttpService {
           if (servers.token && servers.token.auth_token) {
             gg4l_token = servers.token.auth_token;
             if (servers.token.refresh_token) {
-              console.log('GG4L TOKEN', servers.token.refresh_token);
               this.storage.setItem('refresh_token', servers.token.refresh_token);
             }
           }
