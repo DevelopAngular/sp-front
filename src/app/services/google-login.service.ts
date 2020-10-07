@@ -206,11 +206,10 @@ export class GoogleLoginService {
   }
 
   updateGoogleToken() {
-    const auth: any = this.GoogleOauth;
-    auth.signIn().then(googleUser => {
-      this._zone.run(() => {
-        console.log('UUUSSEERRR', googleUser.reloadAuthResponse());
-      });
+    const auth = this.googleAuthTool.getValue();
+    const user = auth.currentUser.get();
+    user.reloadAuthResponse().then(res => {
+      this.updateAuth(res);
     });
   }
 

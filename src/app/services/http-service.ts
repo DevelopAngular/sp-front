@@ -112,6 +112,7 @@ export interface LoginResponse {
   servers: LoginServer[];
   token?: {
     auth_token: string,
+    refresh_token?: string
   };
 }
 
@@ -209,19 +210,22 @@ export class HttpService {
       .pipe(
         switchMap(() => of(this.accessTokenSubject.value)),
         filter(v => !!v),
+        take(1),
         switchMap(({auth, server}) => {
-          debugger;
-          this.http.post('https://sso.gg4l.com/oauth/token', {
-            'refresh_token': auth.refresh_token,
-            'grant_type': 'refresh_token'
-          }, {
+          console.log('Sending Request');
+          const refresh_token = this.storage.getItem('refresh_token');
+          const c = new URLSearchParams();
+          c.append('refresh_token', refresh_token);
+          c.append('grant_type', 'refresh_token');
+          return this.http.post('https://sso.gg4l.com/oauth/token', c, {
             headers: new HttpHeaders({
-              'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSg=='
+              // 'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSg=='
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSitic2xLOUo1RERQeHZtTWJKZCtnPQ=='
             })
-          }).subscribe(res => {
-            debugger;
           });
-          if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
+          // console.log(new Date(auth.expires).getTime() + (auth.expires_in * 1000), Date.now());
+          if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < Date.now()) {
             const authType = this.storage.getItem('authType');
             if (authType === 'password') {
               const config = new FormData();
@@ -245,8 +249,10 @@ export class HttpService {
                 })
               );
             } else if (authType === 'google') {
-
+              debugger;
+              this.loginService.updateGoogleToken();
             } else if (authType === 'gg4l') {
+              debugger;
                 this.http.post('https://sso.gg4l.com/oauth/token', {
                   refresh_token: auth.refresh_token,
                   grant_type: 'refresh_token'
@@ -255,14 +261,15 @@ export class HttpService {
                     'Authorization': 'Basic ' + btoa(environment.gg4l.clientId + ':' + environment.gg4l.secretKey)
                   })
                 }).subscribe(res => {
-                  debugger;
+                  // debugger;
                 });
             }
           } else {
             return of(null);
           }
         }),
-      ).subscribe(() => {
+      ).subscribe((res) => {
+        console.log('GG4L refresh', res);
     });
 
     this.kioskTokenSubject$.pipe(
@@ -320,6 +327,9 @@ export class HttpService {
 
           if (servers.token && servers.token.auth_token) {
             gg4l_token = servers.token.auth_token;
+            if (servers.token.refresh_token) {
+              this.storage.setItem('refresh_token', servers.token.refresh_token);
+            }
           }
 
           return { server, gg4l_token };
