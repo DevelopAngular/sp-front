@@ -328,6 +328,7 @@ export class HttpService {
           if (servers.token && servers.token.auth_token) {
             gg4l_token = servers.token.auth_token;
             if (servers.token.refresh_token) {
+              console.log('GG4L TOKEN', servers.token.refresh_token);
               this.storage.setItem('refresh_token', servers.token.refresh_token);
             }
           }
