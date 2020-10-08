@@ -68,6 +68,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() documentType: docType;
   @Input() isGradient: boolean;
   @Output() buttonClick = new EventEmitter<any>();
+  @Output() disabledButtonClick = new EventEmitter<any>();
 
 
   buttonDown = false;
@@ -228,7 +229,7 @@ export class GradientButtonComponent implements OnInit {
     if (!this.disabled) {
       this.buttonClick.emit(event);
     } else {
-      return;
+      this.disabledButtonClick.emit(event);
     }
   }
 
