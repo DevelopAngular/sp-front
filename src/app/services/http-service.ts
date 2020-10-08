@@ -1,5 +1,5 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {BehaviorSubject, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
@@ -179,7 +179,8 @@ export class HttpService {
     private loginService: GoogleLoginService,
     private storage: StorageService,
     private pwaStorage: LocalStorage,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private _zone: NgZone
   ) {
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
@@ -214,15 +215,14 @@ export class HttpService {
         switchMap(({auth, server}) => {
           console.log('Sending Request');
           const refresh_token = this.storage.getItem('refresh_token');
-          const c = new FormData();
-          c.append('refresh_token', refresh_token);
-          c.append('grant_type', 'refresh_token');
-          return this.http.post('https://sso.gg4l.com/oauth/token', c, {
-            headers: new HttpHeaders({
-              // 'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSg=='
-              'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSitic2xLOUo1RERQeHZtTWJKZCtnPQ=='
-            })
-          });
+            const c = new FormData();
+            c.append('refresh_token', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQVFJETlVCR0RYIiwiaWF0IjoxNjAyMDc3OTY5LCJleHAiOjI1OTIwMDAsInBpZCI6Nzc2OTQwMH0.P8Co84BAIYEL12C4-97ovD7Y-SBSfePp8fA7wZ6W2kg');
+            c.append('grant_type', 'refresh_token');
+            return this.http.post('https://sso.gg4l.com/oauth/token', c, {
+              headers: new HttpHeaders({
+                'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSitic2xLOUo1RERQeHZtTWJKZCtnPQ=='
+              })
+            });
           // console.log(new Date(auth.expires).getTime() + (auth.expires_in * 1000), Date.now());
           if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < Date.now()) {
             const authType = this.storage.getItem('authType');
