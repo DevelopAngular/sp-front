@@ -126,6 +126,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() emitSingleProfile: boolean = false;
   @Input() chipsMode: boolean = false;
   @Input() inputField: boolean = true;
+  @Input() overrideChipsInputField: boolean = false;
   @Input() cancelButton: boolean = false;
   @Input() rollUpAfterSelection: boolean = true;
   @Input() role: string = '_profile_student';
@@ -208,7 +209,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.chipsMode) {
+    if (this.chipsMode && !this.overrideChipsInputField) {
       this.inputField = false;
     }
     this.currentSchool = this.httpService.getSchool();
