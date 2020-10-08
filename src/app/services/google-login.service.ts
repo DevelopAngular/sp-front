@@ -205,6 +205,14 @@ export class GoogleLoginService {
 
   }
 
+  updateGoogleToken() {
+    const auth = this.googleAuthTool.getValue();
+    const user = auth.currentUser.get();
+    user.reloadAuthResponse().then(res => {
+      this.updateAuth(res);
+    });
+  }
+
   signInDemoMode(username: string, password: string) {
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
   }

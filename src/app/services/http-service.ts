@@ -1,5 +1,5 @@
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Injectable, NgZone} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {BehaviorSubject, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
@@ -112,6 +112,7 @@ export interface LoginResponse {
   servers: LoginServer[];
   token?: {
     auth_token: string,
+    refresh_token?: string
   };
 }
 
@@ -178,7 +179,8 @@ export class HttpService {
     private loginService: GoogleLoginService,
     private storage: StorageService,
     private pwaStorage: LocalStorage,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private _zone: NgZone
   ) {
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
@@ -210,33 +212,51 @@ export class HttpService {
         switchMap(() => of(this.accessTokenSubject.value)),
         filter(v => !!v),
         switchMap(({auth, server}) => {
-          if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
-            const config = new FormData();
-            const user = JSON.parse(this.storage.getItem('google_auth'));
-            config.append('client_id', server.client_id);
-            config.append('grant_type', 'refresh_token');
-            config.append('token', auth.refresh_token);
+          if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < Date.now()) {
+            const authType = this.storage.getItem('authType');
+            if (authType === 'password') {
+              const config = new FormData();
+              config.append('client_id', server.client_id);
+              config.append('grant_type', 'refresh_token');
+              config.append('token', auth.refresh_token);
 
-            return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-              map((data: any) => {
-                // don't use TimeService for auth because auth is required for time service
-                // to be useful
-                data['expires'] = new Date(new Date() + data['expires_in']);
+              return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+                map((data: any) => {
+                  // don't use TimeService for auth because auth is required for time service
+                  // to be useful
+                  data['expires'] = new Date(new Date() + data['expires_in']);
 
-                ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-                const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
-                this.accessTokenSubject.next(updatedAuthContext);
-              }),
-              catchError((err) => {
-                this.loginService.isAuthenticated$.next(false);
-                return of(null);
-              })
-            );                    // return this.fetchServerAuth();
+                  ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+                  const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+                  this.accessTokenSubject.next(updatedAuthContext);
+                }),
+                catchError((err) => {
+                  this.loginService.isAuthenticated$.next(false);
+                  return of(null);
+                })
+              );
+            } else if (authType === 'google') {
+              // debugger;
+              this.loginService.updateGoogleToken();
+              return of(null);
+            } else if (authType === 'gg4l') {
+              // debugger;
+              const refresh_token = this.storage.getItem('refresh_token');
+              const c = new FormData();
+              c.append('refresh_token', refresh_token);
+              c.append('grant_type', 'refresh_token');
+              return this.http.post('https://sso.gg4l.com/oauth/token', c, {
+                headers: new HttpHeaders({
+                  'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSitic2xLOUo1RERQeHZtTWJKZCtnPQ=='
+                })
+              });
+            }
           } else {
             return of(null);
           }
         }),
-      ).subscribe(() => {
+      ).subscribe((res) => {
+        // console.log('GG4L refresh', res);
     });
 
     this.kioskTokenSubject$.pipe(
@@ -294,6 +314,9 @@ export class HttpService {
 
           if (servers.token && servers.token.auth_token) {
             gg4l_token = servers.token.auth_token;
+            if (servers.token.refresh_token) {
+              this.storage.setItem('refresh_token', servers.token.refresh_token);
+            }
           }
 
           return { server, gg4l_token };
