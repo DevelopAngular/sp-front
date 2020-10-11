@@ -115,6 +115,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(res => {
+        console.log(res)
         this.passLimits = res;
     });
 
@@ -323,7 +324,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 
   isValidLocation(locationId: any) {
-    if (+locationId === +this.invalidLocation)
+    if (this.isFavoriteForm)
+      return true;
+    else if (+locationId === +this.invalidLocation)
       return false;
 
     const location = this.passLimits[locationId];
