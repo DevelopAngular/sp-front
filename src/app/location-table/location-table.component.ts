@@ -323,11 +323,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 
   isValidLocation(locationId: any) {
-    if ((this.forStaff && (+locationId !== +this.invalidLocation)) || this.isFavoriteForm) {
-      return true;
-    }
+    if (+locationId === +this.invalidLocation)
+      return false;
+
     const location = this.passLimits[locationId];
-    return location && (!this.forStaff && this.tooltipService.reachedPassLimit(this.currentPage, location, this.forStaff)) && (+location.id !== +this.invalidLocation);
+    if (!location)
+      return false;
+
+    return this.tooltipService.reachedPassLimit(this.currentPage, location);
   }
 
   mergeLocations(url, withStars: boolean, category: string) {
