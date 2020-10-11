@@ -70,7 +70,11 @@ export class LocationsService {
   ) { }
 
     getLocationsWithCategory(category: string) {
-        return this.http.get(`v1/locations?category=${category}&`);
+      return this.http.get('v1/locations', {
+        params: {
+          category: category,}
+        }
+      );
     }
 
     getLocationsWithTeacherRequest(teacher: User): Observable<Location[]> {
