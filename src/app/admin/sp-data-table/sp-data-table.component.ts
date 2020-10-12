@@ -13,7 +13,7 @@ import {
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
-import {MatDialog, MatSort, Sort} from '@angular/material';
+import {MatDialog, MatSort} from '@angular/material';
 import * as moment from 'moment';
 import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
@@ -149,6 +149,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowClickEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() sortClickEvent: EventEmitter<string> = new EventEmitter<string>();
 
   placeholderHeight = 0;
   displayedColumns: string[];
@@ -250,36 +251,36 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.generateCSV();
       });
 
-    this.dataSource.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe((sort: Sort) => {
-      const activeSort = this.currentSort.find(curr => curr.active === sort.active);
-      // debugger;
-      // if (!activeSort) {
-        this.currentSort = [sort];
-      // } else {
-      //   activeSort.direction = sort.direction;
-      // }
-
-      const data = this.dataSource.allData;
-      if (!sort.active || sort.direction === '') {
-        this.dataSource.allData = data;
-        return;
-      }
-
-      this.storage.setItem('defaultSortSubject', sort.active);
-
-      this.dataSource.allData = data.sort((a, b) => {
-        const isAsc = sort.direction === 'desc';
-        const {_data: _a} = a;
-        const {_data: _b} = b;
-
-        return this.dataSource.compare(
-          this.dataSource.sortingDataAccessor(_a, sort.active),
-          this.dataSource.sortingDataAccessor(_b, sort.active),
-          isAsc
-        );
-
-      });
-    });
+    // this.dataSource.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe((sort: Sort) => {
+    //   const activeSort = this.currentSort.find(curr => curr.active === sort.active);
+    //   // debugger;
+    //   // if (!activeSort) {
+    //     this.currentSort = [sort];
+    //   // } else {
+    //   //   activeSort.direction = sort.direction;
+    //   // }
+    //
+    //   const data = this.dataSource.allData;
+    //   if (!sort.active || sort.direction === '') {
+    //     this.dataSource.allData = data;
+    //     return;
+    //   }
+    //
+    //   this.storage.setItem('defaultSortSubject', sort.active);
+    //
+    //   this.dataSource.allData = data.sort((a, b) => {
+    //     const isAsc = sort.direction === 'desc';
+    //     const {_data: _a} = a;
+    //     const {_data: _b} = b;
+    //
+    //     return this.dataSource.compare(
+    //       this.dataSource.sortingDataAccessor(_a, sort.active),
+    //       this.dataSource.sortingDataAccessor(_b, sort.active),
+    //       isAsc
+    //     );
+    //
+    //   });
+    // });
 
     if (!this.selection.isEmpty()) {
       this.selection.clear();
@@ -381,5 +382,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       return omit(row, ['Pass']);
     });
     this.xlsx.generate(exceptPass);
+  }
+
+  sortHeader(column) {
+    this.sortClickEvent.emit(column);
   }
 }

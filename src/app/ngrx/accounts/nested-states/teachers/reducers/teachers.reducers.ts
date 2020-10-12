@@ -41,6 +41,9 @@ const reducer = createReducer(
   on(teachersActions.getMoreTeachersFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
   on(teachersActions.bulkAddTeacherAccounts, (state, {teachers}) => {
     return adapter.addMany(teachers, {...state});
+  }),
+  on(teachersActions.sortTeacherAccountsSuccess, (state, {teachers, next}) => {
+    return adapter.addAll(teachers, {...state, loading: false, loaded: true, nextRequest: next});
   })
 );
 

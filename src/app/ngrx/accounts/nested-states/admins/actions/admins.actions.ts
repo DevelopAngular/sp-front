@@ -34,3 +34,5 @@ export const addUserToAdminProfileFailure = createAction(`[${ADMIN}] Add User To
 export const updateAdminAccount = createAction(`[${ADMIN}] Update Admin Account`, props<{profile: User}>());
 
 export const bulkAddAdminAccounts = createAction(`[${ADMIN}] Bulk Add Admin Accounts`, props<{admins: User[]}>());
+
+export const sortAdminAccounts = createAction(`[${ADMIN}] Sort Admin Accounts`, props<{admins: User[], next: string}>());

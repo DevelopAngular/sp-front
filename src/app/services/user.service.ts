@@ -19,6 +19,7 @@ import {
   getMoreAccounts,
   postAccounts,
   removeAccount,
+  sortAccounts,
   updateAccountActivity,
   updateAccountPermissions
 } from '../ngrx/accounts/actions/accounts.actions';
@@ -550,5 +551,13 @@ export class UserService {
       })
     };
     return this.http.post('v1/users/bulk-add?should_commit=true', accounts, httpOptions, false);
+  }
+
+  sortTableHeaderRequest(role, queryParams) {
+    this.store.dispatch(sortAccounts({role, queryParams}));
+  }
+
+  sortTableHeader(queryParams) {
+    return this.http.get(constructUrl('v1/users', queryParams));
   }
 }

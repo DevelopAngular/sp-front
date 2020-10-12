@@ -259,6 +259,41 @@ export class AccountsEffects {
        );
    });
 
+   sortAccounts$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.sortAccounts),
+         concatMap((action: any) => {
+           return this.userService.sortTableHeader(action.queryParams)
+             .pipe(
+               map(({next, results}) => {
+                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next});
+               }),
+               catchError(error => of(accountsActions.sortAccountsFailure({errorMessage: error.message})))
+             );
+         })
+       );
+   });
+
+   sortAccountsSuccess$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.sortAccountsSuccess),
+         map(({users, role, next}) => {
+           const nextUrl = next ? next.substring(next.search('v1')) : null;
+           if (role === '_profile_admin') {
+             return nestedStates.sortAdminAccounts({admins: users, next: nextUrl});
+           } else if (role === '_profile_teacher') {
+             return nestedStates.sortTeacherAccounts({teachers: users, next: nextUrl});
+           } else if (role === '_profile_student') {
+             return nestedStates.sortStudentAccounts({students: users, next: nextUrl});
+           } else if (role === '_profile_assistant') {
+             return nestedStates.sortAssistantAccounts({assistants: users, next: nextUrl});
+           }
+         })
+       );
+   });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

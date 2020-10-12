@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as teachersActions from '../actions';
-import {catchError, concatMap, filter, map, pluck, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
 import {HttpService} from '../../../../../services/http-service';
@@ -170,6 +170,30 @@ export class TeachersEffects {
               catchError(error => of(teachersActions.addUserToTeacherProfileFailure({errorMessage: error.message})))
             );
         })
+      );
+  });
+
+  sortTeacherAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.sortTeacherAccounts),
+        concatMap((action: any) => {
+          return forkJoin({
+            userList: of(action.teachers),
+            userLocations: this.locationService.getLocationsWithManyTeachers(action.teachers)
+          }).pipe(
+            map(({userList, userLocations}: {userList: any, userLocations: any[]}) => {
+              const users = userList.map(user => {
+                const assignedTo = userLocations.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
+                return {...user, assignedTo};
+              });
+              return { users, next: action.next };
+            }),
+            map(({users, next}) => {
+              return teachersActions.sortTeacherAccountsSuccess({teachers: users, next});
+            })
+          );
+        }),
       );
   });
 

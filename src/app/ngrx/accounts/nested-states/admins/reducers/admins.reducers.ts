@@ -41,6 +41,9 @@ const reducer = createReducer(
   on(adminsActions.getMoreAdminsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
   on(adminsActions.bulkAddAdminAccounts, (state, {admins}) => {
     return adapter.addMany(admins, {...state});
+  }),
+  on(adminsActions.sortAdminAccounts, (state, {admins, next}) => {
+    return adapter.addAll(admins, {...state, loading: false, loaded: true, nextRequest: next});
   })
 );
 

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as assistantsActions from '../actions';
-import {catchError, concatMap, map, switchMap } from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
@@ -244,6 +244,29 @@ export class AssistantsEffects {
                 ];
               }),
               catchError(error => of(assistantsActions.addUserToAssistantProfileFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  sortAssistantAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(assistantsActions.sortAssistantAccounts),
+        concatMap((action: any) => {
+          return forkJoin({
+            users: of(action.assistants),
+            representedUsers: zip(...action.assistants.map(user => this.userService.getRepresentedUsers(user.id)))
+          }).pipe(
+              map(({users, representedUsers}) => {
+                const assistants = users.map((user, index) => {
+                  return {
+                    ...user,
+                    canActingOnBehalfOf: representedUsers[index]
+                  };
+                });
+                return assistantsActions.sortAssistantAccountsSuccess({assistants, next: action.next})
+              })
             );
         })
       );

@@ -13,7 +13,7 @@
     </div>
   </div>
     <cdk-virtual-scroll-viewport class="example-viewport" [style.height]="height" [itemSize]="itemSize">
-      <table class="table" mat-table [dataSource]="dataSource" [multiTemplateDataRows]="true" matSort>
+      <table class="table" mat-table [dataSource]="dataSource" [multiTemplateDataRows]="true">
         <ng-container matColumnDef="select" *ngIf="isCheckbox | async" sticky>
           <th mat-header-cell *matHeaderCellDef style="padding: 0 15px;">
             <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -37,10 +37,11 @@
           <ng-container *ngIf="column !== 'Pass' && column !== 'Passes'; else passNoSort">
             <th
               [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
+              style="cursor: pointer"
               [style.background-color]="getColumnSort(column) === 'asc' || getColumnSort(column) === 'desc' ? '#e5e6eb' : '#D3D6DE'"
-              mat-sort-header
               mat-header-cell
               *matHeaderCellDef
+              (click)="sortHeader(column)"
             >
               {{ column }}
               <div class="sort-icon" [style.right]="!showPrintButtons && isLast ? '55px' : '25px'">

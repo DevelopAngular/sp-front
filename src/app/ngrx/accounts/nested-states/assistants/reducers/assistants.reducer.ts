@@ -47,6 +47,9 @@ const reducer = createReducer(
   on(assistantsActions.getMoreAssistantsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
   on(assistantsActions.bulkAddAssistantAccounts, (state, {assistants}) => {
     return adapter.addMany(assistants, {...state});
+  }),
+  on(assistantsActions.sortAssistantAccountsSuccess, (state, {assistants, next}) => {
+    return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next});
   })
 );
 

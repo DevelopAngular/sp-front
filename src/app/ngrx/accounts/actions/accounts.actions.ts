@@ -27,3 +27,7 @@ export const bulkAddAccounts = createAction('[Accounts] Bulk Add Accounts', prop
 export const bulkAddAccountsSuccess = createAction('[Accounts] Bulk Add Accounts Success', props<{accounts: User[]}>());
 export const bulkAddAccountsFailure = createAction('[Accounts] Bulk Add Accounts Failure', props<{errorMessage: string}>());
 
+export const sortAccounts = createAction('[Accounts] Sort Accounts', props<{role: string, queryParams: any}>());
+export const sortAccountsSuccess = createAction('[Accounts] Sort Accounts Success', props<{users: User[], role: string, next: string}>());
+export const sortAccountsFailure = createAction('[Accounts] Sort Accounts Failure', props<{errorMessage: string}>());
+

@@ -73,12 +73,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         switchMap(() => this.route.params),
         tap(params => {
           this.role = params.role;
+          this.userService.getAccountsRoles(this.role, '', 50);
           this.buildPermissions();
           this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
           this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
         }),
         switchMap(() => {
-          return this.userService.getAccountsRoles(this.role, '', 50);
+          return this.userService.getAccountsRole(this.role);
         }),
         map((accounts: User[]) => {
           if (!accounts.length) {
@@ -298,5 +299,28 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   loadMore() {
     this.userService.getMoreUserListRequest(this.role);
+  }
+
+  sortingTable(sortColumn) {
+    const queryParams: any = {};
+    switch (sortColumn) {
+      case 'Name':
+        queryParams.sort = '-last_name';
+        break;
+      case 'Email/username':
+        queryParams.sort = '-email';
+        break;
+      case 'Last sign-in':
+        queryParams.sort = 'last_sign_in';
+        break;
+      case 'Type':
+        queryParams.sort = 'sync_type';
+        break;
+      case 'rooms':
+        queryParams.sort = 'assigned_locations';
+    }
+    queryParams.limit = 50;
+    queryParams.role = this.role;
+    this.userService.sortTableHeaderRequest(this.role, queryParams);
   }
 }
