@@ -38,15 +38,18 @@
             <th
               [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
               style="cursor: pointer"
-              [style.background-color]="getColumnSort(column) === 'asc' || getColumnSort(column) === 'desc' ? '#e5e6eb' : '#D3D6DE'"
+              [style.background-color]="sort && sort === 'asc' && sortColumn === column || sort && sort === 'desc' && sortColumn === column ? '#e5e6eb' : '#D3D6DE'"
               mat-header-cell
               *matHeaderCellDef
               (click)="sortHeader(column)"
             >
               {{ column }}
+              <div class="loading-theme_blue-gray spinner ds-flex-center-center sort-spinner" *ngIf="(sortLoading$ | async) && sortColumn === column">
+                <mat-spinner [diameter]="15" [color]="'primary'"></mat-spinner>
+              </div>
               <div class="sort-icon" [style.right]="!showPrintButtons && isLast ? '55px' : '25px'">
-                <mat-icon class="icon" [ngStyle]="{'color': getColumnSort(column) === 'asc' ? '#666D81' : '#7F879D'}">arrow_drop_up</mat-icon>
-                <mat-icon class="icon" [ngStyle]="{'color': getColumnSort(column) === 'desc' ? '#666D81' : '#7F879D'}">arrow_drop_down</mat-icon>
+                <mat-icon class="icon" [ngStyle]="{'color': sort && sort === 'asc' && sortColumn === column ? '#666D81' : '#7F879D'}">arrow_drop_up</mat-icon>
+                <mat-icon class="icon" [ngStyle]="{'color': sort && sort === 'desc' && sortColumn === column ? '#666D81' : '#7F879D'}">arrow_drop_down</mat-icon>
               </div>
             </th>
           </ng-container>

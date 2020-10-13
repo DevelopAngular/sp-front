@@ -31,4 +31,4 @@ export const addUserToStudentProfileFailure = createAction(`[${STUDENTS}] Add Us
 
 export const bulkAddStudentAccounts = createAction(`[${STUDENTS}] Bulk Add Students Accounts`, props<{students: User[]}>());
 
-export const sortStudentAccounts = createAction(`[${STUDENTS}] Sort Student Accounts`, props<{students: User[], next: string}>());
+export const sortStudentAccounts = createAction(`[${STUDENTS}] Sort Student Accounts`, props<{students: User[], next: string, sortValue: string}>());

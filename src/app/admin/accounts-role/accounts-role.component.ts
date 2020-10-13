@@ -1,9 +1,9 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -42,10 +42,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
   public searchValue: string;
 
+  public sortingColumn: string;
+
   accountRoleData$: Observable<any[]>;
 
   isLoading$: Observable<boolean>;
   isLoaded$: Observable<boolean>;
+  sort$: Observable<string>;
+  sortLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   schools$: Observable<School[]>;
 
@@ -77,11 +81,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.buildPermissions();
           this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
           this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
+          this.sort$ = this.userService.accountSort$[this.role];
         }),
         switchMap(() => {
           return this.userService.getAccountsRole(this.role);
         }),
         map((accounts: User[]) => {
+          this.sortLoading$.next(false);
           if (!accounts.length) {
             this.userEmptyState = true;
            return this.emptyRoleObject();
@@ -303,24 +309,37 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   sortingTable(sortColumn) {
     const queryParams: any = {};
-    switch (sortColumn) {
-      case 'Name':
-        queryParams.sort = '-last_name';
-        break;
-      case 'Email/username':
-        queryParams.sort = '-email';
-        break;
-      case 'Last sign-in':
-        queryParams.sort = 'last_sign_in';
-        break;
-      case 'Type':
-        queryParams.sort = 'sync_type';
-        break;
-      case 'rooms':
-        queryParams.sort = 'assigned_locations';
-    }
-    queryParams.limit = 50;
-    queryParams.role = this.role;
-    this.userService.sortTableHeaderRequest(this.role, queryParams);
+    this.sortingColumn = sortColumn;
+    this.sortLoading$.next(true);
+    this.sort$
+      .pipe(take(1))
+      .subscribe(sort => {
+        switch (sortColumn) {
+          case 'Name':
+            queryParams.sort = sort && sort === 'asc' ? '-last_name' : 'last_name';
+            break;
+          case 'Email/username':
+            queryParams.sort = sort && sort === 'asc' ? '-email' : 'email';
+            break;
+          case 'Last sign-in':
+            queryParams.sort = sort && sort === 'asc' ? '-last_sign_in' : 'last_sign_in';
+            break;
+          case 'Type':
+            queryParams.sort = sort && sort === 'asc' ? '-sync_type' : 'sync_type';
+            break;
+          case 'rooms':
+            queryParams.sort = sort && sort === 'asc' ? '-assigned_locations' : 'assigned_locations';
+            break;
+          default:
+            this.sortLoading$.next(false);
+            return;
+        }
+        if (sort === 'desc') {
+          delete queryParams.sort;
+        }
+        queryParams.limit = 50;
+        queryParams.role = this.role;
+        this.userService.sortTableHeaderRequest(this.role, queryParams);
+    });
   }
 }

@@ -51,8 +51,8 @@ export const addUserToAssistantProfileFailure = createAction(`[${ASSISTANTS}] Ad
 
 export const bulkAddAssistantAccounts = createAction(`[${ASSISTANTS}] Bulk Add Assistants Accounts`, props<{assistants: User[]}>());
 
-export const sortAssistantAccounts = createAction(`[${ASSISTANTS}] Sort Assistant Accounts`, props<{assistants: User[], next: string}>());
-export const sortAssistantAccountsSuccess = createAction(`[${ASSISTANTS}] Sort Assistant Accounts Success`, props<{assistants: User[], next: string}>());
+export const sortAssistantAccounts = createAction(`[${ASSISTANTS}] Sort Assistant Accounts`, props<{assistants: User[], next: string, sortValue: string}>());
+export const sortAssistantAccountsSuccess = createAction(`[${ASSISTANTS}] Sort Assistant Accounts Success`, props<{assistants: User[], next: string, sortValue: string}>());
 
 
 

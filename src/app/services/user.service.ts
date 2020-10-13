@@ -35,6 +35,7 @@ import {
 import {
   getAdminsAccountsEntities,
   getAdminsCollections,
+  getAdminSort,
   getCountAdmins,
   getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
@@ -48,11 +49,13 @@ import {
   getLoadingTeachers,
   getNextRequestTeachers,
   getTeacherAccountsCollection,
-  getTeachersAccountsEntities
+  getTeachersAccountsEntities,
+  getTeacherSort
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
   getAssistantsAccountsCollection,
   getAssistantsAccountsEntities,
+  getAssistantSort,
   getCountAssistants,
   getLastAddedAssistants,
   getLoadedAssistants,
@@ -66,7 +69,8 @@ import {
   getLoadingStudents,
   getNextRequestStudents,
   getStudentsAccountsCollection,
-  getStudentsAccountsEntities
+  getStudentsAccountsEntities,
+  getStudentSort
 } from '../ngrx/accounts/nested-states/students/states';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
@@ -149,6 +153,13 @@ export class UserService {
     _profile_teacher: this.store.select(getNextRequestTeachers),
     _profile_admin: this.store.select(getNextRequestAdminsAccounts),
     _profile_assistant: this.store.select(getNextRequestAssistants)
+  };
+
+  accountSort$ = {
+    _profile_admin: this.store.select(getAdminSort),
+    _profile_teacher: this.store.select(getTeacherSort),
+    _profile_student: this.store.select(getStudentSort),
+    _profile_assistant: this.store.select(getAssistantSort)
   };
 
   user$: Observable<User> = this.store.select(getUserData);

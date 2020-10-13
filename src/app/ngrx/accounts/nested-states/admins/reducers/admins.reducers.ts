@@ -11,7 +11,8 @@ export const adminsInitialState: AdminsState = adapter.getInitialState({
   loading: false,
   loaded: false,
   nextRequest: null,
-  lastAddedAdmins: []
+  lastAddedAdmins: [],
+  sortValue: ''
 });
 
 const reducer = createReducer(
@@ -42,8 +43,8 @@ const reducer = createReducer(
   on(adminsActions.bulkAddAdminAccounts, (state, {admins}) => {
     return adapter.addMany(admins, {...state});
   }),
-  on(adminsActions.sortAdminAccounts, (state, {admins, next}) => {
-    return adapter.addAll(admins, {...state, loading: false, loaded: true, nextRequest: next});
+  on(adminsActions.sortAdminAccounts, (state, {admins, next, sortValue}) => {
+    return adapter.addAll(admins, {...state, loading: false, loaded: true, nextRequest: next, sortValue});
   })
 );
 

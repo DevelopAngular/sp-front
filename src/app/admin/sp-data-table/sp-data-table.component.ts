@@ -143,9 +143,12 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() currentPage: string;
   @Input() isRowClick: boolean;
   @Input() showPrintButtons: boolean = true;
+  @Input() sort: string = '';
+  @Input() sortColumn: string;
+  @Input() sortLoading$: Observable<boolean>;
 
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
-  @ViewChild(MatSort) sort: MatSort;
+  // @ViewChild(MatSort) sort: MatSort;
 
   @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowClickEvent: EventEmitter<any> = new EventEmitter<any>();
@@ -192,7 +195,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
-    this.dataSource.sort = this.sort;
+    // this.dataSource.sort = this.sort;
     this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
       .subscribe(offset => {
         this.placeholderHeight = offset;

@@ -35,4 +35,4 @@ export const updateAdminAccount = createAction(`[${ADMIN}] Update Admin Account`
 
 export const bulkAddAdminAccounts = createAction(`[${ADMIN}] Bulk Add Admin Accounts`, props<{admins: User[]}>());
 
-export const sortAdminAccounts = createAction(`[${ADMIN}] Sort Admin Accounts`, props<{admins: User[], next: string}>());
+export const sortAdminAccounts = createAction(`[${ADMIN}] Sort Admin Accounts`, props<{admins: User[], next: string, sortValue: string}>());

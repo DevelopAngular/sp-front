@@ -35,7 +35,7 @@ export const addUserToTeacherProfileFailure = createAction(`[${TEACHER}] Add Use
 
 export const bulkAddTeacherAccounts = createAction(`[${TEACHER}] Bulk Add Teacher Accounts`, props<{teachers: User[]}>());
 
-export const sortTeacherAccounts = createAction(`[${TEACHER}] Sort Teacher Accounts`, props<{teachers: User[], next: string}>());
-export const sortTeacherAccountsSuccess = createAction(`[${TEACHER}] Sort Teacher Accounts Success`, props<{teachers: User[], next: string}>());
+export const sortTeacherAccounts = createAction(`[${TEACHER}] Sort Teacher Accounts`, props<{teachers: User[], next: string, sortValue: string}>());
+export const sortTeacherAccountsSuccess = createAction(`[${TEACHER}] Sort Teacher Accounts Success`, props<{teachers: User[], next: string, sortValue: string}>());
 
 

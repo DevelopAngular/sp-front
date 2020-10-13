@@ -265,7 +265,7 @@ export class AssistantsEffects {
                     canActingOnBehalfOf: representedUsers[index]
                   };
                 });
-                return assistantsActions.sortAssistantAccountsSuccess({assistants, next: action.next})
+                return assistantsActions.sortAssistantAccountsSuccess({assistants, next: action.next, sortValue: action.sortValue})
               })
             );
         })

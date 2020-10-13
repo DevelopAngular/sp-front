@@ -28,6 +28,6 @@ export const bulkAddAccountsSuccess = createAction('[Accounts] Bulk Add Accounts
 export const bulkAddAccountsFailure = createAction('[Accounts] Bulk Add Accounts Failure', props<{errorMessage: string}>());
 
 export const sortAccounts = createAction('[Accounts] Sort Accounts', props<{role: string, queryParams: any}>());
-export const sortAccountsSuccess = createAction('[Accounts] Sort Accounts Success', props<{users: User[], role: string, next: string}>());
+export const sortAccountsSuccess = createAction('[Accounts] Sort Accounts Success', props<{users: User[], role: string, next: string, sortValue: string}>());
 export const sortAccountsFailure = createAction('[Accounts] Sort Accounts Failure', props<{errorMessage: string}>());
 

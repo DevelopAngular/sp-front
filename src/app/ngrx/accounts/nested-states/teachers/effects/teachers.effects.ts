@@ -190,7 +190,7 @@ export class TeachersEffects {
               return { users, next: action.next };
             }),
             map(({users, next}) => {
-              return teachersActions.sortTeacherAccountsSuccess({teachers: users, next});
+              return teachersActions.sortTeacherAccountsSuccess({teachers: users, next, sortValue: action.sortValue});
             })
           );
         }),

@@ -267,7 +267,8 @@ export class AccountsEffects {
            return this.userService.sortTableHeader(action.queryParams)
              .pipe(
                map(({next, results}) => {
-                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next});
+                 const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
+                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next, sortValue});
                }),
                catchError(error => of(accountsActions.sortAccountsFailure({errorMessage: error.message})))
              );
@@ -279,16 +280,16 @@ export class AccountsEffects {
      return this.actions$
        .pipe(
          ofType(accountsActions.sortAccountsSuccess),
-         map(({users, role, next}) => {
+         map(({users, role, next, sortValue}) => {
            const nextUrl = next ? next.substring(next.search('v1')) : null;
            if (role === '_profile_admin') {
-             return nestedStates.sortAdminAccounts({admins: users, next: nextUrl});
+             return nestedStates.sortAdminAccounts({admins: users, next: nextUrl, sortValue});
            } else if (role === '_profile_teacher') {
-             return nestedStates.sortTeacherAccounts({teachers: users, next: nextUrl});
+             return nestedStates.sortTeacherAccounts({teachers: users, next: nextUrl, sortValue});
            } else if (role === '_profile_student') {
-             return nestedStates.sortStudentAccounts({students: users, next: nextUrl});
+             return nestedStates.sortStudentAccounts({students: users, next: nextUrl, sortValue});
            } else if (role === '_profile_assistant') {
-             return nestedStates.sortAssistantAccounts({assistants: users, next: nextUrl});
+             return nestedStates.sortAssistantAccounts({assistants: users, next: nextUrl, sortValue});
            }
          })
        );

@@ -28,6 +28,11 @@ export const getLastAddedTeachers = createSelector(
   (state: TeachersStates) => state.lastAddedTeachers
 );
 
+export const getTeacherSort = createSelector(
+  getTeachersAccountsProfiles,
+  (state: TeachersStates) => state.sortValue
+);
+
 export const getCountTeachers = adapter.getSelectors(getTeachersAccountsProfiles).selectTotal;
 export const getTeachersAccountsEntities = adapter.getSelectors(getTeachersAccountsProfiles).selectEntities;
 

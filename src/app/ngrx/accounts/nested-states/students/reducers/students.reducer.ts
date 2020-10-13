@@ -10,7 +10,8 @@ export const studentsAccountsInitialState: StudentsStates = adapter.getInitialSt
   loading: false,
   loaded: false,
   nextRequest: null,
-  lastAddedStudents: []
+  lastAddedStudents: [],
+  sortValue: ''
 });
 
 const reducer = createReducer(
@@ -40,8 +41,8 @@ const reducer = createReducer(
   on(studentsActions.bulkAddStudentAccounts, (state, {students}) => {
     return adapter.addMany(students, {...state});
   }),
-  on(studentsActions.sortStudentAccounts, (state, {students, next}) => {
-    return adapter.addAll(students, {...state, loading: false, loaded: true, nextRequest: next});
+  on(studentsActions.sortStudentAccounts, (state, {students, next, sortValue}) => {
+    return adapter.addAll(students, {...state, loading: false, loaded: true, nextRequest: next, sortValue});
   })
 );
 

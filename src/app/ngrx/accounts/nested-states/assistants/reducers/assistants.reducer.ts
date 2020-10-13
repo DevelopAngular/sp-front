@@ -10,7 +10,8 @@ export const assistantsInitialState: AssistantsStates = adapter.getInitialState(
   loading: false,
   loaded: false,
   nextRequest: null,
-  lastAddedAssistants: []
+  lastAddedAssistants: [],
+  sortValue: ''
 });
 
 const reducer = createReducer(
@@ -48,8 +49,8 @@ const reducer = createReducer(
   on(assistantsActions.bulkAddAssistantAccounts, (state, {assistants}) => {
     return adapter.addMany(assistants, {...state});
   }),
-  on(assistantsActions.sortAssistantAccountsSuccess, (state, {assistants, next}) => {
-    return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next});
+  on(assistantsActions.sortAssistantAccountsSuccess, (state, {assistants, next, sortValue}) => {
+    return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next, sortValue});
   })
 );
 
