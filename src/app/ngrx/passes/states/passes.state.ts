@@ -1,5 +1,5 @@
-import { EntityState } from '@ngrx/entity';
-import { HallPass } from '../../../models/HallPass';
+import {EntityState} from '@ngrx/entity';
+import {HallPass} from '../../../models/HallPass';
 
 export interface IPassesState extends EntityState<HallPass> {
   loading: boolean;
@@ -7,4 +7,7 @@ export interface IPassesState extends EntityState<HallPass> {
   moreLoading: boolean;
   nextRequest: string;
   lastAddedPasses: HallPass[];
+  sortLoading: boolean;
+  sortLoaded: boolean;
+  sortValue: string;
 }

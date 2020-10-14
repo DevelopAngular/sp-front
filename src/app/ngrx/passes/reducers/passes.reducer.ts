@@ -1,7 +1,7 @@
-import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
-import { HallPass } from '../../../models/HallPass';
-import { IPassesState } from '../states';
-import { Action, createReducer, on } from '@ngrx/store';
+import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
+import {HallPass} from '../../../models/HallPass';
+import {IPassesState} from '../states';
+import {Action, createReducer, on} from '@ngrx/store';
 
 import * as passesActions from '../actions';
 
@@ -12,7 +12,10 @@ export const passesInitialState: IPassesState = adapter.getInitialState({
   loaded: false,
   moreLoading: false,
   nextRequest: null,
-  lastAddedPasses: []
+  lastAddedPasses: [],
+  sortLoading: false,
+  sortLoaded: false,
+  sortValue: ''
 });
 
 const reducer = createReducer(
@@ -26,6 +29,10 @@ const reducer = createReducer(
   }),
   on(passesActions.getMorePassesSuccess, (state, {passes, next}) => {
     return adapter.addMany(passes, {...state, loaded: true, loading: false, nextRequest: next, lastAddedPasses: passes, moreLoading: false});
+  }),
+  on(passesActions.sortPasses, (state) => ({...state, sortLoading: true, sortLoaded: false})),
+  on(passesActions.sortPassesSuccess, (state, {next, passes, sortValue}) => {
+    return adapter.addAll(passes, {...state, nextRequest: next, sortLoading: false, sortLoaded: true, sortValue});
   })
 );
 

@@ -107,7 +107,11 @@
         [emptyText]="'No passes found with the selected filters.'"
         [currentPage]="currentView$.value"
         (loadMoreData)="loadMorePasses()"
+        (sortClickEvent)="sortHeaders($event)"
         [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+        [sort]="passSearchState.sortPasses$ | async"
+        [sortColumn]="sortColumn"
+        [sortLoading$]="passSearchState.sortPassesLoading$"
       ></app-sp-data-table>
     </div>
     <div class="contact-trace" *ngIf="views[currentView].id === 3" [style.height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'">

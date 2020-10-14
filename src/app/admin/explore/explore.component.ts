@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDes
 import {BehaviorSubject, iif, Observable, of, Subject} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
@@ -65,7 +65,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
   passSearchState: {
     loading$: Observable<boolean>,
     loaded$: Observable<boolean>
-    isEmpty?: boolean
+    isEmpty?: boolean,
+    sortPasses$?: Observable<string>,
+    sortPassesLoading$?: Observable<boolean>
   };
   contactTraceState: {
     loading$: Observable<boolean>,
@@ -97,6 +99,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
   adminCalendarOptions;
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
+
+  sortColumn: string;
 
   destroyPassClick = new Subject();
   destroy$ = new Subject();
@@ -139,7 +143,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.passSearchState = {
       loading$: this.hallPassService.passesLoading$,
-      loaded$: this.hallPassService.passesLoaded$
+      loaded$: this.hallPassService.passesLoaded$,
+      sortPasses$: this.hallPassService.sortPassesValue$,
+      sortPassesLoading$: this.hallPassService.sortPassesLoading$
     };
     this.contactTraceState = {
       loading$: this.contactTraceService.contactTraceLoading$,
@@ -498,4 +504,33 @@ export class ExploreComponent implements OnInit, OnDestroy {
     };
   }
 
+  sortHeaders(sortColumn) {
+    const queryParams: any = {};
+    this.sortColumn = sortColumn;
+    this.passSearchState.sortPasses$
+      .pipe(take(1))
+      .subscribe(sort => {
+        switch (sortColumn) {
+          case 'Student Name':
+            queryParams.sort = sort && sort === 'asc' ? '-student_name' : 'student_name';
+            break;
+          case 'Origin':
+            queryParams.sort = sort && sort === 'asc' ? '-origin_name' : 'origin_name';
+            break;
+          case 'Destination':
+            queryParams.sort = sort && sort === 'asc' ? '-destination_name' : 'destination_name';
+            break;
+          case 'Duration':
+            queryParams.sort = sort && sort === 'asc' ? '-duration' : 'duration';
+            break;
+          case 'Pass start time':
+            queryParams.sort = sort && sort === 'asc' ? '-start_time' : 'start_time';
+        }
+        if (sort === 'desc') {
+          delete queryParams.sort;
+        }
+        queryParams.limit = 300;
+        this.hallPassService.sortHallPassesRequest(queryParams);
+      });
+  }
 }
