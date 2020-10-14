@@ -3,12 +3,12 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
 import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {PostRoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
 import {User} from '../../../models/User';
-import {of} from 'rxjs';
+import {forkJoin, of} from 'rxjs';
 
 @Injectable()
 export class AccountsEffects {
@@ -263,8 +263,15 @@ export class AccountsEffects {
      return this.actions$
        .pipe(
          ofType(accountsActions.sortAccounts),
-         concatMap((action: any) => {
-           return this.userService.sortTableHeader(action.queryParams)
+         switchMap(action => {
+           return forkJoin({
+             action: of(action),
+             limit: this.userService.countAccounts$[action.role].pipe(take(1))
+           });
+         }),
+         concatMap(({action, limit}) => {
+           const queryParams = {...action.queryParams, limit};
+           return this.userService.sortTableHeader(queryParams)
              .pipe(
                map(({next, results}) => {
                  const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
