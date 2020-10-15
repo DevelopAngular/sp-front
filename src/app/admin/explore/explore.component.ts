@@ -17,6 +17,7 @@ import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filt
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {StorageService} from '../../services/storage.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
+import {isEqual} from 'lodash';
 
 declare const window;
 
@@ -249,14 +250,19 @@ export class ExploreComponent implements OnInit, OnDestroy {
             this.contact_trace_passes = {};
             return contacts.map(contact => {
               const duration = moment.duration(contact.total_contact_duration, 'seconds');
+              const connection: any[] =
+                contact.contact_paths.length === 2 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) ?
+                  [contact.contact_paths[0]] :
+                  contact.contact_paths.length === 4 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) && isEqual(contact.contact_paths[2], contact.contact_paths[3]) ?
+                    [contact.contact_paths[0], contact.contact_paths[2]] : contact.contact_paths;
 
               const result = {
                 'Student Name': contact.student.display_name,
                 'Degree': contact.degree,
                 // 'Contact connection': contact.contact_paths[0][0].display_name,
                 'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
-                  `<div style="display: flex; width: 100%; text-overflow: ellipsis">` +
-                  contact.contact_paths.map(path => {
+                  `<div style="display: flex; width: 100%; white-space: nowrap">` +
+                  connection.map(path => {
                   if (path.length === 1) {
                     return `<div>${path[0].display_name}</div>`;
                   } else {
@@ -389,7 +395,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               this.contactTraceData.selectedStudents = students;
             }
           }
-          if (this.isSearched) {
+          if (this.isSearched || this.currentView$.getValue() === 'contact_trace') {
             this.autoSearch();
           }
           this.cdr.detectChanges();
@@ -426,7 +432,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               this.contactTraceData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
             }
           }
-        if (this.isSearched) {
+        if (this.isSearched || this.currentView$.getValue() === 'contact_trace') {
           this.autoSearch();
         }
         this.cdr.detectChanges();
@@ -446,6 +452,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
       if (this.isSearched) {
         this.search();
       }
+    } else if (this.currentView$.getValue() === 'contact_trace' && this.showContactTraceTable) {
+      this.contactTraceService.clearContactTraceDataRequest();
+      this.showContactTraceTable = false;
+      this.contactTraceState.isEmpty = false;
     }
   }
 

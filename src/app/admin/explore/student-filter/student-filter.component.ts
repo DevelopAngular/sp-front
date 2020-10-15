@@ -35,7 +35,7 @@ export class StudentFilterComponent implements OnInit {
   }
 
   get displayUpdateButton() {
-    return this.initialStudentsArray && !isEqual(this.selectedStudents, this.initialStudentsArray);
+    return this.initialStudentsArray && this.selectedStudents.length && !isEqual(this.selectedStudents, this.initialStudentsArray);
   }
 
   get showButton() {
@@ -64,7 +64,7 @@ export class StudentFilterComponent implements OnInit {
     if (this.isMultiSelect || this.type === 'rooms') {
       this.selectedStudents = students;
     } else {
-      this.selectedStudents = [students[students.length - 1]];
+      this.selectedStudents = students.length ? [students[students.length - 1]] : [];
     }
   }
 

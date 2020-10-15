@@ -382,9 +382,16 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   generateCSV() {
     const exceptPass = this.selection.selected.map(row => {
-      return omit(row, ['Pass']);
+      if (row['Contact connection']) {
+        const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
+        row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
+      }
+      return omit(row, ['Pass', 'Passes']);
     });
-    this.xlsx.generate(exceptPass);
+    const fileName = this.currentPage === 'pass_search' ?
+      'SmartPass-PassSearch' : this.currentPage === 'contact_trace' ?
+        'SmartPass-ContactTracing' : 'TestCSV';
+    this.xlsx.generate(exceptPass, fileName);
   }
 
   sortHeader(column) {

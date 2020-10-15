@@ -123,7 +123,7 @@
         [showEmptyState]="contactTraceState.isEmpty && contactTraceState.loaded$ | async"
         [currentPage]="currentView$.value"
         [emptyIcon]="'./assets/Contact Trace (Blue-Gray).svg'"
-        [emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have any hall passes overlap.'"
+        [emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have an overlapping pass with another student'"
         [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
       ></app-sp-data-table>
       <ng-template #empty>
