@@ -243,9 +243,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }};
     } else if (this.role === '_profile_assistant') {
       objectToTable = {...roleObject, ...{
-          'Acting on Behalf Of': account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
+          'Acting on Behalf Of': this.sanitizer.bypassSecurityTrustHtml(`<div style="display: flex; width: 100%; white-space: nowrap">` + (account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
-          }).join(', ') : 'No Teachers',
+          }).join(', ') : 'No Teachers') + `<div>`),
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',

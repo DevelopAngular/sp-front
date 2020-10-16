@@ -251,7 +251,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         filter(() => !!this.selection.selected.length)
       )
       .subscribe(() => {
-        this.generateCSV();
+        if (this.selection.selected.length > 300) {
+          window.open('https://www.smartpass.app/bulk-export');
+        } else {
+          this.generateCSV();
+        }
       });
 
     // this.dataSource.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe((sort: Sort) => {
@@ -374,9 +378,20 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv' && this.selection.selected.length) {
-      this.toastService.openToast(
-        {title: 'CSV Generated', subtitle: 'Download it to your computer now.'}
+      if (this.selection.selected.length > 300) {
+        this.toastService.openToast(
+          {
+            title: 'Information Required',
+            subtitle: 'We need some additional information to export your data (300+ passes)',
+            icon: './assets/External Link (Navy).svg',
+            buttonText: 'See form'
+          }
         );
+      } else {
+        this.toastService.openToast(
+          {title: 'CSV Generated', subtitle: 'Download it to your computer now.'}
+        );
+      }
     }
   }
 

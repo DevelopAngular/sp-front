@@ -25,7 +25,7 @@
             [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'"
             [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
             [forceButtonClick$]="buttonForceTrigger$"
-            (forceButtonClickEvent)="openFilter($event.event, $event.action)"
+            (forceButtonClickEvent)="$event.action === 'students' ? openFilter($event.event, $event.action) : null"
             [showClearIcon]="false">
           </app-filter-button>
         </ng-template>
@@ -62,7 +62,7 @@
             (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;"
             [showClearIcon]="false"
             [forceButtonClick$]="buttonForceTrigger$"
-            (forceButtonClickEvent)="openFilter($event.event, $event.action)"
+            (forceButtonClickEvent)="$event.action === 'calendar' ? openFilter($event.event, $event.action) : null"
           >
           </app-filter-button>
         </ng-template>

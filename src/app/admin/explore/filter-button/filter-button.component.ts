@@ -1,7 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Subject} from 'rxjs';
-import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-filter-button',
@@ -25,7 +24,7 @@ export class FilterButtonComponent implements OnInit {
 
   ngOnInit() {
     if (this.forceButtonClick$) {
-      this.forceButtonClick$.pipe(take(1)).subscribe(res => {
+      this.forceButtonClick$.subscribe(res => {
         this.forceButtonClickEvent.emit({event: this.button.nativeElement, action: res});
       });
     }

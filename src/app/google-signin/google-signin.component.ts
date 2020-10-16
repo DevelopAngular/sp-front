@@ -68,6 +68,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
     this.loginService.isAuthLoaded()
+      .pipe(takeUntil(this.destroy$))
       .subscribe(isLoaded => {
       this._ngZone.run(() => {
         this.isLoaded = isLoaded;

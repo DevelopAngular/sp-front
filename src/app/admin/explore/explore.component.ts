@@ -218,7 +218,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 'Origin': pass.origin.title,
                 'Destination': pass.destination.title,
                 'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
-                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2).toString().replace('.', ':')) + ' min'
+                'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
               };
 
               Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
@@ -364,7 +364,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openFilter(event, action) {
-    debugger;
     UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
@@ -404,12 +403,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         });
     } else if (action === 'calendar') {
-      const target = new ElementRef(event.currentTarget);
       const calendar = this.dialog.open(DateTimeFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
-          target,
+          target: new ElementRef(event),
           date: (this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedDate : this.contactTraceData.selectedDate),
           options: this.adminCalendarOptions
         }
