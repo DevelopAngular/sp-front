@@ -14,9 +14,13 @@ export class TooltipDataService {
     // if (currentPage === 'from' && passLimit.max_passes_from_active && ((passLimit.from_count && passLimit.from_count >= passLimit.max_passes_from) || (!passLimit.from_count && !passLimit.max_passes_from))) {
     //   return false;
     // } else
-      if (currentPage === 'to' && passLimit.max_passes_to_active && ((passLimit.to_count && passLimit.to_count >= passLimit.max_passes_to) || (!passLimit.to_count && !passLimit.max_passes_to)) && !isStaff) {
-      return false;
-    }
+    if (currentPage === 'to' && !isStaff)
+      if (passLimit.max_passes_to_active)
+        if (passLimit.to_count) {
+          if (passLimit.max_passes_to <= passLimit.to_count)
+            return false;
+        } else if (!passLimit.max_passes_to)
+          return false;
     return true;
   }
 
