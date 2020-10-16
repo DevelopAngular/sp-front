@@ -21,11 +21,12 @@
         </app-filter-button>
         <ng-template #trace>
           <app-filter-button
-             (buttonClick)="openFilter($event, 'students')"
-             [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'"
-             [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
-             [showClearIcon]="false"
-          >
+            (buttonClick)="openFilter($event, 'students')"
+            [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'"
+            [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
+            [forceButtonClick$]="buttonForceTrigger$"
+            (forceButtonClickEvent)="openFilter($event.event, $event.action)"
+            [showClearIcon]="false">
           </app-filter-button>
         </ng-template>
       </div>
@@ -60,6 +61,8 @@
             [filter]="!!contactTraceData.selectedDate"
             (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;"
             [showClearIcon]="false"
+            [forceButtonClick$]="buttonForceTrigger$"
+            (forceButtonClickEvent)="openFilter($event.event, $event.action)"
           >
           </app-filter-button>
         </ng-template>
@@ -69,11 +72,13 @@
     <div class="search-button" *ngIf="views[currentView].id === 3">
       <div class="buttons">
         <app-gradient-button
-          *ngIf="contactTraceData.selectedStudents && contactTraceData.selectedDate && !(contactTraceState.length$ | async) && !this.contactTraceState.isEmpty"
+          *ngIf="!contactTraceState.isEmpty && !(contactTraceState.length$ | async)"
+          [disabled]="!contactTraceData.selectedStudents || !contactTraceData.selectedDate"
           [gradient]="views[currentView].color + ', ' + views[currentView].color"
           [rightIcon]="'./assets/Chevron Right (White).svg'"
           [size]="'medium'"
           (buttonClick)="contactTrace()"
+          (disabledButtonClick)="openInvalidFields()"
         >{{ views[currentView].title }}
         </app-gradient-button>
         <app-gradient-button
@@ -88,8 +93,7 @@
           [leftImageWidth]="'13px'"
           [leftImageHeight]="'13px'"
           [textColor]="'#7f879d'"
-          (buttonClick)="clearContactTraceData()"
-        >
+          (buttonClick)="clearContactTraceData()">
           Clear
         </app-gradient-button>
       </div>

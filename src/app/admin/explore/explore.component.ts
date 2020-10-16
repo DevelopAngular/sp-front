@@ -103,6 +103,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   sortColumn: string;
 
+  buttonForceTrigger$: Subject<any> = new Subject<any>();
+
   destroyPassClick = new Subject();
   destroy$ = new Subject();
 
@@ -270,7 +272,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
                   }
                 }).join() + `</div>`),
                 'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
-                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)).toString().replace('.', ':') + ' min',
+                'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
                 // 'Pass': this.domSanitizer
                 //   .bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(contact.contact_passes[0].contact_pass.gradient_color)}"></div>`)
                 'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
@@ -337,7 +339,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   passClick(id) {
-    iif(() => this.currentView$.getValue() === 'pass_search', this.hallPassService.passesEntities$, of(this.contact_trace_passes))
+    iif(() => this.currentView$.getValue() === 'pass_search', this.hallPassService.passesEntities$.pipe(take(1)), of(this.contact_trace_passes))
       .pipe(
         takeUntil(this.destroyPassClick),
         map(passes => {
@@ -362,13 +364,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openFilter(event, action) {
+    debugger;
     UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
-          'trigger': event.currentTarget,
+          'trigger': new ElementRef(event).nativeElement,
           'selectedStudents': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedStudents : this.contactTraceData.selectedStudents,
           'type': action === 'students' ? 'selectedStudents' : 'rooms',
           'rooms': this.currentView$.getValue() === 'pass_search' ? (action === 'origin' ? this.passSearchData.selectedOriginRooms : this.passSearchData.selectedDestinationRooms) : this.contactTraceData.selectedDestinationRooms,
@@ -542,5 +545,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
         queryParams.limit = 300;
         this.hallPassService.sortHallPassesRequest(queryParams);
       });
+  }
+
+  openInvalidFields() {
+    if (!this.contactTraceData.selectedStudents || (!this.contactTraceData.selectedStudents && !this.contactTraceData.selectedDate)) {
+      this.buttonForceTrigger$.next('students');
+      return;
+    } else if (!this.contactTraceData.selectedDate) {
+      this.buttonForceTrigger$.next('calendar');
+      return;
+    }
   }
 }

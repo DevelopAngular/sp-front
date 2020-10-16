@@ -16,11 +16,9 @@ export class StudentFilterComponent implements OnInit {
   triggerElementRef: HTMLElement;
 
   selectedStudents: User[] | Location[] = [];
-
   initialStudentsArray: User[] | Location[];
 
   isMultiSelect: boolean;
-
   update: boolean;
 
   type: 'selectedStudents' | 'rooms';

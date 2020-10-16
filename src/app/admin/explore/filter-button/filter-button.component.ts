@@ -1,5 +1,7 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
+import {Subject} from 'rxjs';
+import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-filter-button',
@@ -11,13 +13,22 @@ export class FilterButtonComponent implements OnInit {
   @Input() title: string;
   @Input() filter: boolean;
   @Input() showClearIcon: boolean = true;
+  @Input() forceButtonClick$: Subject<any>;
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
+  @Output() forceButtonClickEvent: EventEmitter<{event: any, action: string}> = new EventEmitter<{event: any, action: string}>();
   @Output() clearData: EventEmitter<any> = new EventEmitter<any>();
+
+  @ViewChild('button') button: ElementRef;
 
   constructor(private domSanitizer: DomSanitizer) { }
 
   ngOnInit() {
+    if (this.forceButtonClick$) {
+      this.forceButtonClick$.pipe(take(1)).subscribe(res => {
+        this.forceButtonClickEvent.emit({event: this.button.nativeElement, action: res});
+      });
+    }
   }
 
   background(hover, pressed) {

@@ -1,26 +1,13 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  Renderer2,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
-import { MapsAPILoader } from '@agm/core';
-import { User } from '../models/User';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {MapsAPILoader} from '@agm/core';
+import {User} from '../models/User';
 import {BehaviorSubject, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
-import {HttpClient} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
-import { filter as _filter } from 'lodash';
+import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {filter as _filter} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {LocationsService} from '../services/locations.service';
@@ -169,7 +156,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   firstSearchItem: User | GSuiteSelector;
   currentSchool: School;
   suggestedTeacher: User;
-  foundLocations: Location[];
+  foundLocations: Location[] = [];
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -369,17 +356,18 @@ export class SPSearchComponent implements OnInit, OnDestroy {
         break;
       case 'rooms':
         if (search !== '') {
-          const url = `v1/locations?limit=100&search=${search}&starred=false`;
-          this.locationService.searchLocationsRequest(url)
-            .pipe(filter(res => !!res.length))
+          this.pending$.next(true);
+          const url = `&search=${search}&starred=false`;
+          this.locationService.searchLocations(100, url)
             .subscribe((locs) => {
-                this.foundLocations = locs;
-                this.showDummy = !locs.length;
+                this.foundLocations = locs.results;
+                this.showDummy = !locs.results.length;
                 this.pending$.next(false);
           });
         } else {
             this.showDummy = false;
             this.inputValue$.next('');
+            this.foundLocations = [];
             this.pending$.next(false);
         }
 

@@ -71,8 +71,8 @@
       </ng-template>
     </div>
 
-    <div *ngIf="showOptions && searchTarget === 'rooms'" [ngClass]="{'options-wrapper': foundLocations}" [style.height]="foundLocations ? '235px' : '0px'">
-      <div *ngIf="foundLocations" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+    <div *ngIf="showOptions && searchTarget === 'rooms'" [ngClass]="{'options-wrapper': foundLocations.length}" [style.height]="foundLocations.length || showDummy ? '235px' : '0px'">
+      <div *ngIf="foundLocations.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else nolocs" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let location of foundLocations" tabindex="0" class="option-list_item"
