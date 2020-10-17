@@ -16,7 +16,7 @@
           (sortClickEvent)="sortingTable($event)"
           [showEmptyState]="userEmptyState && (isLoaded$ | async)"
           [emptyIcon]="'./assets/Users (Blue-Gray).svg'"
-          [emptyText]="'There are no students in this school yet'"
+          [emptyText]="getCountAccounts(accounts$ | async) > 1 ? 'No ' + role.substring(9) + ' accounts found' : 'There are no students in this school yet'"
         ></app-sp-data-table>
     </div>
   </div>

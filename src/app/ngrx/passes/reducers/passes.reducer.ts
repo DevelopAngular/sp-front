@@ -33,7 +33,8 @@ const reducer = createReducer(
   on(passesActions.sortPasses, (state) => ({...state, sortLoading: true, sortLoaded: false})),
   on(passesActions.sortPassesSuccess, (state, {next, passes, sortValue}) => {
     return adapter.addAll(passes, {...state, nextRequest: next, sortLoading: false, sortLoaded: true, sortValue});
-  })
+  }),
+  on(passesActions.getMorePassesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false}))
 );
 
 

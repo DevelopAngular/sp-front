@@ -17,6 +17,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {uniqBy} from 'lodash';
 import {School} from '../../models/School';
 import {TableService} from '../sp-data-table/table.service';
+import {TotalAccounts} from '../../models/TotalAccounts';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -50,6 +51,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   isLoaded$: Observable<boolean>;
   sort$: Observable<string>;
   sortLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
   schools$: Observable<School[]>;
 
@@ -259,6 +262,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  getCountAccounts(count: TotalAccounts): number {
+    if (this.role === '_profile_admin') {
+      return +count.admin_count;
+    } else if (this.role === '_profile_teacher') {
+      return +count.teacher_count;
+    } else if (this.role === '_profile_student') {
+      return +count.student_count;
+    } else if (this.role === '_profile_assistant') {
+      return +count.assistant_count;
+    }
   }
 
   findProfileByRole(evt) {
