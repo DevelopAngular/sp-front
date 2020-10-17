@@ -571,4 +571,8 @@ export class UserService {
   sortTableHeader(queryParams) {
     return this.http.get(constructUrl('v1/users', queryParams));
   }
+
+  sendTestNotification(userId) {
+    return this.http.post(`v1/users/${userId}/test_notification`, new Date());
+  }
 }

@@ -1,7 +1,6 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { bumpIn } from '../animations';
-import {ScreenService} from '../services/screen.service';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
+import {bumpIn} from '../animations';
 
 export interface ClickEvent {
   clicked: boolean;
@@ -171,7 +170,6 @@ export class GradientButtonComponent implements OnInit {
       } else {
         const lastIndex = this.gradient.lastIndexOf(',');
         const color = this.gradient.substr(lastIndex + 1);
-        // console.log(color);
         return color;
       }
     }
