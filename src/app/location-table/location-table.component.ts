@@ -115,7 +115,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(res => {
-        console.log(res)
         this.passLimits = res;
     });
 
