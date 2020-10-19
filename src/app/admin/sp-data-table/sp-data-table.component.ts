@@ -227,7 +227,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
           //     this.cdr.detectChanges();
           // });
         }
-        this.displayedColumns = Object.keys(this.dataSource.allData[0]);
+        const columnsOrder = this.storage.getItem(`order${this.currentPage}`);
+        this.displayedColumns = this.storage.getItem(`order${this.currentPage}`) ? [Object.keys(this.dataSource.allData[0])[0], ...columnsOrder.split(',')] : Object.keys(this.dataSource.allData[0]);
         const savedColumns = JSON.parse(this.storage.getItem(this.currentPage));
         this.columnsToDisplay = this.storage.getItem(this.currentPage) ? [this.displayedColumns[0], ...this.displayedColumns.slice(1).filter(col => {
           return savedColumns[col];

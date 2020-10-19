@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { FormControl, FormGroup } from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {FormControl, FormGroup} from '@angular/forms';
 import {TableService} from '../table.service';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {StorageService} from '../../../services/storage.service';
@@ -56,6 +56,7 @@ export class ColumnOptionsComponent implements OnInit, OnDestroy {
         filteredColumns.push(column);
       }
     });
+    this.storage.setItem(`order${this.currentPage}`, filteredColumns);
     this.tableService.updateTableColumns$.next(filteredColumns);
   }
 

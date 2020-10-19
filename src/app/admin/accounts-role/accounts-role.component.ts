@@ -18,6 +18,7 @@ import {uniqBy} from 'lodash';
 import {School} from '../../models/School';
 import {TableService} from '../sp-data-table/table.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
+import {StorageService} from '../../services/storage.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -67,7 +68,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private _zone: NgZone,
     public darkTheme: DarkThemeSwitch,
     private tableService: TableService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private storage: StorageService
   ) {
 
   }
@@ -174,6 +176,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   emptyRoleObject() {
+    // let columnsOrder = this.storage.getItem(`order${this.role}`);
+    // if (columnsOrder) {
+    //   columnsOrder = columnsOrder.split(',').reduce((acc, curr) => {
+    //     return {...acc, [curr]: null};
+    //   }, {});
+    // }
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
       return [{
         'Name': null,
