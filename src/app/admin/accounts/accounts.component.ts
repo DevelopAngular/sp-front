@@ -7,7 +7,7 @@ import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {Util} from '../../../Util';
 import {User} from '../../models/User';
 import {StorageService} from '../../services/storage.service';
@@ -40,7 +40,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   gg4lSettingsData$: Observable<GG4LSync>;
   schoolSyncInfoData$: Observable<SchoolSyncInfo>;
-  selectedUsers = [];
+  prevRoute: string;
+  showOnlyRole: boolean;
 
   destroy$ = new Subject();
 
@@ -123,6 +124,23 @@ export class AccountsComponent implements OnInit, OnDestroy {
       .subscribe((user) => {
       this.user = user;
     });
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        if (event.url === '/admin/accounts' &&
+          (this.prevRoute === `/admin/accounts/_profile_student` ||
+            this.prevRoute === `/admin/accounts/_profile_teacher` ||
+            this.prevRoute === `/admin/accounts/_profile_admin`) ||
+          this.prevRoute === `/admin/accounts/_profile_assistant`) {
+          this.router.navigate([this.prevRoute]);
+        } else {
+          this.prevRoute = event.url;
+          this.showOnlyRole = false;
+          console.log(this.prevRoute);
+        }
+
+      });
   }
 
   ngOnDestroy(): void {
