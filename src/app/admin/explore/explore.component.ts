@@ -266,9 +266,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
                   `<div style="display: flex; width: 100%; white-space: nowrap">` +
                   connection.map(path => {
                   if (path.length === 1) {
-                    return `<div>${path[0].display_name}</div>`;
+                    return `<div style="margin-left: 5px">${path[0].display_name}</div>`;
                   } else {
-                    return `<div>${path[0].display_name + ' to ' + path[1].display_name}</div>`;
+                    return `<div style="margin-left: 5px">${path[0].display_name + ' to ' + path[1].display_name}</div>`;
                   }
                 }).join() + `</div>`),
                 'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),

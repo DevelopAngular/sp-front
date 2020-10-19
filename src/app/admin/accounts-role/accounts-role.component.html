@@ -4,7 +4,7 @@
         <app-sp-data-table
           [data$]="accountRoleData$"
           [loading$]="isLoading$"
-          [height]="(schools$ | async).length > 1 ? 'calc(100vh - 280px)' : 'calc(100vh - 150px)'"
+          [height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 205px)'"
           [currentPage]="role"
           [isRowClick]="true"
           [sort]="sort$ | async"

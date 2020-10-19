@@ -8,7 +8,7 @@
            (mouseenter)="r.hover = true"
            (mouseleave)="r.hover = false"
       >
-<!--        <img width="12" [src]="role.icon | resolveAsset" alt="ii">-->
+        <img width="12" [src]="role.icon | resolveAsset" alt="ii">
         <span class="title">{{ role.role }}</span>
 
         <div *ngIf="r.hover && selectedRoles.length > 1" class="delete" appCrossPointerEventTarget (pointerClickEvent)="deleteRole(role)">

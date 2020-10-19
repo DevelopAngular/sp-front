@@ -32,7 +32,7 @@
         <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
       </div>
       <div class="ds-flex-center-center ds-dialog-title" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <img class="role-icon" [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">
+<!--        <img class="role-icon" [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">-->
         <span>{{headerText}}</span>
 
       </div>
@@ -56,7 +56,7 @@
                [matTooltip]="'Profile pictures are coming soon!'"
                matTooltipClass="tooltip"
           >
-            <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="avatar">
+            <img width="88" height="88" [src]="'./assets/Default Avatar.svg' | resolveAsset" alt="avatar">
 <!--            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>-->
 <!--            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">-->
           </div>
