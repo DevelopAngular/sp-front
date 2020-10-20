@@ -36,12 +36,10 @@ declare const window;
 export class AccountsComponent implements OnInit, OnDestroy {
 
   user: User;
-  currentRole: string;
 
   gg4lSettingsData$: Observable<GG4LSync>;
   schoolSyncInfoData$: Observable<SchoolSyncInfo>;
   prevRoute: string;
-  showOnlyRole: boolean;
 
   destroy$ = new Subject();
 
@@ -136,8 +134,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
           this.router.navigate([this.prevRoute]);
         } else {
           this.prevRoute = event.url;
-          this.showOnlyRole = false;
-          console.log(this.prevRoute);
         }
 
       });
