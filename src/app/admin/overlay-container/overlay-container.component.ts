@@ -1,30 +1,22 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip} from 'rxjs';
-import {
-  map,
-  switchMap,
-  filter,
-  take,
-  debounceTime,
-  distinctUntilChanged,
-  tap, finalize, concatAll, switchMapTo, takeLast
-} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap,} from 'rxjs/operators';
 
-import { NextStep } from '../../animations';
-import { Pinnable } from '../../models/Pinnable';
-import { Location } from '../../models/Location';
-import { HttpService } from '../../services/http-service';
-import { UserService } from '../../services/user.service';
-import { HallPassesService } from '../../services/hall-passes.service';
-import { LocationsService } from '../../services/locations.service';
+import {NextStep} from '../../animations';
+import {Pinnable} from '../../models/Pinnable';
+import {Location} from '../../models/Location';
+import {HttpService} from '../../services/http-service';
+import {UserService} from '../../services/user.service';
+import {HallPassesService} from '../../services/hall-passes.service';
+import {LocationsService} from '../../services/locations.service';
 import {OptionState, ValidButtons} from './advanced-options/advanced-options.component';
-import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import { FolderData, OverlayDataService, Pages, RoomData } from './overlay-data.service';
-import { cloneDeep, filter as _filter, pullAll, isString, isNull, differenceBy } from 'lodash';
+import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
+import {FolderData, OverlayDataService, Pages, RoomData} from './overlay-data.service';
+import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lodash';
 import {ColorProfile} from '../../models/ColorProfile';
 
 @Component({
@@ -35,6 +27,8 @@ import {ColorProfile} from '../../models/ColorProfile';
 
 })
 export class OverlayContainerComponent implements OnInit {
+
+  @ViewChild('block') block: ElementRef;
 
   currentPage: number;
   roomData: RoomData;
@@ -87,6 +81,7 @@ export class OverlayContainerComponent implements OnInit {
 
   showPublishSpinner: boolean;
   iconTextResult$: Subject<string> = new Subject<string>();
+  showBottomShadow: boolean = true;
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -181,14 +176,14 @@ export class OverlayContainerComponent implements OnInit {
         this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder ||
         this.currentPage === Pages.BulkEditRoomsInFolder)
       if (!this.selectedIcon || !this.color_profile) return true;
-    
-    if ((this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom || 
+
+    if ((this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
         this.currentPage === Pages.BulkEditRooms) && this.roomData !== undefined)
       if ((this.roomData.advOptState.now.state === 'Certain \n teachers' &&
-          this.roomData.advOptState.now.data.selectedTeachers.length === 0) || 
+          this.roomData.advOptState.now.data.selectedTeachers.length === 0) ||
           (this.roomData.advOptState.future.state === 'Certain \n teachers' &&
           this.roomData.advOptState.future.data.selectedTeachers.length === 0)) return true;
-    
+
     return !this.roomValidButtons.getValue().publish;
   }
 
@@ -362,6 +357,14 @@ export class OverlayContainerComponent implements OnInit {
       .subscribe(() => {
       this.dialogRef.close();
     });
+
+      fromEvent(this.block.nativeElement, 'scroll').subscribe((res: any) => {
+        if (res.target.offsetHeight + res.target.scrollTop >= res.target.scrollHeight) {
+          this.showBottomShadow = false;
+        } else {
+          this.showBottomShadow = true;
+        }
+      });
   }
 
   buildForm() {
