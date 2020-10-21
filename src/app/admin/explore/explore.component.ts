@@ -449,9 +449,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
     if (this.currentView$.getValue() === 'pass_search') {
       if (!this.passSearchData.selectedDestinationRooms && !this.passSearchData.selectedOriginRooms && !this.passSearchData.selectedDate && !this.passSearchData.selectedStudents) {
         this.search(300);
+        return;
       }
       if (this.isSearched) {
         this.search();
+        return;
       }
     } else if (this.currentView$.getValue() === 'contact_trace' && this.showContactTraceTable) {
       this.contactTraceService.clearContactTraceDataRequest();

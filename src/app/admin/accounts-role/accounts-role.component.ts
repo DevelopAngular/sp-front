@@ -176,12 +176,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   emptyRoleObject() {
-    // let columnsOrder = this.storage.getItem(`order${this.role}`);
-    // if (columnsOrder) {
-    //   columnsOrder = columnsOrder.split(',').reduce((acc, curr) => {
-    //     return {...acc, [curr]: null};
-    //   }, {});
-    // }
+    // let columns = [];
+    // const columnsOrder = ('Name,' + this.storage.getItem(`order${this.role}`)).split(',');
+    // const ss = JSON.stringify({
+    //   [`${columnsOrder[0]}`]: null,
+    //   [`${columnsOrder[1]}`]: null,
+    //   [`${columnsOrder[2]}`]: null,
+    //   [`${columnsOrder[3]}`]: null,
+    //   [`${columnsOrder[4]}`]: null,
+    //   [`${columnsOrder[5]}`]: null
+    // });
+    // const tt = JSON.parse(ss);
+    // debugger;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
       return [{
         'Name': null,

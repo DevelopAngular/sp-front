@@ -14,7 +14,6 @@ import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import {MatDialog, MatSort} from '@angular/material';
-import * as moment from 'moment';
 import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
@@ -85,31 +84,31 @@ export class GridTableDataSource extends DataSource<any> {
     // this.destroy$.complete();
   }
 
-  compare(a: number | string, b: number | string, isAsc: boolean) {
-    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-  }
+  // compare(a: number | string, b: number | string, isAsc: boolean) {
+  //   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  // }
 
-  sortingDataAccessor(item, property) {
-    switch (property) {
-      case 'Student Name':
-        return item['sortStudentName'];
-      case 'Pass start time':
-      case 'Contact date':
-        return moment(item['date']).milliseconds;
-      case 'Duration':
-        return item['sortDuration'].as('milliseconds');
-      case 'Profile(s)':
-        return item[property].map(i => i.title).join('');
-      case 'Last sign-in':
-        if (item['last_sign_in']) {
-          return moment(item['last_sign_in']).toDate();
-        } else {
-          return new Date('1995-12-17T03:24:00');
-        }
-      default:
-        return item[property];
-    }
-  }
+  // sortingDataAccessor(item, property) {
+  //   switch (property) {
+  //     case 'Student Name':
+  //       return item['sortStudentName'];
+  //     case 'Pass start time':
+  //     case 'Contact date':
+  //       return moment(item['date']).milliseconds;
+  //     case 'Duration':
+  //       return item['sortDuration'].as('milliseconds');
+  //     case 'Profile(s)':
+  //       return item[property].map(i => i.title).join('');
+  //     case 'Last sign-in':
+  //       if (item['last_sign_in']) {
+  //         return moment(item['last_sign_in']).toDate();
+  //       } else {
+  //         return new Date('1995-12-17T03:24:00');
+  //       }
+  //     default:
+  //       return item[property];
+  //   }
+  // }
 }
 
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -227,8 +226,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
           //     this.cdr.detectChanges();
           // });
         }
-        const columnsOrder = this.storage.getItem(`order${this.currentPage}`);
-        this.displayedColumns = this.storage.getItem(`order${this.currentPage}`) ? [Object.keys(this.dataSource.allData[0])[0], ...columnsOrder.split(',')] : Object.keys(this.dataSource.allData[0]);
+        this.displayedColumns = Object.keys(this.dataSource.allData[0]);
         const savedColumns = JSON.parse(this.storage.getItem(this.currentPage));
         this.columnsToDisplay = this.storage.getItem(this.currentPage) ? [this.displayedColumns[0], ...this.displayedColumns.slice(1).filter(col => {
           return savedColumns[col];
@@ -258,37 +256,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
           this.generateCSV();
         }
       });
-
-    // this.dataSource.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe((sort: Sort) => {
-    //   const activeSort = this.currentSort.find(curr => curr.active === sort.active);
-    //   // debugger;
-    //   // if (!activeSort) {
-    //     this.currentSort = [sort];
-    //   // } else {
-    //   //   activeSort.direction = sort.direction;
-    //   // }
-    //
-    //   const data = this.dataSource.allData;
-    //   if (!sort.active || sort.direction === '') {
-    //     this.dataSource.allData = data;
-    //     return;
-    //   }
-    //
-    //   this.storage.setItem('defaultSortSubject', sort.active);
-    //
-    //   this.dataSource.allData = data.sort((a, b) => {
-    //     const isAsc = sort.direction === 'desc';
-    //     const {_data: _a} = a;
-    //     const {_data: _b} = b;
-    //
-    //     return this.dataSource.compare(
-    //       this.dataSource.sortingDataAccessor(_a, sort.active),
-    //       this.dataSource.sortingDataAccessor(_b, sort.active),
-    //       isAsc
-    //     );
-    //
-    //   });
-    // });
 
     if (!this.selection.isEmpty()) {
       this.selection.clear();

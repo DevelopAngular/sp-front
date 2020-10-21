@@ -15,7 +15,6 @@ import {GettingStartedProgressService} from '../getting-started-progress.service
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../services/locations.service';
-import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
 import {GG4LSync} from '../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
@@ -129,8 +128,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
         if (event.url === '/admin/accounts' &&
           (this.prevRoute === `/admin/accounts/_profile_student` ||
             this.prevRoute === `/admin/accounts/_profile_teacher` ||
-            this.prevRoute === `/admin/accounts/_profile_admin`) ||
-          this.prevRoute === `/admin/accounts/_profile_assistant`) {
+            this.prevRoute === `/admin/accounts/_profile_admin` ||
+            this.prevRoute === `/admin/accounts/_profile_assistant`)) {
           this.router.navigate([this.prevRoute]);
         } else {
           this.prevRoute = event.url;
@@ -144,17 +143,17 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSyncSettings() {
-    const SS = this.matDialog.open(SyncSettingsComponent, {
-      panelClass: 'accounts-profiles-dialog',
-      backdropClass: 'custom-bd',
-      data: {gg4lInfo: this.gg4lSettingsData$}
-    });
-  }
-
-  openNewTab(url) {
-    window.open(url);
-  }
+  // openSyncSettings() {
+  //   const SS = this.matDialog.open(SyncSettingsComponent, {
+  //     panelClass: 'accounts-profiles-dialog',
+  //     backdropClass: 'custom-bd',
+  //     data: {gg4lInfo: this.gg4lSettingsData$}
+  //   });
+  // }
+  //
+  // openNewTab(url) {
+  //   window.open(url);
+  // }
 
   openSettingsDialog(action, status) {
     if (action === 'gg4l') {

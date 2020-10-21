@@ -320,8 +320,8 @@
 
 .cdk-virtual-scroll-viewport::-webkit-scrollbar {
   -webkit-appearance: none;
-  width: 0;
-  height: 5px;
+  width: 10px;
+  height: 10px;
 }
 
 .cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb {
