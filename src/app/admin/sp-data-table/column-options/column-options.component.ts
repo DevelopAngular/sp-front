@@ -56,7 +56,7 @@ export class ColumnOptionsComponent implements OnInit, OnDestroy {
         filteredColumns.push(column);
       }
     });
-    this.storage.setItem(`order${this.currentPage}`, filteredColumns);
+    this.storage.setItem(`order${this.currentPage}`, this.columns);
     this.tableService.updateTableColumns$.next(filteredColumns);
   }
 
@@ -67,6 +67,7 @@ export class ColumnOptionsComponent implements OnInit, OnDestroy {
         this.formGroup.get(column).setValue(false);
       }
     });
+    this.storage.setItem(`order${this.currentPage}`, this.columns);
   }
 
   showAll() {
@@ -76,6 +77,7 @@ export class ColumnOptionsComponent implements OnInit, OnDestroy {
         this.formGroup.get(column).setValue(true);
       }
     });
+    this.storage.setItem(`order${this.currentPage}`, this.columns);
   }
 
   drop(event: CdkDragDrop<string[]>) {

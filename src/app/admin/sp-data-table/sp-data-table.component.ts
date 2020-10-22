@@ -55,7 +55,6 @@ export class GridTableDataSource extends DataSource<any> {
   ) {
     super();
     this.initialData$
-      // .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
           this.allData = res;
           this.loadedData$.next(true);
@@ -147,7 +146,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() sortLoading$: Observable<boolean>;
 
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
-  // @ViewChild(MatSort) sort: MatSort;
 
   @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowClickEvent: EventEmitter<any> = new EventEmitter<any>();
@@ -169,6 +167,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   selectedRows: any[];
   hasHorizontalScroll: boolean;
   loadingCSV$: Observable<boolean>;
+  preventRole: string;
 
   destroy$ = new Subject();
 
@@ -194,7 +193,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
-    // this.dataSource.sort = this.sort;
     this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
       .subscribe(offset => {
         this.placeholderHeight = offset;
@@ -221,10 +219,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         if (!!this.selection.selected.length) {
           this.selectedRows = cloneDeep(this.selection.selected);
           this.selection.clear();
-          // this.selectedRows.forEach(row => {
-          //     this.select(row);
-          //     this.cdr.detectChanges();
-          // });
         }
         this.displayedColumns = Object.keys(this.dataSource.allData[0]);
         const savedColumns = JSON.parse(this.storage.getItem(this.currentPage));
@@ -345,8 +339,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         UNANIMATED_CONTAINER.next(false);
         this.cdr.detectChanges();
       });
-    } else if (action === 'csv' && this.selection.selected.length) {
-      if (this.selection.selected.length > 300) {
+    } else if (action === 'csv') {
+      if (this.selection.selected.length > 300 || !this.selection.selected.length) {
         this.toastService.openToast(
           {
             title: 'Information Required',

@@ -5,7 +5,7 @@
           [data$]="accountRoleData$"
           [loading$]="isLoading$"
           [height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 205px)'"
-          [currentPage]="role"
+          [currentPage]="(route.params | async).role"
           [isRowClick]="true"
           [sort]="sort$ | async"
           [sortColumn]="sortingColumn"

@@ -9,12 +9,11 @@ import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 import {User} from '../../models/User';
-import {Location} from '../../models/Location';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {DomSanitizer} from '@angular/platform-browser';
-import {uniqBy} from 'lodash';
+import {cloneDeep, uniqBy} from 'lodash';
 import {School} from '../../models/School';
 import {TableService} from '../sp-data-table/table.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
@@ -36,7 +35,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public placeholder: boolean;
   public loaded: boolean = false;
   public profilePermissions: any;
-  public tabVisibility: boolean = false;
   public user: User;
   public pending$: Subject<boolean> = new Subject<boolean>();
   public userEmptyState: boolean;
@@ -45,6 +43,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public searchValue: string;
 
   public sortingColumn: string;
+  public currentColumns: any = {};
 
   accountRoleData$: Observable<any[]>;
 
@@ -60,7 +59,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   constructor(
     public router: Router,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     private userService: UserService,
     private http: HttpService,
     private adminService: AdminService,
@@ -93,9 +92,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }),
         map((accounts: User[]) => {
           this.sortLoading$.next(false);
+          const getColumns = this.storage.getItem(`order${this.role}`);
+          const columns = {};
+          if (getColumns) {
+            const columnsOrder = ('Name,' + getColumns).split(',');
+            for (let i = 0; i < columnsOrder.length; i++) {
+              Object.assign(columns, {[columnsOrder[i]]: null});
+            }
+            this.currentColumns = cloneDeep(columns);
+          }
           if (!accounts.length) {
             this.userEmptyState = true;
-           return this.emptyRoleObject();
+           return this.emptyRoleObject(getColumns, this.currentColumns);
           }
           this.userEmptyState = false;
           return accounts.map(account => {
@@ -110,7 +118,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               writable: false,
               value: account
             });
-            Object.defineProperty(rowObj, '_data', { enumerable: false, value: rowObj });
+            // Object.defineProperty(rowObj, '_data', { enumerable: false, value: rowObj });
 
             return rowObj;
           });
@@ -175,21 +183,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  emptyRoleObject() {
-    // let columns = [];
-    // const columnsOrder = ('Name,' + this.storage.getItem(`order${this.role}`)).split(',');
-    // const ss = JSON.stringify({
-    //   [`${columnsOrder[0]}`]: null,
-    //   [`${columnsOrder[1]}`]: null,
-    //   [`${columnsOrder[2]}`]: null,
-    //   [`${columnsOrder[3]}`]: null,
-    //   [`${columnsOrder[4]}`]: null,
-    //   [`${columnsOrder[5]}`]: null
-    // });
-    // const tt = JSON.parse(ss);
-    // debugger;
+  emptyRoleObject(getColumns, columns) {
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
-      return [{
+      return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
         'Status': null,
@@ -198,7 +194,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'Permissions': null
       }];
     } else if (this.role === '_profile_teacher') {
-      return [{
+      return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
         'Rooms': null,
@@ -208,7 +204,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'Permissions': null
       }];
     } else if (this.role === '_profile_assistant') {
-      return [{
+      return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
         'Acting on Behalf Of': null,
@@ -269,8 +265,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Permissions': permissions
       }};
     }
-
-    return objectToTable;
+    const currentObj = {};
+    if (this.storage.getItem(`order${this.role}`)) {
+      Object.keys(this.currentColumns).forEach(key => {
+        currentObj[key] = objectToTable[key];
+      });
+    }
+    return this.storage.getItem(`order${this.role}`) ? currentObj : objectToTable;
   }
 
   ngOnDestroy() {
@@ -290,21 +291,21 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  findProfileByRole(evt) {
-    this.tabVisibility = false;
-
-    setTimeout(() => {
-      if (evt instanceof Location) {
-        this.router.navigate(['admin/passconfig'], {
-          queryParams: {
-            locationId: evt.id,
-          }
-        });
-      } else {
-        this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
-      }
-    }, 250);
-  }
+  // findProfileByRole(evt) {
+  //   this.tabVisibility = false;
+  //
+  //   setTimeout(() => {
+  //     if (evt instanceof Location) {
+  //       this.router.navigate(['admin/passconfig'], {
+  //         queryParams: {
+  //           locationId: evt.id,
+  //         }
+  //       });
+  //     } else {
+  //       this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
+  //     }
+  //   }, 250);
+  // }
 
   showProfileCard(evt) {
     // if (this.role === '_profile_admin') {

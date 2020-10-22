@@ -17,7 +17,7 @@ import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filt
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {StorageService} from '../../services/storage.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
-import {isEqual} from 'lodash';
+import {cloneDeep, isEqual} from 'lodash';
 
 declare const window;
 
@@ -102,6 +102,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
   sortColumn: string;
+  currentColumns: any;
 
   buttonForceTrigger$: Subject<any> = new Subject<any>();
 
@@ -195,9 +196,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
         .pipe(
           filter((res: any[]) => this.currentView$.getValue() === 'pass_search'),
           map((passes: HallPass[]) => {
+            const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
+            const columns = {};
+            if (getColumns) {
+              const columnsOrder = ('Pass,' + getColumns).split(',');
+              for (let i = 0; i < columnsOrder.length; i++) {
+                Object.assign(columns, {[columnsOrder[i]]: null});
+              }
+              this.currentColumns = cloneDeep(columns);
+            }
             if (!passes.length) {
               this.passSearchState.isEmpty = true;
-              return [{
+              return getColumns ? [this.currentColumns] : [{
                 'Pass': null,
                 'Student Name': null,
                 'Origin': null,
@@ -212,7 +222,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" onClick="passClick(${pass.id})" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
 <!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
-              const rawObj = {
+              let rawObj: any = {
                 'Pass': passImg,
                 'Student Name': pass.student.display_name,
                 'Origin': pass.origin.title,
@@ -221,12 +231,21 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
               };
 
+              const currentObj = {};
+              if (this.storage.getItem(`order${this.currentView$.getValue()}`)) {
+                Object.keys(this.currentColumns).forEach(key => {
+                  currentObj[key] = rawObj[key];
+                });
+              }
+
+              rawObj = this.storage.getItem(`order${this.currentView$.getValue()}`) ? currentObj : rawObj;
+
               Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
-              Object.defineProperty(rawObj, 'sortStudentName', { enumerable: false, value: pass.student.last_name});
+              // Object.defineProperty(rawObj, 'sortStudentName', { enumerable: false, value: pass.student.last_name});
               Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
-              Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+              // Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
               Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
-              Object.defineProperty(rawObj, '_data', {enumerable: false, value: rawObj });
+              // Object.defineProperty(rawObj, '_data', {enumerable: false, value: rawObj });
 
               return rawObj;
             });
@@ -261,7 +280,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
               const result = {
                 'Student Name': contact.student.display_name,
                 'Degree': contact.degree,
-                // 'Contact connection': contact.contact_paths[0][0].display_name,
                 'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
                   `<div style="display: flex; width: 100%; white-space: nowrap">` +
                   connection.map(path => {
@@ -273,8 +291,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 }).join() + `</div>`),
                 'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
                 'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
-                // 'Pass': this.domSanitizer
-                //   .bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(contact.contact_passes[0].contact_pass.gradient_color)}"></div>`)
                 'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
                   contact.contact_passes
                     .map(({contact_pass, student_pass}, index) => {
@@ -292,10 +308,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
               };
 
               Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
-              Object.defineProperty(result, 'sortStudentName', { enumerable: false, value: contact.student.last_name});
+              // Object.defineProperty(result, 'sortStudentName', { enumerable: false, value: contact.student.last_name});
               Object.defineProperty(result, 'date', {enumerable: false, value: moment(contact.initial_contact_date) });
-              Object.defineProperty(result, 'sortDuration', {enumerable: false, value: duration });
-              Object.defineProperty(result, '_data', {enumerable: false, value: result });
+              // Object.defineProperty(result, 'sortDuration', {enumerable: false, value: duration });
+              // Object.defineProperty(result, '_data', {enumerable: false, value: result });
               return result;
             });
           })
