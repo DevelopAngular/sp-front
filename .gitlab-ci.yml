@@ -36,6 +36,7 @@ testing:
   variables:
     AUTO_DEVOPS_DOMAIN: "smartpass-testing.lavanote.com"
     IMAGE_TAG_SUFFIX: "testing"
+    INCLUDE_SOURCEMAPS: "true"
   environment:
     name: testing
     url: "https://smartpass-testing.lavanote.com"
