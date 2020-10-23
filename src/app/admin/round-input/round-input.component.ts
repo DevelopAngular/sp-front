@@ -47,6 +47,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() closeIcon: boolean = false;
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
+  @Input() forceFocused$: Subject<any>;
   @Input() pending$: Subject<boolean>;
   @Input() selectReset$: Subject<string>;
   @Input() selections: any[] = [];
@@ -111,6 +112,16 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
       setTimeout(() => {
         this.input.nativeElement.focus();
       }, 500);
+    }
+
+    if (this.forceFocused$) {
+      this.forceFocused$.subscribe(res => {
+        if (res) {
+          this.input.nativeElement.focus();
+        } else {
+          this.input.nativeElement.blur();
+        }
+      });
     }
 
       fromEvent(this.input.nativeElement, 'input')

@@ -13,7 +13,7 @@ export class SpChipsComponent implements OnInit {
   @Input() preventRemovingLast: boolean = false;
   @Input() suggestedTeacher: User;
   @Input() isProposed: boolean;
-  @Input() selectedTarget: 'users' | 'orgunits' = 'users';
+  @Input() selectedTarget: 'users' | 'orgunits' | 'roles' = 'users';
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
   @Output() updateSelectedEvent: EventEmitter<User[]> = new EventEmitter();

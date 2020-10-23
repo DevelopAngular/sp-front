@@ -28,6 +28,12 @@ export const getLastAddedAdminsAccounts = createSelector(
   (state: AdminsState) => state.lastAddedAdmins
 );
 
+export const getAdminSort = createSelector(
+  getAdminsAccountsProfiles,
+  (state: AdminsState) => state.sortValue
+);
+
 export const getCountAdmins = adapter.getSelectors(getAdminsAccountsProfiles).selectTotal;
+export const getAdminsAccountsEntities = adapter.getSelectors(getAdminsAccountsProfiles).selectEntities;
 
 export const getAdminsCollections = adapter.getSelectors(getAdminsAccountsProfiles).selectAll;

@@ -21,6 +21,8 @@ import {
   MatSidenavModule, MatSortModule,
 } from '@angular/material';
 
+import {DragDropModule} from '@angular/cdk/drag-drop';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -44,6 +46,7 @@ import {
     MatButtonModule,
     MatSidenavModule,
     MatSortModule,
+    DragDropModule
   ],
   exports: [
     MatProgressBarModule,
@@ -65,6 +68,7 @@ import {
     MatButtonModule,
     MatSidenavModule,
     MatSortModule,
+    DragDropModule
   ]
 })
 export class MaterialModule { }

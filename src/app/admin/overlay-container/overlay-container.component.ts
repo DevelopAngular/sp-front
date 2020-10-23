@@ -1,30 +1,22 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip} from 'rxjs';
-import {
-  map,
-  switchMap,
-  filter,
-  take,
-  debounceTime,
-  distinctUntilChanged,
-  tap, finalize, concatAll, switchMapTo, takeLast
-} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap,} from 'rxjs/operators';
 
-import { NextStep } from '../../animations';
-import { Pinnable } from '../../models/Pinnable';
-import { Location } from '../../models/Location';
-import { HttpService } from '../../services/http-service';
-import { UserService } from '../../services/user.service';
-import { HallPassesService } from '../../services/hall-passes.service';
-import { LocationsService } from '../../services/locations.service';
+import {NextStep} from '../../animations';
+import {Pinnable} from '../../models/Pinnable';
+import {Location} from '../../models/Location';
+import {HttpService} from '../../services/http-service';
+import {UserService} from '../../services/user.service';
+import {HallPassesService} from '../../services/hall-passes.service';
+import {LocationsService} from '../../services/locations.service';
 import {OptionState, ValidButtons} from './advanced-options/advanced-options.component';
-import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import { FolderData, OverlayDataService, Pages, RoomData } from './overlay-data.service';
-import { cloneDeep, filter as _filter, pullAll, isString, isNull, differenceBy } from 'lodash';
+import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
+import {FolderData, OverlayDataService, Pages, RoomData} from './overlay-data.service';
+import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lodash';
 import {ColorProfile} from '../../models/ColorProfile';
 
 @Component({
@@ -35,6 +27,8 @@ import {ColorProfile} from '../../models/ColorProfile';
 
 })
 export class OverlayContainerComponent implements OnInit {
+
+  @ViewChild('block') block: ElementRef;
 
   currentPage: number;
   roomData: RoomData;
@@ -87,6 +81,7 @@ export class OverlayContainerComponent implements OnInit {
 
   showPublishSpinner: boolean;
   iconTextResult$: Subject<string> = new Subject<string>();
+  showBottomShadow: boolean = true;
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -176,17 +171,89 @@ export class OverlayContainerComponent implements OnInit {
           this.currentPage === Pages.AddExistingRooms;
   }
 
-  get showPublishButton() {
-    if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom  || this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
-      // return this.roomValidButtons.getValue().publish &&
-      //   !!this.selectedIcon &&
-      //   !!this.color_profile ||
-      //   this.isDirtyIcon ||
-      //   this.isDirtyColor && !this.disabledRightBlock;
-      return this.roomValidButtons.getValue().publish || this.roomValidButtons.getValue().incomplete || this.isDirtyIcon || this.isDirtyColor;
-    } else if (this.currentPage === Pages.BulkEditRooms) {
-      return this.roomValidButtons.getValue().publish;
+  get isFormIncomplete() {
+    if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
+        this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder ||
+        this.currentPage === Pages.BulkEditRoomsInFolder)
+      if (!this.selectedIcon || !this.color_profile) return true;
+
+    if ((this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
+        this.currentPage === Pages.BulkEditRooms) && this.roomData !== undefined)
+      if ((this.roomData.advOptState.now.state === 'Certain \n teachers' &&
+          this.roomData.advOptState.now.data.selectedTeachers.length === 0) ||
+          (this.roomData.advOptState.future.state === 'Certain \n teachers' &&
+          this.roomData.advOptState.future.data.selectedTeachers.length === 0)) return true;
+
+    return !this.roomValidButtons.getValue().publish;
+  }
+
+  get saveButtonToolTip() {
+    if (this.isFormIncomplete) {
+      let missing = [];
+
+      if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom)
+        if (this.form.get('roomName').invalid)
+          missing.push('room name');
+      if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder ||
+          this.currentPage === Pages.BulkEditRoomsInFolder)
+        if (this.form.get('folderName').invalid)
+          missing.push('folder name');
+
+      if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
+          this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder ||
+          this.currentPage === Pages.BulkEditRoomsInFolder) {
+        if (!this.selectedIcon)
+          missing.push('icon');
+        if (!this.color_profile)
+          missing.push('color');
+      }
+
+      if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom) {
+        if (this.form.get('roomNumber').invalid)
+          missing.push('room number');
+        if (this.form.get('timeLimit').invalid)
+          missing.push('time limit');
+
+        if (this.roomData !== undefined) {
+          if (this.roomData.travelType.length === 0)
+            missing.push('travel type');
+          if (this.roomData.advOptState.now.state === 'Certain \n teachers' &&
+              this.roomData.advOptState.now.data.selectedTeachers.length === 0)
+            missing.push('restriction for now teachers');
+          if (this.roomData.advOptState.future.state === 'Certain \n teachers' &&
+              this.roomData.advOptState.future.data.selectedTeachers.length === 0)
+            missing.push('restriction for future teachers');
+        }
+        if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value)
+          missing.push('active pass limit');
+      }
+
+      if (this.currentPage === Pages.BulkEditRooms) {
+        if (this.bulkEditData !== undefined && this.bulkEditData.roomData !== undefined) {
+          if (this.bulkEditData.roomData.advOptState.now.state === 'Certain \n teachers' &&
+              this.bulkEditData.roomData.advOptState.now.data.selectedTeachers.length === 0)
+            missing.push('restriction for now teachers');
+          if (this.bulkEditData.roomData.advOptState.future.state === 'Certain \n teachers' &&
+              this.bulkEditData.roomData.advOptState.future.data.selectedTeachers.length === 0)
+            missing.push('restriction for future teachers');
+        }
+        if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value)
+          missing.push('pass limit');
+      }
+
+      if (missing.length === 1)
+        return 'Missing ' + missing[0];
+      if (missing.length === 2)
+        return `Missing ${missing[0]} and ${missing[1]}`;
+      if (missing.length !== 0)
+        return `Missing ${missing.slice(0, missing.length - 1).join(', ')}, and ${missing[missing.length - 1]}`;
     }
+
+
+    if (this.showPublishSpinner)
+      return 'Please wait, rooms are still being uploaded.';
+
+    return null;
   }
 
   get showIncompleteButton() {
@@ -290,6 +357,14 @@ export class OverlayContainerComponent implements OnInit {
       .subscribe(() => {
       this.dialogRef.close();
     });
+
+      fromEvent(this.block.nativeElement, 'scroll').subscribe((res: any) => {
+        if (res.target.offsetHeight + res.target.scrollTop >= res.target.scrollHeight) {
+          this.showBottomShadow = false;
+        } else {
+          this.showBottomShadow = true;
+        }
+      });
   }
 
   buildForm() {
@@ -508,7 +583,7 @@ export class OverlayContainerComponent implements OnInit {
     }
   }
 
-  setFormErrors() {
+  showFormErrors() {
     if (this.form.get('roomName').invalid) {
       this.form.get('roomName').markAsDirty();
       this.form.get('roomName').setErrors(this.form.get('roomName').errors);
@@ -533,10 +608,6 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   onPublish() {
-    if (this.roomValidButtons.getValue().incomplete || !this.selectedIcon || !this.color_profile) {
-      this.setFormErrors();
-      return;
-    }
     this.showPublishSpinner = true;
 
     if (this.currentPage === Pages.NewRoom) {

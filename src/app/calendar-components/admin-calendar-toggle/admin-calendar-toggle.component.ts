@@ -70,6 +70,7 @@ export class AdminCalendarToggleComponent implements OnInit {
 
   public rangeOptions = [
       { id: 'range_0', title: 'Today', selectedIcon: './assets/Check (Navy).svg'},
+      { id: 'range_5', title: 'Last 3 Days', selectedIcon: './assets/Check (Navy).svg'},
       { id: 'range_1', title: 'Last 7 Days', selectedIcon: './assets/Check (Navy).svg'},
       { id: 'range_2', title: 'Last 30 Days', selectedIcon: './assets/Check (Navy).svg' },
       { id: 'range_3', title: 'Last 90 Days', selectedIcon: './assets/Check (Navy).svg' },
@@ -172,6 +173,9 @@ export class AdminCalendarToggleComponent implements OnInit {
       this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
       // this.selectedDate = { start: null, end: null };
         return false;
+    } else if (id === 'range_5') {
+      this.selectedDate.end = this.currentDate;
+      this.selectedDate.start = moment().subtract(3, 'days').startOf('day');
     }
     this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
     this.adminCalendarRes.emit(this.selectedDate);

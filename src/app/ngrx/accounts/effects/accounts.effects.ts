@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
+import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {concatMap, map} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
-import {User} from '../../../models/User';
-import {PostRoleProps, RoleProps} from '../states';
+import {PostRoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
+import {User} from '../../../models/User';
+import {forkJoin, of} from 'rxjs';
 
 @Injectable()
 export class AccountsEffects {
@@ -77,6 +79,30 @@ export class AccountsEffects {
           }
 
           return action;
+        })
+      );
+  });
+
+  updateAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.updateAccounts),
+        switchMap((action) => {
+          const account = User.fromJSON(action.account);
+          if (account.isAdmin() && account.isTeacher()) {
+            return [
+              nestedStates.updateAdminAccount({profile: action.account}),
+              nestedStates.updateTeacherAccount({profile: action.account})
+            ];
+          } else if (account.isAdmin()) {
+            return [nestedStates.updateAdminAccount({profile: action.account})];
+          } else if (account.isTeacher()) {
+            return [nestedStates.updateTeacherAccount({profile: action.account})];
+          } else if (account.isStudent()) {
+            return [nestedStates.updateStudentAccount({profile: action.account})];
+          } else if (account.isAssistant()) {
+            return [nestedStates.updateAssistantAccount({profile: action.account})];
+          }
         })
       );
   });
@@ -163,6 +189,119 @@ export class AccountsEffects {
         })
       );
   });
+
+   addUserToProfile$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.addUserToProfile),
+         map((action: any) => {
+            if (action.role === 'admin') {
+              return nestedStates.addUserToAdminProfile({user: action.user, role: action.role});
+            } else if (action.role === 'teacher') {
+              return nestedStates.addUserToTeacherProfile({user: action.user, role: action.role});
+            } else if (action.role === 'student') {
+              return nestedStates.addUserToStudentProfile({user: action.user, role: action.role});
+            } else if (action.role === 'assistant') {
+              return nestedStates.addUserToAssistantProfile({user: action.user, role: action.role});
+            }
+         })
+       );
+   });
+
+   bulkAddAccounts$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.bulkAddAccounts),
+         concatMap((action: any) => {
+           return this.userService.addBulkAccounts(action.accounts)
+             .pipe(
+               map((users: User[]) => {
+                 return accountsActions.bulkAddAccountsSuccess({accounts: users});
+               }),
+              catchError(error => of(accountsActions.bulkAddAccountsFailure({errorMessage: error.message})))
+             );
+         })
+       );
+   });
+
+   bulkAddAccountsSuccess$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.bulkAddAccountsSuccess),
+         switchMap((action: any) => {
+           const accounts: {admins: User[], teachers: User[], students: User[], assistants: User[]} = {
+             admins: [],
+             teachers: [],
+             students: [],
+             assistants: []
+           };
+           action.accounts.forEach(account => {
+             if (User.fromJSON(account).isAdmin()) {
+               accounts.admins.push(account);
+             }
+             if (User.fromJSON(account).isTeacher()) {
+               accounts.teachers.push(account);
+             }
+             if (User.fromJSON(account).isStudent()) {
+               accounts.students.push(account);
+             }
+             if (User.fromJSON(account).isAssistant()) {
+               accounts.assistants.push(account);
+             }
+           });
+           return [
+             nestedStates.bulkAddAdminAccounts({admins: accounts.admins}),
+             nestedStates.bulkAddTeacherAccounts({teachers: accounts.teachers}),
+             nestedStates.bulkAddStudentAccounts({students: accounts.students}),
+             nestedStates.bulkAddAssistantAccounts({assistants: accounts.assistants})
+           ];
+         })
+       );
+   });
+
+   sortAccounts$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.sortAccounts),
+         switchMap(action => {
+           return forkJoin({
+             action: of(action),
+             limit: this.userService.countAccounts$[action.role].pipe(take(1))
+           });
+         }),
+         concatMap(({action, limit}) => {
+           const queryParams = {...action.queryParams, limit};
+           return this.userService.sortTableHeader(queryParams)
+             .pipe(
+               map(({next, results}) => {
+                 const nextUrl = limit === results.length ? null : next;
+                 const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
+                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next: nextUrl, sortValue});
+               }),
+               catchError(error => of(accountsActions.sortAccountsFailure({errorMessage: error.message})))
+             );
+         })
+       );
+   });
+
+   sortAccountsSuccess$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.sortAccountsSuccess),
+         map(({users, role, next, sortValue}) => {
+           const nextUrl = next ? next.substring(next.search('v1')) : null;
+           if (role === '_profile_admin') {
+             return nestedStates.sortAdminAccounts({admins: users, next: nextUrl, sortValue});
+           } else if (role === '_profile_teacher') {
+             return nestedStates.sortTeacherAccounts({teachers: users, next: nextUrl, sortValue});
+           } else if (role === '_profile_student') {
+             return nestedStates.sortStudentAccounts({students: users, next: nextUrl, sortValue});
+           } else if (role === '_profile_assistant') {
+             return nestedStates.sortAssistantAccounts({assistants: users, next: nextUrl, sortValue});
+           }
+         })
+       );
+   });
 
   constructor(
     private actions$: Actions,

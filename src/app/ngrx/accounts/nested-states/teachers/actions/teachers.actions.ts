@@ -27,3 +27,15 @@ export const updateTeacherPermissions = createAction(`[${TEACHER}] Update Teache
 export const updateTeacherPermissionsSuccess = createAction(`[${TEACHER}] Update Teacher Permissions Success`, props<{profile: User}>());
 export const updateTeacherPermissionsFailure = createAction(`[${TEACHER}] Update Teacher Permissions Failure`, props<{errorMessage: string}>());
 
+export const updateTeacherAccount = createAction(`[${TEACHER}] Update Teacher Account`, props<{profile: User}>());
+
+export const addUserToTeacherProfile = createAction(`[${TEACHER}] Add User To Teacher Profile`, props<{user: User, role: string}>());
+export const addUserToTeacherProfileSuccess = createAction(`[${TEACHER}] Add User To Teacher Profile Success`, props<{teacher: User}>());
+export const addUserToTeacherProfileFailure = createAction(`[${TEACHER}] Add User To Teacher Profile`, props<{errorMessage: string}>());
+
+export const bulkAddTeacherAccounts = createAction(`[${TEACHER}] Bulk Add Teacher Accounts`, props<{teachers: User[]}>());
+
+export const sortTeacherAccounts = createAction(`[${TEACHER}] Sort Teacher Accounts`, props<{teachers: User[], next: string, sortValue: string}>());
+export const sortTeacherAccountsSuccess = createAction(`[${TEACHER}] Sort Teacher Accounts Success`, props<{teachers: User[], next: string, sortValue: string}>());
+
+
