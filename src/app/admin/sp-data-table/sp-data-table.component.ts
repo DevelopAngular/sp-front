@@ -240,11 +240,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
     this.toastService.toastButtonClick$
       .pipe(
-        takeUntil(this.destroy$),
-        filter(() => !!this.selection.selected.length)
+        takeUntil(this.destroy$)
       )
       .subscribe(() => {
-        if (this.selection.selected.length > 300) {
+        if (this.selection.selected.length > 300 || !this.selection.selected.length) {
           window.open('https://www.smartpass.app/bulk-export');
         } else {
           this.generateCSV();

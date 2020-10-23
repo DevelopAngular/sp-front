@@ -281,12 +281,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 'Student Name': contact.student.display_name,
                 'Degree': contact.degree,
                 'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
-                  `<div style="display: flex; width: 100%; white-space: nowrap">` +
+                  `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
                   connection.map(path => {
                   if (path.length === 1) {
-                    return `<div style="margin-left: 5px">${path[0].display_name}</div>`;
+                    return `<span style="margin-left: 5px">${path[0].display_name}</span>`;
                   } else {
-                    return `<div style="margin-left: 5px">${path[0].display_name + ' to ' + path[1].display_name}</div>`;
+                    return `<span style="margin-left: 5px">${path[0].display_name + ' to ' + path[1].display_name}</span>`;
                   }
                 }).join() + `</div>`),
                 'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),

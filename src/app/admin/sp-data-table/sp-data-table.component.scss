@@ -134,6 +134,12 @@
     color: $blue-gray;
   }
 
+mat-cell {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
   //.mat-header-cell:hover {
   //  background: #FFFFFF;
   //  mix-blend-mode: normal;
@@ -194,8 +200,8 @@
 ::ng-deep .mat-column-Email-username, .mat-column-rooms {
   word-wrap: break-word !important;
   white-space: unset !important;
-  flex: 0 0 200px !important;
-  min-width: 200px !important;
+  flex: 0 0 250px !important;
+  min-width: 250px !important;
   overflow-wrap: break-word;
   word-break: break-word;
   -ms-hyphens: auto;
@@ -318,16 +324,54 @@
   contain: none;
 }
 
+//.cdk-virtual-scroll-viewport::-webkit-scrollbar {
+//  -webkit-appearance: none;
+//  width: 10px;
+//  height: 10px;
+//}
+//
+//.cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb {
+//  border-radius: 8px;
+//  background-color: #D3D6DE;
+//  //-webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+//}
+//.cdk-virtual-scroll-viewport::-webkit-scrollbar-button {
+//  display: block;
+//}
+
+.cdk-virtual-scroll-viewport::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #E7E7E7;
+  box-shadow: 1px 0 1px 0 #F6F6F6 inset, -1px 0 1px 0 #F6F6F6 inset;
+}
+
+.cdk-virtual-scroll-viewport::-webkit-scrollbar-track:horizontal {
+  border-top: 1px solid #E7E7E7;
+  box-shadow: 0 1px 1px 0 #F6F6F6 inset, 0 -1px 1px 0 #F6F6F6 inset;
+}
+
 .cdk-virtual-scroll-viewport::-webkit-scrollbar {
   -webkit-appearance: none;
-  width: 10px;
-  height: 10px;
+  background-color: #FAFAFA;
+  width: 16px;
 }
 
 .cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb {
-  border-radius: 8px;
-  background-color: #D3D6DE;
-  //-webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+  background-clip: padding-box;
+  background-color: #C1C1C1;
+  border-color: transparent;
+  border-radius: 9px 8px 8px 9px;
+  border-style: solid;
+  border-width: 3px 3px 3px 4px; /* Workaround because margins aren't supported */
+  box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+/* Unfortunately scrollbars can't use CSS transitions. Also, it's not possible
+   to highlight the thumb when the scrollbar track is hovered without some
+   JavaScript acrobatics; https://jsfiddle.net/QcqBM/6/ is a start, but you
+   also have to check whether the element has a scrollbar and if so how wide
+   it is. */
+.cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .cdk-drag-preview {
@@ -348,6 +392,13 @@
 
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+::ng-deep .mat-cell > div.no-wrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 200px;
+  white-space: nowrap;
 }
 //
 //@media all and (max-width: 1200px) {
