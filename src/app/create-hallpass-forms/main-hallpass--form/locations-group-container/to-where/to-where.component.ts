@@ -108,10 +108,16 @@ export class ToWhereComponent implements OnInit {
   }
 
   isValidPinnable(pinnable: Pinnable) {
-    if (pinnable.location.id === this.location.id || !this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id], this.isStaff)) {
+    if (pinnable.location.id === this.location.id)
       return false;
-    }
-    if (!this.isStaff &&
+
+    if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id]))
+      return false;
+
+    if (this.isStaff)
+      return true;
+
+    if (
       (!this.formState.forLater &&
       pinnable.location.restricted &&
       pinnable.location.request_mode === 'all_teachers_in_room' &&
