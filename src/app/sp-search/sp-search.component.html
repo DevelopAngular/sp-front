@@ -71,6 +71,36 @@
       </ng-template>
     </div>
 
+    <div *ngIf="showOptions && searchTarget === 'rooms'" [ngClass]="{'options-wrapper': foundLocations.length}" [style.height]="foundLocations.length || showDummy ? '235px' : '0px'">
+      <div *ngIf="foundLocations.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+      <div *ngIf="!showDummy; else nolocs" style="margin-top: -1px;">
+        <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+          <div #cell *ngFor="let location of foundLocations" tabindex="0" class="option-list_item"
+               (mouseenter)="changeColor(true, $event)"
+               (mouseleave)="changeColor(false, $event)"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="changeColor(true, $event)"
+               (pointerClickEvent)="changeColor(true, $event); addLocation(location)"
+               [style.color]="textColor(cell)"
+          >
+            <span>
+             {{ location.title }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+      <ng-template #nolocs>
+        <div class="no-students-dummy">
+          <div>
+            <div class="dummy-image"><img width="150" [src]="'./assets/emptyStates/undraw_graduation_9x4i.svg'" alt="undraw_graduation_9x4i.svg"></div>
+
+            <div class="dummy-text"><span>No {{dummyRoleText}} found</span></div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
 
 
     <div *ngIf="showOptions && searchTarget === 'orgunits'" [ngClass]="{'options-wrapper': ( orgunits | async)}" [style.height]="( orgunits | async) ? '235px' : '0px'">
@@ -101,6 +131,24 @@
           </div>
         </div>
       </ng-template>
+    </div>
+
+    <div *ngIf="showOptions && searchTarget === 'roles'" [ngClass]="{'options-wrapper': searchingRoles?.length}" [style.height]="searchingRoles?.length ? '235px' : '0px'">
+      <div *ngIf="searchingRoles?.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+        <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+          <div #cell *ngFor="let role of searchingRoles" class="option-list_item"
+               (mouseenter)="changeColor(true, $event)"
+               (mouseleave)="changeColor(false, $event)"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="changeColor(true, $event)"
+               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); addRole(role)"
+               [style.color]="textColor(cell)"
+          >
+            <span>
+              {{role.role}}
+            </span>
+          </div>
+        </div>
     </div>
 
     <div *ngIf="showOptions && searchTarget === 'local'" [ngClass]="{'options-wrapper': ( teacherCollection$ | async)}" [style.height]="( teacherCollection$ | async) ? '235px' : '0px'">
@@ -191,7 +239,7 @@
   </div>
 
   <div class="option-list" *ngIf="!chipsMode && list && selectedOptions.length">
-    <div class="ds-dialog-heading option-list_header">
+    <div class="ds-dialog-heading option-list_header" *ngIf="displaySelectedTitle">
       <span>Selected</span>
     </div>
     <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
@@ -205,6 +253,9 @@
         </span>
         <span *ngIf="this.searchTarget === 'orgunits'">
           {{selectedOption.path}}
+        </span>
+        <span *ngIf="searchTarget === 'rooms'">
+          {{ selectedOption.title }}
         </span>
 
         <img

@@ -1,6 +1,6 @@
-import { createAction, props } from '@ngrx/store';
+import {createAction, props} from '@ngrx/store';
 import {PostRoleProps, RoleProps} from '../../../states';
-import { User } from '../../../../../models/User';
+import {User} from '../../../../../models/User';
 
 const ADMIN = 'Admin Accounts';
 
@@ -26,3 +26,13 @@ export const updateAdminActivityFailure = createAction(`[${ADMIN}] Update Admin 
 export const updateAdminPermissions = createAction(`[${ADMIN}] Update Admin Permissions`, props<{profile: User, permissions: any}>());
 export const updateAdminPermissionsSuccess = createAction(`[${ADMIN}] Update Admin Permissions Success`, props<{profile: User}>());
 export const updateAdminPermissionsFailure = createAction(`[${ADMIN}] Update Admin Permissions Failure`, props<{errorMessage: string}>());
+
+export const addUserToAdminProfile = createAction(`[${ADMIN}] Add User To Admin Profile`, props<{user: User, role: string}>());
+export const addUserToAdminProfileSuccess = createAction(`[${ADMIN}] Add User To Admin Profile Success`, props<{admin: User}>());
+export const addUserToAdminProfileFailure = createAction(`[${ADMIN}] Add User To Admin Profile Failure`, props<{errorMessage: string}>());
+
+export const updateAdminAccount = createAction(`[${ADMIN}] Update Admin Account`, props<{profile: User}>());
+
+export const bulkAddAdminAccounts = createAction(`[${ADMIN}] Bulk Add Admin Accounts`, props<{admins: User[]}>());
+
+export const sortAdminAccounts = createAction(`[${ADMIN}] Sort Admin Accounts`, props<{admins: User[], next: string, sortValue: string}>());

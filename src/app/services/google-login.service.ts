@@ -1,5 +1,5 @@
 import {Injectable, NgZone} from '@angular/core';
-import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {GoogleAuthService} from './google-auth.service';
 import {StorageService} from './storage.service';
@@ -47,6 +47,7 @@ export class GoogleLoginService {
   private authToken$ = new BehaviorSubject<AuthObject>(null);
 
   public showLoginError$ = new BehaviorSubject(false);
+  public loginErrorMessage$: Subject<string> = new Subject<string>();
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
   // public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
@@ -203,6 +204,14 @@ export class GoogleLoginService {
       });
     });
 
+  }
+
+  updateGoogleToken() {
+    const auth = this.googleAuthTool.getValue();
+    const user = auth.currentUser.get();
+    user.reloadAuthResponse().then(res => {
+      this.updateAuth(res);
+    });
   }
 
   signInDemoMode(username: string, password: string) {

@@ -1,35 +1,35 @@
-import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter as _filter, find } from 'lodash';
-import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {filter as _filter, find} from 'lodash';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
-import { filter, map, mergeMap, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
-import { BUILD_INFO_REAL } from '../build-info';
-import { DarkThemeSwitch } from './dark-theme-switch';
+import {filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {BUILD_INFO_REAL} from '../build-info';
+import {DarkThemeSwitch} from './dark-theme-switch';
 
-import { DeviceDetection } from './device-detection.helper';
-import { School } from './models/School';
-import { AdminService } from './services/admin.service';
-import { GoogleLoginService } from './services/google-login.service';
-import { HttpService, SPError } from './services/http-service';
-import { KioskModeService } from './services/kiosk-mode.service';
-import { StorageService } from './services/storage.service';
-import { WebConnectionService } from './services/web-connection.service';
-import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
-import { OverlayContainer } from '@angular/cdk/overlay';
-import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
-import { Meta} from '@angular/platform-browser';
-import { NotificationService } from './services/notification-service';
-import { GoogleAnalyticsService } from './services/google-analytics.service';
-import { ShortcutInput } from 'ng-keyboard-shortcuts';
-import { KeyboardShortcutsService } from './services/keyboard-shortcuts.service';
-import { NextReleaseComponent, Update } from './next-release/next-release.component';
-import { User } from './models/User';
-import { UserService } from './services/user.service';
-import { NextReleaseService } from './next-release/services/next-release.service';
-import { ScreenService } from './services/screen.service';
+import {DeviceDetection} from './device-detection.helper';
+import {School} from './models/School';
+import {AdminService} from './services/admin.service';
+import {GoogleLoginService} from './services/google-login.service';
+import {HttpService, SPError} from './services/http-service';
+import {KioskModeService} from './services/kiosk-mode.service';
+import {StorageService} from './services/storage.service';
+import {WebConnectionService} from './services/web-connection.service';
+import {ToastConnectionComponent} from './toast-connection/toast-connection.component';
+import {OverlayContainer} from '@angular/cdk/overlay';
+import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
+import {Meta} from '@angular/platform-browser';
+import {NotificationService} from './services/notification-service';
+import {GoogleAnalyticsService} from './services/google-analytics.service';
+import {ShortcutInput} from 'ng-keyboard-shortcuts';
+import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
+import {NextReleaseComponent, Update} from './next-release/next-release.component';
+import {User} from './models/User';
+import {UserService} from './services/user.service';
+import {NextReleaseService} from './next-release/services/next-release.service';
+import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
 
 declare const window;
@@ -114,7 +114,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userService.loadedUser$
       .pipe(
         filter(l => l),
-        switchMap(l => this.userService.user$),
+        switchMap(l => this.userService.user$.pipe(take(1))),
+        filter(user => !!user),
         switchMap((user: User) => {
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())

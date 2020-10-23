@@ -47,6 +47,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public disabledButton: boolean = true;
   public showError: boolean;
   public schoolAlreadyText$: Observable<string>;
+  public passwordError: boolean;
 
   private changeUserName$: Subject<string> = new Subject<string>();
   private destroy$ = new Subject();
@@ -67,27 +68,42 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
     this.loginService.isAuthLoaded()
+      .pipe(takeUntil(this.destroy$))
       .subscribe(isLoaded => {
       this._ngZone.run(() => {
         this.isLoaded = isLoaded;
       });
     });
-    this.httpService.errorToast$.subscribe(v => {
-      this.showSpinner = !!v;
-      if (!v) {
-        this.loginForm.get('password').setValue('');
+    this.loginService.loginErrorMessage$.subscribe(message => {
+      if (message === 'this user is suspended') {
+        this.error$.next('Account is suspended. Please contact your school admin.');
+      } else if (message === 'this user is disabled') {
+        this.error$.next('Account is disabled. Please contact your school admin.');
       }
+      this.passwordError = !!message;
+      this.showSpinner = false;
     });
+    // this.httpService.errorToast$.subscribe((v: any) => {
+    //   this.showSpinner = !!v;
+    //   if (!v) {
+    //     this.loginForm.get('password').setValue('');
+    //   }
+    //   this.error$.next(v.message);
+    // });
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
-        const errMessage = this.loggedWith === 1
-          ? 'G Suite authentication failed. Please check your password or contact your school admin.'
-          : 'Standard sign-in authentication failed. Please check your password or contact your school admin.';
-
-        this.httpService.errorToast$.next({
-          header: 'Oops! Sign in error.',
-          message: errMessage
-        });
+        this.error$.next('Incorrect password. Try again or contact your school admin to reset it.');
+        this.passwordError = true;
+        this.showSpinner = false;
+        // debugger;
+        // const errMessage = this.loggedWith === 1
+        //   ? 'G Suite authentication failed. Please check your password or contact your school admin.'
+        //   : 'Standard sign-in authentication failed. Please check your password or contact your school admin.';
+        //
+        // this.httpService.errorToast$.next({
+        //   header: 'Oops! Sign in error.',
+        //   message: errMessage
+        // });
       }
     });
   }
@@ -132,10 +148,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       });
 
     this.changeUserName$.pipe(
-      filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
+      // filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
       tap(() => this.disabledButton = false),
       debounceTime(1000),
       switchMap(userName => {
+        this.showSpinner = true;
         const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
         return this.http.get<any>(discovery);
       }),
@@ -144,10 +161,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         return errors;
       })
     ).subscribe(({auth_types}) => {
+      this.showSpinner = false;
       if (!auth_types.length) {
         this.showError = true;
         // this.error$.next('Couldn’t find that username or email');
         this.isGoogleLogin = true;
+        this.isStandardLogin = false;
+        this.loginData.demoLoginEnabled = false;
         return;
       } else {
         this.showError = false;
@@ -200,6 +220,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     );
   }
   updateDemoUsername(event) {
+    this.showSpinner = false;
     if (!event) {
       this.loginData.demoLoginEnabled = false;
       this.loginData.demoUsername = '';
@@ -209,11 +230,15 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     }
     this.loginData.demoUsername = event;
     this.error$.next(null);
+    this.passwordError = false;
     this.changeUserName$.next(event);
   }
 
   updateDemoPassword(event) {
-    this.loginData.demoPassword = event;
+    this.error$.next(null);
+    this.passwordError = false;
+    this.showSpinner = false;
+    // this.loginData.demoPassword = event;
   }
 
   checkUserAuthType() {
@@ -223,6 +248,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.error$.next('Couldn’t find that username or email');
       return false;
     } else if (this.isGoogleLogin) {
+      this.storage.setItem('authType', this.loginData.authType);
       this.initLogin();
     } else if (this.isGG4L) {
       this.storage.setItem('authType', this.loginData.authType);
@@ -232,6 +258,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
       }
     } else if (this.isStandardLogin) {
+      this.storage.setItem('authType', this.loginData.authType);
       this.inputFocusNumber = 2;
       this.forceFocus$.next();
       this.loginData.demoLoginEnabled = true;
@@ -247,6 +274,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
+      // this.loginService.loginErrorMessage$.next(null);
 
       of(this.loginService.signInDemoMode(this.loginForm.get('username').value, this.loginForm.get('password').value))
       .pipe(
@@ -260,6 +288,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.loggedWith = LoginMethod.OAuth;
     this.showSpinner = true;
     this.loginService.showLoginError$.next(false);
+    this.loginService.loginErrorMessage$.next(null);
     this.loginService
       .signIn(this.loginData.demoUsername)
       .then(() => {
