@@ -62,13 +62,9 @@ echo 'Uploading sourcemaps to Sentry'
 
 sentry-cli releases files "$release_name" upload-sourcemaps --rewrite --url-prefix "~/app" ./dist/
 
-if [ -z "$INCLUDE_SOURCEMAPS" ]; then
-  echo 'Deleting source maps in dist/'
+echo 'Deleting source maps in dist/'
 
-  rm dist/*.map
-else
-  echo 'Not deleting source maps due to $INCLUDE_SOURCEMAPS'
-fi
+rm dist/*.map
 
 echo 'Finalizing project in Sentry'
 

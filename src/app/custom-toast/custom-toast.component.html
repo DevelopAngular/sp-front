@@ -1,18 +1,18 @@
-<div class="toast-container" [ngStyle]="{'opacity': toggleToast ? '1' : '0'}" *ngIf="data$ | async as data">
+<div class="toast-container" [ngStyle]="{'opacity': toggleToast ? '1' : '0'}">
   <div class="content" [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}">
     <div class="text">
-      <div class="text_header">{{ data.title }}</div>
+      <div class="text_header">{{ (data$ | async).title }}</div>
       <div class="text_message">
-        {{ data.subtitle }}
+        {{ (data$ | async).subtitle }}
       </div>
     </div>
     <div class="button">
       <app-gradient-button
         [gradient]="'#F4F4F4, #F4F4F4'"
-        [leftIcon]="data.icon ? data.icon  : './assets/Download (Navy).svg'"
+        [leftIcon]="'./assets/Download (Navy).svg'"
         [textColor]="'#1F195E'"
         (buttonClick)="download()"
-      >{{ data.buttonText ? data.buttonText : 'Download' }}</app-gradient-button>
+      >Download</app-gradient-button>
     </div>
 
     <div class="close-btn" (click)="close($event)">

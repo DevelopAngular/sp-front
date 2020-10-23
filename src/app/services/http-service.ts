@@ -1,9 +1,9 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Injectable, NgZone} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {BehaviorSubject, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
-import {catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, switchMap, tap} from 'rxjs/operators';
+import {catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
@@ -91,7 +91,6 @@ function makeUrl(server: LoginServer, endpoint: string) {
       const proxyPath = new URL(server.api_root).pathname;
       url = proxyPath + endpoint;
     } else {
-      // url = 'https://smartpass.app/api/prod-us-central' + endpoint;
       url = server.api_root + endpoint;
     }
   }
@@ -113,7 +112,6 @@ export interface LoginResponse {
   servers: LoginServer[];
   token?: {
     auth_token: string,
-    refresh_token?: string
   };
 }
 
@@ -151,6 +149,7 @@ export class HttpService {
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
+    take(1),
     switchMap(() => {
       return this.getSchoolsRequest();
     }),
@@ -179,8 +178,7 @@ export class HttpService {
     private loginService: GoogleLoginService,
     private storage: StorageService,
     private pwaStorage: LocalStorage,
-    private store: Store<AppState>,
-    private _zone: NgZone
+    private store: Store<AppState>
   ) {
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
@@ -212,51 +210,33 @@ export class HttpService {
         switchMap(() => of(this.accessTokenSubject.value)),
         filter(v => !!v),
         switchMap(({auth, server}) => {
-          if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < Date.now()) {
-            const authType = this.storage.getItem('authType');
-            if (authType === 'password') {
-              const config = new FormData();
-              config.append('client_id', server.client_id);
-              config.append('grant_type', 'refresh_token');
-              config.append('token', auth.refresh_token);
+          if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
+            const config = new FormData();
+            const user = JSON.parse(this.storage.getItem('google_auth'));
+            config.append('client_id', server.client_id);
+            config.append('grant_type', 'refresh_token');
+            config.append('token', auth.refresh_token);
 
-              return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-                map((data: any) => {
-                  // don't use TimeService for auth because auth is required for time service
-                  // to be useful
-                  data['expires'] = new Date(new Date() + data['expires_in']);
+            return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+              map((data: any) => {
+                // don't use TimeService for auth because auth is required for time service
+                // to be useful
+                data['expires'] = new Date(new Date() + data['expires_in']);
 
-                  ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-                  const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
-                  this.accessTokenSubject.next(updatedAuthContext);
-                }),
-                catchError((err) => {
-                  this.loginService.isAuthenticated$.next(false);
-                  return of(null);
-                })
-              );
-            } else if (authType === 'google') {
-              // debugger;
-              this.loginService.updateGoogleToken();
-              return of(null);
-            } else if (authType === 'gg4l') {
-              // debugger;
-              const refresh_token = this.storage.getItem('refresh_token');
-              const c = new FormData();
-              c.append('refresh_token', refresh_token);
-              c.append('grant_type', 'refresh_token');
-              return this.http.post('https://sso.gg4l.com/oauth/token', c, {
-                headers: new HttpHeaders({
-                  'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSitic2xLOUo1RERQeHZtTWJKZCtnPQ=='
-                })
-              });
-            }
+                ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+                const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+                this.accessTokenSubject.next(updatedAuthContext);
+              }),
+              catchError((err) => {
+                this.loginService.isAuthenticated$.next(false);
+                return of(null);
+              })
+            );                    // return this.fetchServerAuth();
           } else {
             return of(null);
           }
         }),
-      ).subscribe((res) => {
-        // console.log('GG4L refresh', res);
+      ).subscribe(() => {
     });
 
     this.kioskTokenSubject$.pipe(
@@ -314,9 +294,6 @@ export class HttpService {
 
           if (servers.token && servers.token.auth_token) {
             gg4l_token = servers.token.auth_token;
-            if (servers.token.refresh_token) {
-              this.storage.setItem('refresh_token', servers.token.refresh_token);
-            }
           }
 
           return { server, gg4l_token };
@@ -572,8 +549,8 @@ export class HttpService {
     });
   }
 
-  post<T>(url: string, body?: any, config?: Config, isFormData = true): Observable<T> {
-    if (body && !(body instanceof FormData) && isFormData) {
+  post<T>(url: string, body?: any, config?: Config): Observable<T> {
+    if (body && !(body instanceof FormData)) {
       const formData: FormData = new FormData();
       for (const prop in body) {
         if (body.hasOwnProperty(prop)) {

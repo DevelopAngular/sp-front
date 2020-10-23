@@ -8,24 +8,19 @@ import {User} from '../models/User';
 import {PollingService} from './polling-service';
 import {filter, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
-import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
-  addUserToProfile,
-  bulkAddAccounts,
   getAccounts,
   getMoreAccounts,
   postAccounts,
   removeAccount,
-  sortAccounts,
   updateAccountActivity,
   updateAccountPermissions
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection,
-  getAllAccountsEntities,
   getCountAllAccounts,
   getLastAddedAllAccounts,
   getLoadedAllAccounts,
@@ -33,9 +28,7 @@ import {
   getNextRequestAllAccounts
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
-  getAdminsAccountsEntities,
   getAdminsCollections,
-  getAdminSort,
   getCountAdmins,
   getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
@@ -48,14 +41,10 @@ import {
   getLoadedTeachers,
   getLoadingTeachers,
   getNextRequestTeachers,
-  getTeacherAccountsCollection,
-  getTeachersAccountsEntities,
-  getTeacherSort
+  getTeacherAccountsCollection
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
   getAssistantsAccountsCollection,
-  getAssistantsAccountsEntities,
-  getAssistantSort,
   getCountAssistants,
   getLastAddedAssistants,
   getLoadedAssistants,
@@ -68,9 +57,7 @@ import {
   getLoadedStudents,
   getLoadingStudents,
   getNextRequestStudents,
-  getStudentsAccountsCollection,
-  getStudentsAccountsEntities,
-  getStudentSort
+  getStudentsAccountsCollection
 } from '../ngrx/accounts/nested-states/students/states';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
@@ -83,7 +70,6 @@ import {
 import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
-import {HttpHeaders} from '@angular/common/http';
 
 @Injectable()
 export class UserService {
@@ -113,14 +99,6 @@ export class UserService {
     _profile_student: this.store.select(getCountStudents),
     _profile_teacher: this.store.select(getCountTeachers),
     _profile_assistant: this.store.select(getCountAssistants)
-  };
-
-  accountsEntities = {
-    _all: this.store.select(getAllAccountsEntities),
-    _profile_admin: this.store.select(getAdminsAccountsEntities),
-    _profile_teacher: this.store.select(getTeachersAccountsEntities),
-    _profile_student: this.store.select(getStudentsAccountsEntities),
-    _profile_assistant: this.store.select(getAssistantsAccountsEntities)
   };
 
   isLoadedAccounts$ = {
@@ -153,13 +131,6 @@ export class UserService {
     _profile_teacher: this.store.select(getNextRequestTeachers),
     _profile_admin: this.store.select(getNextRequestAdminsAccounts),
     _profile_assistant: this.store.select(getNextRequestAssistants)
-  };
-
-  accountSort$ = {
-    _profile_admin: this.store.select(getAdminSort),
-    _profile_teacher: this.store.select(getTeacherSort),
-    _profile_student: this.store.select(getStudentSort),
-    _profile_assistant: this.store.select(getAssistantSort)
   };
 
   user$: Observable<User> = this.store.select(getUserData);
@@ -266,10 +237,6 @@ export class UserService {
     }
   }
 
-  getAccountsEntities(role) {
-    return role ? this.accountsEntities[role] : of(null);
-  }
-
   getUserRequest() {
     this.store.dispatch(getUser());
     return this.user$;
@@ -347,7 +314,7 @@ export class UserService {
       switch (type) {
         case 'alternative':
           return this.http.get(constructUrl(`v1/users`, {search: search}), );
-        case 'G Suite':
+        case 'gsuite':
           if (excludeProfile) {
             return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
               search: search,
@@ -358,22 +325,6 @@ export class UserService {
               search: search
             }));
           }
-        case 'GG4L':
-          return this.http.currentSchool$.pipe(
-            take(1),
-            switchMap((currentSchool: School) => {
-              if (excludeProfile) {
-                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
-                  search: search,
-                  profile: excludeProfile
-                }));
-              } else {
-                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
-                  search
-                }));
-              }
-            })
-          );
       }
   }
 
@@ -410,7 +361,7 @@ export class UserService {
       });
     } else if (userType === 'username') {
         return this.http.post(`v1/schools/${id}/add_user`, {
-            type: 'username',
+            type:  'username',
             username: user.email,
             password: user.password,
             first_name: user.first_name,
@@ -420,14 +371,8 @@ export class UserService {
         });
     }
   }
-
-  addUserToProfileRequest(user, role) {
-    this.store.dispatch(addUserToProfile({user, role}));
-    return of(null);
-  }
-
   addUserToProfile(id, role) {
-    return this.http.put(`v1/users/${id}/profiles/${role}`);
+      return this.http.put(`v1/users/${id}/profiles/${role}`);
   }
 
   createUserRolesRequest(profile, permissions, role) {
@@ -522,6 +467,7 @@ export class UserService {
   }
 
   getUsersList(role: string = '', search: string = '', limit: number = 0) {
+
     const params: any = {};
     if (role !== '' && role !== '_all') {
       params.role = role;
@@ -548,31 +494,5 @@ export class UserService {
 
   checkUserEmail(email) {
     return this.http.post('v1/check-email', {email});
-  }
-
-  addBulkAccountsRequest(accounts) {
-    this.store.dispatch(bulkAddAccounts({accounts}));
-    return of(null);
-  }
-
-  addBulkAccounts(accounts) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-      })
-    };
-    return this.http.post('v1/users/bulk-add?should_commit=true', accounts, httpOptions, false);
-  }
-
-  sortTableHeaderRequest(role, queryParams) {
-    this.store.dispatch(sortAccounts({role, queryParams}));
-  }
-
-  sortTableHeader(queryParams) {
-    return this.http.get(constructUrl('v1/users', queryParams));
-  }
-
-  sendTestNotification(userId) {
-    return this.http.post(`v1/users/${userId}/test_notification`, new Date());
   }
 }

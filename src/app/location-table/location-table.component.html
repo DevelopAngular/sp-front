@@ -79,8 +79,6 @@
             [showStar]="!!showStars"
             [allowOnStar]="allowOnStar"
             [valid]="isValidLocation(choice.id)"
-            matTooltipShowDelay="1000"
-            [matTooltip]="getDisabledTooltip(choice) ? 'This is the origin' : null"
           >
           </app-location-cell>
         </div>
@@ -119,8 +117,6 @@
             [value]="normalizeLocations(choice)"
             [type]="type"
             [valid]="isValidLocation(choice.id)"
-            matTooltipShowDelay="1000"
-            [matTooltip]="getDisabledTooltip(choice) ? 'This is the origin' : null"
           >
           </app-location-cell>
         </div>

@@ -32,18 +32,10 @@
 
     .left-block {
       width: 525px;
-      position: relative;
 
       .block {
         height: 100%;
         overflow: auto;
-      }
-
-      .shadow {
-        position: absolute;
-        width: 100%;
-        bottom: -8px;
-        box-shadow: -12px -15px 20px 22px #FFFFFF !important;
       }
     }
 

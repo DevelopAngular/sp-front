@@ -6,6 +6,5 @@ export interface AssistantsStates extends EntityState<User> {
   loaded: boolean;
   nextRequest: string;
   lastAddedAssistants: User[];
-  sortValue: string;
 }
 

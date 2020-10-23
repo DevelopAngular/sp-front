@@ -38,6 +38,7 @@
       </div>
 
       <div *ngIf="user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra && !isStaff" class="teacherNav">
+        <!--{{buttons.length}}-->
         <div *ngFor="let button of buttons" class="teacherNav_tab">
           <ng-container *ngIf="buttonVisibility(button)">
             <div

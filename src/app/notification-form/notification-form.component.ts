@@ -1,16 +1,16 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {FormControl, FormGroup} from '@angular/forms';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { FormControl, FormGroup } from '@angular/forms';
 
-import {Subject} from 'rxjs';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 
-import {User} from '../models/User';
-import {DataService} from '../services/data-service';
-import {LocationsService} from '../services/locations.service';
-import {LoadingService} from '../services/loading.service';
-import {UserService} from '../services/user.service';
-import {NotificationService} from '../services/notification-service';
+import { User } from '../models/User';
+import { DataService } from '../services/data-service';
+import { LocationsService } from '../services/locations.service';
+import { LoadingService } from '../services/loading.service';
+import { UserService } from '../services/user.service';
+import { NotificationService } from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 
 
@@ -24,8 +24,6 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
   settings;
 
   user: User;
-
-  loaded: boolean;
 
   private change$: Subject<{id: string, value: boolean}> = new Subject<{id: string, value: boolean}>();
 
@@ -50,10 +48,6 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
     return DeviceDetection.isSafari();
   }
 
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
-  }
-
   ngOnInit() {
       this.dataService.currentUser
       .subscribe(user => {
@@ -64,7 +58,6 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
 
       this.userService.getUserNotification().pipe(takeUntil(this.destroy$)).subscribe(res => {
           this.settings = res;
-          this.loaded = true;
           this.buildForm();
       });
 
@@ -97,8 +90,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
 
   }
 
-  send() {
-    this.userService.sendTestNotification(this.user.id).subscribe(res => {
-    });
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

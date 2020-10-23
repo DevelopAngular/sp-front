@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { HttpService } from './http-service';
 import { School } from '../models/School';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {GSuiteOrgs} from '../models/GSuiteOrgs';
 import {switchMap} from 'rxjs/operators';
 import {AppState} from '../ngrx/app-state/app-state';
@@ -39,8 +39,6 @@ import {Onboard} from '../models/Onboard';
   providedIn: 'root'
 })
 export class AdminService {
-
-  searchAccountEmit$: Subject<string> = new Subject<string>();
   reports = {
     reports$: this.store.select(getReportsCollection),
     loaded$: this.store.select(getIsLoadedReports),

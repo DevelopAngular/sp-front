@@ -2,19 +2,14 @@ import { BaseModel } from './base';
 
 export class User extends BaseModel {
   constructor(public id: string,
-              public active: boolean,
               public created: Date,
-              public demo_account: boolean,
-              public last_login: Date,
               public last_updated: Date,
               public first_name: string,
               public last_name: string,
               public display_name: string,
-              public passes_restricted: boolean,
               public primary_email: string,
               public roles: string[],
-              public status: string,
-              public sync_types?: string[],
+              public sync_types?: string[]
               ) {
     super();
   }
@@ -26,18 +21,13 @@ export class User extends BaseModel {
 
     const
       id: string = '' + JSON['id'],
-      active: boolean = !!JSON['active'],
       created: Date = new Date(JSON['created']),
-      demo_account: boolean = !!JSON['demo_account'],
-      last_login: Date = new Date(JSON['last_login']),
       last_updated: Date = new Date(JSON['last_updated']),
       first_name: string = JSON['first_name'],
       last_name: string = JSON['last_name'],
       display_name: string = JSON['display_name'],
-      passes_restricted: boolean = !!JSON['passes_restricted'],
       primary_email: string = JSON['primary_email'],
       roles: string[] = [],
-      status: string = JSON['status'],
       sync_types: string[] = [];
 
     const rolesJSON = JSON['roles'];
@@ -49,22 +39,7 @@ export class User extends BaseModel {
       sync_types.push(sync_types_json[i]);
     }
 
-    return new User(
-      id,
-      active,
-      created,
-      demo_account,
-      last_login,
-      last_updated,
-      first_name,
-      last_name,
-      display_name,
-      passes_restricted,
-      primary_email,
-      roles,
-      status,
-      sync_types
-    );
+    return new User(id, created, last_updated, first_name, last_name, display_name, primary_email, roles, sync_types);
   }
 
   isHead() {

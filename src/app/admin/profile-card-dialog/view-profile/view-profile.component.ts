@@ -1,20 +1,18 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {BehaviorSubject, fromEvent, Observable, of, Subject, zip} from 'rxjs';
-import {Location} from '../../../models/Location';
-import {User} from '../../../models/User';
-import {FormControl, FormGroup} from '@angular/forms';
-import {GSuiteSelector} from '../../../sp-search/sp-search.component';
-import {MatDialog, MatDialogRef} from '@angular/material';
-import {Router} from '@angular/router';
-import {DataService} from '../../../services/data-service';
-import {UserService} from '../../../services/user.service';
-import {LocationsService} from '../../../services/locations.service';
-import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
-import {cloneDeep, differenceBy, isEqual} from 'lodash';
-import {filter} from 'rxjs/operators';
-import {ProfileCardDialogComponent} from '../profile-card-dialog.component';
-import {StatusPopupComponent} from '../status-popup/status-popup.component';
-import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { BehaviorSubject, fromEvent, Observable, of, Subject, zip } from 'rxjs';
+import { Location } from '../../../models/Location';
+import { User } from '../../../models/User';
+import { FormControl, FormGroup } from '@angular/forms';
+import { GSuiteSelector } from '../../../sp-search/sp-search.component';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { Router } from '@angular/router';
+import { DataService } from '../../../services/data-service';
+import { UserService } from '../../../services/user.service';
+import { LocationsService } from '../../../services/locations.service';
+import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
+import { cloneDeep, differenceBy, isEqual } from 'lodash';
+import { mapTo, switchMap } from 'rxjs/operators';
+import { ProfileCardDialogComponent } from '../profile-card-dialog.component';
 
 @Component({
   selector: 'app-view-profile',
@@ -45,13 +43,8 @@ export class ViewProfileComponent implements OnInit {
       });
     }
   }
-  @ViewChild('status') statusButton: ElementRef;
-
   public profile: any;
   public teacherAssignedTo: Location[] = [];
-  profilePermissions: {
-    [profile: string]: {label: string, permission: string, icon?: string}[]
-  } = {teacher: [], admin: [], assistant: [], student: []};
 
   public assistantFor: User[];
   public assistantForEditState: boolean = false;
@@ -77,22 +70,6 @@ export class ViewProfileComponent implements OnInit {
     value: boolean,
     initialValue: boolean
   };
-  user: User;
-  roles: { id: number, role: string, icon: string }[] = [
-    {id: 1, role: 'Student', icon: './assets/Student (Navy).svg'},
-    {id: 2, role: 'Teacher', icon: './assets/Teacher (Navy).svg'},
-    {id: 3, role: 'Admin', icon: './assets/Admin (Navy).svg'},
-    {id: 4, role: 'Assistant', icon: './assets/Assistant (Navy).svg'}
-  ];
-  initialRoles: { id: number, role: string, icon: string }[];
-  userRoles: { role: string, icon: string }[] = [];
-  initialSelectedRoles: { role: string, icon: string }[];
-  profileStatusActive: string;
-  statusDescriptions: {[status: string]: string} = {
-    'suspended': 'Suspending an account will not delete any data association, but no-one will see or be able to interact with this account.',
-    'disabled': 'Disabling an account prevents them from signing in. They’ll still show up in SmartPass search, can make passes, etc.'
-  };
-  profileStatusInitial: string;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -108,17 +85,6 @@ export class ViewProfileComponent implements OnInit {
     private locationService: LocationsService,
     private formService: CreateFormService
   ) {}
-
-  get isAccessAdd() {
-    if (
-      this.userRoles.find(role => role.role === 'Admin') &&
-      this.userRoles.find(role => role.role === 'Teacher') ||
-      this.userRoles.find(role => role.role === 'Student'))
-    {
-      return false;
-    }
-    return true;
-  }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
@@ -138,26 +104,8 @@ export class ViewProfileComponent implements OnInit {
     }
 
     if (this.data.profile) {
-      this.profile = this.data.profile;
-      this.user = User.fromJSON(this.profile._originalUserProfile);
-      this.profileStatusActive = this.user.status;
-      this.profileStatusInitial = cloneDeep(this.profileStatusActive);
-      if (this.user.isStudent()) {
-        this.userRoles.push(this.roles[0]);
-      }
-      if (this.user.isTeacher()) {
-        this.userRoles.push(this.roles[1]);
-      }
-      if (this.user.isAdmin()) {
-        this.userRoles.push(this.roles[2]);
-      }
-      if (this.user.isAssistant()) {
-        this.userRoles.push(this.roles[3]);
-      }
-      this.initialRoles = cloneDeep(this.roles);
-      this.initialSelectedRoles = cloneDeep(this.userRoles);
-      this.roles = differenceBy(this.initialRoles, this.userRoles, 'id');
 
+      this.profile = this.data.profile;
       this.signInStatus = {
         touched: false,
         value: false,
@@ -228,28 +176,26 @@ export class ViewProfileComponent implements OnInit {
       }
     }
 
-    this.buildPermissions();
+    if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
+      const permissions = this.data.permissions;
+      this.controlsIteratable = permissions ? Object.values(permissions) : [];
+      const group: any = {};
+      for (const key in permissions) {
+        const value = (this.profile._originalUserProfile as User).roles.includes(key);
+        group[key] = new FormControl(value);
+      }
+      this.permissionsForm = new FormGroup(group);
+      this.permissionsFormInitialState = cloneDeep(this.permissionsForm.value);
+      this.permissionsForm.valueChanges.subscribe((formValue) => {
+        this.permissionsFormEditState = !isEqual(Object.values(this.permissionsFormInitialState), Object.values(formValue));
 
-    this.permissionsFormInitialState = cloneDeep(this.permissionsForm.value);
-    this.permissionsForm.valueChanges.subscribe((formValue) => {
-      this.permissionsFormEditState = !isEqual(Object.values(this.permissionsFormInitialState), Object.values(formValue));
-    });
+      });
+    }
+
 
     this.dialogRef.backdropClick().subscribe((evt) => {
       this.back();
     });
-  }
-
-  getUserRole(role: string) {
-    if (role === 'Teacher') {
-      return '_profile_teacher';
-    } else if (role === 'Admin') {
-      return '_profile_admin';
-    } else if (role === 'Student') {
-      return '_profile_student';
-    } else if (role === 'Assistant') {
-      return '_profile_assistant';
-    }
   }
 
   goToSearch() {
@@ -267,28 +213,12 @@ export class ViewProfileComponent implements OnInit {
   updateProfile(): Observable<any> {
 
     this.disabledState = true;
-    if (this.profileStatusInitial !== this.profileStatusActive) {
-      this.userService.updateUserRequest(this.user, {status: this.profileStatusActive});
-    }
 
-    if (!isEqual(this.initialSelectedRoles, this.userRoles)) {
-      const rolesToRemove = [];
-      this.initialSelectedRoles.forEach(role => {
-        if (!this.userRoles.find(r => r.role === role.role)) {
-          rolesToRemove.push(role);
-        }
-      });
-      if (rolesToRemove.length) {
-        zip(...rolesToRemove.map(role => {
-          return this.userService.deleteUserRequest(this.user.id, `_profile_${role.role.toLowerCase()}`);
-        })).subscribe();
-      }
-      zip(...this.userRoles.map(role => {
-        return this.userService.addUserToProfileRequest(this.user, role.role.toLowerCase());
-      })).subscribe();
-    }
-
-   if (this.permissionsFormEditState && this.assistantForEditState) {
+    if ( this.data.bulkPermissions) {
+      return zip(
+        ...this.data.bulkPermissions.map((user) => this.userService.createUserRolesRequest(user, this.permissionsForm.value, this.data.role))
+      );
+    } else if (this.permissionsFormEditState && this.assistantForEditState) {
       return zip(
         this.userService.createUserRolesRequest(this.profile, this.permissionsForm.value, this.data.role),
         ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile.id, user)),
@@ -306,96 +236,58 @@ export class ViewProfileComponent implements OnInit {
         );
       }
     }
-    return of(null);
   }
 
-  buildPermissions() {
-    if (this.user.isTeacher()) {
-      this.profilePermissions.teacher.push(
-        {label: 'Passes', permission: 'access_passes', icon: 'Passes'},
-        {label: 'Hall Monitor', permission: 'access_hall_monitor', icon: 'Walking'},
-        {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
-        );
+  promptConfirmation(eventTarget: HTMLElement, option: string = '') {
+    if (!eventTarget.classList.contains('button')) {
+      (eventTarget as any) = eventTarget.closest('.button');
     }
-    if (this.user.isAdmin()) {
-      this.profilePermissions.admin.push(
-        {label: 'Dashboard', permission: 'access_admin_dashboard', icon: 'Dashboard'},
-        {label: 'Hall Monitor', permission: 'admin_hall_monitor', icon: 'Walking'},
-        {label: 'Explore', permission: 'access_admin_search', icon: 'Search Eye'},
-        {label: 'Rooms', permission: 'access_pass_config', icon: 'Room'},
-        {label: 'Accounts', permission: 'access_user_config', icon: 'Users'}
-      );
-    }
-    if (this.user.isAssistant()) {
-      this.profilePermissions.assistant.push(
-        {label: 'Passes', permission: 'access_passes', icon: 'Passes'},
-        {label: 'Hall Monitor', permission: 'access_hall_monitor', icon: 'Walking'},
-        {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
-      );
-    }
-    // if (this.user.isStudent()) {
-    //   this.profilePermissions.student.push(
-    //     {label: 'Make passes without approval', permission: 'pass_approval'}
-    //   );
-    // }
-    const controls = {};
-    this.profilePermissions.teacher.concat([...this.profilePermissions.admin, ...this.profilePermissions.assistant, ...this.profilePermissions.student]).forEach(perm => {
-      controls[perm.permission] = new FormControl(this.user.roles.includes(perm.permission));
-    });
-    this.permissionsForm = new FormGroup(controls);
 
-  }
+    eventTarget.style.opacity = '0.75';
 
-  updateRoles(roles) {
-    this.userRoles = roles;
-    this.roles = differenceBy(this.initialRoles, this.userRoles, 'id');
+    of(option)
+      .pipe(
+        switchMap((action): Observable<any> => {
+          eventTarget.style.opacity = '1';
+
+          switch (action) {
+            case 'delete_from_profile':
+              return this.userService.deleteUserRequest(this.profile.id, this.data.role).pipe(mapTo('close'));
+            case 'disable_sign_in':
+              this.signInStatus.touched = true;
+              this.signInStatus.value = false;
+              return of(false);
+            case 'enable_sign_in':
+              this.signInStatus.touched = true;
+              this.signInStatus.value = true;
+              return of(true);
+            default:
+              return of( 'close');
+          }
+        }),
+      )
+      .subscribe((res) => {
+        this.profile._originalUserProfile.active = res;
+        if (res === 'close') {
+          this.close.emit(res);
+        }
+      });
+
   }
 
   back() {
-    if (
-      this.permissionsFormEditState ||
-      this.assistantForEditState ||
-      this.profileStatusInitial !== this.profileStatusActive ||
-      !isEqual(this.initialSelectedRoles, this.userRoles)
-    ) {
+    if (this.permissionsFormEditState || this.assistantForEditState) {
       this.updateProfile().subscribe(() => {
         this.close.emit(true);
       });
+    } else if (this.signInStatus.touched && this.signInStatus.value !== this.signInStatus.initialValue) {
+      this.userService.setUserActivityRequest(this.profile._originalUserProfile, this.signInStatus.value, this.data.role)
+        .subscribe(() => {
+          this.close.emit(false);
+        });
     } else {
       this.close.emit(false);
     }
-  }
-
-  getIsPermissionOn(permission) {
-    return this.permissionsForm.get(permission).value;
-  }
-
-  openStatusPopup() {
-   const SPC = this.matDialog.open(StatusPopupComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {
-        'trigger': this.statusButton.nativeElement,
-        'profile': this.user,
-        'profileStatus': this.profileStatusActive
-      }
-    });
-
-   SPC.afterClosed().pipe(filter(res => !!res)).subscribe((status) => {
-     if (status === 'delete') {
-       this.userService.deleteUserRequest(this.profile.id, this.data.role);
-       this.close.emit(false);
-     }
-     this.profileStatusActive = status;
-   });
-  }
-
-  openEditAvatar(event) {
-    const ED = this.matDialog.open(EditAvatarComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: { 'trigger': event.currentTarget }
-    });
   }
 
 }

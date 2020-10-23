@@ -6,6 +6,30 @@
     </div>
     <div class="nav-header ds-pr-10">
       <app-smartpass-logo></app-smartpass-logo>
+<!--      <div style="display: flex;align-items: center;">-->
+<!--        <div [style.color]="isSelected(gettingStarted.route) ? '#00B476' : darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})" *ngIf="!isSelected(gettingStarted.route) && (gsProgress.onboardProgress$ | async).progress < 100">-->
+<!--          <span>{{(gsProgress.onboardProgress$ | async).progress}}</span>-->
+<!--          <span>%</span>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <div-->
+<!--            appCrossPointerEventTarget-->
+<!--            (pointerClickEvent)="selectTab(tabRef, navButtonsContainter);"-->
+<!--            #tabRef-->
+<!--          >-->
+<!--            <ng-container *ngIf="hasRoles(gettingStarted.requiredRoles) | async">-->
+<!--              <app-nav-button-->
+<!--                [style.margin-bottom]="'15px'"-->
+<!--                [selected]="isSelected(gettingStarted.route)"-->
+<!--                [content]="gettingStarted.title"-->
+<!--                [icon]="gettingStarted.imgUrl"-->
+<!--                (selectedButton)="selectTab(tabRef, navButtonsContainter)"-->
+<!--                (onClick)="route(gettingStarted); selectTab(tabRef, navButtonsContainter);">-->
+<!--              </app-nav-button>-->
+<!--            </ng-container>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
 
     <div class="nav-buttons">
@@ -25,7 +49,7 @@
               (selectedButton)="selectTab(tabRef, navButtonsContainter);"
               (onClick)="route(button); selectTab(tabRef, navButtonsContainter);">
             </app-nav-button>
-            <mat-divider style="margin: 7px 0" *ngIf="button.route === 'explore'"></mat-divider>
+            <mat-divider style="margin: 7px 0" *ngIf="button.route === 'search'"></mat-divider>
           </ng-container>
         </div>
       </div>

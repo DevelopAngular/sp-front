@@ -1,5 +1,5 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {ResolveAssetPipe} from '../resolve-asset.pipe';
 import {MaterialModule} from '../shared/material/material.module';
 import {ErrorToastComponent} from '../error-toast/error-toast.component';
@@ -9,12 +9,11 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.directive';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
-import {MoovingTilesComponent} from '../mooving-tiles/mooving-tiles.component';
+import { MoovingTilesComponent } from '../mooving-tiles/mooving-tiles.component';
 import {NoAccountComponent} from '../no-account/no-account.component';
-import {CheckUserInputDirective} from './directives/check-user-input.directive';
+import { CheckUserInputDirective } from './directives/check-user-input.directive';
 import {SupportOptionsComponent} from '../support-options/support-options.component';
-import {ToolTipRendererDirective} from './directives/tool-tip-renderer.directive';
-import {PassClickDirective} from './directives/pass-click.directive';
+import { ToolTipRendererDirective } from './directives/tool-tip-renderer.directive';
 
 @NgModule({
   declarations: [
@@ -30,28 +29,26 @@ import {PassClickDirective} from './directives/pass-click.directive';
     NoAccountComponent,
     CheckUserInputDirective,
     SupportOptionsComponent,
-    ToolTipRendererDirective,
-    PassClickDirective
+    ToolTipRendererDirective
   ],
   imports: [
     CommonModule,
     MaterialModule,
   ],
-    exports: [
-        ResolveAssetPipe,
-        MaterialModule,
-        ErrorToastComponent,
-        SchoolToggleBarComponent,
-        ToastConnectionComponent,
-        DropdownComponent,
-        CrossPointerEventTargetDirective,
-        SignedOutToastComponent,
-        GradientButtonComponent,
-        MoovingTilesComponent,
-        NoAccountComponent,
-        ToolTipRendererDirective,
-        CheckUserInputDirective
-    ],
+  exports: [
+    ResolveAssetPipe,
+    MaterialModule,
+    ErrorToastComponent,
+    SchoolToggleBarComponent,
+    ToastConnectionComponent,
+    DropdownComponent,
+    CrossPointerEventTargetDirective,
+    SignedOutToastComponent,
+    GradientButtonComponent,
+    MoovingTilesComponent,
+    NoAccountComponent,
+    ToolTipRendererDirective
+  ],
   entryComponents: [
     ErrorToastComponent,
     ToastConnectionComponent,

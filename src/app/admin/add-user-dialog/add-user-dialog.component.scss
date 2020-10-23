@@ -70,7 +70,6 @@
       }
     }
     .content {
-      overflow: auto;
       .content_top{
         display: flex;
         justify-content: space-between;
@@ -104,9 +103,9 @@
       .content_rest {
         display: flex;
         flex-direction: column;
-        //align-items: center;
+        align-items: center;
         //justify-content: center;
-        padding: 30px 25px;
+        padding: 15px 25px;
         box-sizing: border-box;
         position: relative;
         width: 100%;
@@ -164,11 +163,10 @@
         }
         .profile-search {
           //margin-right: 33px;
-          .label {
+          &_label {
             font-weight: bold;
             font-size: 15px;
             margin-bottom: 15px;
-            color: $blue-gray;
           }
           .user {
             background-color: #F7F7F7;
@@ -235,6 +233,8 @@
     }
 
     .assistant-content {
+      padding: 15px 25px;
+
       .info {
         font-size: 14px;
         color: $blue-gray;

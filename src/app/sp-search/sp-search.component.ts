@@ -1,21 +1,32 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
-import {MapsAPILoader} from '@agm/core';
-import {User} from '../models/User';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
+import { MapsAPILoader } from '@agm/core';
+import { User } from '../models/User';
 import {BehaviorSubject, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
+import {HttpClient} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
-import {filter as _filter} from 'lodash';
+import {distinctUntilChanged, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import { filter as _filter } from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
-import {LocationsService} from '../services/locations.service';
-import {Location} from '../models/Location';
 
 declare const window;
 
-export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local' | 'roles' | 'rooms';
+export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local';
 
 export type selectorIndicator = '+' | '-';
 
@@ -102,7 +113,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = true;
   @Input() showOptions: boolean = true;
-  @Input() selectedOptions: Array<User | School | GSuiteSelector | {id: number, role: string, icon: string}[] | Location> = [];
+  @Input() selectedOptions: Array<User | School | GSuiteSelector> = [];
   @Input() selectedOrgUnits: any[] = [];
   @Input() height: string = '40px';
   @Input() width: string = '280px';
@@ -113,19 +124,16 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() emitSingleProfile: boolean = false;
   @Input() chipsMode: boolean = false;
   @Input() inputField: boolean = true;
-  @Input() overrideChipsInputField: boolean = false;
   @Input() cancelButton: boolean = false;
   @Input() rollUpAfterSelection: boolean = true;
   @Input() role: string = '_profile_student';
   @Input() dummyRoleText: string = 'students';
   @Input() placeholder: string = 'Search students';
-  @Input() type: string = 'alternative'; // Can be alternative or G_Suite or GG4L, endpoint will depend on that.
+  @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
   @Input() isProposed: boolean;
   @Input() proposedSearchString: string;
-  @Input() displaySelectedTitle: boolean = true;
 
   @Input() searchingTeachers: User[];
-  @Input() searchingRoles: { id: number, role: string, icon: string }[];
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -156,7 +164,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   firstSearchItem: User | GSuiteSelector;
   currentSchool: School;
   suggestedTeacher: User;
-  foundLocations: Location[] = [];
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -167,8 +174,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private mapsApi: MapsAPILoader,
     private shortcutsService: KeyboardShortcutsService,
     private renderer: Renderer2,
-    public screenService: ScreenService,
-    private locationService: LocationsService
+    public screenService: ScreenService
   ) {}
 
   private getEmitedValue() {
@@ -196,7 +202,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.chipsMode && !this.overrideChipsInputField) {
+    if (this.chipsMode) {
       this.inputField = false;
     }
     this.currentSchool = this.httpService.getSchool();
@@ -213,6 +219,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
 
       this.query
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           (v1: any[]) => {
             this.schools.next(v1);
@@ -221,12 +228,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           });
     } else if (this.searchTarget === 'orgunits') {
       this.httpService.currentSchool$.pipe(
+        takeUntil(this.destroy$),
         map((school: School) => {
           return `${school.id}`;
         }),
         switchMap((schoolId: string) => {
           return this.httpService.get(`v1/schools/${schoolId}/gsuite/org_units`);
-
         }),
         map((gss: any[]) => {
           return gss
@@ -286,7 +293,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                   this.isOpenedOptions.emit(true);
                   return this.removeDuplicateStudents(paged.results);
                 });
-            } else if (this.type === 'G Suite' || this.type === 'GG4L') {
+            } else if (this.type === 'gsuite') {
               let request$;
               if (this.role !== '_all') {
                 request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);
@@ -353,25 +360,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           this.pending$.next(false);
           this.teacherCollection$.next(null);
         }
-        break;
-      case 'rooms':
-        if (search !== '') {
-          this.pending$.next(true);
-          const url = `&search=${search}&starred=false`;
-          this.locationService.searchLocations(100, url)
-            .subscribe((locs) => {
-                this.foundLocations = locs.results;
-                this.showDummy = !locs.results.length;
-                this.pending$.next(false);
-          });
-        } else {
-            this.showDummy = false;
-            this.inputValue$.next('');
-            this.foundLocations = [];
-            this.pending$.next(false);
-        }
 
-        break;
     }
   }
   selectSchool(school) {
@@ -380,25 +369,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.schools.next(null);
   }
 
-  addLocation(location) {
-    this.foundLocations = null;
-    this.inputValue$.next('');
-    this.onSearch('');
-    if (!this.selectedOptions.includes(location)) {
-      this.selectedOptions.push(location);
-      this.onUpdate.emit(this.getEmitedValue());
-    }
-  }
-
   addUnit(unit) {
     this.selectedOptions.push(unit);
     this.orgunits.next(null);
-    this.inputField = false;
-    this.onUpdate.emit(this.selectedOptions);
-  }
-
-  addRole(role) {
-    this.selectedOptions.push(role);
     this.inputField = false;
     this.onUpdate.emit(this.selectedOptions);
   }
@@ -435,18 +408,18 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       return [];
     }
     if (students[0] instanceof User || this.searchTarget === 'users') {
-      const fixedStudents: User[] = <User[]>students;
-      const studentsToRemove: User[] = [];
-      for (const selectedStudent of <Array<User>>this.selectedOptions) {
-        for (const student of fixedStudents) {
+      let fixedStudents: User[] = <User[]>students;
+      let studentsToRemove: User[] = [];
+      for (let selectedStudent of <Array<User>>this.selectedOptions) {
+        for (let student of fixedStudents) {
           if (selectedStudent.id === student.id) {
             studentsToRemove.push(student);
           }
         }
       }
 
-      for (const studentToRemove of studentsToRemove) {
-        const index = fixedStudents.indexOf(studentToRemove, 0);
+      for (let studentToRemove of studentsToRemove) {
+        var index = fixedStudents.indexOf(studentToRemove, 0);
         if (index > -1) {
           fixedStudents.splice(index, 1);
         }

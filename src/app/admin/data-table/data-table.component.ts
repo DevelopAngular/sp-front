@@ -4,7 +4,7 @@ import {
   EventEmitter,
   Input, NgZone, OnChanges, OnDestroy,
   OnInit,
-  Output, SimpleChanges,
+  Output,
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
@@ -198,8 +198,8 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() set lazyData(value: any[]) {
     if (value.length) {
-      this.dataSource.add(value);
-      this._data = this.dataSource.allData;
+        this.dataSource.add(value);
+        this._data = this.dataSource.allData;
     }
 
   }
@@ -222,13 +222,12 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
           const isFirst = this.dataSource.last === 1;
           const isThree = this.dataSource.last >= 3;
           const isFour = this.dataSource.last >= 4;
+          const allowLoadMore = (
+            (
+              this.dataSource.last * 50) -
+            (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
+            (isFour ? 60 : 0) === (this.dataSource.last * 50) - 20;
 
-          // const allowLoadMore = (
-          //   (
-          //     this.dataSource.last * 50) -
-          //   (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
-          //   (isFour ? 60 : 0) === (this.dataSource.last * 50) - 20;
-    console.log(((this.dataSource.last * ( isFirst ? 40 : 60)) + (isThree ? (this.counter * 20) : 0)) - Math.ceil(offset / PAGESIZE), (this.dataSource.last * 50) - 15);
           if (((this.dataSource.last * ( isFirst ? 40 : 60)) + (isThree ? (this.counter * 20) : 0)) - Math.ceil(offset / PAGESIZE) <= (this.dataSource.last * 50) - 15) {
             if (isThree) {
               this.counter += 1;
@@ -303,6 +302,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
 
+
     this.marginTopStickyHeader = '0px';
     if (!this.displayedColumns) {
       this.displayedColumns = Object.keys(this._data[0]);
@@ -317,6 +317,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.selectedUsers.emit([]);
       }
     });
+    console.log(this.columnsToDisplay);
 
     const defaultSortSubject = this.storage.getItem('defaultSortSubject');
     let sortSubject: string;
@@ -339,9 +340,10 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  ngOnChanges(simpleChanges: SimpleChanges) {
+  ngOnChanges() {
     if (this.scrollableAreaName && this.scrollPosition.getComponentScroll(this.scrollableAreaName)) {
       setTimeout(() => {
+        // console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
         this.viewport.scrollToOffset(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
       }, 0);
     }

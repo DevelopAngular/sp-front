@@ -24,8 +24,6 @@ export const updateAssistantActivitySuccess = createAction(`[${ASSISTANTS}] Upda
 export const updateAssistantActivityFailure =
   createAction(`[${ASSISTANTS}] Update Assistant Activity Failure`, props<{errorMessage: string}>());
 
-export const updateAssistantAccount = createAction(`[${ASSISTANTS}] Update Assistant Account`, props<{profile: User}>());
-
 export const updateAssistantPermissions = createAction(`[${ASSISTANTS}] Update Assistant Permissions`, props<{profile: User, permissions: any}>());
 export const updateAssistantPermissionsSuccess = createAction(`[${ASSISTANTS}] Update Assistant Permissions Success`, props<{profile: User}>());
 export const updateAssistantPermissionsFailure =
@@ -44,15 +42,6 @@ export const removeRepresentedUserSuccess =
   createAction(`[${ASSISTANTS}] Remove Represented AU Success`, props<{profile: User}>());
 export const removeRepresentedUserFailure =
   createAction(`[${ASSISTANTS}] Remove Represented AU Failure`, props<{errorMessage: string}>());
-
-export const addUserToAssistantProfile = createAction(`[${ASSISTANTS}] Add User To Assistant Profile`, props<{user: User, role: string}>());
-export const addUserToAssistantProfileSuccess = createAction(`[${ASSISTANTS}] Add User To Assistant Profile Success`, props<{assistant: User}>());
-export const addUserToAssistantProfileFailure = createAction(`[${ASSISTANTS}] Add User To Assistant Profile Failure`, props<{errorMessage: string}>());
-
-export const bulkAddAssistantAccounts = createAction(`[${ASSISTANTS}] Bulk Add Assistants Accounts`, props<{assistants: User[]}>());
-
-export const sortAssistantAccounts = createAction(`[${ASSISTANTS}] Sort Assistant Accounts`, props<{assistants: User[], next: string, sortValue: string}>());
-export const sortAssistantAccountsSuccess = createAction(`[${ASSISTANTS}] Sort Assistant Accounts Success`, props<{assistants: User[], next: string, sortValue: string}>());
 
 
 

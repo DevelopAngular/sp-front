@@ -3,7 +3,7 @@ import {FormGroup} from '@angular/forms';
 import { Observable, fromEvent } from 'rxjs';
 import {startWith} from 'rxjs/operators';
 
-export type ToggleInputSize = 'small' | 'regular' | 'large' | 'smallest';
+export type ToggleInputSize = 'small' | 'regular' | 'large';
 
 @Component({
   selector: 'app-toggle-input',
@@ -22,7 +22,6 @@ export class ToggleInputComponent implements OnInit {
   @Input() color: string = '#00B476';
   @Input() icon: string = './assets/Hand (Jade).svg';
   @Input() hasIcon: boolean = false;
-  @Input() padding: string = '8px 0 9px 0';
 
   @ViewChild('inp') set inputField(inputField: ElementRef) {
     this.inp = inputField;
@@ -52,9 +51,6 @@ export class ToggleInputComponent implements OnInit {
           break;
         case 'large':
           this.sizedLayout['checkbox-container__large'] = true;
-          break;
-        case 'smallest':
-          this.sizedLayout['checkbox-container__smallest'] = true;
           break;
         default:
           this.sizedLayout['checkbox-container__regular'] = true;

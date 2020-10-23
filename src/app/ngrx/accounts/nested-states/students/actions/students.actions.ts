@@ -22,13 +22,3 @@ export const removeStudentFailure = createAction(`[${STUDENTS}] Remove Student F
 export const updateStudentActivity = createAction(`[${STUDENTS}] Update Student Activity`, props<{profile: User, active: boolean}>());
 export const updateStudentActivitySuccess = createAction(`[${STUDENTS}] Update Student Activity Success`, props<{profile: User}>());
 export const updateStudentActivityFailure = createAction(`[${STUDENTS}] Update Student Activity Failure`, props<{errorMessage: string}>());
-
-export const updateStudentAccount = createAction(`[${STUDENTS}] Update Student Account`, props<{profile: User}>());
-
-export const addUserToStudentProfile = createAction(`[${STUDENTS}] Add User To Student Profile`, props<{user: User, role: string}>());
-export const addUserToStudentProfileSuccess = createAction(`[${STUDENTS}] Add User To Student Profile Success`, props<{student: User}>());
-export const addUserToStudentProfileFailure = createAction(`[${STUDENTS}] Add User To Student Profile Failure`, props<{errorMessage: string}>());
-
-export const bulkAddStudentAccounts = createAction(`[${STUDENTS}] Bulk Add Students Accounts`, props<{students: User[]}>());
-
-export const sortStudentAccounts = createAction(`[${STUDENTS}] Sort Student Accounts`, props<{students: User[], next: string, sortValue: string}>());

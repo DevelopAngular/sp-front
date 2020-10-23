@@ -54,7 +54,6 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
     @Input() resetOptions$: Subject<OptionState>;
     @Input() roomData: RoomData;
     @Input() passLimitForm: FormGroup;
-    @Input() showErrors: boolean;
 
     @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() resultOptions: EventEmitter<{options: OptionState, validButtons: ValidButtons}> = new EventEmitter<{options: OptionState, validButtons: ValidButtons}>();
@@ -188,7 +187,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
         this.buildData();
         this.checkValidOptions();
         this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
-        
+
     }
 
     checkValidOptions() {
@@ -258,15 +257,5 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
     futureEvent(value) {
       this.futureRestEmit.emit(value);
-    }
-
-    isRestrictionEmpty(restriction) {
-      if(!this.showErrors) return;
-
-      if(restriction === 'now'){
-        if (this.optionState.now.state === this.toggleChoices[3])
-          return this.optionState.now.data.selectedTeachers.length === 0;
-      } else if (this.optionState.future.state === this.toggleChoices[3])
-        return this.optionState.future.data.selectedTeachers.length === 0;
     }
 }

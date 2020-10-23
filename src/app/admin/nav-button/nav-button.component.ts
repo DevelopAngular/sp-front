@@ -29,8 +29,13 @@ export class NavButtonComponent implements OnInit, OnChanges {
     return this.selected ? '#00B476' : this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
   }
 
+  get backgroundColor() {
+    return 'none';
+  }
+
   constructor(
     private darkTheme: DarkThemeSwitch,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit() {

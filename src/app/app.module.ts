@@ -69,8 +69,6 @@ import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support-button/support-button.component';
 import {PassLimitEffects} from './ngrx/pass-limits/effects';
 import { CustomToastComponent } from './custom-toast/custom-toast.component';
-import {PassesEffects} from './ngrx/passes/effects';
-import {ContactTraceEffects} from './ngrx/contact-trace/effects';
 
 
 const appRoutes: Routes = [
@@ -181,9 +179,7 @@ const appRoutes: Routes = [
             SchoolsEffects,
             UserEffects,
             ProcessEffects,
-            PassLimitEffects,
-            PassesEffects,
-            ContactTraceEffects
+            PassLimitEffects
         ]),
         StoreDevtoolsModule.instrument({})
     ],

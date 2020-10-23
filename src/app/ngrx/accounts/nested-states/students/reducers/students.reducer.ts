@@ -10,8 +10,7 @@ export const studentsAccountsInitialState: StudentsStates = adapter.getInitialSt
   loading: false,
   loaded: false,
   nextRequest: null,
-  lastAddedStudents: [],
-  sortValue: ''
+  lastAddedStudents: []
 });
 
 const reducer = createReducer(
@@ -26,23 +25,14 @@ const reducer = createReducer(
   on(studentsActions.removeStudentSuccess, (state, {id}) => {
     return adapter.removeOne(+id, {...state, loading: false, loaded: true});
   }),
-  on(studentsActions.updateStudentActivitySuccess,
-    studentsActions.updateStudentAccount,
-    (state, {profile}) => {
+  on(studentsActions.updateStudentActivitySuccess, (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   }),
   on(studentsActions.getMoreStudentsSuccess, (state, {moreStudents, next}) => {
     return adapter.addMany(moreStudents, {...state, loading: false, loaded: true, nextRequest: next, lastAddedStudents: moreStudents});
   }),
-  on(studentsActions.postStudentSuccess, studentsActions.addUserToStudentProfileSuccess, (state, {student}) => {
+  on(studentsActions.postStudentSuccess, (state, {student}) => {
     return adapter.addOne(student, {...state, loading: false, loaded: true});
-  }),
-  on(studentsActions.getMoreStudentsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
-  on(studentsActions.bulkAddStudentAccounts, (state, {students}) => {
-    return adapter.addMany(students, {...state});
-  }),
-  on(studentsActions.sortStudentAccounts, (state, {students, next, sortValue}) => {
-    return adapter.addAll(students, {...state, loading: false, loaded: true, nextRequest: next, sortValue});
   })
 );
 

@@ -1,6 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
-import {bumpIn} from '../animations';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { bumpIn } from '../animations';
+import {ScreenService} from '../services/screen.service';
 
 export interface ClickEvent {
   clicked: boolean;
@@ -54,8 +55,8 @@ export class GradientButtonComponent implements OnInit {
   @Input() minHeight: string; // > editable
   @Input() fontSize: string = '20px'; // > editable
   @Input() fontWeight: string = '500'; // > editable
-  @Input() leftImageWidth: string = '25px'; // > editable
-  @Input() leftImageHeight: string = '25px'; // > editable
+  @Input() leftImageWidth: string; // > editable
+  @Input() leftImageHeight: string; // > editable
   @Input() cursor: string = 'pointer';
   @Input() cornerRadius: string;
   @Input() padding: string;
@@ -67,7 +68,6 @@ export class GradientButtonComponent implements OnInit {
   @Input() documentType: docType;
   @Input() isGradient: boolean;
   @Output() buttonClick = new EventEmitter<any>();
-  @Output() disabledButtonClick = new EventEmitter<any>();
 
 
   buttonDown = false;
@@ -170,6 +170,7 @@ export class GradientButtonComponent implements OnInit {
       } else {
         const lastIndex = this.gradient.lastIndexOf(',');
         const color = this.gradient.substr(lastIndex + 1);
+        // console.log(color);
         return color;
       }
     }
@@ -227,7 +228,7 @@ export class GradientButtonComponent implements OnInit {
     if (!this.disabled) {
       this.buttonClick.emit(event);
     } else {
-      this.disabledButtonClick.emit(event);
+      return;
     }
   }
 

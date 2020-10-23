@@ -35,7 +35,7 @@ export class StudentsEffects {
         concatMap((action: any) => {
           return this.userService.nextRequests$._profile_student.pipe(take(1));
         }),
-        // filter(res => !!res),
+        filter(res => !!res),
         switchMap(next => {
           return this.http.get(next)
             .pipe(
@@ -107,22 +107,6 @@ export class StudentsEffects {
                 return studentsActions.updateStudentActivitySuccess({profile});
               }),
               catchError(error => of(studentsActions.updateStudentActivityFailure({errorMessage: error.message})))
-            );
-        })
-      );
-  });
-
-  addUserToStudentProfile$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(studentsActions.addUserToStudentProfile),
-        concatMap((action: any) => {
-          return this.userService.addUserToProfile(action.user.id, action.role)
-            .pipe(
-              map(user => {
-                return studentsActions.addUserToStudentProfileSuccess({student: action.user});
-              }),
-              catchError(error => of(studentsActions.addUserToStudentProfileFailure({errorMessage: error.message})))
             );
         })
       );

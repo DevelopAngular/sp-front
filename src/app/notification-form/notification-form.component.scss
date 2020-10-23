@@ -109,26 +109,6 @@
         }
       }
     }
-
-    .test-notif {
-      padding: 20px;
-
-      .test-header {
-        color: $navy;
-        font-size: 16px;
-      }
-      .info {
-        color: $blue-gray;
-        font-size: 14px;
-        margin-top: 6px;
-        margin-bottom: 15px;
-
-        a {
-          color: $blue-gray;
-          outline: none;
-        }
-      }
-    }
   }
 
   .notif-empty-state {

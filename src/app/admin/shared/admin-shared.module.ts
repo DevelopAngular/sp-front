@@ -10,14 +10,12 @@ import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
 import { DisabledChipComponent } from '../accounts/disabled-chip/disabled-chip.component';
-import {SpDataTableComponent} from '../sp-data-table/sp-data-table.component';
-import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-options.component';
 
 @NgModule({
   imports: [
     CommonModule,
     SharedModule,
-    FormsModule
+    FormsModule,
   ],
   declarations: [
       ColorPalletPickerComponent,
@@ -27,9 +25,7 @@ import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-opt
       NavButtonComponent,
       PinnableCollectionComponent,
       ColorComponent,
-      DisabledChipComponent,
-      SpDataTableComponent,
-      ColumnOptionsComponent,
+      DisabledChipComponent
   ],
   exports: [
       ColorPalletPickerComponent,
@@ -40,9 +36,7 @@ import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-opt
       PinnableCollectionComponent,
       ColorComponent,
       SharedModule,
-      DisabledChipComponent,
-      SpDataTableComponent,
-      ColumnOptionsComponent,
+      DisabledChipComponent
   ]
 })
 export class AdminSharedModule { }

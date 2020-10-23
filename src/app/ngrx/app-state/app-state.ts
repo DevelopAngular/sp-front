@@ -12,8 +12,6 @@ import { schoolsReducer } from '../schools/reducers';
 import { userReducer } from '../user/reducers/user.reducer';
 import { onboardProcessReducer } from '../onboard-process/reducers/process.reducer';
 import { passLimitsReducer } from '../pass-limits/reducers';
-import { passesReducer } from '../passes/reducers/passes.reducer';
-import { contactTraceReducer } from '../contact-trace/reducers';
 import { toastReducer } from '../toast/reducers';
 
 
@@ -32,8 +30,6 @@ export interface AppState {
   readonly user;
   readonly onboardProcess;
   readonly pass_limits;
-  readonly passes;
-  readonly contactTrace;
   readonly toast;
 }
 
@@ -52,7 +48,5 @@ export const reducers = {
   user: userReducer,
   onboardProcess: onboardProcessReducer,
   pass_limits: passLimitsReducer,
-  passes: passesReducer,
-  contactTrace: contactTraceReducer,
   toast: toastReducer
 };
