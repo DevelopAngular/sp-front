@@ -115,6 +115,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(res => {
+        console.log(res)
         this.passLimits = res;
     });
 
@@ -323,11 +324,18 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 
   isValidLocation(locationId: any) {
-    if ((this.forStaff && (+locationId !== +this.invalidLocation)) || this.isFavoriteForm) {
+    if (this.isFavoriteForm)
       return true;
-    }
+    else if (this.forStaff && !this.forKioskMode)
+      return true;
+    else if (+locationId === +this.invalidLocation)
+      return false;
+
     const location = this.passLimits[locationId];
-    return location && (!this.forStaff && this.tooltipService.reachedPassLimit(this.currentPage, location, this.forStaff)) && (+location.id !== +this.invalidLocation);
+    if (!location)
+      return false;
+
+    return this.tooltipService.reachedPassLimit(this.currentPage, location);
   }
 
   mergeLocations(url, withStars: boolean, category: string) {

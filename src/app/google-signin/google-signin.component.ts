@@ -148,7 +148,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       });
 
     this.changeUserName$.pipe(
-      filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
+      // filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
       tap(() => this.disabledButton = false),
       debounceTime(1000),
       switchMap(userName => {

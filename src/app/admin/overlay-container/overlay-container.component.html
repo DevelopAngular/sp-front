@@ -48,45 +48,33 @@
 
   <div class="content">
     <div class="left-block">
-      <div class="block" *ngIf="currentPage === 1 || currentPage === 2">
-        <app-room [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (roomDataResult)="roomResult($event)"></app-room>
-      </div>
-      <div class="block" *ngIf="currentPage === 3 || currentPage === 4">
-        <app-folder [form]="form" (folderDataResult)="folderResult($event)"></app-folder>
-      </div>
+      <div class="block" #block>
+        <app-room [form]="form" *ngIf="currentPage === 1 || currentPage === 2" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (roomDataResult)="roomResult($event)"></app-room>
 
-      <div class="block" *ngIf="currentPage === 5">
-        <app-new-room-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (errorsEmit)="showFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
-      </div>
+        <app-folder [form]="form" *ngIf="currentPage === 3 || currentPage === 4" (folderDataResult)="folderResult($event)"></app-folder>
 
-      <div class="block" *ngIf="currentPage === 6">
-        <app-edit-room-in-folder (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="showFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
-      </div>
+        <app-new-room-in-folder [form]="form" *ngIf="currentPage === 5" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (errorsEmit)="showFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
 
-      <div class="block" *ngIf="currentPage === 8">
-        <div class="existing-rooms">
+        <app-edit-room-in-folder *ngIf="currentPage === 6" (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="showFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
+
+        <div class="existing-rooms" *ngIf="currentPage === 8">
           <app-add-existing-room
-                  [data]="pinnables$ | async"
-                  [roomName]="folderData.folderName"
-                  [roomsInFolder]="folderData.selectedRoomsInFolder"
-                  (back)="back(false);"
-                  (save)="addToFolder($event)">
+            [data]="pinnables$ | async"
+            [roomName]="folderData.folderName"
+            [roomsInFolder]="folderData.selectedRoomsInFolder"
+            (back)="back(false);"
+            (save)="addToFolder($event)">
           </app-add-existing-room>
         </div>
-      </div>
 
-      <div class="block" *ngIf="currentPage === 9">
-        <app-bulk-edit-rooms (bulkEditResult)="bulkEditResult($event)" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors"></app-bulk-edit-rooms>
-      </div>
+        <app-bulk-edit-rooms *ngIf="currentPage === 9" (bulkEditResult)="bulkEditResult($event)" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors"></app-bulk-edit-rooms>
 
-      <div class="block" *ngIf="currentPage === 10">
-        <app-bulk-edit-rooms-in-folder [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (bulkEditResult)="bulkEditInFolder($event)" (errorsEmit)="showFormErrors()" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
-      </div>
+        <app-bulk-edit-rooms-in-folder *ngIf="currentPage === 10" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (bulkEditResult)="bulkEditInFolder($event)" (errorsEmit)="showFormErrors()" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
 
+        <app-import-rooms [form]="form" *ngIf="currentPage === 7" (back)="back(false)"></app-import-rooms>
 
-      <div class="block" *ngIf="currentPage === 7">
-        <app-import-rooms [form]="form" (back)="back(false)"></app-import-rooms>
       </div>
+      <div class="shadow" *ngIf="showBottomShadow"></div>
     </div>
 
     <mat-divider [vertical]="true"></mat-divider>

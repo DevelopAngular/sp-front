@@ -89,6 +89,7 @@
           <div *ngIf="issue.existsEmail">- Email/username already used</div>
           <div *ngIf="issue.invalidType">- Account group not specified (Admin, Teacher, Student)</div>
           <div *ngIf="issue.invalidEmail">- Email/username not specified</div>
+          <div *ngIf="issue.invalidPassword">- Invalid password: password must contain at least 8 characters and 1 digit.</div>
         </div>
       </div>
       <div class="issues-footer">

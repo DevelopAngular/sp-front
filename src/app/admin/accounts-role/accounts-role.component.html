@@ -4,8 +4,8 @@
         <app-sp-data-table
           [data$]="accountRoleData$"
           [loading$]="isLoading$"
-          [height]="(schools$ | async).length > 1 ? 'calc(100vh - 280px)' : 'calc(100vh - 150px)'"
-          [currentPage]="role"
+          [height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 205px)'"
+          [currentPage]="(route.params | async).role"
           [isRowClick]="true"
           [sort]="sort$ | async"
           [sortColumn]="sortingColumn"

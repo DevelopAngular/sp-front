@@ -15,7 +15,7 @@ export class PassesEffects {
     return this.actions$
       .pipe(
         ofType(passesActions.searchPasses),
-        concatMap((action: any) => {
+        switchMap((action: any) => {
           return this.hallPassesService.searchPasses(action.url)
             .pipe(
               map(({results, next}) => {

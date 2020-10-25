@@ -33,7 +33,7 @@
       <div class="filter" *ngIf="views[currentView].id === 1">
         <app-filter-button
           (buttonClick)="openFilter($event, 'origin')"
-          [title]="(!passSearchData.selectedOriginRooms || passSearchData.selectedOriginRooms.length > 1 ? 'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' (' + passSearchData.selectedOriginRooms.length + ')' : '') : passSearchData.selectedOriginRooms[0].room)"
+          [title]="'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' (' + passSearchData.selectedOriginRooms.length + ')' : '')"
           [filter]="passSearchData.selectedOriginRooms && !!passSearchData.selectedOriginRooms.length"
           (clearData)="passSearchData.selectedOriginRooms = null; autoSearch()"
         ></app-filter-button>
@@ -41,7 +41,7 @@
       <div class="filter" *ngIf="views[currentView].id === 1">
         <app-filter-button
           (buttonClick)="openFilter($event, 'destination')"
-          [title]="(!passSearchData.selectedDestinationRooms || passSearchData.selectedDestinationRooms.length > 1 ? 'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' (' + passSearchData.selectedDestinationRooms.length + ')' : '') : passSearchData.selectedDestinationRooms[0].room)"
+          [title]="'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' (' + passSearchData.selectedDestinationRooms.length + ')' : '')"
           [filter]="passSearchData.selectedDestinationRooms && !!passSearchData.selectedDestinationRooms.length"
           (clearData)="passSearchData.selectedDestinationRooms = null; autoSearch()"
         ></app-filter-button>

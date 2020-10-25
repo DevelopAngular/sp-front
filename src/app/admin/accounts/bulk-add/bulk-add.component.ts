@@ -20,6 +20,7 @@ export interface ImportAccount {
   existsEmail?: boolean;
   invalidEmail?: boolean;
   invalidType?: boolean;
+  invalidPassword?: boolean;
 }
 
 export function validationAccounts<T>(userService): MonoTypeOperatorFunction<ImportAccount[]> {
@@ -38,10 +39,12 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
     }),
     map(({users, isValidEmail}: {users: ImportAccount[], isValidEmail: {exists: boolean}[]}) => {
       return users.map((user, index) => {
+        const regExpPassword = new RegExp('[a-z][0-9]+');
         return {
           ...user,
           existsEmail: isValidEmail[index].exists,
           invalidEmail: !user.primary_email,
+          invalidPassword: !regExpPassword.test(user.password),
           invalidType: !user.type ||
             (user.type.toLowerCase() !== 'admin' &&
             user.type.toLowerCase() !== 'teacher' &&
@@ -153,7 +156,7 @@ export class BulkAddComponent implements OnInit, OnDestroy {
       this.uploadingProgress.inProgress = false;
       this.uploadingProgress.completed = true;
     }, 1500);
-    this.invalidAccounts = users.filter(user => user.existsEmail || user.invalidEmail || user.invalidType);
+    this.invalidAccounts = users.filter(user => user.existsEmail || user.invalidEmail || user.invalidType || user.invalidPassword);
     this.importAccounts = users;
     this.validAccountsToDb = differenceBy(this.importAccounts, this.invalidAccounts, 'id');
   }

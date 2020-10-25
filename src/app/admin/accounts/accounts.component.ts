@@ -7,7 +7,7 @@ import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {Util} from '../../../Util';
 import {User} from '../../models/User';
 import {StorageService} from '../../services/storage.service';
@@ -15,7 +15,6 @@ import {GettingStartedProgressService} from '../getting-started-progress.service
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../services/locations.service';
-import {SyncSettingsComponent} from './sync-settings/sync-settings.component';
 import {GG4LSync} from '../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
@@ -36,11 +35,10 @@ declare const window;
 export class AccountsComponent implements OnInit, OnDestroy {
 
   user: User;
-  currentRole: string;
 
   gg4lSettingsData$: Observable<GG4LSync>;
   schoolSyncInfoData$: Observable<SchoolSyncInfo>;
-  selectedUsers = [];
+  prevRoute: string;
 
   destroy$ = new Subject();
 
@@ -123,6 +121,21 @@ export class AccountsComponent implements OnInit, OnDestroy {
       .subscribe((user) => {
       this.user = user;
     });
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        if (event.url === '/admin/accounts' &&
+          (this.prevRoute === `/admin/accounts/_profile_student` ||
+            this.prevRoute === `/admin/accounts/_profile_teacher` ||
+            this.prevRoute === `/admin/accounts/_profile_admin` ||
+            this.prevRoute === `/admin/accounts/_profile_assistant`)) {
+          this.router.navigate([this.prevRoute]);
+        } else {
+          this.prevRoute = event.url;
+        }
+
+      });
   }
 
   ngOnDestroy(): void {
@@ -130,17 +143,17 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSyncSettings() {
-    const SS = this.matDialog.open(SyncSettingsComponent, {
-      panelClass: 'accounts-profiles-dialog',
-      backdropClass: 'custom-bd',
-      data: {gg4lInfo: this.gg4lSettingsData$}
-    });
-  }
-
-  openNewTab(url) {
-    window.open(url);
-  }
+  // openSyncSettings() {
+  //   const SS = this.matDialog.open(SyncSettingsComponent, {
+  //     panelClass: 'accounts-profiles-dialog',
+  //     backdropClass: 'custom-bd',
+  //     data: {gg4lInfo: this.gg4lSettingsData$}
+  //   });
+  // }
+  //
+  // openNewTab(url) {
+  //   window.open(url);
+  // }
 
   openSettingsDialog(action, status) {
     if (action === 'gg4l') {

@@ -9,15 +9,15 @@ import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 import {User} from '../../models/User';
-import {Location} from '../../models/Location';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {DomSanitizer} from '@angular/platform-browser';
-import {uniqBy} from 'lodash';
+import {cloneDeep, uniqBy} from 'lodash';
 import {School} from '../../models/School';
 import {TableService} from '../sp-data-table/table.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
+import {StorageService} from '../../services/storage.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -35,7 +35,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public placeholder: boolean;
   public loaded: boolean = false;
   public profilePermissions: any;
-  public tabVisibility: boolean = false;
   public user: User;
   public pending$: Subject<boolean> = new Subject<boolean>();
   public userEmptyState: boolean;
@@ -44,6 +43,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public searchValue: string;
 
   public sortingColumn: string;
+  public currentColumns: any = {};
 
   accountRoleData$: Observable<any[]>;
 
@@ -59,7 +59,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   constructor(
     public router: Router,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     private userService: UserService,
     private http: HttpService,
     private adminService: AdminService,
@@ -67,7 +67,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private _zone: NgZone,
     public darkTheme: DarkThemeSwitch,
     private tableService: TableService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private storage: StorageService
   ) {
 
   }
@@ -91,9 +92,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }),
         map((accounts: User[]) => {
           this.sortLoading$.next(false);
+          const getColumns = this.storage.getItem(`order${this.role}`);
+          const columns = {};
+          if (getColumns) {
+            const columnsOrder = ('Name,' + getColumns).split(',');
+            for (let i = 0; i < columnsOrder.length; i++) {
+              Object.assign(columns, {[columnsOrder[i]]: null});
+            }
+            this.currentColumns = cloneDeep(columns);
+          }
           if (!accounts.length) {
             this.userEmptyState = true;
-           return this.emptyRoleObject();
+           return this.emptyRoleObject(getColumns, this.currentColumns);
           }
           this.userEmptyState = false;
           return accounts.map(account => {
@@ -108,7 +118,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               writable: false,
               value: account
             });
-            Object.defineProperty(rowObj, '_data', { enumerable: false, value: rowObj });
+            // Object.defineProperty(rowObj, '_data', { enumerable: false, value: rowObj });
 
             return rowObj;
           });
@@ -173,9 +183,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  emptyRoleObject() {
+  emptyRoleObject(getColumns, columns) {
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
-      return [{
+      return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
         'Status': null,
@@ -184,7 +194,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'Permissions': null
       }];
     } else if (this.role === '_profile_teacher') {
-      return [{
+      return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
         'Rooms': null,
@@ -194,7 +204,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'Permissions': null
       }];
     } else if (this.role === '_profile_assistant') {
-      return [{
+      return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
         'Acting on Behalf Of': null,
@@ -235,29 +245,34 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
-          'Permissions': permissions
+          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
-          'rooms': account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned',
+          'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
-          'Permissions': permissions
+          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     } else if (this.role === '_profile_assistant') {
       objectToTable = {...roleObject, ...{
-          'Acting on Behalf Of': this.sanitizer.bypassSecurityTrustHtml(`<div style="display: flex; width: 100%; white-space: nowrap">` + (account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
+          'Acting on Behalf Of': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
-          }).join(', ') : 'No Teachers') + `<div>`),
+          }).join(', ') : 'No Teachers') + `</div>`),
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
-          'Permissions': permissions
+          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     }
-
-    return objectToTable;
+    const currentObj = {};
+    if (this.storage.getItem(`order${this.role}`)) {
+      Object.keys(this.currentColumns).forEach(key => {
+        currentObj[key] = objectToTable[key];
+      });
+    }
+    return this.storage.getItem(`order${this.role}`) ? currentObj : objectToTable;
   }
 
   ngOnDestroy() {
@@ -277,21 +292,21 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  findProfileByRole(evt) {
-    this.tabVisibility = false;
-
-    setTimeout(() => {
-      if (evt instanceof Location) {
-        this.router.navigate(['admin/passconfig'], {
-          queryParams: {
-            locationId: evt.id,
-          }
-        });
-      } else {
-        this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
-      }
-    }, 250);
-  }
+  // findProfileByRole(evt) {
+  //   this.tabVisibility = false;
+  //
+  //   setTimeout(() => {
+  //     if (evt instanceof Location) {
+  //       this.router.navigate(['admin/passconfig'], {
+  //         queryParams: {
+  //           locationId: evt.id,
+  //         }
+  //       });
+  //     } else {
+  //       this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
+  //     }
+  //   }, 250);
+  // }
 
   showProfileCard(evt) {
     // if (this.role === '_profile_admin') {
