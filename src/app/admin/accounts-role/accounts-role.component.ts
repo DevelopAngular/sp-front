@@ -224,9 +224,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
       }
     }());
+    let email = account.primary_email;
     const roleObject = {
       'Name': account.display_name,
-      'Email/username': account.primary_email,
+      'Email/username': email.endsWith('@spnx.local') ? email.split('@')[0] : email,
     };
     let objectToTable;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
