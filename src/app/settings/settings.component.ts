@@ -1,10 +1,10 @@
-import {Component, ElementRef, HostListener, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { User } from '../models/User';
+import {Component, ElementRef, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {User} from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
+import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
@@ -224,6 +224,13 @@ export class SettingsComponent implements OnInit {
       'icon': 'Notifications',
       'action': 'notifications',
       'title': 'Notifications'
+    });
+    this.settings.push({
+      'hidden': this.isKioskMode || !this.isStaff,
+      'background': '#EBBB00',
+      'icon': '',
+      'action': 'refer',
+      'title': 'Refer a friend'
     });
   }
 }
