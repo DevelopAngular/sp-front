@@ -234,10 +234,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
       }
     }());
-    let email = account.primary_email;
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
-      'Email/username': `<div class="no-wrap">` + email.endsWith('@spnx.local') ? email.split('@')[0] : email + '</div>',
+      'Email/username': `<div class="no-wrap">` + account.primary_email.split('@spnx.local')[0] + '</div>',
     };
     let objectToTable;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
