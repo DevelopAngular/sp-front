@@ -134,7 +134,13 @@
       </div>
 
       <div class="options-wrapper" #setButton>
-        <app-icon-button [srcString]="'Settings'" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
+        <app-icon-button
+          [srcString]="'Settings'"
+          [size]="20"
+          (clickEvent)="showOptions($event)"
+          [notificationBadge]="true"
+          [notificationCount]="1"
+        ></app-icon-button>
       </div>
     </div>
   </div>

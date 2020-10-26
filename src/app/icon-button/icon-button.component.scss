@@ -7,9 +7,24 @@
     border-radius: 50%;
     background-color: rgba(244, 244, 244, .75);
     transition: background-color .2s ease;
+    position: relative;
     //touch-action: none;
     .icon {
       transition: opacity .2s ease;
     };
+    .notification {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      background-color: #E32C66;
+      font-size: 13px;
+    }
   }
 }

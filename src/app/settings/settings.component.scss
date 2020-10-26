@@ -88,6 +88,19 @@
         //padding-left: 25px;
         height: 40px;
         cursor: pointer;
+
+        .release {
+          width: 44px;
+          height: 21px;
+          background-color: #E32C66;
+          border-radius: 11px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          font-size: 13px;
+          margin-left: 20px;
+        }
       }
       .setting-icon {
         width: 20px;

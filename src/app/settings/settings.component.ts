@@ -19,6 +19,7 @@ export interface Setting {
   action: string | Function;
   title: string;
   tooltip?: string;
+  isNew?: boolean;
 }
 
 @Component({
@@ -230,7 +231,8 @@ export class SettingsComponent implements OnInit {
       'background': '#EBBB00',
       'icon': '',
       'action': 'refer',
-      'title': 'Refer a friend'
+      'title': 'Refer a friend',
+      'isNew': true
     });
   }
 }
