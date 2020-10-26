@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
 
 @Component({
   selector: 'app-link-card',
@@ -16,7 +17,7 @@ export class LinkCardComponent implements OnInit {
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor() { }
+  constructor(public darkTheme: DarkThemeSwitch) { }
 
   ngOnInit() {
   }

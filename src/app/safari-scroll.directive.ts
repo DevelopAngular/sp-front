@@ -14,7 +14,7 @@ export class SafariScrollDirective {
 
     if (DeviceDetection.isSafari()) {
       fromEvent(window, 'resize').subscribe((event) => {
-        console.log(event);
+        // console.log(event);
         const _host = this.host.nativeElement as HTMLElement;
         if (_host.scrollLeft + _host.clientWidth >= _host.scrollWidth) {
           _host.scrollLeft = _host.scrollWidth - _host.clientWidth;

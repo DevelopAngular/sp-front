@@ -1,49 +1,4 @@
 <div class="host" appSafariScroll (click)="closeChat($event)">
-<!--  <div class="backdrop" *ngIf="chatBackdrop" (click)="closeChat($event)"></div>-->
-<!--  <div class="set-day-wrapper" *ngIf="!openSchoolPage && loaded; else mySchool">-->
-<!--    <div class="set-day-header">-->
-<!--      <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Prepare for Launch</div>-->
-<!--      <div class="subtitle" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">Get your school using SmartPass on day one.</div>-->
-<!--    </div>-->
-
-<!--    <div class="set-day-content">-->
-<!--      <div class="left-block">-->
-<!--        <div>-->
-<!--          <div class="selected-date">-->
-<!--            <div class="label" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Set a launch day</div>-->
-
-<!--            <app-date-chip [selectedDate]="selectedDate" (dateEmit)="updateLaunchDay($event)"></app-date-chip>-->
-
-<!--          </div>-->
-
-<!--          <div class="info-text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">-->
-<!--            The day your school will start using SmartPass. <br><br>-->
-<!--            Students won’t be able to sign in until launch day, but staff can! The 60 day free trial starts on launch day.-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        <div class="button">-->
-<!--          <app-gradient-button-->
-<!--                  [cursor]="'pointer'"-->
-<!--                  [rightIcon]="'./assets/Chevron Right (White).svg'"-->
-<!--                  [size]="'medium'"-->
-<!--                  [disabled]="!selectedDate"-->
-<!--                  (buttonClick)="saveRequest()"-->
-<!--          >-->
-<!--            Continue-->
-<!--          </app-gradient-button>-->
-<!--        </div>-->
-<!--        <div class="footer-text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">-->
-<!--          Don’t know your launch date yet? <span style="text-decoration: underline; cursor: pointer" (click)="openSchoolPage = true; updateProgress$.next(true);">Skip for now.</span>-->
-<!--          Launch dates can always be changed later.-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="image">-->
-<!--        <img width="750" height="538" [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My_school">-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <ng-template #mySchool>-->
     <div class="wrapper">
       <div class="header-container">
         <div class="header-wrapper">
@@ -67,7 +22,7 @@
 
       <div class="content">
         <div class="left">
-          <div class="title">Prep Guides</div>
+          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Prep Guides</div>
           <div class="button">
             <app-link-card
               [title]="'Community Letter'"
@@ -102,7 +57,7 @@
         </div>
 
         <div class="right">
-          <div class="title">Support</div>
+          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Support</div>
           <div class="button">
             <app-link-card
               [title]="'Free support call'"
@@ -124,55 +79,7 @@
             ></app-link-card>
           </div>
         </div>
-
-
-<!--        <div class="left-block">-->
-<!--          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Launch Day Prep Materials</div>-->
-<!--          <div class="download-button">-->
-<!--            <app-gradient-button-->
-<!--              [size]="'small'"-->
-<!--              [cursor]="'pointer'"-->
-<!--              [leftIcon]="'./assets/Download (White).svg' | resolveAsset"-->
-<!--              [gradient]="'#7F879D, #7F879D'"-->
-<!--              (buttonClick)="redirect({link: 'https://www.smartpass.app/support/downloadallmaterials'})"-->
-<!--            >-->
-<!--              Download All-->
-<!--            </app-gradient-button>-->
-<!--          </div>-->
-
-<!--          <div class="button-collection">-->
-<!--            <app-school-button *ngFor="let button of buttons" [button]="button" (result)="redirect($event)"></app-school-button>-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        <div class="right-block">-->
-<!--          <div class="start-day" *ngIf="!isLaunched; else launched">-->
-<!--            <div class="start-day-content">-->
-<!--              <div class="start-day-header">{{ launchDay ? (countLaunchDay === 0 ? 'Launch tomorrow': countLaunchDay + ' days until launch') : 'Set a launch day'}}</div>-->
-<!--              <div class="start-day-info">The day your school will start using SmartPass. Students won’t be able to sign in until launch day, but staff can!</div>-->
-<!--              <app-date-chip [selectedDate]="launchDay" (dateEmit)="selected($event)"></app-date-chip>-->
-<!--            </div>-->
-<!--            <div class="image">-->
-<!--              <img width="244" height="155" [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My-School">-->
-<!--            </div>-->
-<!--          </div>-->
-
-<!--          <ng-template #launched>-->
-<!--            <div class="start-day">-->
-<!--              <div class="start-day-content">-->
-<!--                <div class="start-day-header">Launched!</div>-->
-<!--                <div class="start-day-info" [style.width]="'200px'">Launch day: {{ launchDay.format('MMMM') }} <br/>-->
-<!--                  {{ launchDay.format(' DD, YYYY') }}-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="image-launched">-->
-<!--                <img [src]="'./assets/admin-images/Launched.svg' | resolveAsset" alt="My-School">-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </ng-template>-->
-<!--        </div>-->
       </div>
     </div>
-<!--  </ng-template>-->
 
 </div>

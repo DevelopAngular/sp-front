@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Pinnable } from '../models/Pinnable';
+import {Injectable} from '@angular/core';
+import {Pinnable} from '../models/Pinnable';
 import {BehaviorSubject, of, ReplaySubject, zip} from 'rxjs';
-import { HallPassesService } from '../services/hall-passes.service';
+import {HallPassesService} from '../services/hall-passes.service';
 import {map, switchMap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {ScreenService} from '../services/screen.service';

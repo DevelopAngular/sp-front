@@ -402,4 +402,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     }
   }
 
+  getDisabledTooltip(choice) {
+    return this.originLocation && this.originLocation.id === choice.id;
+  }
+
 }

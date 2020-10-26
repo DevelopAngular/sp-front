@@ -18,7 +18,7 @@
   align-items: center;
   position: relative;
   z-index: 1;
-  padding: 8px 0 9px 0;
+  //padding: 8px 0 9px 0;
   .user-action-none {
     position: absolute;
     top: 0;
@@ -106,6 +106,22 @@ $disabled: #D3D6DE;
     }
     .ios-toggle:checked + .checkbox-label:before {
       left: calc(100% - 23px);
+    }
+  }
+
+  &__smallest {
+    width: 23px;
+
+    .checkbox-label {
+      height: 14px;
+      padding: 0;
+    }
+    .checkbox-label:before {
+      height: 14px;
+      width: 14px;
+    }
+    .ios-toggle:checked + .checkbox-label:before {
+      left: calc(100% - 14px);
     }
   }
 }

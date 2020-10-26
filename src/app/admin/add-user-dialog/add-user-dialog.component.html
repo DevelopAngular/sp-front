@@ -5,25 +5,25 @@
   </div>
   <!-- end -->
   <div class="heading" #header>
-    <div class="back-button" (click)="back()" *ngIf="!state">
+    <div class="back-button" (click)="back()">
       <img *ngIf="!selectedUsers.length && (!showIncomplete() && !showSaveButton()); else cancel" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
       <ng-template #cancel>
         <div class="cancel">Cancel</div>
       </ng-template>
     </div>
-    <div class="back-button" *ngIf="state === 'assistant' || state === 'selectRole'" (click)="state = null">
-      <img [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
-    </div>
+<!--    <div class="back-button" *ngIf="isAssistant" (click)="state = null">-->
+<!--      <img [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">-->
+<!--    </div>-->
     <div class="ds-dialog-title-white ds-flex-center-center">
-      <img [src]="'./assets/Plus (White).svg'" width="20" height="20" alt="(White).svg" class="ds-mr-10">
-      <span>Add User</span>
+      <img [src]="icon | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+      <span>{{ title }}</span>
     </div>
     <div class="save-button">
-      <app-gradient-button *ngIf="showSaveButton()"
+      <app-gradient-button
         [size]="'small'"
         [gradient]="'#FFFFFF, #FFFFFF'"
         [hoverColor]="'#FCFDFF'"
-        [textColor]="'#04CD33'"
+        [textColor]="'#00B476'"
         [cursor]="'pointer'"
         (buttonClick)="addUser()"
       >
@@ -31,54 +31,27 @@
           <span>Add</span>
         </div>
       </app-gradient-button>
-      <div class="incomplete" *ngIf="showIncomplete()">Incomplete</div>
-    </div>
-    <div class="save-button" *ngIf="showNextButton">
-      <app-gradient-button
-         [size]="'small'"
-         [gradient]="'#FFFFFF, #FFFFFF'"
-         [hoverColor]="'#FCFDFF'"
-         [textColor]="'#04CD33'"
-         [cursor]="'pointer'"
-         (buttonClick)="next()"
-      >
-        <div class="ds-flex-center-start">
-          <span>Next</span>
-        </div>
-      </app-gradient-button>
+      <div class="incomplete" *ngIf="false">Incomplete</div>
     </div>
   </div>
-  <div class="content" *ngIf="!state" #rc>
-    <div class="content_top">
-      <div class="content_top-header">
-        <span class="ds-dialog-heading" style="padding-bottom: 0">Account Type</span>
-      </div>
-      <div class="content_top-body">
-
-        <div class="account-type-picker">
-          <app-restriction-picker
-            [choices]="accountTypes"
-            [selectedChoice]="typeChoosen"
-            [height]="32"
-            [width]="167"
-            [fontSize]="13"
-            (result)="typeChoosen = $event"
-          ></app-restriction-picker>
-        </div>
-      </div>
-    </div>
-
+  <div class="content" style="height: 100%">
     <div>
-      <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
-        <div class="ds-w-100 ds-flex-start-center" style="position: relative;">
+      <div class="content_rest" *ngIf="typeChosen === accountTypes[0] || typeChosen === accountTypes[2]">
+        <div class="roles" style="margin-bottom: 25px">
+          <app-select-role
+            [selectedRoles]="userRoles"
+            (onSelect)="userRoles = $event"
+          ></app-select-role>
+        </div>
 
+        <div class="ds-w-100 ds-flex-start" style="position: relative;">
           <div class="profile-search">
-
+            <div class="label" [style.color]="selectedUserErrors ? '#E32C66' : (selectedUsers.length ? '#1F195E' : '#7f879d')">G Suite Accounts</div>
             <app-sp-search
               [selectedOptions]="selectedUsers"
               [placeholder]="'Search syncing accounts'"
               [dummyRoleText]="'users'"
-              [type]="'gsuite'"
+              [type]="typeChosen"
               [role]="data.role"
               (onUpdate)="setSelectedUsers($event)"
             ></app-sp-search>
@@ -87,7 +60,7 @@
       </div>
     </div>
 
-    <div class="content_rest" *ngIf="typeChoosen === accountTypes[1]">
+    <div class="content_rest" *ngIf="typeChosen === accountTypes[1]">
       <form class="new-alt-acc-form" [formGroup]="newAlternativeAccount">
 
         <div style="width: 238px">
@@ -98,7 +71,8 @@
             [input_value]="newAlternativeAccount.get('name').value"
             [width]="'222px'"
             [height]="'40px'"
-
+            [isFocus]="inputFocusNumber === 1"
+            [forceFocus$]="forceFocus$"
           ></app-input>
         </div>
         <div class="ds-flex-start-start ds-w-100 ds-mt-10" style="height: 170px">
@@ -114,7 +88,8 @@
                 [input_value]="newAlternativeAccount.get('addUsername').value"
                 [width]="'222px'"
                 [height]="'40px'"
-
+                [isFocus]="inputFocusNumber === 2"
+                [forceFocus$]="forceFocus$"
               ></app-input>
             </div>
             <div style="padding-bottom: 20px;">
@@ -124,74 +99,57 @@
                 [input_type]="'password'"
                 [autocomplete]="'new-password'"
                 [placeholder]="'8+ characters'"
+                [rightIcon]="'./assets/Support (Gray).svg'"
+                [tooltipText]="'Password must contain at least 8 characters and 1 digit. Users are not sent this password'"
                 [isSuccessIcon]="true"
                 [controlName]="newAlternativeAccount.get('addPassword')"
                 [formGroup]="newAlternativeAccount"
                 [input_value]="newAlternativeAccount.get('addPassword').value"
                 [width]="'222px'"
                 [height]="'40px'"
+                [isFocus]="inputFocusNumber === 3"
+                [forceFocus$]="forceFocus$"
+                [showPasswordButton]="true"
               ></app-input>
             </div>
 
           </div>
         </div>
 
-      </form>
-      <div class="info-text" *ngIf="typeChoosen === accountTypes[1]">
-        <div style="margin-top: 7px">New users aren’t emailed this, you will need to share their password with them.</div>
-      </div>
+        <div class="roles" style="margin-bottom: 25px">
+          <app-select-role
+            [selectedRoles]="userRoles"
+            [invalid]="roleErrors"
+            [isAccessAdd]="isAccessAdd"
+            (onSelect)="selectRole($event)"
+          ></app-select-role>
+        </div>
 
-    </div>
-
-  </div>
-
-  <div class="assistant-content" *ngIf="state === 'assistant'" #rc>
-    <div class="info">As an assistant, choose from existing teacher(s) so this user can act on behalf of the specified accounts.</div>
-    <div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">
-      <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
-      <div class="profile-search">
-        <app-sp-search
+        <div class="assistant-content" *ngIf="isAssistant" #rc>
+          <div class="info">As an assistant, choose from existing teacher(s) so this user can act on behalf of the specified accounts.</div>
+          <div class="active-on-user ds-w-100" *ngIf="isAssistant">
+            <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
+            <div class="profile-search">
+              <app-sp-search
+                [focused]="false"
                 [placeholder]="'Search existing teachers'"
                 [dummyRoleText]="'teachers'"
                 [selectedOptions]="assistantLike.behalfOf"
                 [type]="'alternative'"
                 [role]="'_profile_teacher'"
                 (onUpdate)="setSecretary(null, $event)"
-        ></app-sp-search>
-      </div>
-    </div>
-  </div>
-
-  <div class="select-role" *ngIf="state === 'selectRole'" #rc>
-    <div class="info">Choose which SmartPass Group(s) this user should be added to.</div>
-    <div class="groups">
-      <div class="group" *ngFor="let account of accounts">
-        <app-profile
-                [title]="account.title"
-                [width]="178"
-                [plusIcon]="false"
-                [icon]="account.icon"
-                [isSelected]="account.selected"
-                [disabled]="isDisabled(account.role)"
-                (select)="account.selected = !!$event"
-        ></app-profile>
-      </div>
-    </div>
-
-    <div class="inp" *ngIf="accounts[2].selected">
-      <div class="active-on-user ds-w-100">
-        <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
-        <div class="profile-search">
-          <app-sp-search
-                  [placeholder]="'Search existing teachers'"
-                  [dummyRoleText]="'teachers'"
-                  [selectedOptions]="assistantLike.behalfOf"
-                  [type]="'alternative'"
-                  [role]="'_profile_teacher'"
-                  (onUpdate)="setSecretary(null, $event)"
-          ></app-sp-search>
+              ></app-sp-search>
+            </div>
+          </div>
         </div>
-      </div>
+
+
+      </form>
+<!--      <div class="info-text" *ngIf="typeChosen === accountTypes[1]">-->
+<!--        <div style="margin-top: 7px">New users aren’t emailed this, you will need to share their password with them.</div>-->
+<!--      </div>-->
+
     </div>
+
   </div>
 </div>
