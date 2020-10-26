@@ -240,9 +240,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
     this.toastService.toastButtonClick$
       .pipe(
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
+        filter(action => action === 'bulk_add_link')
       )
-      .subscribe(() => {
+      .subscribe((action) => {
         if (this.selection.selected.length > 300 || !this.selection.selected.length) {
           window.open('https://www.smartpass.app/bulk-export');
         } else {
@@ -345,7 +346,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
             title: 'Information Required',
             subtitle: 'We need some additional information to export your data (300+ passes)',
             icon: './assets/External Link (Navy).svg',
-            buttonText: 'See form'
+            buttonText: 'See form',
+            action: 'bulk_add_link'
           }
         );
       } else {

@@ -236,7 +236,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }());
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
-      'Email/username': `<div class="no-wrap">` + account.primary_email + '</div>',
+      'Email/username': `<div class="no-wrap">` + account.primary_email.split('@spnx.local')[0] + '</div>',
     };
     let objectToTable;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
