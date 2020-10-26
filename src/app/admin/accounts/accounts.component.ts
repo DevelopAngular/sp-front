@@ -92,6 +92,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     this.toastService.toastButtonClick$
       .pipe(
+        filter(action => action === 'demo_accounts_down'),
         tap(() => this.tableService.loadingCSV$.next(true)),
         switchMap(() => {
           return this.onboardProcess$;
@@ -183,7 +184,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.adminService.getCountAccountsRequest();
         this.toastService.openToast(
-          {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.'});
+          {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.', action: 'demo_accounts_down'});
       });
   }
 }

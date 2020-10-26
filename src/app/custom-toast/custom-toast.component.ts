@@ -1,7 +1,7 @@
-import  {Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { ToastService } from '../services/toast.service';
+import {Component, OnInit} from '@angular/core';
+import {Observable, of} from 'rxjs';
+import {delay} from 'rxjs/operators';
+import {ToastService} from '../services/toast.service';
 
 @Component({
   selector: 'app-custom-toast',
@@ -30,8 +30,8 @@ export class CustomToastComponent implements OnInit {
     });
   }
 
-  download() {
-    this.toastService.toastButtonClick$.next();
+  download(action) {
+    this.toastService.toastButtonClick$.next(action);
   }
 
 }
