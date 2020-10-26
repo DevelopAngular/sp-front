@@ -310,9 +310,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   }
 
   addUser() {
-    if (this.newAlternativeAccount.invalid || !this.userRoles.length) {
-      this.formSetErrors();
-    } else {
+    if (!this.newAlternativeAccount.invalid || this.userRoles.length) {
       const role: any = this.data.role.split('_').reverse()[0];
 
       of(null)
@@ -377,7 +375,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           //   this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
           // }
         });
-    }
+    } else
+      this.formSetErrors();
 
   }
 
