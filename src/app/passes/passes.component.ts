@@ -9,40 +9,34 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import {
-  BehaviorSubject,
-  combineLatest,
-  ConnectableObservable,
-  empty, interval,
-  merge,
-  Observable,
-  of,
-  ReplaySubject, Subject,
-} from 'rxjs';
+import {MatDialog} from '@angular/material';
+import {BehaviorSubject, combineLatest, ConnectableObservable, empty, interval, merge, Observable, of, ReplaySubject, Subject,} from 'rxjs';
 import {
   filter,
-  map, pluck, publishBehavior,
+  map,
+  pluck,
+  publishBehavior,
   publishReplay,
-  refCount, shareReplay,
+  refCount,
   startWith,
-  switchMap, take, takeUntil,
+  switchMap,
+  takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
-import { CreateFormService } from '../create-hallpass-forms/create-form.service';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { mergeObject } from '../live-data/helpers';
-import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
-import { exceptPasses, PassLike } from '../models';
-import { HallPass } from '../models/HallPass';
-import { testInvitations, testPasses, testRequests } from '../models/mock_data';
-import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { NotificationService } from '../services/notification-service';
-import { TimeService } from '../services/time.service';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {mergeObject} from '../live-data/helpers';
+import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
+import {exceptPasses, PassLike} from '../models';
+import {HallPass} from '../models/HallPass';
+import {testInvitations, testPasses, testRequests} from '../models/mock_data';
+import {BasicPassLikeProvider, PassLikeProvider, WrappedProvider} from '../models/providers';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {NotificationService} from '../services/notification-service';
+import {TimeService} from '../services/time.service';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NavbarDataService} from '../main/navbar-data.service';
@@ -381,6 +375,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
+        if (passLike instanceof HallPass) {
+
+        }
       });
   }
 
