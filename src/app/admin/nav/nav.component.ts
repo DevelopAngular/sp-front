@@ -167,6 +167,7 @@ export class NavComponent implements OnInit, AfterViewInit {
 
     this.userService.introsData$.pipe(filter(res => !!res), takeUntil(this.destroy$))
       .subscribe(data => {
+        // debugger;
         this.introsData = data;
       });
   }
@@ -237,7 +238,7 @@ export class NavComponent implements OnInit, AfterViewInit {
         } else if (action === 'privacy') {
           window.open('https://www.smartpass.app/legal');
         } else if (action === 'refer') {
-          if (!this.introsData.main_intro.universal.seen_version) {
+          if (this.introsData.main_intro.universal && !this.introsData.main_intro.universal.seen_version) {
             this.userService.updateIntrosRequest(this.introsData, 'universal', '23.46.2');
           }
           window.open('https://www.smartpass.app/referrals');

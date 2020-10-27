@@ -245,7 +245,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'icon': 'Referal',
       'action': 'refer',
       'title': 'Refer a friend',
-      'isNew': this.isStaff && !this.intosData.main_intro.universal.seen_version
+      'isNew': this.isStaff && this.intosData.main_intro.universal ? !this.intosData.main_intro.universal.seen_version : false
     });
   }
 }
