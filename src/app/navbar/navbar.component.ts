@@ -1,32 +1,37 @@
 import {
+  AfterViewInit,
+  ChangeDetectorRef,
   Component,
-  NgZone,
-  OnInit,
-  Input,
   ElementRef,
-  HostListener,
   EventEmitter,
+  HostListener,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
   Output,
+  QueryList,
+  Renderer2,
   ViewChild,
-  AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy, Renderer2
+  ViewChildren
 } from '@angular/core';
-import { Location } from '@angular/common';
-import { MatDialog } from '@angular/material';
-import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
+import {Location} from '@angular/common';
+import {MatDialog} from '@angular/material';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
-import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {filter, map, mergeAll, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
+import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 
-import { DataService } from '../services/data-service';
-import { GoogleLoginService } from '../services/google-login.service';
-import { LoadingService } from '../services/loading.service';
-import { NavbarDataService } from '../main/navbar-data.service';
-import { User } from '../models/User';
-import { UserService } from '../services/user.service';
-import { SettingsComponent } from '../settings/settings.component';
-import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
-import { NotificationFormComponent } from '../notification-form/notification-form.component';
-import { LocationsService } from '../services/locations.service';
+import {DataService} from '../services/data-service';
+import {GoogleLoginService} from '../services/google-login.service';
+import {LoadingService} from '../services/loading.service';
+import {NavbarDataService} from '../main/navbar-data.service';
+import {User} from '../models/User';
+import {UserService} from '../services/user.service';
+import {SettingsComponent} from '../settings/settings.component';
+import {FavoriteFormComponent} from '../favorite-form/favorite-form.component';
+import {NotificationFormComponent} from '../notification-form/notification-form.component';
+import {LocationsService} from '../services/locations.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NotificationService} from '../services/notification-service';
 import {DropdownComponent} from '../dropdown/dropdown.component';
@@ -42,7 +47,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
-import { filter as _filter } from 'lodash';
+import {filter as _filter} from 'lodash';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 
@@ -86,6 +91,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   effectiveUser: RepresentedUser;
   tab: string = 'passes';
   inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
+  introsData: any;
 
   isOpenSettings: boolean;
 
@@ -349,6 +355,14 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         return filteredSchools.length;
       })
     );
+
+    this.userService.introsData$
+      .pipe(
+        filter(res => !!res),
+        takeUntil(this.destroyer$)
+      ).subscribe(data => {
+        this.introsData = data;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -560,6 +574,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         window.open('https://www.smartpass.app/privacy');
       } else if (action === 'terms') {
         window.open('https://www.smartpass.app/terms');
+      } else if (action === 'refer') {
+        if (!this.introsData.main_intro.universal.seen_version) {
+          this.userService.updateIntrosRequest(this.introsData, 'universal', '23.46.2');
+        }
+        window.open('https://www.smartpass.app/referrals');
       }
   }
 

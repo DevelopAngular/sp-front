@@ -43,7 +43,6 @@
             <div
               #tabRef
               [style.transition]="'transform .4s ease'"
-
               appCrossPointerEventTarget
               (pointerClickEvent)="tabRef.style.transform = 'unset'"
               (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
@@ -80,10 +79,16 @@
         </div>
       </div>
       <ng-template #notAssistant>
-        <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
+        <div
+          [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
+          [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})"
+          [matTooltip]="user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
+          matTooltipClass="tooltip"
+        >
           <span>
             {{ user?user.display_name:'' }}
           </span>
+          <img *ngIf="user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
         </div>
       </ng-template>
 
@@ -138,7 +143,7 @@
           [srcString]="'Settings'"
           [size]="20"
           (clickEvent)="showOptions($event)"
-          [notificationBadge]="true"
+          [notificationBadge]="isStaff && !introsData.main_intro.universal.seen_version"
           [notificationCount]="1"
         ></app-icon-button>
       </div>
@@ -154,7 +159,6 @@
         <div
           #tabRefMobile
           [style.transition]="'transform .4s ease'"
-
           appCrossPointerEventTarget
           (pointerClickEvent)="changeTabOpacity(tabRefMobile, false)"
           (pointerDownEvent)="changeTabOpacity(tabRefMobile, true)"

@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
+import {Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
@@ -9,8 +9,10 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
+import {UserService} from '../services/user.service';
+import {takeUntil} from 'rxjs/operators';
 
 export interface Setting {
   hidden: boolean;
@@ -28,7 +30,7 @@ export interface Setting {
   styleUrls: ['./settings.component.scss'],
 })
 
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
 
   @Input() dataSideNav: any = null;
 
@@ -36,6 +38,7 @@ export class SettingsComponent implements OnInit {
   settings: Setting[] = [];
   user: User;
   isStaff: boolean;
+  intosData: any;
 
   isSwitch: boolean;
 
@@ -47,6 +50,8 @@ export class SettingsComponent implements OnInit {
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
   currentBuildTime = BUILD_DATE;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
       public dialog: MatDialog,
@@ -60,6 +65,7 @@ export class SettingsComponent implements OnInit {
       public kioskMode: KioskModeService,
       private router: Router,
       private pwaStorage: LocalStorage,
+      private userService: UserService
 
   ) {
     // this.initializeSettings();
@@ -70,13 +76,14 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
-      .subscribe(user => {
+    combineLatest(this.userService.user$, this.userService.introsData$)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([user, intros]) => {
         this._zone.run(() => {
-          this.user = user;
+          this.user = User.fromJSON(user);
+          this.intosData = intros;
           this.settings = [];
-          this.isStaff = user.isTeacher() || user.isAssistant();
+          this.isStaff = this.user.isTeacher() || this.user.isAssistant();
           this.initializeSettings();
         });
       });
@@ -85,19 +92,24 @@ export class SettingsComponent implements OnInit {
       this.isSwitch = this.data['isSwitch'] && !this.kioskMode.currentRoom$.value;
     }
 
-    this.sideNavService.sideNavData.subscribe( sideNavData => {
+    this.sideNavService.sideNavData.pipe(takeUntil(this.destroy$)).subscribe( sideNavData => {
       if (sideNavData) {
         this.targetElementRef = sideNavData['trigger'];
         this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
       }
     });
 
-    this.sideNavService.toggle.subscribe(() => {
+    this.sideNavService.toggle.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.settings = [];
       this.initializeSettings();
     });
 
     this.updateDialogPosition();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getIcon(iconName: string, setting: any) {
@@ -168,7 +180,8 @@ export class SettingsComponent implements OnInit {
 
     combineLatest(
       this.pwaStorage.removeItem('servers'),
-      this.pwaStorage.removeItem('authData') )
+      this.pwaStorage.removeItem('authData'))
+      .pipe(takeUntil(this.destroy$))
       .subscribe();
   }
 
@@ -229,10 +242,10 @@ export class SettingsComponent implements OnInit {
     this.settings.push({
       'hidden': this.isKioskMode || !this.isStaff,
       'background': '#EBBB00',
-      'icon': '',
+      'icon': 'Referal',
       'action': 'refer',
       'title': 'Refer a friend',
-      'isNew': true
+      'isNew': this.isStaff && !this.intosData.main_intro.universal.seen_version
     });
   }
 }

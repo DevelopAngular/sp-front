@@ -1,4 +1,4 @@
-import { BaseModel } from './base';
+import {BaseModel} from './base';
 
 export class User extends BaseModel {
   constructor(public id: string,
@@ -14,6 +14,7 @@ export class User extends BaseModel {
               public primary_email: string,
               public roles: string[],
               public status: string,
+              public badge: string,
               public sync_types?: string[],
               ) {
     super();
@@ -38,6 +39,7 @@ export class User extends BaseModel {
       primary_email: string = JSON['primary_email'],
       roles: string[] = [],
       status: string = JSON['status'],
+      badge: string = JSON['badge'],
       sync_types: string[] = [];
 
     const rolesJSON = JSON['roles'];
@@ -63,6 +65,7 @@ export class User extends BaseModel {
       primary_email,
       roles,
       status,
+      badge,
       sync_types
     );
   }

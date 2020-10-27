@@ -84,6 +84,8 @@ import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/
 import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpHeaders} from '@angular/common/http';
+import {getIntros, updateIntros} from '../ngrx/intros/actions';
+import {getIntrosData} from '../ngrx/intros/state';
 
 @Injectable()
 export class UserService {
@@ -170,6 +172,8 @@ export class UserService {
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
   isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
+
+  introsData$: Observable<any> = this.store.select(getIntrosData);
 
   constructor(
     private http: HttpService,
@@ -292,7 +296,7 @@ export class UserService {
     return this.http.get('v1/users/@me/pin_info');
   }
 
-  updateUserRequest(user, data) {
+  updateUserRequest(user: User, data) {
     this.store.dispatch(updateUserAction({user, data}));
     return this.user$;
   }
@@ -301,8 +305,16 @@ export class UserService {
     return this.http.patch(`v1/users/${userId}`, data);
   }
 
+  getIntrosRequest() {
+    this.store.dispatch(getIntros());
+  }
+
   getIntros() {
     return this.http.get('v1/intros');
+  }
+
+  updateIntrosRequest(intros, device, version) {
+    this.store.dispatch(updateIntros({intros, device, version}));
   }
 
   updateIntros(device, version) {
