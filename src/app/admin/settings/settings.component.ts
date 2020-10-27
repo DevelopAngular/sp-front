@@ -1,12 +1,10 @@
-import { Component, ElementRef, Inject, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { DarkThemeSwitch } from '../../dark-theme-switch';
-import { RELEASE_NAME } from '../../../build-info';
-import { LocalStorage } from '@ngx-pwa/local-storage';
-import { combineLatest, Subject } from 'rxjs';
-import { GettingStartedProgressService } from '../getting-started-progress.service';
-import { takeUntil } from 'rxjs/operators';
+import {Component, ElementRef, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {RELEASE_NAME} from '../../../build-info';
+import {LocalStorage} from '@ngx-pwa/local-storage';
+import {combineLatest, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-settings',
@@ -40,6 +38,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'icon': 'Glasses',
       'action': 'appearance',
       'title': 'Appearance'
+    },
+    {
+      'hidden': false,
+      'icon': 'Referal',
+      'action': 'refer',
+      'title': 'Refer a friend',
+      'isNew': !this.data['introsData'].main_intro.universal.seen_version
     }
   ];
 
@@ -49,17 +54,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public darkTheme: DarkThemeSwitch,
     private elemRef: ElementRef,
-    private pwaStorage: LocalStorage,
-    public gsProgress: GettingStartedProgressService,
+    private pwaStorage: LocalStorage
   ) {
   }
 
   ngOnInit() {
-    // this.gsProgress.onboardProgress$
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe(res => {
-    //     this.showGetStarted = res.progress === 100;
-    //   });
     this.triggerElementRef = this.data['trigger'];
     this.isSwitchOption = this.data['isSwitch'];
     this.updateSettingsPosition();

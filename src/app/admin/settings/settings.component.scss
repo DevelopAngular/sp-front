@@ -28,6 +28,20 @@
           -moz-user-select: none;
           -ms-user-select: none;
           user-select: none;
+          display: flex;
+
+          .release {
+            width: 44px;
+            height: 21px;
+            background-color: #E32C66;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 13px;
+            margin-left: 20px;
+          }
         }
 
         .switch-icon {

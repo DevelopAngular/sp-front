@@ -41,9 +41,22 @@
     </div>
   </div>
   <div class="nav-footer">
-    <div class="footer-text" [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})">{{(user?user.display_name : '')}}</div>
+    <div class="footer-text"
+         [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})"
+         [matTooltip]="user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
+         matTooltipClass="tooltip"
+    >
+      {{(user?user.display_name : '')}}
+      <img *ngIf="user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
+    </div>
     <div [style.display]="'flex'" #settingsButton>
-      <app-icon-button  [srcString]="'Settings'" [size]="20" (clickEvent)="openSettings($event)"></app-icon-button>
+      <app-icon-button
+        [srcString]="'Settings'"
+        [size]="20"
+        (clickEvent)="openSettings($event)"
+        [notificationBadge]="!introsData?.main_intro.universal.seen_version"
+        [notificationCount]="1"
+      ></app-icon-button>
     </div>
   </div>
 </div>

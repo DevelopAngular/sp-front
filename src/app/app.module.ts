@@ -108,7 +108,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
+    canActivate: [NotSeenIntroGuard, AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
     loadChildren: 'app/admin/admin.module#AdminModule',
     resolve: {currentUser: CurrentUserResolver},
     data: {

@@ -29,7 +29,6 @@ export class IntrosEffects {
       .pipe(
         ofType(introsActions.updateIntros),
         switchMap((action) => {
-          debugger;
           return this.userService.updateIntros(action.device, action.version)
             .pipe(
               map(data => {
