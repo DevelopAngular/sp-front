@@ -51,16 +51,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   shortcuts: ShortcutInput[];
 
   private dialogContainer: HTMLElement;
-  @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
-    this.dialogContainer = content.nativeElement;
-  }
-
-  @HostListener('window:popstate', ['$event'])
-  back(event) {
-    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
-      window.history.pushState({}, '');
-    }
-  }
 
   public isAuthenticated = null;
   public hideScroll: boolean = false;
@@ -74,8 +64,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSupportButton: boolean;
   private openConnectionDialog: boolean;
   public customToastOpen$: Observable<boolean>;
+  public hasCustomBackdrop$: Observable<boolean>;
 
   private subscriber$ = new Subject();
+
+  @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
+    this.dialogContainer = content.nativeElement;
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  back(event) {
+    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
+      window.history.pushState({}, '');
+    }
+  }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
@@ -105,6 +107,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.customToastOpen$ = this.toastService.isOpen$;
+    this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
     this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
       if (event instanceof NavigationEnd) {
         window.history.pushState({}, '');

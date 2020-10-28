@@ -51,6 +51,7 @@ import {NotificationButtonService} from '../services/notification-button.service
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
+import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -267,6 +268,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
+  shownotificationBackdrop: boolean;
 
   public schoolsLength$: Observable<number>;
 
@@ -375,10 +377,33 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
-        if (passLike instanceof HallPass) {
-
+        if (passLike instanceof HallPass && !this.dialog.openDialogs.length) {
         }
       });
+
+    merge(this.passesService.watchPassStart(), this.passesService.watchEndPass())
+      .pipe(
+        filter(() => !this.isStaff),
+        switchMap(({action, data}) => {
+          if (action === 'hall_pass.start') {
+            this.screenService.customBackdropEvent$.next(true);
+            const SPNC = this.dialog.open(StartPassNotificationComponent, {
+              id: 'startNotification',
+              panelClass: 'main-form-dialog-container',
+              backdropClass: 'notification-backdrop',
+              disableClose: true,
+              hasBackdrop: false
+            });
+            return SPNC.afterClosed();
+          } else if (action === 'hall_pass.end') {
+            this.dialog.getDialogById('startNotification').close();
+            return of(true);
+          }
+        })
+      )
+      .subscribe(res => {
+        this.screenService.customBackdropEvent$.next(false);
+    });
   }
 
   ngOnInit() {
@@ -445,9 +470,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  ngAfterViewInit(): void {
-
-  }
+  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
     if (this.scrollableArea && this.scrollableAreaName) {

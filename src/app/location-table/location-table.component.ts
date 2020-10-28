@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy, ViewChild, ElementRef} from '@angular/core';
-import { HttpService } from '../services/http-service';
-import { Location } from '../models/Location';
-import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {HttpService} from '../services/http-service';
+import {Location} from '../models/Location';
+import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
-import { sortBy, filter as _filter } from 'lodash';
+import {filter as _filter, sortBy} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -115,7 +115,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(res => {
-        console.log(res)
         this.passLimits = res;
     });
 

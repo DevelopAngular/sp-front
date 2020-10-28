@@ -21,6 +21,7 @@ import {StartPassNotificationComponent} from './start-pass-notification/start-pa
     CommonModule,
     PassesRoutingModule,
     SharedModule
-  ]
+  ],
+  entryComponents: [StartPassNotificationComponent]
 })
 export class PassesModule { }
