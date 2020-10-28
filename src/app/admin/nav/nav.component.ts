@@ -25,6 +25,8 @@ import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.servic
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
 
+import * as moment from 'moment';
+
 declare const window;
 
 @Component({
@@ -80,6 +82,10 @@ export class NavComponent implements OnInit, AfterViewInit {
 
   get pointerTopSpace() {
     return this.pts;
+  }
+
+  get showNotificationBadge() {
+    return this.user && moment().isSameOrAfter(this.user.created);
   }
 
   ngAfterViewInit() {
@@ -201,7 +207,8 @@ export class NavComponent implements OnInit, AfterViewInit {
           'trigger': target,
           'isSwitch': this.showButton,
           darkBackground: this.darkTheme.isEnabled$.value,
-          introsData: this.introsData
+          introsData: this.introsData,
+          showNotificationBadge: this.showNotificationBadge
         }
       });
 

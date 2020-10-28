@@ -13,6 +13,7 @@ import {combineLatest, Subject} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
 import {takeUntil} from 'rxjs/operators';
+import * as moment from 'moment';
 
 export interface Setting {
   hidden: boolean;
@@ -73,6 +74,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   get isKioskMode(): boolean {
     return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get showNotificationBadge() {
+    return this.user && moment().isSameOrAfter(this.user.created);
   }
 
   ngOnInit() {
@@ -245,7 +250,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'icon': 'Referal',
       'action': 'refer',
       'title': 'Refer a friend',
-      'isNew': this.isStaff && this.intosData.main_intro.universal ? !this.intosData.main_intro.universal.seen_version : false
+      'isNew': this.isStaff && this.intosData.main_intro.universal ? (!this.intosData.main_intro.universal.seen_version && this.showNotificationBadge) : false
     });
   }
 }

@@ -50,6 +50,7 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {filter as _filter} from 'lodash';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
+import * as moment from 'moment';
 
 declare const window;
 
@@ -215,6 +216,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   get notificationBadge$() {
     return this.navbarData.notificationBadge$;
+  }
+
+  get showNotificationBadge() {
+    return this.user && moment().isSameOrAfter(this.user.created);
   }
 
   ngOnInit() {
@@ -576,7 +581,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         window.open('https://www.smartpass.app/terms');
       } else if (action === 'refer') {
         if (this.introsData.main_intro.universal && !this.introsData.main_intro.universal.seen_version) {
-          this.userService.updateIntrosRequest(this.introsData, 'universal', '23.46.2');
+          this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
         }
         window.open('https://www.smartpass.app/referrals');
       }

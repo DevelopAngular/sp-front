@@ -143,7 +143,7 @@
           [srcString]="'Settings'"
           [size]="20"
           (clickEvent)="showOptions($event)"
-          [notificationBadge]="isStaff && introsData.main_intro.universal ? !introsData.main_intro.universal.seen_version : false"
+          [notificationBadge]="isStaff && introsData.main_intro.universal ? (!introsData.main_intro.universal.seen_version && showNotificationBadge) : false"
           [notificationCount]="1"
         ></app-icon-button>
       </div>
