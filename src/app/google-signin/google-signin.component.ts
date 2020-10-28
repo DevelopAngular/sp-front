@@ -79,6 +79,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.error$.next('Account is suspended. Please contact your school admin.');
       } else if (message === 'this user is disabled') {
         this.error$.next('Account is disabled. Please contact your school admin.');
+      } else if (message === 'this profile is not active') {
+        this.error$.next('Account is not active. Please contact your school admin.');
       }
       this.passwordError = !!message;
       this.showSpinner = false;
