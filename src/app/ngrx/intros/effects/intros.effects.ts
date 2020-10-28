@@ -29,7 +29,7 @@ export class IntrosEffects {
       .pipe(
         ofType(introsActions.updateIntros),
         switchMap((action) => {
-          return this.userService.updateIntros(action.device, action.version)
+          return this.userService.updateIntrosReferral(action.device, action.version)
             .pipe(
               map(data => {
                 const updatedData = {

@@ -321,6 +321,10 @@ export class UserService {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
 
+  updateIntrosReferral(device, version) {
+    return this.http.patch('v1/intros/referral_reminder', {device, version});
+  }
+
   saveKioskModeLocation(locId) {
     return this.http.post('auth/kiosk', {location: locId});
   }
