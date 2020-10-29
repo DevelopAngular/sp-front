@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
   HostListener,
   Input,
@@ -23,7 +22,6 @@ import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {delay, filter, shareReplay, switchMap, tap} from 'rxjs/operators';
-import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {TimeService} from '../services/time.service';
 import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -185,7 +183,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
     this.passClick.emit(true);
-    this.dataService.markRead(pass).subscribe();
+    // this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }
 
