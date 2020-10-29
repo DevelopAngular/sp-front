@@ -54,7 +54,7 @@
         [srcString]="'Settings'"
         [size]="20"
         (clickEvent)="openSettings($event)"
-        [notificationBadge]="introsData && introsData.main_intro.universal ? (!introsData?.main_intro.universal.seen_version && showNotificationBadge) : false"
+        [notificationBadge]="introsData && introsData.referral_reminder.universal ? (!introsData?.referral_reminder.universal.seen_version && showNotificationBadge) : false"
         [notificationCount]="1"
       ></app-icon-button>
     </div>
