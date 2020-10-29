@@ -34,7 +34,7 @@ export class IntrosEffects {
               map(data => {
                 const updatedData = {
                   main_intro: {
-                    ...action.intros.main_intro,
+                    ...action.intros.referral_reminder,
                     [action.device]: {seen_version: action.version}
                   }
                 };

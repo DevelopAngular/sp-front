@@ -77,7 +77,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   get showNotificationBadge() {
-    return this.user && moment().add(7, 'days').isSameOrBefore(moment(this.user.created));
+    return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
   }
 
   ngOnInit() {
@@ -250,7 +250,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'icon': 'Referal',
       'action': 'refer',
       'title': 'Refer a friend',
-      'isNew': this.isStaff && this.intosData.referral_reminder.universal ? (!this.intosData.referral_reminder.universal.seen_version && this.showNotificationBadge) : false
+      'isNew': this.isStaff && this.intosData.referral_reminder ? (!this.intosData.referral_reminder.universal.seen_version && this.showNotificationBadge) : false
     });
   }
 }

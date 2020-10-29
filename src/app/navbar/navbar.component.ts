@@ -219,7 +219,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   get showNotificationBadge() {
-    return this.user && moment().add(7, 'days').isSameOrBefore(moment(this.user.created));
+    return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
   }
 
   ngOnInit() {
