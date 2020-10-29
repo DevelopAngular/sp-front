@@ -654,9 +654,10 @@ export class OverlayContainerComponent implements OnInit {
         if (this.pinnable) {
           this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
             .subscribe(res => this.dialogRef.close(true));
-        } else {
-          this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)).subscribe(res => this.dialogRef.close(true));
         }
+        // else {
+        //   this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)).subscribe(res => this.dialogRef.close(true));
+        // }
       }
       if (this.folderData.roomsToDelete.length) {
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
