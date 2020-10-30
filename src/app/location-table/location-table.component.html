@@ -28,7 +28,7 @@
              (dragulaModelChange)="updateOrderLocation($event)"
         >
           <div class="choice" *ngFor="let choice of starredChoices">
-            <app-location-cell
+            <app-location-cell *ngIf="this.passLimits[choice.id]"
               (onSelect)="choiceSelected($event)"
               (onStar)="star($event)"
               [value]="choice"
@@ -45,7 +45,7 @@
         <ng-template #noDnd>
           <div class="choices">
             <div class="choice" *ngFor="let choice of starredChoices">
-              <app-location-cell
+              <app-location-cell *ngIf="this.passLimits[choice.id]"
                 (onSelect)="choiceSelected($event)"
                 (onStar)="star($event)"
                 [value]="choice"
@@ -65,7 +65,7 @@
       <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode && pinnablesLoaded"
            class="choices">
         <div class="choice" *ngFor="let choice of starredChoices">
-          <app-location-cell
+          <app-location-cell *ngIf="this.passLimits[choice.id]"
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
             [value]="normalizeLocations(choice)"
@@ -104,7 +104,7 @@
           *ngFor="let choice of choices"
           #item
         >
-          <app-location-cell
+          <app-location-cell *ngIf="this.passLimits[choice.id]"
             class="choice"
             [hasLocks]="hasLocks"
             [forLater]="forLater"

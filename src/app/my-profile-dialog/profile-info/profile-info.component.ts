@@ -5,6 +5,7 @@ import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
 import {MatDialogRef} from '@angular/material';
 import {MyProfileDialogComponent} from '../my-profile-dialog.component';
+import {StorageService} from '../../services/storage.service';
 
 @Component({
   selector: 'app-profile-info',
@@ -19,11 +20,17 @@ export class ProfileInfoComponent implements OnInit {
   @Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
 
   frameMotion$: BehaviorSubject<any>;
+  userAuthType: string;
 
-  constructor(private formService: CreateFormService, public dialogRef: MatDialogRef<MyProfileDialogComponent>) { }
+  constructor(
+    private formService: CreateFormService,
+    private storage: StorageService,
+    public dialogRef: MatDialogRef<MyProfileDialogComponent>,
+  ) { }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.userAuthType = this.storage.getItem('authType');
   }
 
   checkAccountType(account: User) {

@@ -175,6 +175,7 @@ export class OverlayContainerComponent implements OnInit {
     if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
         this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder ||
         this.currentPage === Pages.BulkEditRoomsInFolder)
+      if (this.isDirtyColor || this.isDirtyIcon) return false;
       if (!this.selectedIcon || !this.color_profile) return true;
 
     if ((this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
@@ -654,9 +655,10 @@ export class OverlayContainerComponent implements OnInit {
         if (this.pinnable) {
           this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
             .subscribe(res => this.dialogRef.close(true));
-        } else {
-          this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)).subscribe(res => this.dialogRef.close(true));
         }
+        // else {
+        //   this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)).subscribe(res => this.dialogRef.close(true));
+        // }
       }
       if (this.folderData.roomsToDelete.length) {
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
@@ -919,23 +921,23 @@ export class OverlayContainerComponent implements OnInit {
     };
   }
 
-  checkAllowedAdvOpt(rooms: Location[]) {
-    return rooms.map(room => {
-      if (!room.teachers.length) {
-        if ((room.request_mode === 'teacher_in_room' || room.request_mode === 'all_teachers_in_room') && (room.request_send_destination_teachers || room.request_send_origin_teachers)) {
-          room.request_mode = 'any_teacher';
-          room.request_send_destination_teachers = false;
-          room.request_send_origin_teachers = false;
-        }
-        if ((room.scheduling_request_mode === 'teacher_in_room' || room.scheduling_request_mode === 'all_teachers_in_room') && (room.scheduling_request_send_destination_teachers || room.scheduling_request_send_origin_teachers)) {
-          room.scheduling_request_mode = 'any_teacher';
-          room.scheduling_request_send_destination_teachers = false;
-          room.scheduling_request_send_origin_teachers = false;
-        }
-      }
-      return room;
-    });
-  }
+  // checkAllowedAdvOpt(rooms: Location[]) {
+  //   return rooms.map(room => {
+  //     if (!room.teachers.length) {
+  //       if ((room.request_mode === 'teacher_in_room' || room.request_mode === 'all_teachers_in_room') && (room.request_send_destination_teachers || room.request_send_origin_teachers)) {
+  //         room.request_mode = 'any_teacher';
+  //         room.request_send_destination_teachers = false;
+  //         room.request_send_origin_teachers = false;
+  //       }
+  //       if ((room.scheduling_request_mode === 'teacher_in_room' || room.scheduling_request_mode === 'all_teachers_in_room') && (room.scheduling_request_send_destination_teachers || room.scheduling_request_send_origin_teachers)) {
+  //         room.scheduling_request_mode = 'any_teacher';
+  //         room.scheduling_request_send_destination_teachers = false;
+  //         room.scheduling_request_send_origin_teachers = false;
+  //       }
+  //     }
+  //     return room;
+  //   });
+  // }
 
   generateRandomString() {
     let random: string = '';
