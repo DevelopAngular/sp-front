@@ -111,11 +111,11 @@ export class ToWhereComponent implements OnInit {
     if (pinnable.location.id === this.location.id)
       return false;
 
+    if (this.isStaff && !this.formState.kioskMode)
+      return true;
+
     if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id]))
       return false;
-
-    if (this.isStaff)
-      return true;
 
     if (
       (!this.formState.forLater &&
