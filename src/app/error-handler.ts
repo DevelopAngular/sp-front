@@ -38,6 +38,7 @@ export interface UserContext {
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
+  static corsErrorCount: number = 0;
 
   constructor() {
     console.log('Error Handler Loading.');
@@ -63,6 +64,14 @@ export class SentryErrorHandler implements ErrorHandler {
       // even though the server logs errors internally.
       if (error.status >= 200 && error.status < 500) {
         return;
+      }
+
+      if (error.status === 0) {
+        this.corsErrorCount++;
+
+        if (this.corsErrorCount >= 2) {
+          return;
+        }
       }
 
       Sentry.captureException({
