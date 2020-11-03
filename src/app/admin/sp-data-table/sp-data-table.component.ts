@@ -82,32 +82,6 @@ export class GridTableDataSource extends DataSource<any> {
     // this.destroy$.next();
     // this.destroy$.complete();
   }
-
-  // compare(a: number | string, b: number | string, isAsc: boolean) {
-  //   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-  // }
-
-  // sortingDataAccessor(item, property) {
-  //   switch (property) {
-  //     case 'Student Name':
-  //       return item['sortStudentName'];
-  //     case 'Pass start time':
-  //     case 'Contact date':
-  //       return moment(item['date']).milliseconds;
-  //     case 'Duration':
-  //       return item['sortDuration'].as('milliseconds');
-  //     case 'Profile(s)':
-  //       return item[property].map(i => i.title).join('');
-  //     case 'Last sign-in':
-  //       if (item['last_sign_in']) {
-  //         return moment(item['last_sign_in']).toDate();
-  //       } else {
-  //         return new Date('1995-12-17T03:24:00');
-  //       }
-  //     default:
-  //       return item[property];
-  //   }
-  // }
 }
 
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -244,7 +218,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         filter(action => action === 'bulk_add_link')
       )
       .subscribe((action) => {
-        if (this.selection.selected.length > 300 || !this.selection.selected.length) {
+        if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
           window.open('https://www.smartpass.app/bulk-export');
         } else {
           this.generateCSV();
@@ -340,7 +314,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv') {
-      if (this.selection.selected.length > 300 || !this.selection.selected.length) {
+      if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
         this.toastService.openToast(
           {
             title: 'Information Required',
@@ -352,7 +326,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         );
       } else {
         this.toastService.openToast(
-          {title: 'CSV Generated', subtitle: 'Download it to your computer now.'}
+          {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
         );
       }
     }
