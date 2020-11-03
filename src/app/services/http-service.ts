@@ -228,6 +228,7 @@ export class HttpService {
 
                   ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
                   const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+                  this.storage.setItem('refresh_token', updatedAuthContext.auth.refresh_token);
                   this.accessTokenSubject.next(updatedAuthContext);
                 }),
                 catchError((err) => {
@@ -236,11 +237,9 @@ export class HttpService {
                 })
               );
             } else if (authType === 'google') {
-              // debugger;
               this.loginService.updateGoogleToken();
               return of(null);
             } else if (authType === 'gg4l') {
-              // debugger;
               const refresh_token = this.storage.getItem('refresh_token');
               const c = new FormData();
               c.append('refresh_token', refresh_token);
