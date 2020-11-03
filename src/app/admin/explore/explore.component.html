@@ -69,6 +69,13 @@
       </div>
     </div>
 
+    <div class="search-button" *ngIf="views[currentView].id === 1 && (passSearchState.countPasses$ | async)">
+      <div class="count" *ngIf="!selectedRows.length; else selected">{{ passSearchState.countPasses$ | async }} pass{{ (passSearchState.countPasses$ | async) > 1 ? 'es' : '' }}</div>
+      <ng-template #selected>
+        <div class="count" style="color: #1F195E; background-color: #ECF1FF">{{ selectedRows.length }}/{{ passSearchState.countPasses$ | async }} selected</div>
+      </ng-template>
+    </div>
+
     <div class="search-button" *ngIf="views[currentView].id === 3">
       <div class="buttons">
         <app-gradient-button
