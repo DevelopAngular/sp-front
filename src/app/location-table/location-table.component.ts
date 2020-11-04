@@ -325,10 +325,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   isValidLocation(locationId: any) {
     if (this.isFavoriteForm)
       return true;
-    else if (this.forStaff && !this.forKioskMode)
-      return true;
     else if (+locationId === +this.invalidLocation)
       return false;
+    else if (this.forStaff && !this.forKioskMode)
+      return true;
 
     const location = this.passLimits[locationId];
     if (!location)
