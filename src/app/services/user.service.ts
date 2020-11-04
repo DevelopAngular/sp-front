@@ -1,6 +1,6 @@
 import {ErrorHandler, Injectable} from '@angular/core';
 import {interval, Observable, of, race, ReplaySubject} from 'rxjs';
-import {SentryErrorHandler} from '../error-handler';
+import { SentryErrorHandler, setUserContext } from '../error-handler';
 import {HttpService} from './http-service';
 import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
@@ -179,7 +179,6 @@ export class UserService {
     private http: HttpService,
     private pollingService: PollingService,
     private _logging: Logger,
-    private errorHandler: ErrorHandler,
     private store: Store<AppState>,
   ) {
     this.http.globalReload$
@@ -227,17 +226,15 @@ export class UserService {
           this.userData.next(user);
         });
 
-    if (errorHandler instanceof SentryErrorHandler) {
-      this.userData.subscribe(user => {
-        errorHandler.setUserContext({
-          id: `${user.id}`,
-          email: user.primary_email,
-          is_student: user.isStudent(),
-          is_teacher: user.isTeacher(),
-          is_admin: user.isAdmin(),
-        });
+    this.userData.subscribe(user => {
+      setUserContext({
+        id: `${user.id}`,
+        email: user.primary_email,
+        is_student: user.isStudent(),
+        is_teacher: user.isTeacher(),
+        is_admin: user.isAdmin(),
       });
-    }
+    });
 
     this.pollingService.listen().subscribe(this._logging.debug);
   }
