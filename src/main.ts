@@ -2,6 +2,7 @@ import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 import {AppModule} from './app/app.module';
+import { initializeErrorHandler } from './app/error-handler';
 import {environment} from './environments/environment';
 
 import 'hammerjs';
@@ -18,6 +19,8 @@ function registerSW() {
     navigator.serviceWorker.register('./ngsw-worker.js');
   }
 }
+
+initializeErrorHandler();
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .then(module => {
