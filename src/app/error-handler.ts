@@ -78,7 +78,9 @@ export class SentryErrorHandler implements ErrorHandler {
             }
           }
 
-          if (event.message.indexOf('Http failure response for') !== -1 && event.message.indexOf(': 0 Unknown Error') !== -1) {
+          if (event.message
+            && event.message.indexOf('Http failure response for') !== -1
+            && event.message.indexOf(': 0 Unknown Error') !== -1) {
             console.log('error message matches discard rule: ' + event.message);
             return null;
           }
