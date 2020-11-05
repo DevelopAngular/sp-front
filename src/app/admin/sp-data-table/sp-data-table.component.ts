@@ -62,7 +62,7 @@ export class GridTableDataSource extends DataSource<any> {
 
     this.viewport.elementScrolled().subscribe((ev: any) => {
       const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
-      const prevExtraData = start > 5 ? 5 : 0;
+      const prevExtraData = start > 0 && start <= 12 ? 1 : start > 12 ? 12 : 0;
       const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
       this.offset = ROW_HEIGHT * (start - prevExtraData);
       this.viewport.setRenderedContentOffset(this.offset);
@@ -318,7 +318,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.toastService.openToast(
           {
             title: 'Information Required',
-            subtitle: 'We need some additional information to export your data (300+ passes)',
+            subtitle: 'We need some additional information to export your data (5000+ passes)',
             icon: './assets/External Link (Navy).svg',
             buttonText: 'See form',
             action: 'bulk_add_link'

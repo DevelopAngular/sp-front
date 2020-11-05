@@ -520,6 +520,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         url += (end ? ('end_time_before=' + end) : '');
       }
     }
+    url = url + 'total_count=true';
 
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;

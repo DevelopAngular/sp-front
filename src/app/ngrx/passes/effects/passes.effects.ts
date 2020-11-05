@@ -18,9 +18,9 @@ export class PassesEffects {
         switchMap((action: any) => {
           return this.hallPassesService.searchPasses(action.url)
             .pipe(
-              map(({results, next}) => {
+              map(({results, next, count}) => {
                 const nextUrl = next ? next.substring(next.search('v1')) : null;
-                return passesActions.searchPassesSuccess({passes: results, next: nextUrl});
+                return passesActions.searchPassesSuccess({passes: results, next: nextUrl, totalCount: count});
               }),
               catchError(error => of(passesActions.searchPassesFailure({errorMessage: error.message})))
             );
