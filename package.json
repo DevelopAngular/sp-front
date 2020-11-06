@@ -54,7 +54,7 @@
     "moment": "^2.24.0",
     "ng-gapi": "^0.0.51",
     "ng-keyboard-shortcuts": "^7.1.15",
-    "ng2-charts": "^2.2.2",
+    "ng2-charts": "^2.4.2",
     "ng2-dragula": "^2.1.1",
     "ngx-connection-service": "^7.0.3",
     "ngx-swiper-wrapper": "^8.0.0",
