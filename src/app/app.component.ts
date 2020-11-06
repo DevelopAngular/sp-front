@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter as _filter, find} from 'lodash';
 import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';

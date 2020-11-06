@@ -14,7 +14,8 @@ import {
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
-import {MatDialog, MatSort} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSort} from '@angular/material/sort';
 import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';

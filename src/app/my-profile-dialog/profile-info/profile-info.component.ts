@@ -3,7 +3,7 @@ import {User} from '../../models/User';
 import {School} from '../../models/School';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {MyProfileDialogComponent} from '../my-profile-dialog.component';
 import {StorageService} from '../../services/storage.service';
 

@@ -1,11 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {bumpIn} from '../animations';
 import {NotificationService} from '../services/notification-service';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {NotificationButtonService} from '../services/notification-button.service';
 import {DeviceDetection} from '../device-detection.helper';
-import {animate, group, query, style, transition, trigger} from '@angular/animations';
+import {animate, group, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-notification-turn-on-btn',

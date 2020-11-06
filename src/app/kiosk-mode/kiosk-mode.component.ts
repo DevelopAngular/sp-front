@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {KioskModeService} from '../services/kiosk-mode.service';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {combineLatest, of} from 'rxjs';

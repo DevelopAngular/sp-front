@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import {Component, OnInit} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {DarkThemeSwitch, SPTheme} from '../dark-theme-switch';
 import {StorageService} from '../services/storage.service';
 import {ScreenService} from '../services/screen.service';

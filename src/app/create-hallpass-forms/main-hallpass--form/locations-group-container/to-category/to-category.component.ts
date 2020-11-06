@@ -4,7 +4,7 @@ import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent} from 'rxjs';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({

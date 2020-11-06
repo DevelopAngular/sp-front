@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {HttpService} from '../../services/http-service';
-import {Observable, of, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
-import {filter, map, mapTo, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {switchMap, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SchoolSettingsComponent} from './school-settings/school-settings.component';
 

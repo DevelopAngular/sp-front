@@ -1,14 +1,14 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
-import { Router } from '@angular/router';
-import { DataService } from '../../services/data-service';
-import { BehaviorSubject } from 'rxjs';
-import { UserService } from '../../services/user.service';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {Router} from '@angular/router';
+import {DataService} from '../../services/data-service';
+import {BehaviorSubject} from 'rxjs';
+import {UserService} from '../../services/user.service';
 
-import { LocationsService } from '../../services/locations.service';
-import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import { NextStep } from '../../animations';
-import { User } from '../../models/User';
+import {LocationsService} from '../../services/locations.service';
+import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
+import {NextStep} from '../../animations';
+import {User} from '../../models/User';
 
 @Component({
   selector: 'app-profile-card-dialog',

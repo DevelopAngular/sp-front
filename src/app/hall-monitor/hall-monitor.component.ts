@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {mergeObject} from '../live-data/helpers';

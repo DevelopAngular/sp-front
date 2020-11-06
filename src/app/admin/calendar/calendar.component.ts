@@ -1,7 +1,7 @@
-import { Component, ElementRef, HostListener, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { Moment } from 'moment';
+import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import * as moment from 'moment';
+import {Moment} from 'moment';
 
 @Component({
   selector: 'app-calendar',

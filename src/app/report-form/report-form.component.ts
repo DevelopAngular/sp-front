@@ -1,7 +1,7 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {HttpService} from '../services/http-service';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../services/admin.service';
 import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';

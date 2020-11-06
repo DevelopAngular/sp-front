@@ -5,7 +5,7 @@ import {HallPassesService} from '../../../services/hall-passes.service';
 import {DataService} from '../../../services/data-service';
 import {HallPassFilter, LiveDataService} from '../../../live-data/live-data.service';
 import {PdfGeneratorService} from '../../pdf-generator.service';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {TimeService} from '../../../services/time.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ThemeService} from 'ng2-charts';

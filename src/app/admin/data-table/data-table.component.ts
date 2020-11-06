@@ -14,7 +14,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {MatSort, Sort} from '@angular/material';
+import {MatSort, Sort} from '@angular/material/sort';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';

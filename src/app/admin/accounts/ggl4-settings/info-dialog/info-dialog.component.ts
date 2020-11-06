@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Ggl4SettingsComponent} from '../ggl4-settings.component';
 
 @Component({

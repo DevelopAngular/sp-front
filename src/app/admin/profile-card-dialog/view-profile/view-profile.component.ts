@@ -4,7 +4,7 @@ import {Location} from '../../../models/Location';
 import {User} from '../../../models/User';
 import {FormControl, FormGroup} from '@angular/forms';
 import {GSuiteSelector} from '../../../sp-search/sp-search.component';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {DataService} from '../../../services/data-service';
 import {UserService} from '../../../services/user.service';

@@ -1,5 +1,5 @@
 ﻿import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 import {merge, of, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';

@@ -5,7 +5,7 @@ import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
 import {NextStep} from '../../../animations';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-ggl4-settings',

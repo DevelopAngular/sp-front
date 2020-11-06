@@ -3,7 +3,7 @@ import {GSuiteOrgs} from '../../../../models/GSuiteOrgs';
 import {Util} from '../../../../../Util';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {GSuiteSettingsComponent} from '../g-suite-settings.component';
 
 @Component({

@@ -1,7 +1,7 @@
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {BrowserModule} from '@angular/platform-browser';
+import {BrowserModule, HammerModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AgmCoreModule} from '@agm/core';
 import {RouterModule, Routes} from '@angular/router';
@@ -186,7 +186,8 @@ const appRoutes: Routes = [
             ContactTraceEffects,
             IntrosEffects
         ]),
-        StoreDevtoolsModule.instrument({})
+        StoreDevtoolsModule.instrument({}),
+        HammerModule
     ],
     providers: [
         DataService,

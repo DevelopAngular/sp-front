@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';

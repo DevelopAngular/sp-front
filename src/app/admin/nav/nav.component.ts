@@ -16,7 +16,7 @@ import {LoadingService} from '../../services/loading.service';
 import {DataService} from '../../services/data-service';
 import {User} from '../../models/User';
 import {UserService} from '../../services/user.service';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SettingsComponent} from '../settings/settings.component';
 import {filter, map, pluck, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';

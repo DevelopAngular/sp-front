@@ -16,7 +16,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {Location} from '@angular/common';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
 import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';

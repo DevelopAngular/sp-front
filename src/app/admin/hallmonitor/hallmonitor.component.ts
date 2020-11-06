@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, interval, merge, Observable, of, Subject} from 'rxjs';
 import {User} from '../../models/User';
 import {Report} from '../../models/Report';

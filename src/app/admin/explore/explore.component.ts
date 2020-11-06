@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, iif, Observable, of, Subject} from 'rxjs';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';

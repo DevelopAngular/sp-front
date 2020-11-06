@@ -8,7 +8,7 @@ import {FormFactor, Navigation} from '../main-hall-pass-form.component';
 import {CreateFormService} from '../../create-form.service';
 import {NextStep} from '../../../animations';
 import {LocationsService} from '../../../services/locations.service';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FromWhereComponent} from './from-where/from-where.component';
 import {ToCategoryComponent} from './to-category/to-category.component';
 import {RestrictedTargetComponent} from './restricted-target/restricted-target.component';

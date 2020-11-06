@@ -5,7 +5,7 @@ import {HallPass} from '../../models/HallPass';
 import {PdfGeneratorService, SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import {find} from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {ActivatedRoute, Router} from '@angular/router';

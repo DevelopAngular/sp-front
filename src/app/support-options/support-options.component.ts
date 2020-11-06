@@ -1,6 +1,6 @@
 import {Component, ElementRef, Inject, OnInit, Optional} from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {UserService} from '../services/user.service';
 import {map} from 'rxjs/operators';
 import {User} from '../models/User';

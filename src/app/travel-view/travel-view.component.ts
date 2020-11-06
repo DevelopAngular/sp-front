@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { HallPass } from '../models/HallPass';
-import { Invitation } from '../models/Invitation';
-import { Request } from '../models/Request';
-import { MatDialog } from '@angular/material';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {HallPass} from '../models/HallPass';
+import {Invitation} from '../models/Invitation';
+import {Request} from '../models/Request';
+import {MatDialog} from '@angular/material/dialog';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {BehaviorSubject} from 'rxjs';
 import {filter} from 'rxjs/operators';
