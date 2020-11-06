@@ -16,7 +16,7 @@ export class ColorPalletPickerComponent implements OnInit {
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
-  @ViewChild('col', { static: false }) pickColor;
+  @ViewChild('col') pickColor;
 
   selectedId: number;
   colors$;

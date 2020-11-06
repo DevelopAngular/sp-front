@@ -14,7 +14,7 @@ declare const window;
 export class GettingStartedComponent implements OnInit {
 
 
-  @ViewChild('gsBanner', { static: false }) set bannerRef(v: ElementRef<HTMLDivElement>) {
+  @ViewChild('gsBanner') set bannerRef(v: ElementRef<HTMLDivElement>) {
     this.banner = v;
     if (this.banner) {
        fromEvent(this.banner.nativeElement, 'animationend')

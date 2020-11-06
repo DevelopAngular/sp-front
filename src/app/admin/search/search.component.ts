@@ -36,7 +36,7 @@ export class SearchComponent implements OnInit {
 
 
 
-  @ViewChild('printPdf', { static: false }) printPdf: ElementRef;
+  @ViewChild('printPdf') printPdf: ElementRef;
   b;
   @ViewChildren(XsButtonComponent) set xsb(xsb: QueryList<XsButtonComponent>) {
     if (xsb) {

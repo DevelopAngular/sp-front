@@ -11,7 +11,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 })
 export class EditAvatarComponent implements OnInit, OnDestroy {
 
-  @ViewChild('dropArea', { static: false }) dropArea: ElementRef;
+  @ViewChild('dropArea') dropArea: ElementRef;
   @ViewChild('file', { static: true }) set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
       this.selectedFile = fileRef;

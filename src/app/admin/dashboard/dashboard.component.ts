@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private scrollableAreaName = 'Dashboard';
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea', { static: false }) set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 

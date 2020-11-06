@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  Injectable,
   Input,
   NgZone,
   OnChanges,
@@ -159,6 +160,7 @@ export class GridTableDataSource extends DataSource<any> {
 /**
  * Virtual Scroll Strategy
  */
+@Injectable()
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
   constructor() {
     super(ROW_HEIGHT, 1000, 2000);

@@ -13,7 +13,7 @@ import {RepresentedUser} from '../navbar/navbar.component';
 })
 export class DropdownComponent implements OnInit {
   options: HTMLElement;
-  @ViewChild('optionsWrapper', { static: false }) set content(content: ElementRef<HTMLElement>) {
+  @ViewChild('optionsWrapper') set content(content: ElementRef<HTMLElement>) {
     this.options = content.nativeElement;
     this.options.scrollTop = this.scrollPosition;
   }

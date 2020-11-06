@@ -63,7 +63,7 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
 })
 export class BulkAddComponent implements OnInit, OnDestroy {
 
-  @ViewChild('dropArea', { static: false }) dropArea: ElementRef;
+  @ViewChild('dropArea') dropArea: ElementRef;
   @ViewChild('file', { static: true }) set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
       this.selectedFile = fileRef;

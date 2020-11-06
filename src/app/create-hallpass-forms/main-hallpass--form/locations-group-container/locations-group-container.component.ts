@@ -33,11 +33,11 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild(FromWhereComponent, { static: false }) fromWhereComp;
-  @ViewChild(forwardRef(() => ToWhereComponent), { static: false }) toWhereComp;
-  @ViewChild(ToCategoryComponent, { static: false }) toCategoryComp;
-  @ViewChild(RestrictedTargetComponent, { static: false }) restTargetComp;
-  @ViewChild(RestrictedMessageComponent, { static: false }) restMessageComp;
+  @ViewChild(FromWhereComponent) fromWhereComp;
+  @ViewChild(forwardRef(() => ToWhereComponent)) toWhereComp;
+  @ViewChild(ToCategoryComponent) toCategoryComp;
+  @ViewChild(RestrictedTargetComponent) restTargetComp;
+  @ViewChild(RestrictedMessageComponent) restMessageComp;
 
   user$: Observable<User>;
   user: User;

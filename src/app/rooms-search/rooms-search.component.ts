@@ -21,7 +21,7 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
 
   @Output() result = new EventEmitter();
 
-  @ViewChild('search', { static: false }) searchItem: ElementRef;
+  @ViewChild('search') searchItem: ElementRef;
 
   allRooms: Location[];
   categories = [];

@@ -28,7 +28,7 @@ export class ImportRoomsComponent implements OnInit {
 
   @Output() back = new EventEmitter();
 
-  @ViewChild('dropArea', { static: false }) dropArea: ElementRef;
+  @ViewChild('dropArea') dropArea: ElementRef;
 
   @ViewChild('file', { static: true }) set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {

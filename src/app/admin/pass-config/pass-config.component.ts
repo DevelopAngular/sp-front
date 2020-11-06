@@ -33,7 +33,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   private scrollableAreaName = 'PassConfig';
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea', { static: false }) set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 
@@ -73,7 +73,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     }
   }
 
-    @ViewChild(PinnableCollectionComponent, { static: false }) pinColComponent;
+    @ViewChild(PinnableCollectionComponent) pinColComponent;
 
 
     public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

@@ -29,7 +29,7 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
   @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
   @Output() createGroupEmit: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
-  @ViewChild('_item', { static: false }) currentGroupElement: ElementRef;
+  @ViewChild('_item') currentGroupElement: ElementRef;
 
   isEmptyGroups: boolean = false;
 

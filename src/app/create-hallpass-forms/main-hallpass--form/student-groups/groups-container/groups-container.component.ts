@@ -30,10 +30,10 @@ export enum States {
 
 export class GroupsContainerComponent implements OnInit, OnDestroy {
 
-  @ViewChild(GroupsStep1Component, { static: false }) g1;
-  @ViewChild(GroupsStep2Component, { static: false }) g2;
-  @ViewChild(GroupsStep3Component, { static: false }) g3;
-  @ViewChild(WhoYouAreComponent, { static: false }) whoYouAre;
+  @ViewChild(GroupsStep1Component) g1;
+  @ViewChild(GroupsStep2Component) g2;
+  @ViewChild(GroupsStep3Component) g3;
+  @ViewChild(WhoYouAreComponent) whoYouAre;
 
   @Input() FORM_STATE: Navigation;
 

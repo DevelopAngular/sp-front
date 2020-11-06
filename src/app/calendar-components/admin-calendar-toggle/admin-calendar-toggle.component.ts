@@ -9,9 +9,9 @@ import {filter} from 'rxjs/operators';
   styleUrls: ['./admin-calendar-toggle.component.scss']
 })
 export class AdminCalendarToggleComponent implements OnInit {
-  @ViewChild('elem', { static: false }) elem: ElementRef;
-  @ViewChild('day', { static: false }) day: ElementRef;
-  @ViewChild('dayButton', { static: false }) dayButton: ElementRef;
+  @ViewChild('elem') elem: ElementRef;
+  @ViewChild('day') day: ElementRef;
+  @ViewChild('dayButton') dayButton: ElementRef;
   @ViewChild('container', { static: true }) set content(content: ElementRef) {
     if (content) {
       setTimeout(() => {

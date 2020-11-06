@@ -4,6 +4,7 @@ import {
   Component,
   EventEmitter,
   HostListener,
+  Injectable,
   Input,
   OnDestroy,
   OnInit,
@@ -84,6 +85,7 @@ export class GridTableDataSource extends DataSource<any> {
   }
 }
 
+@Injectable()
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
   constructor() {
     super(ROW_HEIGHT, 1000, 2000);

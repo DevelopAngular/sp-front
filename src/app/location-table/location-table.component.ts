@@ -57,7 +57,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Output() onStar: EventEmitter<string> = new EventEmitter();
   @Output() onUpdate: EventEmitter<number[]> = new EventEmitter<number[]>();
 
-  @ViewChild('item', { static: false }) currentItem: ElementRef;
+  @ViewChild('item') currentItem: ElementRef;
 
   choices: any[] = [];
   noChoices:boolean = false;

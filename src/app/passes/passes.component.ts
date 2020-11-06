@@ -188,11 +188,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   private scrollableAreaName = 'Passes';
   private scrollableArea: HTMLElement;
 
-  @ViewChild('animatedHeader', { static: false }) animatedHeader: ElementRef<HTMLElement>;
+  @ViewChild('animatedHeader') animatedHeader: ElementRef<HTMLElement>;
 
-  @ViewChild('passesWrapper', { static: false }) passesWrapper: ElementRef<HTMLElement>;
+  @ViewChild('passesWrapper') passesWrapper: ElementRef<HTMLElement>;
 
-  @ViewChild('scrollableArea', { static: false }) set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 

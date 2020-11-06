@@ -16,7 +16,7 @@ import {DeviceDetection} from '../../../../device-detection.helper';
 
 })
 export class RestrictedTargetComponent implements OnInit {
-  @ViewChild('header', { static: false }) header: ElementRef<HTMLDivElement>;
+  @ViewChild('header') header: ElementRef<HTMLDivElement>;
   @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {

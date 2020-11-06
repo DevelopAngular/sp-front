@@ -25,7 +25,7 @@ declare const window;
 })
 export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('place', { static: false }) place: ElementRef;
+  @ViewChild('place') place: ElementRef;
 
   @Output() errorEvent: EventEmitter<any> = new EventEmitter();
 

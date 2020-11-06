@@ -100,7 +100,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   private scrollableAreaName = 'MyRoom';
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea', { static: false }) set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 

@@ -131,9 +131,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  @ViewChild('studentInput', { static: false }) input: ElementRef;
-  @ViewChild('wrapper', { static: false }) wrapper: ElementRef;
-  @ViewChild('cell', { static: false }) cell: ElementRef;
+  @ViewChild('studentInput') input: ElementRef;
+  @ViewChild('wrapper') wrapper: ElementRef;
+  @ViewChild('cell') cell: ElementRef;
 
   private placePredictionService;
   private currentPosition;

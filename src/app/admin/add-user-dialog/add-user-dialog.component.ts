@@ -23,7 +23,7 @@ import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.servic
 })
 export class AddUserDialogComponent implements OnInit, OnDestroy {
   @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
-  @ViewChild('rc', { static: false }) set rc(rc: ElementRef<HTMLDivElement> ) {
+  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
         let blur: number;

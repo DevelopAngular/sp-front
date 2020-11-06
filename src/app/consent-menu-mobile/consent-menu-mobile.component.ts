@@ -30,7 +30,7 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewI
   @Output() backDropClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() receiveOption: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild('consentMenu', { static: false }) consentMenu: ElementRef<HTMLElement>;
+  @ViewChild('consentMenu') consentMenu: ElementRef<HTMLElement>;
 
   constructor(
     private sanitizer: DomSanitizer,

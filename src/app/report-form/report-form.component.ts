@@ -17,7 +17,7 @@ import {filter} from 'rxjs/operators';
 })
 export class ReportFormComponent implements OnInit {
 
-  @ViewChild('messageBox', { static: false }) set content(content: ElementRef) {
+  @ViewChild('messageBox') set content(content: ElementRef) {
     if (content) {
       content.nativeElement.focus();
     }

@@ -19,8 +19,8 @@ export enum KEY_CODE {
 })
 export class PagerComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('pageContent', { static: false }) pageContent: ElementRef;
-  @ViewChild('left', { static: false }) left: ElementRef;
+  @ViewChild('pageContent') pageContent: ElementRef;
+  @ViewChild('left') left: ElementRef;
 
   @Input() page: number = 1;
   @Input() pages = 2;

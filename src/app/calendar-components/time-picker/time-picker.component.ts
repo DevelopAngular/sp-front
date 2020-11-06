@@ -20,7 +20,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 
   @Input() forseDate$: Subject<moment.Moment>;
 
-  @ViewChild('hourInp', { static: false }) hourInput: ElementRef;
+  @ViewChild('hourInp') hourInput: ElementRef;
 
   @Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
 

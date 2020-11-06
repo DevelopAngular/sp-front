@@ -10,7 +10,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 })
 export class SortMenuComponent implements OnInit, OnDestroy {
 
-  @ViewChild('_item', { static: false }) item: ElementRef;
+  @ViewChild('_item') item: ElementRef;
 
   items: any[];
   selectedItem: any;
