@@ -22,8 +22,8 @@ import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.servic
   styleUrls: ['./add-user-dialog.component.scss']
 })
 export class AddUserDialogComponent implements OnInit, OnDestroy {
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
-  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+  @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc', { static: false }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
         let blur: number;

@@ -1,7 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import { SupportOptionsComponent } from '../support-options/support-options.component';
-import { MatDialog } from '@angular/material';
-import {UserService} from '../services/user.service';
+import {SupportOptionsComponent} from '../support-options/support-options.component';
+import {MatDialog} from '@angular/material';
 import {SupportService} from '../services/support.service';
 
 declare const window;
@@ -13,7 +12,7 @@ declare const window;
 })
 export class SupportButtonComponent implements OnInit {
 
-  @ViewChild('wrapper') container: ElementRef;
+  @ViewChild('wrapper', { static: true }) container: ElementRef;
 
   isOpenOptions: boolean;
 

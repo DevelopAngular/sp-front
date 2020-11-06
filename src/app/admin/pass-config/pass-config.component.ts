@@ -1,15 +1,15 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material';
 
-import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
-import {concatMap, filter, map, mapTo, share, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
-import { HttpService } from '../../services/http-service';
-import { Pinnable } from '../../models/Pinnable';
-import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
-import { isArray } from 'lodash';
-import { HallPassesService } from '../../services/hall-passes.service';
+import {HttpService} from '../../services/http-service';
+import {Pinnable} from '../../models/Pinnable';
+import {OverlayContainerComponent} from '../overlay-container/overlay-container.component';
+import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
+import {isArray} from 'lodash';
+import {HallPassesService} from '../../services/hall-passes.service';
 import {SchoolSettingDialogComponent} from '../school-setting-dialog/school-setting-dialog.component';
 import {Location} from '../../models/Location';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -33,7 +33,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   private scrollableAreaName = 'PassConfig';
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea', { static: false }) set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 
@@ -73,7 +73,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     }
   }
 
-    @ViewChild(PinnableCollectionComponent) pinColComponent;
+    @ViewChild(PinnableCollectionComponent, { static: false }) pinColComponent;
 
 
     public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

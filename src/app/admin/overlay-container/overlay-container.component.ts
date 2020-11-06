@@ -28,7 +28,7 @@ import {ColorProfile} from '../../models/ColorProfile';
 })
 export class OverlayContainerComponent implements OnInit {
 
-  @ViewChild('block') block: ElementRef;
+  @ViewChild('block', { static: true }) block: ElementRef;
 
   currentPage: number;
   roomData: RoomData;

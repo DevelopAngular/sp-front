@@ -1,6 +1,6 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { DeviceDetection } from '../device-detection.helper';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {DeviceDetection} from '../device-detection.helper';
 
 import * as moment from 'moment';
 
@@ -28,7 +28,7 @@ export interface Update {
   styleUrls: ['./next-release.component.scss']
 })
 export class NextReleaseComponent implements OnInit {
-  @ViewChild('stickHeader') stickHeader: ElementRef<any>;
+  @ViewChild('stickHeader', { static: true }) stickHeader: ElementRef<any>;
 
   public whatsNewItems;
 

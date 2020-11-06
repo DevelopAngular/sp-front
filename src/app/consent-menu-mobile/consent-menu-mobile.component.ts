@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {optionsView} from '../consent-menu/consent-menu.component';
@@ -30,7 +30,7 @@ export class ConsentMenuMobileComponent implements OnInit, OnDestroy, AfterViewI
   @Output() backDropClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() receiveOption: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild('consentMenu') consentMenu: ElementRef<HTMLElement>;
+  @ViewChild('consentMenu', { static: false }) consentMenu: ElementRef<HTMLElement>;
 
   constructor(
     private sanitizer: DomSanitizer,

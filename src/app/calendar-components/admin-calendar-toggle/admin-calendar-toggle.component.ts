@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import * as moment from 'moment';
 import {fromEvent} from 'rxjs';
-import {delay, filter} from 'rxjs/operators';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-calendar-toggle',
@@ -9,10 +9,10 @@ import {delay, filter} from 'rxjs/operators';
   styleUrls: ['./admin-calendar-toggle.component.scss']
 })
 export class AdminCalendarToggleComponent implements OnInit {
-  @ViewChild('elem') elem: ElementRef;
-  @ViewChild('day') day: ElementRef;
-  @ViewChild('dayButton') dayButton: ElementRef;
-  @ViewChild('container') set content(content: ElementRef) {
+  @ViewChild('elem', { static: false }) elem: ElementRef;
+  @ViewChild('day', { static: false }) day: ElementRef;
+  @ViewChild('dayButton', { static: false }) dayButton: ElementRef;
+  @ViewChild('container', { static: true }) set content(content: ElementRef) {
     if (content) {
       setTimeout(() => {
         this.container = content.nativeElement;

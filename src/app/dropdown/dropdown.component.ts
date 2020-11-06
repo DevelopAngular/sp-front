@@ -1,14 +1,7 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  Inject,
-  ViewChild,
-  Renderer2, ViewChildren, QueryList
-} from '@angular/core';
-import { Location } from '../models/Location';
-import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { School } from '../models/School';
+import {Component, ElementRef, Inject, OnInit, QueryList, Renderer2, ViewChild, ViewChildren} from '@angular/core';
+import {Location} from '../models/Location';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {School} from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -20,7 +13,7 @@ import {RepresentedUser} from '../navbar/navbar.component';
 })
 export class DropdownComponent implements OnInit {
   options: HTMLElement;
-  @ViewChild('optionsWrapper') set content(content: ElementRef<HTMLElement>) {
+  @ViewChild('optionsWrapper', { static: false }) set content(content: ElementRef<HTMLElement>) {
     this.options = content.nativeElement;
     this.options.scrollTop = this.scrollPosition;
   }

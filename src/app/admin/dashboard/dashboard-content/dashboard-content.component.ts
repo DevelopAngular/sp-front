@@ -25,7 +25,7 @@ import {CalendarComponent} from '../../calendar/calendar.component';
 })
 export class DashboardContentComponent implements OnInit, OnDestroy {
 
-  @ViewChild('ctx') ctx: any;
+  @ViewChild('ctx', { static: true }) ctx: any;
 
   public chartsDate: Date;
   public activeCalendar: boolean;

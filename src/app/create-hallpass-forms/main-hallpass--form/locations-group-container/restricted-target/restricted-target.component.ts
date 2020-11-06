@@ -1,12 +1,12 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
-import { Pinnable } from '../../../../models/Pinnable';
-import { Navigation } from '../../main-hall-pass-form.component';
-import { CreateFormService } from '../../../create-form.service';
+import {Pinnable} from '../../../../models/Pinnable';
+import {Navigation} from '../../main-hall-pass-form.component';
+import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent} from 'rxjs';
-import { States } from '../locations-group-container.component';
-import { DomSanitizer } from '@angular/platform-browser';
+import {States} from '../locations-group-container.component';
+import {DomSanitizer} from '@angular/platform-browser';
 
-import { uniqBy } from 'lodash';
+import {uniqBy} from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
@@ -16,8 +16,8 @@ import {DeviceDetection} from '../../../../device-detection.helper';
 
 })
 export class RestrictedTargetComponent implements OnInit {
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
-  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+  @ViewChild('header', { static: false }) header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
         let blur: number;

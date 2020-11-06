@@ -36,7 +36,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   private scrollableAreaName: string;
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea', { static: true }) set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 

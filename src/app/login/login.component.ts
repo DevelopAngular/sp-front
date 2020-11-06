@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import { DeviceDetection } from '../device-detection.helper';
-import { GoogleLoginService } from '../services/google-login.service';
-import { UserService } from '../services/user.service';
+import {DeviceDetection} from '../device-detection.helper';
+import {GoogleLoginService} from '../services/google-login.service';
+import {UserService} from '../services/user.service';
 import {DomSanitizer, Meta, SafeUrl, Title} from '@angular/platform-browser';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
@@ -14,7 +14,6 @@ import {Observable, ReplaySubject, Subject, zip} from 'rxjs';
 import {INITIAL_LOCATION_PATHNAME} from '../app.component';
 import {NotificationService} from '../services/notification-service';
 import {environment} from '../../environments/environment.prod';
-import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';
 
 declare const window;
@@ -26,7 +25,7 @@ declare const window;
 })
 export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('place') place: ElementRef;
+  @ViewChild('place', { static: false }) place: ElementRef;
 
   @Output() errorEvent: EventEmitter<any> = new EventEmitter();
 

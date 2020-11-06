@@ -1,9 +1,9 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import { LocationsService } from '../services/locations.service';
-import { Subject } from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
+import {LocationsService} from '../services/locations.service';
+import {Subject} from 'rxjs';
+import {DomSanitizer} from '@angular/platform-browser';
 import {pluck, takeUntil} from 'rxjs/operators';
-import { findIndex } from 'lodash';
+import {findIndex} from 'lodash';
 import {Location} from '../models/Location';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
@@ -21,7 +21,7 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
 
   @Output() result = new EventEmitter();
 
-  @ViewChild('search') searchItem: ElementRef;
+  @ViewChild('search', { static: false }) searchItem: ElementRef;
 
   allRooms: Location[];
   categories = [];

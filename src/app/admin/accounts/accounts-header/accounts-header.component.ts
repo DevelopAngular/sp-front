@@ -38,8 +38,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   @Output() searchValueEmit: EventEmitter<any> = new EventEmitter<any>();
   @Output() currentPageEmit: EventEmitter<string> = new EventEmitter<string>();
 
-  @ViewChild('tabPointer') tabPointer: ElementRef;
-  @ViewChild('navButtonsContainer') navButtonsContainerRef: ElementRef;
+  @ViewChild('tabPointer', { static: false }) tabPointer: ElementRef;
+  @ViewChild('navButtonsContainer', { static: false }) navButtonsContainerRef: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   tableState: boolean;

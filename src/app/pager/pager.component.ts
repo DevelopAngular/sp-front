@@ -1,5 +1,5 @@
-import {Component, OnInit, Input, ViewChild, ElementRef, HostListener, AfterViewInit, ChangeDetectorRef} from '@angular/core';
-import {BehaviorSubject, fromEvent} from 'rxjs';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {SwiperConfigInterface} from 'ngx-swiper-wrapper';
@@ -19,8 +19,8 @@ export enum KEY_CODE {
 })
 export class PagerComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('pageContent') pageContent: ElementRef;
-  @ViewChild('left') left: ElementRef;
+  @ViewChild('pageContent', { static: false }) pageContent: ElementRef;
+  @ViewChild('left', { static: false }) left: ElementRef;
 
   @Input() page: number = 1;
   @Input() pages = 2;

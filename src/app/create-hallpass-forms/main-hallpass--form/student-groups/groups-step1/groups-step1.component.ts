@@ -3,11 +3,11 @@ import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
-import {BehaviorSubject, Observable, of, Subject, timer} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../../../services/locations.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
-import { cloneDeep } from 'lodash';
+import {cloneDeep} from 'lodash';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
@@ -29,7 +29,7 @@ export class GroupsStep1Component implements OnInit, OnDestroy {
   @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
   @Output() createGroupEmit: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
-  @ViewChild('_item') currentGroupElement: ElementRef;
+  @ViewChild('_item', { static: false }) currentGroupElement: ElementRef;
 
   isEmptyGroups: boolean = false;
 

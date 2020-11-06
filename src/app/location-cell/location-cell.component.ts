@@ -51,7 +51,7 @@ export class LocationCellComponent implements OnInit {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
-  @ViewChild('cell') cell: ElementRef;
+  @ViewChild('cell', { static: true }) cell: ElementRef;
 
   currentSchool: School;
 

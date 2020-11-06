@@ -27,8 +27,8 @@ export class ViewProfileComponent implements OnInit {
   @Output() nextStep: EventEmitter<any> = new EventEmitter<any>();
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
-  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+  @ViewChild('header', { static: false }) header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc', { static: false }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
         let blur: number;
@@ -45,7 +45,7 @@ export class ViewProfileComponent implements OnInit {
       });
     }
   }
-  @ViewChild('status') statusButton: ElementRef;
+  @ViewChild('status', { static: false }) statusButton: ElementRef;
 
   public profile: any;
   public teacherAssignedTo: Location[] = [];

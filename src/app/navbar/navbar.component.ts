@@ -72,13 +72,13 @@ export interface RepresentedUser {
 export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   @Input() hasNav = true;
-  @ViewChild('tabPointer') tabPointer: ElementRef;
-  @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
+  @ViewChild('tabPointer', { static: false }) tabPointer: ElementRef;
+  @ViewChild('navButtonsContainer', { static: false }) navButtonsContainer: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
-  @ViewChild('navbar') navbar: ElementRef;
-  @ViewChild('setButton') settingsButton: ElementRef;
+  @ViewChild('navbar', { static: false }) navbar: ElementRef;
+  @ViewChild('setButton', { static: false }) settingsButton: ElementRef;
 
-  @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
+  @ViewChild('navButtonsContainerMobile', { static: false }) navButtonsContainerMobile: ElementRef;
   @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
 
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();

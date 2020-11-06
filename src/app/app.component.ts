@@ -51,7 +51,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   shortcuts: ShortcutInput[];
 
   private dialogContainer: HTMLElement;
-  @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
+  @ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
     this.dialogContainer = content.nativeElement;
   }
 

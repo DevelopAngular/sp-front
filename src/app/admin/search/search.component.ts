@@ -1,9 +1,9 @@
 import {Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {filter, map, switchMap, tap} from 'rxjs/operators';
-import { HttpService } from '../../services/http-service';
-import { HallPass } from '../../models/HallPass';
+import {filter, switchMap, tap} from 'rxjs/operators';
+import {HttpService} from '../../services/http-service';
+import {HallPass} from '../../models/HallPass';
 import {PdfGeneratorService, SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
-import { find } from 'lodash';
+import {find} from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {MatDialog} from '@angular/material';
 import {HallPassesService} from '../../services/hall-passes.service';
@@ -25,7 +25,6 @@ import {prettyDate, wrapToHtml} from '../helpers';
 import {XsButtonComponent} from '../../xs-button/xs-button.component';
 
 
-
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -37,7 +36,7 @@ export class SearchComponent implements OnInit {
 
 
 
-  @ViewChild('printPdf') printPdf: ElementRef;
+  @ViewChild('printPdf', { static: false }) printPdf: ElementRef;
   b;
   @ViewChildren(XsButtonComponent) set xsb(xsb: QueryList<XsButtonComponent>) {
     if (xsb) {

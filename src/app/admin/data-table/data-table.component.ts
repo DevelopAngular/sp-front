@@ -1,10 +1,15 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
-  Input, NgZone, OnChanges, OnDestroy,
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
   OnInit,
-  Output, SimpleChanges,
+  Output,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
@@ -18,8 +23,8 @@ import {ScrollPositionService} from '../../scroll-position.service';
 import {wrapToHtml} from '../helpers';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
-import { findIndex } from 'lodash';
-import {debounceTime, delay, distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
+import {findIndex} from 'lodash';
+import {distinctUntilChanged} from 'rxjs/operators';
 import {StorageService} from '../../services/storage.service';
 
 const PAGESIZE = 50;
@@ -193,8 +198,8 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   @Output() selectedCell: EventEmitter<any> = new EventEmitter<any>();
   @Output() loadMoreAccounts: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport;
 
   @Input() set lazyData(value: any[]) {
     if (value.length) {

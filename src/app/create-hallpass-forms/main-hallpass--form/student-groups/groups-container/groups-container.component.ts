@@ -1,20 +1,15 @@
-import {Component, EventEmitter, forwardRef, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../../../../models/User';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
-import {delay, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 import {CreateFormService} from '../../../create-form.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
 import {DeviceDetection} from '../../../../device-detection.helper';
-import {FromWhereComponent} from '../../locations-group-container/from-where/from-where.component';
-import {ToWhereComponent} from '../../locations-group-container/to-where/to-where.component';
-import {ToCategoryComponent} from '../../locations-group-container/to-category/to-category.component';
-import {RestrictedTargetComponent} from '../../locations-group-container/restricted-target/restricted-target.component';
-import {RestrictedMessageComponent} from '../../locations-group-container/restricted-message/restricted-message.component';
 import {GroupsStep1Component} from '../groups-step1/groups-step1.component';
 import {GroupsStep2Component} from '../groups-step2/groups-step2.component';
 import {GroupsStep3Component} from '../groups-step3/groups-step3.component';
@@ -35,10 +30,10 @@ export enum States {
 
 export class GroupsContainerComponent implements OnInit, OnDestroy {
 
-  @ViewChild(GroupsStep1Component) g1;
-  @ViewChild(GroupsStep2Component) g2;
-  @ViewChild(GroupsStep3Component) g3;
-  @ViewChild(WhoYouAreComponent) whoYouAre;
+  @ViewChild(GroupsStep1Component, { static: false }) g1;
+  @ViewChild(GroupsStep2Component, { static: false }) g2;
+  @ViewChild(GroupsStep3Component, { static: false }) g3;
+  @ViewChild(WhoYouAreComponent, { static: false }) whoYouAre;
 
   @Input() FORM_STATE: Navigation;
 

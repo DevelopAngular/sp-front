@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
 
-import { Navigation } from '../../main-hall-pass-form.component';
-import { Pinnable } from '../../../../models/Pinnable';
+import {Navigation} from '../../main-hall-pass-form.component';
+import {Pinnable} from '../../../../models/Pinnable';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent} from 'rxjs';
 import {MAT_DIALOG_DATA} from '@angular/material';
@@ -13,8 +13,8 @@ import {DeviceDetection} from '../../../../device-detection.helper';
   styleUrls: ['./to-category.component.scss'],
 })
 export class ToCategoryComponent implements OnInit {
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
-  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+  @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
         let blur: number;

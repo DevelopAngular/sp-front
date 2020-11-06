@@ -1,33 +1,33 @@
 import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { MatDialog} from '@angular/material';
-import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject, interval} from 'rxjs';
-import { Util } from '../../Util';
-import { DataService } from '../services/data-service';
-import { mergeObject } from '../live-data/helpers';
-import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
-import { LoadingService } from '../services/loading.service';
-import { PassLike } from '../models';
-import { Location } from '../models/Location';
-import { testPasses } from '../models/mock_data';
-import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
-import { User } from '../models/User';
-import { DropdownComponent } from '../dropdown/dropdown.component';
-import { TimeService } from '../services/time.service';
-import { CalendarComponent } from '../admin/calendar/calendar.component';
+import {MatDialog} from '@angular/material';
+import {BehaviorSubject, combineLatest, interval, merge, Observable, of, ReplaySubject, Subject} from 'rxjs';
+import {Util} from '../../Util';
+import {DataService} from '../services/data-service';
+import {mergeObject} from '../live-data/helpers';
+import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
+import {LoadingService} from '../services/loading.service';
+import {PassLike} from '../models';
+import {Location} from '../models/Location';
+import {testPasses} from '../models/mock_data';
+import {BasicPassLikeProvider, PassLikeProvider, WrappedProvider} from '../models/providers';
+import {User} from '../models/User';
+import {DropdownComponent} from '../dropdown/dropdown.component';
+import {TimeService} from '../services/time.service';
+import {CalendarComponent} from '../admin/calendar/calendar.component';
 import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
-import { DarkThemeSwitch } from '../dark-theme-switch';
-import { LocationsService } from '../services/locations.service';
-import { RepresentedUser } from '../navbar/navbar.component';
-import { UserService } from '../services/user.service';
-import { ScreenService } from '../services/screen.service';
-import { SortMenuComponent } from '../sort-menu/sort-menu.component';
-import { MyRoomAnimations } from './my-room.animations';
-import { KioskModeService } from '../services/kiosk-mode.service';
-import { bumpIn } from '../animations';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { StorageService } from '../services/storage.service';
-import { HttpService } from '../services/http-service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
+import {LocationsService} from '../services/locations.service';
+import {RepresentedUser} from '../navbar/navbar.component';
+import {UserService} from '../services/user.service';
+import {ScreenService} from '../services/screen.service';
+import {SortMenuComponent} from '../sort-menu/sort-menu.component';
+import {MyRoomAnimations} from './my-room.animations';
+import {KioskModeService} from '../services/kiosk-mode.service';
+import {bumpIn} from '../animations';
+import {DomSanitizer} from '@angular/platform-browser';
+import {Router} from '@angular/router';
+import {StorageService} from '../services/storage.service';
+import {HttpService} from '../services/http-service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -100,7 +100,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   private scrollableAreaName = 'MyRoom';
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea', { static: false }) set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 

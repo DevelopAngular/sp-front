@@ -1,7 +1,6 @@
-import {Component, EventEmitter, Input, Output, OnInit, ViewChild, ElementRef, NgZone} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import { Observable, fromEvent } from 'rxjs';
-import {startWith} from 'rxjs/operators';
+import {fromEvent, Observable} from 'rxjs';
 
 export type ToggleInputSize = 'small' | 'regular' | 'large' | 'smallest';
 
@@ -24,7 +23,7 @@ export class ToggleInputComponent implements OnInit {
   @Input() hasIcon: boolean = false;
   @Input() padding: string = '8px 0 9px 0';
 
-  @ViewChild('inp') set inputField(inputField: ElementRef) {
+  @ViewChild('inp', { static: false }) set inputField(inputField: ElementRef) {
     this.inp = inputField;
     if (this.inp) {
       this.e = fromEvent(this.inp.nativeElement, 'change');

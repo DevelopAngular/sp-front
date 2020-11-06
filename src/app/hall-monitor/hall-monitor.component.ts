@@ -1,13 +1,13 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { MatDialog } from '@angular/material';
-import {merge, of, combineLatest, BehaviorSubject, Observable, Subject, interval} from 'rxjs';
-import { DataService } from '../services/data-service';
-import { mergeObject } from '../live-data/helpers';
-import { LiveDataService } from '../live-data/live-data.service';
-import { LoadingService } from '../services/loading.service';
-import { PassLikeProvider, WrappedProvider } from '../models/providers';
-import { User } from '../models/User';
-import { ReportFormComponent } from '../report-form/report-form.component';
+import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
+import {DataService} from '../services/data-service';
+import {mergeObject} from '../live-data/helpers';
+import {LiveDataService} from '../live-data/live-data.service';
+import {LoadingService} from '../services/loading.service';
+import {PassLikeProvider, WrappedProvider} from '../models/providers';
+import {User} from '../models/User';
+import {ReportFormComponent} from '../report-form/report-form.component';
 import {Report} from '../models/Report';
 import {delay, filter, map, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -52,7 +52,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   private scrollableAreaName = 'HallMonitorTeacher';
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea', { static: false }) set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 

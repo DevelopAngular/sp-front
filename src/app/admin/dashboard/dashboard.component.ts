@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {interval, Observable, Subject} from 'rxjs';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
-import { HttpService } from '../../services/http-service';
+import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
 import {ScrollPositionService} from '../../scroll-position.service';
 import {Onboard} from '../../models/Onboard';
@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private scrollableAreaName = 'Dashboard';
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea', { static: false }) set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 

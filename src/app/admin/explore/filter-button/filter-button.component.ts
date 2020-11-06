@@ -18,7 +18,7 @@ export class FilterButtonComponent implements OnInit {
   @Output() forceButtonClickEvent: EventEmitter<{event: any, action: string}> = new EventEmitter<{event: any, action: string}>();
   @Output() clearData: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild('button') button: ElementRef;
+  @ViewChild('button', { static: true }) button: ElementRef;
 
   constructor(private domSanitizer: DomSanitizer) { }
 

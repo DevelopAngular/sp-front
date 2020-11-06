@@ -1,8 +1,6 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-sort-menu',
@@ -12,7 +10,7 @@ import {fromEvent} from 'rxjs';
 })
 export class SortMenuComponent implements OnInit, OnDestroy {
 
-  @ViewChild('_item') item: ElementRef;
+  @ViewChild('_item', { static: false }) item: ElementRef;
 
   items: any[];
   selectedItem: any;

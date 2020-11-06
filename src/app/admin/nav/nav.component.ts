@@ -36,8 +36,8 @@ declare const window;
 })
 export class NavComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('settingsButton') settingsButton: ElementRef;
-  @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
+  @ViewChild('settingsButton', { static: true }) settingsButton: ElementRef;
+  @ViewChild('navButtonsContainter', { static: true }) navButtonsContainterRef: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();

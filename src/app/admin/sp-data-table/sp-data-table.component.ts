@@ -119,7 +119,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() sortColumn: string;
   @Input() sortLoading$: Observable<boolean>;
 
-  @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
+  @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport;
 
   @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowClickEvent: EventEmitter<any> = new EventEmitter<any>();
