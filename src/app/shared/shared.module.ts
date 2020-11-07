@@ -20,7 +20,6 @@ import {PagerComponent} from '../pager/pager.component';
 import {RoundInputComponent} from '../admin/round-input/round-input.component';
 import {DragulaModule} from 'ng2-dragula';
 import {AppInputComponent} from '../app-input/app-input.component';
-import {InputTextareaModule} from 'primeng/inputtextarea';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
 import {SafariScrollDirective} from '../safari-scroll.directive';
 import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
@@ -70,7 +69,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ScrollingModule,
     FormsModule,
     ReactiveFormsModule,
-    InputTextareaModule,
     DragulaModule.forRoot(),
     SwiperModule,
     ChartsModule,
@@ -147,7 +145,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RoundInputComponent,
     AppInputComponent,
     PassCardComponent,
-    InputTextareaModule,
     CalendarComponent,
     SafariScrollDirective,
     ToggleInputComponent,
