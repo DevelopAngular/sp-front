@@ -19,6 +19,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {TextFieldModule} from '@angular/cdk/text-field';
 
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
@@ -45,7 +46,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     MatButtonModule,
     MatSidenavModule,
     MatSortModule,
-    DragDropModule
+    DragDropModule,
+    TextFieldModule
   ],
   exports: [
     MatProgressBarModule,
@@ -67,7 +69,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     MatButtonModule,
     MatSidenavModule,
     MatSortModule,
-    DragDropModule
+    DragDropModule,
+    TextFieldModule
   ]
 })
 export class MaterialModule { }

@@ -34,6 +34,10 @@
             #messageBox
             class="message-box"
             [maxlength]="160"
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="6"
+            cdkAutosizeMaxRows="11"
             [placeholder]="'Attach a message'"
             [formControl]="message"
             [style.width]="messageBoxViewRestriction.textAreaWidth"
