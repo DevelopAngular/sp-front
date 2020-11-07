@@ -52,18 +52,7 @@ import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/pe
     CommonModule,
     AccountsRoutingModule,
     AdminSharedModule
-  ],
-  // entryComponents: [
-  //   IntegrationsDialogComponent,
-  //   Ggl4SettingsComponent,
-  //   GSuiteSettingsComponent,
-  //   SyncSettingsComponent,
-  //   SyncProviderComponent,
-  //   AddAccountPopupComponent,
-  //   BulkAddComponent,
-  //   AddRolePopupComponent,
-  //   PermissionsDialogComponent
-  // ]
+  ]
 })
 export class AccountsModule {
 }

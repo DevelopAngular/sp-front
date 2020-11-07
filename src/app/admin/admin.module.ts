@@ -72,21 +72,6 @@ import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-prof
         ViewProfileComponent,
 
     ],
-    // entryComponents: [
-    //     LinkGeneratedDialogComponent,
-    //     ColumnsConfigDialogComponent,
-    //     SchoolSettingDialogComponent,
-    //     SettingsComponent,
-    //     SearchFilterDialogComponent,
-    //     DateTimeFilterComponent,
-    //     OverlayContainerComponent,
-    //     ColumnOptionsComponent,
-    //     GeneratedTableDialogComponent,
-    //     StatusPopupComponent,
-    //     EditAvatarComponent,
-    //     ProfileCardDialogComponent,
-    //     AddUserDialogComponent
-    // ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
         PdfGeneratorService,
