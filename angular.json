@@ -22,8 +22,10 @@
               "xlsx",
               "dragula",
               "chart.js",
-              "primeng/inputtextarea",
-              "@sentry/browser"
+              "@sentry/browser",
+              "hammerjs",
+              "@firebase/util",
+              "url"
             ],
             "outputPath": "dist",
             "index": "src/index.html",
