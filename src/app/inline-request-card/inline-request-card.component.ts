@@ -114,15 +114,12 @@ export class InlineRequestCardComponent implements OnInit {
       this.header = 'Are you sure you want to delete this pass request you sent?';
 
       if (!this.screenService.isDeviceMid) {
+        this.cancelOpen = true;
         UNANIMATED_CONTAINER.next(true);
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: {'header': this.header, 'options': this.options, 'trigger': target}
-        });
-
-        cancelDialog.afterOpen().subscribe( () => {
-          this.cancelOpen = true;
         });
 
         cancelDialog.afterClosed()

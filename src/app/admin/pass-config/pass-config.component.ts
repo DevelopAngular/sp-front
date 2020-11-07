@@ -228,15 +228,12 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             }
 
             UNANIMATED_CONTAINER.next(true);
+            this.buttonMenuOpen = true;
 
             const cancelDialog = this.dialog.open(ConsentMenuComponent, {
                 panelClass: 'consent-dialog-container',
                 backdropClass: 'invis-backdrop',
                 data: {'options': options, 'trigger': target}
-            });
-
-            cancelDialog.afterOpen().subscribe( () => {
-                this.buttonMenuOpen = true;
             });
 
             cancelDialog.afterClosed()
@@ -338,6 +335,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   dialogContainer(data, component) {
+    this.forceSelectedLocation = null;
       const overlayDialog =  this.dialog.open(component, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
@@ -347,10 +345,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         width: '800px',
         height: '500px',
         data: data
-      });
-
-      overlayDialog.afterOpen().subscribe(() => {
-        this.forceSelectedLocation = null;
       });
       overlayDialog.afterClosed()
         // .pipe(

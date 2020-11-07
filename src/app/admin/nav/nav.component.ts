@@ -212,12 +212,9 @@ export class NavComponent implements OnInit, AfterViewInit {
         }
       });
 
-      settingsRef.beforeClose().subscribe(() => {
-        this.selectedSettings = false;
-      });
-
       settingsRef.afterClosed().subscribe(action => {
         UNANIMATED_CONTAINER.next(false);
+        this.selectedSettings = false;
         if (action === 'signout') {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {

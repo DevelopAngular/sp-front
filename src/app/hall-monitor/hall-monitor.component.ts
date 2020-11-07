@@ -191,12 +191,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
         tap((res) => this.searchPending$.next(!res))
       );
 
-      this.dialog.afterOpened.subscribe( (dialog) => {
-        if (dialog.componentInstance instanceof ReportFormComponent) {
-          this.isReportFormOpened = true;
-        }
-      });
-
       this.dialog.afterAllClosed.subscribe( () => {
         this.isReportFormOpened = false;
       });
@@ -209,7 +203,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   openReportForm() {
-
+    this.isReportFormOpened = true;
     const dialogRef = this.dialog.open(ReportFormComponent, {
       panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
       backdropClass: 'custom-backdrop',

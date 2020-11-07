@@ -421,6 +421,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   displayOptionsPopover(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
+      this.optionsOpen = true;
       UNANIMATED_CONTAINER.next(true);
       const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
@@ -434,17 +435,12 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         }
       });
 
-      optionDialog.afterOpen().subscribe(() => {
-        this.optionsOpen = true;
-      });
-
-      optionDialog.beforeClose().subscribe(() => {
-        this.optionsOpen = false;
-      });
-
       optionDialog.afterClosed()
         .pipe(
-          tap(() => UNANIMATED_CONTAINER.next(false)),
+          tap(() => {
+            UNANIMATED_CONTAINER.next(false);
+            this.optionsOpen = false;
+          }),
           filter(res => !!res)
         )
         .subscribe(data => {

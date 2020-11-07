@@ -309,6 +309,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   changeDate(resend_request?: boolean) {
     if (!this.dateEditOpen) {
+      this.dateEditOpen = true;
       let config;
       this.dialogRef.close();
       config = {
@@ -331,11 +332,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       };
       const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
-      dateDialog.afterOpen().subscribe( () => {
-        this.dateEditOpen = true;
-      });
-
       dateDialog.afterClosed().pipe(
+        tap(() => this.dateEditOpen = false),
         filter((state) => resend_request && state),
         switchMap((state) => {
           const body: any = {
@@ -357,6 +355,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   editMessage() {
     if (!this.messageEditOpen) {
+      this.messageEditOpen = true;
       const infoDialog = this.dialog.open(CreateHallpassFormsComponent, {
         width: '750px',
         maxWidth: '100vw',
@@ -367,10 +366,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               'originalToLocation': this.request.destination,
               'colorProfile': this.request.color_profile,
               'originalFromLocation': this.request.origin}
-      });
-
-      infoDialog.afterOpen().subscribe( () => {
-        this.messageEditOpen = true;
       });
 
       infoDialog.afterClosed().subscribe(data =>{
@@ -412,14 +407,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
       if (!this.screenService.isDeviceMid) {
       UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {'header': this.header, 'options': this.options, 'trigger': target}
-      });
-
-      cancelDialog.afterOpen().subscribe(() => {
-        this.cancelOpen = true;
       });
 
       cancelDialog.afterClosed()
@@ -445,6 +437,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       if (action.indexOf('Message') > -1) {
 
       } else {
+        this.messageEditOpen = true;
         let config;
           config = {
             panelClass: 'form-dialog-container',
@@ -463,10 +456,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             }
           };
         const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
-
-        messageDialog.afterOpen().subscribe(() => {
-          this.messageEditOpen = true;
-        });
 
         messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
           // denyMessage = data['message'];

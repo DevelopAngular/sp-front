@@ -197,14 +197,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
       filter(res => !res && !this.openConnectionDialog))
       .subscribe(() => {
+        this.openConnectionDialog = true;
         const toastDialog = this.dialog.open(ToastConnectionComponent, {
           panelClass: 'toasr',
           hasBackdrop: false,
           disableClose: true
-        });
-
-        toastDialog.afterOpened().subscribe(() => {
-          this.openConnectionDialog = true;
         });
 
         toastDialog.afterClosed().subscribe(() => {

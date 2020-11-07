@@ -292,7 +292,7 @@ export class HttpService {
 
     let servers$: Observable<LoginResponse>;
     if (!navigator.onLine) {
-      servers$ = this.pwaStorage.getItem('servers');
+      // servers$ = this.pwaStorage.getItem('servers');
     } else {
       const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
 

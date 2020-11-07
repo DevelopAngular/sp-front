@@ -69,6 +69,7 @@ export class TravelViewComponent implements OnInit {
 
   changeLocation(){
     if(!this.locationChangeOpen){
+      this.locationChangeOpen = true;
       const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
         panelClass: 'form-dialog-container',
         maxWidth: '100vw',
@@ -82,15 +83,8 @@ export class TravelViewComponent implements OnInit {
               'originalFromLocation': this.pass['default_origin']}
       });
 
-      locationDialog.afterOpen().subscribe(() => {
-        this.locationChangeOpen = true;
-      });
-
-      locationDialog.beforeClose().subscribe(() => {
-          this.locationChangeOpen = false;
-      });
-
       locationDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
+        this.locationChangeOpen = false;
         this.locationSelected.emit((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.pass['default_origin']);
       });
     }

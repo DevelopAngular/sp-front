@@ -460,12 +460,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
         });
 
-        settingRef.beforeClose().subscribe(() => {
-          this.isOpenSettings = false;
-        });
-
         settingRef.afterClosed().subscribe(action => {
           UNANIMATED_CONTAINER.next(false);
+          this.isOpenSettings = false;
           this.settingsAction(action);
         });
       }

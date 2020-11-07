@@ -73,6 +73,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 };
 
 
+// @ts-ignore
 const appRoutes: Routes = [
   {
     path: 'main/intro',

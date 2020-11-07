@@ -127,6 +127,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMainForm(forLater: boolean, student?): void {
+    this.hideInput = true
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',
           maxWidth: '100vw',
@@ -141,7 +142,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
           }
       });
 
-      mainFormRef.afterOpened().subscribe(() => this.hideInput = true);
       mainFormRef.afterClosed().subscribe(() => {
           this.hideInput = false;
           setTimeout(() => {

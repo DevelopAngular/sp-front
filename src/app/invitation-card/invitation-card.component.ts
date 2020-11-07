@@ -146,6 +146,7 @@ export class InvitationCardComponent implements OnInit {
 
   changeLocation(){
     if(!this.locationChangeOpen){
+      this.locationChangeOpen = true;
       const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
         panelClass: 'form-dialog-container',
         maxWidth: '100vw',
@@ -159,15 +160,8 @@ export class InvitationCardComponent implements OnInit {
           'originalFromLocation': this.invitation['default_origin']}
       });
 
-      locationDialog.afterOpen().subscribe(() => {
-        this.locationChangeOpen = true;
-      });
-
-      locationDialog.beforeClose().subscribe(() => {
-        this.locationChangeOpen = false;
-      });
-
       locationDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
+        this.locationChangeOpen = false;
         this.setLocation((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.invitation['default_origin']);
       });
     }
@@ -213,6 +207,7 @@ export class InvitationCardComponent implements OnInit {
 
     changeDate(resend_request?: boolean) {
       if (!this.dateEditOpen) {
+        this.dateEditOpen = true;
             this.dialogRef.close();
             const conf = {
                 panelClass: 'form-dialog-container',
@@ -235,11 +230,8 @@ export class InvitationCardComponent implements OnInit {
 
         const dateDialog = this.dialog.open(CreateHallpassFormsComponent, conf);
 
-        dateDialog.afterOpen().subscribe( () => {
-            this.dateEditOpen = true;
-        });
-
         dateDialog.afterClosed().pipe(
+          tap(() => this.dateEditOpen = false),
           filter((res) => res && res.data.date && resend_request && this.forStaff),
             switchMap((state) => {
               const body = {
@@ -289,14 +281,11 @@ export class InvitationCardComponent implements OnInit {
 
       if (!this.screenService.isDeviceMid) {
         UNANIMATED_CONTAINER.next(true);
+        this.denyOpen = true;
         const consentDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: {'header': this.header, 'options': this.options, 'trigger': target}
-        });
-
-        consentDialog.afterOpen().subscribe( () => {
-          this.denyOpen = true;
         });
 
         consentDialog.afterClosed()

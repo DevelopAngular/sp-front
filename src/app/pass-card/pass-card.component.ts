@@ -373,14 +373,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
       if (!this.screenService.isDeviceMid) {
         UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: {'header': this.header, 'options': this.options, 'trigger': target}
-        });
-
-        cancelDialog.afterOpen().subscribe( () => {
-          this.cancelOpen = true;
         });
 
         cancelDialog.afterClosed()
