@@ -15,6 +15,16 @@
               "path": "./extra-webpack.config.js",
               "mergeStrategies": { "externals": "replace" }
             },
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "firebase",
+              "angular2-websocket",
+              "xlsx",
+              "dragula",
+              "chart.js",
+              "primeng/inputtextarea",
+              "@sentry/browser"
+            ],
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",

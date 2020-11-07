@@ -1,8 +1,7 @@
-import { Inject, Injectable, InjectionToken } from '@angular/core';
-import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Subject } from 'rxjs/Subject';
+import {Inject, Injectable, InjectionToken} from '@angular/core';
+import {Observable, ReplaySubject} from 'rxjs';
+import {take} from 'rxjs/operators';
+import {Subject} from 'rxjs/Subject';
 
 export const SP_GAPI_CONFIG = new InjectionToken('sp-gapi.config');
 
