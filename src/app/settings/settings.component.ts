@@ -100,7 +100,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.sideNavService.sideNavData.pipe(takeUntil(this.destroy$)).subscribe( sideNavData => {
       if (sideNavData) {
         this.targetElementRef = sideNavData['trigger'];
-        this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+        // this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+        this.isSwitch = false;
       }
     });
 
