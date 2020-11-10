@@ -232,6 +232,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+
   testPasses: PassLikeProvider;
   testRequests: PassLikeProvider;
   testInvitations: PassLikeProvider;
@@ -263,12 +264,25 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   user: User;
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
+  currentScrollPosition: number;
 
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
 
   public schoolsLength$: Observable<number>;
+
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    if (this.screenService.isDeviceLargeExtra) {
+      this.cursor = 'default';
+    }
+  }
+
+  @HostListener('window:scroll')
+  scroll(event) {
+    this.currentScrollPosition = event.currentTarget.scrollTop;
+  }
 
   showInboxAnimated() {
     return this.dataService.inboxState;
@@ -372,6 +386,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     )
       .subscribe(passLike => {
         this._zone.run(() => {
+          if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
+            this.scrollableArea.scrollTo({top: 0});
+          }
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
@@ -488,13 +505,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   passClick(event) {
     this.passesService.isOpenPassModal$.next(true);
-  }
-
-  @HostListener('window:resize')
-  checkDeviceWidth() {
-    if (this.screenService.isDeviceLargeExtra) {
-      this.cursor = 'default';
-    }
   }
 
   get isSmartphone() {

@@ -49,6 +49,7 @@
       [style.padding-top]="isSmartphone ? '0px' : '50px'"
       [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' "
       #scrollableArea
+      (scroll)="scroll($event)"
     >
       <div class="main-page-left">
         <div class="current-pass" [style.margin-bottom]="'15px'">
