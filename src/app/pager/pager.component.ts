@@ -5,6 +5,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {SwiperConfigInterface} from 'ngx-swiper-wrapper';
 import {ScreenService} from '../services/screen.service';
 import {MobileDeviceService} from '../services/mobile-device.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 export enum KEY_CODE {
     RIGHT_ARROW = 39,
@@ -52,6 +53,10 @@ export class PagerComponent implements OnInit, AfterViewInit {
     public mobileDevice: MobileDeviceService,
   ) {
     // console.log(this.page);
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   get $pages() {
@@ -136,6 +141,10 @@ export class PagerComponent implements OnInit, AfterViewInit {
       }
     }, 100);
 
+  }
+
+  next() {
+    this.page += 1;
   }
 
   onSlideChange(event) {
