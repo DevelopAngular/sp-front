@@ -103,24 +103,46 @@
 
     <div class="teacher-view" *ngIf="forStaff">
       <div class="center-block">
-        <app-pager *ngIf="!forInput" [arrowPosition]="'-93px'" [isStaff]="true">
-          <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <app-travel-view
-              [forStaff]="forStaff"
-              [height]="'170px'"
-              [pass]='invitation'
-              (locationSelected)="setLocation($event)"
-            ></app-travel-view>
-          </div>
-          <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <div class="page-2-wrapper">
-              <div class="message" [style.height]="(forInput?'70px':'164px')">
-                <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
-                {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
+        <ng-container *ngIf="!isMobile; else mobile">
+          <app-pager *ngIf="!forInput" [arrowPosition]="'-93px'" [isStaff]="true">
+            <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+              <app-travel-view
+                [forStaff]="forStaff"
+                [height]="'170px'"
+                [pass]='invitation'
+                (locationSelected)="setLocation($event)"
+              ></app-travel-view>
+            </div>
+            <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+              <div class="page-2-wrapper" style="display: flex; justify-content: center">
+                <div class="message" [style.height]="(forInput?'70px':'164px')">
+                  <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
+                  {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
+                </div>
               </div>
             </div>
-          </div>
-        </app-pager>
+          </app-pager>
+        </ng-container>
+        <ng-template #mobile>
+          <app-pager *ngIf="!forInput" [arrowPosition]="'-93px'" [isStaff]="true">
+            <div class="page-5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+              <app-travel-view
+                [forStaff]="forStaff"
+                [height]="'170px'"
+                [pass]='invitation'
+                (locationSelected)="setLocation($event)"
+              ></app-travel-view>
+            </div>
+            <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+              <div class="page-2-wrapper" style="display: flex; justify-content: center">
+                <div class="message" [style.height]="(forInput?'70px':'164px')">
+                  <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
+                  {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
+                </div>
+              </div>
+            </div>
+          </app-pager>
+        </ng-template>
       </div>
 
       <mat-divider></mat-divider>

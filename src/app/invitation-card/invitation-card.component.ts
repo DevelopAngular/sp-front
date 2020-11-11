@@ -72,6 +72,10 @@ export class InvitationCardComponent implements OnInit {
       private navbarData: NavbarDataService
   ) {}
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   get studentName() {
     return getInnerPassName(this.invitation);
   }

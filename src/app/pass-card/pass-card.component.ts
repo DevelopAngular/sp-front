@@ -17,6 +17,7 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-pass-card',
@@ -123,9 +124,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
     return this.pass.student.primary_email.split('@', 1)[0];
   }
 
-  get startTime(){
-    let s:Date = this.pass['start_time'];
-    return Util.formatDateTime(s);
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   get closeIcon(){
