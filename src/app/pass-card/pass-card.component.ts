@@ -307,9 +307,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   cancelEdit(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
 
     if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
@@ -326,44 +326,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.header = '';
       } else{
         if (this.forInput) {
-          if (this.isSeen) {
-
             this.formState.step = 3;
               this.formState.previousStep = 4;
               this.formService.setFrameMotionDirection('disable');
               this.cardEvent.emit(this.formState);
-          } else {
-            // this.dialogRef.close();
-            // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-            // const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-            //     width: '750px',
-            //     panelClass: 'form-dialog-container',
-            //     backdropClass: 'custom-backdrop',
-            //     data: {
-            //         'toIcon': isCategory ? this.pass.icon : null,
-            //         'toProfile': this.pass.color_profile,
-            //         'toCategory': isCategory ? this.pass.destination.category : null,
-            //         'fromLocation': this.pass.origin,
-            //         'fromHistory': this.fromHistory,
-            //         'fromHistoryIndex': this.fromHistoryIndex,
-            //         'colorProfile': this.pass.color_profile,
-            //         'forLater': this.forFuture,
-            //         'forStaff': this.forStaff,
-            //         'selectedStudents': this.selectedStudents,
-            //         'requestTime': this.pass.start_time
-            //     }
-            // });
-            // dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
-            //         this.openInputCard(result['templatePass'],
-            //             result['forLater'],
-            //             result['forStaff'],
-            //             result['selectedStudents'],
-            //             (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-            //             result['fromHistory'],
-            //             result['fromHistoryIndex']
-            //         );
-            //     });
-          }
             return false;
         } else if(this.forFuture){
           this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
@@ -371,7 +337,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         }
       }
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
         UNANIMATED_CONTAINER.next(true);
         this.cancelOpen = true;
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
@@ -387,7 +353,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
           .subscribe(action => {
           this.chooseAction(action);
         });
-      }
+      // }
 
     }
   }

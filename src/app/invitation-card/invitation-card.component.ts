@@ -249,9 +249,9 @@ export class InvitationCardComponent implements OnInit {
     }
 
   denyInvitation(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
     if(!this.denyOpen){
       const target = new ElementRef(evt.currentTarget);
       this.options = [];
@@ -279,7 +279,7 @@ export class InvitationCardComponent implements OnInit {
         this.header = 'Are you sure you want to delete this pass request you sent?';
       }
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
         UNANIMATED_CONTAINER.next(true);
         this.denyOpen = true;
         const consentDialog = this.dialog.open(ConsentMenuComponent, {
@@ -295,7 +295,7 @@ export class InvitationCardComponent implements OnInit {
           .subscribe(action => {
           this.chooseAction(action);
         });
-      }
+      // }
 
     }
   }

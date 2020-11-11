@@ -99,9 +99,9 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   cancelRequest(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
 
     if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
@@ -113,7 +113,7 @@ export class InlineRequestCardComponent implements OnInit {
       this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
       this.header = 'Are you sure you want to delete this pass request you sent?';
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
         this.cancelOpen = true;
         UNANIMATED_CONTAINER.next(true);
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
@@ -130,7 +130,7 @@ export class InlineRequestCardComponent implements OnInit {
             this.cancelOpen = false;
             this.chooseAction(action);
           });
-      }
+      // }
 
     }
   }

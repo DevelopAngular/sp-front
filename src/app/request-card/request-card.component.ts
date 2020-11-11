@@ -376,9 +376,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
 
     if(!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
@@ -405,7 +405,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         return false;
       }
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
       UNANIMATED_CONTAINER.next(true);
         this.cancelOpen = true;
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
@@ -421,7 +421,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         .subscribe(action => {
           this.chooseAction(action);
         });
-    }
+    // }
 
     }
   }
