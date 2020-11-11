@@ -10,6 +10,7 @@ import {ScreenService} from '../services/screen.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
+import {DeviceDetection} from '../device-detection.helper';
 
 
 export interface Paged<T> {
@@ -170,7 +171,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             });
         }
 
-        this.isFocused = !this.isFavoriteForm && !(!this.forStaff && this.screenService.isDeviceLargeExtra);
+        this.isFocused = !this.isFavoriteForm && !DeviceDetection.isMobile();
     }
     if (this.type === 'location') {
       this.locationService.favoriteLocations$
