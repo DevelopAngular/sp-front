@@ -1,6 +1,7 @@
 import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {StorageService} from './services/storage.service';
+import {Meta} from '@angular/platform-browser';
 
 declare const window;
 
@@ -54,7 +55,8 @@ export class DarkThemeSwitch {
   private darkLink = listenSysDark.bind(this);
 
   constructor(
-    private storage: StorageService
+    private storage: StorageService,
+    private meta: Meta
   ) {
     const currentTheme: SPTheme = this.storage.getItem('appearance');
     this.switchTheme(currentTheme ? currentTheme : 'Auto');
@@ -86,10 +88,12 @@ export class DarkThemeSwitch {
       case 'Light':
         this.listenSystemThemePreference(false);
         this.isEnabled$.next(false);
+        this.meta.updateTag({name: 'theme-color', content: 'white'}, 'name="theme-color"');
         break;
       case 'Dark':
         this.listenSystemThemePreference(false);
         this.isEnabled$.next(true);
+        this.meta.updateTag({name: 'theme-color', content: 'black'}, 'name="theme-color"');
         break;
       case 'Auto':
         this.listenSystemThemePreference(true);
