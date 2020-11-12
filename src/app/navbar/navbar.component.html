@@ -80,6 +80,7 @@
       </div>
       <ng-template #notAssistant>
         <div
+          *ngIf="!isMobile"
           [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
           [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})"
           [matTooltip]="user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"

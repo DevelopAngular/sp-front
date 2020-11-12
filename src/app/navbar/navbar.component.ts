@@ -187,6 +187,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     return this.tab === 'settings';
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   get showNav() {
     return this.tab !== 'intro' && this.hasNav;
   }

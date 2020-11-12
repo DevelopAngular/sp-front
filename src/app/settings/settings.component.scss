@@ -17,6 +17,19 @@
   position: relative;
   border-radius: 10px;
 
+  .user-info {
+    display: flex;
+    padding: 0 0 10px 30px;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: $blue-gray;
+  }
+
   .top-arrow-container {
     position: absolute;
     top: -50px;
