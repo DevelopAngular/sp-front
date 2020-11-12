@@ -76,6 +76,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     return !!this.kioskMode.currentRoom$.value;
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   get showNotificationBadge() {
     return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
   }

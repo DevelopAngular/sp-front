@@ -51,6 +51,7 @@ import {NotificationButtonService} from '../services/notification-button.service
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
+import {SideNavService} from '../services/side-nav.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -279,7 +280,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  @HostListener('window:scroll')
+  @HostListener('window:scroll', ['$event'])
   scroll(event) {
     this.currentScrollPosition = event.currentTarget.scrollTop;
   }
@@ -315,7 +316,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private  notificationButtonService: NotificationButtonService,
     private httpService: HttpService,
-    private passesService: HallPassesService
+    private passesService: HallPassesService,
+    private sideNavService: SideNavService
     ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -505,6 +507,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   passClick(event) {
     this.passesService.isOpenPassModal$.next(true);
+  }
+
+  openSettings(value) {
+    if (value) {
+      // this.sideNavService.toggle$.next(true);
+      this.shortcutsService.onPressKeyEvent$.next({event: null, key: [',']});
+    }
   }
 
   get isSmartphone() {
