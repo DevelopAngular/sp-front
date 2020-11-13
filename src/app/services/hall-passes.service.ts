@@ -25,9 +25,9 @@ import {
   getPassesLoaded,
   getPassesLoading,
   getPassesNextUrl,
+  getPassesTotalCount,
   getSortPassesLoading,
-  getSortPassesValue,
-  getTotalPasses
+  getSortPassesValue
 } from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
 import {PollingService} from './polling-service';
@@ -50,7 +50,7 @@ export class HallPassesService {
   moreLoading$: Observable<boolean> = this.store.select(getMorePassesLoading);
   sortPassesLoading$: Observable<boolean> = this.store.select(getSortPassesLoading);
   sortPassesValue$: Observable<string> = this.store.select(getSortPassesValue);
-  currentPassesCount$: Observable<number> = this.store.select(getTotalPasses);
+  currentPassesCount$: Observable<number> = this.store.select(getPassesTotalCount);
 
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
 
@@ -193,8 +193,12 @@ export class HallPassesService {
     return this.http.get(constructUrl('v1/hall_passes', queryParams));
   }
 
+  startPushNotification() {
+    return this.http.post('v1/users/@me/test_push_message', new Date());
+  }
+
   watchPassStart() {
-    return this.pollingService.listen('hall_pass.start');
+    return this.pollingService.listen('message.alert');
   }
 
   watchEndPass() {

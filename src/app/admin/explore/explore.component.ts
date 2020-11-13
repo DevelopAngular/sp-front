@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, iif, Observable, of, Subject} from 'rxjs';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
@@ -18,6 +18,7 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {StorageService} from '../../services/storage.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {cloneDeep, isEqual} from 'lodash';
+import {TableService} from '../sp-data-table/table.service';
 
 declare const window;
 
@@ -68,7 +69,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     loaded$: Observable<boolean>
     isEmpty?: boolean,
     sortPasses$?: Observable<string>,
-    sortPassesLoading$?: Observable<boolean>
+    sortPassesLoading$?: Observable<boolean>,
+    countPasses$?: Observable<number>
   };
   contactTraceState: {
     loading$: Observable<boolean>,
@@ -103,6 +105,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   sortColumn: string;
   currentColumns: any;
+  selectedRows: any[] = [];
 
   buttonForceTrigger$: Subject<any> = new Subject<any>();
 
@@ -116,7 +119,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private domSanitizer: DomSanitizer,
     private http: HttpService,
     private contactTraceService: ContactTraceService,
-    private storage: StorageService
+    private storage: StorageService,
+    private tableService: TableService
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -149,7 +153,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
       loading$: this.hallPassService.passesLoading$,
       loaded$: this.hallPassService.passesLoaded$,
       sortPasses$: this.hallPassService.sortPassesValue$,
-      sortPassesLoading$: this.hallPassService.sortPassesLoading$
+      sortPassesLoading$: this.hallPassService.sortPassesLoading$,
+      countPasses$: this.hallPassService.currentPassesCount$
     };
     this.contactTraceState = {
       loading$: this.contactTraceService.contactTraceLoading$,
@@ -316,6 +321,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
             });
           })
         );
+
+      this.tableService.selectRow.asObservable()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(res => {
+          this.selectedRows = res;
+        });
   }
 
   ngOnDestroy() {
@@ -509,6 +520,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         url += (end ? ('end_time_before=' + end) : '');
       }
     }
+    url = url + 'total_count=true';
 
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;

@@ -2,8 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService, ProgressInterface} from '../getting-started-progress.service';
-import {fromEvent, of} from 'rxjs';
-import {switchMap, take} from 'rxjs/operators';
+import {fromEvent} from 'rxjs';
 
 declare const window;
 

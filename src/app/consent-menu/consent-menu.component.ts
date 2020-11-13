@@ -1,6 +1,6 @@
-﻿import {Component, Inject, ElementRef, OnInit, HostListener} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
+﻿import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
+import {DomSanitizer} from '@angular/platform-browser';
 import {DataService} from '../services/data-service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 

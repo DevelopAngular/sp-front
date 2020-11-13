@@ -151,15 +151,15 @@
               </div>
             </div>
 
-            <div *ngIf="request.status==='declined'">
-              <app-card-button *ngIf="!forStaff" [disabled]="performingAction" (onClick)="changeDate()" [width]="'297px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">
-                <div class="resend-button-content">
-                  <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
-                  <div *ngIf="!performingAction" class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
-                  <div class="resend-button-content-subtitle">Pass Request Denied</div>
-                </div>
-              </app-card-button>
-            </div>
+<!--            <div *ngIf="request.status==='declined'">-->
+<!--              <app-card-button *ngIf="!forStaff" [disabled]="performingAction" (onClick)="changeDate()" [width]="'297px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">-->
+<!--                <div class="resend-button-content">-->
+<!--                  <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>-->
+<!--                  <div *ngIf="!performingAction" class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>-->
+<!--                  <div class="resend-button-content-subtitle">Pass Request Denied</div>-->
+<!--                </div>-->
+<!--              </app-card-button>-->
+<!--            </div>-->
           </div>
         </div>
 

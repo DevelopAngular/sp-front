@@ -33,9 +33,11 @@
           <textarea
             #messageBox
             class="message-box"
-            pInputTextarea
             [maxlength]="160"
-            autoResize="autoResize"
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="6"
+            cdkAutosizeMaxRows="11"
             [placeholder]="'Attach a message'"
             [formControl]="message"
             [style.width]="messageBoxViewRestriction.textAreaWidth"

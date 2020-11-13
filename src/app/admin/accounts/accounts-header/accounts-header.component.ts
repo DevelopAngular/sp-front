@@ -4,7 +4,7 @@ import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
 import {TotalAccounts} from '../../../models/TotalAccounts';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';

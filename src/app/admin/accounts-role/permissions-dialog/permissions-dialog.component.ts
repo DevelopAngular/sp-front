@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {User} from '../../../models/User';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup} from '@angular/forms';
-import { cloneDeep, isEqual } from 'lodash';
+import {cloneDeep, isEqual} from 'lodash';
 import {UserService} from '../../../services/user.service';
 import {switchMap} from 'rxjs/operators';
 import {zip} from 'rxjs';

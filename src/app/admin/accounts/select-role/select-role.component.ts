@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {AddRolePopupComponent} from './add-role-popup/add-role-popup.component';
 import {filter} from 'rxjs/operators';
 

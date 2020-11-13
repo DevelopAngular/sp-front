@@ -12,7 +12,6 @@ import {GoogleLoginService} from '../../../services/google-login.service';
 import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
-import {StorageService} from '../../../services/storage.service';
 
 declare const window;
 
@@ -187,7 +186,6 @@ export class SchoolsEffects {
     private adminService: AdminService,
     private router: Router,
     private userService: UserService,
-    private loginService: GoogleLoginService,
-    private storage: StorageService
+    private loginService: GoogleLoginService
   ) {}
 }

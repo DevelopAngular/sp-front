@@ -4,7 +4,7 @@ import {HallPass} from '../../../models/HallPass';
 const PASSES = 'Passes';
 
 export const searchPasses = createAction(`[${PASSES}] Search Passes`, props<{url: string}>());
-export const searchPassesSuccess = createAction(`[${PASSES}] Search Passes Success`, props<{ passes: HallPass[], next: string }>());
+export const searchPassesSuccess = createAction(`[${PASSES}] Search Passes Success`, props<{ passes: HallPass[], next: string, totalCount: number }>());
 export const searchPassesFailure = createAction(`[${PASSES}] Search Passes Failure`, props<{errorMessage: string}>());
 
 export const getMorePasses = createAction(`[${PASSES}] Get More Passes`);

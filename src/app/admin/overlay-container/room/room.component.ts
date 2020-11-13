@@ -1,19 +1,19 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {FormGroup} from '@angular/forms';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {merge, Observable, Subject} from 'rxjs';
+import {merge, Subject} from 'rxjs';
 import {debounceTime, filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
-import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
-import { ValidButtons } from '../advanced-options/advanced-options.component';
+import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
+import {ValidButtons} from '../advanced-options/advanced-options.component';
 
-import { Location } from '../../../models/Location';
-import { HallPassesService } from '../../../services/hall-passes.service';
-import { LocationsService } from '../../../services/locations.service';
-import { OverlayContainerComponent } from '../overlay-container.component';
+import {Location} from '../../../models/Location';
+import {HallPassesService} from '../../../services/hall-passes.service';
+import {LocationsService} from '../../../services/locations.service';
+import {OverlayContainerComponent} from '../overlay-container.component';
 
-import { isNull, isEqual, cloneDeep, omit } from 'lodash';
+import {cloneDeep, isEqual, isNull, omit} from 'lodash';
 import {KeyboardShortcutsService} from '../../../services/keyboard-shortcuts.service';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';

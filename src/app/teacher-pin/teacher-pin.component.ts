@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../services/user.service';
 import {Observable, of} from 'rxjs';
 import {User} from '../models/User';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {switchMap, take} from 'rxjs/operators';
 
 @Component({

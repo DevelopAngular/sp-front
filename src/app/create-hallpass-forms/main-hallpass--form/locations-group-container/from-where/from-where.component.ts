@@ -11,8 +11,8 @@ import {ScreenService} from '../../../../services/screen.service';
 })
 export class FromWhereComponent implements OnInit {
 
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
-  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+  @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
         let blur: number;

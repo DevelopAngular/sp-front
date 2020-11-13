@@ -1,15 +1,14 @@
-import {AfterViewInit, Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import { Request } from '../../../models/Request';
-import { User } from '../../../models/User';
-import { DataService } from '../../../services/data-service';
-import { Pinnable } from '../../../models/Pinnable';
-import { Util } from '../../../../Util';
-import { FormFactor, Navigation } from '../main-hall-pass-form.component';
-import { CreateFormService } from '../../create-form.service';
-import { NextStep } from '../../../animations';
-import { LocationsService } from '../../../services/locations.service';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {User} from '../../../models/User';
+import {DataService} from '../../../services/data-service';
+import {Pinnable} from '../../../models/Pinnable';
+import {Util} from '../../../../Util';
+import {FormFactor, Navigation} from '../main-hall-pass-form.component';
+import {CreateFormService} from '../../create-form.service';
+import {NextStep} from '../../../animations';
+import {LocationsService} from '../../../services/locations.service';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FromWhereComponent} from './from-where/from-where.component';
 import {ToCategoryComponent} from './to-category/to-category.component';
 import {RestrictedTargetComponent} from './restricted-target/restricted-target.component';
@@ -35,7 +34,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(FromWhereComponent) fromWhereComp;
-  @ViewChild(forwardRef( () => ToWhereComponent) ) toWhereComp;
+  @ViewChild(forwardRef(() => ToWhereComponent)) toWhereComp;
   @ViewChild(ToCategoryComponent) toCategoryComp;
   @ViewChild(RestrictedTargetComponent) restTargetComp;
   @ViewChild(RestrictedMessageComponent) restMessageComp;

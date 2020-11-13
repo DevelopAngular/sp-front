@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../services/user.service';
-import { HttpService } from '../services/http-service';
+import {Component, OnInit} from '@angular/core';
+import {UserService} from '../services/user.service';
+import {HttpService} from '../services/http-service';
 import {BehaviorSubject, Observable} from 'rxjs';
-import { User } from '../models/User';
-import { School } from '../models/School';
-import { NextStep } from '../animations';
-import { CreateFormService } from '../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material';
+import {User} from '../models/User';
+import {School} from '../models/School';
+import {NextStep} from '../animations';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-my-profile-dialog',

@@ -8,7 +8,7 @@ import {UserService} from '../../../../services/user.service';
 import {fromEvent, Observable, throwError} from 'rxjs';
 import * as XLSX from 'xlsx';
 import {User} from '../../../../models/User';
-import { cloneDeep, uniqBy } from 'lodash';
+import {cloneDeep, uniqBy} from 'lodash';
 
 @Component({
   selector: 'app-groups-step3',
@@ -16,7 +16,7 @@ import { cloneDeep, uniqBy } from 'lodash';
   styleUrls: ['./groups-step3.component.scss']
 })
 export class GroupsStep3Component implements OnInit, AfterViewInit {
-  @ViewChild('studentEmails') studentEmailsFile;
+  @ViewChild('studentEmails', { static: true }) studentEmailsFile;
 
   @Input() form: FormGroup;
   editGroupInitial: StudentList;

@@ -6,7 +6,7 @@ import {AuthContext, HttpService} from '../services/http-service';
 import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {HttpClient} from '@angular/common/http';
 import {FormControl, FormGroup} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
@@ -79,6 +79,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.error$.next('Account is suspended. Please contact your school admin.');
       } else if (message === 'this user is disabled') {
         this.error$.next('Account is disabled. Please contact your school admin.');
+      } else if (message === 'this profile is not active') {
+        this.error$.next('Account is not active. Please contact your school admin.');
       }
       this.passwordError = !!message;
       this.showSpinner = false;

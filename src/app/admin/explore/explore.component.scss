@@ -47,6 +47,17 @@
     .search-button {
       position: absolute;
       right: 30px;
+
+      .count {
+        height: 35px;
+        background-color: #F4F4F4;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $blue-gray;
+        padding: 0 10px;
+      }
     }
 
     .filters {

@@ -4,6 +4,7 @@ import {
   Component,
   EventEmitter,
   HostListener,
+  Injectable,
   Input,
   OnDestroy,
   OnInit,
@@ -13,7 +14,8 @@ import {
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
-import {MatDialog, MatSort} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSort} from '@angular/material/sort';
 import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
@@ -62,7 +64,7 @@ export class GridTableDataSource extends DataSource<any> {
 
     this.viewport.elementScrolled().subscribe((ev: any) => {
       const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
-      const prevExtraData = start > 5 ? 5 : 0;
+      const prevExtraData = start > 0 && start <= 12 ? 1 : start > 12 ? 12 : 0;
       const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
       this.offset = ROW_HEIGHT * (start - prevExtraData);
       this.viewport.setRenderedContentOffset(this.offset);
@@ -82,34 +84,9 @@ export class GridTableDataSource extends DataSource<any> {
     // this.destroy$.next();
     // this.destroy$.complete();
   }
-
-  // compare(a: number | string, b: number | string, isAsc: boolean) {
-  //   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-  // }
-
-  // sortingDataAccessor(item, property) {
-  //   switch (property) {
-  //     case 'Student Name':
-  //       return item['sortStudentName'];
-  //     case 'Pass start time':
-  //     case 'Contact date':
-  //       return moment(item['date']).milliseconds;
-  //     case 'Duration':
-  //       return item['sortDuration'].as('milliseconds');
-  //     case 'Profile(s)':
-  //       return item[property].map(i => i.title).join('');
-  //     case 'Last sign-in':
-  //       if (item['last_sign_in']) {
-  //         return moment(item['last_sign_in']).toDate();
-  //       } else {
-  //         return new Date('1995-12-17T03:24:00');
-  //       }
-  //     default:
-  //       return item[property];
-  //   }
-  // }
 }
 
+@Injectable()
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
   constructor() {
     super(ROW_HEIGHT, 1000, 2000);
@@ -145,7 +122,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() sortColumn: string;
   @Input() sortLoading$: Observable<boolean>;
 
-  @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
+  @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport;
 
   @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowClickEvent: EventEmitter<any> = new EventEmitter<any>();
@@ -244,7 +221,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         filter(action => action === 'bulk_add_link')
       )
       .subscribe((action) => {
-        if (this.selection.selected.length > 300 || !this.selection.selected.length) {
+        if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
           window.open('https://www.smartpass.app/bulk-export');
         } else {
           this.generateCSV();
@@ -340,11 +317,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv') {
-      if (this.selection.selected.length > 300 || !this.selection.selected.length) {
+      if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
         this.toastService.openToast(
           {
             title: 'Information Required',
-            subtitle: 'We need some additional information to export your data (300+ passes)',
+            subtitle: 'We need some additional information to export your data (5000+ passes)',
             icon: './assets/External Link (Navy).svg',
             buttonText: 'See form',
             action: 'bulk_add_link'
@@ -352,7 +329,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         );
       } else {
         this.toastService.openToast(
-          {title: 'CSV Generated', subtitle: 'Download it to your computer now.'}
+          {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
         );
       }
     }

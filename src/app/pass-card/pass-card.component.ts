@@ -1,22 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output, ElementRef, NgZone, OnDestroy } from '@angular/core';
-import { User } from '../models/User';
-import { HallPass} from '../models/HallPass';
-import { Util } from '../../Util';
-import { MatDialogRef, MatDialog } from '@angular/material';
-import { MAT_DIALOG_DATA } from '@angular/material';
-import { Inject } from '@angular/core';
-import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
-import {RequestCardComponent} from '../request-card/request-card.component';
-import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
-import {BehaviorSubject, interval, merge, Observable, of, Subject, Subscription} from 'rxjs';
+import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
+import {User} from '../models/User';
+import {HallPass} from '../models/HallPass';
+import {Util} from '../../Util';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {map, pluck, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, interval, merge, Observable, of, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {HallPassesService} from '../services/hall-passes.service';
-import { TimeService } from '../services/time.service';
+import {TimeService} from '../services/time.service';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
@@ -305,7 +300,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
         body['self_issued'] = true;
     }
      const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
-      getRequest$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      getRequest$.pipe(
+        // switchMap(() => this.hallPassService.startPushNotification()),
+        takeUntil(this.destroy$)
+      )
+        .subscribe((data) => {
         this.performingAction = true;
         this.dialogRef.close();
       });
@@ -378,14 +377,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
       if (!this.screenService.isDeviceMid) {
         UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: {'header': this.header, 'options': this.options, 'trigger': target}
-        });
-
-        cancelDialog.afterOpen().subscribe( () => {
-          this.cancelOpen = true;
         });
 
         cancelDialog.afterClosed()

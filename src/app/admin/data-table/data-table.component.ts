@@ -1,14 +1,20 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
-  Input, NgZone, OnChanges, OnDestroy,
+  Injectable,
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
   OnInit,
-  Output, SimpleChanges,
+  Output,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {MatSort, Sort} from '@angular/material';
+import {MatSort, Sort} from '@angular/material/sort';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
@@ -18,8 +24,8 @@ import {ScrollPositionService} from '../../scroll-position.service';
 import {wrapToHtml} from '../helpers';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
-import { findIndex } from 'lodash';
-import {debounceTime, delay, distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
+import {findIndex} from 'lodash';
+import {distinctUntilChanged} from 'rxjs/operators';
 import {StorageService} from '../../services/storage.service';
 
 const PAGESIZE = 50;
@@ -154,6 +160,7 @@ export class GridTableDataSource extends DataSource<any> {
 /**
  * Virtual Scroll Strategy
  */
+@Injectable()
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
   constructor() {
     super(ROW_HEIGHT, 1000, 2000);
@@ -193,8 +200,8 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   @Output() selectedCell: EventEmitter<any> = new EventEmitter<any>();
   @Output() loadMoreAccounts: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport;
 
   @Input() set lazyData(value: any[]) {
     if (value.length) {

@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {HttpService} from '../../services/http-service';
 import {UserService} from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';

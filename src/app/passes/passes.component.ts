@@ -9,7 +9,7 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, ConnectableObservable, empty, interval, merge, Observable, of, ReplaySubject, Subject,} from 'rxjs';
 import {
   filter,
@@ -377,15 +377,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
-        if (passLike instanceof HallPass && !this.dialog.openDialogs.length) {
-        }
       });
 
     merge(this.passesService.watchPassStart(), this.passesService.watchEndPass())
       .pipe(
         filter(() => !this.isStaff),
         switchMap(({action, data}) => {
-          if (action === 'hall_pass.start') {
+          if (action === 'message.alert') {
             this.screenService.customBackdropEvent$.next(true);
             const SPNC = this.dialog.open(StartPassNotificationComponent, {
               id: 'startNotification',
@@ -396,9 +394,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             });
             return SPNC.afterClosed();
           } else if (action === 'hall_pass.end') {
-            this.dialog.getDialogById('startNotification').close();
-            return of(true);
+            if (this.dialog.openDialogs.length) {
+              this.dialog.getDialogById('startNotification').close();
+              return of(true);
+            }
           }
+          return of(null);
         })
       )
       .subscribe(res => {

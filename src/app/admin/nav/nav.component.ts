@@ -1,31 +1,31 @@
 import {
-  Component,
-  OnInit,
-  NgZone,
-  Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef,
   AfterViewInit,
-  ChangeDetectorRef,
-  QueryList, ViewChildren
+  Component,
+  ElementRef,
+  EventEmitter,
+  NgZone,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren
 } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import { LoadingService } from '../../services/loading.service';
-import { DataService } from '../../services/data-service';
-import { User } from '../../models/User';
-import { UserService } from '../../services/user.service';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {LoadingService} from '../../services/loading.service';
+import {DataService} from '../../services/data-service';
+import {User} from '../../models/User';
+import {UserService} from '../../services/user.service';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SettingsComponent} from '../settings/settings.component';
-import {map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
-import {HttpService} from '../../services/http-service';
 import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
+
+import * as moment from 'moment';
 
 declare const window;
 
@@ -36,8 +36,8 @@ declare const window;
 })
 export class NavComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('settingsButton') settingsButton: ElementRef;
-  @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
+  @ViewChild('settingsButton', { static: true }) settingsButton: ElementRef;
+  @ViewChild('navButtonsContainter', { static: true }) navButtonsContainterRef: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
@@ -58,6 +58,7 @@ export class NavComponent implements OnInit, AfterViewInit {
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
   currentTab: string;
+  introsData: any;
   public pts: string;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -70,9 +71,7 @@ export class NavComponent implements OnInit, AfterViewInit {
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
-        public gsProgress: GettingStartedProgressService,
-        private shortcutsService: KeyboardShortcutsService,
-        private http: HttpService
+        private shortcutsService: KeyboardShortcutsService
     ) { }
 
   user: User;
@@ -85,28 +84,15 @@ export class NavComponent implements OnInit, AfterViewInit {
     return this.pts;
   }
 
+  get showNotificationBadge() {
+    return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
+  }
+
   ngAfterViewInit() {
     this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef);
   }
 
   ngOnInit() {
-    // this.http.globalReload$
-    //   .pipe(
-    //     takeUntil(this.destroy$),
-    //     switchMap(() => {
-    //       return this.gsProgress.onboardProgress$;
-    //     }),
-    //   ).subscribe(res => {
-    //     this.process = res.progress;
-    //     setTimeout(() => {
-    //       this.hidePointer = this.router.url === '/admin/gettingstarted' && this.process === 100;
-    //     }, 100);
-    //   if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
-    //       this.buttons.splice(0, 1);
-    //     } else if (res.progress < 100 && !this.buttons.find(button => button.title === 'Get Started')) {
-    //       this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
-    //     }
-    //   });
     const url: string[] = this.router.url.split('/');
     this.currentTab = url[url.length - 1];
     this.tab = url.slice(1);
@@ -184,6 +170,12 @@ export class NavComponent implements OnInit, AfterViewInit {
           }
         }
     });
+
+    this.userService.introsData$.pipe(filter(res => !!res), takeUntil(this.destroy$))
+      .subscribe(data => {
+        // debugger;
+        this.introsData = data;
+      });
   }
 
   route( button: any) {
@@ -215,15 +207,14 @@ export class NavComponent implements OnInit, AfterViewInit {
           'trigger': target,
           'isSwitch': this.showButton,
           darkBackground: this.darkTheme.isEnabled$.value,
+          introsData: this.introsData,
+          showNotificationBadge: this.showNotificationBadge
         }
-      });
-
-      settingsRef.beforeClose().subscribe(() => {
-        this.selectedSettings = false;
       });
 
       settingsRef.afterClosed().subscribe(action => {
         UNANIMATED_CONTAINER.next(false);
+        this.selectedSettings = false;
         if (action === 'signout') {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
@@ -250,6 +241,11 @@ export class NavComponent implements OnInit, AfterViewInit {
           window.open('https://www.smartpass.app/bugreport');
         } else if (action === 'privacy') {
           window.open('https://www.smartpass.app/legal');
+        } else if (action === 'refer') {
+          if (this.introsData.referral_reminder.universal && !this.introsData.referral_reminder.universal.seen_version) {
+            this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
+          }
+          window.open('https://www.smartpass.app/referrals');
         }
       });
     }

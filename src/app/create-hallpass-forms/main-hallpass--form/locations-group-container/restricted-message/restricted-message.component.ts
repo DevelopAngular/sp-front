@@ -1,15 +1,15 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Navigation } from '../../main-hall-pass-form.component';
-import { Location } from '../../../../models/Location';
-import { User } from '../../../../models/User';
+import {FormControl} from '@angular/forms';
+import {Navigation} from '../../main-hall-pass-form.component';
+import {Location} from '../../../../models/Location';
+import {User} from '../../../../models/User';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
 import {MessageBoxViewRestrictionSm} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionSm';
 import {MessageBoxViewRestriction} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestriction';
 import {MessageBoxViewRestrictionLg} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionLg';
 import {ScreenService} from '../../../../services/screen.service';
-import { uniqBy } from 'lodash';
+import {uniqBy} from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
@@ -29,7 +29,7 @@ export class RestrictedMessageComponent implements OnInit {
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
   messageBox;
-  @ViewChild('messageBox') set content(content: ElementRef) {
+  @ViewChild('messageBox', { static: true }) set content(content: ElementRef) {
     this.messageBox = content;
     // this.messageBox.nativeElement.focus();
   }

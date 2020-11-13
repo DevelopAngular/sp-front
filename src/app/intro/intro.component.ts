@@ -1,16 +1,16 @@
 import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Optional, Output} from '@angular/core';
-import { Router } from '@angular/router';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { User } from '../models/User';
+import {Router} from '@angular/router';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {User} from '../models/User';
 import {bumpIn, NextStep} from '../animations';
-import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent} from 'rxjs';
 import {StorageService} from '../services/storage.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {NotificationService} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 
 declare const window;

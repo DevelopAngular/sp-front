@@ -1,15 +1,15 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 
-import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
-import {concatMap, filter, map, mapTo, share, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
-import { HttpService } from '../../services/http-service';
-import { Pinnable } from '../../models/Pinnable';
-import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
-import { isArray } from 'lodash';
-import { HallPassesService } from '../../services/hall-passes.service';
+import {HttpService} from '../../services/http-service';
+import {Pinnable} from '../../models/Pinnable';
+import {OverlayContainerComponent} from '../overlay-container/overlay-container.component';
+import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
+import {isArray} from 'lodash';
+import {HallPassesService} from '../../services/hall-passes.service';
 import {SchoolSettingDialogComponent} from '../school-setting-dialog/school-setting-dialog.component';
 import {Location} from '../../models/Location';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -228,15 +228,12 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             }
 
             UNANIMATED_CONTAINER.next(true);
+            this.buttonMenuOpen = true;
 
             const cancelDialog = this.dialog.open(ConsentMenuComponent, {
                 panelClass: 'consent-dialog-container',
                 backdropClass: 'invis-backdrop',
                 data: {'options': options, 'trigger': target}
-            });
-
-            cancelDialog.afterOpen().subscribe( () => {
-                this.buttonMenuOpen = true;
             });
 
             cancelDialog.afterClosed()
@@ -338,6 +335,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   dialogContainer(data, component) {
+    this.forceSelectedLocation = null;
       const overlayDialog =  this.dialog.open(component, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
@@ -347,10 +345,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         width: '800px',
         height: '500px',
         data: data
-      });
-
-      overlayDialog.afterOpen().subscribe(() => {
-        this.forceSelectedLocation = null;
       });
       overlayDialog.afterClosed()
         // .pipe(

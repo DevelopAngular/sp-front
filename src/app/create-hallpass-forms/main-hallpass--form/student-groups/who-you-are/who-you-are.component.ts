@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CreateFormService} from '../../../create-form.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {ScreenService} from '../../../../services/screen.service';
 import {BehaviorSubject} from 'rxjs';

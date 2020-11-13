@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter as _filter, find} from 'lodash';
 import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
@@ -51,6 +51,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   shortcuts: ShortcutInput[];
 
   private dialogContainer: HTMLElement;
+  @ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
+    this.dialogContainer = content.nativeElement;
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  back(event) {
+    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
+      window.history.pushState({}, '');
+    }
+  }
 
   public isAuthenticated = null;
   public hideScroll: boolean = false;
@@ -67,17 +77,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hasCustomBackdrop$: Observable<boolean>;
 
   private subscriber$ = new Subject();
-
-  @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
-    this.dialogContainer = content.nativeElement;
-  }
-
-  @HostListener('window:popstate', ['$event'])
-  back(event) {
-    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
-      window.history.pushState({}, '');
-    }
-  }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
@@ -200,14 +199,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
       filter(res => !res && !this.openConnectionDialog))
       .subscribe(() => {
+        this.openConnectionDialog = true;
         const toastDialog = this.dialog.open(ToastConnectionComponent, {
           panelClass: 'toasr',
           hasBackdrop: false,
           disableClose: true
-        });
-
-        toastDialog.afterOpened().subscribe(() => {
-          this.openConnectionDialog = true;
         });
 
         toastDialog.afterClosed().subscribe(() => {
