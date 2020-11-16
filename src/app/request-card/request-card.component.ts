@@ -298,7 +298,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
                   (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
           })).subscribe((res) => {
           this.performingAction = true;
-        if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile() && this.forFuture) {
+        if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
           this.dataService.openRequestPageMobile();
           this.navbarData.inboxClick$.next(true);
         }
