@@ -1,6 +1,6 @@
 <div class="wrapper">
   <app-round-input
-    [style.margin]="'20px' "
+    [style.margin]="'20px'"
     [minWidth]="'20px auto 5px auto'"
     [width]="inputWidth"
     [type]="'text'"
@@ -28,13 +28,13 @@
              (dragulaModelChange)="updateOrderLocation($event)"
         >
           <div class="choice" *ngFor="let choice of starredChoices">
-            <app-location-cell *ngIf="this.passLimits[choice.id]"
+            <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
               (onSelect)="choiceSelected($event)"
               (onStar)="star($event)"
               [value]="choice"
               [type]="type"
               [currentPage]="currentPage"
-              [passLimit]="passLimits ? passLimits[choice.id] : null"
+              [passLimit]="getPassLimit(choice)"
               [starred]="true"
               [showStar]="!!showStars"
               [allowOnStar]="allowOnStar"
@@ -45,7 +45,7 @@
         <ng-template #noDnd>
           <div class="choices">
             <div class="choice" *ngFor="let choice of starredChoices">
-              <app-location-cell *ngIf="this.passLimits[choice.id]"
+              <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
                 (onSelect)="choiceSelected($event)"
                 (onStar)="star($event)"
                 [value]="choice"
@@ -65,13 +65,13 @@
       <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode && pinnablesLoaded"
            class="choices">
         <div class="choice" *ngFor="let choice of starredChoices">
-          <app-location-cell *ngIf="this.passLimits[choice.id]"
+          <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
             [value]="normalizeLocations(choice)"
             [type]="type"
             [currentPage]="currentPage"
-            [passLimit]="passLimits ? passLimits[choice.id] : null"
+            [passLimit]="getPassLimit(choice)"
             [hasLocks]="hasLocks"
             [forLater]="forLater"
             [forStaff]="forStaff"
@@ -104,7 +104,7 @@
           *ngFor="let choice of choices"
           #item
         >
-          <app-location-cell *ngIf="this.passLimits[choice.id]"
+          <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
             class="choice"
             [hasLocks]="hasLocks"
             [forLater]="forLater"
@@ -112,7 +112,7 @@
             [showStar]="showStars && !noRightStar"
             [starred]="isSelected(choice)"
             [currentPage]="currentPage"
-            [passLimit]="passLimits ? passLimits[choice.id] : null"
+            [passLimit]="getPassLimit(choice)"
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
             [allowOnStar]="allowOnStar"

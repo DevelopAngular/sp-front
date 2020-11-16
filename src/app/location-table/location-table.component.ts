@@ -70,7 +70,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   pinnables;
   pinnablesLoaded: boolean;
 
-  passLimits: {[id: number]: PassLimit};
+  passLimits: {[id: number]: PassLimit} = {};
 
   showSpinner$: Observable<boolean>;
   loaded$: Observable<boolean>;
@@ -326,10 +326,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   isValidLocation(locationId: any) {
     if (this.isFavoriteForm)
       return true;
-    else if (this.forStaff && !this.forKioskMode)
-      return true;
     else if (+locationId === +this.invalidLocation)
       return false;
+    else if (this.forStaff && !this.forKioskMode)
+      return true;
 
     const location = this.passLimits[locationId];
     if (!location)
@@ -405,6 +405,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   getDisabledTooltip(choice) {
     return this.originLocation && this.originLocation.id === choice.id;
+  }
+
+  getPassLimit(choice: any): PassLimit {
+    return this.passLimits ? this.passLimits[choice.id] : null;
   }
 
 }
