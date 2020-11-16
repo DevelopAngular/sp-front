@@ -54,7 +54,7 @@
              (pointerCancelEvent)="set.pressed = false; set.hovered = false;"
              (mouseenter)="set.hovered = true"
              (mouseleave)="set.hovered = false; set.pressed = false"
-             [style.background]="set.hovered ? (set.pressed ? 'rgba(127, 135, 157, .15)' : 'rgba(127, 135, 157, .1)') : 'transparent'"
+             [style.background]="set.pressed ? 'rgba(127, 135, 157, .15)' : (set.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"
         >
           <img class="setting-icon"
                [title]="setting.tooltip"
