@@ -25,9 +25,9 @@ import {
   getPassesLoaded,
   getPassesLoading,
   getPassesNextUrl,
+  getPassesTotalCount,
   getSortPassesLoading,
-  getSortPassesValue,
-  getTotalPasses
+  getSortPassesValue
 } from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
 
@@ -49,7 +49,7 @@ export class HallPassesService {
   moreLoading$: Observable<boolean> = this.store.select(getMorePassesLoading);
   sortPassesLoading$: Observable<boolean> = this.store.select(getSortPassesLoading);
   sortPassesValue$: Observable<string> = this.store.select(getSortPassesValue);
-  currentPassesCount$: Observable<number> = this.store.select(getTotalPasses);
+  currentPassesCount$: Observable<number> = this.store.select(getPassesTotalCount);
 
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
 

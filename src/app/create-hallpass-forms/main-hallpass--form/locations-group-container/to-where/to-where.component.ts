@@ -1,14 +1,14 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output, Inject, ViewChild, ElementRef} from '@angular/core';
-import { Pinnable } from '../../../../models/Pinnable';
-import { Navigation } from '../../main-hall-pass-form.component';
-import { CreateFormService } from '../../../create-form.service';
-import { States } from '../locations-group-container.component';
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Pinnable} from '../../../../models/Pinnable';
+import {Navigation} from '../../main-hall-pass-form.component';
+import {CreateFormService} from '../../../create-form.service';
+import {States} from '../locations-group-container.component';
 import {ScreenService} from '../../../../services/screen.service';
 import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction';
 import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
@@ -22,8 +22,8 @@ import {LocationsService} from '../../../../services/locations.service';
   styleUrls: ['./to-where.component.scss']
 })
 export class ToWhereComponent implements OnInit {
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
-  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+  @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
         let blur: number;

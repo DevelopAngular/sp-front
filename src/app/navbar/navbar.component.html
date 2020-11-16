@@ -80,6 +80,7 @@
       </div>
       <ng-template #notAssistant>
         <div
+          *ngIf="!isMobile"
           [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
           [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})"
           [matTooltip]="user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
@@ -154,10 +155,13 @@
 <div class="host" *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
       user.isAssistant() && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
   <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
-    <div *ngFor="let button of buttons" class="teacherNav_tab">
+    <div *ngFor="let button of buttons" class="teacherNav_tab" #tabRefMobile
+         appCrossPointerEventTarget
+         (pointerClickEvent)="updateTab(button.route); selectTab(tabRefMobile, navButtonsContainerMobile)"
+    >
       <ng-container *ngIf="isStaff && buttonVisibility(button) || user.isAssistant() && buttonVisibility(button)">
         <div
-          #tabRefMobile
+
           [style.transition]="'transform .4s ease'"
           appCrossPointerEventTarget
           (pointerClickEvent)="changeTabOpacity(tabRefMobile, false)"
@@ -168,8 +172,7 @@
           <app-nav-button
             [selected]="tab === button.route"
             [content]="button.title"
-            [icon]="button.imgUrl"
-            (onClick)="updateTab(button.route); selectTab(tabRefMobile, navButtonsContainerMobile)">
+            [icon]="button.imgUrl">
           </app-nav-button>
         </div>
       </ng-container>

@@ -16,7 +16,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {Location} from '@angular/common';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
 import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
@@ -185,6 +185,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   get optionsOpen() {
     return this.tab === 'settings';
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   get showNav() {
@@ -460,12 +464,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
         });
 
-        settingRef.beforeClose().subscribe(() => {
-          this.isOpenSettings = false;
-        });
-
         settingRef.afterClosed().subscribe(action => {
           UNANIMATED_CONTAINER.next(false);
+          this.isOpenSettings = false;
           this.settingsAction(action);
         });
       }

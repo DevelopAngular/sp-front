@@ -15,6 +15,18 @@
               "path": "./extra-webpack.config.js",
               "mergeStrategies": { "externals": "replace" }
             },
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "firebase",
+              "angular2-websocket",
+              "xlsx",
+              "dragula",
+              "chart.js",
+              "@sentry/browser",
+              "hammerjs",
+              "@firebase/util",
+              "url"
+            ],
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -29,7 +41,6 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/primeng/resources/primeng.min.css",
               "node_modules/font-awesome/css/font-awesome.min.css"
             ],
             "scripts": [
@@ -186,7 +197,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "scss"
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

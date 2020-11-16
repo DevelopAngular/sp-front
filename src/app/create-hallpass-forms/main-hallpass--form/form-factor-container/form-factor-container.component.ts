@@ -1,15 +1,13 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import { TimeService } from '../../../services/time.service';
+import {TimeService} from '../../../services/time.service';
 
-import { FormFactor, Navigation } from '../main-hall-pass-form.component';
-import { HallPass } from '../../../models/HallPass';
-import { Request } from '../../../models/Request';
-import { Invitation } from '../../../models/Invitation';
-import { DataService } from '../../../services/data-service';
-import { Pinnable } from '../../../models/Pinnable';
-import {MAT_DIALOG_DATA} from '@angular/material';
-
-
+import {FormFactor, Navigation} from '../main-hall-pass-form.component';
+import {HallPass} from '../../../models/HallPass';
+import {Request} from '../../../models/Request';
+import {Invitation} from '../../../models/Invitation';
+import {DataService} from '../../../services/data-service';
+import {Pinnable} from '../../../models/Pinnable';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 
 @Component({

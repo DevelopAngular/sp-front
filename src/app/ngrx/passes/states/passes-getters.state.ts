@@ -39,3 +39,8 @@ export const getSortPassesValue = createSelector(
   (state: IPassesState) => state.sortValue
 );
 
+export const getPassesTotalCount = createSelector(
+  getPassesState,
+  (state: IPassesState) => state.totalCount
+);
+

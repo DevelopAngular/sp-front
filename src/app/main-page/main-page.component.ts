@@ -15,7 +15,6 @@ import {InboxInvitationProvider, InboxRequestProvider} from '../passes/passes.co
 import {NavigationEnd, Router} from '@angular/router';
 import {filter as _filter} from 'lodash';
 import {HttpService} from '../services/http-service';
-import {useAnimation} from '@angular/animations';
 
 declare const window;
 
@@ -114,15 +113,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.goHome(user);
     });
 
-    // this.dataService.currentUser
-    //   .pipe(
-    //     this.loadingService.watchFirst,
-    //     takeUntil(this.destroy$)
-    //   )
-    //   .subscribe(user => {
-    //     this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.isAssistant();
-    //   });
-
     this.inboxHasItems = combineLatest(
       this.receivedRequests.length$,
       this.receivedRequests.loaded$,
@@ -163,6 +153,10 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   shouldShowRouter() {
     // return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
+  }
+
+  onSwipe(event) {
+    debugger;
   }
 
   goHome(user) {

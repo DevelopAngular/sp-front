@@ -1,6 +1,6 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
@@ -28,7 +28,7 @@ import {ColorProfile} from '../../models/ColorProfile';
 })
 export class OverlayContainerComponent implements OnInit {
 
-  @ViewChild('block') block: ElementRef;
+  @ViewChild('block', { static: true }) block: ElementRef;
 
   currentPage: number;
   roomData: RoomData;

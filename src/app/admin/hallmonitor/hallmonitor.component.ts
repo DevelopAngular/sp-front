@@ -1,13 +1,13 @@
-import {Component, OnInit, ElementRef, ViewChild, HostListener, OnDestroy} from '@angular/core';
-import { MatDialog } from '@angular/material';
-import {BehaviorSubject, fromEvent, combineLatest, Observable, of, Subject, interval, merge} from 'rxjs';
-import { User } from '../../models/User';
-import { Report } from '../../models/Report';
-import { Pinnable } from '../../models/Pinnable';
-import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
-import { LiveDataService } from '../../live-data/live-data.service';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {BehaviorSubject, interval, merge, Observable, of, Subject} from 'rxjs';
+import {User} from '../../models/User';
+import {Report} from '../../models/Report';
+import {Pinnable} from '../../models/Pinnable';
+import {ActivePassProvider} from '../../hall-monitor/hall-monitor.component';
+import {LiveDataService} from '../../live-data/live-data.service';
 import {WrappedProvider} from '../../models/providers';
-import { TimeService } from '../../services/time.service';
+import {TimeService} from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
@@ -15,10 +15,9 @@ import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ScrollPositionService} from '../../scroll-position.service';
-import { takeRight } from 'lodash';
+import {takeRight} from 'lodash';
 import * as moment from 'moment';
 import {School} from '../../models/School';
-
 
 
 @Component({
@@ -31,7 +30,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     private scrollableAreaName = 'HallMonitorAdmin';
     private scrollableArea: HTMLElement;
 
-    @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    @ViewChild('scrollableArea', { static: true }) set scrollable(scrollable: ElementRef) {
       if (scrollable) {
         this.scrollableArea = scrollable.nativeElement;
 
@@ -71,8 +70,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
       }
     }
 
-    @ViewChild('bottomShadow') bottomShadow;
-    @ViewChild('reportBox') reportBox: ElementRef;
+    @ViewChild('bottomShadow', { static: true }) bottomShadow;
+    @ViewChild('reportBox', { static: true }) reportBox: ElementRef;
 
     activePassProvider: WrappedProvider;
     searchQuery$ = new BehaviorSubject('');

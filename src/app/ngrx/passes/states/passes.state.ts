@@ -10,4 +10,5 @@ export interface IPassesState extends EntityState<HallPass> {
   sortLoading: boolean;
   sortLoaded: boolean;
   sortValue: string;
+  totalCount: number;
 }

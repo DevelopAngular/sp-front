@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 
 import {map, switchMap, takeUntil} from 'rxjs/operators';
 import {forkJoin, fromEvent, MonoTypeOperatorFunction, of, Subject, zip} from 'rxjs';
@@ -64,7 +64,7 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
 export class BulkAddComponent implements OnInit, OnDestroy {
 
   @ViewChild('dropArea') dropArea: ElementRef;
-  @ViewChild('file') set fileRef(fileRef: ElementRef) {
+  @ViewChild('file', { static: true }) set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
       this.selectedFile = fileRef;
       fromEvent(this.selectedFile.nativeElement , 'change')

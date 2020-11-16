@@ -1,12 +1,12 @@
-import { Location } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {Location} from '@angular/common';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 import {fromEvent, of, zip} from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { TimeService } from '../services/time.service';
-import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
-import { OPEN_SANS_BOLD, OPEN_SANS_REGULAR } from './pdf-fonts';
+import {switchMap, tap} from 'rxjs/operators';
+import {TimeService} from '../services/time.service';
+import {LinkGeneratedDialogComponent} from './link-generated-dialog/link-generated-dialog.component';
+import {OPEN_SANS_BOLD, OPEN_SANS_REGULAR} from './pdf-fonts';
 import {StorageService} from '../services/storage.service';
 import {prettyDate} from './helpers';
 

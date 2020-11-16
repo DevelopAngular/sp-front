@@ -9,7 +9,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';

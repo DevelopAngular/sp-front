@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Location} from '../../models/Location';
 import {Pinnable} from '../../models/Pinnable';
 import {User} from '../../models/User';

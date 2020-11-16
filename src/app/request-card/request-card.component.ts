@@ -1,15 +1,14 @@
-import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy, Renderer2} from '@angular/core';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { Util } from '../../Util';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
-import { Inject } from '@angular/core';
-import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { getInnerPassName } from '../pass-tile/pass-display-util';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import {concatMap, filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {Util} from '../../Util';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {getInnerPassName} from '../pass-tile/pass-display-util';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
@@ -17,7 +16,7 @@ import {NextStep} from '../animations';
 import {BehaviorSubject, interval, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
-import { uniqBy, uniq, isNull } from 'lodash';
+import {isNull, uniq, uniqBy} from 'lodash';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
@@ -299,7 +298,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
                   (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
           })).subscribe((res) => {
           this.performingAction = true;
-        if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile() && this.forFuture) {
+        if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
           this.dataService.openRequestPageMobile();
           this.navbarData.inboxClick$.next(true);
         }
@@ -310,6 +309,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   changeDate(resend_request?: boolean) {
     if (!this.dateEditOpen) {
+      this.dateEditOpen = true;
       let config;
       this.dialogRef.close();
       config = {
@@ -332,11 +332,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       };
       const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
-      dateDialog.afterOpen().subscribe( () => {
-        this.dateEditOpen = true;
-      });
-
       dateDialog.afterClosed().pipe(
+        tap(() => this.dateEditOpen = false),
         filter((state) => resend_request && state),
         switchMap((state) => {
           const body: any = {
@@ -358,6 +355,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   editMessage() {
     if (!this.messageEditOpen) {
+      this.messageEditOpen = true;
       const infoDialog = this.dialog.open(CreateHallpassFormsComponent, {
         width: '750px',
         maxWidth: '100vw',
@@ -370,10 +368,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               'originalFromLocation': this.request.origin}
       });
 
-      infoDialog.afterOpen().subscribe( () => {
-        this.messageEditOpen = true;
-      });
-
       infoDialog.afterClosed().subscribe(data =>{
         this.request.attachment_message = data['message']===''?this.request.attachment_message:data['message'];
         this.messageEditOpen = false;
@@ -382,9 +376,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
 
     if(!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
@@ -411,16 +405,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         return false;
       }
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
       UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {'header': this.header, 'options': this.options, 'trigger': target}
-      });
-
-      cancelDialog.afterOpen().subscribe(() => {
-        this.cancelOpen = true;
       });
 
       cancelDialog.afterClosed()
@@ -430,7 +421,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         .subscribe(action => {
           this.chooseAction(action);
         });
-    }
+    // }
 
     }
   }
@@ -446,6 +437,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       if (action.indexOf('Message') > -1) {
 
       } else {
+        this.messageEditOpen = true;
         let config;
           config = {
             panelClass: 'form-dialog-container',
@@ -464,10 +456,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             }
           };
         const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
-
-        messageDialog.afterOpen().subscribe(() => {
-          this.messageEditOpen = true;
-        });
 
         messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
           // denyMessage = data['message'];

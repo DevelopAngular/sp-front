@@ -1,6 +1,6 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RELEASE_NAME} from '../../../build-info';
 import {LocalStorage} from '@ngx-pwa/local-storage';

@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {fromEvent, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup} from '@angular/forms';
@@ -12,7 +12,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 export class EditAvatarComponent implements OnInit, OnDestroy {
 
   @ViewChild('dropArea') dropArea: ElementRef;
-  @ViewChild('file') set fileRef(fileRef: ElementRef) {
+  @ViewChild('file', { static: true }) set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
       this.selectedFile = fileRef;
       fromEvent(this.selectedFile.nativeElement , 'change')

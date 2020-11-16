@@ -1,7 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { XlsxGeneratorService } from '../../xlsx-generator.service';
-import { omit } from 'lodash';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
+import {XlsxGeneratorService} from '../../xlsx-generator.service';
+import {omit} from 'lodash';
 
 @Component({
   selector: 'app-generated-table-dialog',

@@ -1,15 +1,15 @@
-import {Component, OnInit, Input, ElementRef, Renderer2} from '@angular/core';
-import { Util } from '../../Util';
-import { Request } from '../models/Request';
-import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { MatDialog } from '@angular/material';
+import {Component, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
+import {Util} from '../../Util';
+import {Request} from '../models/Request';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {MatDialog} from '@angular/material/dialog';
 import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {takeUntil, tap} from 'rxjs/operators';
-import { uniqBy } from 'lodash';
+import {uniqBy} from 'lodash';
 import {DeviceDetection} from '../device-detection.helper';
-import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
@@ -99,9 +99,9 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   cancelRequest(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
 
     if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
@@ -113,16 +113,13 @@ export class InlineRequestCardComponent implements OnInit {
       this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
       this.header = 'Are you sure you want to delete this pass request you sent?';
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
+        this.cancelOpen = true;
         UNANIMATED_CONTAINER.next(true);
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: {'header': this.header, 'options': this.options, 'trigger': target}
-        });
-
-        cancelDialog.afterOpen().subscribe( () => {
-          this.cancelOpen = true;
         });
 
         cancelDialog.afterClosed()
@@ -133,7 +130,7 @@ export class InlineRequestCardComponent implements OnInit {
             this.cancelOpen = false;
             this.chooseAction(action);
           });
-      }
+      // }
 
     }
   }

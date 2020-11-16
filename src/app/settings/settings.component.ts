@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {User} from '../models/User';
@@ -76,6 +76,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     return !!this.kioskMode.currentRoom$.value;
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   get showNotificationBadge() {
     return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
   }
@@ -100,7 +104,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.sideNavService.sideNavData.pipe(takeUntil(this.destroy$)).subscribe( sideNavData => {
       if (sideNavData) {
         this.targetElementRef = sideNavData['trigger'];
-        this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+        // this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+        this.isSwitch = false;
       }
     });
 

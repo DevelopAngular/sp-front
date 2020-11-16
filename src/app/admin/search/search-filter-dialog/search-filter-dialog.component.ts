@@ -1,9 +1,9 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { User } from '../../../models/User';
-import { Location } from '../../../models/Location';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {User} from '../../../models/User';
+import {Location} from '../../../models/Location';
 import {fromEvent} from 'rxjs';
-import { cloneDeep, isEqual } from 'lodash';
+import {cloneDeep, isEqual} from 'lodash';
 
 @Component({
   selector: 'app-search-filter-dialog',
@@ -12,7 +12,7 @@ import { cloneDeep, isEqual } from 'lodash';
 })
 export class SearchFilterDialogComponent implements OnInit {
 
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+  @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {

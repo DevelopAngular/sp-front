@@ -1,19 +1,18 @@
-import { Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter } from '@angular/core';
-import { Invitation } from '../models/Invitation';
-import { User } from '../models/User';
-import { Location} from '../models/Location';
-import { Util } from '../../Util';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
-import { Inject } from '@angular/core';
-import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { getInnerPassName } from '../pass-tile/pass-display-util';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnInit, Output} from '@angular/core';
+import {Invitation} from '../models/Invitation';
+import {User} from '../models/User';
+import {Location} from '../models/Location';
+import {Util} from '../../Util';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {getInnerPassName} from '../pass-tile/pass-display-util';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {filter, switchMap, tap} from 'rxjs/operators';
-import { CreateFormService } from '../create-hallpass-forms/create-form.service';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { RequestsService } from '../services/requests.service';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {RequestsService} from '../services/requests.service';
 import {BehaviorSubject} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
@@ -72,6 +71,10 @@ export class InvitationCardComponent implements OnInit {
       private http: HttpService,
       private navbarData: NavbarDataService
   ) {}
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
 
   get studentName() {
     return getInnerPassName(this.invitation);
@@ -147,6 +150,7 @@ export class InvitationCardComponent implements OnInit {
 
   changeLocation(){
     if(!this.locationChangeOpen){
+      this.locationChangeOpen = true;
       const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
         panelClass: 'form-dialog-container',
         maxWidth: '100vw',
@@ -160,15 +164,8 @@ export class InvitationCardComponent implements OnInit {
           'originalFromLocation': this.invitation['default_origin']}
       });
 
-      locationDialog.afterOpen().subscribe(() => {
-        this.locationChangeOpen = true;
-      });
-
-      locationDialog.beforeClose().subscribe(() => {
-        this.locationChangeOpen = false;
-      });
-
       locationDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
+        this.locationChangeOpen = false;
         this.setLocation((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.invitation['default_origin']);
       });
     }
@@ -214,6 +211,7 @@ export class InvitationCardComponent implements OnInit {
 
     changeDate(resend_request?: boolean) {
       if (!this.dateEditOpen) {
+        this.dateEditOpen = true;
             this.dialogRef.close();
             const conf = {
                 panelClass: 'form-dialog-container',
@@ -236,11 +234,8 @@ export class InvitationCardComponent implements OnInit {
 
         const dateDialog = this.dialog.open(CreateHallpassFormsComponent, conf);
 
-        dateDialog.afterOpen().subscribe( () => {
-            this.dateEditOpen = true;
-        });
-
         dateDialog.afterClosed().pipe(
+          tap(() => this.dateEditOpen = false),
           filter((res) => res && res.data.date && resend_request && this.forStaff),
             switchMap((state) => {
               const body = {
@@ -258,9 +253,9 @@ export class InvitationCardComponent implements OnInit {
     }
 
   denyInvitation(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
     if(!this.denyOpen){
       const target = new ElementRef(evt.currentTarget);
       this.options = [];
@@ -288,16 +283,13 @@ export class InvitationCardComponent implements OnInit {
         this.header = 'Are you sure you want to delete this pass request you sent?';
       }
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
         UNANIMATED_CONTAINER.next(true);
+        this.denyOpen = true;
         const consentDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: {'header': this.header, 'options': this.options, 'trigger': target}
-        });
-
-        consentDialog.afterOpen().subscribe( () => {
-          this.denyOpen = true;
         });
 
         consentDialog.afterClosed()
@@ -307,7 +299,7 @@ export class InvitationCardComponent implements OnInit {
           .subscribe(action => {
           this.chooseAction(action);
         });
-      }
+      // }
 
     }
   }

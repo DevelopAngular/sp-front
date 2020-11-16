@@ -9,40 +9,34 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import {
-  BehaviorSubject,
-  combineLatest,
-  ConnectableObservable,
-  empty, interval,
-  merge,
-  Observable,
-  of,
-  ReplaySubject, Subject,
-} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {BehaviorSubject, combineLatest, ConnectableObservable, empty, interval, merge, Observable, of, ReplaySubject, Subject,} from 'rxjs';
 import {
   filter,
-  map, pluck, publishBehavior,
+  map,
+  pluck,
+  publishBehavior,
   publishReplay,
-  refCount, shareReplay,
+  refCount,
   startWith,
-  switchMap, take, takeUntil,
+  switchMap,
+  takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
-import { CreateFormService } from '../create-hallpass-forms/create-form.service';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { mergeObject } from '../live-data/helpers';
-import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
-import { exceptPasses, PassLike } from '../models';
-import { HallPass } from '../models/HallPass';
-import { testInvitations, testPasses, testRequests } from '../models/mock_data';
-import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { NotificationService } from '../services/notification-service';
-import { TimeService } from '../services/time.service';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {mergeObject} from '../live-data/helpers';
+import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
+import {exceptPasses, PassLike} from '../models';
+import {HallPass} from '../models/HallPass';
+import {testInvitations, testPasses, testRequests} from '../models/mock_data';
+import {BasicPassLikeProvider, PassLikeProvider, WrappedProvider} from '../models/providers';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {NotificationService} from '../services/notification-service';
+import {TimeService} from '../services/time.service';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NavbarDataService} from '../main/navbar-data.service';
@@ -57,6 +51,7 @@ import {NotificationButtonService} from '../services/notification-button.service
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
+import {SideNavService} from '../services/side-nav.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -238,6 +233,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+
   testPasses: PassLikeProvider;
   testRequests: PassLikeProvider;
   testInvitations: PassLikeProvider;
@@ -269,12 +265,25 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   user: User;
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
+  currentScrollPosition: number;
 
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
 
   public schoolsLength$: Observable<number>;
+
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    if (this.screenService.isDeviceLargeExtra) {
+      this.cursor = 'default';
+    }
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  scroll(event) {
+    this.currentScrollPosition = event.currentTarget.scrollTop;
+  }
 
   showInboxAnimated() {
     return this.dataService.inboxState;
@@ -307,7 +316,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private  notificationButtonService: NotificationButtonService,
     private httpService: HttpService,
-    private passesService: HallPassesService
+    private passesService: HallPassesService,
+    private sideNavService: SideNavService
     ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -378,6 +388,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     )
       .subscribe(passLike => {
         this._zone.run(() => {
+          if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
+            this.scrollableArea.scrollTo({top: 0});
+          }
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
@@ -496,10 +509,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.passesService.isOpenPassModal$.next(true);
   }
 
-  @HostListener('window:resize')
-  checkDeviceWidth() {
-    if (this.screenService.isDeviceLargeExtra) {
-      this.cursor = 'default';
+  openSettings(value) {
+    if (value) {
+      // this.sideNavService.toggle$.next(true);
+      this.shortcutsService.onPressKeyEvent$.next({event: null, key: [',']});
     }
   }
 

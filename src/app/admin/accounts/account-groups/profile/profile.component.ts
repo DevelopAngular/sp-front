@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {DarkThemeSwitch} from '../../../../dark-theme-switch';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {ProfileCardDialogComponent} from '../../../profile-card-dialog/profile-card-dialog.component';
 import {GSuiteSelector, OrgUnit} from '../../../../sp-search/sp-search.component';
-import { cloneDeep } from 'lodash';
+import {cloneDeep} from 'lodash';
 import {ReplaySubject} from 'rxjs';
 import {filter} from 'rxjs/operators';
 

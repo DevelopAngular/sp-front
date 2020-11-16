@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {interval, Observable, Subject} from 'rxjs';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
-import { HttpService } from '../../services/http-service';
+import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
 import {ScrollPositionService} from '../../scroll-position.service';
 import {Onboard} from '../../models/Onboard';

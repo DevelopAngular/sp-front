@@ -6,12 +6,13 @@ import {AuthContext, HttpService} from '../services/http-service';
 import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {HttpClient} from '@angular/common/http';
 import {FormControl, FormGroup} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {QueryParams} from '../live-data/helpers';
 import {StorageService} from '../services/storage.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 declare const window;
 
@@ -110,6 +111,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     });
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   ngOnInit(): void {
 
     this.route.queryParams
@@ -178,10 +183,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.loginData.authType = auth_types[auth_types.length - 1];
       const auth = auth_types[auth_types.length - 1];
       if (auth.indexOf('google') !== -1) {
-        this.loginData.demoLoginEnabled = false;
-        this.isStandardLogin = false;
+        this.loginData.demoLoginEnabled = true;
+        this.isStandardLogin = true;
         this.isGG4L = false;
-        this.isGoogleLogin = true;
+        this.isGoogleLogin = false;
       } else if (auth.indexOf('gg4l') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;

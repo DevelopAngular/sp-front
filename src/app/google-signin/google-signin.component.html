@@ -10,7 +10,7 @@
         [autocomplete]="'username'"
         [controlName]="loginForm.get('username')"
         [input_label]="'Username or email'"
-        [input_type]="'text'"
+        [input_type]="isMobile ? 'email' : 'text'"
         [width]="'250px'"
         (onUpdate)="updateDemoUsername($event)"
       ></app-input>

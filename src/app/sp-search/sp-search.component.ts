@@ -12,6 +12,7 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
+import {DeviceDetection} from '../device-detection.helper';
 
 declare const window;
 
@@ -170,6 +171,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     public screenService: ScreenService,
     private locationService: LocationsService
   ) {}
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
 
   private getEmitedValue() {
     if (this.emitSingleProfile)  {

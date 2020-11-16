@@ -32,10 +32,13 @@
         <div data-grammarly-issue-container [style.width]="'100%'" [style.padding]="'0px 25px'" [style.width.%]="85">
           <textarea
             #messageBox
+            (keyup.enter)="sendRequest()"
             class="message-box"
-            pInputTextarea
             [maxlength]="160"
-            autoResize="autoResize"
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="6"
+            cdkAutosizeMaxRows="11"
             [placeholder]="'Attach a message'"
             [formControl]="message"
             [style.width]="messageBoxViewRestriction.textAreaWidth"

@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { CreateFormService } from '../../../../create-hallpass-forms/create-form.service';
-import { GSuiteOrgs } from '../../../../models/GSuiteOrgs';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
+import {GSuiteOrgs} from '../../../../models/GSuiteOrgs';
 import {GSuiteSelector} from '../../../../sp-search/sp-search.component';
 import {cloneDeep, isEqual} from 'lodash';
 import {AdminService} from '../../../../services/admin.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {GSuiteSettingsComponent} from '../g-suite-settings.component';
 
 @Component({

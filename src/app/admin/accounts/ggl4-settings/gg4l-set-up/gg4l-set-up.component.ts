@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {GG4LSync} from '../../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../../models/SchoolSyncInfo';
 import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
 import {AdminService} from '../../../../services/admin.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Ggl4SettingsComponent} from '../ggl4-settings.component';
 
 declare const window;

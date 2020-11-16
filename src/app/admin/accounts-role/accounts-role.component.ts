@@ -1,5 +1,5 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
