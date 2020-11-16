@@ -54,6 +54,11 @@ export class RestrictedMessageComponent implements OnInit {
     private screenService: ScreenService
   ) { }
 
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
   get headerGradient() {
     const colors = this.gradient;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
@@ -186,9 +191,5 @@ export class RestrictedMessageComponent implements OnInit {
     }
 
     return new MessageBoxViewRestrictionLg();
-  }
-
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
   }
 }
