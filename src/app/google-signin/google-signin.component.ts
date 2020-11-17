@@ -183,10 +183,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.loginData.authType = auth_types[auth_types.length - 1];
       const auth = auth_types[auth_types.length - 1];
       if (auth.indexOf('google') !== -1) {
-        this.loginData.demoLoginEnabled = true;
-        this.isStandardLogin = true;
+        this.loginData.demoLoginEnabled = false;
+        this.isStandardLogin = false;
         this.isGG4L = false;
-        this.isGoogleLogin = false;
+        this.isGoogleLogin = true;
       } else if (auth.indexOf('gg4l') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
