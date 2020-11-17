@@ -8,7 +8,6 @@
      (mouseleave)="tooltipDelay(false)"
      [style.color]="textColor"
      [style.cursor]="cursor"
-     tabindex="0"
 >
   <div *ngIf="type==='location'" class="info" customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip">
     <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">

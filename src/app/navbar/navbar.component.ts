@@ -354,11 +354,15 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this.settingsAction(action);
       });
 
+    this.sideNavService.openSettingsEvent$.pipe(filter(r => !!r), takeUntil(this.destroyer$))
+      .subscribe(res => this.showOptions(this.settingsButton));
+
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
 
-    this.sideNavService.fadeClick.subscribe(click =>  this.fadeClick = click);
+    this.sideNavService.fadeClick.pipe(takeUntil(this.destroyer$)).subscribe(click =>  this.fadeClick = click);
 
     this.countSchools$ = this.http.schoolsCollection$.pipe(
+      takeUntil(this.destroyer$),
       map(schools => {
         const filteredSchools = _filter(schools, (school => school.my_roles.length > 0));
         return filteredSchools.length;

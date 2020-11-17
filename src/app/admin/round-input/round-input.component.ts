@@ -5,6 +5,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {debounceTime, distinctUntilChanged, takeUntil, tap} from 'rxjs/operators';
+import {DeviceDetection} from '../../device-detection.helper';
 
 //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
 
@@ -81,6 +82,10 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       return './assets/Search Eye (Blue-Gray).svg';
     }
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   get labelColor() {

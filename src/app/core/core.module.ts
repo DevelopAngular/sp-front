@@ -15,6 +15,7 @@ import {CheckUserInputDirective} from './directives/check-user-input.directive';
 import {SupportOptionsComponent} from '../support-options/support-options.component';
 import {ToolTipRendererDirective} from './directives/tool-tip-renderer.directive';
 import {PassClickDirective} from './directives/pass-click.directive';
+import {SwipeEventDirective} from './directives/swipe-event.directive';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {PassClickDirective} from './directives/pass-click.directive';
     CheckUserInputDirective,
     SupportOptionsComponent,
     ToolTipRendererDirective,
-    PassClickDirective
+    PassClickDirective,
+    SwipeEventDirective
   ],
   imports: [
     CommonModule,
@@ -50,7 +52,8 @@ import {PassClickDirective} from './directives/pass-click.directive';
         MoovingTilesComponent,
         NoAccountComponent,
         ToolTipRendererDirective,
-        CheckUserInputDirective
+        CheckUserInputDirective,
+        SwipeEventDirective
     ],
   entryComponents: [
     ErrorToastComponent,
