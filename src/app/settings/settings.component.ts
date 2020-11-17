@@ -14,6 +14,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
 import {takeUntil} from 'rxjs/operators';
 import * as moment from 'moment';
+import {NotificationService} from '../services/notification-service';
 
 export interface Setting {
   hidden: boolean;
@@ -66,7 +67,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
       public kioskMode: KioskModeService,
       private router: Router,
       private pwaStorage: LocalStorage,
-      private userService: UserService
+      private userService: UserService,
+      private notificationService: NotificationService
 
   ) {
     // this.initializeSettings();
@@ -243,7 +245,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': this.isKioskMode || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid() || DeviceDetection.isIOSTablet(),
+      'hidden': this.isKioskMode || !NotificationService.hasPermission,
       'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',

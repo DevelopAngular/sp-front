@@ -50,6 +50,7 @@
       [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' "
       #scrollableArea
       (scroll)="scroll($event)"
+      (swiperight)="openSettings(true)"
     >
       <div class="main-page-left">
         <div class="current-pass" [style.margin-bottom]="'15px'">

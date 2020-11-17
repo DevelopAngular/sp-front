@@ -511,8 +511,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSettings(value) {
     if (value) {
-      // this.sideNavService.toggle$.next(true);
-      this.shortcutsService.onPressKeyEvent$.next({event: null, key: [',']});
+      this.sideNavService.openSettingsEvent$.next(true);
     }
   }
 
