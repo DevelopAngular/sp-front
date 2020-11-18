@@ -1,6 +1,6 @@
-import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
-import { School } from '../../../models/School';
-import { SchoolsState } from '../states';
+import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
+import {School} from '../../../models/School';
+import {SchoolsState} from '../states';
 import {Action, createReducer, on} from '@ngrx/store';
 import * as schoolsActions from '../actions';
 
@@ -13,7 +13,8 @@ export const schoolsInitialState: SchoolsState = {
   currentSchoolId: null,
   gg4lInfo: null,
   syncInfo: null,
-  gSuiteInfo: null
+  gSuiteInfo: null,
+  cleverInfo: null
 };
 
 const reducer = createReducer(
@@ -58,6 +59,9 @@ const reducer = createReducer(
   }),
   on(schoolsActions.updateGSuiteInfoSelectorsSuccess, (state, {selectors}) => {
     return {...state, gSuiteInfo: {...state.gSuiteInfo, selectors}};
+  }),
+  on(schoolsActions.getCleverInfoSuccess, (state, {cleverInfo}) => {
+    return {...state, loaded: true, loading: false, cleverInfo};
   })
 );
 

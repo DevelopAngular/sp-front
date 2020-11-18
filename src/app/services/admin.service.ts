@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
-import { HttpService } from './http-service';
-import { School } from '../models/School';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {HttpService} from './http-service';
+import {School} from '../models/School';
+import {Observable, of, Subject} from 'rxjs';
 import {GSuiteOrgs} from '../models/GSuiteOrgs';
 import {switchMap} from 'rxjs/operators';
 import {AppState} from '../ngrx/app-state/app-state';
@@ -22,18 +22,21 @@ import {getDashboardDataResult} from '../ngrx/dashboard/states/dashboard-getters
 import {ColorProfile} from '../models/ColorProfile';
 import {getColorProfilesCollection, getLoadedColors, getLoadingColors} from '../ngrx/color-profiles/states/colors-getters.state';
 import {getColorProfiles} from '../ngrx/color-profiles/actions';
-import {
-  getLoadedProcess,
-  getLoadingProcess,
-  getProcessData,
-  getProcessEntities
-} from '../ngrx/onboard-process/states/process-getters.state';
+import {getLoadedProcess, getLoadingProcess, getProcessEntities} from '../ngrx/onboard-process/states/process-getters.state';
 import {getOnboardProcess, updateOnboardProcess} from '../ngrx/onboard-process/actions';
-import {getGSuiteSyncInfo, getSchoolsGG4LInfo, getSchoolSyncInfo, updateSchool, updateSchoolSyncInfo} from '../ngrx/schools/actions';
-import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolSyncInfoData} from '../ngrx/schools/states';
+import {
+  getCleverInfo,
+  getGSuiteSyncInfo,
+  getSchoolsGG4LInfo,
+  getSchoolSyncInfo,
+  updateSchool,
+  updateSchoolSyncInfo
+} from '../ngrx/schools/actions';
+import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolCleverInfo, getSchoolSyncInfoData} from '../ngrx/schools/states';
 import {GG4LSync} from '../models/GG4LSync';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
+import {CleverInfo} from '../models/CleverInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +65,7 @@ export class AdminService {
   gg4lInfo$: Observable<GG4LSync> = this.store.select(getGG4LInfoData);
   schoolSyncInfo$: Observable<SchoolSyncInfo> = this.store.select(getSchoolSyncInfoData);
   gSuiteInfoData$: Observable<GSuiteOrgs> = this.store.select(getGSuiteSyncInfoData);
+  cleverInfoData$: Observable<CleverInfo> = this.store.select(getSchoolCleverInfo);
 
   constructor(private http: HttpService,  private store: Store<AppState>) {}
 
@@ -210,5 +214,13 @@ export class AdminService {
   getGSuiteOrgs(): Observable<GSuiteOrgs> {
     return this.http.currentSchool$.pipe(
       switchMap(school => this.http.get(`v1/schools/${school.id}/syncing/gsuite/status`)));
+  }
+
+  getCleverInfoRequest() {
+    this.store.dispatch(getCleverInfo());
+  }
+
+  getCleverInfo() {
+    return this.http.get('v1/schools/{school.id}/syncing/clever/status');
   }
 }
