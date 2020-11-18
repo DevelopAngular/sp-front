@@ -150,8 +150,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         controlName: 'access_admin_dashboard',
         controlLabel: 'Dashboard tab Access',
       };
-      this.profilePermissions['access_hall_monitor'] = {
-        controlName: 'access_hall_monitor',
+      this.profilePermissions['admin_hall_monitor'] = {
+        controlName: 'admin_hall_monitor',
         controlLabel: 'Hall Monitor tab Access',
       };
       this.profilePermissions['access_admin_search'] = {
