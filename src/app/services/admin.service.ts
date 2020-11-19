@@ -4,7 +4,6 @@ import {HttpService} from './http-service';
 import {School} from '../models/School';
 import {Observable, of, Subject} from 'rxjs';
 import {GSuiteOrgs} from '../models/GSuiteOrgs';
-import {switchMap} from 'rxjs/operators';
 import {AppState} from '../ngrx/app-state/app-state';
 import {Store} from '@ngrx/store';
 import {
@@ -201,9 +200,7 @@ export class AdminService {
   }
 
   getGG4LSyncInfo() {
-    return this.http.currentSchool$.pipe(
-      switchMap(school => this.http.get(`v1/schools/${school.id}/syncing/gg4l/status`))
-    );
+    return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/gg4l/status`);
   }
 
   getGSuiteOrgsRequest() {
@@ -212,8 +209,7 @@ export class AdminService {
   }
 
   getGSuiteOrgs(): Observable<GSuiteOrgs> {
-    return this.http.currentSchool$.pipe(
-      switchMap(school => this.http.get(`v1/schools/${school.id}/syncing/gsuite/status`)));
+    return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/gsuite/status`);
   }
 
   getCleverInfoRequest() {
@@ -221,6 +217,6 @@ export class AdminService {
   }
 
   getCleverInfo() {
-    return this.http.get('v1/schools/{school.id}/syncing/clever/status');
+    return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/clever/status`);
   }
 }

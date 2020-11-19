@@ -6,6 +6,8 @@ import {CreateFormService} from '../../../../create-hallpass-forms/create-form.s
 import {AdminService} from '../../../../services/admin.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {Ggl4SettingsComponent} from '../ggl4-settings.component';
+import {CleverInfo} from '../../../../models/CleverInfo';
+import {Util} from '../../../../../Util';
 
 declare const window;
 
@@ -18,6 +20,8 @@ export class Gg4lSetUpComponent implements OnInit {
 
   @Input() gg4lSyncInfo: GG4LSync;
   @Input() schoolSyncInfo: SchoolSyncInfo;
+  @Input() cleverSyncInfo: CleverInfo;
+  @Input() dialogAction: string;
 
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
 
@@ -41,8 +45,16 @@ export class Gg4lSetUpComponent implements OnInit {
     }
   }
 
+  get integrationName() {
+    return this.dialogAction === 'gg4l' ? 'GG4L' : this.dialogAction === 'clever' ? 'Clever' : null;
+  }
+
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+  }
+
+  formatDate(date) {
+    return Util.formatDateTime(new Date(date));
   }
 
   selectProvider(provider) {

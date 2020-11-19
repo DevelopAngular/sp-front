@@ -6,6 +6,7 @@ import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {Observable} from 'rxjs';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {Util} from '../../../../Util';
+import {CleverInfo} from '../../../models/CleverInfo';
 
 @Component({
   selector: 'app-integrations-dialog',
@@ -17,6 +18,7 @@ export class IntegrationsDialogComponent implements OnInit {
   gg4lSyncInfo$: Observable<GG4LSync>;
   schoolSyncInfo$: Observable<SchoolSyncInfo>;
   gSuiteOrgs$: Observable<GSuiteOrgs>;
+  cleverSyncInfo$: Observable<CleverInfo>;
 
   constructor(
     public dialogRef: MatDialogRef<IntegrationsDialogComponent>,
@@ -28,6 +30,7 @@ export class IntegrationsDialogComponent implements OnInit {
     this.gSuiteOrgs$ = this.adminService.gSuiteInfoData$;
     this.gg4lSyncInfo$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
+    this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
   }
 
   formatDate(date) {

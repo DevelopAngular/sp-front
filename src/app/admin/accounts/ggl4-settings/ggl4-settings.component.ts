@@ -6,6 +6,7 @@ import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
 import {NextStep} from '../../../animations';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {CleverInfo} from '../../../models/CleverInfo';
 
 @Component({
   selector: 'app-ggl4-settings',
@@ -17,7 +18,9 @@ export class Ggl4SettingsComponent implements OnInit {
 
   gg4lSyncInfo$: Observable<GG4LSync>;
   schoolSyncInfo$: Observable<SchoolSyncInfo>;
+  cleverSyncInfo$: Observable<CleverInfo>;
   frameMotion$: BehaviorSubject<any>;
+  dialogAction: string;
 
   page: number = 1;
 
@@ -32,9 +35,11 @@ export class Ggl4SettingsComponent implements OnInit {
     if (this.data['status'] === 'approved' || this.data['status'] === 'done') {
       this.page = 2;
     }
+    this.dialogAction = this.data['action'];
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.gg4lSyncInfo$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
+    this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
   }
 
   nextPage() {

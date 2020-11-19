@@ -259,13 +259,13 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   openSettingsDialog(action, status) {
-    if (action === 'gg4l') {
+    if (action === 'gg4l' || action === 'clever') {
       const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
-        data: { status }
+        data: { status, action }
       });
     } else if (action === 'g_suite') {
       const g_suite = this.matDialog.open(GSuiteSettingsComponent, {

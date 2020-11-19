@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <div class="header">
+  <div class="header" *ngIf="dialogAction === 'gg4l'; else cleverHeader">
     <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
     <img class="back-button" *ngIf="schoolSyncInfo.login_provider || !schoolSyncInfo.is_gg4l_enabled" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="close()">
     <div class="back-button" *ngIf="!schoolSyncInfo.login_provider && this.selectedProvider" (click)="close()">Cancel</div>
@@ -22,45 +22,86 @@
       </app-gradient-button>
     </div>
   </div>
+  <ng-template #cleverHeader>
+    <div class="header">
+      <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+      <img class="back-button" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="close()">
+      <div class="ds-dialog-title-white"
+           [style.margin-left]="'12px'"
+           [style.z-index]="10"
+           [attr.data-motion-translate]="(frameMotion$ | async).direction"
+      >Clever Set-up</div>
+    </div>
+  </ng-template>
 
   <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-    <div class="no-connect" *ngIf="!schoolSyncInfo.is_gg4l_enabled">
+    <div class="no-connect" *ngIf="(!schoolSyncInfo.is_gg4l_enabled && dialogAction === 'gg4l') || (!schoolSyncInfo.is_clever_enabled && dialogAction === 'clever')">
       <div class="top-block">
-        <div class="title">Add SmartPass in GG4L</div>
-        <div class="subtitle">You’ll need to be a GG4L admin to add an application.</div>
+        <div class="title">Add SmartPass in {{ integrationName }}</div>
+        <div class="subtitle">You’ll need to be a {{ integrationName }} admin to add an application.</div>
         <div class="button">
           <app-gradient-button
             [gradient]="'#5352E4, #5352E4'"
             [leftIcon]="'./assets/External Link (White).svg'"
-            (buttonClick)="openLink('https://www.smartpass.app/gg4l-open')"
-          >Open GG4L Connect</app-gradient-button>
+            (buttonClick)="openLink(dialogAction === 'gg4l' ? 'https://www.smartpass.app/gg4l-open' : 'https://www.smartpass.app/clever-open')"
+          >Open {{ dialogAction === 'gg4l' ? integrationName + ' Connect' : integrationName }}</app-gradient-button>
         </div>
       </div>
       <div class="center-block">
         <div class="title">Wait for approval from SmartPass</div>
         <div class="subtitle">
-          After you add SmartPass in GG4L, we’ll start processing your activation request immediately. It might take a few hours, but we’ll send you an email once accounts are ready.
+          After you add SmartPass in {{ integrationName }}, we’ll start processing your activation request immediately. It might take a few hours, but we’ll send you an email once accounts are ready.
         </div>
       </div>
     </div>
 
-    <div class="content-enabled" *ngIf="schoolSyncInfo.is_gg4l_enabled">
-      <div class="active-top">
-        <div class="left">
-          <div class="sync-title">Last Sync</div>
-          <div class="sync-subtitle">Dec. 4, 5:34 PM</div>
-          <div style="color: #00B476">Successful</div>
+    <div class="content-enabled" *ngIf="(schoolSyncInfo.is_gg4l_enabled && dialogAction === 'gg4l') || (schoolSyncInfo.is_clever_enabled && dialogAction === 'clever')">
+      <ng-container *ngIf="dialogAction === 'gg4l'; else clever">
+        <div class="active-top">
+          <div class="left">
+            <div class="sync-title">Last Sync</div>
+            <div class="sync-subtitle">{{ formatDate(gg4lSyncInfo.last_successful_sync) }}</div>
+            <div style="color: #00B476">Successful</div>
+          </div>
+          <div class="right">
+            <div class="sync-title">Accounts synced</div>
+            <div class="sync-subtitle">{{ gg4lSyncInfo.num_students }} students</div>
+            <div class="sync-subtitle">{{ gg4lSyncInfo.num_teachers }} teachers</div>
+            <div class="sync-subtitle">{{ gg4lSyncInfo.num_admins }} admins</div>
+          </div>
         </div>
-        <div class="right">
-          <div class="sync-title">Accounts synced</div>
-          <div class="sync-subtitle">{{ gg4lSyncInfo.num_students }} students</div>
-          <div class="sync-subtitle">{{ gg4lSyncInfo.num_teachers }} teachers</div>
-          <div class="sync-subtitle">{{ gg4lSyncInfo.num_admins }} admins</div>
+        <div class="active-top">
+          <div class="left">
+            <div class="sync-title">Next sync</div>
+            <div class="sync-subtitle">{{ formatDate(gg4lSyncInfo.next_sync) }}</div>
+          </div>
         </div>
-      </div>
-      <mat-divider [style.margin-top]="'34px'"></mat-divider>
+      </ng-container>
 
-      <div class="center">
+      <ng-template #clever>
+        <div class="active-top">
+          <div class="left">
+            <div class="sync-title">Last Sync</div>
+            <div class="sync-subtitle">{{ formatDate(cleverSyncInfo.last_successful_sync) }}</div>
+            <div style="color: #00B476">Successful</div>
+          </div>
+          <div class="right">
+            <div class="sync-title">Accounts synced</div>
+            <div class="sync-subtitle">{{ 5 }} students</div>
+            <div class="sync-subtitle">{{ 5 }} teachers</div>
+            <div class="sync-subtitle">{{ 5 }} admins</div>
+          </div>
+        </div>
+        <div class="active-top">
+          <div class="left">
+            <div class="sync-title">Next sync</div>
+            <div class="sync-subtitle">{{ formatDate(cleverSyncInfo.next_sync) }}</div>
+          </div>
+        </div>
+      </ng-template>
+      <mat-divider [style.margin-top]="'34px'" *ngIf="dialogAction === 'gg4l'"></mat-divider>
+
+      <div class="center" *ngIf="dialogAction === 'gg4l'">
         <div class="prov-title">Sign-in authentication (SSO)</div>
         <div class="prov-subtitle">How should users be authenticated when they sign in to SmartPass?</div>
         <div class="buttons" style="width: 228px" [matTooltip]="schoolSyncInfo.is_gg4l_enabled && !!schoolSyncInfo.login_provider ? 'Contact us to change your sign-in provider.' : null"
@@ -79,7 +120,7 @@
       </div>
     </div>
   </div>
-  <div class="footer">
+  <div class="footer" *ngIf="dialogAction === 'gg4l'">
     <mat-divider></mat-divider>
 
     <div class="footer-content">
