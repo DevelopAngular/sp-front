@@ -13,4 +13,6 @@ export interface SchoolsState extends EntityState<School> {
   syncInfo: SchoolSyncInfo;
   gSuiteInfo: GSuiteOrgs;
   cleverInfo: CleverInfo;
+  syncLoading: boolean;
+  syncLoaded: boolean;
 }

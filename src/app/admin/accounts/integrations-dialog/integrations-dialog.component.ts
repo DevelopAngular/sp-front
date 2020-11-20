@@ -19,6 +19,7 @@ export class IntegrationsDialogComponent implements OnInit {
   schoolSyncInfo$: Observable<SchoolSyncInfo>;
   gSuiteOrgs$: Observable<GSuiteOrgs>;
   cleverSyncInfo$: Observable<CleverInfo>;
+  cleverSyncLoading$: Observable<boolean>;
 
   constructor(
     public dialogRef: MatDialogRef<IntegrationsDialogComponent>,
@@ -31,6 +32,7 @@ export class IntegrationsDialogComponent implements OnInit {
     this.gg4lSyncInfo$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
     this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
+    this.cleverSyncLoading$ = this.adminService.cleverSyncLoading$;
   }
 
   formatDate(date) {

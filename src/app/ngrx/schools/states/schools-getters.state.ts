@@ -44,4 +44,9 @@ export const getSchoolCleverInfo = createSelector(
   (state: SchoolsState) => state.cleverInfo
 );
 
+export const getCleverSyncLoading = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.syncLoading
+);
+
 export const getSchoolsLength = schoolAdapter.getSelectors(getSchoolsState).selectTotal;

@@ -28,10 +28,18 @@ import {
   getGSuiteSyncInfo,
   getSchoolsGG4LInfo,
   getSchoolSyncInfo,
+  syncClever,
+  updateCleverInfo,
   updateSchool,
   updateSchoolSyncInfo
 } from '../ngrx/schools/actions';
-import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolCleverInfo, getSchoolSyncInfoData} from '../ngrx/schools/states';
+import {
+  getCleverSyncLoading,
+  getGG4LInfoData,
+  getGSuiteSyncInfoData,
+  getSchoolCleverInfo,
+  getSchoolSyncInfoData
+} from '../ngrx/schools/states';
 import {GG4LSync} from '../models/GG4LSync';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
@@ -65,6 +73,7 @@ export class AdminService {
   schoolSyncInfo$: Observable<SchoolSyncInfo> = this.store.select(getSchoolSyncInfoData);
   gSuiteInfoData$: Observable<GSuiteOrgs> = this.store.select(getGSuiteSyncInfoData);
   cleverInfoData$: Observable<CleverInfo> = this.store.select(getSchoolCleverInfo);
+  cleverSyncLoading$: Observable<boolean> = this.store.select(getCleverSyncLoading);
 
   constructor(private http: HttpService,  private store: Store<AppState>) {}
 
@@ -127,11 +136,6 @@ export class AdminService {
 
   getOnboardProgress() {
     return this.http.get('v1/admin/onboard_progress');
-  }
-
-  syncNow() {
-    const school = this.http.getSchool();
-    return this.http.post(`v1/schools/${school.id}/syncing/manual_sync`);
   }
 
   getSpSyncingRequest() {
@@ -218,5 +222,17 @@ export class AdminService {
 
   getCleverInfo() {
     return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/clever/status`);
+  }
+
+  syncNow() {
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/syncing/clever/manual_sync`);
+  }
+
+  syncLoading() {
+    this.store.dispatch(syncClever());
+  }
+
+  updateCleverInfo(cleverInfo) {
+    this.store.dispatch(updateCleverInfo({cleverInfo}));
   }
 }

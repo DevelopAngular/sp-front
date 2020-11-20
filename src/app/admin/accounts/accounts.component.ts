@@ -24,6 +24,7 @@ import {Onboard} from '../../models/Onboard';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {TableService} from '../sp-data-table/table.service';
 import {CleverInfo} from '../../models/CleverInfo';
+import {PollingService} from '../../services/polling-service';
 
 declare const window;
 
@@ -68,7 +69,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private locationService: LocationsService,
     private toastService: ToastService,
     private xlsxGeneratorService: XlsxGeneratorService,
-    private tableService: TableService
+    private tableService: TableService,
+    private polingService: PollingService
   ) {}
 
   formatDate(date) {
@@ -93,6 +95,17 @@ export class AccountsComponent implements OnInit, OnDestroy {
       })
     );
     // this.router.navigate(['admin/accounts', '_profile_student']);
+
+
+    this.polingService.listen('admin.user_sync.sync_start').pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+      this.adminService.syncLoading();
+    });
+
+    this.polingService.listen('admin.user_sync.sync_end').pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+      this.adminService.updateCleverInfo(res.data);
+    });
 
     this.toastService.toastButtonClick$
       .pipe(

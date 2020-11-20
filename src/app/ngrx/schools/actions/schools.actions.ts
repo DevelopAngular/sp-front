@@ -43,3 +43,8 @@ export const updateGSuiteInfoSelectorsSuccess = createAction(`[${COMPONENT}] Upd
 export const getCleverInfo = createAction(`[${COMPONENT}] Get Clever Info`);
 export const getCleverInfoSuccess = createAction(`[${COMPONENT}] Get Clever Info Success`, props<{cleverInfo: CleverInfo}>());
 export const getCleverInfoFailure = createAction(`[${COMPONENT}] Get Clever Info Failure`, props<{errorMessage: string}>());
+
+export const syncClever = createAction(`[${COMPONENT}] Sync Clever`);
+
+export const updateCleverInfo = createAction(`[${COMPONENT}] Update Clever Info`, props<{cleverInfo: CleverInfo}>());
+

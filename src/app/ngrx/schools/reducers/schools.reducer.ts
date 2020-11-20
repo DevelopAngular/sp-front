@@ -14,7 +14,9 @@ export const schoolsInitialState: SchoolsState = {
   gg4lInfo: null,
   syncInfo: null,
   gSuiteInfo: null,
-  cleverInfo: null
+  cleverInfo: null,
+  syncLoading: false,
+  syncLoaded: false
 };
 
 const reducer = createReducer(
@@ -62,6 +64,10 @@ const reducer = createReducer(
   }),
   on(schoolsActions.getCleverInfoSuccess, (state, {cleverInfo}) => {
     return {...state, loaded: true, loading: false, cleverInfo};
+  }),
+  on(schoolsActions.syncClever, (state) => ({...state, syncLoading: true, syncLoaded: false})),
+  on(schoolsActions.updateCleverInfo, (state, {cleverInfo}) => {
+    return { ...state, syncLoaded: true, syncLoading: false, cleverInfo };
   })
 );
 

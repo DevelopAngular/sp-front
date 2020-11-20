@@ -31,6 +31,9 @@
            [style.z-index]="10"
            [attr.data-motion-translate]="(frameMotion$ | async).direction"
       >Clever Set-up</div>
+      <div class="right-button">
+        <app-icon-button [srcString]="'Dots'" [onDarkShade]="true" [size]="17" (clickEvent)="openConsentMenu($event)"></app-icon-button>
+      </div>
     </div>
   </ng-template>
 
@@ -79,25 +82,38 @@
       </ng-container>
 
       <ng-template #clever>
-        <div class="active-top">
-          <div class="left">
-            <div class="sync-title">Last Sync</div>
-            <div class="sync-subtitle">{{ formatDate(cleverSyncInfo.last_successful_sync) }}</div>
-            <div style="color: #00B476">Successful</div>
+        <ng-container *ngIf="!(syncLoading$ | async)">
+          <div class="active-top">
+            <div class="left">
+              <div class="sync-title">Last Sync</div>
+              <div class="sync-subtitle">{{ formatDate(cleverSyncInfo.last_successful_sync) }}</div>
+              <div style="color: #00B476">Successful</div>
+            </div>
+            <div class="right">
+              <div class="sync-title">Accounts synced</div>
+              <div class="sync-subtitle">{{ cleverSyncInfo.num_students }} students</div>
+              <div class="sync-subtitle">{{ cleverSyncInfo.num_teachers }} teachers</div>
+              <div class="sync-subtitle">{{ cleverSyncInfo.num_admins }} admins</div>
+            </div>
           </div>
-          <div class="right">
-            <div class="sync-title">Accounts synced</div>
-            <div class="sync-subtitle">{{ 5 }} students</div>
-            <div class="sync-subtitle">{{ 5 }} teachers</div>
-            <div class="sync-subtitle">{{ 5 }} admins</div>
+          <div class="active-top">
+            <div class="left">
+              <div class="sync-title">Next sync</div>
+              <div class="sync-subtitle">{{ formatDate(cleverSyncInfo.next_sync) }}</div>
+              <div style="margin-top: 15px">
+                <app-gradient-button [gradient]="'#4274F6, #4274F6'" (buttonClick)="syncing()">Sync now</app-gradient-button>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="active-top">
-          <div class="left">
-            <div class="sync-title">Next sync</div>
-            <div class="sync-subtitle">{{ formatDate(cleverSyncInfo.next_sync) }}</div>
+        </ng-container>
+        <ng-container *ngIf="syncLoading$ | async">
+          <div class="syncing-container">
+            <div class="syncing-spin-wrapper">
+              <mat-spinner [style.color]="'#4274F6'" [diameter]="50"></mat-spinner>
+              <div class="syncing-title">Sync in Process...</div>
+            </div>
           </div>
-        </div>
+        </ng-container>
       </ng-template>
       <mat-divider [style.margin-top]="'34px'" *ngIf="dialogAction === 'gg4l'"></mat-divider>
 
@@ -120,7 +136,7 @@
       </div>
     </div>
   </div>
-  <div class="footer" *ngIf="dialogAction === 'gg4l'">
+  <div class="footer">
     <mat-divider></mat-divider>
 
     <div class="footer-content">
