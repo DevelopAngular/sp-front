@@ -3,7 +3,7 @@ import {Injectable, NgZone} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {BehaviorSubject, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
-import {catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, switchMap, tap} from 'rxjs/operators';
+import {catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
@@ -120,6 +120,7 @@ export interface LoginResponse {
 export interface LoginChoice {
   server: LoginServer;
   gg4l_token?: string;
+  token?: any;
 }
 
 export interface AuthContext {
@@ -454,6 +455,43 @@ export class HttpService {
       config.append('client_id', server.client_id);
       config.append('provider', 'gg4l-sso');
       config.append('token', response.gg4l_token || '');
+
+      return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
+        map((data: any) => {
+          // don't use TimeService for auth because auth is required for time service
+          // to be useful
+          data['expires'] = new Date(new Date() + data['expires_in']);
+
+          ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+          const auth = data as ServerAuth;
+
+          return {auth: auth, server: server, gg4l_token: response.gg4l_token} as AuthContext;
+        }));
+
+    }));
+  }
+
+  loginClever(code: string): Observable<AuthContext> {
+
+    const c = new FormData();
+    c.append('code', code);
+    c.append('provider', 'clever');
+    c.append('platform_type', 'web');
+    c.append('redirect_uri', 'https://smartpass.app/app/');
+
+    return this.getLoginServers(c).pipe(mergeMap((response: LoginChoice) => {
+      debugger;
+      const server = response.server;
+      if (server === null) {
+        return throwError(new LoginServerError('No login server!'));
+      }
+
+      const config = new FormData();
+
+      config.append('client_id', server.client_id);
+      config.append('provider', 'clever');
+      config.append('token', response.token.access_token);
 
       return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
         map((data: any) => {

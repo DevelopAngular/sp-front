@@ -39,6 +39,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isGoogleLogin: boolean;
   public isStandardLogin: boolean;
   public isGG4L: boolean;
+  public isClever: boolean;
 
   public inputFocusNumber: number = 1;
   public forceFocus$ = new Subject();
@@ -86,27 +87,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.passwordError = !!message;
       this.showSpinner = false;
     });
-    // this.httpService.errorToast$.subscribe((v: any) => {
-    //   this.showSpinner = !!v;
-    //   if (!v) {
-    //     this.loginForm.get('password').setValue('');
-    //   }
-    //   this.error$.next(v.message);
-    // });
     this.loginService.showLoginError$.subscribe((show: boolean) => {
       if (show) {
         this.error$.next('Incorrect password. Try again or contact your school admin to reset it.');
         this.passwordError = true;
         this.showSpinner = false;
-        // debugger;
-        // const errMessage = this.loggedWith === 1
-        //   ? 'G Suite authentication failed. Please check your password or contact your school admin.'
-        //   : 'Standard sign-in authentication failed. Please check your password or contact your school admin.';
-        //
-        // this.httpService.errorToast$.next({
-        //   header: 'Oops! Sign in error.',
-        //   message: errMessage
-        // });
       }
     });
   }
@@ -120,7 +105,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.route.queryParams
       .pipe(
         filter((qp: QueryParams) => !!qp.code),
-        switchMap(({code}) => this.loginSSO(code as string))
+        switchMap(({code}) => {
+          return this.loginSSO(code as string);
+        })
       )
       .subscribe((auth: AuthContext) => {
         this.router.navigate(['']);
@@ -187,10 +174,18 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.isStandardLogin = true;
         this.isGG4L = false;
         this.isGoogleLogin = false;
+        this.isClever = false;
+      } else if (auth.indexOf('clever') !== -1) {
+        this.loginData.demoLoginEnabled = false;
+        this.isStandardLogin = false;
+        this.isGG4L = false;
+        this.isGoogleLogin = false;
+        this.isClever = true;
       } else if (auth.indexOf('gg4l') !== -1) {
         this.loginData.demoLoginEnabled = false;
         this.isStandardLogin = false;
         this.isGoogleLogin = false;
+        this.isClever = false;
         this.isGG4L = true;
       } else
         if (auth.indexOf('password') !== -1) {
@@ -257,6 +252,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     } else if (this.isGoogleLogin) {
       this.storage.setItem('authType', this.loginData.authType);
       this.initLogin();
+    } else if (this.isClever) {
+      this.storage.setItem('authType', this.loginData.authType);
+      window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-testing.lavanote.com%2Fapp%2F&client_id=d8b866c26cd9957a4834';
     } else if (this.isGG4L) {
       this.storage.setItem('authType', this.loginData.authType);
       if (this.storage.getItem('gg4l_invalidate')) {
