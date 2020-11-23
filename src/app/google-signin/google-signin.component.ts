@@ -106,7 +106,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       .pipe(
         filter((qp: QueryParams) => !!qp.code),
         switchMap(({code}) => {
-          return this.loginSSO(code as string);
+          if (this.storage.getItem('authType') === 'clever') {
+            return this.loginClever(code as string);
+          } else {
+            return this.loginSSO(code as string);
+          }
         })
       )
       .subscribe((auth: AuthContext) => {
@@ -221,6 +225,17 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       })
     );
   }
+
+  loginClever(code: string) {
+    return this.httpService.loginClever(code).pipe(
+      tap((auth: AuthContext) => {
+        console.log('LoginCleverTest ==>>', auth);
+        window.waitForAppLoaded(true);
+        // this.loginService.updateAuth(auth);
+      })
+    );
+  }
+
   updateDemoUsername(event) {
     this.showSpinner = false;
     if (!event) {
@@ -254,7 +269,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.initLogin();
     } else if (this.isClever) {
       this.storage.setItem('authType', this.loginData.authType);
-      window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-testing.lavanote.com%2Fapp%2F&client_id=d8b866c26cd9957a4834';
+      window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-feature.lavanote.com%2Fapp%2F&client_id=d8b866c26cd9957a4834';
     } else if (this.isGG4L) {
       this.storage.setItem('authType', this.loginData.authType);
       if (this.storage.getItem('gg4l_invalidate')) {

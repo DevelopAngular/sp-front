@@ -28,6 +28,10 @@ export interface GG4LResponse {
   code: string;
 }
 
+export interface CleverLogin {
+  type: 'clever';
+}
+
 
 export function isDemoLogin(d: any): d is DemoLogin {
   return (<DemoLogin>d).type === 'demo-login';
@@ -35,6 +39,10 @@ export function isDemoLogin(d: any): d is DemoLogin {
 
 export function isGg4lLogin(d: any): d is Gg4lLogin {
   return (<Gg4lLogin>d).type === 'gg4l-login';
+}
+
+export function isCleverLogin(d: any) {
+  return (<CleverLogin>d).type === 'clever';
 }
 
 type AuthObject = AuthResponse | DemoLogin | Gg4lLogin;
@@ -148,7 +156,7 @@ export class GoogleLoginService {
 
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
-      map(a => {
+      map((a) => {
         return (isDemoLogin(a) || isGg4lLogin(a)) ? a : a.id_token;
       })
     );

@@ -481,7 +481,6 @@ export class HttpService {
     c.append('redirect_uri', 'https://smartpass.app/app/');
 
     return this.getLoginServers(c).pipe(mergeMap((response: LoginChoice) => {
-      debugger;
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
@@ -503,7 +502,7 @@ export class HttpService {
 
           const auth = data as ServerAuth;
 
-          return {auth: auth, server: server, gg4l_token: response.gg4l_token} as AuthContext;
+          return { auth: auth, server: server } as AuthContext;
         }));
 
     }));
