@@ -384,13 +384,18 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(() => !this.isStaff),
         switchMap(({action, data}) => {
           if (action === 'message.alert') {
+            const isFirstPass: boolean = data.type.includes('first_pass');
             this.screenService.customBackdropEvent$.next(true);
             const SPNC = this.dialog.open(StartPassNotificationComponent, {
               id: 'startNotification',
               panelClass: 'main-form-dialog-container',
               backdropClass: 'notification-backdrop',
               disableClose: true,
-              hasBackdrop: false
+              hasBackdrop: false,
+              data: {
+                title: isFirstPass ? 'Quick Reminder' : 'You didn’t end your pass last time…',
+                subtitle: 'When you come back to the room, remember to end your pass!'
+              }
             });
             return SPNC.afterClosed();
           } else if (action === 'hall_pass.end') {

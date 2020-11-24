@@ -8,8 +8,8 @@ import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/
 })
 export class StartPassNotificationComponent implements OnInit {
 
-  title: string = 'Quick Reminder';
-  subtitle: string = 'When you come back to the room, remember to end your pass!';
+  title: string;
+  subtitle: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -17,8 +17,8 @@ export class StartPassNotificationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.title = this.data['title'];
-    // this.subtitle = this.data['subtitle'];
+    this.title = this.data['title'];
+    this.subtitle = this.data['subtitle'];
     this.updateDialogPosition();
   }
 
