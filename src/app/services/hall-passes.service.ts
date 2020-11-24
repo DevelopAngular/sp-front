@@ -30,6 +30,7 @@ import {
   getSortPassesValue
 } from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
+import {PollingService} from './polling-service';
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +59,11 @@ export class HallPassesService {
 
   isOpenPassModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  constructor(private http: HttpService, private store: Store<AppState>) {
+  constructor(
+    private http: HttpService,
+    private store: Store<AppState>,
+    private pollingService: PollingService
+  ) {
     this.pinnables$ = this.store.select(getPinnableCollection);
     this.loadedPinnables$ = this.store.select(getIsLoadedPinnables);
     this.isLoadingPinnables$ = this.store.select(getIsLoadingPinnables);
@@ -186,6 +191,18 @@ export class HallPassesService {
 
   sortHallPasses(queryParams) {
     return this.http.get(constructUrl('v1/hall_passes', queryParams));
+  }
+
+  startPushNotification() {
+    return this.http.post('v1/users/@me/test_push_message', new Date());
+  }
+
+  watchPassStart() {
+    return this.pollingService.listen('message.alert');
+  }
+
+  watchEndPass() {
+    return this.pollingService.listen('hall_pass.end');
   }
 }
 

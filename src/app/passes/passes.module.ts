@@ -7,7 +7,7 @@ import {SharedModule} from '../shared/shared.module';
 import {NotificationTurnOnBtnComponent} from '../notification-turn-on-btn/notification-turn-on-btn.component';
 import {InlineRequestCardComponent} from '../inline-request-card/inline-request-card.component';
 import {InlinePassCardComponent} from '../inline-pass-card/inline-pass-card.component';
-import {SwiperModule} from 'ngx-swiper-wrapper';
+import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 
 @NgModule({
   declarations: [
@@ -15,12 +15,13 @@ import {SwiperModule} from 'ngx-swiper-wrapper';
     NotificationTurnOnBtnComponent,
     InlineRequestCardComponent,
     InlinePassCardComponent,
+    StartPassNotificationComponent,
   ],
-    imports: [
-        CommonModule,
-        PassesRoutingModule,
-        SharedModule,
-        SwiperModule
-    ]
+  imports: [
+    CommonModule,
+    PassesRoutingModule,
+    SharedModule
+  ],
+  entryComponents: [StartPassNotificationComponent]
 })
 export class PassesModule { }
