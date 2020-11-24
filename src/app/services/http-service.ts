@@ -478,7 +478,7 @@ export class HttpService {
     c.append('code', code);
     c.append('provider', 'clever');
     c.append('platform_type', 'web');
-    c.append('redirect_uri', 'https://smartpass.app/app/');
+    c.append('redirect_uri', 'https://smartpass-feature.lavanote.com/app');
 
     return this.getLoginServers(c).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
