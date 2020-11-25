@@ -542,7 +542,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSettings(value) {
-    if (value) {
+    if (value && !this.dialog.openDialogs.length) {
       this.sideNavService.openSettingsEvent$.next(true);
     }
   }
