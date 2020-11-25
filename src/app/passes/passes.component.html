@@ -43,6 +43,8 @@
   <div
       class="passes-wrapper passes-mobile-height"
       [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'"
+      [style.overflow]="'visible'"
+      [style.touch-action]="'auto'"
       *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
       [@PassesSlideTopBottom]
       [style.padding-bottom]="isSmartphone ? '50px' : '0px'"
