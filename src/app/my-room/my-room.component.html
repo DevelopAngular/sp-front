@@ -15,6 +15,7 @@
           [fieldIconPosition]="'left'"
           [closeIcon]="true"
           [selectReset$]="resetValue"
+          (blurEvent)="isSearchBarClicked = false"
           [pending$]="searchPending$"
           (ontextupdate)="onSearch($event)"
         ></app-round-input>
