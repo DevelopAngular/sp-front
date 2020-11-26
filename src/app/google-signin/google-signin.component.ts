@@ -157,7 +157,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.changeUserName$.pipe(
       // filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
       tap(() => this.disabledButton = false),
-      debounceTime(1000),
+      debounceTime(300),
       switchMap(userName => {
         this.showSpinner = true;
         const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
@@ -171,7 +171,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.showSpinner = false;
       if (!auth_types.length) {
         this.showError = true;
-        // this.error$.next('Couldn’t find that username or email');
         this.isGoogleLogin = true;
         this.isStandardLogin = false;
         this.loginData.demoLoginEnabled = false;
