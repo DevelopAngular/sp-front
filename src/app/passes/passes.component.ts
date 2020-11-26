@@ -53,6 +53,7 @@ import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {SideNavService} from '../services/side-nav.service';
 import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
+import {LocationsService} from '../services/locations.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -330,7 +331,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private  notificationButtonService: NotificationButtonService,
     private httpService: HttpService,
     private passesService: HallPassesService,
-    private sideNavService: SideNavService
+    private sideNavService: SideNavService,
+    private locationsService: LocationsService
     ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -504,6 +506,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
     }
+
+    this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
+    this.locationsService.getFavoriteLocationsRequest();
+    this.locationsService.getPassLimitRequest();
   }
 
   ngAfterViewInit(): void {}
