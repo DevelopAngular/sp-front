@@ -114,12 +114,14 @@ export interface LoginResponse {
   token?: {
     auth_token: string,
     refresh_token?: string
+    access_token?: string
   };
 }
 
 export interface LoginChoice {
   server: LoginServer;
   gg4l_token?: string;
+  clever_token?: string;
   token?: any;
 }
 
@@ -311,6 +313,7 @@ export class HttpService {
           const server: LoginServer = servers.servers.find(s => s.name === (preferredEnvironment as any)) || servers.servers[0];
 
           let gg4l_token: string;
+          let clever_token: string;
 
           if (servers.token && servers.token.auth_token) {
             gg4l_token = servers.token.auth_token;
@@ -319,7 +322,11 @@ export class HttpService {
             }
           }
 
-          return { server, gg4l_token };
+          if (this.storage.getItem('authType') === 'clever' && servers.token && servers.token.access_token) {
+            clever_token = servers.token.access_token;
+          }
+
+          return { server, gg4l_token, clever_token };
         } else {
           return null;
         }
@@ -490,8 +497,7 @@ export class HttpService {
 
       config.append('client_id', server.client_id);
       config.append('provider', 'clever');
-      config.append('token', response.token.access_token);
-
+      config.append('token', response.clever_token);
       return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
         map((data: any) => {
           // don't use TimeService for auth because auth is required for time service
