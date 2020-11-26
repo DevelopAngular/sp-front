@@ -8,9 +8,8 @@
           <app-pass-collection
             [forStaff]="isStaff"
             [forFuture]="true"
-            [isActive]="false"
-            [passProvider]="isStaff?receivedRequests:sentRequests"
-            [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+            [passProvider]="isStaff ? receivedRequests : sentRequests"
+            [title]="isStaff ? 'Received' : 'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
             [columns]="2"
           ></app-pass-collection>
         </div>
@@ -18,9 +17,8 @@
           <app-pass-collection
             [forStaff]="isStaff"
             [forFuture]="true"
-            [isActive]="false"
-            [passProvider]="isStaff?sentRequests:receivedRequests"
-            [title]="isStaff?'Sent':'Received'"
+            [passProvider]="isStaff ? sentRequests : receivedRequests"
+            [title]="isStaff ? 'Sent' : 'Received'"
             [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
             [columns]="2"
           ></app-pass-collection>

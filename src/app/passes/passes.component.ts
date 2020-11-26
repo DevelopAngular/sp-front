@@ -287,6 +287,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentScrollPosition = event.currentTarget.scrollTop;
   }
 
+  @HostListener('window:popstate', ['$event'])
+  onPopState() {
+    if (this.isMobile) {
+      this.navbarService.inboxClick$.next(false);
+    }
+  }
+
   showInboxAnimated() {
     return this.dataService.inboxState;
   }
@@ -299,6 +306,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       return of(true);
     }
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   constructor(
