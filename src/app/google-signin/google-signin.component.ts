@@ -230,8 +230,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     return this.httpService.loginClever(code).pipe(
       tap((auth: AuthContext) => {
         console.log('LoginCleverTest ==>>', auth);
-        window.waitForAppLoaded(true);
-        // this.loginService.updateAuth(auth);
+        if (auth.clever_token) {
+          window.waitForAppLoaded(true);
+          this.loginService.updateAuth({clever_token: auth.clever_token, type: 'clever-login'});
+        }
       })
     );
   }

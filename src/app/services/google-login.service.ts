@@ -29,7 +29,8 @@ export interface GG4LResponse {
 }
 
 export interface CleverLogin {
-  type: 'clever';
+  clever_token: string;
+  type: 'clever-login';
 }
 
 
@@ -41,8 +42,8 @@ export function isGg4lLogin(d: any): d is Gg4lLogin {
   return (<Gg4lLogin>d).type === 'gg4l-login';
 }
 
-export function isCleverLogin(d: any) {
-  return (<CleverLogin>d).type === 'clever';
+export function isCleverLogin(d: any): d is CleverLogin {
+  return (<CleverLogin>d).type === 'clever-login';
 }
 
 type AuthObject = AuthResponse | DemoLogin | Gg4lLogin;
@@ -101,7 +102,7 @@ export class GoogleLoginService {
     if (savedAuth) {
       console.log('Loading saved auth:', savedAuth);
       const auth: AuthResponse = JSON.parse(savedAuth);
-      if (auth.id_token !== undefined || isDemoLogin(auth) || isGg4lLogin(auth)) {
+      if (auth.id_token !== undefined || isDemoLogin(auth) || isGg4lLogin(auth) || isCleverLogin(auth)) {
         this.updateAuth(auth);
       } else {
         this.isAuthenticated$.next(false);
@@ -141,13 +142,17 @@ export class GoogleLoginService {
       return false;
     }
 
+    if (isCleverLogin(this.authToken$.value)) {
+      return false;
+    }
+
     const threshold = 5 * 60 * 1000; // 5 minutes
     // don't use TimeService for auth because auth is required for time service
     // to be useful
     return this.authToken$.value.expires_at <= Date.now() + threshold;
   }
 
-  getIdToken(): Observable<DemoLogin | Gg4lLogin | string> {
+  getIdToken(): Observable<DemoLogin | Gg4lLogin | CleverLogin | string> {
     if (this.needNewToken()) {
       this.authToken$.next(null);
       this.isAuthenticated$.next(false);
@@ -157,7 +162,7 @@ export class GoogleLoginService {
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
       map((a) => {
-        return (isDemoLogin(a) || isGg4lLogin(a)) ? a : a.id_token;
+        return (isDemoLogin(a) || isGg4lLogin(a) || isCleverLogin(a)) ? a : a.id_token;
       })
     );
   }
