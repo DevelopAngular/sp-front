@@ -46,7 +46,7 @@ export function isCleverLogin(d: any): d is CleverLogin {
   return (<CleverLogin>d).type === 'clever-login';
 }
 
-type AuthObject = AuthResponse | DemoLogin | Gg4lLogin;
+type AuthObject = AuthResponse | DemoLogin | Gg4lLogin | CleverLogin;
 
 @Injectable()
 export class GoogleLoginService {
