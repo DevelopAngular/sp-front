@@ -232,7 +232,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         console.log('LoginCleverTest ==>>', auth);
         if (auth.clever_token) {
           window.waitForAppLoaded(true);
-          this.loginService.updateAuth(auth);
+          this.loginService.updateAuth({clever_token: auth.auth.access_token, type: 'clever-login'});
         }
       })
     );
