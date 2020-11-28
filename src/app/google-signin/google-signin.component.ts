@@ -214,30 +214,23 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   loginSSO(code: string) {
-    // this.loginService.simpleSignOn(code);
+    window.waitForAppLoaded(true);
     this.loginService.updateAuth({ gg4l_token: code, type: 'gg4l-login'});
     return of (null);
-    // return this.httpService.loginGG4L(code).pipe(
-    //   tap((auth: AuthContext) => {
-    //     if (auth.gg4l_token) {
-    //       window.waitForAppLoaded(true);
-    //       // this.loginService.setAuthenticated();
-    //       // this.httpService.accessTokenSubject.next(auth);
-    //       this.loginService.updateAuth({ gg4l_token: auth.gg4l_token, type: 'gg4l-login'});
-    //     }
-    //   })
-    // );
   }
 
   loginClever(code: string) {
-    return this.httpService.loginClever(code).pipe(
-      tap((auth: AuthContext) => {
-        if (auth.clever_token) {
-          window.waitForAppLoaded(true);
-          this.loginService.updateAuth({clever_token: auth.clever_token, type: 'clever-login'});
-        }
-      })
-    );
+    window.waitForAppLoaded(true);
+    this.loginService.updateAuth({clever_token: code, type: 'clever-login'});
+    // return this.httpService.loginClever(code).pipe(
+    //   tap((auth: AuthContext) => {
+    //     if (auth.clever_token) {
+    //       window.waitForAppLoaded(true);
+    //       this.loginService.updateAuth({clever_token: auth.clever_token, type: 'clever-login'});
+    //     }
+    //   })
+    // );
+    return of(null);
   }
 
   updateDemoUsername(event) {
