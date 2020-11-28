@@ -147,6 +147,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             this.mergeLocations(url, this.withMergedStars, this.category)
               .pipe(takeUntil(this.destroy$))
                 .subscribe(res => {
+                  // debugger;
                     this.choices = res;
                     this.noChoices = !this.choices.length;
                     this.mainContentVisibility = true;

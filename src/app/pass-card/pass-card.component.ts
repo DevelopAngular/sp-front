@@ -300,7 +300,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
         body['self_issued'] = true;
     }
      const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
-      getRequest$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      getRequest$.pipe(
+        // switchMap(() => this.hallPassService.startPushNotification()),
+        takeUntil(this.destroy$)
+      )
+        .subscribe((data) => {
         this.performingAction = true;
         this.dialogRef.close();
       });

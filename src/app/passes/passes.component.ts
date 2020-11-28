@@ -52,6 +52,8 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {SideNavService} from '../services/side-nav.service';
+import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
+import {LocationsService} from '../services/locations.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -270,6 +272,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
+  shownotificationBackdrop: boolean;
 
   public schoolsLength$: Observable<number>;
 
@@ -285,6 +288,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentScrollPosition = event.currentTarget.scrollTop;
   }
 
+  @HostListener('window:popstate', ['$event'])
+  onPopState() {
+    if (this.isMobile) {
+      this.navbarService.inboxClick$.next(false);
+    }
+  }
+
   showInboxAnimated() {
     return this.dataService.inboxState;
   }
@@ -297,6 +307,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       return of(true);
     }
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   constructor(
@@ -317,7 +331,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private  notificationButtonService: NotificationButtonService,
     private httpService: HttpService,
     private passesService: HallPassesService,
-    private sideNavService: SideNavService
+    private sideNavService: SideNavService,
+    private locationsService: LocationsService
     ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -395,6 +410,38 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
       });
+
+    merge(this.passesService.watchPassStart(), this.passesService.watchEndPass())
+      .pipe(
+        filter(() => !this.isStaff),
+        switchMap(({action, data}) => {
+          if (action === 'message.alert') {
+            const isFirstPass: boolean = data.type.includes('first_pass');
+            this.screenService.customBackdropEvent$.next(true);
+            const SPNC = this.dialog.open(StartPassNotificationComponent, {
+              id: 'startNotification',
+              panelClass: 'main-form-dialog-container',
+              backdropClass: 'notification-backdrop',
+              disableClose: true,
+              hasBackdrop: false,
+              data: {
+                title: isFirstPass ? 'Quick Reminder' : 'You didn’t end your pass last time…',
+                subtitle: 'When you come back to the room, remember to end your pass!'
+              }
+            });
+            return SPNC.afterClosed();
+          } else if (action === 'hall_pass.end') {
+            if (this.dialog.openDialogs.length) {
+              this.dialog.getDialogById('startNotification').close();
+              return of(true);
+            }
+          }
+          return of(null);
+        })
+      )
+      .subscribe(res => {
+        this.screenService.customBackdropEvent$.next(false);
+    });
   }
 
   ngOnInit() {
@@ -459,11 +506,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
     }
+
+    this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
+    this.locationsService.getFavoriteLocationsRequest();
+    this.locationsService.getPassLimitRequest();
   }
 
-  ngAfterViewInit(): void {
-
-  }
+  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
     if (this.scrollableArea && this.scrollableAreaName) {
@@ -510,7 +559,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSettings(value) {
-    if (value) {
+    if (value && !this.dialog.openDialogs.length) {
       this.sideNavService.openSettingsEvent$.next(true);
     }
   }

@@ -4,6 +4,7 @@
   flex-direction: column;
   background-color: #FBFEFF;
   overflow: hidden;
+  position: relative;
   .router-outlet {
     height: 100%;
   }

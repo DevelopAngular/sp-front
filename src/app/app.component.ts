@@ -74,6 +74,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSupportButton: boolean;
   private openConnectionDialog: boolean;
   public customToastOpen$: Observable<boolean>;
+  public hasCustomBackdrop$: Observable<boolean>;
 
   private subscriber$ = new Subject();
 
@@ -105,6 +106,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.customToastOpen$ = this.toastService.isOpen$;
+    this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
     this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
       if (event instanceof NavigationEnd) {
         window.history.pushState({}, '');

@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {DeviceDetection} from '../device-detection.helper';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +8,7 @@ import {BehaviorSubject} from 'rxjs';
 export class ScreenService {
 
   enabledLocationTableDnD: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  customBackdropEvent$: Subject<boolean> = new Subject<boolean>();
 
   constructor() { }
 
