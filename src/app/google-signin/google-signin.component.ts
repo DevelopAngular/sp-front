@@ -174,10 +174,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.loginData.authType = auth_types[auth_types.length - 1];
       const auth = auth_types[auth_types.length - 1];
       if (auth.indexOf('google') !== -1) {
-        this.loginData.demoLoginEnabled = true;
-        this.isStandardLogin = true;
+        this.loginData.demoLoginEnabled = false;
+        this.isStandardLogin = false;
         this.isGG4L = false;
-        this.isGoogleLogin = false;
+        this.isGoogleLogin = true;
         this.isClever = false;
       } else if (auth.indexOf('clever') !== -1) {
         this.loginData.demoLoginEnabled = false;
@@ -216,14 +216,18 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   loginSSO(code: string) {
     // this.loginService.simpleSignOn(code);
-    return this.httpService.loginGG4L(code).pipe(
-      tap((auth: AuthContext) => {
-        if (auth.gg4l_token) {
-          window.waitForAppLoaded(true);
-          this.loginService.updateAuth({ gg4l_token: auth.gg4l_token, type: 'gg4l-login'});
-        }
-      })
-    );
+    this.loginService.updateAuth({ gg4l_token: code, type: 'gg4l-login'});
+    return of (null);
+    // return this.httpService.loginGG4L(code).pipe(
+    //   tap((auth: AuthContext) => {
+    //     if (auth.gg4l_token) {
+    //       window.waitForAppLoaded(true);
+    //       // this.loginService.setAuthenticated();
+    //       // this.httpService.accessTokenSubject.next(auth);
+    //       this.loginService.updateAuth({ gg4l_token: auth.gg4l_token, type: 'gg4l-login'});
+    //     }
+    //   })
+    // );
   }
 
   loginClever(code: string) {
