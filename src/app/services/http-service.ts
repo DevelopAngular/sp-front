@@ -326,7 +326,7 @@ export class HttpService {
 
           if (this.storage.getItem('authType') === 'clever' && servers.token && servers.token.access_token) {
             clever_token = servers.token.access_token;
-            this.storage.setItem('google_auth', JSON.stringify({clever_token, type: 'clever-login'}));
+            // this.storage.setItem('google_auth', JSON.stringify({clever_token, type: 'clever-login'}));
           }
 
           return { server, gg4l_token, clever_token };
