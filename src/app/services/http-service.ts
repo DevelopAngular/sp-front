@@ -2,8 +2,8 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable, NgZone} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {BehaviorSubject, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
-import {catchError, delay, distinctUntilChanged, filter, first, flatMap, map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {BehaviorSubject, iif, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
+import {catchError, delay, distinctUntilChanged, filter, first, map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
@@ -329,6 +329,8 @@ export class HttpService {
             // this.storage.setItem('google_auth', JSON.stringify({clever_token, type: 'clever-login'}));
           }
 
+          this.storage.setItem('context', JSON.stringify({ server, gg4l_token, clever_token }));
+
           return { server, gg4l_token, clever_token };
         } else {
           return null;
@@ -342,7 +344,9 @@ export class HttpService {
     c.append('email', username);
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c).pipe(flatMap((response: LoginChoice) => {
+    const context = this.storage.getItem('context');
+
+    return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
@@ -419,7 +423,7 @@ export class HttpService {
     c.append('provider', 'google-auth-token');
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c).pipe(flatMap((response: LoginChoice) => {
+    return this.getLoginServers(c).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
@@ -454,7 +458,9 @@ export class HttpService {
     c.append('provider', 'gg4l-sso');
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c).pipe(flatMap((response: LoginChoice) => {
+    const context = this.storage.getItem('context');
+
+    return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
@@ -490,7 +496,9 @@ export class HttpService {
     c.append('platform_type', 'web');
     c.append('redirect_uri', 'https://smartpass-feature.lavanote.com/app');
 
-    return this.getLoginServers(c).pipe(mergeMap((response: LoginChoice) => {
+    const context = this.storage.getItem('context');
+
+    return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));

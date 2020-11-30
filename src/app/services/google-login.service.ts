@@ -186,6 +186,7 @@ export class GoogleLoginService {
 
     this.storage.removeItem(STORAGE_KEY);
     this.storage.removeItem('refresh_token');
+    this.storage.removeItem('context');
     this.logout();
   }
 
