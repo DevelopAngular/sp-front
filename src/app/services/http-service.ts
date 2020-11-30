@@ -425,7 +425,9 @@ export class HttpService {
     c.append('provider', 'google-auth-token');
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c).pipe(mergeMap((response: LoginChoice) => {
+    const context = this.storage.getItem('context');
+
+    return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
