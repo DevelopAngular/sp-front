@@ -40,6 +40,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isStandardLogin: boolean;
   public isGG4L: boolean;
   public isClever: boolean;
+  public auth_providers: any;
 
   public inputFocusNumber: number = 1;
   public forceFocus$ = new Subject();
@@ -106,6 +107,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       .pipe(
         filter((qp: QueryParams) => !!qp.code),
         switchMap(({code}) => {
+          this.storage.removeItem('context');
           if (this.storage.getItem('authType') === 'clever') {
             return this.loginClever(code as string);
           } else {
@@ -158,7 +160,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.showError = true;
         return errors;
       })
-    ).subscribe(({auth_types}) => {
+    ).subscribe(({auth_types, auth_providers}) => {
       this.showSpinner = false;
       if (!auth_types.length) {
         this.showError = true;
@@ -171,6 +173,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.error$.next(null);
       }
       this.loginData.authType = auth_types[auth_types.length - 1];
+      this.auth_providers = auth_providers[0];
       const auth = auth_types[auth_types.length - 1];
       if (auth.indexOf('google') !== -1) {
         this.loginData.demoLoginEnabled = false;
@@ -266,7 +269,12 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.initLogin();
     } else if (this.isClever) {
       this.storage.setItem('authType', this.loginData.authType);
-      window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-feature.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834';
+      const district = this.auth_providers && this.auth_providers.provider === 'clever' ? this.auth_providers.sourceId : null;
+      if (district) {
+        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-feature.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834&district_id=${district}`;
+      } else {
+        window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-feature.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834';
+      }
     } else if (this.isGG4L) {
       this.storage.setItem('authType', this.loginData.authType);
       if (this.storage.getItem('gg4l_invalidate')) {

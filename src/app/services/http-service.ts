@@ -253,6 +253,8 @@ export class HttpService {
                   'Authorization': 'Basic UFRSRE5VQkdEWDp6U0VrMlFpNFVkS1dkYlJqOFpZVWtnSitic2xLOUo1RERQeHZtTWJKZCtnPQ=='
                 })
               });
+            } else if (authType === 'clever') {
+              window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-feature.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834';
             }
           } else {
             return of(null);
