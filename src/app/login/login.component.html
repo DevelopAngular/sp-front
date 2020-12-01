@@ -2,7 +2,7 @@
 
   <div class="ds-w-100 ds-h-100 ds-flex-center-between ds-flex-column login">
 
-    <div class="background" [style.background-image]="trustedBackgroundUrl | resolveAsset"></div>
+    <div class="background"></div>
     <div style="flex-grow: 0.5;"></div>
 
     <div class="brand">
@@ -10,9 +10,9 @@
     </div>
 
     <div class="moving-tiles">
-      <div class="shadow"></div>
+      <div class="shadow"><span style="width: 1px; background-color: white"></span></div>
       <app-mooving-tiles></app-mooving-tiles>
-      <div class="right-shadow"></div>
+      <div class="right-shadow"><span style="width: 1px; background-color: white"></span></div>
     </div>
 
     <div class="login-form">
