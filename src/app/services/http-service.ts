@@ -498,7 +498,7 @@ export class HttpService {
     c.append('code', code);
     c.append('provider', 'clever');
     c.append('platform_type', 'web');
-    c.append('redirect_uri', 'https://smartpass-feature.lavanote.com/app');
+    c.append('redirect_uri', 'https://smartpass-testing.lavanote.com/app');
 
     const context = this.storage.getItem('context');
 

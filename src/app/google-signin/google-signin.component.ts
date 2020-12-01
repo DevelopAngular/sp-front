@@ -271,9 +271,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.storage.setItem('authType', this.loginData.authType);
       const district = this.auth_providers && this.auth_providers.provider === 'clever' ? this.auth_providers.sourceId : null;
       if (district) {
-        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-feature.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834&district_id=${district}`;
+        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-testing.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834&district_id=${district}`;
       } else {
-        window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-feature.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834';
+        window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-testing.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834';
       }
     } else if (this.isGG4L) {
       this.storage.setItem('authType', this.loginData.authType);
