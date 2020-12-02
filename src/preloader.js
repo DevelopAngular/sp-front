@@ -38,7 +38,6 @@ window.waitForAppLoaded = function(force = false) {
 
   var arrowRef = document.querySelector('#arrow');
   var preloaderVisibility = false;
-  var percentDisplay = document.querySelector('.percent-display');
   let arrow_mobile = document.querySelector('#arrow-mobile');
 
   var timerId;
