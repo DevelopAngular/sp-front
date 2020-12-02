@@ -44,6 +44,7 @@ import {GG4LSync} from '../models/GG4LSync';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
 import {CleverInfo} from '../models/CleverInfo';
+import {constructUrl} from '../live-data/helpers';
 
 @Injectable({
   providedIn: 'root'
@@ -234,5 +235,9 @@ export class AdminService {
 
   updateCleverInfo(cleverInfo) {
     this.store.dispatch(updateCleverInfo({cleverInfo}));
+  }
+
+  exportCsvPasses(queryParams) {
+    return this.http.post(constructUrl('v1/admin/hall_passes', queryParams));
   }
 }

@@ -19,6 +19,8 @@ import {StorageService} from '../../services/storage.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {cloneDeep, isEqual} from 'lodash';
 import {TableService} from '../sp-data-table/table.service';
+import {ToastService} from '../../services/toast.service';
+import {AdminService} from '../../services/admin.service';
 
 declare const window;
 
@@ -98,6 +100,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
+  queryParams: any;
 
   adminCalendarOptions;
 
@@ -120,7 +123,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private contactTraceService: ContactTraceService,
     private storage: StorageService,
-    private tableService: TableService
+    private tableService: TableService,
+    private toastService: ToastService,
+    private adminService: AdminService
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -571,6 +576,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           delete queryParams.sort;
         }
         queryParams.limit = 300;
+        this.queryParams = queryParams;
         this.hallPassService.sortHallPassesRequest(queryParams);
       });
   }
@@ -583,5 +589,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
       this.buttonForceTrigger$.next('calendar');
       return;
     }
+  }
+
+  exportPasses() {
+    debugger;
+    this.adminService.exportCsvPasses(this.queryParams).subscribe(res => {
+      debugger;
+      this.toastService.openToast(
+        {
+          title: 'Data Export Requested',
+          subtitle: 'The link to download your requested data will be emailed to you shortly.'
+        }
+      );
+    });
   }
 }

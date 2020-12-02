@@ -127,6 +127,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowClickEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() sortClickEvent: EventEmitter<string> = new EventEmitter<string>();
+  @Output() exportPasses: EventEmitter<any> = new EventEmitter<any>();
 
   placeholderHeight = 0;
   displayedColumns: string[];
@@ -221,11 +222,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         filter(action => action === 'bulk_add_link')
       )
       .subscribe((action) => {
-        if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
-          window.open('https://www.smartpass.app/bulk-export');
-        } else {
+        // if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
+        //   window.open('https://www.smartpass.app/bulk-export');
+        // } else {
           this.generateCSV();
-        }
+        // }
       });
 
     if (!this.selection.isEmpty()) {
@@ -317,16 +318,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv') {
-      if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
-        this.toastService.openToast(
-          {
-            title: 'Information Required',
-            subtitle: 'We need some additional information to export your data (5000+ passes)',
-            icon: './assets/External Link (Navy).svg',
-            buttonText: 'See form',
-            action: 'bulk_add_link'
-          }
-        );
+      if (this.selection.selected.length > 300 || !this.selection.selected.length) {
+        debugger;
+        this.exportPasses.emit(true);
       } else {
         this.toastService.openToast(
           {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
