@@ -59,12 +59,12 @@
 
   .login-form {
     width: 325px;
-    margin-top: 70px;
     background: #FFFFFF;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
     border-radius: 12px;
     z-index: 10;
     box-sizing: border-box;
+    transition: margin-top .3s ease-in;
   }
   .spinner {
     position: absolute;

@@ -34,6 +34,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   // public isMobileDevice = false;
   public trustedBackgroundUrl: SafeUrl;
   public pending$: Observable<boolean>;
+  public formPosition: string = '70px';
 
   private pendingSubject = new ReplaySubject<boolean>(1);
   private isIOSMobile: boolean = DeviceDetection.isIOSMobile();
@@ -119,6 +120,12 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.destroyer$.next(null);
     this.destroyer$.complete();
+  }
+
+  formMobileUpdatePosition() {
+    if (this.isMobileDevice) {
+      this.formPosition = '-25px';
+    }
   }
 
   /*Scroll hack for ios safari*/

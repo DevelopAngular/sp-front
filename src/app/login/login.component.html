@@ -15,8 +15,8 @@
       <div class="right-shadow"><span style="width: 1px; background-color: white"></span></div>
     </div>
 
-    <div class="login-form">
-      <google-signin></google-signin>
+    <div class="login-form" [style.margin-top]="formPosition">
+      <google-signin (focusEvent)="formMobileUpdatePosition()" (blurEvent)="formPosition = '70px'"></google-signin>
     </div>
 
     <div class="grow"></div>
