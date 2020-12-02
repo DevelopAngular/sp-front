@@ -1,4 +1,4 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
 import {GoogleLoginService} from '../services/google-login.service';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {debounceTime, filter, finalize, pluck, retryWhen, switchMap, takeUntil, tap} from 'rxjs/operators';
@@ -25,6 +25,9 @@ export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
 })
 
 export class GoogleSigninComponent implements OnInit, OnDestroy {
+
+  @Output() focusEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
 
   public isLoaded = false;
   public showSpinner: boolean = false;
