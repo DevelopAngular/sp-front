@@ -17,17 +17,17 @@ export class ProgressInterceptor implements HttpInterceptor {
         return next.handle(req)
                     .pipe(
                       catchError((error: any) => {
-                                  // debugger;
                         const exeptedUrls = [
                           'onboard/schools/check_school',
                           'discovery/find',
                           'discovery/email_info',
                           'auth/by-token',
                           'o/token',
-                          'pass_requests/'
+                          'pass_requests/',
+                          '//server.test-cors.org'
                         ].every(_url => error.url.search(_url) < 0);
 
-                        if ( error.status === 0 || (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
+                        if ( (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
                           // console.log(error);
                           this.http.errorToast$.next({
                             header: 'Something went wrong.',
