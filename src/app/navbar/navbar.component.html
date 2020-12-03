@@ -19,11 +19,6 @@
             <div
                  #tabRef
                  [style.transition]="'transform .4s ease'"
-                 appCrossPointerEventTarget
-                 (pointerClickEvent)="tabRef.style.transform = 'unset'"
-                 (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
-                 (pointerCancelEvent)="tabRef.style.transform = 'unset'"
-
             >
               <app-nav-button
                       [selected]="tab === button.route"
