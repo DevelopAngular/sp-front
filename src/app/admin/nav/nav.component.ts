@@ -264,7 +264,10 @@ export class NavComponent implements OnInit, AfterViewInit {
   selectTab(evt: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
-    this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+    setTimeout(() => {
+      this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+    }, 10);
+
   }
 
   isSelected(route: string) {

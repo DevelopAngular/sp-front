@@ -93,7 +93,7 @@ window.waitForAppLoaded = function(force = false) {
         window.preloader.percent = 0;
         window.preloader.opacity = 0;
         window.preloader.inProgress = false;
-        // arrowRef.style.fill = '#7F879D';
+        arrowRef.style.fill = '#7F879D';
         preloaderRef.style.display = 'none';
       }, 1500);
       setInterval(function () {

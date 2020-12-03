@@ -45,6 +45,7 @@ import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
 import {CleverInfo} from '../models/CleverInfo';
 import {constructUrl} from '../live-data/helpers';
+import {isObject} from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -237,7 +238,10 @@ export class AdminService {
     this.store.dispatch(updateCleverInfo({cleverInfo}));
   }
 
-  exportCsvPasses(queryParams) {
-    return this.http.post(constructUrl('v1/admin/hall_passes', queryParams));
+  exportCsvPasses(queryParams, limit) {
+    const url = isObject(queryParams) ?
+      constructUrl('v1/admin/export/hall_passes', {...queryParams, limit}) :
+      'v1/admin/export/hall_passes?' + queryParams + `&limit=${limit}`;
+    return this.http.post(url);
   }
 }

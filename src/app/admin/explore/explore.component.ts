@@ -526,7 +526,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       }
     }
     url = url + 'total_count=true';
-
+    this.queryParams = url.substring(url.lastIndexOf('&') + 1);
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
   }
@@ -591,14 +591,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
-  exportPasses() {
-    debugger;
-    this.adminService.exportCsvPasses(this.queryParams).subscribe(res => {
-      debugger;
+  exportPasses(selectedPassesLength) {
+    this.adminService.exportCsvPasses(this.queryParams, selectedPassesLength || 100000).subscribe(res => {
       this.toastService.openToast(
         {
           title: 'Data Export Requested',
-          subtitle: 'The link to download your requested data will be emailed to you shortly.'
+          subtitle: 'The link to download your requested data will be emailed to you shortly.',
+          noButton: true
         }
       );
     });

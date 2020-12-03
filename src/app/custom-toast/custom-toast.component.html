@@ -2,12 +2,12 @@
   <div class="content" [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}">
     <div class="text">
       <div class="text_header">{{ data.title }}</div>
-      <div class="text_message">
+      <div class="text_message" [style.width]="!data.noButton ? '170px' : '300px'">
         {{ data.subtitle }}
       </div>
     </div>
     <div class="button">
-      <app-gradient-button
+      <app-gradient-button *ngIf="!data.noButton"
         [gradient]="'#F4F4F4, #F4F4F4'"
         [leftIcon]="data.icon ? data.icon  : './assets/Download (Navy).svg'"
         [textColor]="'#1F195E'"

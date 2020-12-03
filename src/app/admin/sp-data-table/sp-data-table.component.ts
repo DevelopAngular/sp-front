@@ -319,8 +319,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       });
     } else if (action === 'csv') {
       if (this.selection.selected.length > 300 || !this.selection.selected.length) {
-        debugger;
-        this.exportPasses.emit(true);
+        this.exportPasses.emit(this.selection.selected.length);
       } else {
         this.toastService.openToast(
           {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
