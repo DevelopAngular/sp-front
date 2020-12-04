@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 
 import {BehaviorSubject, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
@@ -92,8 +92,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     buttonMenuOpen: boolean;
     bulkSelect: boolean;
-
-    chatBackdrop: boolean;
+    bottomShadow: boolean = true;
 
     // // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
@@ -105,6 +104,15 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     destroy$ = new Subject();
     showRooms: boolean;
+
+    @HostListener('window:scroll', ['$event'])
+    scroll(event) {
+      if (event.currentTarget.offsetHeight + event.currentTarget.scrollTop >= event.currentTarget.scrollHeight) {
+        this.bottomShadow = false;
+      } else {
+        this.bottomShadow = true;
+      }
+    }
 
   constructor(
       private dialog: MatDialog,
