@@ -66,6 +66,7 @@ import {CustomToastComponent} from './custom-toast/custom-toast.component';
 import {PassesEffects} from './ngrx/passes/effects';
 import {ContactTraceEffects} from './ngrx/contact-trace/effects';
 import {IntrosEffects} from './ngrx/intros/effects/intros.effects';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -188,7 +189,8 @@ const appRoutes: Routes = [
             IntrosEffects
         ]),
         StoreDevtoolsModule.instrument({}),
-        HammerModule
+        HammerModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
     ],
     providers: [
         DataService,
