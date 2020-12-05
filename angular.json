@@ -39,7 +39,7 @@
               "src/assets",
               "src/preloader.js",
               "src/firebase-messaging-sw.js",
-              "src/manifest.webmanifest"
+              "src/manifest.json"
             ],
             "styles": [
               "src/styles.scss",
@@ -85,7 +85,7 @@
                 }
               ],
               "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "ngswConfigPath": "src/ngsw-config.json"
             },
             "production": {
               "optimization": true,
@@ -104,7 +104,7 @@
                 }
               ],
               "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "ngswConfigPath": "src/ngsw-config.json"
             }
           }
         },
@@ -151,7 +151,7 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/manifest.webmanifest"
+              "src/manifest.json"
             ]
           }
         },
