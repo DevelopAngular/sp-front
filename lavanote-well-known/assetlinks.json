@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.smartpass.smartpass",
+      "sha256_cert_fingerprints": [
+        "0F:D6:D7:2E:94:17:DE:C0:07:34:8B:9B:02:9D:22:9F:07:1F:03:81:23:22:BB:4D:3D:79:83:5C:1E:17:09:21",
+        "78:A7:FC:69:0F:A4:C9:A7:71:99:B9:B5:3A:03:3E:61:4A:F1:33:54:11:46:9D:78:44:6A:90:97:53:BA:00:2D"
+      ]
+    }
+  }
+]
