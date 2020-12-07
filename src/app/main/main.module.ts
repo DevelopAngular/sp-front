@@ -34,6 +34,7 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
 import {NavbarComponent} from '../navbar/navbar.component';
 import {NavButtonComponent} from '../nav-button/nav-button.component';
 import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
+import {AssistantRestrictionComponent} from '../assistant-restriction/assistant-restriction.component';
 
 
 @NgModule({
@@ -75,7 +76,8 @@ import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
     DateTimeComponent,
     NavbarComponent,
     NavButtonComponent,
-    TeacherPinComponent
+    TeacherPinComponent,
+    AssistantRestrictionComponent
   ],
   // entryComponents: [
   //   CreateHallpassFormsComponent,

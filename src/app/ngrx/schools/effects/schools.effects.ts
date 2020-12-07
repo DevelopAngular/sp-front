@@ -63,15 +63,15 @@ export class SchoolsEffects {
     return this.actions$
       .pipe(
         ofType(schoolsActions.getSchoolsFailure),
-        map((action: any) => {
+        switchMap((action: any) => {
           window.appLoaded();
           this.loginService.loginErrorMessage$.next(action.errorMessage);
-          this.http.clearInternal();
           this.loginService.clearInternal(true);
+          this.http.clearInternal();
           this.http.setSchool(null);
           this.userService.clearUser();
           this.userService.userData.next(null);
-          return schoolsActions.errorToastSuccess();
+          return [schoolsActions.errorToastSuccess(), schoolsActions.clearSchools()];
         })
       );
   });
