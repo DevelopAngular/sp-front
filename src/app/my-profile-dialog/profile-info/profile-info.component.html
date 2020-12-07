@@ -24,11 +24,11 @@
           {{ school.name + ' (' + checkUserRoles(school.my_roles) + ')' }}
         </div>
       </div>
-      <div class="block-item">
+      <div class="block-item" style="margin-bottom: 15px">
         <div class="label">Account type</div>
         <div class="item-content">{{ checkAccountType(user) }}</div>
       </div>
-      <div class="block-item" *ngIf="userAuthType === 'password'">
+      <div class="block-item" *ngIf="userAuthType === 'password'" style="margin-bottom: 15px">
         <div class="label">Password</div>
         <div class="item-content">
           <app-gradient-button
