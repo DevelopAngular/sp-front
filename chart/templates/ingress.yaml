@@ -24,9 +24,7 @@ spec:
           servicePort: {{ .Values.service.externalPort }}
 # Do *not* remove this conditional. It may break prod because other services exist under /. (/app is unique to this
 # service for https://smartpass.app).
-
-{{- if (contains "lavanote" .Values.service.url) -}}
-      - path: /
+{{if (contains "lavanote" .Values.service.url)}}      - path: /
         backend:
           serviceName: {{ .Values.application.name }}
           servicePort: {{ .Values.service.externalPort }}
