@@ -243,7 +243,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       objectToTable = {...roleObject, ...{
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     } else if (this.role === '_profile_teacher') {
@@ -251,7 +251,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     } else if (this.role === '_profile_assistant') {
@@ -261,7 +261,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           }).join(', ') : 'No Teachers') + `</div>`),
           'Status': `<span class="status">${account.status}</span>`,
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : account.sync_types[0] === 'gg4l' ? 'GG4L' : 'Standard',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     }

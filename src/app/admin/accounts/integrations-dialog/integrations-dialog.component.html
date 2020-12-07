@@ -34,7 +34,7 @@
         [title]="'Clever'"
         [style.padding]="'10px'"
         [status]="schoolSyncInfo.is_clever_enabled ? 'done' : 'disconnect'"
-        [subtitle]="schoolSyncInfo.is_clever_enabled ? ((cleverSyncLoading$ | async) ? 'Sync in Process...' : 'Last Sync: ' + formatDate((cleverSyncInfo$ | async).last_successful_sync) + ' (Successful)') : 'Sync accounts automatically from any SIS with Clever.'"
+        [subtitle]="schoolSyncInfo.is_clever_enabled ? ((cleverSyncLoading$ | async) ? 'Sync in Progress...' : 'Last Sync: ' + formatDate((cleverSyncInfo$ | async).last_successful_sync) + ' (Successful)') : 'Sync accounts automatically from any SIS with Clever.'"
         [learnMoreLink]="'https://www.smartpass.app/clever'"
         (setUp)="openSettings($event,'clever')"
       ></app-integration-card>
