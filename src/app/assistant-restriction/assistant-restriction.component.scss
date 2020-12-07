@@ -1,0 +1,31 @@
+:host{
+  width: 100%;
+  height: calc(100vh - 78px);
+  .dummy-wrapper {
+    position: relative;
+    width: inherit;
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .dummy{
+      box-sizing: border-box;
+      //padding: 0 30px 30px  30px ;
+      margin: 40px;
+      font-size: 24px;
+      color: #7E879D;
+      text-align: center;
+    }
+    .go_back{
+      height: 100px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 50px;
+      display: flex;
+      justify-content: center;
+      //margin: 30px 0 80px 0;
+    }
+  }
+}

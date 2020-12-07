@@ -24,11 +24,12 @@ export class SupportOptionsComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
   ) { }
 
+
   ngOnInit() {
     this.targetElementRef = this.data['trigger'];
     this.userService.user$.pipe(map(user => User.fromJSON(user))).subscribe((user) => {
       this.options = [
-        { name: 'Support guides', image: 'Tour', hasShow: true, hovered: false,  link: 'https://www.smartpass.app/support'},
+        { name: 'Support guides', image: 'Tour', hasShow: true, hovered: false,  link: `https://www.smartpass.app/support#${this.getUserRole(user)}`},
         { name: 'Chat with us', image: 'Chat', hasShow: !user.isStudent(), hovered: false },
         { name: 'Report a bug', image: 'Bug', hasShow: true, hovered: false, link: 'https://www.smartpass.app/bugreport'},
         { name: 'What’s new?', image: 'Balloons', hasShow: true, hovered: false, link: 'https://www.smartpass.app/updates' },
@@ -36,6 +37,16 @@ export class SupportOptionsComponent implements OnInit {
       ];
       this.updateDialogPosition(user);
     });
+  }
+
+  getUserRole(user: User) {
+    if (user.isAdmin()) {
+      return 'admin';
+    } else if (user.isTeacher() || user.isAssistant()) {
+      return 'teacher';
+    } else if (user.isStudent()) {
+      return 'student';
+    }
   }
 
   getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {

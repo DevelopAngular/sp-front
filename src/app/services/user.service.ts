@@ -1,5 +1,5 @@
 import {ErrorHandler, Injectable} from '@angular/core';
-import {interval, Observable, of, race, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, race, ReplaySubject, zip} from 'rxjs';
 import {SentryErrorHandler} from '../error-handler';
 import {HttpService} from './http-service';
 import {constructUrl} from '../live-data/helpers';
@@ -86,6 +86,7 @@ import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/acc
 import {HttpHeaders} from '@angular/common/http';
 import {getIntros, updateIntros} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
+import {getSchoolsFailure} from '../ngrx/schools/actions';
 
 @Injectable()
 export class UserService {
@@ -172,6 +173,7 @@ export class UserService {
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
   isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
+  blockUserPage$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
@@ -180,7 +182,7 @@ export class UserService {
     private pollingService: PollingService,
     private _logging: Logger,
     private errorHandler: ErrorHandler,
-    private store: Store<AppState>,
+    private store: Store<AppState>
   ) {
     this.http.globalReload$
         .pipe(
@@ -193,10 +195,19 @@ export class UserService {
           }),
           map(raw => User.fromJSON(raw)),
           switchMap((user: User) => {
+            this.blockUserPage$.next(false);
             if (user.isAssistant()) {
-              return this.getUserRepresented()
+              return zip(this.getUserRepresented(), this.http.schoolsCollection$)
                 .pipe(
-                  map((users: RepresentedUser[]) => {
+                  tap(([users, schools]) => {
+                    if (!users.length && schools.length === 1) {
+                      this.store.dispatch(getSchoolsFailure({errorMessage: 'Assistant does`t have teachers'}));
+                    } else if (!users.length && schools.length > 1) {
+                      this.blockUserPage$.next(true);
+                    }
+                  }),
+                  filter(([users, schools]) => !!users.length || schools.length > 1),
+                  map(([users, schools]) => {
                     const normalizedRU = users.map((raw) => {
                       raw.user = User.fromJSON(raw.user);
                       return raw;

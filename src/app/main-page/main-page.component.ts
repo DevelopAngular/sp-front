@@ -37,6 +37,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   isStaff: boolean;
   data: any;
   navbarHeight: string = '78px';
+  restriction$: Observable<boolean>;
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -64,6 +65,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((schools) => {
         this.topPadding = schools.length > 1 ? '50px' : '0px';
       });
+    this.restriction$ = this.userService.blockUserPage$;
 
     this.dataService.currentUser
       .pipe(

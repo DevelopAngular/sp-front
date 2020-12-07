@@ -68,7 +68,8 @@ const reducer = createReducer(
   on(schoolsActions.syncClever, (state) => ({...state, syncLoading: true, syncLoaded: false})),
   on(schoolsActions.updateCleverInfo, (state, {cleverInfo}) => {
     return { ...state, syncLoaded: true, syncLoading: false, cleverInfo };
-  })
+  }),
+  on(schoolsActions.clearSchools, (state) => (schoolsInitialState))
 );
 
 export function schoolsReducer(state: any | undefined, action: Action) {

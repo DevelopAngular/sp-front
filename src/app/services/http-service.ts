@@ -3,7 +3,7 @@ import {Injectable, NgZone} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {BehaviorSubject, iif, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
-import {catchError, delay, distinctUntilChanged, filter, first, map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {catchError, delay, filter, first, map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
@@ -155,7 +155,7 @@ export class HttpService {
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
-    switchMap(() => {
+    switchMap((v) => {
       return this.getSchoolsRequest();
     }),
     switchMap(() => this.schoolsCollection$)
@@ -172,7 +172,6 @@ export class HttpService {
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
     map(school => school ? school.id : null),
-    distinctUntilChanged(),
     delay(5)
   );
 
@@ -191,7 +190,11 @@ export class HttpService {
     // First, if there is a current school loaded, try to use that one.
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
-    this.schools$.pipe(filter(schools => !!schools.length)).subscribe(schools => {
+    this.schools$
+      .pipe(
+        filter(schools => !!schools.length)
+      )
+      .subscribe(schools => {
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
         this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
@@ -531,6 +534,7 @@ export class HttpService {
 
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
     return this.loginService.getIdToken().pipe(
+      filter(token => !!token),
       switchMap((googleToken: any) => {
         let authContext$: Observable<AuthContext>;
         if (isDemoLogin(googleToken)) {
