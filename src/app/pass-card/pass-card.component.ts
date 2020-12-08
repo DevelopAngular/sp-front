@@ -336,7 +336,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
               this.cardEvent.emit(this.formState);
             return false;
         } else if(this.forFuture){
-          this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
+          this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete', './assets/Delete (Red).svg'));
           this.header = 'Are you sure you want to delete this scheduled pass?';
         }
       }
@@ -385,28 +385,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       });
   }
 
-  genOption(display, color, action) {
-    return {display: display, color: color, action: action};
+  genOption(display, color, action, icon?) {
+    return {display: display, color: color, action: action, icon};
   }
-
-    openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-        let data = {
-            'pass': templatePass,
-            'fromPast': false,
-            'fromHistory': fromHistory,
-            'fromHistoryIndex': fromHistoryIndex,
-            'forFuture': forLater,
-            'forInput': true,
-            'forStaff': forStaff,
-            'selectedStudents': selectedStudents,
-        };
-        this.dialog.open(component, {
-            panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-            backdropClass: 'custom-backdrop',
-            disableClose: true,
-            data: data
-        });
-    }
 
   cancelClick() {
     this.cancelEditClick = false;

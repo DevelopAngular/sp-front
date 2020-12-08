@@ -50,14 +50,15 @@
           </textarea>
         </div>
         <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">
-          <app-gradient-button size="editable"
-                               [hoverColor]="'#04CD33'"
-                               [cursor]="'pointer'"
-                               [minWidth]="messageBoxViewRestriction.btnWidth"
-                               [minHeight]="messageBoxViewRestriction.btnHeight"
-                               [fontSize]="messageBoxViewRestriction.fontSize"
-                               (buttonClick)="sendRequest()"
-                               class="message-button">
+          <app-gradient-button
+           [gradient]="gradient"
+           [cursor]="'pointer'"
+           [minWidth]="messageBoxViewRestriction.btnWidth"
+           [minHeight]="messageBoxViewRestriction.btnHeight"
+           [fontSize]="messageBoxViewRestriction.fontSize"
+           (buttonClick)="sendRequest()"
+           class="message-button"
+          >
             {{(message.value ? 'Next' : 'Skip')}}
           </app-gradient-button>
         </div>
