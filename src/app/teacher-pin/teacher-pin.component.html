@@ -26,35 +26,42 @@
     </app-gradient-button>
   </div>
   <div class="content">
+    <app-pin-input></app-pin-input>
     <div class="top-block">
-      <div class="pin">
-        <div class="label">Pin</div>
-        <app-input
-          [width]="'65px'"
-          [input_value]="userPin$ | async"
-          [controlName]="form.get('pin')"
-          [input_type]="'text'"
-          [formGroup]="form"
-          [pattern]="'[0-9]*'"
-          [isErrorIcon]="false"
-        ></app-input>
-      </div>
       <div class="info">
-        This pin can be used to approve or deny Pass Requests from a student’s device.
-        Pins cannot be used to access any account information.
-      </div>
-      <div class="instruction">
         Pins must be 4 digits and can be changed at any time.
       </div>
+      <div class="info" style="margin-top: 10px">Pins can be used to approve Pass Requests from a student’s device. Pins cannot be used to access any account information.</div>
     </div>
+<!--    <div class="top-block">-->
+<!--      <div class="pin">-->
+<!--        <div class="label">Pin</div>-->
+<!--        <app-input-->
+<!--          [width]="'65px'"-->
+<!--          [input_value]="userPin$ | async"-->
+<!--          [controlName]="form.get('pin')"-->
+<!--          [input_type]="'text'"-->
+<!--          [formGroup]="form"-->
+<!--          [pattern]="'[0-9]*'"-->
+<!--          [isErrorIcon]="false"-->
+<!--        ></app-input>-->
+<!--      </div>-->
+<!--      <div class="info">-->
+<!--        This pin can be used to approve or deny Pass Requests from a student’s device.-->
+<!--        Pins cannot be used to access any account information.-->
+<!--      </div>-->
+<!--      <div class="instruction">-->
+<!--        Pins must be 4 digits and can be changed at any time.-->
+<!--      </div>-->
+<!--    </div>-->
 
-    <mat-divider></mat-divider>
+<!--    <mat-divider></mat-divider>-->
 
-    <div class="bottom-block">
-      <div class="text">Example</div>
-      <div class="pinnable-wrapper">
-        <img [src]="'./assets/Library.png' | resolveAsset" width="235" height="175">
-      </div>
-    </div>
+<!--    <div class="bottom-block">-->
+<!--      <div class="text">Example</div>-->
+<!--      <div class="pinnable-wrapper">-->
+<!--        <img [src]="'./assets/Library.png' | resolveAsset" width="235" height="175">-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
 </div>

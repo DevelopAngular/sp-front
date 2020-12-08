@@ -35,6 +35,7 @@ import {NavbarComponent} from '../navbar/navbar.component';
 import {NavButtonComponent} from '../nav-button/nav-button.component';
 import {TeacherPinComponent} from '../teacher-pin/teacher-pin.component';
 import {AssistantRestrictionComponent} from '../assistant-restriction/assistant-restriction.component';
+import {PinInputComponent} from '../teacher-pin/pin-input/pin-input.component';
 
 
 @NgModule({
@@ -77,7 +78,8 @@ import {AssistantRestrictionComponent} from '../assistant-restriction/assistant-
     NavbarComponent,
     NavButtonComponent,
     TeacherPinComponent,
-    AssistantRestrictionComponent
+    AssistantRestrictionComponent,
+    PinInputComponent
   ],
   // entryComponents: [
   //   CreateHallpassFormsComponent,
