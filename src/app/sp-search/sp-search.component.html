@@ -15,7 +15,7 @@
 
 <div class="sp-search-wrapper" [style.width]="width" *ngIf="inputField">
 
-  <div class="input">
+  <div class="input" [style.box-shadow]="isMobile ? 'none' : '0 0 6px 0 rgba(0, 0, 0, 0.1)'">
 
     <div class="round-input-container">
       <app-round-input
