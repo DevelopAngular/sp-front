@@ -23,7 +23,7 @@
   <title>SmartPass</title>
   <base href="/">
 
-  <link rel="manifest" crossorigin="use-credentials" href="./assets/manifest.json">
+  <link rel="manifest" crossorigin="use-credentials" href="src/manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png?v=2bBxdz87Xl">
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png?v=2bBxdz87Xl">
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png?v=2bBxdz87Xl">
@@ -33,7 +33,6 @@
   <meta name="application-name" content="SmartPass">
   <meta name="msapplication-TileColor" content="#04cd33">
   <meta name="msapplication-config" content="./assets/icons/browserconfig.xml?v=2bBxdz87Xl">
-<!--  <meta name="theme-color" content="#ffffff">-->
 
   <link rel="stylesheet" type="text/css" href="./assets/css/preloader.css">
 
@@ -64,11 +63,11 @@
       class="preloader scale">
       <defs>
         <linearGradient id="Gradient-1" x1="0.5" y1="1" x2="0.5" y2="0">
-          <stop offset="100%" stop-opacity="1" stop-color="#04CD33">
-            <animate attributeName="offset" values="0;1;0" dur="7s" from="0" to="100"/>
+          <stop offset="0%" stop-opacity="1" stop-color="#00B476">
+            <animate attributeName="offset" values="0;1;" dur="3s" begin="0" fill="freeze"/>
           </stop>
-          <stop offset="100%" stop-opacity="1" stop-color="#7f879d">
-            <animate attributeName="offset" values="0;1;0" dur="7s"/>
+          <stop offset="0%" stop-opacity="1" stop-color="#7f879d">
+            <animate attributeName="offset" values="0;1;" dur="3s" begin="0" fill="freeze"/>
           </stop>
         </linearGradient>
         <linearGradient id="repeat" xlink:href="#Gradient-1" spreadMethod="repeat" />

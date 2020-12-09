@@ -83,7 +83,7 @@ window.waitForAppLoaded = function(force = false) {
       window.preloader.percent = 100;
       preloaderSvg.style.strokeDashoffset = window.preloader.n;
       // percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
-      arrowRef.style.fill = '#04CD33';
+      arrowRef.style.fill = '#00B476';
 
       setTimeout(function() {
         preloaderRef.style.opacity = '0';
@@ -93,7 +93,7 @@ window.waitForAppLoaded = function(force = false) {
         window.preloader.percent = 0;
         window.preloader.opacity = 0;
         window.preloader.inProgress = false;
-        arrowRef.style.fill = '#7F879D';
+        // arrowRef.style.fill = '#7F879D';
         preloaderRef.style.display = 'none';
       }, 1500);
       setInterval(function () {
