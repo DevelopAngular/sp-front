@@ -1,3 +1,24 @@
 <div class="wrapper">
-  <input class="input" type="password" placeholder="...."/>
+  <ng-container>
+    <div style="margin: 5px" *ngIf="value && value[0]; else first">{{ value[0] }}</div>
+    <ng-template #first><div class="fake"></div></ng-template>
+  </ng-container>
+
+  <ng-container>
+    <div style="margin: 5px" *ngIf="value && value[1]; else second">{{ value[1] }}</div>
+    <ng-template #second><div class="fake"></div></ng-template>
+  </ng-container>
+
+  <ng-container>
+    <div style="margin: 5px" *ngIf="value && value[2]; else tree">{{ value[2] }}</div>
+    <ng-template #tree><div class="fake"></div></ng-template>
+  </ng-container>
+
+  <ng-container>
+    <div style="margin: 5px" *ngIf="value && value[3]; else four">{{ value[3] }}</div>
+    <ng-template #four><div class="fake"></div></ng-template>
+  </ng-container>
+
 </div>
+<input #input (blur)="input.focus()" style="opacity: 0; position: absolute; width: 0px" class="input" type="text" maxlength="4" [formControl]="formControl"/>
+<!--<input class="wrapper" placeholder="...." [formControl]="formControl" maxlength="4" type="text">-->

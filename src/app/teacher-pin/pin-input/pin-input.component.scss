@@ -1,9 +1,23 @@
-.wrapper {
+@import "../../../sp-colors";
 
-  .input {
+.wrapper {
     width: 90px;
     height: 42px;
     background-color: #F4F4F4;
     border-radius: 7px;
+    display: flex;
+    align-items: center;
+    outline: none;
+    //letter-spacing: 10px;
+
+    justify-content: center;
+
+  .fake {
+    background-color: #D8D8D8;
+    width: 10px;
+    height: 10px;
+    font-size: 20px;
+    border-radius: 50%;
+    margin: 5px
   }
 }

@@ -26,7 +26,7 @@
     </app-gradient-button>
   </div>
   <div class="content">
-    <app-pin-input></app-pin-input>
+    <app-pin-input [formControl]="form.get('pin')" [value]="form.get('pin').value"></app-pin-input>
     <div class="top-block">
       <div class="info">
         Pins must be 4 digits and can be changed at any time.

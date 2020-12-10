@@ -64,6 +64,7 @@
                [style.color]="getColor('#FFFFFF', '#7f879d')"
           > {{setting.title}} </div>
           <div class="release" *ngIf="setting.isNew">New</div>
+          <div class="set-up" *ngIf="!(teacherPin$ | async) && setting.action === 'myPin'">Set-Up</div>
         </div>
 <!--        <mat-divider class="divider"-->
 <!--                     [style.border-top-color]="darkTheme.isEnabled$.value ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)'"-->

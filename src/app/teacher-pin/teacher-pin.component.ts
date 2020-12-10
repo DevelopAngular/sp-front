@@ -38,13 +38,15 @@ export class TeacherPinComponent implements OnInit {
   ngOnInit() {
     this.user$ = this.userService.user$;
     this.userPin$ = this.userService.userPin$;
-    this.form = new FormGroup({
-      pin: new FormControl('', [
-        Validators.required,
-        Validators.minLength(4),
-        Validators.pattern('^[0-9]*?[0-9]+$'),
-        (fn) => fn.value.length < 4 ? { minPin: true } : null
-      ])
+    this.userPin$.subscribe(res => {
+      this.form = new FormGroup({
+        pin: new FormControl(res, [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.pattern('^[0-9]*?[0-9]+$'),
+          (fn) => fn.value.length < 4 ? { minPin: true } : null
+        ])
+      });
     });
   }
 

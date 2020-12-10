@@ -9,7 +9,7 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest, Subject} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
 import {takeUntil} from 'rxjs/operators';
@@ -52,6 +52,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
   currentBuildTime = BUILD_DATE;
+  teacherPin$: Observable<string | number>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -67,9 +68,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       public kioskMode: KioskModeService,
       private router: Router,
       private pwaStorage: LocalStorage,
-      private userService: UserService,
-      private notificationService: NotificationService
-
+      private userService: UserService
   ) {
     // this.initializeSettings();
   }
@@ -87,6 +86,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.teacherPin$ = this.userService.userPin$;
     combineLatest(this.userService.user$, this.userService.introsData$)
       .pipe(takeUntil(this.destroy$))
       .subscribe(([user, intros]) => {
