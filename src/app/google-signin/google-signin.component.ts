@@ -30,7 +30,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   @Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
 
   public isLoaded = false;
-  public showSpinner: boolean = false;
+  public showSpinner = false;
   public loggedWith: number;
   // public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
   public loginData = {
@@ -145,68 +145,12 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
           this.forceFocus$.next();
         } else if (key[0] === 'enter') {
           if (!this.disabledButton && !this.loginData.demoLoginEnabled) {
-            this.checkUserAuthType();
+            this.nextButtonTapped();
           } else if (this.loginData.demoLoginEnabled) {
             this.demoLogin();
           }
         }
       });
-
-    this.changeUserName$.pipe(
-      // filter(userName => userName.length && userName[userName.length - 1] !== '@' && userName[userName.length - 1] !== '.'),
-      tap(() => this.disabledButton = false),
-      debounceTime(300),
-      switchMap(userName => {
-        this.showSpinner = true;
-        const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
-        return this.http.get<any>(discovery);
-      }),
-      retryWhen((errors) => {
-        this.showError = true;
-        return errors;
-      })
-    ).subscribe(({auth_types, auth_providers}) => {
-      this.showSpinner = false;
-      if (!auth_types.length) {
-        this.showError = true;
-        this.isGoogleLogin = true;
-        this.isStandardLogin = false;
-        this.loginData.demoLoginEnabled = false;
-        return;
-      } else {
-        this.showError = false;
-        this.error$.next(null);
-      }
-      this.loginData.authType = auth_types[auth_types.length - 1];
-      this.auth_providers = auth_providers[0];
-      const auth = auth_types[auth_types.length - 1];
-      if (auth.indexOf('google') !== -1) {
-        this.loginData.demoLoginEnabled = false;
-        this.isStandardLogin = false;
-        this.isGG4L = false;
-        this.isGoogleLogin = true;
-        this.isClever = false;
-      } else if (auth.indexOf('clever') !== -1) {
-        this.loginData.demoLoginEnabled = false;
-        this.isStandardLogin = false;
-        this.isGG4L = false;
-        this.isGoogleLogin = false;
-        this.isClever = true;
-      } else if (auth.indexOf('gg4l') !== -1) {
-        this.loginData.demoLoginEnabled = false;
-        this.isStandardLogin = false;
-        this.isGoogleLogin = false;
-        this.isClever = false;
-        this.isGG4L = true;
-      } else
-        if (auth.indexOf('password') !== -1) {
-        this.isGoogleLogin = false;
-        this.isStandardLogin = true;
-      } else {
-        this.loginData.demoLoginEnabled = false;
-      }
-      this.disabledButton = false;
-    });
 
     this.storage.showError$.subscribe(res => {
       this.httpService.errorToast$.next({
@@ -251,9 +195,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       return false;
     }
     this.loginData.demoUsername = event;
+    this.disabledButton = false;
     this.error$.next(null);
     this.passwordError = false;
-    this.changeUserName$.next(event);
   }
 
   updateDemoPassword(event) {
@@ -263,24 +207,77 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     // this.loginData.demoPassword = event;
   }
 
-  checkUserAuthType() {
+  nextButtonTapped() {
+    this.showSpinner = true;
+    const userName = this.loginData.demoUsername;
+    const discovery = /proxy/.test(environment.buildType) ? `/api/discovery/email_info?email=${encodeURIComponent(userName)}` : `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
+    this.http.get<any>(discovery)
+      .subscribe(({auth_types, auth_providers}) => {
+        this.showSpinner = false;
+        if (!auth_types.length) {
+          this.error$.next(`Couldn't find that username or email`);
+          this.showSpinner = false;
+          this.isGoogleLogin = false;
+          this.isStandardLogin = false;
+          this.loginData.demoLoginEnabled = false;
+          return;
+        } else {
+          this.error$.next(null);
+        }
+        this.loginData.authType = auth_types[auth_types.length - 1];
+        this.auth_providers = auth_providers[0];
+        const auth = auth_types[auth_types.length - 1];
+        if (auth.indexOf('google') !== -1) {
+          this.loginData.demoLoginEnabled = false;
+          this.isStandardLogin = false;
+          this.isGG4L = false;
+          this.isGoogleLogin = true;
+          this.isClever = false;
+        } else if (auth.indexOf('clever') !== -1) {
+          this.loginData.demoLoginEnabled = false;
+          this.isStandardLogin = false;
+          this.isGG4L = false;
+          this.isGoogleLogin = false;
+          this.isClever = true;
+        } else if (auth.indexOf('gg4l') !== -1) {
+          this.loginData.demoLoginEnabled = false;
+          this.isStandardLogin = false;
+          this.isGoogleLogin = false;
+          this.isClever = false;
+          this.isGG4L = true;
+        } else
+        if (auth.indexOf('password') !== -1) {
+          this.isGoogleLogin = false;
+          this.isStandardLogin = true;
+        } else {
+          this.loginData.demoLoginEnabled = false;
+        }
+        this.disabledButton = false;
+        this.signIn();
+      }, (_ => {
+        this.error$.next(`Couldn't find that username or email`);
+        this.showSpinner = false;
+      }));
+  }
+
+  signIn() {
     this.storage.removeItem('authType');
     this.httpService.schoolSignInRegisterText$.next(null);
-    if (this.showError) {
-      this.error$.next('Couldn’t find that username or email');
-      return false;
-    } else if (this.isGoogleLogin) {
+    if (this.isGoogleLogin) {
       this.storage.setItem('authType', this.loginData.authType);
       this.initLogin();
     } else if (this.isClever) {
+      this.showSpinner = true
       this.storage.setItem('authType', this.loginData.authType);
       const district = this.auth_providers && this.auth_providers.provider === 'clever' ? this.auth_providers.sourceId : null;
+      const redirect = encodeURIComponent(window.location.href);
       if (district) {
-        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-testing.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834&district_id=${district}`;
+        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=d8b866c26cd9957a4834&district_id=${district}`;
       } else {
-        window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-testing.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834';
+        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=d8b866c26cd9957a4834`;
       }
     } else if (this.isGG4L) {
+      this.showSpinner = true;
       this.storage.setItem('authType', this.loginData.authType);
       if (this.storage.getItem('gg4l_invalidate')) {
         window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
@@ -296,6 +293,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.isGoogleLogin = false;
     this.isGG4L = false;
     this.isStandardLogin = false;
+    this.isClever = false;
   }
 
   demoLogin() {
