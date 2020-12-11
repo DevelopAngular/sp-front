@@ -84,7 +84,7 @@ import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/
 import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpHeaders} from '@angular/common/http';
-import {getIntros, updateIntros} from '../ngrx/intros/actions';
+import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {getSchoolsFailure} from '../ngrx/schools/actions';
 
@@ -326,6 +326,11 @@ export class UserService {
 
   updateIntrosRequest(intros, device, version) {
     this.store.dispatch(updateIntros({intros, device, version}));
+  }
+
+  updateIntrosMainRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosMain({intros, device, version}));
+    return of(null);
   }
 
   updateIntros(device, version) {

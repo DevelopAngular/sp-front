@@ -12,6 +12,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
+import {switchMap, take} from 'rxjs/operators';
 
 declare const window;
 
@@ -395,7 +396,11 @@ export class IntroComponent implements OnInit, AfterViewInit {
     } else {
       device = 'web';
     }
-    this.userService.updateIntros(device, this.introVersion)
+    this.userService.introsData$
+      .pipe(
+        take(1),
+        switchMap(intros => this.userService.updateIntrosMainRequest(intros, device, this.introVersion))
+      )
         .subscribe(res => {
             if (this.usedAsEntryComponent) {
                 this.endIntroEvent.emit(true);
