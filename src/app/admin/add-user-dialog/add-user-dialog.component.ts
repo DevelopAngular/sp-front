@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
@@ -22,7 +22,7 @@ import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.servic
   styleUrls: ['./add-user-dialog.component.scss']
 })
 export class AddUserDialogComponent implements OnInit, OnDestroy {
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+  @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {

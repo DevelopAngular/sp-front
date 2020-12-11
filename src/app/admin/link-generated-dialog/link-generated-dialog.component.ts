@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 
 export interface LinkGeneratedDialogData {

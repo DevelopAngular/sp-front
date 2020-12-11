@@ -4,7 +4,7 @@
     <img class="back-button" *ngIf="!showSave" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back.emit()">
     <div class="back-button" *ngIf="showSave" (click)="back.emit()">Cancel</div>
     <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <img width="21" height="21" [src]="'./assets/Google (Color).svg' | resolveAsset" alt="Options">
+      <img width="21" height="21" [src]="'./assets/Google (White).svg' | resolveAsset" alt="Options">
       <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Account Link</div>
     </div>
 

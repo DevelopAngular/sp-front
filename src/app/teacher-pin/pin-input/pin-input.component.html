@@ -1,0 +1,10 @@
+<div class="wrapper" [style.border]="value.length === 4 && group.invalid && group.dirty ? '1px red solid' : 'none'">
+  <input class="input" [formControl]="control" maxlength="4" type="tel" [pattern]="'[0-9]*'" [style.caret-color]="value.length === 4 ? 'transparent' : 'black'">
+  <div class="background" style="position: absolute">
+    <div class="fake" [style.opacity]="!value ? 1 : 0"></div>
+    <div class="fake" [style.opacity]="value.length < 2 ? 1 : 0"></div>
+    <div class="fake" [style.opacity]="value.length < 3 ? 1 : 0"></div>
+    <div class="fake" [style.opacity]="value.length < 4 ? 1 : 0"></div>
+  </div>
+</div>
+

@@ -11,7 +11,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('iconButtonRef') iconButtonRef: ElementRef;
+  @ViewChild('iconButtonRef', { static: true }) iconButtonRef: ElementRef;
 
   @Input() size: number = 25;
   @Input() onDarkShade: boolean = false;

@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormGroup} from '@angular/forms';
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
-import { Location } from '../../../models/Location';
-import { ValidButtons } from '../advanced-options/advanced-options.component';
-import { BehaviorSubject } from 'rxjs';
-import { isNull } from 'lodash';
+import {Location} from '../../../models/Location';
+import {ValidButtons} from '../advanced-options/advanced-options.component';
+import {BehaviorSubject} from 'rxjs';
+import {isNull} from 'lodash';
 
 @Component({
   selector: 'app-bulk-edit-rooms-in-folder',
@@ -55,6 +55,10 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
     return this.roomsValidButtons.getValue().cancel;
   }
 
+  get isImportState() {
+    return this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms;
+  }
+
   ngOnInit() {
     this.selectedRoomsInFolder = this.overlayService.pageState.getValue().data.selectedRoomsInFolder;
   }
@@ -70,7 +74,7 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
   }
 
   checkValidForm() {
-    if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
+    if (this.isImportState) {
       if (
         (this.roomData.travelType.length &&
         this.roomData.timeLimit) && !this.advOptionsButtons

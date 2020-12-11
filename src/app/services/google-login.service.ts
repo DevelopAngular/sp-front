@@ -28,6 +28,11 @@ export interface GG4LResponse {
   code: string;
 }
 
+export interface CleverLogin {
+  clever_token: string;
+  type: 'clever-login';
+}
+
 
 export function isDemoLogin(d: any): d is DemoLogin {
   return (<DemoLogin>d).type === 'demo-login';
@@ -37,7 +42,11 @@ export function isGg4lLogin(d: any): d is Gg4lLogin {
   return (<Gg4lLogin>d).type === 'gg4l-login';
 }
 
-type AuthObject = AuthResponse | DemoLogin | Gg4lLogin;
+export function isCleverLogin(d: any): d is CleverLogin {
+  return (<CleverLogin>d).type === 'clever-login';
+}
+
+type AuthObject = AuthResponse | DemoLogin | Gg4lLogin | CleverLogin;
 
 @Injectable()
 export class GoogleLoginService {
@@ -93,7 +102,7 @@ export class GoogleLoginService {
     if (savedAuth) {
       console.log('Loading saved auth:', savedAuth);
       const auth: AuthResponse = JSON.parse(savedAuth);
-      if (auth.id_token !== undefined || isDemoLogin(auth) || isGg4lLogin(auth)) {
+      if (auth.id_token !== undefined || isDemoLogin(auth) || isGg4lLogin(auth) || isCleverLogin(auth)) {
         this.updateAuth(auth);
       } else {
         this.isAuthenticated$.next(false);
@@ -133,13 +142,17 @@ export class GoogleLoginService {
       return false;
     }
 
+    if (isCleverLogin(this.authToken$.value)) {
+      return false;
+    }
+
     const threshold = 5 * 60 * 1000; // 5 minutes
     // don't use TimeService for auth because auth is required for time service
     // to be useful
     return this.authToken$.value.expires_at <= Date.now() + threshold;
   }
 
-  getIdToken(): Observable<DemoLogin | Gg4lLogin | string> {
+  getIdToken(): Observable<DemoLogin | Gg4lLogin | CleverLogin | string> {
     if (this.needNewToken()) {
       this.authToken$.next(null);
       this.isAuthenticated$.next(false);
@@ -148,8 +161,8 @@ export class GoogleLoginService {
 
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
-      map(a => {
-        return (isDemoLogin(a) || isGg4lLogin(a)) ? a : a.id_token;
+      map((a) => {
+        return (isDemoLogin(a) || isGg4lLogin(a) || isCleverLogin(a)) ? a : a.id_token;
       })
     );
   }
@@ -173,6 +186,7 @@ export class GoogleLoginService {
 
     this.storage.removeItem(STORAGE_KEY);
     this.storage.removeItem('refresh_token');
+    this.storage.removeItem('context');
     this.logout();
   }
 

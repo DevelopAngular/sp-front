@@ -39,6 +39,10 @@
 
   .content {
     height: 430px;
+    padding-top: 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .top-block {
       padding: 20px 30px;
@@ -57,7 +61,7 @@
       .info {
         font-size: 14px;
         color: $blue-gray;
-        max-width: 295px;
+        max-width: 370px;
         margin-top: 5px;
       }
       .instruction {

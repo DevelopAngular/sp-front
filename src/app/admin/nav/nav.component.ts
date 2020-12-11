@@ -16,7 +16,7 @@ import {LoadingService} from '../../services/loading.service';
 import {DataService} from '../../services/data-service';
 import {User} from '../../models/User';
 import {UserService} from '../../services/user.service';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SettingsComponent} from '../settings/settings.component';
 import {filter, map, pluck, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
@@ -36,8 +36,8 @@ declare const window;
 })
 export class NavComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('settingsButton') settingsButton: ElementRef;
-  @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
+  @ViewChild('settingsButton', { static: true }) settingsButton: ElementRef;
+  @ViewChild('navButtonsContainter', { static: true }) navButtonsContainterRef: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
@@ -45,7 +45,7 @@ export class NavComponent implements OnInit, AfterViewInit {
   // gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
-    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
+    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
     // {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
     {title: 'Explore', route : 'explore', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
     {title: 'Rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
@@ -212,12 +212,9 @@ export class NavComponent implements OnInit, AfterViewInit {
         }
       });
 
-      settingsRef.beforeClose().subscribe(() => {
-        this.selectedSettings = false;
-      });
-
       settingsRef.afterClosed().subscribe(action => {
         UNANIMATED_CONTAINER.next(false);
+        this.selectedSettings = false;
         if (action === 'signout') {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
@@ -267,7 +264,10 @@ export class NavComponent implements OnInit, AfterViewInit {
   selectTab(evt: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
-    this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+    setTimeout(() => {
+      this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+    }, 10);
+
   }
 
   isSelected(route: string) {

@@ -16,7 +16,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {Location} from '@angular/common';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
 import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
@@ -187,6 +187,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     return this.tab === 'settings';
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   get showNav() {
     return this.tab !== 'intro' && this.hasNav;
   }
@@ -350,11 +354,15 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this.settingsAction(action);
       });
 
+    this.sideNavService.openSettingsEvent$.pipe(filter(r => !!r), takeUntil(this.destroyer$))
+      .subscribe(res => this.showOptions(this.settingsButton));
+
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
 
-    this.sideNavService.fadeClick.subscribe(click =>  this.fadeClick = click);
+    this.sideNavService.fadeClick.pipe(takeUntil(this.destroyer$)).subscribe(click =>  this.fadeClick = click);
 
     this.countSchools$ = this.http.schoolsCollection$.pipe(
+      takeUntil(this.destroyer$),
       map(schools => {
         const filteredSchools = _filter(schools, (school => school.my_roles.length > 0));
         return filteredSchools.length;
@@ -460,12 +468,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
         });
 
-        settingRef.beforeClose().subscribe(() => {
-          this.isOpenSettings = false;
-        });
-
         settingRef.afterClosed().subscribe(action => {
           UNANIMATED_CONTAINER.next(false);
+          this.isOpenSettings = false;
           this.settingsAction(action);
         });
       }

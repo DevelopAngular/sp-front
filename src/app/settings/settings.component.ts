@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {User} from '../models/User';
@@ -9,11 +9,12 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest, Subject} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
 import {takeUntil} from 'rxjs/operators';
 import * as moment from 'moment';
+import {NotificationService} from '../services/notification-service';
 
 export interface Setting {
   hidden: boolean;
@@ -51,6 +52,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
   currentBuildTime = BUILD_DATE;
+  teacherPin$: Observable<string | number>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -67,7 +69,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
       private router: Router,
       private pwaStorage: LocalStorage,
       private userService: UserService
-
   ) {
     // this.initializeSettings();
   }
@@ -76,11 +77,16 @@ export class SettingsComponent implements OnInit, OnDestroy {
     return !!this.kioskMode.currentRoom$.value;
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   get showNotificationBadge() {
     return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
   }
 
   ngOnInit() {
+    this.teacherPin$ = this.userService.userPin$;
     combineLatest(this.userService.user$, this.userService.introsData$)
       .pipe(takeUntil(this.destroy$))
       .subscribe(([user, intros]) => {
@@ -100,7 +106,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.sideNavService.sideNavData.pipe(takeUntil(this.destroy$)).subscribe( sideNavData => {
       if (sideNavData) {
         this.targetElementRef = sideNavData['trigger'];
-        this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+        // this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+        this.isSwitch = false;
       }
     });
 
@@ -238,7 +245,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': this.isKioskMode || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid() || DeviceDetection.isIOSTablet(),
+      'hidden': this.isKioskMode || !NotificationService.hasPermission,
       'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',

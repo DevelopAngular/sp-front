@@ -10,9 +10,13 @@ export const introsInitialState: IIntrosState = {
 
 const reducer = createReducer(
   introsInitialState,
-  on(introsActions.getIntros, introsActions.updateIntros,
-    (state) => ({...state, loading: true, loaded: false})),
-  on(introsActions.getIntrosSuccess, introsActions.updateIntrosSuccess, (state, {data}) => {
+  on(introsActions.getIntros, introsActions.updateIntros, introsActions.updateIntrosMain,
+    (state) => ({...state, loading: true, loaded: false, data: null})),
+  on(
+    introsActions.getIntrosSuccess,
+    introsActions.updateIntrosSuccess,
+    introsActions.updateIntrosMainSuccess,
+    (state, {data}) => {
     return {...state, loading: false, loaded: true, data };
   }),
 );

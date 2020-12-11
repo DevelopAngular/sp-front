@@ -13,8 +13,6 @@
         <div *ngFor="let button of buttons; let i = index"
              [style.transition]="'transform .4s ease'"
              appCrossPointerEventTarget
-             (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
-             (pointerClickEvent)="tabRef.style.transform = 'unset'"
              #tabRef>
           <ng-container *ngIf="hasRoles(button.requiredRoles) | async">
             <app-nav-button

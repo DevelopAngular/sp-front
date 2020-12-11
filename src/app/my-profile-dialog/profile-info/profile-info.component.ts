@@ -3,7 +3,7 @@ import {User} from '../../models/User';
 import {School} from '../../models/School';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {MyProfileDialogComponent} from '../my-profile-dialog.component';
 import {StorageService} from '../../services/storage.service';
 
@@ -38,6 +38,8 @@ export class ProfileInfoComponent implements OnInit {
       return 'Connected with G Suite';
     } else if (account.sync_types.indexOf('gg4l') !== -1) {
       return 'Connected with GG4L';
+    } else if (account.sync_types.indexOf('clever') !== -1) {
+      return 'Connected with Clever';
     } else if (!account.sync_types.length) {
       return 'Standard account';
     }

@@ -1,8 +1,8 @@
-import { Injectable, NgZone } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
-import { UserService } from '../services/user.service';
-import {map, skip, tap} from 'rxjs/operators';
+import {Injectable, NgZone} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {Observable} from 'rxjs';
+import {UserService} from '../services/user.service';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,6 @@ export class IsStudentOrTeacherGuard implements CanActivate {
         if (u === null) {
           return false;
         }
-
         if (u.isAdmin() && !(u.isStudent() || u.isTeacher())) {
           console.log('SeaB');
 
@@ -29,11 +28,9 @@ export class IsStudentOrTeacherGuard implements CanActivate {
             this.router.navigate(['admin']);
           });
         }
-
         console.log('SeaC');
-
         return true;
-      })
-      , tap(v => console.log('canActivate:', v)));
+      }),
+      tap(v => console.log('canActivate:', v)));
   }
 }

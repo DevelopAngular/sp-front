@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 

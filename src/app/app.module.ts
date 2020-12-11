@@ -1,7 +1,7 @@
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {BrowserModule} from '@angular/platform-browser';
+import {BrowserModule, HammerModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AgmCoreModule} from '@agm/core';
 import {RouterModule, Routes} from '@angular/router';
@@ -66,6 +66,7 @@ import {CustomToastComponent} from './custom-toast/custom-toast.component';
 import {PassesEffects} from './ngrx/passes/effects';
 import {ContactTraceEffects} from './ngrx/contact-trace/effects';
 import {IntrosEffects} from './ngrx/intros/effects/intros.effects';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -73,33 +74,34 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 };
 
 
+// @ts-ignore
 const appRoutes: Routes = [
   {
     path: 'main/intro',
     canActivate: [AuthenticatedGuard],
-    loadChildren: 'app/intro-route/intro-route.module#IntroRouteModule',
+    loadChildren: () => import('app/intro-route/intro-route.module').then(m => m.IntroRouteModule),
     data: { hideSchoolToggleBar: true}
   },
   {
     path: 'school_signup',
     canActivate: [SchoolSignUpGuard],
-    loadChildren: 'app/school-sign-up/school-sign-up.module#SchoolSignUpModule',
+    loadChildren: () => import('app/school-sign-up/school-sign-up.module').then(m => m.SchoolSignUpModule),
     data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: false, authFree: true},
   },
   {
     path: 'accounts_setup',
-    loadChildren: 'app/accounts-setup/accounts-setup.module#AccountsSetupModule',
+    loadChildren: () => import('app/accounts-setup/accounts-setup.module').then(m => m.AccountsSetupModule),
     data: {hideScroll: true, hubspot: true, authFree: true},
   },
   {
     path: '',
-    loadChildren: 'app/login/login.module#LoginModule',
+    loadChildren: () => import('app/login/login.module').then(m => m.LoginModule),
     data: { hideSchoolToggleBar: true}
   },
   {
     path: 'main',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
-    loadChildren: 'app/main/main.module#MainModule',
+    loadChildren: () => import('app/main/main.module').then(m => m.MainModule),
     resolve: {currentUser: CurrentUserResolver},
     data: {
       hubspot: true,
@@ -109,7 +111,7 @@ const appRoutes: Routes = [
   {
     path: 'admin',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
-    loadChildren: 'app/admin/admin.module#AdminModule',
+    loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule),
     resolve: {currentUser: CurrentUserResolver},
     data: {
       hideScroll: true,
@@ -119,11 +121,11 @@ const appRoutes: Routes = [
   },
   {
     path: 'sign-out',
-    loadChildren: 'app/sign-out/sign-out.module#SignOutModule'
+    loadChildren: () => import('app/sign-out/sign-out.module').then(m => m.SignOutModule)
   },
   {
     path: 'error',
-    loadChildren: 'app/error/error.module#ErrorModule'
+    loadChildren: () => import('app/error/error.module').then(m => m.ErrorModule)
   },
 
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -186,7 +188,9 @@ const appRoutes: Routes = [
             ContactTraceEffects,
             IntrosEffects
         ]),
-        StoreDevtoolsModule.instrument({})
+        StoreDevtoolsModule.instrument({}),
+        HammerModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
     ],
     providers: [
         DataService,

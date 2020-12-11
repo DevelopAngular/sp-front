@@ -4,7 +4,7 @@ import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
 import {TotalAccounts} from '../../../models/TotalAccounts';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
@@ -259,13 +259,13 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   openSettingsDialog(action, status) {
-    if (action === 'gg4l') {
+    if (action === 'gg4l' || action === 'clever') {
       const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
-        data: { status }
+        data: { status, action }
       });
     } else if (action === 'g_suite') {
       const g_suite = this.matDialog.open(GSuiteSettingsComponent, {

@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
-import { AdminService } from '../../services/admin.service';
-import { Subject } from 'rxjs';
-import { School } from '../../models/School';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {MatDialogRef} from '@angular/material/dialog';
+import {AdminService} from '../../services/admin.service';
+import {Subject} from 'rxjs';
+import {School} from '../../models/School';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
-import { HttpService } from '../../services/http-service';
+import {HttpService} from '../../services/http-service';
 
 @Component({
   selector: 'app-school-setting-dialog',

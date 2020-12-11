@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Ggl4SettingsComponent} from '../ggl4-settings.component';
 
 @Component({
@@ -10,6 +10,8 @@ import {Ggl4SettingsComponent} from '../ggl4-settings.component';
   styleUrls: ['./info-dialog.component.scss']
 })
 export class InfoDialogComponent implements OnInit {
+
+  @Input() integrationName: string;
 
   @Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
 

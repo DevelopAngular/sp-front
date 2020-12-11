@@ -1,7 +1,6 @@
-import {Component, EventEmitter, Input, Output, OnInit, ViewChild, ElementRef, NgZone} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import { Observable, fromEvent } from 'rxjs';
-import {startWith} from 'rxjs/operators';
+import {fromEvent, Observable} from 'rxjs';
 
 export type ToggleInputSize = 'small' | 'regular' | 'large' | 'smallest';
 

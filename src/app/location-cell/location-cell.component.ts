@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {Location} from '../models/Location';
 import {HttpService} from '../services/http-service';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -7,15 +7,16 @@ import {DeviceDetection} from '../device-detection.helper';
 import {School} from '../models/School';
 import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
-import {of} from 'rxjs';
-import {delay} from 'rxjs/operators';
+import {of, Subject} from 'rxjs';
+import {delay, pluck, takeUntil} from 'rxjs/operators';
+import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-location-cell',
   templateUrl: './location-cell.component.html',
   styleUrls: ['./location-cell.component.scss']
 })
-export class LocationCellComponent implements OnInit {
+export class LocationCellComponent implements OnInit, OnDestroy {
 
   @Input()
   value: Location;
@@ -51,7 +52,7 @@ export class LocationCellComponent implements OnInit {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
-  @ViewChild('cell') cell: ElementRef;
+  @ViewChild('cell', { static: true }) cell: ElementRef;
 
   currentSchool: School;
 
@@ -61,6 +62,9 @@ export class LocationCellComponent implements OnInit {
   hovered: boolean;
   pressed: boolean;
   intervalId;
+  tabIndex: number = 1;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private http: HttpService,
@@ -68,6 +72,7 @@ export class LocationCellComponent implements OnInit {
     public screen: ScreenService,
     private renderer: Renderer2,
     private tooltipService: TooltipDataService,
+    private shortcutsService: KeyboardShortcutsService
   ) {
     this.currentSchool = this.http.getSchool();
   }
@@ -138,6 +143,18 @@ export class LocationCellComponent implements OnInit {
 
   ngOnInit() {
     this.value.starred = this.starred;
+    this.shortcutsService.onPressKeyEvent$
+      .pipe(pluck('key'), takeUntil(this.destroy$))
+      .subscribe(key => {
+        if (key[0] === 'tab') {
+          this.renderer.setAttribute(this.cell.nativeElement, 'tabindex', '0');
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   changeColor(hovered, pressed?: boolean) {

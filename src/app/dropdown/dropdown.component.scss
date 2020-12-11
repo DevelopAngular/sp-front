@@ -75,7 +75,7 @@
 }
 .option{
     width: inherit;
-    height: 40px;
+    padding: 2px 0;
     display: flex;
     flex-direction: column;
     cursor: pointer;
@@ -84,7 +84,7 @@
 
 
 .option-data{
-  height: inherit;
+  height: 40px;
   color: #134482;
   font-size: 15px;
   padding: 2px 26px;
@@ -97,7 +97,7 @@
   }
 
   .option-data_leftside {
-    font-weight: bold;
+    font-weight: normal;
   }
   .option-data_rightside {
     display: flex;

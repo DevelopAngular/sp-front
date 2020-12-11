@@ -1,15 +1,16 @@
-import {Component, EventEmitter, Input, OnInit, Output, Directive, HostListener, OnDestroy, ViewChild, ElementRef} from '@angular/core';
-import { HttpService } from '../services/http-service';
-import { Location } from '../models/Location';
-import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {HttpService} from '../services/http-service';
+import {Location} from '../models/Location';
+import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
-import { sortBy, filter as _filter } from 'lodash';
+import {filter as _filter, sortBy} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
+import {DeviceDetection} from '../device-detection.helper';
 
 
 export interface Paged<T> {
@@ -146,6 +147,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             this.mergeLocations(url, this.withMergedStars, this.category)
               .pipe(takeUntil(this.destroy$))
                 .subscribe(res => {
+                  // debugger;
                     this.choices = res;
                     this.noChoices = !this.choices.length;
                     this.mainContentVisibility = true;
@@ -170,7 +172,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             });
         }
 
-        this.isFocused = !this.isFavoriteForm && !(!this.forStaff && this.screenService.isDeviceLargeExtra);
+        this.isFocused = !this.isFavoriteForm && !DeviceDetection.isMobile();
     }
     if (this.type === 'location') {
       this.locationService.favoriteLocations$

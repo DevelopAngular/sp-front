@@ -1,12 +1,11 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorHandler, Injectable, Provider } from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ErrorHandler, Injectable, Provider} from '@angular/core';
 import * as Sentry from '@sentry/browser';
-import { BrowserOptions } from '@sentry/browser';
-import { SentryEvent, SentryEventHint } from '@sentry/types';
-import { FirebaseError } from 'firebase';
-import { BUILD_INFO_REAL, RELEASE_NAME } from '../build-info';
-import { environment } from '../environments/environment';
-import {APP_BASE_HREF} from '@angular/common';
+import {BrowserOptions} from '@sentry/browser';
+import {SentryEvent, SentryEventHint} from '@sentry/types';
+import {FirebaseError} from 'firebase';
+import {BUILD_INFO_REAL, RELEASE_NAME} from '../build-info';
+import {environment} from '../environments/environment';
 
 
 const FIREBASE_ERROR_IGNORE_LIST = ['messaging/unsupported-browser'];
@@ -78,7 +77,9 @@ export class SentryErrorHandler implements ErrorHandler {
             }
           }
 
-          if (event.message.indexOf('Http failure response for') !== -1 && event.message.indexOf(': 0 Unknown Error') !== -1) {
+          if (event.message
+            && event.message.indexOf('Http failure response for') !== -1
+            && event.message.indexOf(': 0 Unknown Error') !== -1) {
             console.log('error message matches discard rule: ' + event.message);
             return null;
           }

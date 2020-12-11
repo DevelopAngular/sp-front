@@ -29,7 +29,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
   @Output() pinResult: EventEmitter<any> = new EventEmitter<any>();
   @Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild('inp') inp: ElementRef;
+  @ViewChild('inp', { static: true }) inp: ElementRef;
 
   pin: string = '';
 

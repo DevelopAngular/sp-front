@@ -1,19 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import { BehaviorSubject, iif, of } from 'rxjs';
-import { User } from '../../models/User';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { UserService } from '../../services/user.service';
-import { catchError, tap } from 'rxjs/operators';
-import { HttpService } from '../../services/http-service';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
+import {BehaviorSubject, iif, of, Subject} from 'rxjs';
+import {User} from '../../models/User';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {UserService} from '../../services/user.service';
+import {catchError, takeUntil, tap} from 'rxjs/operators';
+import {HttpService} from '../../services/http-service';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss']
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent implements OnInit, OnDestroy {
 
   @Input() user: User;
 
@@ -24,6 +24,9 @@ export class ChangePasswordComponent implements OnInit {
   form: FormGroup;
   showOldPasswordInput: boolean;
   errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  me: User;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private formService: CreateFormService,
@@ -33,7 +36,7 @@ export class ChangePasswordComponent implements OnInit {
     ) { }
 
   get isAdmin() {
-    return this.user && this.user.roles.includes('_profile_admin');
+    return this.user && this.user.roles.includes('_profile_admin') && this.router.url.includes('/admin');
   }
 
   get isSaveButton() {
@@ -45,8 +48,13 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.userService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.me = user;
+    });
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    this.showOldPasswordInput = !this.router.url.includes('/admin');
+    this.showOldPasswordInput = !this.router.url.includes('/admin') || this.user.id === this.me.id;
     this.form = new FormGroup({
       oldPassword: new FormControl('', [Validators.required]),
       newPassword: new FormControl('', [
@@ -57,6 +65,11 @@ export class ChangePasswordComponent implements OnInit {
     this.form.valueChanges.subscribe(() => {
       this.errorMessage$.next(null);
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   updateUserPassword() {

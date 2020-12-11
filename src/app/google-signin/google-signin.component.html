@@ -10,7 +10,10 @@
         [autocomplete]="'username'"
         [controlName]="loginForm.get('username')"
         [input_label]="'Username or email'"
-        [input_type]="'text'"
+        [isFocus]="true"
+        (focusEvent)="focusEvent.emit($event)"
+        (blurEvent)="blurEvent.emit($event)"
+        [input_type]="isMobile ? 'email' : 'text'"
         [width]="'250px'"
         (onUpdate)="updateDemoUsername($event)"
       ></app-input>
@@ -22,6 +25,8 @@
           [formGroup]="loginForm"
           [isFocus]="inputFocusNumber === 2"
           [forceFocus$]="forceFocus$"
+          (focusEvent)="focusEvent.emit($event)"
+          (blurEvent)="blurEvent.emit($event)"
           [controlName]="loginForm.get('password')"
           [input_label]="'Password'"
           [input_type]="'password'"
@@ -41,7 +46,7 @@
           [minWidth]="'90px'"
           [minHeight]="'30px'"
           [fontSize]="'14px'"
-          (buttonClick)="!showSpinner ? checkUserAuthType() : null"
+          (buttonClick)="!showSpinner ? nextButtonTapped() : null"
           [style.width]="'90px'"
         >
           <div *ngIf="!showSpinner">

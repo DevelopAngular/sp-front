@@ -47,7 +47,7 @@ export class CreatePassButtonComponent implements OnInit {
       if (this.buttonDown && !this.disabled) {
           return this.solid_color;
       } else {
-          return 'radial-gradient(circle at 73% 71%, #03cf31, #00b476)';
+          return 'radial-gradient(circle at 73% 71%, #00B467, #15D593)';
       }
   }
 

@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Location } from '../models/Location';
-import { MatDialogRef } from '@angular/material';
-import { LocationsService } from '../services/locations.service';
-import { DeviceDetection } from '../device-detection.helper';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Location} from '../models/Location';
+import {MatDialogRef} from '@angular/material/dialog';
+import {LocationsService} from '../services/locations.service';
+import {DeviceDetection} from '../device-detection.helper';
 import {DragulaService} from 'ng2-dragula';
 import {merge, Observable, of} from 'rxjs';
 import {mapTo, publish, refCount} from 'rxjs/operators';

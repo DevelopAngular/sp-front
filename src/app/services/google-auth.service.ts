@@ -1,9 +1,9 @@
 import {Injectable, NgZone} from '@angular/core';
 
 import {mergeMap, take} from 'rxjs/operators';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
 import {Subject} from 'rxjs/Subject';
 import {GoogleApiService} from './google-api.service';
+import {ReplaySubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

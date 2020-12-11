@@ -1,0 +1,10 @@
+<div class="wrapper">
+  <img class="close"
+       [src]="'./assets/Cancel (Transparent).svg' | resolveAsset"
+       alt=""
+       appCrossPointerEventTarget
+       (pointerClickEvent)="close()"
+  >
+  <div class="title">{{ title }}</div>
+  <div class="subtitle">{{ subtitle }}</div>
+</div>

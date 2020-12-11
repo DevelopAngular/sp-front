@@ -5,7 +5,6 @@
       [@pressState]="buttonState"
       (mouseenter)="hovered = true"
       (mouseleave)="buttonDown = false; hovered = false"
-
       appCrossPointerEventTarget
       (pointerClickEvent)="buttonDown = false; onClick($event)"
       (pointerDownEvent)="buttonDown = true;"

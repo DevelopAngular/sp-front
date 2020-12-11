@@ -6,7 +6,7 @@ import {UserService} from '../../../../services/user.service';
 import {fromEvent, Observable, throwError} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
-import { uniqBy } from 'lodash';
+import {uniqBy} from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
 
 
@@ -18,7 +18,7 @@ import {DeviceDetection} from '../../../../device-detection.helper';
 export class GroupsStep2Component implements OnInit {
 
 
-  @ViewChild('studentEmails') studentEmailsFile;
+  @ViewChild('studentEmails', { static: true }) studentEmailsFile;
 
   @Input() selectedStudents: User[] = [];
   @Input() form: FormGroup;

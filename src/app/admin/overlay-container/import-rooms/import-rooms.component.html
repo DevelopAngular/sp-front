@@ -11,9 +11,9 @@
       <div class="room-in-folder-title-inactive">
         {{ (showIncomplete ? 'Adding ' + importedRooms.length + ' Rooms' : 'Import Rooms')  }}
       </div>
-      <div class="header-in-folder-button">
-        <div *ngIf="showIncomplete" [style.color]="'#1F194E'">Incomplete</div>
-      </div>
+<!--      <div class="header-in-folder-button">-->
+<!--        <div *ngIf="showIncomplete" [style.color]="'#1F194E'">Incomplete</div>-->
+<!--      </div>-->
     </div>
   </div>
 
@@ -77,12 +77,13 @@
       </div>
       <div class="issues-footer ds-flex-center-between">
 
-        <div>
+        <div style="margin-top: 20px">
           <span class="ds-dialog-bold-text">Need help?</span> <br>
           <span class="ds-cell-text-2 ds-pt-5">support@smartpass.app</span>
         </div>
         <app-gradient-button
-                (buttonClick)="redirect()"
+          (buttonClick)="redirect()"
+          style="position: absolute; right: 20px; bottom: 45px;"
         >
           Next
         </app-gradient-button>

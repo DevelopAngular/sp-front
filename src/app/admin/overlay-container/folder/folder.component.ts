@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {BehaviorSubject, interval, merge, Subject, zip} from 'rxjs';
 
@@ -36,7 +36,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   private scrollableAreaName: string;
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea', { static: true }) set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 
