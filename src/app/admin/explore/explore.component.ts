@@ -595,8 +595,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.adminService.exportCsvPasses(this.queryParams).subscribe(res => {
       this.toastService.openToast(
         {
-          title: 'Data Export Requested',
-          subtitle: 'The link to download your requested data will be emailed to you shortly.',
+          title: 'Generating CSV...',
+          subtitle: 'When it’s ready (1-2min), we’ll send you a download link to your email.',
           noButton: true
         }
       );
