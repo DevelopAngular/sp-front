@@ -494,7 +494,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
-  search(limit: number = 100000) {
+  search(limit: number = 300) {
     let url = `v1/hall_passes?limit=${limit}&`;
     if (this.passSearchData.selectedDestinationRooms) {
       this.passSearchData.selectedDestinationRooms.forEach(room => {
@@ -522,10 +522,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
       }
       if (this.passSearchData.selectedDate['end']) {
         end = this.passSearchData.selectedDate['end'].toISOString();
-        url += (end ? ('end_time_before=' + end) : '');
+        url += (end ? ('end_time_before=' + end + '&') : '');
       }
     }
-    url = url + 'total_count=true';
+    url = url + 'total_count=true&';
     this.queryParams = url.substring(url.lastIndexOf('&') + 1);
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
@@ -591,12 +591,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
-  exportPasses(selectedPassesLength) {
-    this.adminService.exportCsvPasses(this.queryParams, selectedPassesLength || 100000).subscribe(res => {
+  exportPasses() {
+    this.adminService.exportCsvPasses(this.queryParams).subscribe(res => {
       this.toastService.openToast(
         {
-          title: 'Data Export Requested',
-          subtitle: 'The link to download your requested data will be emailed to you shortly.',
+          title: 'Generating CSV...',
+          subtitle: 'When it’s ready (1-2min), we’ll send you a download link to your email.',
           noButton: true
         }
       );
