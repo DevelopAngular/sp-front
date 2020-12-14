@@ -318,8 +318,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv') {
-      if (this.selection.selected.length > 300 || !this.selection.selected.length) {
-        this.exportPasses.emit(this.selection.selected.length);
+      if (this.currentPage === 'pass_search' && (this.selection.selected.length > 300 || !this.selection.selected.length)) {
+        this.exportPasses.emit(this.selection.selected);
       } else {
         this.toastService.openToast(
           {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
@@ -329,7 +329,15 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   }
 
   generateCSV() {
-    const exceptPass = this.selection.selected.map(row => {
+    // If we are generating CSV locally, use all data from datasource if no selection.
+    let rows: any[];
+    if (this.selection.selected.length) {
+      rows = this.selection.selected;
+    } else {
+      rows = this.dataSource.allData;
+    }
+
+    const exceptPass = rows.map(row => {
       if (row['Contact connection']) {
         const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
         row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
