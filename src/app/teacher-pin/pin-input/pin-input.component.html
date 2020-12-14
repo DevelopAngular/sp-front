@@ -1,5 +1,18 @@
-<div class="wrapper" [style.border]="value.length === 4 && group.invalid && group.dirty ? '1px red solid' : 'none'">
-  <input class="input" [formControl]="control" maxlength="4" type="tel" [pattern]="'[0-9]*'" [style.caret-color]="value.length === 4 ? 'transparent' : 'black'">
+<div class="wrapper"
+     [style.border]="value.length === 4 && group.invalid && group.dirty ? '2px red solid' :
+     (focused ? '2px #1F195E solid' : '2px transparent solid')"
+>
+  <input
+    #inp
+    class="input"
+    [formControl]="control"
+    maxlength="4"
+    type="tel"
+    tabindex="-1"
+    [pattern]="'[0-9]*'"
+    (focus)="focusEvent($event)"
+    (blur)="blurEvent($event)"
+  />
   <div class="background" style="position: absolute">
     <div class="fake" [style.opacity]="!value ? 1 : 0"></div>
     <div class="fake" [style.opacity]="value.length < 2 ? 1 : 0"></div>
