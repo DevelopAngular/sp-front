@@ -238,10 +238,10 @@ export class AdminService {
     this.store.dispatch(updateCleverInfo({cleverInfo}));
   }
 
-  exportCsvPasses(queryParams, limit) {
+  exportCsvPasses(queryParams) {
     const url = isObject(queryParams) ?
-      constructUrl('v1/admin/export/hall_passes', {...queryParams, limit}) :
-      'v1/admin/export/hall_passes?' + queryParams + `&limit=${limit}`;
+      constructUrl('v1/admin/export/hall_passes', {...queryParams}) :
+      'v1/admin/export/hall_passes?' + queryParams;
     return this.http.post(url);
   }
 }

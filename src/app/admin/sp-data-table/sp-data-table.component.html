@@ -99,7 +99,7 @@
           <mat-spinner [diameter]="25" [color]="'primary'"></mat-spinner>
         </div>
         <ng-template #image>
-          <img width="20" [src]="'./assets/' + option.icon + ' ('+ (selection.selected.length && !isFirst ? 'Navy' : 'Blue-Gray') +').svg' | resolveAsset">
+          <img width="20" [src]="'./assets/' + option.icon + ' ('+ (!isFirst ? 'Navy' : 'Blue-Gray') +').svg' | resolveAsset">
         </ng-template>
       </div>
     </div>
