@@ -1,16 +1,20 @@
-import {Component, ElementRef, HostListener, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { User } from '../models/User';
+import {Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit, Optional} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {User} from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
+import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
+import {UserService} from '../services/user.service';
+import {takeUntil} from 'rxjs/operators';
+import * as moment from 'moment';
+import {NotificationService} from '../services/notification-service';
 
 export interface Setting {
   hidden: boolean;
@@ -19,6 +23,7 @@ export interface Setting {
   action: string | Function;
   title: string;
   tooltip?: string;
+  isNew?: boolean;
 }
 
 @Component({
@@ -27,7 +32,7 @@ export interface Setting {
   styleUrls: ['./settings.component.scss'],
 })
 
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
 
   @Input() dataSideNav: any = null;
 
@@ -35,6 +40,7 @@ export class SettingsComponent implements OnInit {
   settings: Setting[] = [];
   user: User;
   isStaff: boolean;
+  intosData: any;
 
   isSwitch: boolean;
 
@@ -46,6 +52,9 @@ export class SettingsComponent implements OnInit {
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
   currentBuildTime = BUILD_DATE;
+  teacherPin$: Observable<string | number>;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
       public dialog: MatDialog,
@@ -59,40 +68,60 @@ export class SettingsComponent implements OnInit {
       public kioskMode: KioskModeService,
       private router: Router,
       private pwaStorage: LocalStorage,
-
+      private userService: UserService
   ) {
-    this.initializeSettings();
+    // this.initializeSettings();
+  }
+
+  get isKioskMode(): boolean {
+    return !!this.kioskMode.currentRoom$.value;
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
+  get showNotificationBadge() {
+    return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
   }
 
   ngOnInit() {
+    this.teacherPin$ = this.userService.userPin$;
+    combineLatest(this.userService.user$, this.userService.introsData$)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([user, intros]) => {
+        this._zone.run(() => {
+          this.user = User.fromJSON(user);
+          this.intosData = intros;
+          this.settings = [];
+          this.isStaff = this.user.isTeacher() || this.user.isAssistant();
+          this.initializeSettings();
+        });
+      });
     if (this.data) {
       this.targetElementRef = this.data['trigger'];
       this.isSwitch = this.data['isSwitch'] && !this.kioskMode.currentRoom$.value;
     }
 
-    this.sideNavService.sideNavData.subscribe( sideNavData => {
+    this.sideNavService.sideNavData.pipe(takeUntil(this.destroy$)).subscribe( sideNavData => {
       if (sideNavData) {
         this.targetElementRef = sideNavData['trigger'];
-        this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+        // this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+        this.isSwitch = false;
       }
     });
 
-    this.sideNavService.toggle.subscribe(() => {
+    this.sideNavService.toggle.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.settings = [];
       this.initializeSettings();
     });
 
     this.updateDialogPosition();
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
-      .subscribe(user => {
-        this._zone.run(() => {
-          this.user = user;
-          this.settings = [];
-          this.initializeSettings();
-          this.isStaff = user.roles.includes('edit_all_hallpass');
-        });
-      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getIcon(iconName: string, setting: any) {
@@ -163,7 +192,8 @@ export class SettingsComponent implements OnInit {
 
     combineLatest(
       this.pwaStorage.removeItem('servers'),
-      this.pwaStorage.removeItem('authData') )
+      this.pwaStorage.removeItem('authData'))
+      .pipe(takeUntil(this.destroy$))
       .subscribe();
   }
 
@@ -185,7 +215,7 @@ export class SettingsComponent implements OnInit {
 
   initializeSettings() {
     this.settings.push({
-      'hidden': false,
+      'hidden': this.isKioskMode,
       'background': '#6651FF',
       'icon': 'Username',
       'action': 'profile',
@@ -198,19 +228,36 @@ export class SettingsComponent implements OnInit {
       'action': 'appearance',
       'title': 'Appearance'
     });
+    if (this.isStaff) {
+      this.settings.push({
+        'hidden': this.isKioskMode,
+        'background': '#12C29E',
+        'icon': 'Lock dots',
+        'action': 'myPin',
+        'title': 'Approval Pin'
+      });
+    }
     this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value,
+      'hidden': this.isKioskMode,
       'background': '#EBBB00',
       'icon': 'Star',
       'action': 'favorite',
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': !!this.kioskMode.currentRoom$.value || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid() || DeviceDetection.isIOSTablet(),
+      'hidden': this.isKioskMode || !NotificationService.hasPermission,
       'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',
       'title': 'Notifications'
+    });
+    this.settings.push({
+      'hidden': this.isKioskMode || !this.isStaff,
+      'background': '#EBBB00',
+      'icon': 'Referal',
+      'action': 'refer',
+      'title': 'Refer a friend',
+      'isNew': this.isStaff && this.intosData.referral_reminder ? (!this.intosData.referral_reminder.universal.seen_version && this.showNotificationBadge) : false
     });
   }
 }

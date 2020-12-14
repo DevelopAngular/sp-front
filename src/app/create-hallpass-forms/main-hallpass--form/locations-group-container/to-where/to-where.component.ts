@@ -1,17 +1,20 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output, Inject, ViewChild, ElementRef} from '@angular/core';
-import { Pinnable } from '../../../../models/Pinnable';
-import { Navigation } from '../../main-hall-pass-form.component';
-import { CreateFormService } from '../../../create-form.service';
-import { States } from '../locations-group-container.component';
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Pinnable} from '../../../../models/Pinnable';
+import {Navigation} from '../../main-hall-pass-form.component';
+import {CreateFormService} from '../../../create-form.service';
+import {States} from '../locations-group-container.component';
 import {ScreenService} from '../../../../services/screen.service';
 import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction';
 import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
+import {TooltipDataService} from '../../../../services/tooltip-data.service';
+import {PassLimit} from '../../../../models/PassLimit';
+import {LocationsService} from '../../../../services/locations.service';
 
 @Component({
   selector: 'app-to-where',
@@ -19,8 +22,8 @@ import {StorageService} from '../../../../services/storage.service';
   styleUrls: ['./to-where.component.scss']
 })
 export class ToWhereComponent implements OnInit {
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
-  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+  @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
         let blur: number;
@@ -54,6 +57,8 @@ export class ToWhereComponent implements OnInit {
   public isLocationList$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(JSON.parse(this.storage.getItem('isGrid')));
   public hiddenBanner: boolean = JSON.parse(this.storage.getItem('hiddenBanner'));
 
+  passLimits: {[id: number]: PassLimit};
+
   public gridRestrictions: ToWhereGridRestriction = new ToWhereGridRestrictionLg();
 
   frameMotion$: BehaviorSubject<any>;
@@ -67,7 +72,9 @@ export class ToWhereComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
     public screenService: ScreenService,
-    private storage: StorageService
+    private storage: StorageService,
+    private tooltipDataService: TooltipDataService,
+    private locationService: LocationsService
   ) {
     this.states = States;
   }
@@ -94,18 +101,30 @@ export class ToWhereComponent implements OnInit {
           this.headerTransition['to-header_animation-back'] = false;
       }
     });
+
+    this.locationService.pass_limits_entities$.subscribe(res => {
+      this.passLimits = res;
+    });
   }
 
   isValidPinnable(pinnable: Pinnable) {
-    if (pinnable.location.id === this.location.id) {
+    if (pinnable.location.id === this.location.id)
       return false;
-    }
-    if (!this.isStaff &&
+
+    if (this.isStaff && !this.formState.kioskMode)
+      return true;
+
+    if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id]))
+      return false;
+
+    if (
       (!this.formState.forLater &&
+      pinnable.location.restricted &&
       pinnable.location.request_mode === 'all_teachers_in_room' &&
       pinnable.location.request_send_origin_teachers &&
       !this.location.teachers.length) ||
       (this.formState.forLater &&
+      pinnable.location.scheduling_restricted &&
       pinnable.location.scheduling_request_mode === 'all_teachers_in_room' &&
       pinnable.location.scheduling_request_send_origin_teachers &&
       !this.location.teachers.length)
@@ -176,6 +195,7 @@ export class ToWhereComponent implements OnInit {
             this.formState.step = 2;
             this.formState.state = 4;
           } else {
+              this.formState.data.direction.from = null;
               this.formState.state -= 1;
           }
         }

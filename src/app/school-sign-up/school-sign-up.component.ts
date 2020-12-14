@@ -1,18 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
-import { environment } from '../../environments/environment';
+import {environment} from '../../environments/environment';
 import {constructUrl, QueryParams} from '../live-data/helpers';
-import {
-  catchError,
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  map,
-  pluck,
-  switchMap,
-  take,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
+import {catchError, debounceTime, delay, distinctUntilChanged, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
@@ -26,7 +15,6 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
-import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -121,7 +109,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private gsProgress: GettingStartedProgressService,
     private fb: FormBuilder,
     private shortcutsService: KeyboardShortcutsService,
-    private darkSwitch: DarkThemeSwitch
   ) {
     this.jwt = new JwtHelperService();
     this.errorToast = this.httpService.errorToast$;
@@ -130,10 +117,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    if (this.darkSwitch.isEnabled$.value) {
-      this.darkSwitch.switchTheme('Light');
-    }
-
     this.route.queryParams
       .pipe(
         switchMap((qp: QueryParams) => {
@@ -271,7 +254,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             this.pending.next(false);
             if (res) {
               this._zone.run(() => {
-                this.router.navigate(['admin', 'gettingstarted']);
+                this.router.navigate(['admin', 'dashboard']);
               });
             }
           });

@@ -9,11 +9,15 @@ import {User} from '../models/User';
 })
 export class SpChipsComponent implements OnInit {
 
-  @Input() selectedProfiles: User[] = [];
+  @Input() selectedProfiles: User[] | any[] = [];
   @Input() preventRemovingLast: boolean = false;
+  @Input() suggestedTeacher: User;
+  @Input() isProposed: boolean;
+  @Input() selectedTarget: 'users' | 'orgunits' | 'roles' = 'users';
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
   @Output() updateSelectedEvent: EventEmitter<User[]> = new EventEmitter();
+  @Output() addSuggestedTeacher: EventEmitter<User> = new EventEmitter<User>();
 
   constructor(
     private sanitizer: DomSanitizer,

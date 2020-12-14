@@ -1,0 +1,15 @@
+.wrapper {
+  height: 100%;
+
+  .settings {
+    height: 100%;
+    position: relative;
+
+    .next-step {
+      position: absolute;
+      border-radius: 14px;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Observable, of, throwError} from 'rxjs';
-import {catchError, finalize, tap} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {HttpService} from './services/http-service';
 
@@ -17,16 +17,17 @@ export class ProgressInterceptor implements HttpInterceptor {
         return next.handle(req)
                     .pipe(
                       catchError((error: any) => {
-
                         const exeptedUrls = [
                           'onboard/schools/check_school',
                           'discovery/find',
                           'discovery/email_info',
                           'auth/by-token',
-                          'o/token'
+                          'o/token',
+                          'pass_requests/',
+                          '//server.test-cors.org'
                         ].every(_url => error.url.search(_url) < 0);
 
-                        if ( error.status === 0 || (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
+                        if ( (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
                           // console.log(error);
                           this.http.errorToast$.next({
                             header: 'Something went wrong.',

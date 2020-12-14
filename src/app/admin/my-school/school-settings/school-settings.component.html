@@ -19,7 +19,7 @@
         (buttonClick)="save()"
       >
         <span *ngIf="!showSpinner">Save</span>
-        <mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+        <mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="30"></mat-spinner>
       </app-gradient-button>
     </div>
   </div>
@@ -39,10 +39,10 @@
       <div class="label">Sign-up date</div>
       <div class="value">{{ school.created }}</div>
     </div>
-    <div class="block">
-      <div class="label">Launch day</div>
-      <div class="value">{{ school.launch_date }}</div>
-    </div>
+<!--    <div class="block">-->
+<!--      <div class="label">Launch day</div>-->
+<!--      <div class="value">{{ school.launch_date }}</div>-->
+<!--    </div>-->
     <div class="block" *ngIf="school.address">
       <div class="label">Address</div>
       <div class="value">{{ school.address.address }}</div>

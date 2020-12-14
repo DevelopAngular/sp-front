@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {School} from '../../models/School';
 import {Observable} from 'rxjs';
@@ -25,14 +25,14 @@ export class SchoolsResolver implements Resolve<School[]> {
           switchMap(() => {
             return this.http.schoolsLoaded$;
           }),
-      switchMap(isLoaded => {
-        if (isLoaded) {
-          return this.http.schoolsCollection$;
-        } else {
-          return this.http.getSchoolsRequest();
-        }
-      }),
-      take(1)
+          switchMap(isLoaded => {
+            if (isLoaded) {
+              return this.http.schoolsCollection$;
+            } else {
+              return this.http.getSchoolsRequest();
+            }
+          }),
+          take(1)
     );
   }
 }

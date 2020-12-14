@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormGroup} from '@angular/forms';
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
-import { Location } from '../../../models/Location';
-import { ValidButtons } from '../advanced-options/advanced-options.component';
-import { BehaviorSubject } from 'rxjs';
-import { isNull } from 'lodash';
+import {Location} from '../../../models/Location';
+import {ValidButtons} from '../advanced-options/advanced-options.component';
+import {BehaviorSubject} from 'rxjs';
+import {isNull} from 'lodash';
 
 @Component({
   selector: 'app-bulk-edit-rooms-in-folder',
@@ -15,6 +15,10 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
 
   @Input() form: FormGroup;
 
+  @Input() passLimitForm: FormGroup;
+
+  @Input() showErrors: boolean;
+
   @Output() back = new EventEmitter();
 
   @Output()
@@ -22,6 +26,8 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
     rooms: Location[],
     roomData: RoomData
   }> = new EventEmitter<{rooms: any[], roomData: RoomData}>();
+
+  @Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
 
   advOptionsButtons: ValidButtons;
 
@@ -49,6 +55,10 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
     return this.roomsValidButtons.getValue().cancel;
   }
 
+  get isImportState() {
+    return this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms;
+  }
+
   ngOnInit() {
     this.selectedRoomsInFolder = this.overlayService.pageState.getValue().data.selectedRoomsInFolder;
   }
@@ -64,24 +74,21 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
   }
 
   checkValidForm() {
-    if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
+    if (this.isImportState) {
       if (
         (this.roomData.travelType.length &&
-        !isNull(this.roomData.restricted) &&
-        !isNull(this.roomData.scheduling_restricted) &&
         this.roomData.timeLimit) && !this.advOptionsButtons
       ) {
         this.roomsValidButtons.next({publish: true, cancel: true, incomplete: false});
       } else if ((this.roomData.travelType.length &&
-        !isNull(this.roomData.restricted) &&
-        !isNull(this.roomData.scheduling_restricted) &&
+        // !isNull(this.roomData.restricted) &&
+        // !isNull(this.roomData.scheduling_restricted) &&
         this.roomData.timeLimit) && this.advOptionsButtons) {
-
-        if (this.advOptionsButtons.incomplete) {
-          this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
-        } else {
+        // if (this.advOptionsButtons.incomplete) {
+        //   this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
+        // } else {
           this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
-        }
+        // }
 
       } else {
         this.roomsValidButtons.next({publish: false, cancel: true, incomplete: true });
@@ -110,6 +117,10 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
   }
 
   save() {
+    if (this.roomsValidButtons.getValue().incomplete) {
+      this.errorsEmit.emit();
+      return;
+    }
     this.bulkEditResult.emit({
       roomData: this.roomData,
       rooms: this.selectedRoomsInFolder

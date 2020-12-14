@@ -1,10 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { User } from '../../../models/User';
-import { bumpIn } from '../../../animations';
-import { DarkThemeSwitch } from '../../../dark-theme-switch';
-import { DomSanitizer } from '@angular/platform-browser';
-import { cloneDeep, isEqual } from 'lodash';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {User} from '../../../models/User';
+import {bumpIn} from '../../../animations';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
+import {DomSanitizer} from '@angular/platform-browser';
+import {cloneDeep, isEqual} from 'lodash';
 import {Subject} from 'rxjs';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {OverlayDataService, RoomData} from '../overlay-data.service';
+import {takeUntil} from 'rxjs/operators';
 
 export interface OptionState {
     now: {
@@ -23,6 +26,10 @@ export interface OptionState {
             all_teach_assign: string;
         }
     };
+    from?: string;
+    fromEnabled?: boolean;
+    to?: string;
+    toEnabled?: boolean;
 }
 
 export interface ValidButtons {
@@ -37,7 +44,7 @@ export interface ValidButtons {
   styleUrls: ['./advanced-options.component.scss'],
   animations: [bumpIn]
 })
-export class AdvancedOptionsComponent implements OnInit {
+export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
     @Input() roomName: string;
     @Input() nowRestricted: boolean;
@@ -45,19 +52,32 @@ export class AdvancedOptionsComponent implements OnInit {
     @Input() disabledOptions: string[];
     @Input() data: OptionState;
     @Input() resetOptions$: Subject<OptionState>;
+    @Input() roomData: RoomData;
+    @Input() passLimitForm: FormGroup;
+    @Input() showErrors: boolean;
 
     @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() resultOptions: EventEmitter<{options: OptionState, validButtons: ValidButtons}> = new EventEmitter<{options: OptionState, validButtons: ValidButtons}>();
+    @Output() nowRestrEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() futureRestEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    openedContent: boolean;
     hideFutureBlock: boolean;
-    isActiveTooltip: boolean;
+    tooltipText;
+    openNowOptions: boolean;
+    openFutureOptions: boolean;
+
+    limitInputsFocus: {
+      to: boolean,
+      from: boolean
+    } = {to: false, from: false};
+
+    restrictionForm: FormGroup;
 
     toggleChoices = [
-        'Any teacher (default)',
-        'Any teachers assigned',
-        'All teachers assigned',
-        'Certain \n teacher(s)'
+        'Any teacher',
+        'Any teachers in room',
+        'All teachers in room',
+        'Certain \n teachers'
     ];
 
     optionState: OptionState;
@@ -75,34 +95,53 @@ export class AdvancedOptionsComponent implements OnInit {
     hovered: boolean;
     pressed: boolean;
 
+    change$: Subject<any> = new Subject<any>();
+    destroy$: Subject<any> = new Subject<any>();
+
     constructor(
         public darkTheme: DarkThemeSwitch,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private fb: FormBuilder,
+        private overlayService: OverlayDataService
     ) {
     }
 
-    get bgColor() {
-        if (this.hovered) {
-            if (this.pressed) {
-                return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-            } else {
-                return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
-            }
-        } else {
-            return this.sanitizer.bypassSecurityTrustStyle('transparent');
-        }
-    }
-
     ngOnInit() {
+        this.tooltipText = this.overlayService.tooltipText;
         this.optionState = cloneDeep(this.data);
-        this.initialState = cloneDeep(this.optionState);
+        this.initialState = cloneDeep({
+          ...this.optionState,
+          ...this.passLimitForm.value
+        });
         this.resetOptions$.subscribe(data => {
           this.optionState = cloneDeep(data);
         });
         this.buildData();
+        this.passLimitForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
+          this.checkValidOptions();
+          this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
+        });
+        this.restrictionForm = new FormGroup({
+          forNow: new FormControl(this.roomData.restricted),
+          forFuture: new FormControl(this.roomData.scheduling_restricted)
+        });
+        this.futureRestEmit.emit(this.roomData.scheduling_restricted);
+        this.nowRestrEmit.emit(this.roomData.restricted);
+
+        this.change$.pipe(takeUntil(this.destroy$)).subscribe(({value, action}) => {
+          this.limitInputsFocus[action] = value;
+          if (this.limitInputsFocus[action]) {
+            this.passLimitForm.get(action).setValue('');
+          }
+        });
     }
 
-    buildData() {
+    ngOnDestroy() {
+      this.destroy$.next();
+      this.destroy$.complete();
+    }
+
+  buildData() {
         this.selectedOpt = {
             anyNow: this.optionState.now.data.any_teach_assign,
             anyFut: this.optionState.future.data.any_teach_assign,
@@ -111,11 +150,6 @@ export class AdvancedOptionsComponent implements OnInit {
             nowTeachers: this.optionState.now.data.selectedTeachers,
             futTeachers: this.optionState.future.data.selectedTeachers,
         };
-    }
-
-    toggleContent() {
-        this.openedContent = !this.openedContent;
-        this.openedOptions.emit(this.openedContent);
     }
 
     changeState(action, data) {
@@ -161,19 +195,39 @@ export class AdvancedOptionsComponent implements OnInit {
         const now = this.optionState.now;
         const future = this.optionState.future;
         if (
-            (now.state === 'Any teachers assigned' && !now.data.any_teach_assign) ||
-            (future.state === 'Any teachers assigned' && !future.data.any_teach_assign) ||
-            (now.state === 'All teachers assigned' && !now.data.all_teach_assign) ||
-            (future.state === 'All teachers assigned' && !future.data.all_teach_assign) ||
-            (now.state === 'Certain \n teacher(s)' && !now.data.selectedTeachers.length) ||
-            (future.state === 'Certain \n teacher(s)' && !future.data.selectedTeachers.length)
+            (now.state === 'Any teachers in room' && !now.data.any_teach_assign) ||
+            (future.state === 'Any teachers in room' && !future.data.any_teach_assign) ||
+            (now.state === 'All teachers in room' && !now.data.all_teach_assign) ||
+            (future.state === 'All teachers in room' && !future.data.all_teach_assign) ||
+            (now.state === 'Certain \n teachers' && !now.data.selectedTeachers.length) ||
+            (future.state === 'Certain \n teachers' && !future.data.selectedTeachers.length ||
+            this.passLimitForm.dirty )
         ) {
-            if (!isEqual(this.initialState, this.optionState)) {
+            if (!isEqual(this.initialState, {...this.optionState, ...this.passLimitForm.value})) {
                 this.isShowButtons = {
                     publish: false,
                     incomplete: true,
                     cancel: true
                 };
+                if (this.passLimitForm.value.from || this.passLimitForm.value.to) {
+                  if (
+                    (this.passLimitForm.value.toEnabled && !this.passLimitForm.value.to) && this.passLimitForm.get('to').invalid
+                    // (this.passLimitForm.value.from && (this.passLimitForm.value.toEnabled && !this.passLimitForm.value.to) || this.passLimitForm.get('from').invalid) ||
+                    // (this.passLimitForm.value.to && (this.passLimitForm.value.fromEnabled && !this.passLimitForm.value.from) || this.passLimitForm.get('from').invalid)
+                  ) {
+                    this.isShowButtons = {
+                      publish: false,
+                      incomplete: true,
+                      cancel: true
+                    };
+                  } else {
+                    this.isShowButtons = {
+                      publish: true,
+                      incomplete: false,
+                      cancel: true
+                    };
+                  }
+                }
             } else {
                 this.isShowButtons = {
                     publish: false,
@@ -182,7 +236,7 @@ export class AdvancedOptionsComponent implements OnInit {
                 };
             }
         } else {
-            if (isEqual(this.initialState, this.optionState)) {
+            if (isEqual(this.initialState, {...this.optionState, ...this.passLimitForm.value})) {
                 this.isShowButtons = {
                     publish: false,
                     incomplete: false,
@@ -196,5 +250,23 @@ export class AdvancedOptionsComponent implements OnInit {
                 };
             }
         }
+    }
+
+    nowEvent(value) {
+      this.nowRestrEmit.emit(value);
+    }
+
+    futureEvent(value) {
+      this.futureRestEmit.emit(value);
+    }
+
+    isRestrictionEmpty(restriction) {
+      if(!this.showErrors) return;
+
+      if(restriction === 'now'){
+        if (this.optionState.now.state === this.toggleChoices[3])
+          return this.optionState.now.data.selectedTeachers.length === 0;
+      } else if (this.optionState.future.state === this.toggleChoices[3])
+        return this.optionState.future.data.selectedTeachers.length === 0;
     }
 }

@@ -43,15 +43,19 @@
     <h1 class="passes-heading" [@HeaderSlideTopBottom] *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"  [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Passes</h1>
   </div>
-    <div
+  <div
       class="passes-wrapper passes-mobile-height"
       [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'"
+      [style.touch-action]="'auto'"
       *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
       [@PassesSlideTopBottom]
       [style.padding-bottom]="isSmartphone ? '50px' : '0px'"
       [style.padding-top]="isSmartphone ? '0px' : '50px'"
       [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' "
       #scrollableArea
+      (scroll)="scroll($event)"
+      appSwipeEvent
+      (swipeRight)="openSettings(true)"
     >
       <div class="main-page-left">
         <div class="current-pass" [style.margin-bottom]="'15px'">
@@ -154,6 +158,7 @@
         </app-display-card>
       </div>
     </div>
+
 
 
 <div class="passes-wrapper" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'" [style.overflow]="isStaff ? 'auto' : 'visible'" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)" #scrollableArea>

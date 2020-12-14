@@ -1,4 +1,4 @@
-﻿import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+﻿import {Component, Input, OnInit} from '@angular/core';
 import {NavbarDataService} from '../main/navbar-data.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';

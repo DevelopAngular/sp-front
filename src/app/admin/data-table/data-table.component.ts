@@ -1,14 +1,20 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
-  Input, NgZone, OnChanges, OnDestroy,
+  Injectable,
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {MatSort, Sort} from '@angular/material';
+import {MatSort, Sort} from '@angular/material/sort';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
@@ -18,8 +24,8 @@ import {ScrollPositionService} from '../../scroll-position.service';
 import {wrapToHtml} from '../helpers';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 
-import { findIndex } from 'lodash';
-import {debounceTime, delay, distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
+import {findIndex} from 'lodash';
+import {distinctUntilChanged} from 'rxjs/operators';
 import {StorageService} from '../../services/storage.service';
 
 const PAGESIZE = 50;
@@ -154,6 +160,7 @@ export class GridTableDataSource extends DataSource<any> {
 /**
  * Virtual Scroll Strategy
  */
+@Injectable()
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
   constructor() {
     super(ROW_HEIGHT, 1000, 2000);
@@ -193,13 +200,13 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   @Output() selectedCell: EventEmitter<any> = new EventEmitter<any>();
   @Output() loadMoreAccounts: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport;
 
   @Input() set lazyData(value: any[]) {
     if (value.length) {
-        this.dataSource.add(value);
-        this._data = this.dataSource.allData;
+      this.dataSource.add(value);
+      this._data = this.dataSource.allData;
     }
 
   }
@@ -222,12 +229,13 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
           const isFirst = this.dataSource.last === 1;
           const isThree = this.dataSource.last >= 3;
           const isFour = this.dataSource.last >= 4;
-          const allowLoadMore = (
-            (
-              this.dataSource.last * 50) -
-            (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
-            (isFour ? 60 : 0) === (this.dataSource.last * 50) - 20;
 
+          // const allowLoadMore = (
+          //   (
+          //     this.dataSource.last * 50) -
+          //   (Math.ceil(offset / PAGESIZE) + (isFirst ? 10 : 0 ) - (isThree ? this.dataSource.last * 10 : 0))) +
+          //   (isFour ? 60 : 0) === (this.dataSource.last * 50) - 20;
+    console.log(((this.dataSource.last * ( isFirst ? 40 : 60)) + (isThree ? (this.counter * 20) : 0)) - Math.ceil(offset / PAGESIZE), (this.dataSource.last * 50) - 15);
           if (((this.dataSource.last * ( isFirst ? 40 : 60)) + (isThree ? (this.counter * 20) : 0)) - Math.ceil(offset / PAGESIZE) <= (this.dataSource.last * 50) - 15) {
             if (isThree) {
               this.counter += 1;
@@ -278,7 +286,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private _ngZone: NgZone,
-    private darkTheme: DarkThemeSwitch,
+    public darkTheme: DarkThemeSwitch,
     private domSanitizer: DomSanitizer,
     private scrollPosition: ScrollPositionService,
     private cdr: ChangeDetectorRef,
@@ -291,7 +299,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
     TABLE_RELOADING_TRIGGER.subscribe(({header, tableHeaders}) => {
       const itemIndex = findIndex(this.displayedColumns, (item) => {
-        return item === header.label;
+        return item.toLowerCase() === header.label.toLowerCase();
       });
       const headerIndex = this.columnsToDisplay[0] === 'select' ? header.index + 1 : header.index;
       const iIndex = this.columnsToDisplay[0] === 'select' ? itemIndex + 1 : itemIndex;
@@ -301,7 +309,6 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.columnsToDisplay.splice(iIndex, 1);
       }
     });
-
 
     this.marginTopStickyHeader = '0px';
     if (!this.displayedColumns) {
@@ -317,7 +324,6 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.selectedUsers.emit([]);
       }
     });
-    console.log(this.columnsToDisplay);
 
     const defaultSortSubject = this.storage.getItem('defaultSortSubject');
     let sortSubject: string;
@@ -340,10 +346,9 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  ngOnChanges() {
+  ngOnChanges(simpleChanges: SimpleChanges) {
     if (this.scrollableAreaName && this.scrollPosition.getComponentScroll(this.scrollableAreaName)) {
       setTimeout(() => {
-        // console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
         this.viewport.scrollToOffset(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
       }, 0);
     }

@@ -57,6 +57,11 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: 20px;
+
+        .controls-description {
+          display: flex;
+          flex-direction: column;
+        }
       }
 
       .buffer-time-control {

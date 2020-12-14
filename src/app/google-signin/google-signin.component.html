@@ -10,7 +10,10 @@
         [autocomplete]="'username'"
         [controlName]="loginForm.get('username')"
         [input_label]="'Username or email'"
-        [input_type]="'text'"
+        [isFocus]="true"
+        (focusEvent)="focusEvent.emit($event)"
+        (blurEvent)="blurEvent.emit($event)"
+        [input_type]="isMobile ? 'email' : 'text'"
         [width]="'250px'"
         (onUpdate)="updateDemoUsername($event)"
       ></app-input>
@@ -22,14 +25,16 @@
           [formGroup]="loginForm"
           [isFocus]="inputFocusNumber === 2"
           [forceFocus$]="forceFocus$"
+          (focusEvent)="focusEvent.emit($event)"
+          (blurEvent)="blurEvent.emit($event)"
           [controlName]="loginForm.get('password')"
           [input_label]="'Password'"
           [input_type]="'password'"
           [width]="loginData.demoLoginEnabled ? '250px' : '0'"
-          (onUpdate)="loginData.demoPassword ? updateDemoPassword($event) : null"
+          (onUpdate)="updateDemoPassword($event)"
         ></app-input>
       </div>
-      <div class="error" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>
+      <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>
       <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div>
       <div class="button" style="margin-top: 97px;" *ngIf="!loginData.demoLoginEnabled">
         <app-gradient-button
@@ -41,7 +46,7 @@
           [minWidth]="'90px'"
           [minHeight]="'30px'"
           [fontSize]="'14px'"
-          (buttonClick)="checkUserAuthType()"
+          (buttonClick)="!showSpinner ? nextButtonTapped() : null"
           [style.width]="'90px'"
         >
           <div *ngIf="!showSpinner">
@@ -54,7 +59,7 @@
       </div>
       <div class="button" style="margin-top: 21px;" *ngIf="loginData.demoLoginEnabled">
           <app-gradient-button
-            [disabled]="!loginData.demoUsername || !this.loginForm.get('password').value"
+            [disabled]="!loginData.demoUsername || !this.loginForm.get('password').value || !!(error$ | async)"
             [size]="'medium'"
             [cursor]="'pointer'"
             [hoverColor]="'#FFFFFF'"

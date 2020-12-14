@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import {from, Observable, of, Subject} from 'rxjs';
-import { Pinnable } from '../models/Pinnable';
-import { HttpService } from './http-service';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, from, Observable, of} from 'rxjs';
+import {Pinnable} from '../models/Pinnable';
+import {HttpService} from './http-service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
@@ -17,6 +17,20 @@ import {getPassStats} from '../ngrx/pass-stats/actions';
 import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
 import {bufferCount, mergeMap, reduce} from 'rxjs/operators';
 import {constructUrl} from '../live-data/helpers';
+import {getMorePasses, searchPasses, sortPasses} from '../ngrx/passes/actions';
+import {
+  getMorePassesLoading,
+  getPassesCollection,
+  getPassesEntities,
+  getPassesLoaded,
+  getPassesLoading,
+  getPassesNextUrl,
+  getPassesTotalCount,
+  getSortPassesLoading,
+  getSortPassesValue
+} from '../ngrx/passes/states';
+import {HallPass} from '../models/HallPass';
+import {PollingService} from './polling-service';
 
 @Injectable({
   providedIn: 'root'
@@ -29,10 +43,27 @@ export class HallPassesService {
   pinnablesCollectionIds$: Observable<number[] | string[]>;
   isLoadingArranged$: Observable<boolean> = this.store.select(getArrangedLoading);
 
+  passesEntities$: Observable<{[id: number]: HallPass}> = this.store.select(getPassesEntities);
+  passesCollection$: Observable<HallPass[]> = this.store.select(getPassesCollection);
+  passesLoaded$: Observable<boolean> = this.store.select(getPassesLoaded);
+  passesLoading$: Observable<boolean> = this.store.select(getPassesLoading);
+  moreLoading$: Observable<boolean> = this.store.select(getMorePassesLoading);
+  sortPassesLoading$: Observable<boolean> = this.store.select(getSortPassesLoading);
+  sortPassesValue$: Observable<string> = this.store.select(getSortPassesValue);
+  currentPassesCount$: Observable<number> = this.store.select(getPassesTotalCount);
+
+  passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
+
   currentPinnable$: Observable<Pinnable>;
   passStats$;
 
-  constructor(private http: HttpService, private store: Store<AppState>) {
+  isOpenPassModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+
+  constructor(
+    private http: HttpService,
+    private store: Store<AppState>,
+    private pollingService: PollingService
+  ) {
     this.pinnables$ = this.store.select(getPinnableCollection);
     this.loadedPinnables$ = this.store.select(getIsLoadedPinnables);
     this.isLoadingPinnables$ = this.store.select(getIsLoadingPinnables);
@@ -138,12 +169,40 @@ export class HallPassesService {
     return of(null);
   }
 
-    createArrangedPinnable(body) {
-        return this.http.post(`v1/pinnables/arranged`, body);
-    }
+  createArrangedPinnable(body) {
+      return this.http.post(`v1/pinnables/arranged`, body);
+  }
 
-    searchPasses(url) {
-      return this.http.get(url);
-    }
+  searchPassesRequest(url: string) {
+    this.store.dispatch(searchPasses({url}));
+  }
+
+  searchPasses(url) {
+    return this.http.get(url);
+  }
+
+  getMorePasses() {
+    this.store.dispatch(getMorePasses());
+  }
+
+  sortHallPassesRequest(queryParams) {
+    this.store.dispatch(sortPasses({queryParams}));
+  }
+
+  sortHallPasses(queryParams) {
+    return this.http.get(constructUrl('v1/hall_passes', queryParams));
+  }
+
+  startPushNotification() {
+    return this.http.post('v1/users/@me/test_push_message', new Date());
+  }
+
+  watchPassStart() {
+    return this.pollingService.listen('message.alert');
+  }
+
+  watchEndPass() {
+    return this.pollingService.listen('hall_pass.end');
+  }
 }
 

@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
-import { HttpService } from '../../services/http-service';
-import {delay, finalize, map, share, shareReplay, switchMap} from 'rxjs/operators';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {delay, map, share, switchMap} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {Observable} from 'rxjs';
 
@@ -12,6 +11,8 @@ import {Observable} from 'rxjs';
 export class ColorPalletPickerComponent implements OnInit {
 
   @Input() selectedColorProfile;
+
+  @Input() showError: boolean;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 

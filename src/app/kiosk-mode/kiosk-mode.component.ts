@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { KioskModeService } from '../services/kiosk-mode.service';
-import { MatDialog } from '@angular/material';
+import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {KioskModeService} from '../services/kiosk-mode.service';
+import {MatDialog} from '@angular/material/dialog';
 import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {combineLatest, of} from 'rxjs';
@@ -10,7 +10,7 @@ import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
 import {filter, switchMap} from 'rxjs/operators';
-import { JwtHelperService } from '@auth0/angular-jwt';
+import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {DataService} from '../services/data-service';
 import {LocationsService} from '../services/locations.service';
@@ -40,7 +40,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       user_id: number
   };
 
-  @ViewChild('input', { read: ElementRef }) input: ElementRef;
+  @ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
   @HostListener('window:keyup', ['$event'])
     setFocus() {
@@ -127,6 +127,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMainForm(forLater: boolean, student?): void {
+    this.hideInput = true
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',
           maxWidth: '100vw',
@@ -141,7 +142,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
           }
       });
 
-      mainFormRef.afterOpened().subscribe(() => this.hideInput = true);
       mainFormRef.afterClosed().subscribe(() => {
           this.hideInput = false;
           setTimeout(() => {

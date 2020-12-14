@@ -14,12 +14,22 @@
   }
 }
 
+.chips-wrapper {
+  display: flex;
+  align-items: center;
+}
+
 .sp-search-wrapper{
     margin-top: 10px;
     width: 100%;
     position: relative;
-    z-index: 1;
     min-height: 50px;
+
+    .chip {
+      display: flex;
+      margin-right: 10px;
+      flex-wrap: wrap;
+    }
 }
 
 .cancel-button {
@@ -31,7 +41,6 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     background-color: #fff;
     border-radius: 20px;
     position: absolute;
@@ -56,7 +65,7 @@ input {
     padding: 0 0 0 15px;
     font-size: 16px;
     height: 40px;
-    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
+    //box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
     caret-color: auto;
 }
 
@@ -150,7 +159,7 @@ mat-input-container.md-input-focused label {
     overflow: auto;
   }
   &_item {
-    border-top: 1px solid #D8D8D8;
+    border-bottom: 1px solid #D8D8D8;
     display: flex;
     align-items: center;
     justify-content: space-between;

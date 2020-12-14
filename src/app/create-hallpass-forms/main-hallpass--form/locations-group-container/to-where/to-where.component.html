@@ -7,7 +7,7 @@
       <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
     </div>
     <div class="to-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
+      <img class="search-icon" [src]="'./assets/Message-circle (Navy).svg' | resolveAsset">
       <div class="text ds-dialog-title">To where?</div>
     </div>
   </div>
@@ -25,8 +25,10 @@
                 [width]="gridRestrictions.pileWidth"
                 [height]="gridRestrictions.pileHeight"
                 [valid]="(room.location && location ? room.location.id != location.id : true)"
+                [passLimit]="room.location ? passLimits[room.location.id] : null"
                 [forStaff]="isStaff"
                 [forLater]="!!date"
+                [currentPage]="'to'"
                 [pinnable]="room"
                 (onSelectEvent)="pinnableSelected($event)"
               ></app-pinnable>
@@ -44,8 +46,10 @@
                 [height]="gridRestrictions.pileHeight"
                 [valid]="(pinnable.location && location ? isValidPinnable(pinnable) : true)"
                 [forStaff]="isStaff && !dialogData.kioskModeRoom"
+                [passLimit]="pinnable.location ? passLimits[pinnable.location.id] : null"
                 [forLater]="!!date"
                 [pinnable]="pinnable"
+                [currentPage]="'to'"
                 (onSelectEvent)="pinnableSelected($event)"
               ></app-pinnable>
             </mat-grid-tile>
@@ -74,6 +78,7 @@
       (onSelect)="locationSelected($event)"
       [dummyString]="'No rooms found'"
       [mergedAllRooms]="true"
+      [currentPage]="'to'"
     >
     </app-location-table>
 

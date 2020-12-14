@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
-import {fromEvent} from 'rxjs';
-import {filter, take, tap} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {fromEvent, Subject} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
+
 declare const window;
 
 @Injectable({
@@ -11,11 +12,13 @@ declare const window;
 })
 export class StorageService {
 
+  showError$: Subject<any> = new Subject<any>();
+
   memoryStore: any = {};
 
   constructor(
     private router: Router,
-    private matDialog: MatDialog,
+    private matDialog: MatDialog
   ) {
 
   }

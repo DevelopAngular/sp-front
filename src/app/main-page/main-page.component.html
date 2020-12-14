@@ -30,12 +30,15 @@
     <div class="sticky" [style.height]="navbarHeight">
       <app-navbar (settingsClick)="onSettingClick($event)"></app-navbar>
     </div>
-<!--    <ng-container *ngIf="!(shouldShowRouter() | async)">-->
-<!--      <app-restriction-dummy></app-restriction-dummy>-->
-<!--    </ng-container>-->
-    <ng-container>
+
+    <ng-container *ngIf="!(restriction$ | async); else restriction">
       <router-outlet></router-outlet>
     </ng-container>
+    <ng-template #restriction>
+      <ng-container>
+        <app-assistant-restriction></app-assistant-restriction>
+      </ng-container>
+    </ng-template>
   </mat-sidenav-content>
 
 </mat-sidenav-container>

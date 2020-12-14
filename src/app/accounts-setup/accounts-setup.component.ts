@@ -7,12 +7,12 @@ import {fromEvent, Observable, of, Subject, throwError} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {HttpClient} from '@angular/common/http';
-import AuthResponse = gapi.auth2.AuthResponse;
 import {AdminService} from '../services/admin.service';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
 import {GSuiteSelector, OrgUnit} from '../sp-search/sp-search.component';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
+import AuthResponse = gapi.auth2.AuthResponse;
 
 declare const window;
 
@@ -54,7 +54,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
         const {googleAuth} = qp;
         this.googleAuth = this.googleAuth ? this.googleAuth : googleAuth;
         // this.router.navigate(['accounts_setup']);
-      })
+      });
     this.CloseButton$ = this.userService.userData
       .pipe(
         filter((cu: User) => {
@@ -122,7 +122,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
 
   connectGSuite() {
     if (this.gSuiteConnected && this.usersForSyncSelected) {
-      this.adminService.updateGSuiteOrgs(this.syncBody)
+      this.adminService.updateSpSyncing(this.syncBody)
         .pipe(
           switchMap(() => {
             return this.gsProgress.updateProgress('setup_accounts:end');

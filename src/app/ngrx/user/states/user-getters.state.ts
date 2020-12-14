@@ -9,6 +9,11 @@ export const getUserData = createSelector(
   (state: UserState) => state.user
 );
 
+export const getSelectUserPin = createSelector(
+  getUserState,
+  (state: UserState) => state.userPin
+);
+
 export const getLoadedUser = createSelector(
   getUserState,
   (state: UserState) => state.loaded

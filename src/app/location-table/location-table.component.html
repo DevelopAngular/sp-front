@@ -1,6 +1,6 @@
 <div class="wrapper">
   <app-round-input
-    [style.margin]="'20px' "
+    [style.margin]="'20px'"
     [minWidth]="'20px auto 5px auto'"
     [width]="inputWidth"
     [type]="'text'"
@@ -21,18 +21,20 @@
       <mat-divider class="divider" *ngIf="!forKioskMode"></mat-divider>
 
       <!-- Favorite Window -->
-      <div class="favorite" *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode">
+      <div class="favorite" *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode && pinnablesLoaded">
         <div
              class="choices"
              [dragula]="(screenService.enabledLocationTableDnD | async) ? 'locations' : null"
              (dragulaModelChange)="updateOrderLocation($event)"
         >
           <div class="choice" *ngFor="let choice of starredChoices">
-            <app-location-cell
+            <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
               (onSelect)="choiceSelected($event)"
               (onStar)="star($event)"
               [value]="choice"
               [type]="type"
+              [currentPage]="currentPage"
+              [passLimit]="getPassLimit(choice)"
               [starred]="true"
               [showStar]="!!showStars"
               [allowOnStar]="allowOnStar"
@@ -43,7 +45,7 @@
         <ng-template #noDnd>
           <div class="choices">
             <div class="choice" *ngFor="let choice of starredChoices">
-              <app-location-cell
+              <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
                 (onSelect)="choiceSelected($event)"
                 (onStar)="star($event)"
                 [value]="choice"
@@ -60,21 +62,25 @@
 
 
       <!-- Create Pass Form -->
-      <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode"
+      <div *ngIf="favoritesLoaded && !isFavoriteForm && !forKioskMode && pinnablesLoaded"
            class="choices">
         <div class="choice" *ngFor="let choice of starredChoices">
-          <app-location-cell
+          <app-location-cell *ngIf="getPassLimit(choice) || !isFavoriteForm"
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
-            [value]="choice"
+            [value]="normalizeLocations(choice)"
             [type]="type"
+            [currentPage]="currentPage"
+            [passLimit]="getPassLimit(choice)"
             [hasLocks]="hasLocks"
             [forLater]="forLater"
             [forStaff]="forStaff"
             [starred]="true"
             [showStar]="!!showStars"
             [allowOnStar]="allowOnStar"
-            [valid]="isValidLocation(choice)"
+            [valid]="isValidLocation(choice.id)"
+            matTooltipShowDelay="1000"
+            [matTooltip]="getDisabledTooltip(choice) ? 'This is the origin' : null"
           >
           </app-location-cell>
         </div>
@@ -90,7 +96,7 @@
       <div *ngIf="rightHeaderText && !hideFavorites" [style.margin-top]="forKioskMode ? '' : '25px'" class="fav-header">All Rooms</div>
       <mat-divider class="divider"></mat-divider>
     </div>
-    <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices">
+    <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices && pinnablesLoaded">
       <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
       <div class="choices">
         <div
@@ -98,19 +104,23 @@
           *ngFor="let choice of choices"
           #item
         >
-          <app-location-cell
+          <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
             class="choice"
             [hasLocks]="hasLocks"
             [forLater]="forLater"
             [forStaff]="forStaff"
             [showStar]="showStars && !noRightStar"
             [starred]="isSelected(choice)"
+            [currentPage]="currentPage"
+            [passLimit]="getPassLimit(choice)"
             (onSelect)="choiceSelected($event)"
             (onStar)="star($event)"
             [allowOnStar]="allowOnStar"
-            [value]="choice"
+            [value]="normalizeLocations(choice)"
             [type]="type"
-            [valid]="isValidLocation(choice)"
+            [valid]="isValidLocation(choice.id)"
+            matTooltipShowDelay="1000"
+            [matTooltip]="getDisabledTooltip(choice) ? 'This is the origin' : null"
           >
           </app-location-cell>
         </div>

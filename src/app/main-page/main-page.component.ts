@@ -37,6 +37,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   isStaff: boolean;
   data: any;
   navbarHeight: string = '78px';
+  restriction$: Observable<boolean>;
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -64,6 +65,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((schools) => {
         this.topPadding = schools.length > 1 ? '50px' : '0px';
       });
+    this.restriction$ = this.userService.blockUserPage$;
 
     this.dataService.currentUser
       .pipe(
@@ -119,15 +121,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.goHome(user);
     });
 
-    // this.dataService.currentUser
-    //   .pipe(
-    //     this.loadingService.watchFirst,
-    //     takeUntil(this.destroy$)
-    //   )
-    //   .subscribe(user => {
-    //     this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.isAssistant();
-    //   });
-
     this.inboxHasItems = combineLatest(
       this.receivedRequests.length$,
       this.receivedRequests.loaded$,
@@ -168,6 +161,10 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   shouldShowRouter() {
     // return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
+  }
+
+  onSwipe(event) {
+    debugger;
   }
 
   goHome(user) {

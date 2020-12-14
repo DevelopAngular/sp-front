@@ -1,14 +1,19 @@
-<div *ngIf="!mock" [formGroup]="form" class="layout" [ngClass]="{'delimiter': delimiter}">
-  <div [style.padding-top]="'5px'">
-    <span class="ds-cell-text-2">{{controlLabel}}</span>
+<div *ngIf="!mock" [formGroup]="form" class="layout" [style.padding]="padding" [ngClass]="{'delimiter': delimiter}">
+  <div [style.padding-top]="'5px'" *ngIf="controlLabel">
+    <span class="ds-cell-text-2" style="text-transform: capitalize">{{controlLabel}}</span>
   </div>
   <div style="display: flex; align-items: center;">
     <div  *ngIf="disabled">
       <img [src]="'./assets/Lock (Blue-Gray).svg' | resolveAsset" width="14" height="14" style="margin: 0 10px" alt="Lock (Blue-Gray).svg">
     </div>
-    <div class="checkbox-container" [ngClass]="sizedLayout">
+    <div class="checkbox-container" [style.color]="color" [ngClass]="sizedLayout">
       <input type="checkbox" class="ios-toggle checkbox1" style="display: none;" [formControlName]="controlName" #inp [id]="controlName"/>
-      <label [for]="controlName" class="checkbox-label"></label>
+      <label [for]="controlName" class="checkbox-label" [style.box-shadow]="inp.checked ? 'inset 0 0 0 18px ' + color + ',0 0 0 2px ' + color : ''"></label>
+      <img class="icon"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="inp.click()"
+           *ngIf="inp.checked && hasIcon"
+           [src]="icon | resolveAsset">
     </div>
   </div>
   <div class="user-action-none" *ngIf="disabled">
@@ -16,7 +21,7 @@
   </div>
 </div>
 <div *ngIf="mock" class="layout">
-  <div [style.padding-top]="'5px'">
+  <div [style.padding-top]="'5px'" *ngIf="controlLabel">
     <span class="ds-cell-text-2">{{controlLabel}}</span>
   </div>
   <div style="display: flex; align-items: center;">

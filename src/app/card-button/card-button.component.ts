@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { bumpIn } from '../animations';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {bumpIn} from '../animations';
 import {DataService} from '../services/data-service';
 
 @Component({
@@ -21,14 +21,14 @@ export class CardButtonComponent implements OnInit {
   @Input() gradientColor: string;
   @Input() margin_top: string;
 
-
   @Output() onClick: EventEmitter<any> = new EventEmitter();
+
   buttonDown = false;
 
   constructor(private dataService: DataService) { }
 
   ngOnInit() {
-  // console.log('Passed gradiend ===> ', this.gradientColor);
+  // console.log('Passed gradiend ===> ', this.gradientColor.split(',')[0]);
   }
 
   get buttonState() {

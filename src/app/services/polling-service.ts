@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
-import { $WebSocket } from 'angular2-websocket/angular2-websocket';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
-import { AuthContext, HttpService } from './http-service';
-import { Logger } from './logger.service';
-import {headersToString} from 'selenium-webdriver/http';
+import {Injectable} from '@angular/core';
+import {$WebSocket} from 'angular2-websocket/angular2-websocket';
+import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
+import {filter, map, publish, refCount, switchMap, take, tap} from 'rxjs/operators';
+import {AuthContext, HttpService} from './http-service';
+import {Logger} from './logger.service';
 
 interface RawMessage {
   type: string;
@@ -29,6 +28,8 @@ function doesFilterMatch(prefix: string, path: string): boolean {
       return false;
     }
   }
+  // console.log(prefixParts);
+  // debugger
 
   return true;
 }
@@ -51,6 +52,7 @@ export class PollingService {
 
   private getRawListener(): Observable<RawMessage> {
     return this.http.accessToken.pipe(
+      take(1),
       switchMap((ctx: AuthContext) => {
         console.log('polling listener', ctx);
 

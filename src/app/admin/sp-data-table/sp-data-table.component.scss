@@ -1,0 +1,412 @@
+@import '../../../sp-colors';
+
+:host {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.wrapper {
+  display: flex;
+  background: #FFFFFF;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.0616259);
+  border-radius: 12px;
+  z-index: 1;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  .spinner-container {
+    position: absolute;
+    left: 0;
+    right: 45px;
+    top: 42px;
+    bottom: 0;
+    background-color: white;
+    z-index: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .empty-state {
+    position: absolute;
+    left: 0;
+    right: 45px;
+    top: 42px;
+    bottom: 0;
+    background-color: white;
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .empty-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .empty-description {
+        font-size: 17px;
+        color: $blue-gray;
+        margin-top: 41px;
+        text-align: center;
+        width: 270px;
+      }
+    }
+  }
+
+
+  .table-options-screen {
+    min-width: 44px;
+    border-left: 1px solid #7E879D;
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: white;
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 12px;
+
+      .button {
+        margin-top: 25px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .column-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 40px;
+    width: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 6px 0 0;
+    border-left: 1px solid #7E879D;
+    box-shadow: 0 0 2px #7E879D;
+    background-color: #D3D6DE;
+    z-index: 10;
+    cursor: pointer;
+  }
+
+  .shadow {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.254999);
+  }
+}
+
+.example-viewport {
+  width: 100%;
+  //overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  min-width: 800px;
+
+  .header {
+    background-color: #D3D6DE !important;
+    height: 41px;
+    z-index: 1000;
+  }
+
+  .mat-header-cell {
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+
+::ng-deep .mat-sort-header-button {
+    text-transform: capitalize;
+  }
+
+  .mat-row {
+    height: 33px;
+  }
+
+  .mat-cell, .mat-header-cell {
+    padding-left: 22px;
+    color: $blue-gray;
+  }
+
+mat-cell {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  //.mat-header-cell:hover {
+  //  background: #FFFFFF;
+  //  mix-blend-mode: normal;
+  //}
+
+  //.mat-cell {
+  //  background-color: white;
+  //}
+
+
+  .sort-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    right: 25px;
+    top: 4px;
+
+    .icon {
+      width: 7px;
+      height: 7px;
+    }
+  }
+
+  .sort-spinner {
+    position: absolute;
+    align-items: center;
+    display: flex;
+    right: 20px;
+    top: 13px;
+  }
+
+
+}
+
+::ng-deep .mat-column-Origin,
+.mat-column-Destination,
+.mat-column-Duration,
+.mat-column-Contact-date,
+.mat-column-Pass-start-time,
+.mat-column-Status,
+.mat-column-Last-sign-in,
+.mat-column-Type,
+.mat-column-Permissions
+{
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 145px !important;
+  min-width: 145px !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Email-username, .mat-column-rooms {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 250px !important;
+  min-width: 250px !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Acting-on-Behalf-Of {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 250px !important;
+  min-width: 250px !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Student-Name, .mat-column-Name {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 145px !important;
+  min-width: 145px !important;
+  overflow-wrap: break-word;
+  left: 46px !important;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  text-overflow: ellipsis !important;
+}
+
+::ng-deep .mat-column-Degree {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 100px !important;
+  min-width: 100px !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Contact-connection {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 200px !important;
+  min-width: 200px !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Pass, .mat-column-Passes {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 40px !important;
+  min-width: 40px !important;
+  overflow-wrap: break-word;
+  left: 46px !important;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+::ng-deep .mat-column-select {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 10px !important;
+  min-width: 10px !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+::ng-deep .mat-sort-header-arrow {
+  display: none !important;
+}
+
+::ng-deep .mat-checkbox-frame {
+  background-color: currentColor !important;
+  border-style: none !important;
+}
+
+::ng-deep .mat-checkbox-background {
+  background-color: transparent !important;
+}
+
+::ng-deep .pass-icon {
+  width: 38px;
+  height: 23px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+::ng-deep .status {
+  text-transform: capitalize;
+}
+
+::ng-deep .cdk-virtual-scroll-content-wrapper {
+  transform: translateY(0px) !important;
+  contain: none;
+}
+
+//.cdk-virtual-scroll-viewport::-webkit-scrollbar {
+//  -webkit-appearance: none;
+//  width: 10px;
+//  height: 10px;
+//}
+//
+//.cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb {
+//  border-radius: 8px;
+//  background-color: #D3D6DE;
+//  //-webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+//}
+//.cdk-virtual-scroll-viewport::-webkit-scrollbar-button {
+//  display: block;
+//}
+
+.cdk-virtual-scroll-viewport::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #E7E7E7;
+  box-shadow: 1px 0 1px 0 #F6F6F6 inset, -1px 0 1px 0 #F6F6F6 inset;
+}
+
+.cdk-virtual-scroll-viewport::-webkit-scrollbar-track:horizontal {
+  border-top: 1px solid #E7E7E7;
+  box-shadow: 0 1px 1px 0 #F6F6F6 inset, 0 -1px 1px 0 #F6F6F6 inset;
+}
+
+.cdk-virtual-scroll-viewport::-webkit-scrollbar {
+  -webkit-appearance: none;
+  background-color: #FAFAFA;
+  width: 16px;
+}
+
+.cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  background-color: #C1C1C1;
+  border-color: transparent;
+  border-radius: 9px 8px 8px 9px;
+  border-style: solid;
+  border-width: 3px 3px 3px 4px; /* Workaround because margins aren't supported */
+  box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+/* Unfortunately scrollbars can't use CSS transitions. Also, it's not possible
+   to highlight the thumb when the scrollbar track is hovered without some
+   JavaScript acrobatics; https://jsfiddle.net/QcqBM/6/ is a start, but you
+   also have to check whether the element has a scrollbar and if so how wide
+   it is. */
+.cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+.cdk-drop-list-dragging {
+  display: flex;
+  background-color: white;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+::ng-deep .mat-cell > div.no-wrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 200px;
+  white-space: nowrap;
+}
+//
+//@media all and (max-width: 1200px) {
+//  .table-options-screen {
+//    box-shadow: 0 0 15px rgba(0, 0, 0, 0.254999);
+//  }
+//}
+
+//.no-container .cdk-virtual-scroll-content-wrapper {
+//  contain: none;
+//}

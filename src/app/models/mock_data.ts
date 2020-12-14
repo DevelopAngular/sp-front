@@ -1,9 +1,9 @@
-import { ColorProfile } from './ColorProfile';
-import { HallPass } from './HallPass';
-import { Invitation } from './Invitation';
-import { Location } from './Location';
-import { Request } from './Request';
-import { User } from './User';
+import {ColorProfile} from './ColorProfile';
+import {HallPass} from './HallPass';
+import {Invitation} from './Invitation';
+import {Location} from './Location';
+import {Request} from './Request';
+import {User} from './User';
 
 function constructTestPasses(student: User, issuer: User, origin: Location, destination: Location, colorProfile: ColorProfile) {
   let testDate = new Date();
@@ -83,11 +83,11 @@ function constructTestInvitations(student: User, issuer: User, origin: Location,
   return [testInvitation1, testInvitation2];
 }
 
-export const testStudent = new User('testStudent', new Date(), new Date(), 'Kyle', 'Cook', 'Kyle Cook', 'mail@mail.com', []);
-export const testIssuer = new User('141', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
-export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, '', true, true, [], false, '', true, true, [], [], [], [], 15, false);
+export const testStudent = new User('testStudent', true, new Date(), false, new Date(),  new Date(), 'Kyle', 'Cook', 'Kyle Cook', false, 'mail@mail.com', [], 'active', null);
+export const testIssuer = new User('141', true, new Date(), false, new Date(),  new Date(), 'Donald', 'Sawyer', 'Don Sawyer', false, 'mail@mail.com', [], 'active', null);
+export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, '', true, true, [], false, '', true, true, [], [], [], [], 15, false, 0, false, 0, false);
 export const testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, '', true, true, [], false, '', true, true, [], [],
-  ['round_trip', 'one_way'], [], 15, false);
+  ['round_trip', 'one_way'], [], 15, false, 0, false, 0, false);
 export const testColorProfile = new ColorProfile('testColorProfile', 'Light-blue', '#0B9FC1,#00C0C7', '#07ABC3',
   '#11CFE5', '#0B9FC1', '#18EEF7');
 
