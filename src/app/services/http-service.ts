@@ -496,9 +496,13 @@ export class HttpService {
     }));
   }
 
-  getEncodedRedirectUrl(): string {
+  getRedirectUrl(): string {
     const url = [window.location.protocol, '//', window.location.host, '/app/'].join('');
-    const redirect = encodeURIComponent(url);
+    return url;
+  }
+
+  getEncodedRedirectUrl(): string {
+    const redirect = encodeURIComponent(this.getRedirectUrl());
     return redirect;
   }
 
@@ -508,7 +512,7 @@ export class HttpService {
     c.append('code', code);
     c.append('provider', 'clever');
     c.append('platform_type', 'web');
-    c.append('redirect_uri', this.getEncodedRedirectUrl());
+    c.append('redirect_uri', this.getRedirectUrl());
 
     const context = this.storage.getItem('context');
 
