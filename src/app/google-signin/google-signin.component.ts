@@ -270,7 +270,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.showSpinner = true
       this.storage.setItem('authType', this.loginData.authType);
       const district = this.auth_providers && this.auth_providers.provider === 'clever' ? this.auth_providers.sourceId : null;
-      const redirect = encodeURIComponent(window.location.href);
+      const redirect = this.httpService.getEncodedRedirectUrl();
       if (district) {
         window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3&district_id=${district}`;
       } else {
