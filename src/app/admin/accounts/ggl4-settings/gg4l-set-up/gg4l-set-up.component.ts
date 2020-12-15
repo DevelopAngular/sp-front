@@ -116,4 +116,20 @@ export class Gg4lSetUpComponent implements OnInit {
     });
   }
 
+  getLastSyncDate(info: (CleverInfo | GG4LSync)): Date {
+    const success = new Date(info.last_successful_sync);
+    const failed = new Date(info.last_failed_sync);
+    return success > failed ? success : failed;
+  }
+
+  getLastSyncMessage(info: (CleverInfo | GG4LSync)): String {
+    const success = new Date(info.last_successful_sync);
+    const failed = new Date(info.last_failed_sync);
+    if (success > failed) {
+      return 'Successful';
+    } else {
+      return 'Failed';
+    }
+  }
+
 }
