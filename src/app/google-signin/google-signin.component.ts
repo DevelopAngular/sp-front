@@ -272,9 +272,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       const district = this.auth_providers && this.auth_providers.provider === 'clever' ? this.auth_providers.sourceId : null;
       const redirect = encodeURIComponent(window.location.href);
       if (district) {
-        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=d8b866c26cd9957a4834&district_id=${district}`;
+        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3&district_id=${district}`;
       } else {
-        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=d8b866c26cd9957a4834`;
+        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
       }
     } else if (this.isGG4L) {
       this.showSpinner = true;
