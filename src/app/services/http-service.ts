@@ -501,7 +501,8 @@ export class HttpService {
     c.append('code', code);
     c.append('provider', 'clever');
     c.append('platform_type', 'web');
-    c.append('redirect_uri', 'https://smartpass-testing.lavanote.com/app');
+    const redirect = encodeURIComponent(window.location.href);
+    c.append('redirect_uri', redirect);
 
     const context = this.storage.getItem('context');
 
