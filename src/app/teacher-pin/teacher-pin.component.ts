@@ -57,7 +57,7 @@ export class TeacherPinComponent implements OnInit {
         return this.userService.updateUserRequest(user, this.form.value);
       })
     ).subscribe(() => {
-      this.close();
+      // this.close();
     });
   }
 

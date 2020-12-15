@@ -56,13 +56,10 @@
              (mouseleave)="set.hovered = false; set.pressed = false"
              [style.background]="set.pressed ? 'rgba(127, 135, 157, .15)' : (set.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"
         >
-          <img class="setting-icon"
-               [title]="setting.tooltip"
-               [src]="getIcon(setting.icon, setting) | resolveAsset" alt="SET"
-          >
-          <div class="setting-title"
-               [style.color]="getColor('#FFFFFF', '#7f879d')"
-          > {{setting.title}} </div>
+          <img class="setting-icon" [src]="getIcon(setting.icon, setting) | resolveAsset" alt="SET">
+          <div class="setting-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
+            {{setting.title}}
+          </div>
           <div class="release" *ngIf="setting.isNew">New</div>
           <div class="set-up" *ngIf="!(teacherPin$ | async) && setting.action === 'myPin'">Set-Up</div>
         </div>
