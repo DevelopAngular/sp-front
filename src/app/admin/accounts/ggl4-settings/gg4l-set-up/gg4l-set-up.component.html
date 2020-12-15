@@ -86,8 +86,10 @@
           <div class="active-top">
             <div class="left">
               <div class="sync-title">Last Sync</div>
-              <div class="sync-subtitle">{{ formatDate(cleverSyncInfo.last_successful_sync) }}</div>
-              <div style="color: #00B476">Successful</div>
+              <div class="sync-subtitle">{{ formatDate(getLastSyncDate(cleverSyncInfo)) }}</div>
+              <div [ngStyle]="{'color': getLastSyncMessage(cleverSyncInfo) === 'Successful' ? '#00B476' : '#E32C66'}">
+                {{ getLastSyncMessage(cleverSyncInfo) }}
+              </div>
             </div>
             <div class="right">
               <div class="sync-title">Accounts synced</div>
