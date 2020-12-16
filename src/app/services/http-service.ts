@@ -257,7 +257,8 @@ export class HttpService {
                 })
               });
             } else if (authType === 'clever') {
-              window.location.href = 'https://clever.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fsmartpass-feature.lavanote.com%2Fapp&client_id=d8b866c26cd9957a4834';
+              const redirect = this.getEncodedRedirectUrl();
+              window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
             }
           } else {
             return of(null);
@@ -495,13 +496,23 @@ export class HttpService {
     }));
   }
 
+  getRedirectUrl(): string {
+    const url = [window.location.protocol, '//', window.location.host, '/app/'].join('');
+    return url;
+  }
+
+  getEncodedRedirectUrl(): string {
+    const redirect = encodeURIComponent(this.getRedirectUrl());
+    return redirect;
+  }
+
   loginClever(code: string): Observable<AuthContext> {
 
     const c = new FormData();
     c.append('code', code);
     c.append('provider', 'clever');
     c.append('platform_type', 'web');
-    c.append('redirect_uri', 'https://smartpass-testing.lavanote.com/app');
+    c.append('redirect_uri', this.getRedirectUrl());
 
     const context = this.storage.getItem('context');
 
