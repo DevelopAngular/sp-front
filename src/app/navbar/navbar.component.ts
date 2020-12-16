@@ -448,7 +448,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   buttonVisibility(button) {
-    return this.hasRoles(button.requiredRoles) && !button.hidden;
+    return !!button && this.hasRoles(button.requiredRoles) && !button.hidden;
   }
 
   showOptions(event) {
