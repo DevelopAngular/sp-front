@@ -13,7 +13,6 @@
             [title]="isStaff ? 'Received':'Sent'"
             [icon]="'./assets/' + (isStaff ? 'Received' : 'Lock') + ' (Navy).svg'"
             [columns]="2"
-            (filterPasses)="prepareFilter($event, (isStaff ? 'received' : 'sent'))"
           ></app-pass-collection>
         </div>
         <div class="requests-or-invitations">
@@ -25,7 +24,6 @@
             [title]="isStaff ? 'Sent' : 'Received'"
             [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
             [columns]="2"
-            (filterPasses)="prepareFilter($event, (isStaff ? 'received' : 'sent'))"
           ></app-pass-collection>
         </div>
 
@@ -97,7 +95,6 @@
             [columns]="3"
             (reportFromPassCard)="onReportFromPassCard($event)"
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
-            (filterPasses)="prepareFilter($event, 'active')"
           ></app-pass-collection>
         </div>
         <div class="future-passes pass-collection">
@@ -111,7 +108,6 @@
             [icon]="'./assets/Future (Navy).svg'"
             [columns]="3"
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
-            (filterPasses)="prepareFilter($event, 'future')"
           ></app-pass-collection>
         </div>
         <div class="past-passes pass-collection">
@@ -126,7 +122,10 @@
             [icon]="'./assets/Expired (Navy).svg'"
             [columns]="3"
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
-            (filterPasses)="prepareFilter($event, 'expired')"
+            [filterModel]="'expired-passes'"
+            [showEmptyHeader]="true"
+            [hasFilterPasses]="true"
+            (filterPasses)="prepareFilter($event, 'expired-passes')"
           ></app-pass-collection>
         </div>
       </div>
@@ -141,9 +140,8 @@
                 [style.width]="'262px'"
                 [passProvider]="isStaff ? receivedRequests : sentRequests"
                 [title]="isStaff ? 'Received' : 'Sent'"
-                [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+                [icon]="'./assets/' +( isStaff ? 'Received' : 'Lock' ) +' (Navy).svg'"
                 [columns]="2"
-                (filterPasses)="prepareFilter($event, (isStaff ? 'received' : 'sent'))"
               ></app-pass-collection>
             </div>
             <div class="requests-or-invitations">
@@ -202,7 +200,6 @@
         [icon]="'./assets/Walking (Navy).svg'"
         [columns]="3"
         (reportFromPassCard)="onReportFromPassCard($event)"
-        (filterPasses)="prepareFilter($event, 'active')"
       ></app-pass-collection>
     </div>
     <div class="future-passes pass-collection">
@@ -214,7 +211,6 @@
         [title]="'Scheduled Passes'"
         [icon]="'./assets/Future (Navy).svg'"
         [columns]="3"
-        (filterPasses)="prepareFilter($event, 'future')"
       ></app-pass-collection>
     </div>
     <div class="past-passes pass-collection">
@@ -227,7 +223,10 @@
         [title]="'Expired Passes'"
         [icon]="'./assets/Expired (Navy).svg'"
         [columns]="3"
-        (filterPasses)="prepareFilter($event, 'expired')"
+        [filterModel]="'expired-passes'"
+        [showEmptyHeader]="true"
+        [hasFilterPasses]="true"
+        (filterPasses)="prepareFilter($event, 'expired-passes')"
       ></app-pass-collection>
     </div>
   </div>
@@ -243,9 +242,8 @@
             [style.width]="'301px'"
             [passProvider]="isStaff?receivedRequests:sentRequests"
             [title]="isStaff ? 'Received' : 'Sent'"
-            [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+            [icon]="'./assets/' +( isStaff ? 'Received' : 'Lock' ) +' (Navy).svg'"
             [columns]="2"
-            (filterPasses)="prepareFilter($event, (isStaff ? 'received' : 'sent'))"
           ></app-pass-collection>
         </div>
         <div class="requests-or-invitations">
@@ -255,10 +253,9 @@
             [isActive]="false"
             [style.width]="'301px'"
             [passProvider]="isStaff?sentRequests:receivedRequests"
-            [title]="isStaff?'Sent':'Received'"
-            [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
+            [title]="isStaff ? 'Sent' : 'Received'"
+            [icon]="'./assets/' +( isStaff ? 'Lock' : 'Received' ) +' (Navy).svg'"
             [columns]="2"
-            (filterPasses)="prepareFilter($event, (isStaff ? 'sent' : 'received'))"
           ></app-pass-collection>
         </div>
         <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">

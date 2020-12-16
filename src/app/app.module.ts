@@ -67,6 +67,7 @@ import {PassesEffects} from './ngrx/passes/effects';
 import {ContactTraceEffects} from './ngrx/contact-trace/effects';
 import {IntrosEffects} from './ngrx/intros/effects/intros.effects';
 import {ServiceWorkerModule} from '@angular/service-worker';
+import {FiltersEffects} from './ngrx/pass-filters/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -186,7 +187,8 @@ const appRoutes: Routes = [
             PassLimitEffects,
             PassesEffects,
             ContactTraceEffects,
-            IntrosEffects
+            IntrosEffects,
+            FiltersEffects
         ]),
         StoreDevtoolsModule.instrument({}),
         HammerModule,

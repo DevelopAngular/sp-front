@@ -153,6 +153,7 @@
             [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
             [icon]="'./assets/SP Arrow Reverse (Navy).svg'"
             [columns]="4"
+            [filterModel]="'passes-from-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
           >
           </app-pass-collection>
@@ -163,6 +164,7 @@
             [title]="'Passes to ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
             [icon]="'./assets/SP Arrow (Navy).svg'"
             [columns]="4"
+            [filterModel]="'passes-to-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
           >
           </app-pass-collection>

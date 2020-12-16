@@ -557,7 +557,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.activePasses.length$,
       this.futurePasses.length$,
       this.pastPasses.length$,
-    ).pipe(map(([con1, con2, con3]) => !con1 && !con2 && !con3));
+      this.filterExpiredPass$
+    ).pipe(map(([con1, con2, con3, passFilter]) => !con1 && !con2 && !con3 && !passFilter));
 
     this.passesLoaded = combineLatest(
       this.activePasses.loaded$,
@@ -578,6 +579,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
     this.locationsService.getFavoriteLocationsRequest();
     this.locationsService.getPassLimitRequest();
+
+    this.passesService.getFiltersRequest('expired-passes');
   }
 
   ngAfterViewInit(): void {
@@ -638,23 +641,23 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.filterActivePass$.next(date);
     } else if (collection === 'future') {
       this.filterFuturePass$.next(date);
-    } else if (collection === 'expired') {
+    } else if (collection === 'expired-passes') {
       this.filterExpiredPass$.next(date);
-    } else if (collection === 'received') {
+    } else if (collection === 'received-pass-requests') {
       this.filterReceivedPass$.next(date);
-    } else if (collection === 'sent') {
+    } else if (collection === 'sent-pass-requests') {
       this.filterSendPass$.next(date);
     }
   }
 
   prepareFilter(action, collection) {
-    if (action === 'past_hour') {
+    if (action === 'past-hour') {
       this.filterPasses(collection, moment().startOf('hour'));
     } else if (action === 'today') {
       this.filterPasses(collection, moment().startOf('day'));
-    } else if (action === 'past_3') {
+    } else if (action === 'past-three-days') {
       this.filterPasses(collection, moment().subtract(3, 'days').startOf('day'));
-    } else if (action === 'past_7') {
+    } else if (action === 'past-seven-days') {
       this.filterPasses(collection, moment().subtract(7, 'days').startOf('day'));
     } else {
       this.filterPasses(collection, null);

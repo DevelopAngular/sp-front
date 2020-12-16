@@ -1,4 +1,4 @@
-<div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length> 0 || showEmptyHeader; else emptyMessage">
+<div class="collection-wrapper" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
   <div class="collection-header" [style.width]="headerWidth">
     <div class="collection-title">
       <img draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
@@ -43,12 +43,17 @@
           <app-pass-cell *ngFor="let pass of currentPasses" (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
         </div>
       </ng-template>
-    <ng-template #emptyMessage>
-      <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-        {{ getEmptyMessage() }}
-      </div>
-    </ng-template>
 </div>
+
+<ng-template #emptyMessage>
+  <div class="empty-state" *ngIf="!(filtersLoading$ | async)">
+    <img [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
+    <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+      No expired passes <br/>
+      in the <span style="text-transform: lowercase">{{ selectedText }}</span>
+    </div>
+  </div>
+</ng-template>
 
 <!-- Needs for Intro page -->
 

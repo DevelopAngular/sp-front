@@ -30,6 +30,8 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import {HallPassesService} from '../services/hall-passes.service';
+import {PassFilters} from '../models/PassFilters';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -70,7 +72,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() isAdminPage: boolean;
   @Input() headerWidth: string = '100%';
   @Input() passProvider: PassLikeProvider;
-  @Input() hasFilterPasses: boolean = true;
+  @Input() hasFilterPasses: boolean;
+  @Input() filterModel: string;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
@@ -81,6 +84,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
   selectedSort;
+  filtersData$: Observable<{[model: string]: PassFilters}>;
+  filtersLoading$: Observable<boolean>;
 
   activePassTime$;
 
@@ -115,7 +120,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private kioskMode: KioskModeService,
       private sanitizer: DomSanitizer,
       public screenService: ScreenService,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
+      private passesService: HallPassesService
   ) {}
 
   get gridTemplate() {
@@ -129,19 +135,34 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     return this.grid_gap;
   }
 
+  get _color() {
+    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
+  }
+
   get selectedText() {
-    if (this.selectedSort === 'past_hour') {
+    if (this.selectedSort === 'past-hour') {
       return 'Past hour';
     } else if (this.selectedSort === 'today') {
       return 'Today';
-    } else if (this.selectedSort === 'past_3') {
+    } else if (this.selectedSort === 'past-three-days') {
       return 'Past 3 days';
-    } else if (this.selectedSort === 'past_7') {
+    } else if (this.selectedSort === 'past-seven-days') {
       return 'Past 7 days';
     }
   }
 
   ngOnInit() {
+    if (this.filterModel && this.hasFilterPasses) {
+      this.passesService.getFiltersRequest(this.filterModel);
+      this.filtersData$ = this.passesService.passFilters$;
+      this.filtersLoading$ = this.passesService.passFiltersLoading$;
+      this.filtersData$.pipe(
+        filter(res => !!res && (this.filterModel && !!res[this.filterModel])))
+        .subscribe(res => {
+        this.selectedSort = res[this.filterModel].default;
+        this.filterPasses.emit(this.selectedSort);
+      });
+    }
     this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
     this.currentPasses$
       .pipe(
@@ -169,7 +190,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.timers.forEach(id => {
-      // console.log('Clearing interval');
       clearInterval(id);
     });
     this.timers = [];
@@ -183,10 +203,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       setting: null
     });
   }
-  get _color() {
-    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
 
-  }
   getEmptyMessage() {
     return this.emptyMessage;
   }
@@ -200,10 +217,10 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   openFilter(target) {
     const sortOptions = [
-      { display: 'Past hour', color: this.darkTheme.getColor(), action: 'past_hour'},
+      { display: 'Past hour', color: this.darkTheme.getColor(), action: 'past-hour'},
       { display: 'Today', color: this.darkTheme.getColor(), action: 'today'},
-      { display: 'Past 3 days', color: this.darkTheme.getColor(), action: 'past_3'},
-      { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past_7'}
+      { display: 'Past 3 days', color: this.darkTheme.getColor(), action: 'past-three-days'},
+      { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past-seven-days'}
     ];
     const filterDialog = this.dialog.open(DropdownComponent, {
       panelClass: 'consent-dialog-container',
@@ -224,6 +241,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           this.selectedSort = action;
         }
         this.cdr.detectChanges();
+        this.passesService.updateFilterRequest(this.filterModel, this.selectedSort);
         this.filterPasses.emit(this.selectedSort);
     });
   }
