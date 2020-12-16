@@ -431,7 +431,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             });
             return SPNC.afterClosed();
           } else if (action === 'hall_pass.end') {
-            if (this.dialog.openDialogs.length) {
+            if (this.dialog.getDialogById('startNotification')) {
               this.dialog.getDialogById('startNotification').close();
               return of(true);
             }
