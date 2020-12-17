@@ -79,7 +79,7 @@
 
         <!-- cdkVirtualScrollViewport uses transform: translateY to correct for all elements that are removed.
         We will use a plcaholder row in the table instead because the translate causes problems with the sticky header -->
-        <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>
+<!--        <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>-->
 
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
             #rowCont

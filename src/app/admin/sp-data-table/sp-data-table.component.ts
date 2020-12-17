@@ -39,7 +39,7 @@ export class GridTableDataSource extends DataSource<any> {
 
   set allData(data: any[]) {
     this._data = data;
-    // this.viewport.scrollToOffset(0);
+    this.viewport.scrollToOffset(this.offset);
     this.viewport.setTotalContentSize(this.itemSize * data.length);
     this.visibleData.next(this._data.slice(0, PAGESIZE));
   }
@@ -67,7 +67,7 @@ export class GridTableDataSource extends DataSource<any> {
       const prevExtraData = start > 0 && start <= 12 ? 1 : start > 12 ? 12 : 0;
       const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
       this.offset = ROW_HEIGHT * (start - prevExtraData);
-      this.viewport.setRenderedContentOffset(this.offset);
+      // this.viewport.setRenderedContentOffset(this.offset);
       this.offsetChange.next(this.offset);
       this.visibleData.next(slicedData);
     });
@@ -76,8 +76,8 @@ export class GridTableDataSource extends DataSource<any> {
   private readonly visibleData: BehaviorSubject<any[]> = new BehaviorSubject([]);
 
   connect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): Observable<any[] | ReadonlyArray<any>> {
-    return this.visibleData.asObservable();
-    // return this.initialData$;
+    // return this.visibleData.asObservable();
+    return this.initialData$;
   }
 
   disconnect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): void {
@@ -145,7 +145,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   selectedRows: any[];
   hasHorizontalScroll: boolean;
   loadingCSV$: Observable<boolean>;
-  preventRole: string;
 
   destroy$ = new Subject();
 
@@ -173,9 +172,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
       .subscribe(offset => {
-        this.placeholderHeight = offset;
-        const doc = document.querySelector('.example-viewport');
-        this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
+        console.log(offset);
+        // this.placeholderHeight = offset;
+        // const doc = document.querySelector('.example-viewport');
+        // this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
       });
 
     this.viewport.scrolledIndexChange
@@ -183,10 +183,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(res => {
-      if (res && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
-        this.loadMoreData.emit();
-        console.log('loading data ==>>>>');
-      }
+        if (res && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
+          this.loadMoreData.emit();
+          // this.viewport.scrollToOffset(res);
+          console.log('loading data ==>>>>');
+        }
     });
 
     this.loadingCSV$ = this.tableService.loadingCSV$.asObservable();
@@ -261,15 +262,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   placeholderWhen(index: number, _: any) {
     return index === 0;
-  }
-
-  getColumnSort(column) {
-    const activeSort = this.currentSort.find(sort => sort.active === column);
-    if (activeSort) {
-      return activeSort.direction;
-    } else {
-      return null;
-    }
   }
 
   isAllSelected() {
