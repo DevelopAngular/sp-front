@@ -20,7 +20,7 @@ import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
-import {cloneDeep, omit} from 'lodash';
+import {cloneDeep, isEmpty, omit} from 'lodash';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {ToastService} from '../../services/toast.service';
@@ -129,14 +129,12 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Output() sortClickEvent: EventEmitter<string> = new EventEmitter<string>();
   @Output() exportPasses: EventEmitter<any> = new EventEmitter<any>();
 
-  placeholderHeight = 0;
   displayedColumns: string[];
   columnsToDisplay: string[];
   tableInitialColumns: string[];
   dataSource: GridTableDataSource;
   selection = new SelectionModel<any>(true, []);
   itemSize = 33;
-  currentSort: {active: string, direction: string}[] = [];
   tableOptionButtons = [
     { icon: 'Columns', action: 'column' },
     // { icon: 'Print', action: 'print' },
@@ -145,6 +143,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   selectedRows: any[];
   hasHorizontalScroll: boolean;
   loadingCSV$: Observable<boolean>;
+
+  selectedObjects: {
+    [id: number]: any
+  } = {};
 
   destroy$ = new Subject();
 
@@ -170,13 +172,13 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
-    this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
-      .subscribe(offset => {
-        console.log(offset);
-        // this.placeholderHeight = offset;
-        // const doc = document.querySelector('.example-viewport');
-        // this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
-      });
+    // this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
+    //   .subscribe(offset => {
+    //     console.log(offset);
+    //     // this.placeholderHeight = offset;
+    //     // const doc = document.querySelector('.example-viewport');
+    //     // this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
+    //   });
 
     this.viewport.scrolledIndexChange
       .pipe(
@@ -195,9 +197,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.dataSource.loadedData$.pipe(
       filter(value => value && this.dataSource.allData[0]),
       switchMap(value => {
-        if (!!this.selection.selected.length) {
-          this.selectedRows = cloneDeep(this.selection.selected);
-          this.selection.clear();
+        if (!!this.selectedHasValue()) {
+          this.selectedRows = cloneDeep(Object.values(this.selectedObjects));
+          this.selectedObjects = {};
         }
         this.displayedColumns = Object.keys(this.dataSource.allData[0]);
         const savedColumns = JSON.parse(this.storage.getItem(this.currentPage));
@@ -212,7 +214,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
           this.columnsToDisplay.unshift('select');
         } else if (!v && (this.columnsToDisplay[0] === 'select')) {
           this.columnsToDisplay.shift();
-          this.selection.clear();
+          // this.selection.clear();
         }
         this.tableInitialColumns = cloneDeep(this.columnsToDisplay);
       });
@@ -230,8 +232,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         // }
       });
 
-    if (!this.selection.isEmpty()) {
-      this.selection.clear();
+    if (!this.selectedHasValue()) {
+      this.selectedObjects = {};
     }
 
     this.tableService.updateTableColumns$
@@ -244,7 +246,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.tableService.clearSelectedUsers
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.selection.clear();
+        this.selectedObjects = {};
         this.cdr.detectChanges();
       });
   }
@@ -255,37 +257,53 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   }
 
   select(row) {
-    this.selection.toggle(row);
+    this.rowSelect(row);
     this.cdr.detectChanges();
-    this.tableService.selectRow.next(this.selection.selected);
+    this.tableService.selectRow.next(Object.values(this.selectedObjects));
   }
 
-  placeholderWhen(index: number, _: any) {
-    return index === 0;
+  rowSelect(object) {
+    if (this.isSelected(object)) {
+      delete this.selectedObjects[object.id];
+    } else {
+      this.selectedObjects = {
+        ...this.selectedObjects,
+        [object.id]: object
+      };
+    }
+  }
+
+  isSelected(row) {
+    return !!this.selectedObjects[row.id];
+  }
+
+  selectedHasValue() {
+    return !isEmpty(this.selectedObjects);
   }
 
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
+    const numSelected = Object.keys(this.selectedObjects).length;
     const numRows = this.dataSource.allData.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.allData.forEach(row => {
-        this.selection.select(row);
-      });
-    this.tableService.selectRow.next(this.selection.selected);
-    // console.log(this.selection.selected.length);
+    if (this.isAllSelected()) {
+      this.selectedObjects = {};
+    } else {
+      this.selectedObjects = this.dataSource.allData.reduce((acc, curr) => {
+        return {...acc, [curr.id]: curr};
+      }, {});
+    }
+    this.tableService.selectRow.next(Object.values(this.selectedObjects));
   }
 
   checkboxLabel(row?): string {
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+    return `${this.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
   rowOnClick(row) {
@@ -310,8 +328,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv') {
-      if (this.currentPage === 'pass_search' && (this.selection.selected.length > 300 || !this.selection.selected.length)) {
-        this.exportPasses.emit(this.selection.selected);
+      if (this.currentPage === 'pass_search' && (Object.values(this.selectedObjects).length > 300 || !this.selectedHasValue())) {
+        this.exportPasses.emit(Object.values(this.selectedObjects));
       } else {
         this.toastService.openToast(
           {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
@@ -323,8 +341,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   generateCSV() {
     // If we are generating CSV locally, use all data from datasource if no selection.
     let rows: any[];
-    if (this.selection.selected.length) {
-      rows = this.selection.selected;
+    if (this.selectedHasValue()) {
+      rows = Object.values(this.selectedObjects);
     } else {
       rows = this.dataSource.allData;
     }

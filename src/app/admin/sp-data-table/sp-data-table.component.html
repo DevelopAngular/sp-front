@@ -17,17 +17,17 @@
         <ng-container matColumnDef="select" *ngIf="isCheckbox | async" sticky>
           <th mat-header-cell *matHeaderCellDef style="padding: 0 15px;">
             <mat-checkbox (change)="$event ? masterToggle() : null"
-                          [checked]="selection.hasValue() && isAllSelected()"
-                          [style.color]="selection.hasValue() ? '#1F195E' : '#7F879D'"
-                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          [checked]="selectedHasValue() && isAllSelected()"
+                          [style.color]="selectedHasValue() ? '#1F195E' : '#7F879D'"
+                          [indeterminate]="selectedHasValue() && !isAllSelected()"
                           [aria-label]="checkboxLabel()">
             </mat-checkbox>
           </th>
           <td mat-cell *matCellDef="let row" style="padding: 0 15px;" (click)="$event.stopPropagation(); select(row)">
             <mat-checkbox (click)="$event.stopPropagation();"
                           (change)="$event ? select(row) : null"
-                          [checked]="selection.isSelected(row)"
-                          [style.color]="selection.isSelected(row) ? '#1F195E' : '#7F879D'"
+                          [checked]="isSelected(row)"
+                          [style.color]="isSelected(row) ? '#1F195E' : '#7F879D'"
                           [aria-label]="checkboxLabel(row)">
             </mat-checkbox>
           </td>
@@ -85,7 +85,7 @@
             #rowCont
             (mouseenter)="rowCont.hover = true"
             (mouseleave)="rowCont.hover = false"
-            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick ? '#F1F2F4' : '#FFFFFF'"
+            [style.background-color]="isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick ? '#F1F2F4' : '#FFFFFF'"
             [style.cursor]="isRowClick ? 'pointer' : 'default'"
             appCrossPointerEventTarget (pointerClickEvent)="isRowClick ? rowOnClick(row) : null">
         </tr>
