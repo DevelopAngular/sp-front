@@ -1,4 +1,16 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {Router} from '@angular/router';
 import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
 import {TotalAccounts} from '../../../models/TotalAccounts';
@@ -27,7 +39,7 @@ import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/statu
   templateUrl: './accounts-header.component.html',
   styleUrls: ['./accounts-header.component.scss']
 })
-export class AccountsHeaderComponent implements OnInit, AfterViewInit {
+export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() pending$: Subject<boolean>;
   @Input() schoolSyncInfoData: SchoolSyncInfo;
@@ -83,11 +95,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
     this.tableService.selectRow.asObservable()
       .pipe(
-        takeUntil(this.destroy$),
         switchMap((selected) => {
-          // return this.userService.accountsEntities[this.currentTab].pipe(
-          //   withLatestFrom(of(selected))
-          // );
           return combineLatest(
             of(selected),
             this.userService.accountsEntities[this.currentTab].pipe(take(1))
@@ -95,7 +103,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
         }),
         map(([selected, users]) => {
           return selected.map(user => users[user.id]);
-        })
+        }),
+        takeUntil(this.destroy$),
       )
       .subscribe(res => {
         this.selectedUsers = res;
@@ -105,6 +114,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getCurrentTab() {
