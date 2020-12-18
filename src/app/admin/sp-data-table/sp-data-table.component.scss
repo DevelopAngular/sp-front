@@ -27,6 +27,53 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .sceleton-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+
+      .sceleton-item {
+
+        .sceleton-item-container {
+          display: flex;
+          align-items: center;
+          padding: 0 15px;
+          width: 100%;
+        }
+
+        .sceleton-item-content {
+          display: flex;
+          align-items: center;
+          width: 100%;
+
+          .first-col {
+            height: inherit;
+            border-right: 1px solid $blue-gray;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .columns {
+            height: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 auto;
+
+            .fake-sceleton {
+              background-color: #F4F4F4;
+              height: 20px;
+              margin-right: 30px;
+              width: 92%;
+              border-radius: 10px;
+            }
+          }
+        }
+      }
+    }
   }
 
   .empty-state {
@@ -324,21 +371,6 @@ mat-cell {
   contain: none;
 }
 
-//.cdk-virtual-scroll-viewport::-webkit-scrollbar {
-//  -webkit-appearance: none;
-//  width: 10px;
-//  height: 10px;
-//}
-//
-//.cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb {
-//  border-radius: 8px;
-//  background-color: #D3D6DE;
-//  //-webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-//}
-//.cdk-virtual-scroll-viewport::-webkit-scrollbar-button {
-//  display: block;
-//}
-
 .cdk-virtual-scroll-viewport::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #E7E7E7;
   box-shadow: 1px 0 1px 0 #F6F6F6 inset, -1px 0 1px 0 #F6F6F6 inset;
@@ -399,6 +431,21 @@ mat-cell {
   text-overflow: ellipsis;
   width: 200px;
   white-space: nowrap;
+}
+
+.animate {
+  animation : shimmer 3s infinite linear;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 1000px 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 //
 //@media all and (max-width: 1200px) {

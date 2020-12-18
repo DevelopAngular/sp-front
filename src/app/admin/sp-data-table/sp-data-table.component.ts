@@ -68,8 +68,8 @@ export class GridTableDataSource extends DataSource<any> {
       const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
       this.offset = ROW_HEIGHT * (start - prevExtraData);
       // this.viewport.setRenderedContentOffset(this.offset);
-      this.offsetChange.next(this.offset);
-      this.visibleData.next(slicedData);
+      // this.offsetChange.next(this.offset);
+      // this.visibleData.next(slicedData);
     });
   }
 
@@ -362,5 +362,13 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   sortHeader(column) {
     this.sortClickEvent.emit(column);
+  }
+
+  generateFakeItems(): Array<number> {
+    const indexes = [];
+    for (let i = 0; i < this.viewportDataItems; i++) {
+      indexes.push(i);
+    }
+    return indexes;
   }
 }

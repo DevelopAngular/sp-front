@@ -229,7 +229,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             this.passSearchState.isEmpty = false;
             return passes.map(pass => {
               const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
-              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" onClick="passClick(${pass.id})" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
+              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
 <!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
               let rawObj: any = {
@@ -601,5 +601,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
         }
       );
     });
+  }
+
+  numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 }
