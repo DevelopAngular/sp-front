@@ -184,7 +184,7 @@ export class GoogleLoginService {
     return auth.signIn({ login_hint: userEmail }).then(user => {
       this._zone.run(() => {
         console.log(user.getAuthResponse());
-        this.updateAuth(user.getAuthResponse());
+        this.updateAuthObjectForGoogle(user.getAuthResponse());
       });
     });
 

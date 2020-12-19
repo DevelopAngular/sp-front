@@ -16,6 +16,7 @@ import {SafeHtml} from '@angular/platform-browser';
 import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
+import AuthResponse = gapi.auth2.AuthResponse;
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -595,12 +596,13 @@ export class HttpService implements OnDestroy {
             signOutCatch
         );
       case 'google':
-        const idToken = this.storage.getItem('google_id_token');
-
-        return this.loginGoogleAuth(idToken).pipe(
-            tap({next: data => {
-                const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
-                this.authContext = updatedAuthContext;
+        return this.loginService.getNewGoogleAuthResponse().pipe(
+            switchMap((value: AuthResponse, _) => {
+              this.storage.setItem('google_id_token', value.id_token);
+              return this.loginGoogleAuth(value.id_token);
+            }),
+            tap({next: (ctx: AuthContext) => {
+                this.authContext = ctx;
             }}),
             signOutCatch
         );

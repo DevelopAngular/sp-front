@@ -524,6 +524,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showMainForm(forLater: boolean): void {
       if (!this.isOpenedModal) {
+        if (!forLater) {
+          this.httpService.dirtyAccessToken(); // TODO: Remove me!!!!!
+        }
         this.isOpenedModal = true;
         const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',
