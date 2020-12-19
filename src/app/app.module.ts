@@ -90,11 +90,6 @@ const appRoutes: Routes = [
     data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: false, authFree: true},
   },
   {
-    path: 'accounts_setup',
-    loadChildren: () => import('app/accounts-setup/accounts-setup.module').then(m => m.AccountsSetupModule),
-    data: {hideScroll: true, hubspot: true, authFree: true},
-  },
-  {
     path: '',
     loadChildren: () => import('app/login/login.module').then(m => m.LoginModule),
     data: { hideSchoolToggleBar: true}
