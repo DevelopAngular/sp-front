@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import {filter, map, publish, refCount, switchMap, take, tap} from 'rxjs/operators';
 import { AuthContext, HttpService } from './http-service';
 import { Logger } from './logger.service';
 import {headersToString} from 'selenium-webdriver/http';
+import {GoogleLoginService} from './google-login.service';
 
 interface RawMessage {
   type: string;
@@ -46,85 +47,88 @@ export class PollingService {
 
   isConnected$ = new BehaviorSubject(false);
 
-  constructor(private http: HttpService, private _logger: Logger) {
+  constructor(private http: HttpService,
+              private inj: Injector,
+              private _logger: Logger) {
 
     this.eventStream = this.getEventListener().pipe(publish(), refCount());
   }
 
   private getRawListener(): Observable<RawMessage> {
-    return this.http.accessToken.pipe(
-      take(1),
-      switchMap((ctx: AuthContext) => {
-        console.log('polling listener', ctx);
+    const loginService = this.inj.get(GoogleLoginService);
+    return loginService.isAuthenticated$.pipe(
+        filter(isAuth => isAuth === true),
+        switchMap( _ => {
+          console.log('Creating websocket');
+          const ctx = this.http.getCurrentAuthContext();
+          const url = ctx.server.ws_url;
 
-        const url = ctx.server.ws_url;
+          const ws = new $WebSocket(url, null, {
+            maxTimeout: 5000,
+            reconnectIfNotNormalClose: true,
+          });
 
-        const ws = new $WebSocket(url, null, {
-          maxTimeout: 5000,
-          reconnectIfNotNormalClose: true,
-        });
+          return new Observable<RawMessage>(s => {
+            let sendMessageSubscription: Subscription = null;
 
-        return new Observable<RawMessage>(s => {
-          let sendMessageSubscription: Subscription = null;
+            ws.onOpen(() => {
+              ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
 
-          ws.onOpen(() => {
-            ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
+              // any time the websocket opens, trigger an invalidation event because listeners can't trust their
+              // current state but by refreshing and listening from here, they will get all updates. (technically
+              // there is a small unsafe window because the invalidation event should be sent when the authentication
+              // success event is received)
+              s.next({
+                type: 'message',
+                data: {
+                  action: 'invalidate',
+                  data: null,
+                },
+              });
+              this.isConnected$.next(true);
 
-            // any time the websocket opens, trigger an invalidation event because listeners can't trust their
-            // current state but by refreshing and listening from here, they will get all updates. (technically
-            // there is a small unsafe window because the invalidation event should be sent when the authentication
-            // success event is received)
-            s.next({
-              type: 'message',
-              data: {
-                action: 'invalidate',
-                data: null,
-              },
+              if (sendMessageSubscription !== null) {
+                sendMessageSubscription.unsubscribe();
+                sendMessageSubscription = null;
+              }
+              sendMessageSubscription = this.sendMessageQueue$.subscribe(message => {
+                ws.send4Direct(JSON.stringify(message));
+              });
             });
-            this.isConnected$.next(true);
 
-            if (sendMessageSubscription !== null) {
-              sendMessageSubscription.unsubscribe();
-              sendMessageSubscription = null;
-            }
-            sendMessageSubscription = this.sendMessageQueue$.subscribe(message => {
-              ws.send4Direct(JSON.stringify(message));
+            ws.onMessage(event => {
+              s.next({
+                type: 'message',
+                data: JSON.parse(event.data),
+              });
             });
-          });
 
-          ws.onMessage(event => {
-            s.next({
-              type: 'message',
-              data: JSON.parse(event.data),
+            ws.onError(event => {
+              s.next({
+                type: 'error',
+                data: event,
+              });
             });
-          });
-
-          ws.onError(event => {
-            s.next({
-              type: 'error',
-              data: event,
+            // we can't use .onClose() because onClose is triggered whenever the internal connection closes
+            // even if a reconnect will be attempted.
+            ws.getDataStream().subscribe(() => null, () => null, () => {
+              s.complete();
             });
-          });
-          // we can't use .onClose() because onClose is triggered whenever the internal connection closes
-          // even if a reconnect will be attempted.
-          ws.getDataStream().subscribe(() => null, () => null, () => {
-            s.complete();
-          });
 
-          ws.onClose(() => {
-            if (sendMessageSubscription !== null) {
-              sendMessageSubscription.unsubscribe();
-              sendMessageSubscription = null;
-              // debugger
-            }
-            this.isConnected$.next(false);
-          });
+            ws.onClose(() => {
+              if (sendMessageSubscription !== null) {
+                sendMessageSubscription.unsubscribe();
+                sendMessageSubscription = null;
+                // debugger
+              }
+              this.isConnected$.next(false);
+            });
 
-          return () => {
-            ws.close();
-          };
-        });
-      })
+            return () => {
+              ws.close();
+            };
+          });
+        })
     );
   }
 

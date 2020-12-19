@@ -1,5 +1,5 @@
 import {Injectable, NgZone} from '@angular/core';
-import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, from, Observable, ReplaySubject, Subject} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {GoogleAuthService} from './google-auth.service';
 import {StorageService} from './storage.service';
@@ -20,17 +20,17 @@ export interface DemoLogin {
 }
 
 export interface Gg4lLogin {
-  gg4l_token: string;
+  gg4l_code: string;
   type: 'gg4l-login';
 }
 
-export interface GG4LResponse {
-  code: string;
+export interface CleverLogin {
+  clever_code: string;
+  type: 'clever-login';
 }
 
-export interface CleverLogin {
-  clever_token: string;
-  type: 'clever-login';
+export interface GoogleLogin {
+  type: 'google-login';
 }
 
 
@@ -46,14 +46,18 @@ export function isCleverLogin(d: any): d is CleverLogin {
   return (<CleverLogin>d).type === 'clever-login';
 }
 
-type AuthObject = AuthResponse | DemoLogin | Gg4lLogin | CleverLogin;
+export function isGoogleLogin(d: any): d is GoogleLogin {
+  return (<GoogleLogin>d).type === 'google-login';
+}
+
+type AuthObject = GoogleLogin | DemoLogin | Gg4lLogin | CleverLogin;
 
 @Injectable()
 export class GoogleLoginService {
 
   private googleAuthTool = new BehaviorSubject<GoogleAuth>(null);
 
-  private authToken$ = new BehaviorSubject<AuthObject>(null);
+  private authObject$ = new BehaviorSubject<AuthObject>(null);
 
   public showLoginError$ = new BehaviorSubject(false);
   public loginErrorMessage$: Subject<string> = new Subject<string>();
@@ -65,7 +69,7 @@ export class GoogleLoginService {
     private _zone: NgZone,
     private storage: StorageService
   ) {
-    this.authToken$.subscribe(auth => {
+    this.authObject$.subscribe(auth => {
       if (auth) {
         const storageKey = isDemoLogin(auth)
                            ? JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type})
@@ -88,21 +92,19 @@ export class GoogleLoginService {
         take(1)
       )
       .subscribe(auth => {
-        if (!auth.isSignedIn.get()) {
+        if (!auth.isSignedIn.get() && this.storage.getItem('authType') !== 'google') {
           return;
         }
         const resp = auth.currentUser.get().getAuthResponse();
-        if (resp.expires_at > Date.now()) {
-          this.updateAuth(resp);
-        }
+        this.updateAuthObjectForGoogle(resp);
       });
 
 
     const savedAuth = this.storage.getItem(STORAGE_KEY);
     if (savedAuth) {
       console.log('Loading saved auth:', savedAuth);
-      const auth: AuthResponse = JSON.parse(savedAuth);
-      if (auth.id_token !== undefined || isDemoLogin(auth) || isGg4lLogin(auth) || isCleverLogin(auth)) {
+      const auth = JSON.parse(savedAuth);
+      if (isGoogleLogin(auth) || isDemoLogin(auth) || isGg4lLogin(auth) || isCleverLogin(auth)) {
         this.updateAuth(auth);
       } else {
         this.isAuthenticated$.next(false);
@@ -125,60 +127,30 @@ export class GoogleLoginService {
     }
   }
 
-  isAuthLoaded(): Observable<boolean> {
+  updateAuthObjectForGoogle(resp: gapi.auth2.AuthResponse) {
+    if (resp.expires_at > Date.now()) {
+      this.storage.setItem('google_id_token', resp.id_token);
+      this.updateAuth({type: 'google-login'} as GoogleLogin);
+    }
+  }
+
+  isGoogleAuthLoaded(): Observable<boolean> {
     return this.googleAuthTool.pipe(map(tool => tool !== null));
   }
 
-  private needNewToken(): boolean {
-    if (!this.authToken$.value) {
-      return true;
-    }
-
-    if (isDemoLogin(this.authToken$.value)) {
-      return !!this.authToken$.value.invalid;
-    }
-
-    if (isGg4lLogin(this.authToken$.value)) {
-      return false;
-    }
-
-    if (isCleverLogin(this.authToken$.value)) {
-      return false;
-    }
-
-    const threshold = 5 * 60 * 1000; // 5 minutes
-    // don't use TimeService for auth because auth is required for time service
-    // to be useful
-    return this.authToken$.value.expires_at <= Date.now() + threshold;
-  }
-
-  getIdToken(): Observable<DemoLogin | Gg4lLogin | CleverLogin | string> {
-    if (this.needNewToken()) {
-      this.authToken$.next(null);
-      this.isAuthenticated$.next(false);
-      this.storage.removeItem(STORAGE_KEY);
-    }
-
-    return this.authToken$.pipe(
-      filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
-      map((a) => {
-        return (isDemoLogin(a) || isGg4lLogin(a) || isCleverLogin(a)) ? a : a.id_token;
-      })
+  // Returns authObject
+  getAuthObject(): Observable<AuthObject> {
+    return this.authObject$.pipe(
+      filter(t => !!t)
     );
   }
 
   public updateAuth(auth: AuthObject) {
-    this.authToken$.next(auth);
-  }
-
-  setAuthenticated() {
-    // console.log('setAuthenticated()');
-    this.isAuthenticated$.next(true);
-    this.showLoginError$.next(false);
+    this.authObject$.next(auth);
   }
 
   clearInternal(permanent: boolean = false) {
-    this.authToken$.next(null);
+    this.authObject$.next(null);
 
     if (!permanent) {
       this.isAuthenticated$.next(false);
@@ -186,11 +158,9 @@ export class GoogleLoginService {
 
     this.storage.removeItem(STORAGE_KEY);
     this.storage.removeItem('refresh_token');
+    this.storage.removeItem('google_id_token');
     this.storage.removeItem('context');
     this.logout();
-  }
-
-  simpleSignOn(code: string) {
   }
 
   /**
@@ -220,16 +190,14 @@ export class GoogleLoginService {
 
   }
 
-  updateGoogleToken() {
+  getNewGoogleAuthResponse(): Observable<AuthResponse> {
     const auth = this.googleAuthTool.getValue();
     const user = auth.currentUser.get();
-    user.reloadAuthResponse().then(res => {
-      this.updateAuth(res);
-    });
+    return from(user.reloadAuthResponse());
   }
 
   signInDemoMode(username: string, password: string) {
-    this.authToken$.next({username: username, password: password, type: 'demo-login'});
+    this.authObject$.next({username: username, password: password, type: 'demo-login'});
   }
 
   logout() {

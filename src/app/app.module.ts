@@ -67,6 +67,7 @@ import {PassesEffects} from './ngrx/passes/effects';
 import {ContactTraceEffects} from './ngrx/contact-trace/effects';
 import {IntrosEffects} from './ngrx/intros/effects/intros.effects';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import {AccessTokenInterceptor} from './services/AccessTokenInterceptor';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -205,6 +206,7 @@ const appRoutes: Routes = [
         GoogleAuthService,
         {provide: OverlayContainer, useFactory: InitOverlay},
         {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
+        {provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true},
         {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
         {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
         {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},

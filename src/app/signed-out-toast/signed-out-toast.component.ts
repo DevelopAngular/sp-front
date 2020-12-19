@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 
@@ -17,8 +17,8 @@ export class SignedOutToastComponent implements OnInit {
   ngOnInit() {
 
   }
-  signBackIn() {
-    this.router.navigate(['sign-out']);
+  signBackInTapped() {
+    // this.router.navigate(['sign-out']);
     this.dialogRef.close();
   }
 }
