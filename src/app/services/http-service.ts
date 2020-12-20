@@ -155,7 +155,9 @@ export class HttpService implements OnDestroy {
   public errorToast$: ReplaySubject<SPError> = new ReplaySubject(1);
   public schoolSignInRegisterText$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
-  private authContext: AuthContext = null;
+  private _authContext: AuthContext = null;
+  public authContext$: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
+
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
       filter(v => v),
@@ -227,10 +229,9 @@ export class HttpService implements OnDestroy {
         filter(v => !!v),
         map(newToken => {
           newToken['expires'] = new Date(new Date() + newToken['expires_in']);
-          return {auth: newToken, server: this.authContext.server};
-
+          return {auth: newToken, server: this.getAuthContext().server};
         })).subscribe(res => {
-          this.authContext = res;
+          this.setAuthContext(res);
           this.loginService.isAuthenticated$.next(true);
     });
 
@@ -250,11 +251,20 @@ export class HttpService implements OnDestroy {
           }}),
           filter(authObj => !!authObj && !!authObj.auth)
       ).subscribe({next: authCtx => {
-          this.authContext = authCtx;
-          console.log('Auth ctx updated');
+          this.setAuthContext(authCtx);
           this.loginService.isAuthenticated$.next(true);
         }});
     });
+
+    this.authContext$.pipe(
+        takeUntil(this.destroyed$)
+    ).subscribe({next: ctx => {
+      if (ctx === null) {
+        console.log('Auth CTX set to null');
+      } else {
+        console.log('Auth CTX updated');
+      }
+    }});
   }
 
   ngOnDestroy() {
@@ -264,12 +274,19 @@ export class HttpService implements OnDestroy {
   }
 
   // Used in AccessTokenInterceptor for token refresh and adding access token
-  getCurrentAuthContext(): AuthContext {
-    return this.authContext;
+  getAuthContext(): AuthContext {
+    return this._authContext;
+  }
+
+  setAuthContext(ctx: AuthContext): void {
+    this._authContext = ctx;
+    this.authContext$.next(ctx);
   }
 
   dirtyAccessToken(): void {
-    this.authContext.auth.access_token = this.authContext.auth.access_token + 'garbed';
+    const ctx = this.getAuthContext();
+    ctx.auth.access_token = ctx.auth.access_token + 'garbled';
+    this._authContext = ctx; // Will not update websocket, but it's ok for testing.
   }
 
   private getLoginServers(data: FormData): Observable<LoginChoice> {
@@ -511,27 +528,6 @@ export class HttpService implements OnDestroy {
     }));
   }
 
-  // Can no longer subscribe to authContext. Subscribe to isAuthenticated and use getAuthContext instead.
-  // private get authContext(): Observable<AuthContext> {
-  //   if (!this.hasRequestedToken) {
-  //     this.fetchServerAuth()
-  //         .pipe(
-  //             take(1),
-  //             catchError( err => {
-  //               this.loginService.clearInternal(true);
-  //               this.loginService.showLoginError$.next(true);
-  //             })
-  //         )
-  //         .subscribe((auth: AuthContext) => {
-  //           this.authContextSubject.next(auth);
-  //         });
-  //
-  //     this.hasRequestedToken = true;
-  //   }
-  //
-  //   return this.authContextSubject.pipe(filter(e => !!e));
-  // }
-
   private fetchServerAuth(authObject: any): Observable<AuthContext | any> {
     let authContext$: Observable<AuthContext>;
     if (isDemoLogin(authObject)) {
@@ -553,11 +549,11 @@ export class HttpService implements OnDestroy {
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-    if (!this.authContext) {
+    if (!this.getAuthContext()) {
       throw new Error('No authContext');
     }
 
-    return predicate(this.authContext);
+    return predicate(this.getAuthContext());
     // return this.authContext.pipe(
     //     // Switching this from switchMap to concatMap, allows refreshAuthContext to complete successfully.
     //     // refreshAuthContext gets cancelled when authContextSubject.next is called, so it never completes!
@@ -578,7 +574,7 @@ export class HttpService implements OnDestroy {
     });
 
     const authType = this.storage.getItem('authType');
-    const {auth, server} = this.authContext;
+    const {auth, server} = this.getAuthContext();
     switch (authType) {
       case 'password':
         const config = new FormData();
@@ -591,7 +587,7 @@ export class HttpService implements OnDestroy {
               data['expires'] = new Date(new Date() + data['expires_in']);
               const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
               this.storage.setItem('refresh_token', updatedAuthContext.auth.refresh_token);
-              this.authContext = updatedAuthContext;
+              this.setAuthContext(updatedAuthContext);
             }}),
             signOutCatch
         );
@@ -602,7 +598,7 @@ export class HttpService implements OnDestroy {
               return this.loginGoogleAuth(value.id_token);
             }),
             tap({next: (ctx: AuthContext) => {
-                this.authContext = ctx;
+                this.setAuthContext(ctx);
             }}),
             signOutCatch
         );
@@ -638,7 +634,7 @@ export class HttpService implements OnDestroy {
   }
 
   clearInternal() {
-    this.authContext = null;
+    this.setAuthContext(null);
     this.hasRequestedToken = false;
   }
 

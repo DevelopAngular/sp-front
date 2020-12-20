@@ -1,6 +1,6 @@
-import {Injectable, Injector} from '@angular/core';
+import {Injectable} from '@angular/core';
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
+import {BehaviorSubject, NEVER, Observable, Subject, Subscription} from 'rxjs';
 import {filter, map, publish, refCount, switchMap, take, tap} from 'rxjs/operators';
 import { AuthContext, HttpService } from './http-service';
 import { Logger } from './logger.service';
@@ -48,30 +48,30 @@ export class PollingService {
   isConnected$ = new BehaviorSubject(false);
 
   constructor(private http: HttpService,
-              private inj: Injector,
               private _logger: Logger) {
 
     this.eventStream = this.getEventListener().pipe(publish(), refCount());
   }
 
   private getRawListener(): Observable<RawMessage> {
-    const loginService = this.inj.get(GoogleLoginService);
-    return loginService.isAuthenticated$.pipe(
-        filter(isAuth => isAuth === true),
-        switchMap( _ => {
-          console.log('Creating websocket');
-          const ctx = this.http.getCurrentAuthContext();
-          const url = ctx.server.ws_url;
-
-          const ws = new $WebSocket(url, null, {
-            maxTimeout: 5000,
-            reconnectIfNotNormalClose: true,
-          });
+    return this.http.authContext$.pipe(
+        switchMap( ctx => {
+          if (ctx === null) {
+            return NEVER;
+          }
 
           return new Observable<RawMessage>(s => {
             let sendMessageSubscription: Subscription = null;
 
+            const url = ctx.server.ws_url;
+            const ws = new $WebSocket(url, null, {
+              maxTimeout: 5000,
+              reconnectIfNotNormalClose: true,
+            });
+            console.log('Websocket created');
+
             ws.onOpen(() => {
+              console.log('Websocket opened');
               ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
 
               // any time the websocket opens, trigger an invalidation event because listeners can't trust their
@@ -109,11 +109,15 @@ export class PollingService {
                 data: event,
               });
             });
+
+            /* This observable should never complete, so the following code has been disabled.
+
             // we can't use .onClose() because onClose is triggered whenever the internal connection closes
             // even if a reconnect will be attempted.
             ws.getDataStream().subscribe(() => null, () => null, () => {
               s.complete();
             });
+             */
 
             ws.onClose(() => {
               if (sendMessageSubscription !== null) {
@@ -125,6 +129,7 @@ export class PollingService {
             });
 
             return () => {
+              console.log('Websocket closed');
               ws.close();
             };
           });

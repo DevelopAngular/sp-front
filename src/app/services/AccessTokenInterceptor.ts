@@ -22,7 +22,7 @@ export class AccessTokenInterceptor implements HttpInterceptor {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const http = this.inj.get(HttpService);
-        const ctx = http.getCurrentAuthContext();
+        const ctx = http.getAuthContext();
 
         if (!ctx) {
             // If no ctx, do nothing
@@ -69,7 +69,7 @@ export class AccessTokenInterceptor implements HttpInterceptor {
     }
 
     addAccessToken(http: HttpService, req: HttpRequest<any>): HttpRequest<any> {
-        const ctx = http.getCurrentAuthContext();
+        const ctx = http.getAuthContext();
         const token = ctx.auth.access_token;
         return req.clone({
             setHeaders: {
