@@ -23,6 +23,7 @@ export class StorageService {
 
   }
 
+  /*
   detectChanges() {
     fromEvent(window, 'storage')
       .pipe(
@@ -39,6 +40,7 @@ export class StorageService {
               });
       });
   }
+   */
 
   confirm(): boolean {
       const uid = 'confirm';

@@ -182,7 +182,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 
-    this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
       document.documentElement.style.background = val ? '#0F171E' : '#FBFEFF';

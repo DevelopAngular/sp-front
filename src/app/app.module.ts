@@ -67,6 +67,7 @@ import {PassesEffects} from './ngrx/passes/effects';
 import {ContactTraceEffects} from './ngrx/contact-trace/effects';
 import {IntrosEffects} from './ngrx/intros/effects/intros.effects';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import {AccessTokenInterceptor} from './services/AccessTokenInterceptor';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -87,11 +88,6 @@ const appRoutes: Routes = [
     canActivate: [SchoolSignUpGuard],
     loadChildren: () => import('app/school-sign-up/school-sign-up.module').then(m => m.SchoolSignUpModule),
     data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: false, authFree: true},
-  },
-  {
-    path: 'accounts_setup',
-    loadChildren: () => import('app/accounts-setup/accounts-setup.module').then(m => m.AccountsSetupModule),
-    data: {hideScroll: true, hubspot: true, authFree: true},
   },
   {
     path: '',
@@ -205,6 +201,7 @@ const appRoutes: Routes = [
         GoogleAuthService,
         {provide: OverlayContainer, useFactory: InitOverlay},
         {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
+        {provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true},
         {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
         {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
         {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
