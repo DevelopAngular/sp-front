@@ -12,7 +12,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSort} from '@angular/material/sort';
@@ -114,7 +114,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() data$: Observable<any>;
   @Input() height: string = 'calc(100vh - 200px)';
 
-  @Input() loading$: Observable<boolean>;
+  @Input() loading$: Observable<boolean> = of(false);
 
   @Input() showEmptyState: boolean;
   @Input() emptyIcon: string;
