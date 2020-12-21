@@ -86,27 +86,26 @@
 
             <td
               mat-cell
+              [ngClass]="{'fake-container': !element[column]}"
               [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
-              [innerHTML]="element[column]"
-            ></td>
+              [innerHTML]="element[column] ? element[column] : fakeTemplate"
+            >
+            </td>
+
 
         </ng-container>
 
         <tr class="header" mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
 
-        <!-- cdkVirtualScrollViewport uses transform: translateY to correct for all elements that are removed.
-        We will use a plcaholder row in the table instead because the translate causes problems with the sticky header -->
-<!--        <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>-->
-
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
             #rowCont
             (mouseenter)="rowCont.hover = true"
             (mouseleave)="rowCont.hover = false"
-            [style.background-color]="isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick ? '#F1F2F4' : '#FFFFFF'"
-            [style.cursor]="isRowClick ? 'pointer' : 'default'"
-            appCrossPointerEventTarget (pointerClickEvent)="isRowClick ? rowOnClick(row) : null">
+            [style.background-color]="isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick && !row.isFake ? '#F1F2F4' : '#FFFFFF'"
+            [style.cursor]="isRowClick && !row.isFake ? 'pointer' : 'default'"
+            appCrossPointerEventTarget (pointerClickEvent)="isRowClick && !row.isFake ? rowOnClick(row) : null">
         </tr>
       </table>
     </cdk-virtual-scroll-viewport>

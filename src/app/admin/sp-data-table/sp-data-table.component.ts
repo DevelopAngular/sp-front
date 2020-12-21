@@ -21,10 +21,11 @@ import {ColumnOptionsComponent} from './column-options/column-options.component'
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
 import {cloneDeep, isEmpty, omit} from 'lodash';
-import {filter, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {ToastService} from '../../services/toast.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
@@ -32,6 +33,13 @@ const ROW_HEIGHT = 33;
 export class GridTableDataSource extends DataSource<any> {
   private _data: any[];
   loadedData$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private readonly visibleData: BehaviorSubject<any[]> = new BehaviorSubject([]);
+
+  sort: MatSort | null;
+  offset = 0;
+  offsetChange = new BehaviorSubject(0);
+
+  destroy$ = new Subject();
 
   get allData(): any[] {
     return this._data ? this._data.slice() : [];
@@ -39,16 +47,14 @@ export class GridTableDataSource extends DataSource<any> {
 
   set allData(data: any[]) {
     this._data = data;
-    this.viewport.scrollToOffset(this.offset);
+    // this.viewport.scrollToOffset(this.offset);
     this.viewport.setTotalContentSize(this.itemSize * data.length);
-    this.visibleData.next(this._data.slice(0, PAGESIZE));
+    this.visibleData.next(this._data);
   }
 
-  sort: MatSort | null;
-  offset = 0;
-  offsetChange = new BehaviorSubject(0);
-
-  destroy$ = new Subject();
+  setFakeData(data) {
+    this.allData = data;
+  }
 
   constructor(
     private initialData$: Observable<any[]>,
@@ -73,11 +79,9 @@ export class GridTableDataSource extends DataSource<any> {
     });
   }
 
-  private readonly visibleData: BehaviorSubject<any[]> = new BehaviorSubject([]);
-
   connect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): Observable<any[] | ReadonlyArray<any>> {
-    // return this.visibleData.asObservable();
-    return this.initialData$;
+    return this.visibleData.asObservable();
+    // return this.initialData$;
   }
 
   disconnect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): void {
@@ -141,6 +145,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     { icon: 'CSV', action: 'csv'}
   ];
   selectedRows: any[];
+  fakedata;
   hasHorizontalScroll: boolean;
   loadingCSV$: Observable<boolean>;
 
@@ -149,6 +154,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   } = {};
 
   destroy$ = new Subject();
+
+  fakeTemplate = this.domSanitizer.bypassSecurityTrustHtml(
+      '<div class="fake-container-block"><div class="fake-block animate"></div></div>'
+    );
 
   @HostListener('window:resize', ['$event'])
   resize(event) {
@@ -163,7 +172,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     private tableService: TableService,
     private hallpassService: HallPassesService,
     private toastService: ToastService,
-    public xlsx: XlsxGeneratorService
+    public xlsx: XlsxGeneratorService,
+    private domSanitizer: DomSanitizer
   ) {}
 
   get viewportDataItems(): number {
@@ -172,22 +182,17 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
-    // this.dataSource.offsetChange.pipe(takeUntil(this.destroy$))
-    //   .subscribe(offset => {
-    //     console.log(offset);
-    //     // this.placeholderHeight = offset;
-    //     // const doc = document.querySelector('.example-viewport');
-    //     // this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
-    //   });
+    this.fakedata = this.generateFakeData();
 
     this.viewport.scrolledIndexChange
       .pipe(
-        takeUntil(this.destroy$)
+        withLatestFrom(this.loading$),
+        takeUntil(this.destroy$),
       )
-      .subscribe(res => {
-        if (res && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
+      .subscribe(([res, loading]) => {
+        if (res && !loading && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
           this.loadMoreData.emit();
-          // this.viewport.scrollToOffset(res);
+          this.dataSource.setFakeData([...this.dataSource.allData, ...this.fakedata]);
           console.log('loading data ==>>>>');
         }
     });
@@ -364,11 +369,22 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.sortClickEvent.emit(column);
   }
 
-  generateFakeItems(): Array<number> {
+  generateFakeItems(): Array<string> {
     const indexes = [];
     for (let i = 0; i < this.viewportDataItems; i++) {
-      indexes.push(i);
+      indexes.push('Fake' + i);
     }
     return indexes;
+  }
+
+  generateFakeData() {
+    const dataIndex = [];
+    for (let i = 0; i < 30; i++) {
+      dataIndex.push({
+        'Pass': this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon animate" style="background: #F4F4F4; cursor: pointer"></div>`),
+        'isFake': true
+      });
+    }
+    return dataIndex;
   }
 }
