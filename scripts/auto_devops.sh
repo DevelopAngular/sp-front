@@ -150,14 +150,14 @@ function download_chart() {
       auto_chart_name="chart"
     fi
 
-    helm init --client-only
-    helm repo add gitlab https://charts.gitlab.io
-    if [[ ! -d "$auto_chart" ]]; then
-      helm fetch ${auto_chart} --untar
-    fi
-    if [ "$auto_chart_name" != "chart" ]; then
-      mv ${auto_chart_name} chart
-    fi
+    helm init --client-only --skip-refresh
+#     helm repo add gitlab https://charts.gitlab.io
+#     if [[ ! -d "$auto_chart" ]]; then
+#       helm fetch ${auto_chart} --untar
+#     fi
+#     if [ "$auto_chart_name" != "chart" ]; then
+#       mv ${auto_chart_name} chart
+#     fi
 
     helm dependency update chart/
     helm dependency build chart/
