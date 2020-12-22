@@ -72,7 +72,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     isEmpty?: boolean,
     sortPasses$?: Observable<string>,
     sortPassesLoading$?: Observable<boolean>,
-    countPasses$?: Observable<number>
+    countPasses$?: Observable<number>,
+    isAllSelected$: Observable<boolean>
   };
   contactTraceState: {
     loading$: Observable<boolean>,
@@ -159,7 +160,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
       loaded$: this.hallPassService.passesLoaded$,
       sortPasses$: this.hallPassService.sortPassesValue$,
       sortPassesLoading$: this.hallPassService.sortPassesLoading$,
-      countPasses$: this.hallPassService.currentPassesCount$
+      countPasses$: this.hallPassService.currentPassesCount$,
+      isAllSelected$: this.tableService.isAllSelected$
     };
     this.contactTraceState = {
       loading$: this.contactTraceService.contactTraceLoading$,

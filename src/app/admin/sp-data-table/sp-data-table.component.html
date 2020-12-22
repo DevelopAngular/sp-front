@@ -87,11 +87,11 @@
             <td
               mat-cell
               [ngClass]="{'fake-container': !element[column]}"
+              [style.opacity]="!element[column] && !isLast ? 0 : 1"
               [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
-              [innerHTML]="element[column] ? element[column] : fakeTemplate"
-            >
+              [innerHTML]="element[column] ? element[column] : fakeTemplate">
             </td>
 
 

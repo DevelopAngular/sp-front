@@ -125,6 +125,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() sort: string = '';
   @Input() sortColumn: string;
   @Input() sortLoading$: Observable<boolean>;
+  @Input() countAllData: number;
+  @Input() isLoadMore: boolean = true;
 
   @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport;
 
@@ -187,10 +189,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.viewport.scrolledIndexChange
       .pipe(
         withLatestFrom(this.loading$),
+        filter(() => this.isLoadMore),
         takeUntil(this.destroy$),
       )
       .subscribe(([res, loading]) => {
-        if (res && !loading && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
+        if (res && !loading && res >= (this.dataSource.allData.length - this.viewportDataItems) && this.dataSource.allData.length < this.countAllData) {
           this.loadMoreData.emit();
           this.dataSource.setFakeData([...this.dataSource.allData, ...this.fakedata]);
           console.log('loading data ==>>>>');
@@ -257,6 +260,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.tableService.isAllSelected$.next(false);
+    this.tableService.selectRow.next([]);
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -296,7 +301,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   masterToggle() {
     if (this.isAllSelected()) {
       this.selectedObjects = {};
+      this.tableService.isAllSelected$.next(false);
     } else {
+      this.tableService.isAllSelected$.next(true);
       this.selectedObjects = this.dataSource.allData.reduce((acc, curr) => {
         return {...acc, [curr.id]: curr};
       }, {});
@@ -333,7 +340,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv') {
-      if (this.currentPage === 'pass_search' && (Object.values(this.selectedObjects).length > 300 || !this.selectedHasValue())) {
+      if (this.currentPage === 'pass_search' && (Object.values(this.selectedObjects).length > 300 || (!this.selectedHasValue() || (this.tableService.isAllSelected$.getValue() && this.countAllData > 300)))) {
         this.exportPasses.emit(Object.values(this.selectedObjects));
       } else {
         this.toastService.openToast(

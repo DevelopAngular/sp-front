@@ -72,7 +72,7 @@
     <div class="search-button" *ngIf="views[currentView].id === 1 && (passSearchState.countPasses$ | async)">
       <div class="count" *ngIf="!selectedRows.length; else selected">{{ numberWithCommas(passSearchState.countPasses$ | async) }} pass{{ (passSearchState.countPasses$ | async) > 1 ? 'es' : '' }}</div>
       <ng-template #selected>
-        <div class="count" style="color: #1F195E; background-color: #ECF1FF">{{ numberWithCommas(selectedRows.length) }}/{{ numberWithCommas(passSearchState.countPasses$ | async) }} selected</div>
+        <div class="count" style="color: #1F195E; background-color: #ECF1FF">{{ ((passSearchState.isAllSelected$ | async) ? numberWithCommas(passSearchState.countPasses$ | async) : numberWithCommas(selectedRows.length)) }}/{{ numberWithCommas(passSearchState.countPasses$ | async) }} selected</div>
       </ng-template>
     </div>
 
@@ -125,6 +125,7 @@
         [sort]="passSearchState.sortPasses$ | async"
         [sortColumn]="sortColumn"
         [sortLoading$]="passSearchState.sortPassesLoading$"
+        [countAllData]="passSearchState.countPasses$ | async"
         (exportPasses)="exportPasses()"
       ></app-sp-data-table>
     </div>
@@ -139,6 +140,7 @@
         [emptyIcon]="'./assets/Contact Trace (Blue-Gray).svg'"
         [emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have an overlapping pass with another student'"
         [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+        [isLoadMore]="false"
       ></app-sp-data-table>
       <ng-template #empty>
         <div class="contact-empty">

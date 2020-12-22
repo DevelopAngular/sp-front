@@ -1,4 +1,9 @@
-<div class="toast-container" [ngStyle]="{'opacity': toggleToast ? '1' : '0'}" *ngIf="data$ | async as data">
+<div class="toast-container"
+     [ngStyle]="{'opacity': toggleToast ? '1' : '0'}"
+     *ngIf="data$ | async as data"
+     (mouseenter)="over()"
+     (mouseleave)="leave()"
+>
   <div class="content" [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}">
     <div class="text">
       <div class="text_header">{{ data.title }}</div>
@@ -15,7 +20,7 @@
       >{{ data.buttonText ? data.buttonText : 'Download' }}</app-gradient-button>
     </div>
 
-    <div class="close-btn" (click)="close($event)">
+    <div class="close-btn" *ngIf="!data.noButton" (click)="close($event)">
       <img [src]="'./assets/Close.svg' | resolveAsset" alt="Cancel (Blue-Gray).svg">
     </div>
   </div>
