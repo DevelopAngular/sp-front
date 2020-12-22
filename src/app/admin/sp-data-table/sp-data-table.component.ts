@@ -340,7 +340,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv') {
-      if (this.currentPage === 'pass_search' && (Object.values(this.selectedObjects).length > 300 || (!this.selectedHasValue() || (this.tableService.isAllSelected$.getValue() && this.countAllData > 300)))) {
+      if (this.currentPage === 'pass_search' && (Object.values(this.selectedObjects).length > 300 || ((!this.selectedHasValue() && this.countAllData > 300) || (this.tableService.isAllSelected$.getValue() && this.countAllData > 300)))) {
         this.exportPasses.emit(Object.values(this.selectedObjects));
       } else {
         this.toastService.openToast(

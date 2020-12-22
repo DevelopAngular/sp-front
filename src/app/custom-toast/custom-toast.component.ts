@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable, of, Subject} from 'rxjs';
-import {delay, filter} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {delay} from 'rxjs/operators';
 import {ToastService} from '../services/toast.service';
 
 @Component({
@@ -12,19 +12,23 @@ export class CustomToastComponent implements OnInit {
 
   toggleToast: boolean;
   data$: Observable<any>;
-  cancelable: Subject<boolean> = new Subject<boolean>();
+  cancelable: boolean;
+  data: any;
 
   constructor(private toastService: ToastService) { }
 
   ngOnInit() {
     this.data$ = this.toastService.data$;
     setTimeout(() => { this.toggleToast = true; }, 250);
-    this.data$.pipe(
-      filter(data => data.noButton),
-      delay(2000)
-    ).subscribe(() => {
-      this.toastService.closeToast();
+
+    this.data$.subscribe((data) => {
+      this.data = data;
     });
+    setTimeout(() => {
+      if (this.cancelable && this.data.noButton) {
+        this.toastService.closeToast();
+      }
+    }, 2000);
   }
 
   close(evt: Event) {
@@ -42,11 +46,13 @@ export class CustomToastComponent implements OnInit {
   }
 
   over() {
-    this.cancelable.next(false);
+    this.cancelable = false;
   }
 
   leave() {
-    this.cancelable.next(true);
-    this.toastService.closeToast();
+    if (this.data.noButton) {
+      this.cancelable = true;
+      this.toastService.closeToast();
+    }
   }
 }

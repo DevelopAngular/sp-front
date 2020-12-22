@@ -6,7 +6,7 @@
      (pointerDownEvent)="button.pressed = true"
      (pointerCancelEvent)="button.pressed = false"
      (pointerClickEvent)="buttonClick.emit(button); button.pressed = false"
-     [style.background-color]="background(button.hover, button.pressed)"
+     [style.background-color]="background((button.hover || openedFilter), button.pressed)"
 >
   <div class="content-button">
     <div class="title" [style.color]="filter ? '#1F195E' : '#7f879d'">{{ title }}</div>

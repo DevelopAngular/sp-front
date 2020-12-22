@@ -7,7 +7,7 @@
             <mat-checkbox [style.color]="'#7f879d'"></mat-checkbox>
           </div>
           <div class="sceleton-item-content" [style.height]="itemSize + 'px'">
-            <div class="first-col" [style.width]="currentPage === 'pass_search' ? '80px' : 'auto'">
+            <div class="first-col" *ngIf="currentPage === 'pass_search'" [style.width]="currentPage === 'pass_search' ? '80px' : 'auto'">
               <div class="pass-icon animate" [style.background]="'#F4F4F4'"></div>
             </div>
             <div class="columns">
@@ -54,7 +54,7 @@
         <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns; last as isLast; first as isFirst" [sticky]="isFirst">
           <ng-container *ngIf="column !== 'Pass' && column !== 'Passes'; else passNoSort">
             <th
-              [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
+              [style.border-right]="'0.5pt solid #B0B4C0'"
               style="cursor: pointer"
               [style.background-color]="sort && sort === 'asc' && sortColumn === column || sort && sort === 'desc' && sortColumn === column ? '#e5e6eb' : '#D3D6DE'"
               mat-header-cell

@@ -110,6 +110,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   sortColumn: string;
   currentColumns: any;
   selectedRows: any[] = [];
+  isOpenedFilter: boolean;
 
   buttonForceTrigger$: Subject<any> = new Subject<any>();
 
@@ -117,7 +118,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   destroy$ = new Subject();
 
   constructor(
-    private dialog: MatDialog,
+    public dialog: MatDialog,
     private hallPassService: HallPassesService,
     private cdr: ChangeDetectorRef,
     private domSanitizer: DomSanitizer,
@@ -401,6 +402,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
+        id: `${action}_filter`,
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
@@ -438,6 +440,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         });
     } else if (action === 'calendar') {
       const calendar = this.dialog.open(DateTimeFilterComponent, {
+        id: 'calendar_filter',
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {

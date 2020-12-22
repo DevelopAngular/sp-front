@@ -1,10 +1,11 @@
 <div class="toast-container"
      [ngStyle]="{'opacity': toggleToast ? '1' : '0'}"
-     *ngIf="data$ | async as data"
-     (mouseenter)="over()"
-     (mouseleave)="leave()"
 >
-  <div class="content" [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}">
+  <div class="content"
+       [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}"
+       (mouseover)="over()"
+       (mouseleave)="leave()"
+  >
     <div class="text">
       <div class="text_header">{{ data.title }}</div>
       <div class="text_message" [style.width]="!data.noButton ? '170px' : '300px'">

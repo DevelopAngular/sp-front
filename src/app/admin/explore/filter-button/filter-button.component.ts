@@ -13,6 +13,7 @@ export class FilterButtonComponent implements OnInit {
   @Input() filter: boolean;
   @Input() showClearIcon: boolean = true;
   @Input() forceButtonClick$: Subject<any>;
+  @Input() openedFilter: boolean;
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() forceButtonClickEvent: EventEmitter<{event: any, action: string}> = new EventEmitter<{event: any, action: string}>();

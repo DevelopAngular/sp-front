@@ -18,7 +18,7 @@ const reducer = createReducer(
   studentsAccountsInitialState,
   on(studentsActions.getStudents,
       studentsActions.removeStudent,
-    studentsActions.getMoreStudents,
+    // studentsActions.getMoreStudents,
       state => ({ ...state, loading: true, loaded: false, lastAddedStudents: [] })),
   on(studentsActions.getStudentsSuccess, (state, { students, next }) => {
     return adapter.addAll(students, { ...state, loading: false, loaded: true, nextRequest: next });
