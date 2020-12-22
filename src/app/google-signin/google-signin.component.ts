@@ -168,12 +168,14 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   loginSSO(code: string) {
     window.waitForAppLoaded(true);
+    this.storage.setItem('authType', 'gg4l');
     this.loginService.updateAuth({ gg4l_code: code, type: 'gg4l-login'});
     return of (null);
   }
 
   loginClever(code: string) {
     window.waitForAppLoaded(true);
+    this.storage.setItem('authType', 'clever');
     this.loginService.updateAuth({clever_code: code, type: 'clever-login'});
     // return this.httpService.loginClever(code).pipe(
     //   tap((auth: AuthContext) => {

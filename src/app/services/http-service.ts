@@ -318,17 +318,17 @@ export class HttpService implements OnDestroy {
             let gg4l_token: string;
             let clever_token: string;
 
-            if (servers.token && servers.token.auth_token) {
-              gg4l_token = servers.token.auth_token;
-              this.storage.setItem('google_auth', JSON.stringify({gg4l_token, type: 'gg4l-login'}));
-              if (servers.token.refresh_token) {
-                this.storage.setItem('refresh_token', servers.token.refresh_token);
-              }
-            }
+            const authType = this.storage.getItem('authType');
 
-            if (this.storage.getItem('authType') === 'clever' && servers.token && servers.token.access_token) {
-              clever_token = servers.token.access_token;
-              // this.storage.setItem('google_auth', JSON.stringify({clever_token, type: 'clever-login'}));
+            if (servers.token) {
+              if (authType === 'gg4l') {
+                gg4l_token = servers.token.auth_token;
+                if (servers.token.refresh_token) {
+                  this.storage.setItem('refresh_token', servers.token.refresh_token);
+                }
+              } else if (authType === 'clever') {
+                clever_token = servers.token.access_token;
+              }
             }
 
             this.storage.setItem('context', JSON.stringify({ server, gg4l_token, clever_token }));
