@@ -77,10 +77,24 @@
       </div>
     </div>
 
-    <div class="search-button" *ngIf="views[currentView].id === 1 && (passSearchState.countPasses$ | async)">
-      <div class="count" *ngIf="!selectedRows.length; else selected">{{ numberWithCommas(passSearchState.countPasses$ | async) }} pass{{ (passSearchState.countPasses$ | async) > 1 ? 'es' : '' }}</div>
+    <div class="search-button" *ngIf="views[currentView].id === 1 && passSearchState.countPasses$ | async as countPasses">
+      <app-filter-button
+        *ngIf="!selectedRows.length; else selected" [openedFilter]="true"
+        [title]="(numberWithCommas(countPasses) + ' pass' + (countPasses > 1 ? 'es' : ''))"
+        [isDownloadButton]="true"
+        [matTooltip]="'Click to export passes'"
+        matTooltipClass="tooltip"
+        (buttonClick)="downloadPasses(countPasses)"
+      ></app-filter-button>
       <ng-template #selected>
-        <div class="count" style="color: #1F195E; background-color: #ECF1FF">{{ ((passSearchState.isAllSelected$ | async) ? numberWithCommas(passSearchState.countPasses$ | async) : numberWithCommas(selectedRows.length)) }}/{{ numberWithCommas(passSearchState.countPasses$ | async) }} selected</div>
+        <app-filter-button
+          [filter]="true"
+          [title]="((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + ' selected'"
+          [isDownloadButton]="true"
+          [matTooltip]="'Click to export passes'"
+          matTooltipClass="tooltip"
+          (buttonClick)="downloadPasses(countPasses)"
+        ></app-filter-button>
       </ng-template>
     </div>
 
@@ -111,6 +125,14 @@
           (buttonClick)="clearContactTraceData()">
           Clear
         </app-gradient-button>
+        <app-gradient-button
+          [style.margin-left]="'13px'"
+          *ngIf="(contactTraceState.length$ | async)"
+          [gradient]="'#F4F4F4, #F4F4F4'"
+          [rightIcon]="'./assets/Circle Download (Blue-Gray).svg'"
+          [textColor]="'#7f879d'"
+          (buttonClick)="generateCSV()"
+        >Download</app-gradient-button>
       </div>
     </div>
   </div>
@@ -134,6 +156,7 @@
         [sortColumn]="sortColumn"
         [sortLoading$]="passSearchState.sortPassesLoading$"
         [countAllData]="passSearchState.countPasses$ | async"
+        [showPrintButtons]="false"
         (exportPasses)="exportPasses()"
       ></app-sp-data-table>
     </div>
@@ -149,6 +172,7 @@
         [emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have an overlapping pass with another student'"
         [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
         [isLoadMore]="false"
+        [showPrintButtons]="false"
       ></app-sp-data-table>
       <ng-template #empty>
         <div class="contact-empty">

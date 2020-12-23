@@ -79,7 +79,7 @@
   .empty-state {
     position: absolute;
     left: 0;
-    right: 45px;
+    right: 0px;
     top: 42px;
     bottom: 0;
     background-color: white;
@@ -136,11 +136,21 @@
     justify-content: center;
     align-items: center;
     border-radius: 0 6px 0 0;
-    border-left: 1px solid #7E879D;
-    box-shadow: 0 0 2px #7E879D;
+    //border-left: 1px solid #7E879D;
+    //box-shadow: 0 0 2px #7E879D;
     background-color: #D3D6DE;
     z-index: 10;
     cursor: pointer;
+
+    .button-content {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #FFFFFF;
+      border-radius: 9px;
+    }
   }
 
   .shadow {
@@ -368,7 +378,7 @@ mat-cell {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 10%;
+  //margin-left: 10%;
   overflow: hidden
 }
 

@@ -14,6 +14,7 @@ export class FilterButtonComponent implements OnInit {
   @Input() showClearIcon: boolean = true;
   @Input() forceButtonClick$: Subject<any>;
   @Input() openedFilter: boolean;
+  @Input() isDownloadButton: boolean;
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() forceButtonClickEvent: EventEmitter<{event: any, action: string}> = new EventEmitter<{event: any, action: string}>();

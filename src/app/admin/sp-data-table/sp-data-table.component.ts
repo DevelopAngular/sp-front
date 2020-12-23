@@ -20,11 +20,10 @@ import {StorageService} from '../../services/storage.service';
 import {ColumnOptionsComponent} from './column-options/column-options.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
-import {cloneDeep, isEmpty, omit} from 'lodash';
+import {cloneDeep, isEmpty} from 'lodash';
 import {filter, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {ToastService} from '../../services/toast.service';
-import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {DomSanitizer} from '@angular/platform-browser';
 
 const PAGESIZE = 50;
@@ -128,7 +127,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() countAllData: number;
   @Input() isLoadMore: boolean = true;
 
-  @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport;
+  @ViewChild(CdkVirtualScrollViewport, {static: true}) viewport: CdkVirtualScrollViewport;
 
   @Output() loadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowClickEvent: EventEmitter<any> = new EventEmitter<any>();
@@ -142,9 +141,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   selection = new SelectionModel<any>(true, []);
   itemSize = 33;
   tableOptionButtons = [
-    { icon: 'Columns', action: 'column' },
+    {icon: 'Columns', action: 'column'},
     // { icon: 'Print', action: 'print' },
-    { icon: 'CSV', action: 'csv'}
+    {icon: 'CSV', action: 'csv'}
   ];
   selectedRows: any[];
   fakedata;
@@ -157,9 +156,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
 
   destroy$ = new Subject();
 
-  fakeTemplate = this.domSanitizer.bypassSecurityTrustHtml(
-      '<div class="fake-container-block"><div class="fake-block animate"></div></div>'
-    );
+  fakeTemplate;
 
   @HostListener('window:resize', ['$event'])
   resize(event) {
@@ -174,9 +171,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     private tableService: TableService,
     private hallpassService: HallPassesService,
     private toastService: ToastService,
-    public xlsx: XlsxGeneratorService,
     private domSanitizer: DomSanitizer
-  ) {}
+  ) {
+  }
 
   get viewportDataItems(): number {
     return Math.floor(this.viewport.getViewportSize() / ROW_HEIGHT);
@@ -185,6 +182,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.fakedata = this.generateFakeData();
+    this.fakeTemplate = this.domSanitizer.bypassSecurityTrustHtml(
+      `<div class="fake-container-block"
+                style="margin-left: ${this.currentPage === 'pass_search' ? '10%' : 'auto'}; width: ${this.currentPage === 'pass_search' ? '90%' : '100%'}"
+            ><div class="fake-block animate"></div></div>`
+    );
 
     this.viewport.scrolledIndexChange
       .pipe(
@@ -198,7 +200,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
           this.dataSource.setFakeData([...this.dataSource.allData, ...this.fakedata]);
           console.log('loading data ==>>>>');
         }
-    });
+      });
 
     this.loadingCSV$ = this.tableService.loadingCSV$.asObservable();
 
@@ -218,27 +220,27 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this.destroy$)
     ).subscribe((v) => {
-        if (v) {
-          this.columnsToDisplay.unshift('select');
-        } else if (!v && (this.columnsToDisplay[0] === 'select')) {
-          this.columnsToDisplay.shift();
-          // this.selection.clear();
-        }
-        this.tableInitialColumns = cloneDeep(this.columnsToDisplay);
-      });
+      if (v) {
+        this.columnsToDisplay.unshift('select');
+      } else if (!v && (this.columnsToDisplay[0] === 'select')) {
+        this.columnsToDisplay.shift();
+        // this.selection.clear();
+      }
+      this.tableInitialColumns = cloneDeep(this.columnsToDisplay);
+    });
 
-    this.toastService.toastButtonClick$
-      .pipe(
-        takeUntil(this.destroy$),
-        filter(action => action === 'bulk_add_link')
-      )
-      .subscribe((action) => {
-        // if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
-        //   window.open('https://www.smartpass.app/bulk-export');
-        // } else {
-          this.generateCSV();
-        // }
-      });
+    // this.toastService.toastButtonClick$
+    //   .pipe(
+    //     takeUntil(this.destroy$),
+    //     filter(action => action === 'bulk_add_link')
+    //   )
+    //   .subscribe((action) => {
+    //     // if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
+    //     //   window.open('https://www.smartpass.app/bulk-export');
+    //     // } else {
+    //       this.generateCSV();
+    //     // }
+    //   });
 
     if (!this.selectedHasValue()) {
       this.selectedObjects = {};
@@ -249,7 +251,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       .subscribe((columns: string[]) => {
         this.columnsToDisplay = ['select', this.displayedColumns[0], ...columns];
         this.cdr.detectChanges();
-    });
+      });
 
     this.tableService.clearSelectedUsers
       .pipe(takeUntil(this.destroy$))
@@ -340,37 +342,37 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } else if (action === 'csv') {
-      if (this.currentPage === 'pass_search' && (Object.values(this.selectedObjects).length > 300 || ((!this.selectedHasValue() && this.countAllData > 300) || (this.tableService.isAllSelected$.getValue() && this.countAllData > 300)))) {
-        this.exportPasses.emit(Object.values(this.selectedObjects));
-      } else {
-        this.toastService.openToast(
-          {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
-        );
-      }
+      // if (this.currentPage === 'pass_search' && (Object.values(this.selectedObjects).length > 300 || ((!this.selectedHasValue() && this.countAllData > 300) || (this.tableService.isAllSelected$.getValue() && this.countAllData > 300)))) {
+      //   this.exportPasses.emit(Object.values(this.selectedObjects));
+      // } else {
+      //   this.toastService.openToast(
+      //     {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
+      //   );
+      // }
     }
   }
 
-  generateCSV() {
-    // If we are generating CSV locally, use all data from datasource if no selection.
-    let rows: any[];
-    if (this.selectedHasValue()) {
-      rows = Object.values(this.selectedObjects);
-    } else {
-      rows = this.dataSource.allData;
-    }
-
-    const exceptPass = rows.map(row => {
-      if (row['Contact connection']) {
-        const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
-        row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
-      }
-      return omit(row, ['Pass', 'Passes']);
-    });
-    const fileName = this.currentPage === 'pass_search' ?
-      'SmartPass-PassSearch' : this.currentPage === 'contact_trace' ?
-        'SmartPass-ContactTracing' : 'TestCSV';
-    this.xlsx.generate(exceptPass, fileName);
-  }
+  // generateCSV() {
+  //   // If we are generating CSV locally, use all data from datasource if no selection.
+  //   let rows: any[];
+  //   if (this.selectedHasValue()) {
+  //     rows = Object.values(this.selectedObjects);
+  //   } else {
+  //     rows = this.dataSource.allData;
+  //   }
+  //
+  //   const exceptPass = rows.map(row => {
+  //     if (row['Contact connection']) {
+  //       const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
+  //       row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
+  //     }
+  //     return omit(row, ['Pass', 'Passes']);
+  //   });
+  //   const fileName = this.currentPage === 'pass_search' ?
+  //     'SmartPass-PassSearch' : this.currentPage === 'contact_trace' ?
+  //       'SmartPass-ContactTracing' : 'TestCSV';
+  //   this.xlsx.generate(exceptPass, fileName);
+  // }
 
   sortHeader(column) {
     this.sortClickEvent.emit(column);
