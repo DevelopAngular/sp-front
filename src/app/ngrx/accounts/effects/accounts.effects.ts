@@ -274,9 +274,8 @@ export class AccountsEffects {
            return this.userService.sortTableHeader(queryParams)
              .pipe(
                map(({next, results}) => {
-                 const nextUrl = limit === results.length ? null : next;
                  const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
-                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next: nextUrl, sortValue});
+                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next, sortValue});
                }),
                catchError(error => of(accountsActions.sortAccountsFailure({errorMessage: error.message})))
              );
