@@ -35,7 +35,7 @@ export class DurationPickerComponent implements OnInit {
       this.emitResult(this.selectedDuration);
     }
 
-  public selectedDuration: number = 5;
+  public selectedDuration: number = this.maxDuration;
 
   constructor() {}
 
@@ -45,7 +45,7 @@ export class DurationPickerComponent implements OnInit {
       this.disabled = true;
     }
 
-    this.selectedDuration = this.maxDuration < 5 ? this.maxDuration : 5;
+    this.selectedDuration = this.maxDuration;
 
     this.emitResult(this.selectedDuration);
   }

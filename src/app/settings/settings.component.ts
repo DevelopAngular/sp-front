@@ -12,7 +12,7 @@ import {LocalStorage} from '@ngx-pwa/local-storage';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
-import {takeUntil} from 'rxjs/operators';
+import {takeUntil, withLatestFrom} from 'rxjs/operators';
 import * as moment from 'moment';
 import {NotificationService} from '../services/notification-service';
 
@@ -87,9 +87,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.teacherPin$ = this.userService.userPin$;
-    combineLatest(this.userService.user$, this.userService.introsData$)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([user, intros]) => {
+    this.userService.introsData$
+      .pipe(withLatestFrom(this.userService.user$), takeUntil(this.destroy$))
+      .subscribe(([intros, user]) => {
         this._zone.run(() => {
           this.user = User.fromJSON(user);
           this.intosData = intros;

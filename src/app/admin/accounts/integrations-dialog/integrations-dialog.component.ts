@@ -43,4 +43,14 @@ export class IntegrationsDialogComponent implements OnInit {
     this.dialogRef.close({action, status});
   }
 
+  getLastSync(syncInfo: CleverInfo | GG4LSync): string {
+    const success = new Date(syncInfo.last_successful_sync);
+    const failed = new Date(syncInfo.last_failed_sync);
+    if (success > failed) {
+      return this.formatDate(success) + ' (Successful)';
+    } else {
+      return this.formatDate(failed) + ' (Failed)';
+    }
+  }
+
 }
