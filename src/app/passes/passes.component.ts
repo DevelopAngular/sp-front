@@ -145,7 +145,7 @@ export class PastPassProvider implements PassLikeProvider {
             )
             .pipe(
               map(passes => {
-                if (date) {
+                if (date && User.fromJSON(user).isTeacher()) {
                   return passes.filter(pass => moment(pass.start_time).isAfter(moment(date)));
                 }
                 return passes;

@@ -21,7 +21,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, filter, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {delay, filter, shareReplay, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -32,6 +32,9 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HallPassesService} from '../services/hall-passes.service';
 import {PassFilters} from '../models/PassFilters';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {User} from '../models/User';
+import {UserService} from '../services/user.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -87,6 +90,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   filtersData$: Observable<{[model: string]: PassFilters}>;
   filtersLoading$: Observable<boolean>;
 
+  user: User;
+
   activePassTime$;
 
   timers: number[] = [];
@@ -95,6 +100,19 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   sort$ = this.dataService.sort$;
   test: any;
+
+  destroy$ = new Subject();
+
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    if (this.screenService.isDeviceSmallExtra) {
+      this.grid_template_columns = '143px';
+    }
+
+    if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
+      this.grid_template_columns = '157px';
+    }
+  }
 
   private static getDetailDialog(pass: PassLike): any {
     if (pass instanceof HallPass) {
@@ -121,7 +139,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private sanitizer: DomSanitizer,
       public screenService: ScreenService,
       private cdr: ChangeDetectorRef,
-      private passesService: HallPassesService
+      private passesService: HallPassesService,
+      private userService: UserService
   ) {}
 
   get gridTemplate() {
@@ -148,6 +167,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       return 'Past 3 days';
     } else if (this.selectedSort === 'past-seven-days') {
       return 'Past 7 days';
+    } else if (this.selectedSort === 'past-seven-days') {
+      return null;
     }
   }
 
@@ -157,6 +178,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       this.filtersData$ = this.passesService.passFilters$;
       this.filtersLoading$ = this.passesService.passFiltersLoading$;
       this.filtersData$.pipe(
+        takeUntil(this.destroy$),
         filter(res => !!res && (this.filterModel && !!res[this.filterModel])))
         .subscribe(res => {
         this.selectedSort = res[this.filterModel].default;
@@ -173,7 +195,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             this.currentPasses = [];
             return of(_passes).pipe(delay(500));
           }
-        })
+        }),
+        takeUntil(this.destroy$)
       )
       .subscribe((passes: any) => {
         this.currentPasses = passes;
@@ -186,6 +209,12 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }, 1000));
     }
+
+    this.userService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.user = user;
+    });
   }
 
   ngOnDestroy() {
@@ -193,6 +222,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       clearInterval(id);
     });
     this.timers = [];
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   get _icon() {
@@ -220,29 +251,44 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       { display: 'Past hour', color: this.darkTheme.getColor(), action: 'past-hour'},
       { display: 'Today', color: this.darkTheme.getColor(), action: 'today'},
       { display: 'Past 3 days', color: this.darkTheme.getColor(), action: 'past-three-days'},
-      { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past-seven-days'}
+      { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past-seven-days'},
+      { display: 'All Time', color: this.darkTheme.getColor(), action: 'all_time', divider: this.user.show_expired_passes }
     ];
+    if (this.user.show_expired_passes && User.fromJSON(this.user).isTeacher()) {
+      sortOptions.push({ display: 'Hide Expired Passes', color: this.darkTheme.getColor(), action: 'hide_expired_pass' });
+    }
     const filterDialog = this.dialog.open(DropdownComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
       data: {
         'trigger': target.currentTarget,
         'sortData': sortOptions,
-        'selectedSort': this.selectedSort
+        'selectedSort': this.selectedSort,
+        'maxHeight': '332px'
       }
     });
 
     filterDialog.afterClosed()
       .pipe(filter(res => !!res))
       .subscribe(action => {
-        if (this.selectedSort === action) {
-          this.selectedSort = null;
+        if (action !== 'hide_expired_pass') {
+          if (this.selectedSort === action || action === 'all_time') {
+            this.selectedSort = null;
+          } else {
+            this.selectedSort = action;
+          }
+          this.cdr.detectChanges();
+          this.passesService.updateFilterRequest(this.filterModel, this.selectedSort);
+          this.filterPasses.emit(this.selectedSort);
         } else {
-          this.selectedSort = action;
+          this.openAppearance();
         }
-        this.cdr.detectChanges();
-        this.passesService.updateFilterRequest(this.filterModel, this.selectedSort);
-        this.filterPasses.emit(this.selectedSort);
+    });
+  }
+
+  openAppearance() {
+    this.dialog.open(SpAppearanceComponent, {
+      panelClass: 'sp-form-dialog',
     });
   }
 
@@ -303,7 +349,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   openSortDialog(event) {
-    // debugger;
     const sortOptions = [
       { display: 'Pass Expiration Time', color: this.darkTheme.getColor(), action: 'expiration_time', toggle: false },
       { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
@@ -330,16 +375,5 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         this.selectedSort = sortMode;
         this.onSortSelected(this.selectedSort);
       });
-  }
-
-  @HostListener('window:resize')
-  checkDeviceWidth() {
-    if (this.screenService.isDeviceSmallExtra) {
-      this.grid_template_columns = '143px';
-    }
-
-    if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
-      this.grid_template_columns = '157px';
-    }
   }
 }

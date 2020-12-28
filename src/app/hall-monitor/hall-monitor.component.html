@@ -70,7 +70,6 @@
         [icon]="hallMonitorCollection.icon"
         [columns]="hallMonitorCollection.columns"
         (reportFromPassCard)="onReportFromPassCard($event)"
-        [hasFilterPasses]="false"
       ></app-pass-collection>
       <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue != ''">

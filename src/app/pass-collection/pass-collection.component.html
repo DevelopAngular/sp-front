@@ -11,13 +11,16 @@
          appCrossPointerEventTarget
          (pointerClickEvent)="openFilter($event)"
       >
-        <div class="icon" *ngIf="!selectedSort">
+        <div class="icon" *ngIf="!selectedSort || selectedSort === 'all_time'; else sort">
           <img width="15" draggable="false" [src]="'./assets/Filter (Blue-Gray).svg' | resolveAsset" alt="Filter">
         </div>
-        <div class="selected-button" *ngIf="!!selectedSort">
-          <img width="15" draggable="false" [src]="'./assets/Filter (Navy).svg' | resolveAsset" alt="Filter">
-          <div class="selected-title">{{ selectedText }}</div>
-        </div>
+        <ng-template #sort>
+          <div class="selected-button" *ngIf="!!selectedSort">
+            <img width="15" draggable="false" [src]="'./assets/Filter (Navy).svg' | resolveAsset" alt="Filter">
+            <div class="selected-title">{{ selectedText }}</div>
+          </div>
+        </ng-template>
+
       </div>
       <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
         <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
@@ -46,7 +49,7 @@
 </div>
 
 <ng-template #emptyMessage>
-  <div class="empty-state" *ngIf="!(filtersLoading$ | async)">
+  <div class="empty-state" *ngIf="!(filtersLoading$ | async) && hasFilterPasses">
     <img [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
     <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
       No expired passes <br/>
