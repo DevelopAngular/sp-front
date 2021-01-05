@@ -58,6 +58,7 @@
           [controlSize]="'small'"
           [form]="form"
           [controlName]="'show_expired_passes'"
+          (pushOutValue)="updateUser($event)"
         ></app-toggle-input>
       </div>
     </div>

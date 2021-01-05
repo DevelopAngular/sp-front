@@ -49,10 +49,6 @@ export class SpAppearanceComponent implements OnInit {
         show_expired_passes: new FormControl(user.show_expired_passes)
       });
     });
-
-    this.form.valueChanges.subscribe(res => {
-        this.userService.updateUserRequest(this.user, res);
-    });
   }
 
   setSelectedTheme(evt: SPTheme) {
@@ -62,5 +58,9 @@ export class SpAppearanceComponent implements OnInit {
 
   selectedLayout(evt) {
     this.storage.setItem('isGrid', evt === 'List');
+  }
+
+  updateUser(show_expired_passes) {
+    this.userService.updateUserRequest(this.user, {show_expired_passes});
   }
 }
