@@ -60,6 +60,8 @@ export class HallPassesService {
 
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
 
+  expiredPassesNextUrl$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
   currentPinnable$: Observable<Pinnable>;
   passStats$;
 
@@ -225,6 +227,10 @@ export class HallPassesService {
 
   updateFilter(model: string, value: string) {
     return this.http.patch(`v1/filters/${model}`, {default_time_filter: value});
+  }
+
+  getMoreExpiredPasses() {
+    return this.http.get(this.expiredPassesNextUrl$.getValue());
   }
 }
 

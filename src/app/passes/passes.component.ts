@@ -113,6 +113,7 @@ export class ActivePassProvider implements PassLikeProvider {
         }
       ),
       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
+        console.log(passes);
         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
       })
     );
@@ -145,8 +146,12 @@ export class PastPassProvider implements PassLikeProvider {
             )
             .pipe(
               map(passes => {
-                if (date && User.fromJSON(user).isTeacher()) {
-                  return passes.filter(pass => moment(pass.start_time).isAfter(moment(date)));
+                if (date) {
+                  return passes.filter(pass => {
+                    // console.log(moment(pass.start_time).isAfter(moment(date)));
+                    // debugger;
+                    return moment(pass.start_time).isAfter(moment(date));
+                  });
                 }
                 return passes;
               })
@@ -652,7 +657,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   prepareFilter(action, collection) {
     if (action === 'past-hour') {
-      this.filterPasses(collection, moment().startOf('hour'));
+      this.filterPasses(collection, moment().subtract(1, 'hours'));
     } else if (action === 'today') {
       this.filterPasses(collection, moment().startOf('day'));
     } else if (action === 'past-three-days') {

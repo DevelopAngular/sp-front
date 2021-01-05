@@ -125,6 +125,7 @@
             [filterModel]="'expired-passes'"
             [showEmptyHeader]="true"
             [hasFilterPasses]="true"
+            [filterDate]="filterExpiredPass$ | async"
             (filterPasses)="prepareFilter($event, 'expired-passes')"
           ></app-pass-collection>
         </div>
@@ -226,6 +227,8 @@
         [filterModel]="'expired-passes'"
         [showEmptyHeader]="true"
         [hasFilterPasses]="true"
+        [scrollable]="true"
+        [filterDate]="filterExpiredPass$ | async"
         (filterPasses)="prepareFilter($event, 'expired-passes')"
       ></app-pass-collection>
     </div>

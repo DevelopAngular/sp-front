@@ -1,19 +1,19 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 import * as moment from 'moment';
 
-import { combineLatest, empty, merge, Observable, of, Subject } from 'rxjs';
-import { map, scan, startWith, switchMap } from 'rxjs/operators';
-import { Paged, PassLike } from '../models';
-import { BaseModel } from '../models/base';
-import { HallPass } from '../models/HallPass';
-import { Invitation } from '../models/Invitation';
-import { Location } from '../models/Location';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { HttpService } from '../services/http-service';
-import { PollingEvent, PollingService } from '../services/polling-service';
-import { TimeService } from '../services/time.service';
+import {combineLatest, empty, merge, Observable, of, Subject} from 'rxjs';
+import {map, scan, startWith, switchMap} from 'rxjs/operators';
+import {Paged, PassLike} from '../models';
+import {BaseModel} from '../models/base';
+import {HallPass} from '../models/HallPass';
+import {Invitation} from '../models/Invitation';
+import {Location} from '../models/Location';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {HttpService} from '../services/http-service';
+import {PollingEvent, PollingService} from '../services/polling-service';
+import {TimeService} from '../services/time.service';
 import {
   Action,
   ExternalEvent,
@@ -24,8 +24,8 @@ import {
   PollingEventHandler,
   TransformFunc
 } from './events';
-import { filterHallPasses, filterNewestFirst, identityFilter } from './filters';
-import { constructUrl, QueryParams } from './helpers';
+import {filterHallPasses, filterNewestFirst, identityFilter} from './filters';
+import {constructUrl, QueryParams} from './helpers';
 import {
   AddItem,
   makePollingEventHandler,
@@ -34,7 +34,8 @@ import {
   RemoveRequestOnApprove,
   UpdateItem
 } from './polling-event-handlers';
-import { State } from './state';
+import {State} from './state';
+import {HallPassesService} from '../services/hall-passes.service';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -183,7 +184,12 @@ export class LiveDataService {
 
   private globalReload$ = new Subject();
 
-  constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
+  constructor(
+    private http: HttpService,
+    private polling: PollingService,
+    private timeService: TimeService,
+    private hallPassesService: HallPassesService
+  ) {
     this.http.currentSchool$.subscribe((value) => {
       setTimeout(() => {
         this.globalReload$.next(null);
@@ -264,7 +270,12 @@ export class LiveDataService {
     };
 
     const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
-      : (json) => json.results.map(raw => config.decoder(raw));
+      : (json) => {
+        if (config.initialUrl.includes('&active=past')) {
+          this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('v1')) : '');
+        }
+       return json.results.map(raw => config.decoder(raw));
+      };
 
     const fullReload$ = merge(
       of('invalidate'),
@@ -530,7 +541,7 @@ export class LiveDataService {
     return this.watch<HallPass, string>({
       externalEvents: empty(),
       eventNamespace: 'hall_pass',
-      initialUrl: `v1/hall_passes?limit=20&active=past${queryFilter}`,
+      initialUrl: `v1/hall_passes?limit=50&active=past${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([

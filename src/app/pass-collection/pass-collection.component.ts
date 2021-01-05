@@ -10,7 +10,7 @@ import {
   Output
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {HallPass} from '../models/HallPass';
@@ -21,7 +21,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, filter, shareReplay, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -35,6 +35,7 @@ import {PassFilters} from '../models/PassFilters';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {User} from '../models/User';
 import {UserService} from '../services/user.service';
+import * as moment from 'moment';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -77,6 +78,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() passProvider: PassLikeProvider;
   @Input() hasFilterPasses: boolean;
   @Input() filterModel: string;
+  @Input() scrollable: boolean;
+  @Input() filterDate: moment.Moment;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
@@ -84,7 +87,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() filterPasses = new EventEmitter();
   @Output() passClick = new EventEmitter<boolean>();
 
-  currentPasses$: Observable<PassLike[]>;
+  currentPasses$: ReplaySubject<PassLike[]> = new ReplaySubject<PassLike[]>();
   currentPasses: PassLike[] = [];
   selectedSort;
   filtersData$: Observable<{[model: string]: PassFilters}>;
@@ -100,6 +103,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   sort$ = this.dataService.sort$;
   test: any;
+  showBottomShadow: boolean = true;
 
   destroy$ = new Subject();
 
@@ -111,6 +115,36 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
     if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
       this.grid_template_columns = '157px';
+    }
+  }
+
+  @HostListener('document.scroll', ['$event'])
+  scroll(event) {
+    if (!!this.passesService.expiredPassesNextUrl$.getValue()) {
+      if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {
+        this.passesService.getMoreExpiredPasses()
+          .pipe(
+            map((passes: any) => {
+              if (this.filterDate) {
+                return {
+                  ...passes,
+                  results: passes.results.filter(pass => moment(pass.start_time).isAfter(moment(this.filterDate)))
+                };
+              }
+              return passes;
+            }))
+          .subscribe((res: any) => {
+            this.currentPasses.push(...res.results.map(pass => HallPass.fromJSON(pass)));
+            this.passesService.expiredPassesNextUrl$.next(res.next ? res.next.substring(res.next.search('v1')) : '');
+            this.cdr.detectChanges();
+          });
+      }
+    } else {
+      if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {
+        this.showBottomShadow = false;
+      } else {
+        this.showBottomShadow = true;
+      }
     }
   }
 
@@ -140,7 +174,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public screenService: ScreenService,
       private cdr: ChangeDetectorRef,
       private passesService: HallPassesService,
-      private userService: UserService
+      private userService: UserService,
   ) {}
 
   get gridTemplate() {
@@ -181,14 +215,21 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         filter(res => !!res && (this.filterModel && !!res[this.filterModel])))
         .subscribe(res => {
-        this.selectedSort = res[this.filterModel].default;
-        this.filterPasses.emit(this.selectedSort);
+          this.selectedSort = res[this.filterModel].default || 'all_time';
+          this.filterPasses.emit(this.selectedSort);
       });
     }
-    this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+    this.passProvider.watch(this.sort$.asObservable()).subscribe(res => {
+      this.currentPasses$.next(res);
+    });
     this.currentPasses$
       .pipe(
         switchMap((_passes) => {
+          if (_passes.length < 16) {
+            this.showBottomShadow = false;
+          } else {
+            this.showBottomShadow = true;
+          }
           if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
             return of(_passes);
           } else {
@@ -252,7 +293,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       { display: 'Today', color: this.darkTheme.getColor(), action: 'today'},
       { display: 'Past 3 days', color: this.darkTheme.getColor(), action: 'past-three-days'},
       { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past-seven-days'},
-      { display: 'All Time', color: this.darkTheme.getColor(), action: 'all_time', divider: this.user.show_expired_passes }
+      { display: 'All Time', color: this.darkTheme.getColor(), action: 'all_time', divider: this.user.show_expired_passes && !User.fromJSON(this.user).isStudent() }
     ];
     if (this.user.show_expired_passes && User.fromJSON(this.user).isTeacher()) {
       sortOptions.push({ display: 'Hide Expired Passes', color: this.darkTheme.getColor(), action: 'hide_expired_pass' });
