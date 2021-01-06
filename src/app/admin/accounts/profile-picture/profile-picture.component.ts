@@ -1,12 +1,12 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {FormControl, FormGroup} from '@angular/forms';
 
-import { forkJoin, fromEvent, of, zip } from 'rxjs';
+import {forkJoin, fromEvent, of, zip} from 'rxjs';
 import {filter, map, switchMap} from 'rxjs/operators';
-import { isArray, uniqBy } from 'lodash';
+import {isArray, uniqBy} from 'lodash';
 
-import { XlsxService } from '../../../services/xlsx.service';
-import { ZipService } from '../../../services/zip.service';
+import {XlsxService} from '../../../services/xlsx.service';
+import {ZipService} from '../../../services/zip.service';
 import {UserService} from '../../../services/user.service';
 
 @Component({
@@ -21,6 +21,7 @@ export class ProfilePictureComponent implements OnInit {
       fromEvent(fileRef.nativeElement , 'change')
         .pipe(
           switchMap((evt: Event) => {
+            this.selectedMapFile = fileRef.nativeElement.files[0];
             this.uploadingProgress.csv.inProcess = true;
             const FR = new FileReader();
             FR.readAsBinaryString(fileRef.nativeElement.files[0]);
@@ -111,6 +112,7 @@ export class ProfilePictureComponent implements OnInit {
   form: FormGroup;
   selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
   selectedImgFiles;
+  selectedMapFile: File;
   filesToDB: any[] = [];
   imagesLength: number;
   uploadingProgress = {

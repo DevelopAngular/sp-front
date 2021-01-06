@@ -65,12 +65,21 @@
                 [learnMoreLink]="'https://www.smartpass.app/clever'"
                 (setUp)="openSettingsDialog('clever', $event)"
               ></app-integration-card>
-              <app-admin-card-button
-                [title]="'Profile pictures'"
-                [subtitle]="'Bulk-upload profile pictures'"
-                [leftIcon]="'./assets/Folder.svg'"
-                (onClick)="openProfilePictures()"
-              ></app-admin-card-button>
+              <app-integration-card
+                [icon]="'./assets/Folder.svg'"
+                [title]="'Profile Pictures'"
+                [style.padding]="'10px'"
+                [status]="'disconnect'"
+                [subtitle]="'Bulk upload profile pictures for your users. '"
+                [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
+                (setUp)="openProfilePictures()"
+              ></app-integration-card>
+<!--              <app-admin-card-button-->
+<!--                [title]="'Profile pictures'"-->
+<!--                [subtitle]="'Bulk-upload profile pictures'"-->
+<!--                [leftIcon]="'./assets/Folder.svg'"-->
+<!--                (onClick)="openProfilePictures()"-->
+<!--              ></app-admin-card-button>-->
             </div>
           </div>
         </div>
