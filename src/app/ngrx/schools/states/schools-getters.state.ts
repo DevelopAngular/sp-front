@@ -1,7 +1,7 @@
-import { AppState } from '../../app-state/app-state';
-import { schoolAdapter } from '../reducers';
-import { createSelector } from '@ngrx/store';
-import { SchoolsState } from './schools.state';
+import {AppState} from '../../app-state/app-state';
+import {schoolAdapter} from '../reducers';
+import {createSelector} from '@ngrx/store';
+import {SchoolsState} from './schools.state';
 
 export const getSchoolsState = (state: AppState) => state.schools;
 
@@ -32,6 +32,21 @@ export const getCurrentSchool = createSelector(
   getSchoolsEntities,
   getCurrentSchoolId,
   (entities, id) => entities[id]
+);
+
+export const getGSuiteSyncInfoData = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.gSuiteInfo
+);
+
+export const getSchoolCleverInfo = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.cleverInfo
+);
+
+export const getCleverSyncLoading = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.syncLoading
 );
 
 export const getSchoolsLength = schoolAdapter.getSelectors(getSchoolsState).selectTotal;

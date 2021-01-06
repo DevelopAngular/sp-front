@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {SPPlatform} from './next-release/services/next-release.service';
 
 declare const window;
@@ -51,6 +51,10 @@ export class DeviceDetection {
             ||
             window.safari
             ;
+  }
+
+  static isMobile(): boolean {
+    return this.isAndroid() || this.isIOSMobile();
   }
 
   static platform(): SPPlatform {

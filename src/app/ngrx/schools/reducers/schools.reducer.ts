@@ -1,6 +1,6 @@
-import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
-import { School } from '../../../models/School';
-import { SchoolsState } from '../states';
+import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
+import {School} from '../../../models/School';
+import {SchoolsState} from '../states';
 import {Action, createReducer, on} from '@ngrx/store';
 import * as schoolsActions from '../actions';
 
@@ -12,7 +12,11 @@ export const schoolsInitialState: SchoolsState = {
   loaded: false,
   currentSchoolId: null,
   gg4lInfo: null,
-  syncInfo: null
+  syncInfo: null,
+  gSuiteInfo: null,
+  cleverInfo: null,
+  syncLoading: false,
+  syncLoaded: false
 };
 
 const reducer = createReducer(
@@ -46,7 +50,26 @@ const reducer = createReducer(
   }),
   on(schoolsActions.updateSchoolSuccess, (state, {school}) => {
     return schoolAdapter.upsertOne(school, { ...state, loading: false, loaded: true, currentSchoolId: school.id });
-  })
+  }),
+  on(schoolsActions.getGSuiteSyncInfoSuccess, (state, {gSuiteInfo}) => {
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      gSuiteInfo
+    };
+  }),
+  on(schoolsActions.updateGSuiteInfoSelectorsSuccess, (state, {selectors}) => {
+    return {...state, gSuiteInfo: {...state.gSuiteInfo, selectors}};
+  }),
+  on(schoolsActions.getCleverInfoSuccess, (state, {cleverInfo}) => {
+    return {...state, loaded: true, loading: false, cleverInfo};
+  }),
+  on(schoolsActions.syncClever, (state) => ({...state, syncLoading: true, syncLoaded: false})),
+  on(schoolsActions.updateCleverInfo, (state, {cleverInfo}) => {
+    return { ...state, syncLoaded: true, syncLoading: false, cleverInfo };
+  }),
+  on(schoolsActions.clearSchools, (state) => (schoolsInitialState))
 );
 
 export function schoolsReducer(state: any | undefined, action: Action) {

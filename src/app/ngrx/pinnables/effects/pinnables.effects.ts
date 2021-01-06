@@ -1,9 +1,9 @@
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
+import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import * as pinnablesActions from '../actions';
-import { HallPassesService } from '../../../services/hall-passes.service';
-import { of } from 'rxjs';
+import {HallPassesService} from '../../../services/hall-passes.service';
+import {of} from 'rxjs';
 import {Pinnable} from '../../../models/Pinnable';
 
 @Injectable()
@@ -78,8 +78,8 @@ export class PinnablesEffects {
         concatMap(action => {
           return this.passesService.createArrangedPinnable(action.order)
             .pipe(
-              map(() => {
-                return pinnablesActions.arrangedPinnableSuccess();
+              switchMap((pinnables: Pinnable[]) => {
+                return [pinnablesActions.arrangedPinnableSuccess(), pinnablesActions.getSuccessPinnable({ pinnables })];
               }),
               catchError(error => of(pinnablesActions.arrangedPinnableFailure({errorMessage: error.message})))
             );

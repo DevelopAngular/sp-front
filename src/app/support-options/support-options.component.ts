@@ -1,6 +1,6 @@
 import {Component, ElementRef, Inject, OnInit, Optional} from '@angular/core';
-import { DarkThemeSwitch } from '../dark-theme-switch';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {DarkThemeSwitch} from '../dark-theme-switch';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {UserService} from '../services/user.service';
 import {map} from 'rxjs/operators';
 import {User} from '../models/User';
@@ -18,17 +18,18 @@ export class SupportOptionsComponent implements OnInit {
   targetElementRef: ElementRef;
 
   constructor(
-    private darkTheme: DarkThemeSwitch,
+    public darkTheme: DarkThemeSwitch,
     private dialogRef: MatDialogRef<SupportOptionsComponent>,
     private userService: UserService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
   ) { }
 
+
   ngOnInit() {
     this.targetElementRef = this.data['trigger'];
     this.userService.user$.pipe(map(user => User.fromJSON(user))).subscribe((user) => {
       this.options = [
-        { name: 'Support guides', image: 'Tour', hasShow: true, hovered: false,  link: 'https://www.smartpass.app/support'},
+        { name: 'Support guides', image: 'Tour', hasShow: true, hovered: false,  link: `https://www.smartpass.app/support#${this.getUserRole(user)}`},
         { name: 'Chat with us', image: 'Chat', hasShow: !user.isStudent(), hovered: false },
         { name: 'Report a bug', image: 'Bug', hasShow: true, hovered: false, link: 'https://www.smartpass.app/bugreport'},
         { name: 'What’s new?', image: 'Balloons', hasShow: true, hovered: false, link: 'https://www.smartpass.app/updates' },
@@ -38,6 +39,16 @@ export class SupportOptionsComponent implements OnInit {
     });
   }
 
+  getUserRole(user: User) {
+    if (user.isAdmin()) {
+      return 'admin';
+    } else if (user.isTeacher() || user.isAssistant()) {
+      return 'teacher';
+    } else if (user.isStudent()) {
+      return 'student';
+    }
+  }
+
   getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
     return this.darkTheme.getIcon({
       iconName: iconName,
@@ -45,6 +56,10 @@ export class SupportOptionsComponent implements OnInit {
       hover: hover,
       hoveredColor: hoveredColor
     });
+  }
+
+  getColor(dark, white) {
+    return this.darkTheme.getColor({ dark, white });
   }
 
   updateDialogPosition(user) {
@@ -58,7 +73,10 @@ export class SupportOptionsComponent implements OnInit {
 
   openHubspot() {
     this.dialogRef.close(true);
-    window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+    const chat = document.querySelector('#hubspot-messages-iframe-container');
+    (chat as HTMLElement).setAttribute('style', 'opacity: 1 !important');
+    // window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+    window.HubSpotConversations.widget.open();
   }
 
 }

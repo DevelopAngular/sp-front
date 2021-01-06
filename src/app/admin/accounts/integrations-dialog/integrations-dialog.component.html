@@ -1,0 +1,81 @@
+<div class="wrapper">
+  <div class="header">
+    <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <img width="21" height="21" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" alt="Options">
+    <div class="ds-dialog-title" [style.margin-left]="'12px'">Integrations</div>
+  </div>
+  <div class="content" *ngIf="schoolSyncInfo$ | async as schoolSyncInfo">
+    <div class="using" *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled">
+      <div class="title">Integrations You’re Using</div>
+      <app-integration-card
+        *ngIf="schoolSyncInfo.is_gg4l_enabled"
+        [icon]="'./assets/GG4L (Blue).svg'"
+        [title]="'GG4L'"
+        [style.padding]="'10px'"
+        [status]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'approved' : 'done') : 'disconnect'"
+        [subtitle]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate((gg4lSyncInfo$ | async).last_successful_sync)) : 'Sync accounts automatically from any SIS through GG4L.'"
+        [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+        (setUp)="openSettings($event,'gg4l')"
+      >
+      </app-integration-card>
+      <app-integration-card *ngIf="schoolSyncInfo.is_gsuite_enabled"
+        [icon]="'./assets/Google (Color).svg'"
+        [title]="'G Suite'"
+        [style.padding]="'10px'"
+        [status]="schoolSyncInfo.is_gsuite_enabled ? 'done' : 'disconnect'"
+        [subtitle]="schoolSyncInfo.is_gsuite_enabled ? 'Last Sync: ' + formatDate((gSuiteOrgs$ | async).last_successful_sync) : 'Sync accounts from your org units.'"
+        [learnMoreLink]="'https://www.smartpass.app/gsuite'"
+        (setUp)="openSettings($event,'g_suite')"
+      >
+      </app-integration-card>
+      <app-integration-card
+        *ngIf="schoolSyncInfo.is_clever_enabled"
+        [icon]="'./assets/Clever (Blue).svg'"
+        [title]="'Clever'"
+        [style.padding]="'10px'"
+        [status]="schoolSyncInfo.is_clever_enabled ? 'done' : 'disconnect'"
+        [subtitle]="schoolSyncInfo.is_clever_enabled ? ((cleverSyncLoading$ | async) ? 'Sync in Progress...' : 'Last Sync: ' + getLastSync(cleverSyncInfo$ | async)) : 'Sync accounts automatically from any SIS with Clever.'"
+        [learnMoreLink]="'https://www.smartpass.app/clever'"
+        (setUp)="openSettings($event,'clever')"
+      ></app-integration-card>
+    </div>
+
+    <mat-divider *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled" [style.width]="'100%'"></mat-divider>
+
+    <div class="using" *ngIf="!schoolSyncInfo.is_gg4l_enabled || !schoolSyncInfo.is_gsuite_enabled || !schoolSyncInfo.is_clever_enabled">
+      <app-integration-card
+        *ngIf="!schoolSyncInfo.is_gg4l_enabled"
+        [icon]="'./assets/GG4L (Blue).svg'"
+        [title]="'GG4L'"
+        [status]="'disconnect'"
+        [style.padding]="'10px'"
+        [subtitle]="'Sync accounts automatically from any SIS through GG4L.'"
+        [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+        (setUp)="openSettings($event,'gg4l')"
+      >
+      </app-integration-card>
+      <app-integration-card
+        *ngIf="!schoolSyncInfo.is_gsuite_enabled"
+        [style.padding]="'10px'"
+        [icon]="'./assets/Google (Color).svg'"
+        [title]="'G Suite'"
+        [status]="'disconnect'"
+        [subtitle]="'Sync accounts from your org units.'"
+        [learnMoreLink]="'https://www.smartpass.app/gsuite'"
+        (setUp)="openSettings($event,'g_suite')"
+      >
+      </app-integration-card>
+      <app-integration-card
+        *ngIf="!schoolSyncInfo.is_clever_enabled"
+        [icon]="'./assets/Clever (Blue).svg'"
+        [title]="'Clever'"
+        [style.padding]="'10px'"
+        [status]="'disconnect'"
+        [subtitle]="'Sync accounts automatically from any SIS with Clever.'"
+        [learnMoreLink]="'https://www.smartpass.app/clever'"
+        (setUp)="openSettings($event,'clever')"
+      ></app-integration-card>
+    </div>
+
+  </div>
+</div>

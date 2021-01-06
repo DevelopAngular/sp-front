@@ -2,16 +2,12 @@
      [style.width]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.height]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.background-color]="bgc"
-
      (mouseover)="hovered = true;"
      (mouseleave)="hovered = false;"
-
      appCrossPointerEventTarget
      (pointerDownEvent)="down = true"
      (pointerClickEvent)="down = false; onClick($event)"
-
-     #iconButtonRef
->
+     #iconButtonRef>
     <img [src]="src | resolveAsset"
          [attr.width]="size"
          [attr.height]="size"
@@ -19,4 +15,5 @@
          draggable="false"
          class="icon"
          alt="img">
+  <div class="notification" *ngIf="notificationBadge">{{ notificationCount }}</div>
 </div>

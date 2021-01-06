@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
   HostListener,
   Input,
@@ -10,7 +9,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
@@ -22,8 +21,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, shareReplay, switchMap, tap} from 'rxjs/operators';
-import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {delay, filter, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -31,6 +29,7 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {DropdownComponent} from '../dropdown/dropdown.component';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -75,9 +74,11 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
   @Output() currentPassesEmit = new EventEmitter();
+  @Output() passClick = new EventEmitter<boolean>();
 
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
+  selectedSort;
 
   activePassTime$;
 
@@ -181,7 +182,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
-    this.dataService.markRead(pass).subscribe();
+    this.passClick.emit(true);
+    // this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }
 
@@ -225,7 +227,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(dialogData => {
-      console.log('Closed with ===>', dialogData);
+      this.passClick.emit(false);
       if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
           width: '425px',
@@ -242,33 +244,44 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   openSortDialog(event) {
-
-    // this.sortOptions.forEach((opt) => opt.color = this.darkTheme.getColor());
+    // debugger;
     const sortOptions = [
       { display: 'Pass Expiration Time', color: this.darkTheme.getColor(), action: 'expiration_time', toggle: false },
       { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
       { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
     ];
     UNANIMATED_CONTAINER.next(true);
-    const sortDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {
-          'header': 'SORT BY',
-          'options': sortOptions,
-          'trigger': new ElementRef(event.currentTarget),
-          'isSort': true,
-          'sortMode': this.dataService.sort$.value
-        }
+    // const sortDialog = this.dialog.open(ConsentMenuComponent, {
+    //     panelClass: 'consent-dialog-container',
+    //     backdropClass: 'invis-backdrop',
+    //     data: {
+    //       'header': 'SORT BY',
+    //       'options': sortOptions,
+    //       'trigger': new ElementRef(event.currentTarget),
+    //       'isSort': true,
+    //       'sortMode': this.dataService.sort$.value
+    //     }
+    // });
+
+    const sortDialog = this.dialog.open(DropdownComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': event.currentTarget,
+        'sortData': sortOptions,
+        'selectedSort': this.selectedSort
+      }
     });
 
     sortDialog.afterClosed()
       .pipe(
-        tap(() => UNANIMATED_CONTAINER.next(false))
+        tap(() => UNANIMATED_CONTAINER.next(false)),
+        filter(res => !!res)
       )
       .subscribe(sortMode => {
+        this.selectedSort = sortMode;
         this.onSortSelected(sortMode);
-        console.log(sortMode);
+        // console.log(sortMode);
       });
   }
 

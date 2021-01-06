@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { RoomData } from '../overlay-data.service';
-import { BehaviorSubject } from 'rxjs';
-import { ValidButtons } from '../advanced-options/advanced-options.component';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormGroup} from '@angular/forms';
+import {RoomData} from '../overlay-data.service';
+import {BehaviorSubject} from 'rxjs';
+import {ValidButtons} from '../advanced-options/advanced-options.component';
 
 @Component({
   selector: 'app-new-room-in-folder',
@@ -13,9 +13,15 @@ export class NewRoomInFolderComponent implements OnInit {
 
   @Input() form: FormGroup;
 
+  @Input() passLimitForm: FormGroup;
+
+  @Input() showErrors: boolean;
+
   @Output() back = new EventEmitter();
 
   @Output() add: EventEmitter<RoomData> = new EventEmitter<RoomData>();
+
+  @Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
 
   roomValidButtons = new BehaviorSubject<ValidButtons>({
       publish: false,
@@ -60,6 +66,10 @@ export class NewRoomInFolderComponent implements OnInit {
   }
 
   addInFolder() {
+    if (this.roomValidButtons.getValue().incomplete) {
+      this.errorsEmit.emit();
+      return;
+    }
     this.add.emit(this.roomInFolderData);
   }
 

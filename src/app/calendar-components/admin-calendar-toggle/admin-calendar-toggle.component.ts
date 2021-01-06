@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import * as moment from 'moment';
 import {fromEvent} from 'rxjs';
-import {delay, filter} from 'rxjs/operators';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-calendar-toggle',
@@ -12,7 +12,7 @@ export class AdminCalendarToggleComponent implements OnInit {
   @ViewChild('elem') elem: ElementRef;
   @ViewChild('day') day: ElementRef;
   @ViewChild('dayButton') dayButton: ElementRef;
-  @ViewChild('container') set content(content: ElementRef) {
+  @ViewChild('container', { static: true }) set content(content: ElementRef) {
     if (content) {
       setTimeout(() => {
         this.container = content.nativeElement;
@@ -70,6 +70,7 @@ export class AdminCalendarToggleComponent implements OnInit {
 
   public rangeOptions = [
       { id: 'range_0', title: 'Today', selectedIcon: './assets/Check (Navy).svg'},
+      { id: 'range_5', title: 'Last 3 Days', selectedIcon: './assets/Check (Navy).svg'},
       { id: 'range_1', title: 'Last 7 Days', selectedIcon: './assets/Check (Navy).svg'},
       { id: 'range_2', title: 'Last 30 Days', selectedIcon: './assets/Check (Navy).svg' },
       { id: 'range_3', title: 'Last 90 Days', selectedIcon: './assets/Check (Navy).svg' },
@@ -172,6 +173,9 @@ export class AdminCalendarToggleComponent implements OnInit {
       this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
       // this.selectedDate = { start: null, end: null };
         return false;
+    } else if (id === 'range_5') {
+      this.selectedDate.end = this.currentDate;
+      this.selectedDate.start = moment().subtract(3, 'days').startOf('day');
     }
     this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
     this.adminCalendarRes.emit(this.selectedDate);

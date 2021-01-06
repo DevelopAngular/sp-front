@@ -1,29 +1,27 @@
-import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter, OnDestroy} from '@angular/core';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { Util } from '../../Util';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
-import { Inject } from '@angular/core';
-import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { getInnerPassName } from '../pass-tile/pass-display-util';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
+import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {Util} from '../../Util';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {getInnerPassName} from '../pass-tile/pass-display-util';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
 import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
-import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep} from '../animations';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
-import { uniqBy, uniq, isNull } from 'lodash';
+import {isNull, uniq, uniqBy} from 'lodash';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DeviceDetection} from '../device-detection.helper';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import {StorageService} from '../services/storage.service';
 import {NavbarDataService} from '../main/navbar-data.service';
 
 @Component({
@@ -54,6 +52,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   pinnableOpen: boolean = false;
   user: User;
   isSeen: boolean;
+  pinLoaded: boolean = false;
 
   isModal: boolean;
 
@@ -66,6 +65,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   header: string;
   cancelEditClick: boolean;
 
+  hoverDestroyer$: Subject<any>;
+
+  activeTeacherPin: boolean = false;
+  solidColorRgba: string;
+  solidColorRgba2: string;
+  removeShadow: boolean;
+  leftTextShadow: boolean;
   destroy$: Subject<any> = new Subject<any>();
 
 
@@ -80,11 +86,16 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       private createFormService: CreateFormService,
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
-      private navbarData: NavbarDataService
+      private navbarData: NavbarDataService,
+      private storage: StorageService
   ) {}
 
   get invalidDate() {
     return Util.invalidDate(this.request.request_time);
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 
   get teacherNames() {
@@ -104,6 +115,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   get filteredTeachers() {
     return uniqBy(this.teacherNames, 'id');
+  }
+
+  get iconClass() {
+    return  this.forStaff || this.invalidDate || !this.forStaff && !this.forInput && !this.invalidDate ? '' : 'icon-button';
   }
 
   ngOnInit() {
@@ -145,11 +160,22 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       });
     });
     this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
+    if (this.isModal) {
+      this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
+      this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  getGradient() {
+    if (this.request.gradient_color) {
+      const gradient: string[] = this.request.gradient_color.split(',');
+      return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
+    }
   }
 
   get studentName() {
@@ -201,7 +227,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
                   this.futureTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
               } else if (to.scheduling_request_send_origin_teachers) {
-                  this.futureTeachers = this.formState.data.direction.from.teachers;
+                  this.futureTeachers = this.formState.data.direction.from.teachers.length ? this.formState.data.direction.from.teachers : this.formState.data.direction.to.teachers;
               } else if (to.scheduling_request_send_destination_teachers) {
                   this.futureTeachers = this.formState.data.direction.to.teachers;
               }
@@ -215,7 +241,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       }
   }
 
-  formatDateTime(date: Date, timeOnly?: boolean){
+  formatDateTime(date: Date, timeOnly?: boolean) {
     return Util.formatDateTime(date, timeOnly);
   }
 
@@ -236,7 +262,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           'travel_type' : this.selectedTravelType,
           'duration' : this.selectedDuration * 60,
         };
-
     if (this.isFutureOrNowTeachers) {
           if (this.forFuture) {
               body.teachers = uniq(this.futureTeachers.map(t => t.id));
@@ -273,7 +298,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
                   (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
           })).subscribe((res) => {
           this.performingAction = true;
-        if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile() && this.forFuture) {
+        if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
           this.dataService.openRequestPageMobile();
           this.navbarData.inboxClick$.next(true);
         }
@@ -284,33 +309,33 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   changeDate(resend_request?: boolean) {
     if (!this.dateEditOpen) {
-       let config;
-            this.dialogRef.close();
-            config = {
-                panelClass: 'form-dialog-container',
-                maxWidth: '100vw',
-                backdropClass: 'custom-backdrop',
-                data: {
-                    'entryState': {
-                        step: 1,
-                        state: 1
-                    },
-                    'forInput': false,
-                    'originalToLocation': this.request.destination,
-                    'colorProfile': this.request.color_profile,
-                    'originalFromLocation': this.request.origin,
-                    'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
-                    'request': this.request,
-                    'resend_request': resend_request
-                }
-            };
+      this.dateEditOpen = true;
+      let config;
+      this.dialogRef.close();
+      config = {
+          panelClass: 'form-dialog-container',
+          maxWidth: '100vw',
+          backdropClass: 'custom-backdrop',
+          data: {
+              'entryState': {
+                  step: 1,
+                  state: 1
+              },
+              'forInput': false,
+              'originalToLocation': this.request.destination,
+              'colorProfile': this.request.color_profile,
+              'originalFromLocation': this.request.origin,
+              'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
+              'request': this.request,
+              'resend_request': resend_request
+          }
+      };
       const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
-      dateDialog.afterOpen().subscribe( () => {
-        this.dateEditOpen = true;
-      });
-
-      dateDialog.afterClosed().pipe(filter((state) => resend_request && state), switchMap((state) => {
+      dateDialog.afterClosed().pipe(
+        tap(() => this.dateEditOpen = false),
+        filter((state) => resend_request && state),
+        switchMap((state) => {
           const body: any = {
               'origin' : this.request.origin.id,
               'destination' : this.request.destination.id,
@@ -322,15 +347,15 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           };
 
          return this.requestService.createRequest(body);
-      }),
-        takeUntil(this.destroy$),
-        switchMap(() => this.requestService.cancelRequest(this.request.id)))
-          .subscribe(console.log);
+        }),
+        switchMap(() => this.requestService.cancelRequest(this.request.id))
+      ).subscribe();
     }
   }
 
   editMessage() {
     if (!this.messageEditOpen) {
+      this.messageEditOpen = true;
       const infoDialog = this.dialog.open(CreateHallpassFormsComponent, {
         width: '750px',
         maxWidth: '100vw',
@@ -343,10 +368,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               'originalFromLocation': this.request.origin}
       });
 
-      infoDialog.afterOpen().subscribe( () => {
-        this.messageEditOpen = true;
-      });
-
       infoDialog.afterClosed().subscribe(data =>{
         this.request.attachment_message = data['message']===''?this.request.attachment_message:data['message'];
         this.messageEditOpen = false;
@@ -355,9 +376,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
 
     if(!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
@@ -365,67 +386,32 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       this.header = '';
       if (!this.forInput) {
         if (this.forStaff) {
-          this.options.push(this.genOption('Attach Message & Deny', '#3D396B', 'deny_with_message'));
-          this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny'));
+          this.options.push(this.genOption('Attach Message & Deny', '#7f879d', 'deny_with_message', './assets/Message (Blue-Gray).svg'));
+          this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
         } else {
           if (this.invalidDate) {
-            this.options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'change_date'));
+            this.options.push(this.genOption('Change Date & Time to Resend', '#7f879d', 'change_date'));
           }
-          this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete'));
+          this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
         }
         this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
       } else {
         if (!this.pinnableOpen) {
-          if (this.isSeen) {
             this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
             this.formState.previousStep = 4;
             this.createFormService.setFrameMotionDirection('disable');
             this.cardEvent.emit(this.formState);
-          } else {
-            this.dialogRef.close();
-            const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-              width: '750px',
-              panelClass: 'form-dialog-container',
-              maxWidth: '100vw',
-              backdropClass: 'custom-backdrop',
-              data: {
-                'fromLocation': this.request.origin,
-                'fromHistory': this.fromHistory,
-                'fromHistoryIndex': this.fromHistoryIndex,
-                'colorProfile': this.request.color_profile,
-                'forLater': this.forFuture,
-                'forStaff': this.forStaff,
-                'selectedStudents': this.selectedStudents,
-                'toLocation': this.request.destination,
-                'requestTarget': this.request.teacher,
-                'toIcon': this.request.icon
-              }
-            });
-            dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
-              this.openInputCard(result['templatePass'],
-                result['forLater'],
-                result['forStaff'],
-                result['selectedStudents'],
-                (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-                result['fromHistory'],
-                result['fromHistoryIndex']
-              );
-            });
-          }
         }
         return false;
       }
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
       UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {'header': this.header, 'options': this.options, 'trigger': target}
-      });
-
-      cancelDialog.afterOpen().subscribe(() => {
-        this.cancelOpen = true;
       });
 
       cancelDialog.afterClosed()
@@ -435,7 +421,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         .subscribe(action => {
           this.chooseAction(action);
         });
-    }
+    // }
 
     }
   }
@@ -451,8 +437,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       if (action.indexOf('Message') > -1) {
 
       } else {
+        this.messageEditOpen = true;
         let config;
-        if (this.isSeen) {
           config = {
             panelClass: 'form-dialog-container',
             backdropClass: 'invis-backdrop',
@@ -469,12 +455,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
               'studentMessage': this.request.attachment_message
             }
           };
-        }
         const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
-
-        messageDialog.afterOpen().subscribe(() => {
-          this.messageEditOpen = true;
-        });
 
         messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
           // denyMessage = data['message'];
@@ -502,6 +483,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       this.requestService.cancelRequest(this.request.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => {
+          const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
+          if (storageData && storageData[this.request.id]) {
+            delete storageData[this.request.id];
+            this.storage.setItem('pinAttempts', JSON.stringify({...storageData}));
+          }
         this.dialogRef.close();
       });
     } else if (action === 'change_date') {
@@ -509,26 +495,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     }
   }
 
-  openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-     const data = {
-       'pass': templatePass,
-       'fromPast': false,
-       'fromHistory': fromHistory,
-       'fromHistoryIndex': fromHistoryIndex,
-       'forFuture': forLater,
-       'forInput': true,
-       'forStaff': forStaff,
-       'selectedStudents': selectedStudents,
-    };
-    this.dialog.open(component, {
-       panelClass: (forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-       backdropClass: 'custom-backdrop',
-       disableClose: true,
-       data: data
-    });
-    }
-
-  denyRequest(denyMessage: string){
+  denyRequest(denyMessage: string) {
     const body = {
       'message' : denyMessage
     };
@@ -539,8 +506,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     });
   }
 
-  genOption(display, color, action) {
-    return {display: display, color: color, action: action};
+  genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {
+    return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
   approveRequest() {
@@ -551,10 +518,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       .subscribe(() => {
       this.dialogRef.close();
     });
-  }
-
-  get iconClass() {
-   return  this.forStaff || this.invalidDate || !this.forStaff && !this.forInput && !this.invalidDate ? '' : 'icon-button';
   }
 
   cancelClick() {
@@ -570,7 +533,44 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
+  onHover(evt: HTMLElement, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = evt;
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if (margin > 0) {
+          this.leftTextShadow = true;
+        }
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        } else {
+          this.removeShadow = true;
+        }
+      });
+  }
+
+  onLeave(target: HTMLElement) {
+    target.style.marginLeft = this.filteredTeachers.length > 1 ? '0px' : '15px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `auto`;
+    this.removeShadow = false;
+    this.leftTextShadow = false;
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
+  }
+
+  goToPin() {
+   this.activeTeacherPin = true;
   }
 }

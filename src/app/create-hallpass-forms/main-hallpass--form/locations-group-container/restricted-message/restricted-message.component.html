@@ -20,7 +20,7 @@
       <div class="rest-mes-content"
            [attr.data-motion-translate]="(frameMotion$ | async).direction"
       >
-        <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
+        <div class="selected-teacher-header" *ngIf="(formState.forInput || formState.missedRequest) && !isStaff">
           <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
             <div class="teacher" *ngFor="let teacher of filteredTeachers; let i = index">
         <span class="" style="color: #7F879D; font-size: 16px; font-weight: normal; margin-right: 3px">
@@ -29,13 +29,16 @@
             </div>
           </div>
         </div>
-        <div data-grammarly-issue-container [style.width]="'100%'" [style.padding]="'0px 25px'" [style.width.%]="85">
+        <div style="width: 100%; display: flex; justify-content: center">
           <textarea
             #messageBox
+            (keyup.enter)="sendRequest()"
             class="message-box"
-            pInputTextarea
             [maxlength]="160"
-            autoResize="autoResize"
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="6"
+            cdkAutosizeMaxRows="11"
             [placeholder]="'Attach a message'"
             [formControl]="message"
             [style.width]="messageBoxViewRestriction.textAreaWidth"
@@ -46,15 +49,16 @@
           >
           </textarea>
         </div>
-        <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">
-          <app-gradient-button size="editable"
-                               [hoverColor]="'#04CD33'"
-                               [cursor]="'pointer'"
-                               [minWidth]="messageBoxViewRestriction.btnWidth"
-                               [minHeight]="messageBoxViewRestriction.btnHeight"
-                               [fontSize]="messageBoxViewRestriction.fontSize"
-                               (buttonClick)="sendRequest()"
-                               class="message-button">
+        <div style="margin-right: 25px" *ngIf="formState.forInput || formState.missedRequest">
+          <app-gradient-button
+           [gradient]="gradient"
+           [cursor]="'pointer'"
+           [minWidth]="messageBoxViewRestriction.btnWidth"
+           [minHeight]="messageBoxViewRestriction.btnHeight"
+           [fontSize]="messageBoxViewRestriction.fontSize"
+           (buttonClick)="sendRequest()"
+           class="message-button"
+          >
             {{(message.value ? 'Next' : 'Skip')}}
           </app-gradient-button>
         </div>

@@ -13,10 +13,11 @@
       padding: 14px;
       color: $blue-gray;
       cursor: pointer;
+      height: 15px;
 
       &:hover {
-        background-color: rgb(228, 235, 255);
-        color: $navy;
+        background-color: rgba(127, 135, 157, .1);
+        color: $blue-gray;
       }
 
       .title {

@@ -1,15 +1,15 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 
-import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
-import {concatMap, filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
-import { HttpService } from '../../services/http-service';
-import { Pinnable } from '../../models/Pinnable';
-import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
-import { isArray } from 'lodash';
-import { HallPassesService } from '../../services/hall-passes.service';
+import {HttpService} from '../../services/http-service';
+import {Pinnable} from '../../models/Pinnable';
+import {OverlayContainerComponent} from '../overlay-container/overlay-container.component';
+import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
+import {isArray} from 'lodash';
+import {HallPassesService} from '../../services/hall-passes.service';
 import {SchoolSettingDialogComponent} from '../school-setting-dialog/school-setting-dialog.component';
 import {Location} from '../../models/Location';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -19,7 +19,8 @@ import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {ScrollPositionService} from '../../scroll-position.service';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {Onboard} from '../../models/Onboard';
+import {SupportService} from '../../services/support.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -84,11 +85,14 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
     pinnables: Pinnable[] = [];
+    onboardProcess$: Observable<{[id: string]: Onboard}>;
+    onboardLoading$: Observable<boolean>;
 
     arrangedOrderForUpdating: number[];
 
     buttonMenuOpen: boolean;
     bulkSelect: boolean;
+    bottomShadow: boolean = true;
 
     // // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
@@ -99,10 +103,16 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     public loaded$: Observable<boolean>;
 
     destroy$ = new Subject();
-
-
     showRooms: boolean;
-    onboardLoaded: boolean;
+
+    @HostListener('window:scroll', ['$event'])
+    scroll(event) {
+      if (event.currentTarget.offsetHeight + event.currentTarget.scrollTop >= event.currentTarget.scrollHeight) {
+        this.bottomShadow = false;
+      } else {
+        this.bottomShadow = true;
+      }
+    }
 
   constructor(
       private dialog: MatDialog,
@@ -115,7 +125,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       public darkTheme: DarkThemeSwitch,
       private adminService: AdminService,
       private scrollPosition: ScrollPositionService,
-      private gsProgress: GettingStartedProgressService
+      private supportService: SupportService
   ) { }
 
   get headerButtonText() {
@@ -130,46 +140,20 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.loading$ = this.hallPassService.isLoadingPinnables$;
     this.loaded$ = this.hallPassService.loadedPinnables$;
     this.isLoadingArranged$ = this.hallPassService.isLoadingArranged$;
+    this.onboardLoading$ = this.adminService.loadingOnboardProcess$;
+
     this.httpService.globalReload$
       .pipe(
-        map((res) => {
-          this.pinnables$ = this.hallPassService.getPinnablesRequest();
-          return res;
-        }),
-        switchMap((res) => {
-          return combineLatest(
-            this.adminService.onboardProcessData$.pipe(filter((r: any[]) => !!r.length)),
-            this.pinnables$
-          ).pipe(
-              filter(() => navigator.onLine)
-            );
-        }),
         takeUntil(this.destroy$),
-        map(([onboard, pinnables]) => {
-          this.pinnables = pinnables;
-          if (onboard && (onboard as any[]).length && !pinnables.length) {
-            const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
-            this.showRooms = !!end.done;
-          } else {
-              const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
-              const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
-              if (!start.done) {
-                  return 'setup_rooms:start';
-              }
-              if (!end.done) {
-                  return 'setup_rooms:end';
-              }
-            this.showRooms = true;
-          }
+        tap(() => this.onboardProcess$ = this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res))),
+        switchMap((res) => {
+          return this.pinnables$ = this.hallPassService.getPinnablesRequest().pipe(
+            filter((r: Pinnable[]) => !!r.length));
         }),
-      switchMap((action) => {
-        this.onboardLoaded = true;
-        if (action) {
-          return this.gsProgress.updateProgress(action);
-        } else {
-          return of(null);
-        }
-      })).subscribe();
+        map((pinnables) => {
+          this.pinnables = pinnables;
+        }),
+      ).subscribe();
 
     this.activatedRoute.queryParams.pipe(
       filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
@@ -238,25 +222,26 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             const target = new ElementRef(evnt.currentTarget);
             let options = [];
 
-            if(this.selectedPinnables.length > 0 && this.bulkSelect){
-                options.push(this.genOption('Bulk Edit Selection', this.darkTheme.getColor(), 'edit'));
-                options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor(), 'newFolder'));
-                // options.push(this.genOption('Delete Selection','#E32C66','delete'));
-            } else{
-                options.push(this.genOption('New Room', this.darkTheme.getColor(), 'newRoom'));
-                options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
+            if(this.selectedPinnables.length > 0 && this.bulkSelect) {
+                options.push(
+                  this.genOption('Bulk Edit Selection',
+                    this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}),
+                    'edit',
+                  )
+                );
+                options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newFolder'));
+            } else {
+                options.push(this.genOption('New Room', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newRoom', this.darkTheme.getIcon({iconName: 'Room', darkFill: 'White', lightFill: 'Blue-Gray'})));
+                options.push(this.genOption('New Folder', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newFolder', this.darkTheme.getIcon({iconName: 'New Folder', darkFill: 'White', lightFill: 'Blue-Gray'})));
             }
 
             UNANIMATED_CONTAINER.next(true);
+            this.buttonMenuOpen = true;
 
             const cancelDialog = this.dialog.open(ConsentMenuComponent, {
                 panelClass: 'consent-dialog-container',
                 backdropClass: 'invis-backdrop',
-                data: {'header': '', 'options': options, 'trigger': target}
-            });
-
-            cancelDialog.afterOpen().subscribe( () => {
-                this.buttonMenuOpen = true;
+                data: {'options': options, 'trigger': target}
             });
 
             cancelDialog.afterClosed()
@@ -271,8 +256,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         }
     }
 
-    genOption(display, color, action) {
-        return {display: display, color: color, action: action};
+    genOption(display, color, action, icon?) {
+      return { display, color, action, icon };
     }
 
   selectPinnable({action, selection}) {
@@ -358,6 +343,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   dialogContainer(data, component) {
+    this.forceSelectedLocation = null;
       const overlayDialog =  this.dialog.open(component, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
@@ -368,19 +354,15 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         height: '500px',
         data: data
       });
-
-      overlayDialog.afterOpen().subscribe(() => {
-        this.forceSelectedLocation = null;
-      });
       overlayDialog.afterClosed()
-        .pipe(
-          switchMap((res) => {
-            if (res) {
-              return this.hallPassService.getPinnablesRequest()
-            }
-            return of(null);
-          }),
-        )
+        // .pipe(
+        //   switchMap((res) => {
+        //     if (res) {
+        //       return this.hallPassService.getPinnablesRequest();
+        //     }
+        //     return of(null);
+        //   }),
+        // )
         .subscribe(res => {
           this.selectedPinnables = [];
           this.bulkSelect = false;
@@ -419,10 +401,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           filter(() => navigator.onLine),
           takeUntil(this.destroy$),
           switchMap((res) => {
-            return this.gsProgress.updateProgress('setup_rooms:end').pipe(mapTo(res));
-          }),
-          take(1),
-          switchMap((res) => {
             const order = res.map((v: any) => v.id).join(',');
             return this.hallPassService.createArrangedPinnable({order});
           }),
@@ -433,13 +411,18 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         )
         .subscribe((res: Pinnable[]) => {
           this.pinnables.push(...res);
-          this.showRooms = true;
         });
       } else {
-        this.gsProgress.updateProgress('setup_rooms:end').pipe(filter(() => navigator.onLine))
-          .subscribe(() => {
-            this.showRooms = true;
-          });
-      }
+        this.showRooms = true;
+    }
+    this.adminService.updateOnboardProgressRequest('2.landing:first_room');
+  }
+
+  openChat(event) {
+    this.supportService.openChat(event);
+  }
+
+  closeChat(event) {
+    this.supportService.closeChat(event);
   }
 }

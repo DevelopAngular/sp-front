@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { HttpService } from '../../../services/http-service';
+import {FormControl, FormGroup} from '@angular/forms';
+import {HttpService} from '../../../services/http-service';
 import * as moment from 'moment';
-import { School } from '../../../models/School';
+import {School} from '../../../models/School';
 import {Subject} from 'rxjs';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../../../services/admin.service';
 
 @Component({

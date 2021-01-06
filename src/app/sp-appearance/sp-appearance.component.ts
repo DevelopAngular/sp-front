@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import {Component, OnInit} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {DarkThemeSwitch, SPTheme} from '../dark-theme-switch';
 import {StorageService} from '../services/storage.service';
 import {ScreenService} from '../services/screen.service';
@@ -49,7 +49,6 @@ export class SpAppearanceComponent implements OnInit {
 
   setSelectedTheme(evt: SPTheme) {
     this.selectedTheme = evt;
-    this.storage.setItem('dark-theme', evt);
     this.darkTheme.switchTheme(evt);
   }
 

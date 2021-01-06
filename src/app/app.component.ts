@@ -1,24 +1,23 @@
-import { HttpClient } from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter as _filter, find } from 'lodash';
-import {BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {filter as _filter, find} from 'lodash';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
-import {filter, map, mapTo, mergeMap, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
-import { BUILD_INFO_REAL } from '../build-info';
-import { DarkThemeSwitch } from './dark-theme-switch';
+import {filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {BUILD_INFO_REAL} from '../build-info';
+import {DarkThemeSwitch} from './dark-theme-switch';
 
-import { DeviceDetection } from './device-detection.helper';
-import { School } from './models/School';
-import { AdminService } from './services/admin.service';
-import { GoogleLoginService } from './services/google-login.service';
-import { HttpService, SPError } from './services/http-service';
-import { KioskModeService } from './services/kiosk-mode.service';
-import { StorageService } from './services/storage.service';
-import { UserService } from './services/user.service';
-import { WebConnectionService } from './services/web-connection.service';
-import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
+import {DeviceDetection} from './device-detection.helper';
+import {School} from './models/School';
+import {AdminService} from './services/admin.service';
+import {GoogleLoginService} from './services/google-login.service';
+import {HttpService, SPError} from './services/http-service';
+import {KioskModeService} from './services/kiosk-mode.service';
+import {StorageService} from './services/storage.service';
+import {WebConnectionService} from './services/web-connection.service';
+import {ToastConnectionComponent} from './toast-connection/toast-connection.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
 import {Meta} from '@angular/platform-browser';
@@ -28,8 +27,10 @@ import {ShortcutInput} from 'ng-keyboard-shortcuts';
 import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
 import {NextReleaseComponent, Update} from './next-release/next-release.component';
 import {User} from './models/User';
+import {UserService} from './services/user.service';
 import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
+import {ToastService} from './services/toast.service';
 
 declare const window;
 
@@ -50,8 +51,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   shortcuts: ShortcutInput[];
 
   private dialogContainer: HTMLElement;
-  @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
+  @ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
     this.dialogContainer = content.nativeElement;
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  back(event) {
+    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
+      window.history.pushState({}, '');
+    }
   }
 
   public isAuthenticated = null;
@@ -65,6 +73,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public isKioskMode: boolean;
   public showSupportButton: boolean;
   private openConnectionDialog: boolean;
+  public customToastOpen$: Observable<boolean>;
+  public hasCustomBackdrop$: Observable<boolean>;
 
   private subscriber$ = new Subject();
 
@@ -89,22 +99,30 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private googleAnalytics: GoogleAnalyticsService,
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
+    private toastService: ToastService
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
+    this.customToastOpen$ = this.toastService.isOpen$;
+    this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
+    this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        window.history.pushState({}, '');
+      }
+    });
 
     this.userService.loadedUser$
       .pipe(
         filter(l => l),
-        switchMap(l => this.userService.user$),
+        switchMap(l => this.userService.user$.pipe(take(1))),
+        filter(user => !!user),
         switchMap((user: User) => {
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
             .pipe(
               map((release: Array<Update>): Array<Update> => {
-                console.log(release);
                 return release.filter((update) => {
                   const allowUpdate: boolean = !!update.groups.find((group) => {
                     console.log(group, '-', user.roles.includes(`_profile_${group}`));
@@ -117,16 +135,33 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         filter((release: Array<Update>) => !!release.length),
         switchMap((release) => {
-          const dialogRef = this.dialog.open(NextReleaseComponent, {
-            panelClass: 'main-form-dialog-container',
-            width: '425px',
-            maxHeight: '500px',
-            data: {
-              isStudent: false,
-              isTeacher: true,
-              releaseUpdates: release
-            }
-          });
+          // release = [release[0]];
+          let config;
+          if (DeviceDetection.isMobile()) {
+            config = {
+              panelClass: 'main-form-dialog-container-mobile',
+              width: '100%',
+              maxWidth: '100%',
+              height: '100%',
+              data: {
+                isStudent: false,
+                isTeacher: true,
+                releaseUpdates: release
+              }
+            };
+          } else {
+            config = {
+              panelClass: 'main-form-dialog-container',
+              width: '425px',
+              maxHeight: '450px',
+              data: {
+                isStudent: false,
+                isTeacher: true,
+                releaseUpdates: release
+              }
+            };
+          }
+          const dialogRef = this.dialog.open(NextReleaseComponent, config);
           return dialogRef.afterClosed().pipe(
             switchMap(() => zip(
               ...release.map((update: Update) => this.nextReleaseService.dismissUpdate(update.id, DeviceDetection.platform()))
@@ -134,14 +169,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           );
         })
       )
-      .subscribe((res) => {
-        console.log(res);
-      });
+      .subscribe(console.log);
 
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
-    this.googleAnalytics.init();
+    // this.googleAnalytics.init();
     const fcm_sw = localStorage.getItem('fcm_sw_registered');
     if (fcm_sw === 'true') {
       this.notifService.initNotifications(true);
@@ -166,14 +199,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
       filter(res => !res && !this.openConnectionDialog))
       .subscribe(() => {
+        this.openConnectionDialog = true;
         const toastDialog = this.dialog.open(ToastConnectionComponent, {
           panelClass: 'toasr',
           hasBackdrop: false,
           disableClose: true
-        });
-
-        toastDialog.afterOpened().subscribe(() => {
-          this.openConnectionDialog = true;
         });
 
         toastDialog.afterClosed().subscribe(() => {

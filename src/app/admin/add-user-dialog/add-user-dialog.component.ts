@@ -1,27 +1,28 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
-import {BehaviorSubject, fromEvent, of, throwError, zip} from 'rxjs';
+import {BehaviorSubject, fromEvent, of, Subject, throwError, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, mapTo, skip, switchMap, take, takeLast, tap} from 'rxjs/operators';
-import { filter as _filter } from 'lodash';
+import {catchError, debounceTime, distinctUntilChanged, filter, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter as _filter} from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 import {AdminService} from '../../services/admin.service';
+import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-add-user-dialog',
   templateUrl: './add-user-dialog.component.html',
   styleUrls: ['./add-user-dialog.component.scss']
 })
-export class AddUserDialogComponent implements OnInit {
-  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+export class AddUserDialogComponent implements OnInit, OnDestroy {
+  @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
@@ -53,15 +54,22 @@ export class AddUserDialogComponent implements OnInit {
   public accountTypes: string[];
   public state: string;
   public accounts = [
-      { title: 'Admin', icon: 'Admin', selected: false, role: '_profile_admin', disabled: false},
-      { title: 'Teacher', icon: 'Teacher', selected: false, role: '_profile_teacher', disabled: false },
+      { title: 'Admin', icon: 'Admin', selected: true, role: '_profile_admin', disabled: false},
+      { title: 'Teacher', icon: 'Teacher', selected: true, role: '_profile_teacher', disabled: false },
       { title: 'Assistant', icon: 'Assistant', selected: false, role: '_profile_assistant', disabled: false },
       { title: 'Student', icon: 'Student', selected: false, role: '_profile_student', disabled: false }
   ];
   public title: string;
   public icon: string;
+  public userRoles: any[] = [];
+  public roleErrors: boolean;
+  public selectedUserErrors: boolean;
   private pendingSubject = new BehaviorSubject(false);
   public pending$ = this.pendingSubject.asObservable();
+  public inputFocusNumber: number = 1;
+  public forceFocus$ = new Subject();
+
+  private destroy$ = new Subject();
 
 
   constructor(
@@ -72,13 +80,14 @@ export class AddUserDialogComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private http: HttpService,
     private adminService: AdminService,
-    private router: Router
+    private router: Router,
+    private shortcuts: KeyboardShortcutsService
 
   ) {
     this.syncInfo = this.data['syncInfo'];
     this.title = this.data['title'];
     this.icon = this.data['icon'];
-    this.accountTypes = ['G_Suite', 'Standard', 'GG4L'];
+    this.accountTypes = ['G Suite', 'Standard', 'GG4L'];
     this.typeChosen = this.data['type'];
     if (this.data.role === '_profile_assistant' || this.data.role === '_all') {
       this.assistantLike = {
@@ -93,17 +102,33 @@ export class AddUserDialogComponent implements OnInit {
     return _filter(this.accounts, ['selected', true]);
   }
 
+  get isAssistant() {
+    return this.userRoles.find(acc => acc.role === 'Assistant');
+  }
+
   get showNextButton() {
-    if (this.typeChosen === this.accountTypes[0] && !this.state) {
-        return (this.data.role === '_profile_assistant' && ((this.assistantLike.user || this.newAlternativeAccount.valid))) ||
-            (this.data.role === '_all' && (this.newAlternativeAccount.valid || this.selectedUsers.length));
-    } else if (this.data.role === '_profile_assistant' && this.typeChosen === this.accountTypes[1] && !this.state) {
+    if (this.typeChosen === this.accountTypes[0]) {
+        return (this.isAssistant && ((this.assistantLike.user || this.newAlternativeAccount.valid)));
+    } else if (this.isAssistant && this.typeChosen === this.accountTypes[1]) {
       return this.newAlternativeAccount.valid;
-    } else if (this.data.role === '_all' && !this.state) {
-      return this.newAlternativeAccount.valid;
-    } else {
+    }
+    // else if (this.data.role === '_all' && !this.state) {
+    //   return this.newAlternativeAccount.valid;
+    // }
+    else {
       return false;
     }
+  }
+
+  get isAccessAdd() {
+    if (
+      this.userRoles.find(role => role.role === 'Admin') &&
+      this.userRoles.find(role => role.role === 'Teacher') ||
+      this.userRoles.find(role => role.role === 'Student'))
+    {
+      return false;
+    }
+    return true;
   }
 
   ngOnInit() {
@@ -120,6 +145,7 @@ export class AddUserDialogComponent implements OnInit {
         Validators.minLength(8)
       ]),
     });
+    this.generateUserRoles();
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
@@ -141,6 +167,44 @@ export class AddUserDialogComponent implements OnInit {
       .subscribe(() => {
         this.pendingSubject.next(false);
       });
+
+    this.shortcuts.onPressKeyEvent$
+      .pipe(
+        takeUntil(this.destroy$),
+        pluck('key')
+      )
+      .subscribe(key => {
+        if (key[0] === 'tab') {
+          if (this.inputFocusNumber < 3) {
+            this.inputFocusNumber += 1;
+          } else if (this.inputFocusNumber === 3) {
+            this.inputFocusNumber = 1;
+          }
+          this.forceFocus$.next();
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+
+  generateUserRoles() {
+    if (this.data.role === '_profile_student') {
+      this.userRoles.push({id: 1, role: 'Student', icon: './assets/Student (Navy).svg', description: 'Students can create passes, schedule passes for the future, and send pass requests to teachers.'});
+    }
+    if (this.data.role === '_profile_teacher') {
+      this.userRoles.push({id: 2, role: 'Teacher', icon: './assets/Teacher (Navy).svg', description: 'Teachers can manage passes in his/her room, see hallway activity, create passes, and more.'});
+    }
+    if (this.data.role === '_profile_admin') {
+      this.userRoles.push({id: 3, role: 'Admin', icon: './assets/Admin (Navy).svg', description: 'Admins can explore pass history, reports, manage rooms, set-up accounts, and more.'});
+    }
+    if (this.data.role === '_profile_assistant') {
+      this.userRoles.push({id: 4, role: 'Assistant', icon: './assets/Assistant (Navy).svg', description: 'Assistants can act on behalf of other teachers: manage passes, create passes, and more.'});
+    }
+
   }
 
   uniqueEmailValidator(control: FormControl) {
@@ -174,10 +238,10 @@ export class AddUserDialogComponent implements OnInit {
       if (this.data.role === '_profile_assistant' && this.state) {
           return this.assistantLike.user && this.assistantLike.behalfOf.length;
       } else if (this.data.role === '_all' && this.state) {
-        if (this.selectedRoles.length && this.selectedRoles.find(acc => acc.role === '_profile_assistant')) {
+        if (this.userRoles.length && this.isAssistant) {
           return this.assistantLike.behalfOf.length;
         } else {
-            return this.selectedUsers && this.selectedUsers.length && this.selectedRoles.length;
+            return this.selectedUsers && this.selectedUsers.length && this.userRoles.length;
         }
       } else {
           return this.selectedUsers && this.selectedUsers.length;
@@ -189,34 +253,20 @@ export class AddUserDialogComponent implements OnInit {
         if (this.data.role !== '_all') {
             return this.newAlternativeAccount.valid && this.assistantLike.behalfOf.length;
         } else {
-          if (this.selectedRoles.length && this.selectedRoles.find(acc => acc.role === '_profile_assistant')) {
+          if (this.userRoles.length && this.isAssistant) {
             return this.assistantLike.behalfOf.length;
           } else {
-              return this.selectedRoles.length;
+              return this.userRoles.length;
           }
         }
       }
     }
   }
 
-  isDisabled(role) {
-    if ((role === '_profile_assistant' || role === '_profile_student') &&
-        this.selectedRoles.find(account => account.role === '_profile_admin' || account.role === '_profile_teacher')) {
-      return true;
-    } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student') &&
-        this.selectedRoles.find(account => account.role === '_profile_assistant')) {
-      return true;
-    } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_assistant') &&
-        this.selectedRoles.find(account => account.role === '_profile_student')) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   showIncomplete() {
     if (this.typeChosen === this.accountTypes[1]) {
-      return this.newAlternativeAccount.dirty && !this.showSaveButton() && !this.showNextButton;
+      return this.newAlternativeAccount.dirty && !this.showSaveButton();
     }
   }
 
@@ -235,78 +285,99 @@ export class AddUserDialogComponent implements OnInit {
   next() {
     if (this.data.role === '_profile_assistant') {
       this.state = 'assistant';
-    } else if (this.data.role === '_all') {
-      this.state = 'selectRole';
+    }
+  }
+
+  formSetErrors() {
+    if (this.newAlternativeAccount.get('name').invalid) {
+      this.newAlternativeAccount.get('name').markAsDirty();
+      this.newAlternativeAccount.get('name').setErrors(this.newAlternativeAccount.get('name').errors);
+    }
+    if (this.newAlternativeAccount.get('addUsername').invalid) {
+      this.newAlternativeAccount.get('addUsername').markAsDirty();
+      this.newAlternativeAccount.get('addUsername').setErrors(this.newAlternativeAccount.get('addUsername').errors);
+    }
+    if (this.newAlternativeAccount.get('addPassword').invalid) {
+      this.newAlternativeAccount.get('addPassword').markAsDirty();
+      this.newAlternativeAccount.get('addPassword').setErrors(this.newAlternativeAccount.get('addPassword').errors);
+    }
+    if (!this.userRoles.length) {
+      this.roleErrors = true;
+    }
+    if (!this.selectedUsers.length) {
+      this.selectedUserErrors = true;
     }
   }
 
   addUser() {
-    const role: any = this.data.role.split('_').reverse()[0];
+    if (!this.newAlternativeAccount.invalid || this.userRoles.length) {
+      const role: any = this.data.role.split('_').reverse()[0];
 
-    of(null)
-      .pipe(
-        tap(() => this.pendingSubject.next(true)),
-        map(() => {
-          const selectedRoles = this.selectedRoles.map(acc => {
-            const oneRole = acc.role.split('_');
-            return oneRole[oneRole.length - 1];
-          });
-          return role === 'all' ? selectedRoles : [role];
-        }),
-        switchMap((rolesToDb) => {
-          if (this.typeChosen === this.accountTypes[0]) {
-            return zip(
-              ...this.selectedUsers
-                .map((user) => this.userService.addAccountRequest(this.school.id, user, 'gsuite', rolesToDb, this.data.role))
-            );
-          } else if (this.typeChosen === this.accountTypes[1]) {
+      of(null)
+        .pipe(
+          tap(() => this.pendingSubject.next(true)),
+          map(() => {
+            return this.userRoles.map(acc => {
+              return acc.role.toLowerCase();
+            });
+          }),
+          switchMap((rolesToDb) => {
+            if (this.typeChosen === this.accountTypes[0]) {
+              return zip(
+                ...this.selectedUsers
+                  .map((user) => this.userService.addAccountRequest(this.school.id, user, 'gsuite', rolesToDb, this.data.role))
+              );
+            } else if (this.typeChosen === this.accountTypes[1]) {
 
-            const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
-            const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+              const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
+              const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
 
-            if (regexpUsername.test(this.newAlternativeAccount.get('addUsername').value)) {
-              const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
-              if (role !== 'assistant') {
-                return this.userService
-                            .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
+              if (regexpUsername.test(this.newAlternativeAccount.get('addUsername').value)) {
+                const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
+                if (role !== 'assistant') {
+                  return this.userService
+                    .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
+                } else {
+                  return this.userService
+                    .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role, this.assistantLike.behalfOf);
+                }
+              } else if (regexpEmail.test(this.newAlternativeAccount.get('addUsername').value)) {
+                const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
+                if (role !== 'assistant') {
+                  return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
+                } else {
+                  return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role, this.assistantLike.behalfOf);
+                }
               } else {
-                return this.userService
-                  .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role, this.assistantLike.behalfOf);
+                throw new Error('Format Error');
               }
-            } else if (regexpEmail.test(this.newAlternativeAccount.get('addUsername').value)) {
-              const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
-              if (role !== 'assistant') {
-               return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
-              } else {
-                return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role, this.assistantLike.behalfOf);
-              }
-            } else {
-              throw new Error('Format Error');
             }
-          }
-        }),
-        catchError((err) => {
-          if (err instanceof HttpErrorResponse) {
-            this.http.errorToast$.next({
-              header: 'Format Error',
-              message: err.error.errors[0]
-            });
-          } else if (err.message === 'Format Error') {
-            this.http.errorToast$.next({
-              header: 'Format Error',
-              message: 'User name should be at least 6 symbols length.'
-            });
-          }
-          return throwError(err);
-        })
-      )
-      .subscribe((res) => {
-        this.pendingSubject.next(false);
-        this.dialogRef.close(res);
-        if (this.selectedRoles.length) {
-          this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
-        }
-      });
+          }),
+          catchError((err) => {
+            if (err instanceof HttpErrorResponse) {
+              this.http.errorToast$.next({
+                header: 'Format Error',
+                message: err.error.errors[0]
+              });
+            } else if (err.message === 'Format Error') {
+              this.http.errorToast$.next({
+                header: 'Format Error',
+                message: 'User name should be at least 6 symbols length.'
+              });
+            }
+            return throwError(err);
+          })
+        )
+        .subscribe((res) => {
+          this.pendingSubject.next(false);
+          this.dialogRef.close(res);
+          // if (this.selectedRoles.length) {
+          //   this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
+          // }
+        });
+    } else
+      this.formSetErrors();
+
   }
 
   buildUserDataToDB(control) {
@@ -324,6 +395,9 @@ export class AddUserDialogComponent implements OnInit {
         this.assistantLike.user = evt[0];
     } else {
         this.selectedUsers = evt;
+        if (this.selectedUsers.length) {
+          this.selectedUserErrors = false;
+        }
     }
     // console.log(evt);
   }
@@ -335,6 +409,13 @@ export class AddUserDialogComponent implements OnInit {
       this.assistantLike.behalfOf = evtBehalfOf;
     }
     // console.log(this.assistantLike);
+  }
+
+  selectRole(roles) {
+    this.userRoles = roles;
+    if (this.roleErrors && this.userRoles.length) {
+      this.roleErrors = false;
+    }
   }
 
   showInstructions(role) {

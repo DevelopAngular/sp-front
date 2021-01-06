@@ -1,7 +1,7 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {fromEvent, Subject} from 'rxjs';
-import {filter, switchMap, takeUntil} from 'rxjs/operators';
+import {takeUntil} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
@@ -11,7 +11,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('iconButtonRef') iconButtonRef: ElementRef;
+  @ViewChild('iconButtonRef', { static: true }) iconButtonRef: ElementRef;
 
   @Input() size: number = 25;
   @Input() onDarkShade: boolean = false;
@@ -21,6 +21,8 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() eventBubbling = false;
   @Input() blueWhite: boolean;
   @Input() hasShadow: boolean = true;
+  @Input() notificationBadge: boolean;
+  @Input() notificationCount: number;
   @Output() clickEvent: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
   hovered: boolean = false;
@@ -32,6 +34,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
     private darkTheme: DarkThemeSwitch,
     private sanitizer: DomSanitizer,
   ) {}
+
   get src() {
     let lightFill;
 

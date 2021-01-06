@@ -1,9 +1,10 @@
-import { AfterContentInit, Component } from '@angular/core';
-import { GoogleLoginService } from '../services/google-login.service';
-import { HttpService } from '../services/http-service';
+import {AfterContentInit, Component} from '@angular/core';
+import {GoogleLoginService} from '../services/google-login.service';
+import {HttpService} from '../services/http-service';
 import {environment} from '../../environments/environment';
 import {UserService} from '../services/user.service';
-import {DarkThemeSwitch} from '../dark-theme-switch';
+import {StorageService} from '../services/storage.service';
+
 declare const window;
 
 @Component({
@@ -17,13 +18,13 @@ export class SignOutComponent implements AfterContentInit {
     private http: HttpService,
     private loginService: GoogleLoginService,
     private userService: UserService,
-    private darkSwitch: DarkThemeSwitch
+    private storage: StorageService
   ) {
+    if (this.storage.getItem('authType') === 'gg4l') {
+      this.storage.setItem('gg4l_invalidate', true);
+    }
     this.http.setSchool(null);
     this.userService.clearUser();
-    if (this.darkSwitch.isEnabled$.value) {
-      this.darkSwitch.switchTheme('Light');
-    }
   }
 
   ngAfterContentInit() {

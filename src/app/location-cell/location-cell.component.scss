@@ -3,10 +3,9 @@
 .wrapper {
   cursor: pointer;
 
-  &:focus {
+  &:hover, &:focus {
     outline: none;
-    background-color: #ECF1FF !important;
-    color: $navy !important;
+    background-color: rgba(127, 135, 157, .1) !important;
   }
 }
 
@@ -16,11 +15,13 @@
 
 .info {
   font-size: 14px;
+  font-weight: 500;
   display: flex;
   flex-direction: row;
-  padding: 8px 5px;
+  padding: 11.5px 6px 11.5px 8px;
   white-space: nowrap;
-
+  align-items: center;
+  position: relative;
 }
 
 .divider{
@@ -31,23 +32,36 @@
 }
 
 .star{
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   margin-right: 5px;
 }
 
 .lock{
-  width: 15px;
-  height: 15px;
-  top: 2px;
-  position: relative;
+  width: 8.5px;
+  height: 9.5px;
+  margin-right: 6px;
 }
 
 .room{
   white-space: nowrap;
   margin-left: auto;
-  width: 55px;
+  font-weight: normal;
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  right: 7px;
+
+  .circle {
+    width: 19px;
+    height: 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-left: 7px;
+    color: #FFFFFF;
+  }
 }

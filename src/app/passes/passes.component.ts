@@ -9,40 +9,34 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import {
-  BehaviorSubject,
-  combineLatest,
-  ConnectableObservable,
-  empty, interval,
-  merge,
-  Observable,
-  of,
-  ReplaySubject, Subject,
-} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {BehaviorSubject, combineLatest, ConnectableObservable, empty, interval, merge, Observable, of, ReplaySubject, Subject,} from 'rxjs';
 import {
   filter,
-  map, pluck, publishBehavior,
+  map,
+  pluck,
+  publishBehavior,
   publishReplay,
   refCount,
   startWith,
-  switchMap, takeUntil,
+  switchMap,
+  takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
-import { CreateFormService } from '../create-hallpass-forms/create-form.service';
-import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { mergeObject } from '../live-data/helpers';
-import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
-import { exceptPasses, PassLike } from '../models';
-import { HallPass } from '../models/HallPass';
-import { testInvitations, testPasses, testRequests } from '../models/mock_data';
-import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { NotificationService } from '../services/notification-service';
-import { TimeService } from '../services/time.service';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {mergeObject} from '../live-data/helpers';
+import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
+import {exceptPasses, PassLike} from '../models';
+import {HallPass} from '../models/HallPass';
+import {testInvitations, testPasses, testRequests} from '../models/mock_data';
+import {BasicPassLikeProvider, PassLikeProvider, WrappedProvider} from '../models/providers';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {NotificationService} from '../services/notification-service';
+import {TimeService} from '../services/time.service';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NavbarDataService} from '../main/navbar-data.service';
@@ -56,6 +50,10 @@ import {NotificationButtonService} from '../services/notification-button.service
 
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
+import {HallPassesService} from '../services/hall-passes.service';
+import {SideNavService} from '../services/side-nav.service';
+import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
+import {LocationsService} from '../services/locations.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -145,7 +143,8 @@ export class InboxRequestProvider implements PassLikeProvider {
       this.isStudent = user.isStudent();
       return this.liveDataService.watchInboxRequests(user);
     }))
-      .pipe(map(req => {
+      .pipe(
+        map(req => {
         if (this.isStudent) {
           return req.filter((r) => !!r.request_time);
         }
@@ -165,10 +164,8 @@ export class InboxInvitationProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const invitations$ = this.user$.pipe(switchMap(user => this.liveDataService.watchInboxInvitations(user)),
-      map(inv => {
-        return inv;
-      }));
+    const invitations$ = this.user$.pipe(
+      switchMap(user => this.liveDataService.watchInboxInvitations(user)));
 
     return invitations$;
   }
@@ -225,6 +222,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(scrollObserver)
           )
           .subscribe((v) => {
+            console.log('Subscribe ==>>', v);
             if (v) {
               this.scrollableArea.scrollTo({top: scrollOffset});
               scrollObserver.next();
@@ -236,6 +234,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       updatePosition();
     }
   }
+
 
   testPasses: PassLikeProvider;
   testRequests: PassLikeProvider;
@@ -261,18 +260,40 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showEmptyState: Observable<boolean>;
 
+
   isOpenedModal: boolean;
   destroy$: Subject<any> = new Subject();
 
   user: User;
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
+  currentScrollPosition: number;
 
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
+  shownotificationBackdrop: boolean;
 
   public schoolsLength$: Observable<number>;
+
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    if (this.screenService.isDeviceLargeExtra) {
+      this.cursor = 'default';
+    }
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  scroll(event) {
+    this.currentScrollPosition = event.currentTarget.scrollTop;
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState() {
+    if (this.isMobile) {
+      this.navbarService.inboxClick$.next(false);
+    }
+  }
 
   showInboxAnimated() {
     return this.dataService.inboxState;
@@ -286,6 +307,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       return of(true);
     }
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   constructor(
@@ -304,8 +329,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private shortcutsService: KeyboardShortcutsService,
     private  notificationButtonService: NotificationButtonService,
-    private httpService: HttpService
-  ) {
+    private httpService: HttpService,
+    private passesService: HallPassesService,
+    private sideNavService: SideNavService,
+    private locationsService: LocationsService
+    ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -331,8 +359,19 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser
       .pipe(
-        map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
-      ).subscribe(isStudent => {
+        map(user => {
+          this.user = user;
+          this.isStaff =
+            user.roles.includes('_profile_teacher') ||
+            user.roles.includes('_profile_admin') ||
+            user.roles.includes('_profile_assistant');
+          if (this.isStaff) {
+            this.dataService.updateInbox(true);
+          }
+          return user.roles.includes('hallpass_student');
+        }) // TODO filter events to only changes.
+      )
+      .subscribe(isStudent => {
       const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
 
       if (isStudent) {
@@ -364,10 +403,45 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     )
       .subscribe(passLike => {
         this._zone.run(() => {
+          if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
+            this.scrollableArea.scrollTo({top: 0});
+          }
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
       });
+
+    merge(this.passesService.watchPassStart(), this.passesService.watchEndPass())
+      .pipe(
+        filter(() => !this.isStaff),
+        switchMap(({action, data}) => {
+          if (action === 'message.alert') {
+            const isFirstPass: boolean = data.type.includes('first_pass');
+            this.screenService.customBackdropEvent$.next(true);
+            const SPNC = this.dialog.open(StartPassNotificationComponent, {
+              id: 'startNotification',
+              panelClass: 'main-form-dialog-container',
+              backdropClass: 'notification-backdrop',
+              disableClose: true,
+              hasBackdrop: false,
+              data: {
+                title: isFirstPass ? 'Quick Reminder' : 'You didn’t end your pass last time…',
+                subtitle: 'When you come back to the room, remember to end your pass!'
+              }
+            });
+            return SPNC.afterClosed();
+          } else if (action === 'hall_pass.end') {
+            if (this.dialog.getDialogById('startNotification')) {
+              this.dialog.getDialogById('startNotification').close();
+              return of(true);
+            }
+          }
+          return of(null);
+        })
+      )
+      .subscribe(res => {
+        this.screenService.customBackdropEvent$.next(false);
+    });
   }
 
   ngOnInit() {
@@ -391,21 +465,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         } else if (key[0] === 'f') {
           this.showMainForm(true);
         }
-      });
-
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
-      .subscribe(user => {
-        this._zone.run(() => {
-          this.user = user;
-          this.isStaff =
-            user.roles.includes('_profile_teacher') ||
-            user.roles.includes('_profile_admin') ||
-            user.roles.includes('_profile_assistant');
-          if (this.isStaff) {
-            this.dataService.updateInbox(true);
-          }
-        });
       });
 
     this.inboxHasItems = combineLatest(
@@ -447,11 +506,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
     }
+
+    this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
+    this.locationsService.getFavoriteLocationsRequest();
+    this.locationsService.getPassLimitRequest();
   }
 
-  ngAfterViewInit(): void {
-
-  }
+  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
     if (this.scrollableArea && this.scrollableAreaName) {
@@ -493,10 +554,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  @HostListener('window:resize')
-  checkDeviceWidth() {
-    if (this.screenService.isDeviceLargeExtra) {
-      this.cursor = 'default';
+  passClick(event) {
+    this.passesService.isOpenPassModal$.next(true);
+  }
+
+  openSettings(value) {
+    if (value && !this.dialog.openDialogs.length) {
+      this.sideNavService.openSettingsEvent$.next(true);
     }
   }
 

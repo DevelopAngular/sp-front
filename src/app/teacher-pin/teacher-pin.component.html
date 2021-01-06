@@ -1,0 +1,37 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="back-button">
+      <app-icon-button *ngIf="!(pinData$ | async)"
+        [srcString]="'Back Button'"
+        (clickEvent)="close()"
+        [size]="28"
+        [onDarkShade]="false"
+        [blueWhite]="true"
+        [hasShadow]="false"
+      ></app-icon-button>
+      <div class="cancel" appCrossPointerEventTarget (pointerClickEvent)="close()" *ngIf="!!(pinData$ | async)">Cancel</div>
+    </div>
+    <div class="title">
+      <img [src]="'./assets/Lock dots (White).svg' | resolveAsset" [width]="23" height="23" alt="Lock">
+      <span style="margin-left: 12px">Approval Pin</span>
+    </div>
+    <app-gradient-button
+      *ngIf="!!(pinData$ | async) && form.valid"
+      class="save-button"
+      [gradient]="'#FFFFFF, #FFFFFF'"
+      [textColor]="'#12C29E'"
+      appCrossPointerEventTarget
+      (pointerClickEvent)="save()"
+    >Save
+    </app-gradient-button>
+  </div>
+  <div class="content">
+    <app-pin-input [control]="form.get('pin')" [focused]="!(userPin$ | async)" [group]="form" [value]="form.get('pin').value"></app-pin-input>
+    <div class="top-block">
+      <div class="info">
+        Pins must be 4 digits and can be changed at any time.
+      </div>
+      <div class="info" style="margin-top: 10px">Pins can be used to approve Pass Requests from a student’s device. Pins cannot be used to access any account information.</div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { BaseModel } from './base';
+import {BaseModel} from './base';
 
 export class School extends BaseModel {
     constructor(
@@ -7,14 +7,15 @@ export class School extends BaseModel {
         public  name: string,
         public my_roles: string[],
         public pass_buffer_time: number,
-        public earliest_pass_time?: string,
-        public gsuite_config?: any,
-        public gsuite_hosted_domain?: string,
-        public latest_pass_time?: string,
-        public launch_date?: string,
-        public address?: any,
-        public created?: string,
-        public display_username?: boolean
+        public earliest_pass_time: string,
+        public gsuite_config: any,
+        public gsuite_hosted_domain: string,
+        public latest_pass_time: string,
+        public launch_date: string,
+        public address: any,
+        public created: string,
+        public display_username: boolean,
+        public show_active_passes_number: boolean
     ) {
         super();
     }
@@ -37,7 +38,8 @@ export class School extends BaseModel {
             launch_date: string = JSON['launch_date'],
             address: any = JSON['address'],
             created: string = JSON['created'],
-            display_username: boolean = JSON['display_username'];
+            display_username: boolean = JSON['display_username'],
+            show_active_passes_number: boolean = JSON['show_active_passes_number'];
 
         return new School(
             display_card_room,
@@ -50,7 +52,8 @@ export class School extends BaseModel {
             launch_date,
             address,
             created,
-            display_username
+            display_username,
+            show_active_passes_number
         );
     }
 }

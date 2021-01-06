@@ -1,13 +1,13 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 
-import { fromEvent, Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import {fromEvent, Observable} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
 import {UserService} from '../../../services/user.service';
 import {OverlayDataService, Pages} from '../overlay-data.service';
 
-import { groupBy } from 'lodash';
+import {groupBy} from 'lodash';
 import * as XLSX from 'xlsx';
 
 export interface RoomInfo {
@@ -30,7 +30,7 @@ export class ImportRoomsComponent implements OnInit {
 
   @ViewChild('dropArea') dropArea: ElementRef;
 
-  @ViewChild('file') set fileRef(fileRef: ElementRef) {
+  @ViewChild('file', { static: true }) set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
       console.log(this.selectedFile);
       this.selectedFile = fileRef;

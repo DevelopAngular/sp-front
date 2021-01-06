@@ -1,8 +1,6 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-sort-menu',

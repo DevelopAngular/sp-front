@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Pinnable } from '../../models/Pinnable';
-import { MatDialog } from '@angular/material';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Pinnable} from '../../models/Pinnable';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject} from 'rxjs';
-import { DarkThemeSwitch } from '../../dark-theme-switch';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DragulaService} from 'ng2-dragula';
 

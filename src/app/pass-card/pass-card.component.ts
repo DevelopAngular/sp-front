@@ -1,27 +1,23 @@
-import { Component, EventEmitter, Input, OnInit, Output, ElementRef, NgZone, OnDestroy } from '@angular/core';
-import { User } from '../models/User';
-import { HallPass} from '../models/HallPass';
-import { Util } from '../../Util';
-import { MatDialogRef, MatDialog } from '@angular/material';
-import { MAT_DIALOG_DATA } from '@angular/material';
-import { Inject } from '@angular/core';
-import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
-import {RequestCardComponent} from '../request-card/request-card.component';
-import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
-import {BehaviorSubject, interval, merge, Observable, of, Subject, Subscription} from 'rxjs';
+import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
+import {User} from '../models/User';
+import {HallPass} from '../models/HallPass';
+import {Util} from '../../Util';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {DataService} from '../services/data-service';
+import {LoadingService} from '../services/loading.service';
+import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {map, pluck, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, interval, merge, Observable, of, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {HallPassesService} from '../services/hall-passes.service';
-import { TimeService } from '../services/time.service';
+import {TimeService} from '../services/time.service';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-pass-card',
@@ -128,9 +124,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
     return this.pass.student.primary_email.split('@', 1)[0];
   }
 
-  get startTime(){
-    let s:Date = this.pass['start_time'];
-    return Util.formatDateTime(s);
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   get closeIcon(){
@@ -298,22 +293,27 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
 
     if (this.forFuture) {
+        body['issuer_message'] = this.pass.issuer_message;
         body['start_time'] = this.pass.start_time.toISOString();
     }
     if (this.forKioskMode) {
         body['self_issued'] = true;
     }
      const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
-      getRequest$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      getRequest$.pipe(
+        // switchMap(() => this.hallPassService.startPushNotification()),
+        takeUntil(this.destroy$)
+      )
+        .subscribe((data) => {
         this.performingAction = true;
         this.dialogRef.close();
       });
   }
 
   cancelEdit(evt: MouseEvent) {
-    if (this.screenService.isDeviceMid) {
-      this.cancelEditClick = !this.cancelEditClick;
-    }
+    // if (this.screenService.isDeviceMid) {
+    //   this.cancelEditClick = !this.cancelEditClick;
+    // }
 
     if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
@@ -330,61 +330,24 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.header = '';
       } else{
         if (this.forInput) {
-          if (this.isSeen) {
-
             this.formState.step = 3;
               this.formState.previousStep = 4;
               this.formService.setFrameMotionDirection('disable');
               this.cardEvent.emit(this.formState);
-          } else {
-            // this.dialogRef.close();
-            // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-            // const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-            //     width: '750px',
-            //     panelClass: 'form-dialog-container',
-            //     backdropClass: 'custom-backdrop',
-            //     data: {
-            //         'toIcon': isCategory ? this.pass.icon : null,
-            //         'toProfile': this.pass.color_profile,
-            //         'toCategory': isCategory ? this.pass.destination.category : null,
-            //         'fromLocation': this.pass.origin,
-            //         'fromHistory': this.fromHistory,
-            //         'fromHistoryIndex': this.fromHistoryIndex,
-            //         'colorProfile': this.pass.color_profile,
-            //         'forLater': this.forFuture,
-            //         'forStaff': this.forStaff,
-            //         'selectedStudents': this.selectedStudents,
-            //         'requestTime': this.pass.start_time
-            //     }
-            // });
-            // dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
-            //         this.openInputCard(result['templatePass'],
-            //             result['forLater'],
-            //             result['forStaff'],
-            //             result['selectedStudents'],
-            //             (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-            //             result['fromHistory'],
-            //             result['fromHistoryIndex']
-            //         );
-            //     });
-          }
             return false;
         } else if(this.forFuture){
-          this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
+          this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete', './assets/Delete (Red).svg'));
           this.header = 'Are you sure you want to delete this scheduled pass?';
         }
       }
 
-      if (!this.screenService.isDeviceMid) {
+      // if (!this.screenService.isDeviceMid) {
         UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: {'header': this.header, 'options': this.options, 'trigger': target}
-        });
-
-        cancelDialog.afterOpen().subscribe( () => {
-          this.cancelOpen = true;
         });
 
         cancelDialog.afterClosed()
@@ -394,7 +357,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
           .subscribe(action => {
           this.chooseAction(action);
         });
-      }
+      // }
 
     }
   }
@@ -422,28 +385,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       });
   }
 
-  genOption(display, color, action) {
-    return {display: display, color: color, action: action};
+  genOption(display, color, action, icon?) {
+    return {display: display, color: color, action: action, icon};
   }
-
-    openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-        let data = {
-            'pass': templatePass,
-            'fromPast': false,
-            'fromHistory': fromHistory,
-            'fromHistoryIndex': fromHistoryIndex,
-            'forFuture': forLater,
-            'forInput': true,
-            'forStaff': forStaff,
-            'selectedStudents': selectedStudents,
-        };
-        this.dialog.open(component, {
-            panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-            backdropClass: 'custom-backdrop',
-            disableClose: true,
-            data: data
-        });
-    }
 
   cancelClick() {
     this.cancelEditClick = false;

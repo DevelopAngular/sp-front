@@ -1,5 +1,8 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {DeviceDetection} from '../device-detection.helper';
+
+import * as moment from 'moment';
 
 export interface Update {
   id: number; // 136
@@ -25,7 +28,7 @@ export interface Update {
   styleUrls: ['./next-release.component.scss']
 })
 export class NextReleaseComponent implements OnInit {
-  @ViewChild('stickHeader') stickHeader: ElementRef<any>;
+  @ViewChild('stickHeader', { static: true }) stickHeader: ElementRef<any>;
 
   public whatsNewItems;
 
@@ -33,6 +36,10 @@ export class NextReleaseComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) private data: any,
     private dialogRef: MatDialogRef<NextReleaseComponent>,
   ) { }
+
+  get isMobile(): boolean {
+    return DeviceDetection.isMobile();
+  }
 
   itemBackgroundColor(item: Update) {
     switch (item.update_type) {
@@ -58,5 +65,13 @@ export class NextReleaseComponent implements OnInit {
 
   markAsSeen() {
     this.dialogRef.close();
+  }
+
+  formattedDate(date) {
+    if (Math.abs(moment(date).diff(moment(), 'days')) > 13) {
+      return moment(date).format('MMMM DD, YYYY');
+    } else {
+      return Math.abs(moment(date).diff(moment(), 'day')) + ' days ago';
+    }
   }
 }

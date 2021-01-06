@@ -1,4 +1,4 @@
-import { adapter } from '../reducers';
+import {adapter} from '../reducers';
 import {getAccountsState, IAccountsState} from '../../../states';
 import {createSelector} from '@ngrx/store';
 import {AllAccountsState} from './all-accounts.state';
@@ -29,5 +29,5 @@ export const getLastAddedAllAccounts = createSelector(
 );
 
 export const getCountAllAccounts = adapter.getSelectors(getAllAccountsProfiles).selectTotal;
-
+export const getAllAccountsEntities = adapter.getSelectors(getAllAccountsProfiles).selectEntities;
 export const getAllAccountsCollection = adapter.getSelectors(getAllAccountsProfiles).selectAll;

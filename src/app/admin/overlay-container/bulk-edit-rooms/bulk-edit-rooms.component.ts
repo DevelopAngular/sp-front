@@ -1,13 +1,13 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import {FormGroup} from '@angular/forms';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 
-import { Pinnable } from '../../../models/Pinnable';
-import { Location } from '../../../models/Location';
-import { LocationsService } from '../../../services/locations.service';
+import {Pinnable} from '../../../models/Pinnable';
+import {Location} from '../../../models/Location';
+import {LocationsService} from '../../../services/locations.service';
 import {OverlayDataService, RoomData} from '../overlay-data.service';
-import { ValidButtons } from '../advanced-options/advanced-options.component';
-import { isNull } from 'lodash';
+import {ValidButtons} from '../advanced-options/advanced-options.component';
+import {isNull} from 'lodash';
 
 @Component({
   selector: 'app-bulk-edit-rooms',
@@ -17,6 +17,10 @@ import { isNull } from 'lodash';
 export class BulkEditRoomsComponent implements OnInit {
 
   @Input() form: FormGroup;
+
+  @Input() passLimitForm: FormGroup;
+
+  @Input() showErrors: boolean;
 
   @Output()
   bulkEditResult: EventEmitter<{

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as adminsActions from '../actions';
-import {catchError, concatMap, filter, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../../../services/user.service';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
@@ -34,7 +34,7 @@ export class AdminsEffects {
         concatMap(action => {
           return this.userService.nextRequests$._profile_admin.pipe(take(1));
         }),
-        filter(res => !!res),
+        // filter(res => !!res),
         switchMap(next => this.http.get(next)
           .pipe(
             map((users: any) => {
@@ -121,6 +121,25 @@ export class AdminsEffects {
                 return adminsActions.updateAdminPermissionsSuccess({profile});
               }),
               catchError(error => of(adminsActions.updateAdminPermissionsFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  addUserToAdminProfile$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(adminsActions.addUserToAdminProfile),
+        concatMap((action: any) => {
+          return this.userService.addUserToProfile(action.user.id, action.role)
+            .pipe(
+              switchMap((user: User) => {
+                return [
+                  adminsActions.updateAdminAccount({profile: user}),
+                  adminsActions.addUserToAdminProfileSuccess({admin: user})
+                ];
+              }),
+              catchError(error => of(adminsActions.addUserToAdminProfileFailure({errorMessage: error.message})))
             );
         })
       );

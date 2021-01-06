@@ -1,15 +1,15 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
+import {FormControl, FormGroup} from '@angular/forms';
+import {MatDialogRef} from '@angular/material/dialog';
 
 import {map, switchMap, takeUntil} from 'rxjs/operators';
-import { forkJoin, fromEvent, MonoTypeOperatorFunction, of, Subject, zip } from 'rxjs';
-import { differenceBy } from 'lodash';
-import * as XLSX from 'xlsx';
+import {forkJoin, fromEvent, MonoTypeOperatorFunction, of, Subject, zip} from 'rxjs';
+import {differenceBy} from 'lodash';
 
-import { UserService } from '../../../services/user.service';
+import {UserService} from '../../../services/user.service';
 import {HttpService} from '../../../services/http-service';
 import {XlsxService} from '../../../services/xlsx.service';
+import {AdminService} from '../../../services/admin.service';
 
 export interface ImportAccount {
   id: string;
@@ -21,6 +21,7 @@ export interface ImportAccount {
   existsEmail?: boolean;
   invalidEmail?: boolean;
   invalidType?: boolean;
+  invalidPassword?: boolean;
 }
 
 export function validationAccounts<T>(userService): MonoTypeOperatorFunction<ImportAccount[]> {
@@ -39,14 +40,17 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
     }),
     map(({users, isValidEmail}: {users: ImportAccount[], isValidEmail: {exists: boolean}[]}) => {
       return users.map((user, index) => {
+        const regExpPassword = new RegExp('[a-z][0-9]+');
         return {
           ...user,
           existsEmail: isValidEmail[index].exists,
           invalidEmail: !user.primary_email,
+          invalidPassword: !regExpPassword.test(user.password),
           invalidType: !user.type ||
             (user.type.toLowerCase() !== 'admin' &&
             user.type.toLowerCase() !== 'teacher' &&
-            user.type.toLowerCase() !== 'student')
+            user.type.toLowerCase() !== 'student' &&
+            user.type.toLowerCase() !== 'assistant')
         };
       });
     })
@@ -61,7 +65,7 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
 export class BulkAddComponent implements OnInit, OnDestroy {
 
   @ViewChild('dropArea') dropArea: ElementRef;
-  @ViewChild('file') set fileRef(fileRef: ElementRef) {
+  @ViewChild('file', { static: true }) set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
       this.selectedFile = fileRef;
       fromEvent(this.selectedFile.nativeElement , 'change')
@@ -111,7 +115,8 @@ export class BulkAddComponent implements OnInit, OnDestroy {
     private userService: UserService,
     public dialogRef: MatDialogRef<BulkAddComponent>,
     private http: HttpService,
-    private xlsxService: XlsxService
+    private xlsxService: XlsxService,
+    private adminService: AdminService
   ) {}
 
   ngOnInit() {
@@ -154,7 +159,7 @@ export class BulkAddComponent implements OnInit, OnDestroy {
       this.uploadingProgress.inProgress = false;
       this.uploadingProgress.completed = true;
     }, 1500);
-    this.invalidAccounts = users.filter(user => user.existsEmail || user.invalidEmail || user.invalidType);
+    this.invalidAccounts = users.filter(user => user.existsEmail || user.invalidEmail || user.invalidType || user.invalidPassword);
     this.importAccounts = users;
     this.validAccountsToDb = differenceBy(this.importAccounts, this.invalidAccounts, 'id');
   }
@@ -176,7 +181,7 @@ export class BulkAddComponent implements OnInit, OnDestroy {
     return rows.map((row, index) => {
       return {
         id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
-        type: row[0] ? ('' + row[0]).trim() : null,
+        type: row[0] ? ('' + row[0]).toLowerCase().trim() : null,
         first_name: row[1] ? ('' + row[1]).trim() : null,
         last_name: row[2] ? ('' + row[2]).trim() : null,
         primary_email: row[3] ? ('' + row[3]).trim() : null,
@@ -223,21 +228,39 @@ export class BulkAddComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    const requests$ = this.validAccountsToDb.map(user => {
-      const emailExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-      const userData: any = {
-        password: user.password,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.primary_email,
-        display_name: `${user.first_name} ${user.last_name}`
-      };
-      const userType = emailExp.test(user.primary_email) ? 'email' : 'username';
-      return this.userService.addAccountRequest(this.http.getSchool().id, userData, userType, [user.type.toLowerCase()], `_profile_${user.type.toLowerCase()}`);
+    const accounts = this.validAccountsToDb.map(user => {
+      const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
+      const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+      let userData = {};
+      if (regexpEmail.test(user.primary_email)) {
+        userData = {
+          password: user.password,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.primary_email,
+          profiles: [user.type]
+        };
+      } else if (regexpUsername.test(user.primary_email)) {
+        userData = {
+          password: user.password,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          username: user.primary_email,
+          profiles: [user.type]
+        };
+      }
+      return userData;
+      // const userType = emailExp.test(user.primary_email) ? 'email' : 'username';
+      // return this.userService.addAccountRequest(this.http.getSchool().id, userData, userType, [user.type.toLowerCase()], `_profile_${user.type.toLowerCase()}`);
     });
-    zip(...requests$).subscribe(res => {
-      console.log(res);
+    this.userService.addBulkAccountsRequest(accounts)
+      .subscribe(res => {
+        this.adminService.updateOnboardProgressRequest('2.landing:first_account');
+        this.dialogRef.close();
     });
+    // zip(...requests$).subscribe(res => {
+    //   console.log(res);
+    // });
   }
 
 }

@@ -7,6 +7,9 @@
       (closeEvent)="errorToastTrigger.next(null)"
     ></app-error-toast>
   </div>
+  <div *ngIf="customToastOpen$ | async">
+    <app-custom-toast></app-custom-toast>
+  </div>
 
   <app-school-toggle-bar
     *ngIf="isAuthenticated && ( schools && schools.length > 1 ) && !hideSchoolToggleBar && !isKioskMode"
@@ -17,6 +20,7 @@
   <div class="router-outlet">
     <router-outlet></router-outlet>
   </div>
+  <div class="notification-backdrop" *ngIf="hasCustomBackdrop$ | async"></div>
 </div>
 
 <div #dialogContainer [@.disabled]="true"></div>

@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 
-import {combineLatest, BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import { UserService } from '../../services/user.service';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {delay, filter, map, skip, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
@@ -45,12 +45,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.schoolsLength$ = this.httpService.schoolsLength$;
-    this.httpService.globalReload$
-      .pipe(
-        switchMap(() => {
-          return this.adminService.getOnboardProcessRequest();
-        })
-      ).subscribe();
 
     this.adminPageReload$.pipe(
       takeUntil(this.destroy$),

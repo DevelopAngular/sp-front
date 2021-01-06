@@ -1,8 +1,9 @@
-import { Injectable, NgZone } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
-import { UserService } from '../services/user.service';
-import { map } from 'rxjs/operators';
+import {Injectable, NgZone} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {Observable} from 'rxjs';
+import {UserService} from '../services/user.service';
+import {map} from 'rxjs/operators';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class IsAdminGuard implements CanActivate {
       return this.userService.userData
             .pipe(
               map(u => {
-                if (!u.isAdmin()) {
+                if (!u.isAdmin() || (u.isAdmin() && u.isTeacher() && DeviceDetection.isMobile())) {
                   this._zone.run(() => {
                     this.router.navigate(['main/passes']);
                   });

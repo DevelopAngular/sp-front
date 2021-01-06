@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
@@ -16,7 +16,7 @@ import {NavbarElementsRefsService} from '../services/navbar-elements-refs.servic
 })
 export class SchoolToggleBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('schoolToggle') schoolToggle: ElementRef;
+  @ViewChild('schoolToggle', { static: true }) schoolToggle: ElementRef;
 
   @Input() schools: School[];
 

@@ -44,7 +44,9 @@
   }
 
   .profile-content {
-    height: 370px;
+    height: 430px;
+    overflow: auto;
+    padding-bottom: 15px;
 
     .page-1 {
       position: relative;

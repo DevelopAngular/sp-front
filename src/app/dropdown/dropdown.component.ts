@@ -1,14 +1,7 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  Inject,
-  ViewChild,
-  Renderer2, ViewChildren, QueryList
-} from '@angular/core';
-import { Location } from '../models/Location';
-import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { School } from '../models/School';
+import {Component, ElementRef, Inject, OnInit, QueryList, Renderer2, ViewChild, ViewChildren} from '@angular/core';
+import {Location} from '../models/Location';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
+import {School} from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -31,15 +24,17 @@ export class DropdownComponent implements OnInit {
   user: User;
   heading: string = '';
   locations: Location[];
-  schools: School[];
-  teachers: RepresentedUser[];
   selectedLocation: Location;
+  schools: School[];
   selectedSchool: School;
+  teachers: RepresentedUser[];
   selectedTeacher: RepresentedUser;
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
   scrollPosition: number;
   findElement: ElementRef;
+  sortData: any[];
+  selectedSort: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -58,14 +53,15 @@ export class DropdownComponent implements OnInit {
     this.selectedTeacher = data['selectedTeacher'];
     this.user = data['user'];
     this.scrollPosition = data['scrollPosition'];
-
+    this.sortData = data['sortData'];
+    this.selectedSort = data['selectedSort'] || '';
   }
 
   ngOnInit() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
-    matDialogConfig.width = this.teachers ? '305px' : '350px';
-    matDialogConfig.height = this.teachers ? '180px' : '215px';
+    matDialogConfig.width = !!this.sortData ? '250px' : '300px';
+    // matDialogConfig.height = this.teachers ? '180px' : '215px';
     matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);

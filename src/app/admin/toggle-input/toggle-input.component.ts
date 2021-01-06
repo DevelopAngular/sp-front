@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Input, Output, OnInit, ViewChild, ElementRef, NgZone} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import { Observable, fromEvent } from 'rxjs';
-import {startWith} from 'rxjs/operators';
+import {fromEvent, Observable} from 'rxjs';
 
+export type ToggleInputSize = 'small' | 'regular' | 'large' | 'smallest';
 
 @Component({
   selector: 'app-toggle-input',
@@ -14,10 +14,14 @@ export class ToggleInputComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() controlName: string;
   @Input() controlLabel: string;
-  @Input() controlSize: string = 'regular'; // Can be small, regular or large ;
+  @Input() controlSize: ToggleInputSize = 'regular';
   @Input() disabled: boolean = false;
   @Input() delimiter: boolean = true;
   @Input() mock: boolean = false;
+  @Input() color: string = '#00B476';
+  @Input() icon: string = './assets/Hand (Jade).svg';
+  @Input() hasIcon: boolean = false;
+  @Input() padding: string = '8px 0 9px 0';
 
   @ViewChild('inp') set inputField(inputField: ElementRef) {
     this.inp = inputField;
@@ -37,6 +41,7 @@ export class ToggleInputComponent implements OnInit {
   constructor(
     private _zone: NgZone
   ) {}
+
   ngOnInit() {
 
     this._zone.run(() => {
@@ -46,6 +51,9 @@ export class ToggleInputComponent implements OnInit {
           break;
         case 'large':
           this.sizedLayout['checkbox-container__large'] = true;
+          break;
+        case 'smallest':
+          this.sizedLayout['checkbox-container__smallest'] = true;
           break;
         default:
           this.sizedLayout['checkbox-container__regular'] = true;

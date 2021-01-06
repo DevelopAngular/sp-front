@@ -1,66 +1,66 @@
 <div class="wrapper">
   <div class="accounts-header" [style.background-color]="darkTheme.getBackground('high', true)">
+    <div class="selected" *ngIf="selectedUsers.length">
+      <div class="selected-content">
+        <div class="count">
+          {{ selectedUsers.length }} Selected account{{selectedUsers.length === 0 || selectedUsers.length > 1 ? 's' : ''}}
+        </div>
+        <div class="buttons">
+          <app-gradient-button [size]="'medium'" [style.margin-right]="'13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openStatusPopup($event)">Edit Status</app-gradient-button>
+          <app-gradient-button *ngIf="currentTab !== '_profile_student'" [size]="'medium'" [style.margin-right]="'13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openPermissions($event)">Edit Permissions</app-gradient-button>
+          <app-gradient-button [size]="'medium'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="clearData()">Done</app-gradient-button>
+        </div>
+      </div>
+
+    </div>
 
     <div class="header-content">
       <div [ngSwitch]="currentTab">
         <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
-          <span *ngSwitchCase="''">Accounts</span>
-          <span *ngSwitchCase="'_profile_admin'">Admins</span>
-          <span *ngSwitchCase="'_profile_teacher'">Teachers</span>
-          <span *ngSwitchCase="'_profile_student'">Students</span>
-          <span *ngSwitchCase="'_profile_assistant'">Assistants</span>
-          <div class="count">
-            <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
-              <span *ngSwitchCase="''">{{ (accounts$ | async).total_count }}</span>
-              <span *ngSwitchCase="'_profile_admin'">{{ (accounts$ | async).admin_count }}</span>
-              <span *ngSwitchCase="'_profile_teacher'">{{ (accounts$ | async).teacher_count }}</span>
-              <span *ngSwitchCase="'_profile_student'">{{ (accounts$ | async).student_count }}</span>
-              <span *ngSwitchCase="'_profile_assistant'">{{ (accounts$ | async).assistant_count }}</span>
-              accounts
-            </div>
-          </div>
+<!--          <span *ngSwitchCase="''">Accounts</span>-->
+<!--          <span *ngSwitchCase="'_profile_admin'">Admins</span>-->
+<!--          <span *ngSwitchCase="'_profile_teacher'">Teachers</span>-->
+<!--          <span *ngSwitchCase="'_profile_student'">Students</span>-->
+<!--          <span *ngSwitchCase="'_profile_assistant'">Assistants</span>-->
+          <span>Accounts</span>
+<!--          <div class="count" *ngIf="accounts$ | async as accounts">-->
+<!--            <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">-->
+<!--              <span *ngSwitchCase="''">{{ accounts.total_count }}</span>-->
+<!--              <span *ngSwitchCase="'_profile_admin'">{{ accounts.admin_count }}</span>-->
+<!--              <span *ngSwitchCase="'_profile_teacher'">{{ accounts.teacher_count }}</span>-->
+<!--              <span *ngSwitchCase="'_profile_student'">{{ accounts.student_count }}</span>-->
+<!--              <span *ngSwitchCase="'_profile_assistant'">{{ accounts.assistant_count }}</span>-->
+<!--              accounts-->
+<!--            </div>-->
+<!--          </div>-->
         </div>
       </div>
 
       <div class="header-buttons">
         <div class="ds-mx-10" *ngIf="currentTab !== ''">
           <app-round-input
-            [minWidth]="'230px'"
-            [width]="'230px'"
+            [minWidth]="'240px'"
+            [width]="'240px'"
             [type]="'text'"
             [pending$]="pending$"
-            [placeholder]="'Search'"
+            [closeIcon]="true"
+            [focused]="true"
+            [forceFocused$]="forceFocus$"
+            [placeholder]="'Search ' + getCountAccounts(accounts$ | async)"
             (ontextupdate)="search($event)"
             [isSearch]="true">
           </app-round-input>
         </div>
+
         <app-gradient-button
-          *ngIf="openTable && tableState"
-           [size]="'small'"
-           [disabled]="!selectedUsers.length"
-           [cursor]="'pointer'"
-           [fontSize]="'14px'"
-           [minHeight]="'50px'"
-           [gradient]="'#DA2370, #FB434A'"
-           [hoverColor]="'#DA2370'"
-           (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')"
-        >
-          <span>Delete Account & Data</span>
-        </app-gradient-button>
-        <app-gradient-button
-          *ngIf="openTable"
-           [style.margin-left]="'15px'"
-           [size]="'medium'"
-           [cursor]="'pointer'"
-           [gradient]="'#F4F4F4, #F4F4F4'"
-           [hoverColor]="'#F4F4F4'"
-           [textColor]="'#1F194E'"
-           (buttonClick)="editTableState()"
-        >
-          <div class="ds-flex-center-center">
-            <span>{{(!tableState ? 'Edit' : 'Done' )}}</span>
-          </div>
-        </app-gradient-button>
+          [style.margin-left]="'15px'"
+          [gradient]="'#F4F4F4, #F4F4F4'"
+          [leftIcon]="'./assets/Integrations (Navy).svg'"
+          [size]="'medium'"
+          [cursor]="'pointer'"
+          [textColor]="'#1F194E'"
+          (buttonClick)="openIntegrations()"
+        >Integrations</app-gradient-button>
 
         <app-gradient-button
           [style.margin-left]="'15px'"
@@ -73,18 +73,10 @@
           Add
         </app-gradient-button>
 
-<!--        <div class="go-accounts" (click)="tableTrigger()">-->
-<!--          <img-->
-<!--            draggable="false"-->
-<!--            width="16"-->
-<!--            height="16"-->
-<!--            [src]="(openTable ? './assets/Chevron Down (Jade).svg' : './assets/Chevron Right (Blue-Gray).svg')"-->
-<!--            alt="Chevron">-->
-<!--        </div>-->
       </div>
     </div>
-
-    <div class="tabs" #navButtonsContainer>
+    <mat-divider></mat-divider>
+    <div class="tabs" #navButtonsContainer *ngIf="showTabs">
       <div
         class="tab"
         #tabRef
@@ -99,10 +91,10 @@
           [title]="tab.title"
           [icon_url]="tab.icon_id"
           [selected]="currentTab === tab.param"
-          (buttonClick)="updateTab(tab.param); selectTab(tabRef, navButtonsContainer)"
+          (buttonClick)="updateTab(tab.param); this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);"
         ></app-tab-button>
       </div>
-      <div class="selected-tab-pointer" #tabPointer [style.left]="pts"></div>
+      <div class="selected-tab-pointer" #tabPointer [style.left]="pts" [style.background-color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})"></div>
     </div>
 
   </div>

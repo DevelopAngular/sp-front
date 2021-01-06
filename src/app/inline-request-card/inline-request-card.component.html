@@ -12,13 +12,15 @@
                     </div>
                 </div>
             </div>
-            <app-icon-button [size]="20" [onDarkShade]="true" [srcString]="'./assets/Delete (Transparent).svg'" (clickEvent)="cancelRequest($event)"></app-icon-button>
-            <!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
+            <app-icon-button *ngIf="!activeTeacherPin" [size]="20" [onDarkShade]="true" [srcString]="'./assets/Delete (Transparent).svg'" (clickEvent)="cancelRequest($event)"></app-icon-button>
+            <app-icon-button *ngIf="activeTeacherPin" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="activeTeacherPin = false"></app-icon-button>
+
+          <!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
         </div>
         <mat-divider></mat-divider>
     </div>
 
-    <div class="inline-request-content">
+    <div class="inline-request-content" *ngIf="!activeTeacherPin">
         <div class="center-block">
 
             <app-pager [arrowPosition]="'-93px'">
@@ -75,21 +77,39 @@
 
         </div>
 
-        <mat-divider *ngIf="hasDivider"></mat-divider>
+        <mat-divider *ngIf="false"></mat-divider>
 
         <div class="bottom-block">
-            <div class="request-description" *ngIf="hasDivider">
-                <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
-                <div class="request-description-text">
-                    Pass Request Sent to: <br>
-                    <span style="font-size: 17px; font-weight: normal" *ngFor="let teacher of filteredTeachers; let i = index">
-                        {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
-                    </span>
+          <div class="pin-button" *ngIf="request?.status !=='declined'" (mouseenter)="onHover(desc, title);"
+               (mouseleave)="onLeave(desc)">
+            <app-card-button
+              [width]="'297px'"
+              [height]="'81px'"
+              [gradientColor]="request.color_profile.gradient_color"
+              (onClick)="activeTeacherPin = true"
+            >
+              <div class="resend-button-content">
+                <div class="resend-button-content-title" style="display: flex; align-items: center; padding-bottom: 5px">
+                  <img style="margin-right: 10px" width="18" height="18" [src]="'./assets/Lock dots (White).svg' | resolveAsset" alt="Lock">
+                  Enter Teacher Pin
                 </div>
-            </div>
+                <div class="description-container" #title>
+                  <div class="shadow left-radius" [ngStyle]="{'box-shadow': '0px 0px 17px 10px ' + solidColorRgba2}" [style.background]="request.gradient_color.split(',')[1]" [style.left]="0" *ngIf="leftTextShadow"></div>
+                  <div class="description-title" #desc>
+                    Pass Request sent to:
+                    <span style="width: 5px"></span>
+                    <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                    {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
+                  </span>
+                  </div>
+                  <div class="shadow right-radius" [ngStyle]="{'box-shadow': '0px 0px 30px 20px ' + solidColorRgba}" [style.background]="request.gradient_color.split(',')[0]" *ngIf="!removeShadow" [style.right]="0"></div>
+                </div>
+              </div>
+            </app-card-button>
+          </div>
 
             <div *ngIf="request?.status==='declined'">
-                <app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'112px'" [gradientColor]="request?.color_profile.gradient_color">
+                <app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'81px'" [gradientColor]="request?.color_profile.gradient_color">
                     <div class="resend-button-content">
                         <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
                         <div class="resend-button-content-subtitle">Pass Request Denied</div>
@@ -99,6 +119,10 @@
 
         </div>
     </div>
+
+  <div class="inline-request-content" *ngIf="activeTeacherPin">
+    <app-teacher-pin-student [requestId]="request.id"></app-teacher-pin-student>
+  </div>
 </div>
 
 <app-consent-menu-mobile

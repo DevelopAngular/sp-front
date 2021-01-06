@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup} from '@angular/forms';
 import {StorageService} from '../../services/storage.service';
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
@@ -69,10 +69,10 @@ export class ColumnsConfigDialogComponent implements OnInit {
   updatePosition() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
-    console.log( rect, this.triggerElementRef);
+    // console.log( rect, this.triggerElementRef);
 
     matDialogConfig.position = { left: `${rect.left + rect.width - 225}px`, top: `${rect.bottom + 20}px` };
-    console.log(matDialogConfig.position);
+    // console.log(matDialogConfig.position);
 
     matDialogConfig.width = '245px';
     this._matDialogRef.updateSize(matDialogConfig.width, 'auto');

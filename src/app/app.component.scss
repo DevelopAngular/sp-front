@@ -4,6 +4,7 @@
   flex-direction: column;
   background-color: #FBFEFF;
   overflow: hidden;
+  position: relative;
   .router-outlet {
     height: 100%;
   }
@@ -19,4 +20,10 @@
 
 ::ng-deep #hubspot-messages-iframe-container {
   z-index: 1 !important;
+  opacity: 0 !important;
+  //right: -1000px !important;
 }
+
+//::ng-deep .Application__WidgetAppContainer-sc-1i6h88-0 {
+//  opacity: 0 !important;
+//}

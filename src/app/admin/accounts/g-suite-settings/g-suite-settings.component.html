@@ -1,0 +1,15 @@
+<div class="wrapper">
+  <div class="info" *ngIf="!(gSuiteInfo$ | async).is_enabled; else settings">
+    <app-g-suite-info></app-g-suite-info>
+  </div>
+  <ng-template #settings>
+    <div class="settings">
+      <div *ngIf="!isEditMode" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+        <app-g-suite-set-up (openEditMode)="nextPage()" [gSuiteInfo]="gSuiteInfo$ | async"></app-g-suite-set-up>
+      </div>
+      <div *ngIf="isEditMode" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+        <app-g-suite-account-link [gSuiteInfo]="gSuiteInfo$ | async" (back)="back()"></app-g-suite-account-link>
+      </div>
+    </div>
+  </ng-template>
+</div>

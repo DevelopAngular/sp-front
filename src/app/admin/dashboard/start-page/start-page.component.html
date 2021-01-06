@@ -1,0 +1,22 @@
+<div class="wrapper">
+  <div class="content">
+    <div class="poster">
+      Your hallways will <br/> <span style="color: #00B476">never be the same.</span>
+    </div>
+    <div class="description">Getting your school up and running with SmartPass is easy. Follow these steps and schedule a call if you need help.</div>
+
+    <div class="cards">
+      <div class="card" *ngFor="let card of cards">
+        <app-start-card
+          *ngIf="!onboardProcess[card.onboardName].done"
+          [title]="card.title"
+          [subtitle]="card.subtitle"
+          [buttonText]="card.buttonText"
+          [buttonIcon]="card.buttonIcon"
+          (onClick)="redirectTo(card)"
+          (close)="removeCard(card)"
+        ></app-start-card>
+      </div>
+    </div>
+  </div>
+</div>
