@@ -238,10 +238,18 @@ export class AdminService {
     this.store.dispatch(updateCleverInfo({cleverInfo}));
   }
 
-  exportCsvPasses(queryParams) {
-    const url = isObject(queryParams) ?
-      constructUrl('v1/admin/export/hall_passes', {...queryParams}) :
-      'v1/admin/export/hall_passes?' + queryParams;
+  exportCsvPasses(queryParams: object) {
+    const blacklist = ['total_count', 'limit'];
+
+    // Filter out keys specified in blacklist
+    const filtered = Object.keys(queryParams)
+        .filter(key => !blacklist.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = queryParams[key];
+          return obj;
+        }, {});
+
+    const url = constructUrl('v1/admin/export/hall_passes', filtered) + '&';
     return this.http.post(url);
   }
 }

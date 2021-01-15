@@ -20,4 +20,5 @@ export const GAPI_CONFIG: NgGapiClientConfig | { [key: string]: string } = {
   discoveryDocs: [
     'https://accounts.google.com/.well-known/openid-configuration'
   ],
+  ux_mode: 'redirect'
 };
