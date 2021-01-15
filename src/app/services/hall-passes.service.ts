@@ -27,10 +27,14 @@ import {
   getPassesNextUrl,
   getPassesTotalCount,
   getSortPassesLoading,
-  getSortPassesValue
+  getSortPassesValue,
+  getTotalPasses
 } from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
 import {PollingService} from './polling-service';
+import {getPassFilter, updatePassFilter} from '../ngrx/pass-filters/actions';
+import {getFiltersData, getFiltersDataLoading} from '../ngrx/pass-filters/states';
+import {PassFilters} from '../models/PassFilters';
 
 @Injectable({
   providedIn: 'root'
@@ -51,8 +55,14 @@ export class HallPassesService {
   sortPassesLoading$: Observable<boolean> = this.store.select(getSortPassesLoading);
   sortPassesValue$: Observable<string> = this.store.select(getSortPassesValue);
   currentPassesCount$: Observable<number> = this.store.select(getPassesTotalCount);
+  currentCountPassesInPage$: Observable<number> = this.store.select(getTotalPasses);
+
+  passFilters$: Observable<{[model: string]: PassFilters}> = this.store.select(getFiltersData);
+  passFiltersLoading$: Observable<boolean> = this.store.select(getFiltersDataLoading);
 
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
+
+  expiredPassesNextUrl$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
@@ -203,6 +213,26 @@ export class HallPassesService {
 
   watchEndPass() {
     return this.pollingService.listen('hall_pass.end');
+  }
+
+  getFiltersRequest(model: string) {
+    this.store.dispatch(getPassFilter({model}));
+  }
+
+  getFilters(model: string) {
+    return this.http.get(`v1/filters/${model}`);
+  }
+
+  updateFilterRequest(model, value) {
+    this.store.dispatch(updatePassFilter({model, value}));
+  }
+
+  updateFilter(model: string, value: string) {
+    return this.http.patch(`v1/filters/${model}`, {default_time_filter: value});
+  }
+
+  getMoreExpiredPasses() {
+    return this.http.get(this.expiredPassesNextUrl$.getValue());
   }
 }
 

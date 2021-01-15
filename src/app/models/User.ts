@@ -15,7 +15,8 @@ export class User extends BaseModel {
               public roles: string[],
               public status: string,
               public badge: string,
-              public sync_types?: string[],
+              public sync_types: string[],
+              public show_expired_passes: boolean
               ) {
     super();
   }
@@ -40,7 +41,8 @@ export class User extends BaseModel {
       roles: string[] = [],
       status: string = JSON['status'],
       badge: string = JSON['badge'],
-      sync_types: string[] = [];
+      sync_types: string[] = [],
+      show_expired_passes: boolean = !!JSON['show_expired_passes'];
 
     const rolesJSON = JSON['roles'];
     const sync_types_json = JSON['sync_types'];
@@ -66,7 +68,8 @@ export class User extends BaseModel {
       roles,
       status,
       badge,
-      sync_types
+      sync_types,
+      show_expired_passes
     );
   }
 

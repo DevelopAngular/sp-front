@@ -7,7 +7,7 @@
      (inputValueEmit)="search($event)"
 >
 
-  <div class="options-wrapper" *ngIf="locations" #optionsWrapper>
+  <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="locations" #optionsWrapper>
     <div class="option" #_option>
 
       <div class="option-data"
@@ -68,7 +68,7 @@
     </div>
   </div>
 
-  <div class="options-wrapper" *ngIf="schools" #optionsWrapper>
+  <div class="options-wrapper" [style.max-height]="optionsMaxHeight"  *ngIf="schools" #optionsWrapper>
     <div class="option" *ngFor="let school of schools" #schoolList>
       <div #_option class="option-data"
            [ngClass]="{
@@ -96,7 +96,7 @@
     </div>
   </div>
 
-  <div class="options-wrapper" *ngIf="teachers && selectedTeacher"  style="padding: 15px 25px 60px 25px;" #optionsWrapper>
+  <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="teachers && selectedTeacher"  style="padding: 15px 25px 60px 25px;" #optionsWrapper>
     <div class="option" style="height: 40px;" *ngFor="let teacher of teachers">
       <div #_option class="option-data" style="background-clip: border-box; padding: 0;"
            [ngClass]="{
@@ -129,7 +129,7 @@
     </div>
   </div>
 
-  <div class="options-wrapper" *ngIf="sortData">
+  <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="sortData">
     <div class="option" *ngFor="let sort of sortData" #optionsWrapper>
       <div #_st class="option-data"
            [ngClass]="{
@@ -153,7 +153,7 @@
           </div>
         </div>
       </div>
-<!--      <div class="option-divider"></div>-->
+      <mat-divider style="margin-top: 8px" *ngIf="sort.divider"></mat-divider>
     </div>
   </div>
 </div>

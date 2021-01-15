@@ -19,9 +19,7 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
-import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
-import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
-import {filter, map, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
@@ -55,8 +53,6 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('navButtonsContainer') navButtonsContainerRef: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
-  tableState: boolean;
-  openTable: boolean;
   pts: string;
   currentTab: string;
   forceFocus$: Subject<boolean> = new Subject<boolean>();
@@ -299,57 +295,58 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
-  promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-
-    if (!eventTarget.classList.contains('button')) {
-      (eventTarget as any) = eventTarget.closest('.button');
-    }
-
-    eventTarget.style.opacity = '0.75';
-    let header: string;
-    let options: any[];
-
-    switch (option) {
-      case 'delete_from_profile':
-        header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
-        options = [{display: `Confirm Delete`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
-        break;
-    }
-    UNANIMATED_CONTAINER.next(true);
-
-    const DR = this.matDialog.open(ConsentMenuComponent, {
-      data: {
-        role: '_all',
-        selectedUsers: this.selectedUsers,
-        restrictions: false,
-        header: header,
-        options: options,
-        trigger: new ElementRef(eventTarget)
-      },
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-    });
-    DR.afterClosed()
-      .pipe(
-        switchMap((action): Observable<any> => {
-          eventTarget.style.opacity = '1';
-          switch (action) {
-            case 'delete_from_profile':
-              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], ''))).pipe(mapTo(true));
-            default:
-              return of(false);
-          }
-        }),
-        tap(() => UNANIMATED_CONTAINER.next(false))
-      )
-      .subscribe(() => {
-        this.selectedUsers = [];
-      });
-  }
 
   clearData() {
     this.selectedUsers = [];
     this.tableService.clearSelectedUsers.next();
   }
+
+  // promptConfirmation(eventTarget: HTMLElement, option: string = '') {
+  //
+  //   if (!eventTarget.classList.contains('button')) {
+  //     (eventTarget as any) = eventTarget.closest('.button');
+  //   }
+  //
+  //   eventTarget.style.opacity = '0.75';
+  //   let header: string;
+  //   let options: any[];
+  //
+  //   switch (option) {
+  //     case 'delete_from_profile':
+  //       header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
+  //       options = [{display: `Confirm Delete`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+  //       break;
+  //   }
+  //   UNANIMATED_CONTAINER.next(true);
+  //
+  //   const DR = this.matDialog.open(ConsentMenuComponent, {
+  //     data: {
+  //       role: '_all',
+  //       selectedUsers: this.selectedUsers,
+  //       restrictions: false,
+  //       header: header,
+  //       options: options,
+  //       trigger: new ElementRef(eventTarget)
+  //     },
+  //     panelClass: 'consent-dialog-container',
+  //     backdropClass: 'invis-backdrop',
+  //   });
+  //   DR.afterClosed()
+  //     .pipe(
+  //       switchMap((action): Observable<any> => {
+  //         eventTarget.style.opacity = '1';
+  //         switch (action) {
+  //           case 'delete_from_profile':
+  //             return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], ''))).pipe(mapTo(true));
+  //           default:
+  //             return of(false);
+  //         }
+  //       }),
+  //       tap(() => UNANIMATED_CONTAINER.next(false))
+  //     )
+  //     .subscribe(() => {
+  //       this.selectedUsers = [];
+  //     });
+  // }
 
 }

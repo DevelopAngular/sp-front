@@ -54,7 +54,7 @@ export class PassesEffects {
         ofType(passesActions.sortPasses),
         switchMap((action) => forkJoin({
           action: of(action),
-          limit: this.hallPassesService.currentPassesCount$.pipe(take(1))
+          limit: this.hallPassesService.currentCountPassesInPage$.pipe(take(1))
         })),
         concatMap(({action, limit}) => {
           const queryParams = {...action.queryParams, limit};

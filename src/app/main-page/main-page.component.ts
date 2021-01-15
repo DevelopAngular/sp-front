@@ -72,18 +72,24 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         takeUntil(this.destroy$),
         tap(user => {
           this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
-          if (user.roles.includes('hallpass_student')) {
-            this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
-            this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-              excludedRequests, this.dataService));
+          if (user.isStudent()) {
+            this.receivedRequests = new WrappedProvider(
+              new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser, of(null))
+            );
+            this.sentRequests = new WrappedProvider(
+              new InboxRequestProvider(this.liveDataService, this.dataService.currentUser, of(null))
+            );
           } else {
-            this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-              excludedRequests, this.dataService));
-            this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
+            this.receivedRequests = new WrappedProvider(
+              new InboxRequestProvider(this.liveDataService, this.dataService.currentUser, of(null))
+            );
+            this.sentRequests = new WrappedProvider(
+              new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser, of(null))
+            );
           }
         }),
         switchMap(user => {
-          return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+          return user.isStudent() ? this.liveDataService.watchActivePassLike(user) : of(null);
         })
       )
       .subscribe(passLike => {

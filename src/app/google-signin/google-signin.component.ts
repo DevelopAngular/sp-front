@@ -73,7 +73,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private domSanitizer: DomSanitizer
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
-    this.loginService.isAuthLoaded()
+
+    this.loginService.isGoogleAuthLoaded() // TODO: Remove unused this, it's unused
       .pipe(takeUntil(this.destroy$))
       .subscribe(isLoaded => {
       this._ngZone.run(() => {
@@ -89,6 +90,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.error$.next('Account is not active. Please contact your school admin.');
       } else if (message === 'Assistant does`t have teachers') {
         this.error$.next('Account does not have any associated teachers. Please contact your school admin.');
+      } else if (message === 'pop up blocked') {
+        this.error$.next('Pop up blocked. Please allow pop ups.');
       }
       this.passwordError = !!message;
       this.showSpinner = false;
@@ -111,12 +114,12 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.route.queryParams
       .pipe(
         filter((qp: QueryParams) => !!qp.code),
-        switchMap(({code}) => {
+        switchMap((qp) => {
           this.storage.removeItem('context');
-          if (this.storage.getItem('authType') === 'clever') {
-            return this.loginClever(code as string);
+          if (!!qp.scope) {
+            return this.loginClever(qp.code as string);
           } else {
-            return this.loginSSO(code as string);
+            return this.loginSSO(qp.code as string);
           }
         })
       )
@@ -167,13 +170,15 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   loginSSO(code: string) {
     window.waitForAppLoaded(true);
-    this.loginService.updateAuth({ gg4l_token: code, type: 'gg4l-login'});
+    this.storage.setItem('authType', 'gg4l');
+    this.loginService.updateAuth({ gg4l_code: code, type: 'gg4l-login'});
     return of (null);
   }
 
   loginClever(code: string) {
     window.waitForAppLoaded(true);
-    this.loginService.updateAuth({clever_token: code, type: 'clever-login'});
+    this.storage.setItem('authType', 'clever');
+    this.loginService.updateAuth({clever_code: code, type: 'clever-login'});
     // return this.httpService.loginClever(code).pipe(
     //   tap((auth: AuthContext) => {
     //     if (auth.clever_token) {
@@ -245,10 +250,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
           this.isGoogleLogin = false;
           this.isClever = false;
           this.isGG4L = true;
-        } else
-        if (auth.indexOf('password') !== -1) {
+        } else if (auth.indexOf('password') !== -1) {
           this.isGoogleLogin = false;
           this.isStandardLogin = true;
+          this.isClever = false;
+          this.isGG4L = false;
         } else {
           this.loginData.demoLoginEnabled = false;
         }
@@ -324,9 +330,16 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         // window.waitForAppLoaded();
       })
       .catch((err) => {
-        if (err && err.error !== 'popup_closed_by_user') {
-          this.loginService.showLoginError$.next(true);
-        }
+          console.log(err);
+          if (err && err.error) {
+              if (err.error === 'popup_closed_by_user') {
+                // Do nothing
+              } else if (err.error === 'popup_blocked_by_browser') {
+                  this.loginService.loginErrorMessage$.next('pop up blocked');
+              } else {
+                  this.loginService.showLoginError$.next(true);
+              }
+          }
         this.showSpinner = false;
       });
   }

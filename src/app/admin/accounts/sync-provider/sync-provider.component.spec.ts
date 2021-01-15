@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SyncProviderComponent } from './sync-provider.component';
+import {SyncProviderComponent} from './sync-provider.component';
 
 describe('SyncProviderComponent', () => {
   let component: SyncProviderComponent;

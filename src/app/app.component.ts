@@ -16,8 +16,6 @@ import {GoogleLoginService} from './services/google-login.service';
 import {HttpService, SPError} from './services/http-service';
 import {KioskModeService} from './services/kiosk-mode.service';
 import {StorageService} from './services/storage.service';
-import {WebConnectionService} from './services/web-connection.service';
-import {ToastConnectionComponent} from './toast-connection/toast-connection.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
 import {Meta} from '@angular/platform-browser';
@@ -89,7 +87,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private webConnection: WebConnectionService,
     private dialog: MatDialog,
     private overlayContainer: OverlayContainer,
     private storageService: StorageService,
@@ -182,7 +179,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 
-    this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
       document.documentElement.style.background = val ? '#0F171E' : '#FBFEFF';
@@ -196,20 +192,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       document.head.appendChild(link);
     }
 
-    this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
-      filter(res => !res && !this.openConnectionDialog))
-      .subscribe(() => {
-        this.openConnectionDialog = true;
-        const toastDialog = this.dialog.open(ToastConnectionComponent, {
-          panelClass: 'toasr',
-          hasBackdrop: false,
-          disableClose: true
-        });
-
-        toastDialog.afterClosed().subscribe(() => {
-          this.openConnectionDialog = false;
-        });
-      });
+    // this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
+    //   filter(res => !res && !this.openConnectionDialog))
+    //   .subscribe(() => {
+    //     this.openConnectionDialog = true;
+    //     const toastDialog = this.dialog.open(ToastConnectionComponent, {
+    //       panelClass: 'toasr',
+    //       hasBackdrop: false,
+    //       disableClose: true
+    //     });
+    //
+    //     toastDialog.afterClosed().subscribe(() => {
+    //       this.openConnectionDialog = false;
+    //     });
+    //   });
 
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),
