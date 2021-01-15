@@ -35,6 +35,7 @@ export class DropdownComponent implements OnInit {
   findElement: ElementRef;
   sortData: any[];
   selectedSort: any;
+  optionsMaxHeight: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -55,6 +56,7 @@ export class DropdownComponent implements OnInit {
     this.scrollPosition = data['scrollPosition'];
     this.sortData = data['sortData'];
     this.selectedSort = data['selectedSort'] || '';
+    this.optionsMaxHeight = data['maxHeight'] || '282px';
   }
 
   ngOnInit() {

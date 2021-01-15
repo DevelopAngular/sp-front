@@ -1,13 +1,13 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import { User } from '../../../models/User';
-import { bumpIn } from '../../../animations';
-import { DarkThemeSwitch } from '../../../dark-theme-switch';
-import { DomSanitizer } from '@angular/platform-browser';
-import { cloneDeep, isEqual } from 'lodash';
+import {User} from '../../../models/User';
+import {bumpIn} from '../../../animations';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
+import {DomSanitizer} from '@angular/platform-browser';
+import {cloneDeep, isEqual} from 'lodash';
 import {Subject} from 'rxjs';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {OverlayDataService, RoomData} from '../overlay-data.service';
-import {take, takeUntil} from 'rxjs/operators';
+import {takeUntil} from 'rxjs/operators';
 
 export interface OptionState {
     now: {
@@ -188,7 +188,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
         this.buildData();
         this.checkValidOptions();
         this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
-        
+
     }
 
     checkValidOptions() {

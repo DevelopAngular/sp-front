@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { Gg4lSetUpComponent } from './gg4l-set-up.component';
+import {Gg4lSetUpComponent} from './gg4l-set-up.component';
 
 describe('Gg4lSetUpComponent', () => {
   let component: Gg4lSetUpComponent;

@@ -22,6 +22,7 @@ import {TableService} from '../sp-data-table/table.service';
 import {ToastService} from '../../services/toast.service';
 import {AdminService} from '../../services/admin.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
+import {constructUrl} from '../../live-data/helpers';
 
 declare const window;
 
@@ -504,22 +505,17 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   search(limit: number = 300) {
-    let url = `v1/hall_passes?limit=${limit}&`;
+    const queryParams: any = {};
+
     if (this.passSearchData.selectedDestinationRooms) {
-      this.passSearchData.selectedDestinationRooms.forEach(room => {
-        url += 'destination=' + room.id + '&';
-      });
+      queryParams['destination'] = this.passSearchData.selectedDestinationRooms.map(l => l['id']);
     }
     if (this.passSearchData.selectedOriginRooms) {
-      this.passSearchData.selectedOriginRooms.forEach(room => {
-        url += 'origin=' + room.id + '&';
-      });
+      queryParams['origin'] = this.passSearchData.selectedOriginRooms.map(l => l['id']);
     }
     if (this.passSearchData.selectedStudents) {
       const students: any[] = this.passSearchData.selectedStudents.map(s => s['id']);
-      Array.from(Array(students.length).keys()).map(i => {
-        url += 'student=' + students[i] + '&';
-      });
+      queryParams['student'] = students;
     }
 
     if (this.passSearchData.selectedDate) {
@@ -527,15 +523,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
       let end;
       if (this.passSearchData.selectedDate['start']) {
         start = this.passSearchData.selectedDate['start'].toISOString();
-        url += (start ? ('created_after=' + start + '&') : '');
+        queryParams['created_after'] = start;
       }
       if (this.passSearchData.selectedDate['end']) {
         end = this.passSearchData.selectedDate['end'].toISOString();
-        url += (end ? ('end_time_before=' + end + '&') : '');
+        queryParams['end_time_before'] = end;
       }
     }
-    url = url + 'total_count=true&';
-    this.queryParams = url.substring(url.lastIndexOf('&') + 1);
+    queryParams['limit'] = limit;
+    queryParams['total_count'] = 'true';
+    this.queryParams = queryParams;
+
+    const url = constructUrl('v1/hall_passes', queryParams);
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
   }

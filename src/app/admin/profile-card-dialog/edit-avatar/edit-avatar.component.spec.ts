@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { EditAvatarComponent } from './edit-avatar.component';
+import {EditAvatarComponent} from './edit-avatar.component';
 
 describe('EditAvatarComponent', () => {
   let component: EditAvatarComponent;

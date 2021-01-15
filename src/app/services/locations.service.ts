@@ -1,30 +1,31 @@
-import { Injectable } from '@angular/core';
-import { bufferCount, flatMap, reduce } from 'rxjs/operators';
-import { constructUrl } from '../live-data/helpers';
-import { Paged } from '../models';
-import { HttpService } from './http-service';
-import { User } from '../models/User';
+import {Injectable} from '@angular/core';
+import {bufferCount, flatMap, reduce} from 'rxjs/operators';
+import {constructUrl} from '../live-data/helpers';
+import {Paged} from '../models';
+import {HttpService} from './http-service';
+import {User} from '../models/User';
 import {BehaviorSubject, from, Observable, of} from 'rxjs';
-import { Location } from '../models/Location';
-import { Store } from '@ngrx/store';
-import { AppState } from '../ngrx/app-state/app-state';
-import { getTeacherLocationsCollection } from '../ngrx/teacherLocations/state/locations-getters.state';
-import { getLocsWithTeachers } from '../ngrx/teacherLocations/actions';
+import {Location} from '../models/Location';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getTeacherLocationsCollection} from '../ngrx/teacherLocations/state/locations-getters.state';
+import {getLocsWithTeachers} from '../ngrx/teacherLocations/actions';
 import {
   getCreatedLocation,
   getFoundLocations,
   getLoadedLocations,
   getLoadingLocations,
-  getLocationsCollection, getLocationsFromCategoryGetter,
+  getLocationsCollection,
+  getLocationsFromCategoryGetter,
   getUpdatedLocation
 } from '../ngrx/locations/states/locations-getters.state';
 import {
   getLocations,
   getLocationsFromCategory,
   postLocation,
-  updateLocation,
+  removeLocation,
   searchLocations,
-  removeLocation
+  updateLocation
 } from '../ngrx/locations/actions';
 import {
   getFavoriteLocationsCollection,

@@ -46,5 +46,21 @@
       </div>
       <div class="header-info-mobile" *ngIf="extraLargeDevice && !IpadDevice">Switch the layout of the “To where?” page during pass creation.</div>
     </div>
+
+    <div class="page-layout" *ngIf="isStaff">
+      <div class="header">
+        <div class="header-title">Show Expired Passes</div>
+        <div class="header-info">Show Expired Passes on your dashboard</div>
+      </div>
+      <div class="picker">
+        <app-toggle-input
+          [delimiter]="false"
+          [controlSize]="'small'"
+          [form]="form"
+          [controlName]="'show_expired_passes'"
+          (pushOutValue)="updateUser($event)"
+        ></app-toggle-input>
+      </div>
+    </div>
   </div>
 </div>

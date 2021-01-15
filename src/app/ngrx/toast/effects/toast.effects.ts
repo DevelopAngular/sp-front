@@ -1,7 +1,5 @@
-import { Injectable} from '@angular/core';
-import {Actions, createEffect, ofType} from '@ngrx/effects';
-import * as toastActions from '../actions';
-import {map} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {Actions} from '@ngrx/effects';
 
 
 @Injectable()

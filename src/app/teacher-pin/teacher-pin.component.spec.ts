@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { TeacherPinComponent } from './teacher-pin.component';
+import {TeacherPinComponent} from './teacher-pin.component';
 
 describe('TeacherPinComponent', () => {
   let component: TeacherPinComponent;

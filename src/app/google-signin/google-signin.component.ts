@@ -1,7 +1,7 @@
 import {Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
 import {GoogleLoginService} from '../services/google-login.service';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import {debounceTime, filter, finalize, pluck, retryWhen, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, finalize, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {AuthContext, HttpService} from '../services/http-service';
 import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
@@ -90,6 +90,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.error$.next('Account is not active. Please contact your school admin.');
       } else if (message === 'Assistant does`t have teachers') {
         this.error$.next('Account does not have any associated teachers. Please contact your school admin.');
+      } else if (message === 'pop up blocked') {
+        this.error$.next('Pop up blocked. Please allow pop ups.');
       }
       this.passwordError = !!message;
       this.showSpinner = false;
@@ -328,9 +330,16 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         // window.waitForAppLoaded();
       })
       .catch((err) => {
-        if (err && err.error !== 'popup_closed_by_user') {
-          this.loginService.showLoginError$.next(true);
-        }
+          console.log(err);
+          if (err && err.error) {
+              if (err.error === 'popup_closed_by_user') {
+                // Do nothing
+              } else if (err.error === 'popup_blocked_by_browser') {
+                  this.loginService.loginErrorMessage$.next('pop up blocked');
+              } else {
+                  this.loginService.showLoginError$.next(true);
+              }
+          }
         this.showSpinner = false;
       });
   }

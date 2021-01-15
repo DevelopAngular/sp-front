@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { Ggl4SettingsComponent } from './ggl4-settings.component';
+import {Ggl4SettingsComponent} from './ggl4-settings.component';
 
 describe('Ggl4SettingsComponent', () => {
   let component: Ggl4SettingsComponent;

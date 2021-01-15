@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { GSuiteAccountLinkComponent } from './g-suite-account-link.component';
+import {GSuiteAccountLinkComponent} from './g-suite-account-link.component';
 
 describe('GSuiteAccountLinkComponent', () => {
   let component: GSuiteAccountLinkComponent;

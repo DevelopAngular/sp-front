@@ -97,7 +97,7 @@
 
   <div class="sort-btn" (click)="openSortMenu()" *ngIf="(hasPasses | async) && (passesLoaded | async) && isDeviceLargeExtra ">
     <app-gradient-button
-      [size] = "sortBtn.size"
+      [size]="sortBtn.size"
       [gradient]="sortBtn.gradient"
       [cursor]="sortBtn.cursor"
       [hoverColor]="sortBtn.hoverColor"

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as adminsActions from '../actions';
-import {catchError, concatMap, filter, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../../../services/user.service';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
