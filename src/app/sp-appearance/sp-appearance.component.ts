@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DarkThemeSwitch, SPTheme} from '../dark-theme-switch';
 import {StorageService} from '../services/storage.service';
 import {ScreenService} from '../services/screen.service';
@@ -21,6 +21,7 @@ export class SpAppearanceComponent implements OnInit {
   form: FormGroup;
   user: User;
   isStaff: boolean;
+  showWrapper: boolean;
 
   constructor(
     private darkTheme: DarkThemeSwitch,
@@ -29,6 +30,7 @@ export class SpAppearanceComponent implements OnInit {
     private screenService: ScreenService,
     private userService: UserService,
     public router: Router,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   get IpadDevice() {
@@ -39,6 +41,12 @@ export class SpAppearanceComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.data && this.data['fromFilter']) {
+      this.showWrapper = this.data['fromFilter'];
+      setTimeout(() => {
+        this.showWrapper = false;
+      }, 2000);
+    }
     this.selectedTheme = this.darkTheme.currentTheme();
     this.isList = JSON.parse(this.storage.getItem('isGrid'));
     this.hideLayoutSettings = this.router.url.includes('/admin');

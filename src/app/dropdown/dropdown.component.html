@@ -129,8 +129,8 @@
     </div>
   </div>
 
-  <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="sortData">
-    <div class="option" *ngFor="let sort of sortData" #optionsWrapper>
+  <div class="options-wrapper sort-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="sortData">
+    <div class="option sort" *ngFor="let sort of sortData" #optionsWrapper>
       <div #_st class="option-data"
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,

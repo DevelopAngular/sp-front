@@ -330,6 +330,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   openAppearance() {
     this.dialog.open(SpAppearanceComponent, {
       panelClass: 'sp-form-dialog',
+      data: {fromFilter: true}
     });
   }
 
