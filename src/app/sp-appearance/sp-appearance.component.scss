@@ -58,6 +58,15 @@
             font-size: 14px;
             color: $blue-gray;
             font-weight: normal;
+
+            .profile-location {
+              cursor: pointer;
+
+              &:hover {
+                background-color: #F4F4F4;
+                border-radius: 4px;
+              }
+            }
           }
 
         }
@@ -67,6 +76,11 @@
           font-weight: normal;
           margin-top: 10px;
         }
+      }
+
+      .res-picker {
+        width: 186px;
+        margin-top: 8px;
       }
     }
   }

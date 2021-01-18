@@ -21,6 +21,8 @@ export class SpAppearanceComponent implements OnInit {
   form: FormGroup;
   user: User;
   isStaff: boolean;
+  showStudentProfileLocation: string = 'Everywhere';
+  showLocationPiker: boolean;
 
   constructor(
     private darkTheme: DarkThemeSwitch,
@@ -46,7 +48,8 @@ export class SpAppearanceComponent implements OnInit {
       this.user = user;
       this.isStaff = User.fromJSON(user).isTeacher() || User.fromJSON(user).isAssistant();
       this.form = new FormGroup({
-        show_expired_passes: new FormControl(user.show_expired_passes)
+        show_expired_passes: new FormControl(user.show_expired_passes),
+        show_student_profile_picture: new FormControl()
       });
     });
   }

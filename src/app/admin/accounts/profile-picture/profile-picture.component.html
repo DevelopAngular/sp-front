@@ -8,8 +8,11 @@
       <img [src]="'./assets/Pictures (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
       <span>Profile Pictures</span>
     </div>
-    <div class="save-button" *ngIf="page !== 1 && uploadingProgress.images.complete && uploadingProgress.csv.complete">
+    <div class="save-button"
+         [matTooltip]="!uploadingProgress.images.complete || !uploadingProgress.csv.complete ? 'Make sure to add the profile files and the map file before uploading!' : null"
+         matTooltipClass="tooltip">
       <app-gradient-button
+        [disabled]="!uploadingProgress.images.complete || !uploadingProgress.csv.complete"
         [size]="'small'"
         [gradient]="'#FFFFFF, #FFFFFF'"
         [hoverColor]="'#FCFDFF'"
@@ -120,6 +123,16 @@
           </div>
 
           <input type="file" [formControl]="form.get('csvFile')"  #csvFile style="display: none"/>
+        </div>
+      </div>
+
+      <div class="footer">
+        <mat-divider></mat-divider>
+
+        <div class="footer-content">
+          <div class="link" style="color: #7f879d">Need some help?</div>
+          <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/profile-pictures" target="_blank">Watch tutorial</a></div>
+          <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/meeting" target="_blank">Schedule a call</a></div>
         </div>
       </div>
 

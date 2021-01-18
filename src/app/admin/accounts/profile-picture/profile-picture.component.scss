@@ -52,10 +52,11 @@
   }
 
   .content {
-    height: 370px;
+    height: 430px;
+    position: relative;
     .page {
-      height: 100%;
       padding: 30px 25px 0 30px;
+
       .center-content {
         height: 100%;
         margin-top: 15px;
@@ -99,7 +100,7 @@
 
       .button {
         width: 100%;
-        height: 100px;
+        height: 80px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -107,7 +108,7 @@
 
       .buttons {
         width: 100%;
-        height: 110px;
+        height: 80px;
         display: flex;
         justify-content: space-evenly;
         align-items: center;
@@ -166,6 +167,24 @@
             color: $blue-gray;
             margin-top: 10px;
           }
+        }
+      }
+
+      .footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 68px;
+
+        .footer-content {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-evenly;
+
         }
       }
     }

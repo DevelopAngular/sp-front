@@ -61,7 +61,7 @@ export class ProfilePictureComponent implements OnInit {
             const filesStream = [];
             if (fileRef.nativeElement.files.length === 1) {
               const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1];
-              if (extension !== 'zip' && extension !== 'jpeg' && extension !== 'png') {
+              if (extension !== 'zip' && extension !== 'jpeg' && extension !== 'jpg' && extension !== 'png') {
                 return of(null);
               }
             }
@@ -69,10 +69,10 @@ export class ProfilePictureComponent implements OnInit {
             for (let i = 0; i < fileRef.nativeElement.files.length; i++) {
               const file = fileRef.nativeElement.files.item(i);
               const extension = file.name.toLowerCase().split('.')[file.name.split('.').length - 1];
-              if (extension === 'zip' || extension === 'jpeg' || extension === 'png') {
+              if (extension === 'zip' || extension === 'jpeg' || extension === 'jpg' || extension === 'png') {
                 if (extension === 'zip') {
                   filesStream.push(this.zipService.loadZip(file));
-                } else if (extension === 'jpeg' || extension === 'png') {
+                } else if (extension === 'jpeg' || extension === 'jpg' || extension === 'png') {
                   const reader = new FileReader();
                   reader.readAsDataURL(file);
                   filesStream.push(fromEvent(reader, 'load').pipe(map((item: any) => {
@@ -108,7 +108,7 @@ export class ProfilePictureComponent implements OnInit {
     }
   }
 
-  page: number = 1;
+  page: number = 2;
   form: FormGroup;
   selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
   selectedImgFiles;
@@ -163,5 +163,9 @@ export class ProfilePictureComponent implements OnInit {
       }
     });
     return errors;
+  }
+
+  redirect(location) {
+    window.open(location, '_blank');
   }
 }

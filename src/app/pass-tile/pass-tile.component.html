@@ -12,7 +12,7 @@
       (pointerCancelEvent)="buttonDown = false;"
   >
 
-  <div class="tile-title-container" [style.background]="profileImage ? backgroundGradient() : 'transparent'" [style.margin-top]="forStaff ? '0' : '-6px'" >
+  <div class="tile-title-container" [style.background]="profileImage ? backgroundGradient() : 'transparent'">
     <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
       <div class="tile-content"  #title [style.height]="forStaff ? '30px' : '20px'">
         <div *ngIf="pass.destination.title.length >= 10; else shortTitle" class="tile-title tile-title-truncated" [style.margin-top]="forStaff ? '8px' : '0px'"  (mouseover)="onHover($event, title);"
