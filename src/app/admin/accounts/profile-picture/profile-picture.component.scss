@@ -170,23 +170,58 @@
         }
       }
 
-      .footer {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        height: 68px;
+      .image-container {
+        height: 300px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+  }
 
-        .footer-content {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-evenly;
+      .upload-info {
+        background-color: #F4F4F4;
+        padding: 20px;
+        border-radius: 8px;
 
+        .upload-title {
+          font-size: 15px;
+          font-weight: bold;
+          color: $navy;
+        }
+        .info {
+          font-size: 14px;
+          color: $blue-gray;
+          margin-top: 7px;
         }
       }
-    }
+
+      .uploaded-users {
+          display: flex;
+          flex-direction: column;
+        align-items: center;
+        .search-input {
+          width: 242px;
+          margin: 15px 0;
+        }
+      }
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 68px;
+
+  .footer-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
   }
+}
+}
 }

@@ -1,18 +1,19 @@
 <div class="wrapper">
   <div class="heading" #header>
     <div class="back-button">
-      <img [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
-      <div class="cancel" *ngIf="false">Cancel</div>
+      <img *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+      <div class="cancel" *ngIf="page === 3">Cancel</div>
     </div>
     <div class="ds-dialog-title-white ds-flex-center-center">
       <img [src]="'./assets/Pictures (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
       <span>Profile Pictures</span>
     </div>
     <div class="save-button"
-         [matTooltip]="!uploadingProgress.images.complete || !uploadingProgress.csv.complete ? 'Make sure to add the profile files and the map file before uploading!' : null"
+         [matTooltip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile files and the map file before uploading!' : null"
          matTooltipClass="tooltip">
       <app-gradient-button
-        [disabled]="!uploadingProgress.images.complete || !uploadingProgress.csv.complete"
+        *ngIf="page !== 3"
+        [disabled]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2"
         [size]="'small'"
         [gradient]="'#FFFFFF, #FFFFFF'"
         [hoverColor]="'#FCFDFF'"
@@ -22,7 +23,7 @@
       >
         <div class="ds-flex-center-start">
           <span>
-           {{ page === 4 ? 'Save' : 'Upload' }}
+           {{ page === 4 ? 'Done' : 'Upload' }}
           </span>
         </div>
       </app-gradient-button>
@@ -45,6 +46,7 @@
         </app-gradient-button>
       </div>
     </div>
+
     <div class="page" *ngIf="page === 2">
       <div class="step-wrapper">
         <div class="step-container">
@@ -126,40 +128,84 @@
         </div>
       </div>
 
-      <div class="footer">
-        <mat-divider></mat-divider>
-
-        <div class="footer-content">
-          <div class="link" style="color: #7f879d">Need some help?</div>
-          <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/profile-pictures" target="_blank">Watch tutorial</a></div>
-          <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/meeting" target="_blank">Schedule a call</a></div>
-        </div>
-      </div>
-
     </div>
+
     <div class="page" *ngIf="page === 3">
-      <div class="ds-dialog-heading">Review Issues ({{ issues.length }})</div>
-      <div class="view-issuer" *ngFor="let issuer of issues">
-        <div class="error" *ngIf="issuer.fileNotListed">
-          <span>{{ 'User ID: ' + issuer.fileNotListed.user_id }}</span><br>
-          <span>- Image filename not listed</span>
-        </div>
-        <div class="error" *ngIf="issuer.noUserIdListed">
-          <span>{{ 'Image filename: ' + issuer.noUserIdListed.file_name }}</span><br>
-          <span>- User ID not listed</span>
-        </div>
-        <div class="error" *ngIf="issuer.noImgFound">
-          <span>{{ 'User ID: ' + issuer.noImgFound.user_id + ', Image filename: ' + issuer.noImgFound.file_name }}</span><br>
-          <span>- No image found</span>
+
+      <div class="image-container">
+
+        <svg width="124px" height="96px">
+            <linearGradient id="lg" x1="0.5" y1="1" x2="0.5" y2="0">
+              <stop offset="0%" stop-opacity="1" stop-color="#07ABC3">
+                <animate attributeName="offset" values="0;1;" dur="3s" begin="0" fill="freeze"/>
+              </stop>
+              <stop offset="0%" stop-opacity="1" stop-color="#7f879d">
+                <animate attributeName="offset" values="0;1;" dur="3s" begin="0" fill="freeze"/>
+              </stop>
+            </linearGradient>
+          <path fill="url(#lg)" d="M9.53846154,0 C4.26846154,0 0,4.296 0,9.6 L0,86.4 C0,91.704 4.26846154,96 9.53846154,96 L114.461538,96 C119.731538,96 124,91.704 124,86.4 L124,9.6 C124,4.296 119.731538,0 114.461538,0 L9.53846154,0 Z M100.153846,14.4 C105.423846,14.4 109.692308,18.696 109.692308,24 C109.692308,29.304 105.423846,33.6 100.153846,33.6 C94.8838462,33.6 90.6153846,29.304 90.6153846,24 C90.6153846,18.696 94.8838462,14.4 100.153846,14.4 Z M33.3846154,33.6093744 C36.3379615,33.6093744 39.2910072,34.7444976 41.5444735,37.0125024 L57.1003594,52.6687488 L62,57.6 L67.5144231,63.15 C69.5270385,65.1756 72.7767494,65.1568512 74.7893648,63.1312512 C76.8067494,61.1056512 76.8067494,57.8116512 74.7893648,55.7812512 L69.2935703,50.2593744 L72.9170649,46.6125024 C77.4239928,42.0764976 84.7298534,42.0764976 89.2367812,46.6125024 L109.692308,67.2 L109.692308,81.6 L14.3076923,81.6 L14.3076923,48 L25.2247596,37.0125024 C27.4782212,34.7444976 30.4312692,33.6093744 33.3846154,33.6093744 Z"></path>
+        </svg>
+
+        <div class="ds-dialog-title" style="margin-top: 15px">Uploading pictures...</div>
+
+      </div>
+
+    </div>
+
+    <div class="page" *ngIf="page === 4">
+      <div class="upload-info">
+        <div class="upload-title">Upload complete</div>
+        <div class="info"><span style="font-weight: bold">New pictures: </span><span>1500 students</span></div>
+        <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>1500 students</span></div>
+        <div class="info"><span style="font-weight: bold">Errors: </span><span>5 errors</span></div>
+      </div>
+
+      <div class="uploaded-users">
+        <div class="search-input">
+          <app-round-input
+            [isSearch]="true"
+            [placeholder]="'Search accounts'"
+            [focused]="true"
+            [width]="'242px'"
+            [minWidth]="'242px'"
+          ></app-round-input>
         </div>
       </div>
     </div>
-    <div class="page">
-      <div class="imports-success" *ngIf="page === 4">
-        <div class="success-content">
-          <img class="slide-center" [src]="'./assets/emptyStates/Upload Success.svg'" alt="upload-file">
-          <div class="count-accounts">{{ filesToDB.length }} Profile Pictures Added</div>
-        </div>
+
+<!--    <div class="page" *ngIf="page === 3">-->
+<!--      <div class="ds-dialog-heading">Review Issues ({{ issues.length }})</div>-->
+<!--      <div class="view-issuer" *ngFor="let issuer of issues">-->
+<!--        <div class="error" *ngIf="issuer.fileNotListed">-->
+<!--          <span>{{ 'User ID: ' + issuer.fileNotListed.user_id }}</span><br>-->
+<!--          <span>- Image filename not listed</span>-->
+<!--        </div>-->
+<!--        <div class="error" *ngIf="issuer.noUserIdListed">-->
+<!--          <span>{{ 'Image filename: ' + issuer.noUserIdListed.file_name }}</span><br>-->
+<!--          <span>- User ID not listed</span>-->
+<!--        </div>-->
+<!--        <div class="error" *ngIf="issuer.noImgFound">-->
+<!--          <span>{{ 'User ID: ' + issuer.noImgFound.user_id + ', Image filename: ' + issuer.noImgFound.file_name }}</span><br>-->
+<!--          <span>- No image found</span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="page">-->
+<!--      <div class="imports-success" *ngIf="page === 4">-->
+<!--        <div class="success-content">-->
+<!--          <img class="slide-center" [src]="'./assets/emptyStates/Upload Success.svg'" alt="upload-file">-->
+<!--          <div class="count-accounts">{{ filesToDB.length }} Profile Pictures Added</div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+    <div class="footer" *ngIf="page !== 4">
+      <mat-divider></mat-divider>
+      <div class="footer-content">
+        <div class="link" style="color: #7f879d">Need some help?</div>
+        <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/profile-pictures" target="_blank">Watch tutorial</a></div>
+        <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/meeting" target="_blank">Schedule a call</a></div>
       </div>
     </div>
   </div>

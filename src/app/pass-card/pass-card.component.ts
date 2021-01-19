@@ -208,11 +208,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  updateDuration(dur:number){
+  updateDuration(dur: number) {
     this.returnData['duration'] = dur;
   }
 
-  updateTravelType(travelType:string){
+  updateTravelType(travelType: string) {
     this.pass.travel_type = travelType;
   }
 
