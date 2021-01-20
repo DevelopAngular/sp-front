@@ -54,6 +54,7 @@
   .content {
     height: 430px;
     position: relative;
+    overflow: auto;
     .page {
       padding: 30px 25px 0 30px;
 
@@ -178,50 +179,105 @@
         flex-direction: column;
   }
 
-      .upload-info {
-        background-color: #F4F4F4;
-        padding: 20px;
-        border-radius: 8px;
-
-        .upload-title {
-          font-size: 15px;
-          font-weight: bold;
-          color: $navy;
-        }
-        .info {
-          font-size: 14px;
-          color: $blue-gray;
-          margin-top: 7px;
-        }
-      }
-
       .uploaded-users {
           display: flex;
           flex-direction: column;
-        align-items: center;
+          align-items: center;
         .search-input {
           width: 242px;
           margin: 15px 0;
         }
+
+        .user-list {
+          width: 100%;
+          .user {
+            .user-container {
+              display: flex;
+              align-items: center;
+              margin: 11px;
+              .picture {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+              }
+              .profile-info {
+                margin-left: 11px;
+                .name {
+                  color: $navy;
+                  font-weight: bold;
+                  font-size: 15px;
+                }
+                .info {
+                  font-size: 14px;
+                  color: $blue-gray;
+                  margin-top: 3px;
+                }
+              }
+            }
+          }
+        }
       }
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 68px;
-
-  .footer-content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-
   }
-}
+
+    .update-page {
+      height: 360px;
+      overflow: auto;
+      .block {
+        padding: 20px;
+      }
+    }
+
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 68px;
+    background-color: #FFFFFF;
+
+    .footer-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+
+    }
+  }
+    .upload-info {
+      background-color: #F4F4F4;
+      padding: 20px;
+      border-radius: 8px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .upload-title {
+        font-size: 15px;
+        font-weight: bold;
+        color: $navy;
+      }
+      .info {
+        font-size: 14px;
+        color: $blue-gray;
+        margin-top: 7px;
+      }
+
+      .info-icon {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        right: 30px;
+      }
+      .info-title {
+        font-size: 15px;
+        font-weight: bold;
+        color: $blue-gray;
+        margin-left: 8px;
+      }
+    }
+
 }
 }

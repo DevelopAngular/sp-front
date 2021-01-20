@@ -1,8 +1,8 @@
 <div class="wrapper">
   <div class="heading" #header>
     <div class="back-button">
-      <img *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
-      <div class="cancel" *ngIf="page === 3">Cancel</div>
+      <img (click)="dialogRef.close()" *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+      <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3">Cancel</div>
     </div>
     <div class="ds-dialog-title-white ds-flex-center-center">
       <img [src]="'./assets/Pictures (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
@@ -12,7 +12,7 @@
          [matTooltip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile files and the map file before uploading!' : null"
          matTooltipClass="tooltip">
       <app-gradient-button
-        *ngIf="page !== 3"
+        *ngIf="page !== 3 && page !== 5"
         [disabled]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2"
         [size]="'small'"
         [gradient]="'#FFFFFF, #FFFFFF'"
@@ -169,6 +169,54 @@
             [width]="'242px'"
             [minWidth]="'242px'"
           ></app-round-input>
+        </div>
+
+        <div class="user-list">
+          <div class="user" *ngFor="let user of fakeUsers">
+            <div class="user-container">
+              <div><img class="picture" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar"></div>
+              <div class="profile-info">
+                <div class="name">{{ user.name }}</div>
+                <div class="info"><span style="font-weight: bold">Student Number: </span><span>{{ user.number }}</span></div>
+                <div class="info"><span style="font-weight: bold">Image Filename: </span><span>{{ user.file }}</span></div>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="update-page" *ngIf="page === 5">
+      <div class="block">
+        <div class="update-button" style="margin-bottom: 20px">
+          <div class="ds-dialog-title">Add/Update Pictures</div>
+          <app-gradient-button
+            [style.margin-top]="'11px'"
+            [rightIcon]="'./assets/Chevron Right (White).svg'"
+            [gradient]="'#07ABC3, #07ABC3'"
+            (buttonClick)="page = 2"
+          >New Upload</app-gradient-button>
+        </div>
+        <div class="upload-info">
+          <div style="display: flex; align-items: center">
+            <img [src]="'./assets/Warning (Orange).svg'" alt="">
+            <div class="info-title">Missing Pictures</div>
+          </div>
+          <div class="info">16 students don’t have profile pictures.</div>
+          <img class="info-icon" [src]="'./assets/Circle Download (Blue-Gray).svg'" alt="">
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="block">
+        <div class="ds-dialog-title" style="margin-bottom: 18px">Upload History</div>
+        <div class="upload-info">
+          <div class="upload-title">Dec. 16, 2020 at 2:34 PM</div>
+          <div class="info"><span style="font-weight: bold">New pictures: </span><span>1500 students</span></div>
+          <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>1500 students</span></div>
+          <div class="info"><span style="font-weight: bold">Errors: </span><span>5 errors</span></div>
+          <img class="info-icon" [src]="'./assets/Circle Download (Blue-Gray).svg'" alt="">
         </div>
       </div>
     </div>

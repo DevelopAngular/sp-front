@@ -8,6 +8,8 @@ import {isArray, uniqBy} from 'lodash';
 import {XlsxService} from '../../../services/xlsx.service';
 import {ZipService} from '../../../services/zip.service';
 import {UserService} from '../../../services/user.service';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 
 @Component({
   selector: 'app-profile-picture',
@@ -108,7 +110,7 @@ export class ProfilePictureComponent implements OnInit {
     }
   }
 
-  page: number = 2;
+  page: number = 4;
   form: FormGroup;
   selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
   selectedImgFiles;
@@ -121,9 +123,31 @@ export class ProfilePictureComponent implements OnInit {
   };
   issues = [];
 
+  fakeUsers = [
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
+    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'}
+  ];
+
   constructor(
+    public dialogRef: MatDialogRef<ProfilePictureComponent>,
     private xlsxService: XlsxService,
     private zipService: ZipService,
+    private dialog: MatDialog,
     private userService: UserService
   ) { }
 
@@ -167,5 +191,32 @@ export class ProfilePictureComponent implements OnInit {
 
   redirect(location) {
     window.open(location, '_blank');
+  }
+
+  genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {
+    return { display, color, action, icon, hoverBackground, clickBackground };
+  }
+
+  openConfirm(event) {
+    const options = [];
+    options.push(this.genOption(
+      'Cancel',
+      '#E32C66',
+      'cancel',
+      './assets/Cancel (Red).svg',
+      'rgba(227, 44, 102, .1)'
+    ));
+    const target = new ElementRef(event.currentTarget);
+    const cm = this.dialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {header: 'Are you sure you want to cancel bulk uploading profile pictures? Your progress will be lost.', 'options': options, 'trigger': target}
+    });
+
+    cm.afterClosed().subscribe(action => {
+      if (action === 'cancel') {
+        this.page -= 1;
+      }
+    });
   }
 }

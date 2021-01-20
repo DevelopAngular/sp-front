@@ -53,12 +53,10 @@
              #avatarContainer
              (mouseenter)="avatarContainer.hover = true"
              (mouseleave)="avatarContainer.hover = false"
-               [matTooltip]="'Profile pictures are coming soon!'"
-               matTooltipClass="tooltip"
           >
             <img width="88" height="88" [src]="'./assets/Default Avatar.svg' | resolveAsset" alt="avatar">
-<!--            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>-->
-<!--            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">-->
+            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
+            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">
           </div>
           <div class="status"
                [matTooltip]="statusDescriptions[profileStatusActive] || null"
