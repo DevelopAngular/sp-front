@@ -171,20 +171,21 @@
           height: 100%;
         }
 
-        .student-text {
-          position: absolute;
-          z-index: 10;
-          top: 0;
-          bottom: 0;
-          right: 0;
-          left: 0;
-          color: white;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 17px;
+            .student-text {
+                position: absolute;
+                z-index: 10;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 17px;
+                text-align: center;
+            }
         }
-      }
 
       .teacher-view {
         flex: 1 1 auto;
@@ -201,7 +202,16 @@
       opacity: 0.4;
     }
 
+  .teacher-pin {
+    position: absolute;
+    z-index: 100;
+    top: 82px
   }
+  .content-container {
+    //position: absolute;
+  }
+
+}
 
   .student-footer-info {
     min-height: 95px;

@@ -1,9 +1,9 @@
-import { ProcessState } from '../states';
+import {ProcessState} from '../states';
 import {Action, createReducer, on} from '@ngrx/store';
 import * as processActions from '../actions';
 
 const onboardProcessInitialState: ProcessState = {
-  entities: {},
+  entities: null,
   ids: [],
   loading: false,
   loaded: false

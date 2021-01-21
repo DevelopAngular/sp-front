@@ -54,7 +54,7 @@
         width: 100%;
         .header {
           .title {
-            font-size: 17px;
+            font-size: 14px;
             color: $navy;
             font-weight: bold;
           }
@@ -68,7 +68,7 @@
         .buttons {
           display: flex;
           margin-top: 21px;
-          justify-content: center;
+          justify-content: space-between;
           width: 100%;
         }
       }

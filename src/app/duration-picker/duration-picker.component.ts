@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output, Input, HostListener} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-duration-picker',
@@ -35,7 +35,7 @@ export class DurationPickerComponent implements OnInit {
       this.emitResult(this.selectedDuration);
     }
 
-  public selectedDuration: number = 5;
+  public selectedDuration: number = this.maxDuration;
 
   constructor() {}
 
@@ -45,7 +45,7 @@ export class DurationPickerComponent implements OnInit {
       this.disabled = true;
     }
 
-    this.selectedDuration = this.maxDuration < 5 ? this.maxDuration : 5;
+    this.selectedDuration = this.maxDuration;
 
     this.emitResult(this.selectedDuration);
   }
@@ -53,6 +53,7 @@ export class DurationPickerComponent implements OnInit {
   emitResult(value) {
     if (value && value <= this.maxDuration && value >= this.minDuration) {
       this.selectedDuration = value;
+      // console.log('Value ==>>>', this.selectedDuration);
       this.onChange.emit(this.selectedDuration);
     } else {
       if (!value) {
@@ -68,7 +69,7 @@ export class DurationPickerComponent implements OnInit {
     if (!event.value) {
       this.minDuration = 1;
     } else {
-        this.emitResult(this.selectedDuration);
+        this.emitResult(event.value);
     }
   }
 

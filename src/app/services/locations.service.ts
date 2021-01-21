@@ -1,30 +1,31 @@
-import { Injectable } from '@angular/core';
-import { bufferCount, flatMap, reduce } from 'rxjs/operators';
-import { constructUrl } from '../live-data/helpers';
-import { Paged } from '../models';
-import { HttpService } from './http-service';
-import { User } from '../models/User';
+import {Injectable} from '@angular/core';
+import {bufferCount, flatMap, reduce} from 'rxjs/operators';
+import {constructUrl} from '../live-data/helpers';
+import {Paged} from '../models';
+import {HttpService} from './http-service';
+import {User} from '../models/User';
 import {BehaviorSubject, from, Observable, of} from 'rxjs';
-import { Location } from '../models/Location';
-import { Store } from '@ngrx/store';
-import { AppState } from '../ngrx/app-state/app-state';
-import { getTeacherLocationsCollection } from '../ngrx/teacherLocations/state/locations-getters.state';
-import { getLocsWithTeachers } from '../ngrx/teacherLocations/actions';
+import {Location} from '../models/Location';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getTeacherLocationsCollection} from '../ngrx/teacherLocations/state/locations-getters.state';
+import {getLocsWithTeachers} from '../ngrx/teacherLocations/actions';
 import {
   getCreatedLocation,
   getFoundLocations,
   getLoadedLocations,
   getLoadingLocations,
-  getLocationsCollection, getLocationsFromCategoryGetter,
+  getLocationsCollection,
+  getLocationsFromCategoryGetter,
   getUpdatedLocation
 } from '../ngrx/locations/states/locations-getters.state';
 import {
   getLocations,
   getLocationsFromCategory,
   postLocation,
-  updateLocation,
+  removeLocation,
   searchLocations,
-  removeLocation
+  updateLocation
 } from '../ngrx/locations/actions';
 import {
   getFavoriteLocationsCollection,
@@ -32,6 +33,10 @@ import {
   getLoadingFavoriteLocations
 } from '../ngrx/favorite-locations/states/favorite-locations-getters.state';
 import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
+import {PassLimit} from '../models/PassLimit';
+import {getPassLimitCollection, getPassLimitEntities} from '../ngrx/pass-limits/states';
+import {getPassLimits, updatePassLimit} from '../ngrx/pass-limits/actions';
+import {PollingService} from './polling-service';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +48,8 @@ export class LocationsService {
   updatedLocation$: Observable<Location> = this.store.select(getUpdatedLocation);
   loadingLocations$: Observable<boolean> = this.store.select(getLoadingLocations);
   loadedLocations$: Observable<boolean> = this.store.select(getLoadedLocations);
+  pass_limits$: Observable<PassLimit[]> = this.store.select(getPassLimitCollection);
+  pass_limits_entities$: Observable<{[id: number]: PassLimit}> = this.store.select(getPassLimitEntities);
 
   foundLocations$: Observable<Location[]> = this.store.select(getFoundLocations);
   locsFromCategory$: Observable<Location[]> = this.store.select(getLocationsFromCategoryGetter);
@@ -57,10 +64,18 @@ export class LocationsService {
 
   focused: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
-  constructor(private http: HttpService, private store: Store<AppState>) { }
+  constructor(
+    private http: HttpService,
+    private store: Store<AppState>,
+    private pollingService: PollingService
+  ) { }
 
     getLocationsWithCategory(category: string) {
-        return this.http.get(`v1/locations?category=${category}&`);
+      return this.http.get('v1/locations', {
+        params: {
+          category: category,}
+        }
+      );
     }
 
     getLocationsWithTeacherRequest(teacher: User): Observable<Location[]> {
@@ -152,6 +167,23 @@ export class LocationsService {
 
     checkLocationNumber(value) {
         return this.http.get(`v1/locations/check_fields?room=${value}`);
+    }
+
+    getPassLimit() {
+      return this.http.get('v1/locations/pass_limits');
+    }
+
+    getPassLimitRequest() {
+      this.store.dispatch(getPassLimits());
+    }
+
+    updatePassLimitRequest(item) {
+      this.store.dispatch(updatePassLimit({item}));
+    }
+
+    listenPassLimitSocket() {
+      this.pollingService.sendMessage('location.active_pass_counts.enable', null);
+      return this.pollingService.listen('location.active_pass_counts');
     }
 
     /////// Favorite Locations

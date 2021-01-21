@@ -1,0 +1,69 @@
+@import "../../../../sp-colors";
+
+.wrapper {
+  background-color: #FFFFFF;
+  border-radius: 9px;
+  width: 142px;
+  height: 164px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px 35px;
+
+  .title {
+    color: $navy;
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .drag-content {
+
+    .uploading-area {
+      margin-top: 25px;
+      width: 139px;
+      height: 117px;
+      border: 2px dashed #7F879D;
+      color: #7F879D;
+      font-size: 14px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      .choose-file-inline {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+
+    .set-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 25px;
+
+      .set-img {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+      }
+
+      .buttons {
+        width: 100%;
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+
+        .cancel {
+          color: $blue-gray;
+          font-size: 14px;
+          margin-right: 15px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

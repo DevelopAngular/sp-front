@@ -2,6 +2,10 @@
 
 .wrapper {
   position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  height: 430px;
   .sticky-header {
     position: sticky;
     top: 0;
@@ -75,12 +79,6 @@
 
     }
   }
-
-  .import-rooms-content {
-  }
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
   .import-screen {
     display: flex;
     flex-direction: column;

@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {GSuiteSelector, OrgUnit, UnitId} from '../../../sp-search/sp-search.component';
 import {AdminService} from '../../../services/admin.service';
-import { cloneDeep, isEqual } from 'lodash';
+import {cloneDeep, isEqual} from 'lodash';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {GettingStartedProgressService} from '../../getting-started-progress.service';
@@ -96,7 +96,7 @@ export class AccountGroupsComponent implements OnInit {
       });
 
       this.pending = true;
-      this.adminService.updateGSuiteOrgs(syncBody)
+      this.adminService.updateSpSyncing(syncBody)
         .pipe(
           switchMap(() => {
             return this.gsProgress.updateProgress('setup_accounts:end');

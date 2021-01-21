@@ -1,8 +1,8 @@
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {FormControl, FormGroup} from '@angular/forms';
 
-import { merge, Subject, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import {merge, Subject, timer} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 import * as moment from 'moment';
 
 @Component({

@@ -1,11 +1,11 @@
-import { ErrorHandler, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { UserService } from '../services/user.service';
-import {combineLatest, filter, map, tap} from 'rxjs/operators';
-import { User } from '../models/User';
+import {ErrorHandler, Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {Observable} from 'rxjs';
+import {UserService} from '../services/user.service';
+import {combineLatest, filter, map, take, tap} from 'rxjs/operators';
+import {User} from '../models/User';
 import {StorageService} from '../services/storage.service';
-import { DeviceDetection } from '../device-detection.helper';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Injectable({
   providedIn: 'root'
@@ -27,10 +27,11 @@ export class NotSeenIntroGuard implements CanActivate {
     return this.userService.user$
       .pipe(
         filter(raw => !!raw),
+        tap(() => this.userService.getIntrosRequest()),
         map(raw => {
           return User.fromJSON(raw);
         }),
-        combineLatest(this.userService.getIntros()),
+        combineLatest(this.userService.introsData$.pipe(filter(res => !!res), take(1))),
         map(([user, intros]: [any, any]) => {
           if (!user) {
             return false;

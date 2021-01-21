@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,8 @@ export class SideNavService {
   public toggleRight$: Subject<boolean>  = new Subject<boolean>();
 
   public  fadeClick$: Subject<boolean> = new Subject<boolean>();
+
+  public openSettingsEvent$: Subject<boolean> = new Subject<boolean>();
 
   get sideNavData() {
     return this.sideNavData$.asObservable();

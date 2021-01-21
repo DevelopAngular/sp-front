@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { bumpIn } from '../animations';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {bumpIn} from '../animations';
 import {DataService} from '../services/data-service';
 
 @Component({

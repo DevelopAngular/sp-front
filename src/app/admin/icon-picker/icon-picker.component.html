@@ -1,5 +1,5 @@
 <div class="icon-picker-wrapper">
-  <div class="icon-title" [ngStyle]="{'color': selectedIconId ? '#1F195E' : '#8e8e93'}">
+  <div class="icon-title" [ngStyle]="{'color': !!selectedIconLocalUrl ? '#1F195E' : showError ? '#E32C66' : '#8e8e93'}">
     <div>
       <span>Icon</span>
     </div>

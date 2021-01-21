@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {map} from 'rxjs/operators';
-import { AdminService } from '../../services/admin.service';
+import {AdminService} from '../../services/admin.service';
 import {Observable, Subject} from 'rxjs';
-import { HttpService } from '../../services/http-service';
+import {HttpService} from '../../services/http-service';
 
 export interface Icon {
     id: string;
@@ -25,6 +25,8 @@ export class IconPickerComponent implements OnInit {
   @Input() roomName: string;
 
   @Input() changeTextResult: Subject<string>;
+
+  @Input() showError: boolean;
 
   public selectedIconLocalUrl: string;
 
@@ -98,14 +100,16 @@ export class IconPickerComponent implements OnInit {
   }
 
   iconTooltipText(icon: Icon) {
-    return icon.id.split('_').map((i: string) => {
-      if (i) {
-        i = i[0].toUpperCase() + i.slice(1);
-      } else {
-        i = '';
-      }
-      return i;
-    }).join(' ');
+    const name = icon.id;
+    return name.replace(/-/g, ' ');
+    // return icon.id.split('_').map((i: string) => {
+    //   if (i) {
+    //     i = i[0].toUpperCase() + i.slice(1);
+    //   } else {
+    //     i = '';
+    //   }
+    //   return i;
+    // }).join(' ');
   }
 
   changeIcon(icon) {

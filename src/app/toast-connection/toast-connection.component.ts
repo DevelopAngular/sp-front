@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { WebConnectionService } from '../services/web-connection.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {WebConnectionService} from '../services/web-connection.service';
 
-import { filter, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { MatDialogConfig, MatDialogRef } from '@angular/material';
+import {filter, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {ScreenService} from '../services/screen.service';
 
 @Component({

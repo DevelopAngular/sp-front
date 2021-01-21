@@ -1,0 +1,64 @@
+@import "../../../../../sp-colors";
+
+.wrapper {
+  width: 425px;
+  height: 500px;
+  border-radius: 14px;
+  background: #1976D2;
+  position: relative;
+
+  .back-button {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    cursor: pointer;
+  }
+
+  .content {
+    padding: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .header {
+      margin-top: 30px;
+      color: #FFFFFF;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .title {
+      color: #FFFFFF;
+      font-size: 14px;
+      margin-top: 18px;
+      width: 219px;
+    }
+
+    .manual-set-up {
+      background: #FFFFFF;
+      box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.06);
+      backdrop-filter: blur(14.271px);
+      border-radius: 9px;
+      margin-top: 51px;
+      padding: 34px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      .manual-title {
+        display: flex;
+        color: $navy;
+        font-size: 15px;
+        margin-bottom: 12px;
+        font-weight: bold;
+      }
+
+      .subtitle {
+        color: $blue-gray;
+        font-size: 14px;
+        width: 184px;
+      }
+    }
+  }
+}

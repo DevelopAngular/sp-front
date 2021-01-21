@@ -15,7 +15,6 @@ import {InboxInvitationProvider, InboxRequestProvider} from '../passes/passes.co
 import {NavigationEnd, Router} from '@angular/router';
 import {filter as _filter} from 'lodash';
 import {HttpService} from '../services/http-service';
-import {useAnimation} from '@angular/animations';
 
 declare const window;
 
@@ -38,6 +37,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   isStaff: boolean;
   data: any;
   navbarHeight: string = '78px';
+  restriction$: Observable<boolean>;
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -65,24 +65,31 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((schools) => {
         this.topPadding = schools.length > 1 ? '50px' : '0px';
       });
+    this.restriction$ = this.userService.blockUserPage$;
 
     this.dataService.currentUser
       .pipe(
         takeUntil(this.destroy$),
         tap(user => {
           this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
-          if (user.roles.includes('hallpass_student')) {
-            this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
-            this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-              excludedRequests, this.dataService));
+          if (user.isStudent()) {
+            this.receivedRequests = new WrappedProvider(
+              new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser, of(null))
+            );
+            this.sentRequests = new WrappedProvider(
+              new InboxRequestProvider(this.liveDataService, this.dataService.currentUser, of(null))
+            );
           } else {
-            this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-              excludedRequests, this.dataService));
-            this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
+            this.receivedRequests = new WrappedProvider(
+              new InboxRequestProvider(this.liveDataService, this.dataService.currentUser, of(null))
+            );
+            this.sentRequests = new WrappedProvider(
+              new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser, of(null))
+            );
           }
         }),
         switchMap(user => {
-          return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+          return user.isStudent() ? this.liveDataService.watchActivePassLike(user) : of(null);
         })
       )
       .subscribe(passLike => {
@@ -113,15 +120,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         window.waitForAppLoaded();
         this.goHome(user);
     });
-
-    // this.dataService.currentUser
-    //   .pipe(
-    //     this.loadingService.watchFirst,
-    //     takeUntil(this.destroy$)
-    //   )
-    //   .subscribe(user => {
-    //     this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.isAssistant();
-    //   });
 
     this.inboxHasItems = combineLatest(
       this.receivedRequests.length$,
@@ -163,6 +161,10 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   shouldShowRouter() {
     // return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
+  }
+
+  onSwipe(event) {
+    debugger;
   }
 
   goHome(user) {

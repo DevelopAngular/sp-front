@@ -113,19 +113,20 @@
         height: 100%;
       }
 
-      .student-text {
-        position: absolute;
-        z-index: 10;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 17px;
-      }
+        .student-text {
+            position: absolute;
+            z-index: 10;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 17px;
+            text-align: center;
+        }
     }
 
     .invitation-card-content-modal {
@@ -162,12 +163,18 @@
       .center-block {
         height: 221px;
 
-        &.center {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          .message {
+            overflow: auto;
+            word-wrap: break-word;
+            width: 222px;
+          }
+
+            &.center {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
-      }
 
       .bottom-block {
         height: 92px;

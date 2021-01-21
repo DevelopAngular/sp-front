@@ -15,7 +15,7 @@
        [@NextStep]="{ value: '', params: frameMotion$ | async}"
        (@NextStep.start)="setFormSize();setContainerSize('end')"
        (@NextStep.done)="setContainerSize('start')">
-    <div [attr.data-motion-compress]="(isCompressed | async) ? 'calendar:' + (frameMotion$ | async).direction : false"
+    <div [attr.data-motion-compress]="'calendar:' + (frameMotion$ | async).direction"
          class="calendar"
     >
       <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
@@ -30,7 +30,7 @@
        [@NextStep]="{ value: '', params: frameMotion$ | async}"
        (@NextStep.start)="setFormSize();setContainerSize('end')"
        (@NextStep.done)="setContainerSize('start')">
-    <div [attr.data-motion-compress]="(isCompressed | async) ? 'students:' + (frameMotion$ | async).direction : false"
+    <div [attr.data-motion-compress]="'students:' + (frameMotion$ | async).direction"
          [attr.data-motion-opacity]="(frameMotion$ | async).direction"
          class="student-groups"
     >
@@ -46,7 +46,7 @@
        [@NextStep]="{ value: '', params: frameMotion$ | async}"
        (@NextStep.start)="setFormSize();setContainerSize('end')"
        (@NextStep.done)="setContainerSize('start')">
-    <div [attr.data-motion-compress]="(isCompressed | async) ? 'locations:' + (frameMotion$ | async).direction : false"
+    <div [attr.data-motion-compress]="'locations:' + (frameMotion$ | async).direction"
          [attr.data-motion-opacity]="(frameMotion$ | async).direction + 2"
          [attr.data-motion-scale]="(isScaled | async)"
          class="locations"

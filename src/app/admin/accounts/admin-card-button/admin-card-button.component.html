@@ -10,7 +10,7 @@
         <img *ngIf="leftIcon" width="50" height="50" [src]="getCardIcon(leftIcon) | resolveAsset" alt="Icon">
         <div class="text">
             <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
-              {{ title }}
+              {{ title }} <span class="new" *ngIf="isNew">New</span>
               <app-disabled-chip [style.margin-left]="'10px'" *ngIf="isBanner"></app-disabled-chip>
             </div>
             <div class="subtitle" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
@@ -26,6 +26,5 @@
       [eventBubbling]="true"
     ></app-icon-button>
   </div>
-<!--    <img *ngIf="wrap.hovered && !integrations" width="24" height="24" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">-->
     <img *ngIf="integrations" width="170" [src]="'./assets/admin-images/integrations.png' | resolveAsset" alt="ALT">
 </div>

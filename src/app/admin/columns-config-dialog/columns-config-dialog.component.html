@@ -3,10 +3,14 @@
 <div class="columns-config-container">
   <div class="columns-config-container_header ds-section-header" style="">Columns</div>
   <div style="display: flex;" *ngFor="let header of options">
-    <app-toggle-input [controlSize]="'small'"
-                      [delimiter]="false"
-                      [disabled]="data['form'][header].disabled"
-                      [form]="formGroup" [controlName]="header"
-                      [controlLabel]="data['form'][header].label"></app-toggle-input>
+    <app-toggle-input
+      [controlSize]="'small'"
+      [delimiter]="false"
+      [disabled]="data['form'][header].disabled"
+      [form]="formGroup"
+      [controlName]="header"
+      [controlLabel]="data['form'][header].label"
+    >
+    </app-toggle-input>
   </div>
 </div>

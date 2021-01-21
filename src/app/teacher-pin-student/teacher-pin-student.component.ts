@@ -29,7 +29,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
   @Output() pinResult: EventEmitter<any> = new EventEmitter<any>();
   @Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild('inp') inp: ElementRef;
+  @ViewChild('inp', { static: true }) inp: ElementRef;
 
   pin: string = '';
 
@@ -98,6 +98,11 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
                   })
                 );
             }
+          } else if (event.keyCode === 8) {
+            this.pin = this.pin.slice(0, this.pin.length - 1);
+            this.circles[this.pin.length].pressed = false;
+            this.cdr.detectChanges();
+            return of(null);
           }
           return of(null);
         }),

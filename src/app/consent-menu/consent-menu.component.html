@@ -43,12 +43,12 @@
                (mouseleave)="_option.style.background = 'transparent'"
                >
             <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
-              <span>{{ option.display }}</span>
+              <span style="white-space: nowrap">{{ option.display }}</span>
               <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" *ngIf="sortMode === option.action" alt="Check.svg">
             </div>
             <ng-template #simpleOptions>
               <img width="16" height="16" *ngIf="option.icon" [src]="option.icon | resolveAsset" alt="Icon">
-              <span [style.margin-left]="option.icon ? '8px' : 0">{{ option.display }}</span>
+              <span style="white-space: nowrap" [style.margin-left]="option.icon ? '8px' : 0">{{ option.display }}</span>
             </ng-template>
           </div>
         </ng-template>

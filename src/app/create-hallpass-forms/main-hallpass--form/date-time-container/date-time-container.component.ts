@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {Navigation} from '../main-hall-pass-form.component';
 
 import {CreateFormService} from '../../create-form.service';
-import {FromWhereComponent} from '../locations-group-container/from-where/from-where.component';
 import {DateTimeComponent} from './date-time/date-time.component';
 import {DeviceDetection} from '../../../device-detection.helper';
 import {UserService} from '../../../services/user.service';
@@ -21,7 +20,7 @@ export class DateTimeContainerComponent implements OnInit {
   @Output('nextStepEvent')
   nextStepEvent: EventEmitter<Navigation | {action: string, data: any}> = new EventEmitter<Navigation | {action: string, data: any}>();
 
-  @ViewChild(DateTimeComponent) dateTimeComponent;
+  @ViewChild(DateTimeComponent, { static: true }) dateTimeComponent;
 
   constructor(
     private formService: CreateFormService,

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as teachersActions from '../actions';
-import {catchError, concatMap, filter, map, pluck, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
 import {HttpService} from '../../../../../services/http-service';
@@ -49,7 +49,7 @@ export class TeachersEffects {
         concatMap(action => {
           return this.userService.nextRequests$._profile_teacher.pipe(take(1));
         }),
-        filter(res => !!res),
+        // filter(res => !!res),
         switchMap(next => this.http.get(next)
           .pipe(
             switchMap((moreTeachers: any) => {
@@ -151,6 +151,49 @@ export class TeachersEffects {
               catchError(error => of(teachersActions.updateTeacherPermissionsFailure({errorMessage: error.message})))
             );
         })
+      );
+  });
+
+  addUserToTeacherProfile$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.addUserToTeacherProfile),
+        concatMap((action: any) => {
+          return this.userService.addUserToProfile(action.user.id, action.role)
+            .pipe(
+              switchMap((user: User) => {
+                return [
+                  teachersActions.updateTeacherAccount({profile: user}),
+                  teachersActions.addUserToTeacherProfileSuccess({teacher: user})
+                ];
+              }),
+              catchError(error => of(teachersActions.addUserToTeacherProfileFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  sortTeacherAccounts$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.sortTeacherAccounts),
+        concatMap((action: any) => {
+          return forkJoin({
+            userList: of(action.teachers),
+            userLocations: this.locationService.getLocationsWithManyTeachers(action.teachers)
+          }).pipe(
+            map(({userList, userLocations}: {userList: any, userLocations: any[]}) => {
+              const users = userList.map(user => {
+                const assignedTo = userLocations.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
+                return {...user, assignedTo};
+              });
+              return { users, next: action.next };
+            }),
+            map(({users, next}) => {
+              return teachersActions.sortTeacherAccountsSuccess({teachers: users, next, sortValue: action.sortValue});
+            })
+          );
+        }),
       );
   });
 

@@ -3,8 +3,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../services/user.service';
 import {Observable, of} from 'rxjs';
 import {User} from '../models/User';
-import {MatDialogRef} from '@angular/material';
-import {filter, skip, switchMap, take} from 'rxjs/operators';
+import {MatDialogRef} from '@angular/material/dialog';
+import {switchMap, take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-teacher-pin',
@@ -38,13 +38,15 @@ export class TeacherPinComponent implements OnInit {
   ngOnInit() {
     this.user$ = this.userService.user$;
     this.userPin$ = this.userService.userPin$;
-    this.form = new FormGroup({
-      pin: new FormControl('', [
-        Validators.required,
-        Validators.minLength(4),
-        Validators.pattern('^[0-9]*?[0-9]+$'),
-        (fn) => fn.value.length < 4 ? { minPin: true } : null
-      ])
+    this.userPin$.subscribe(res => {
+      this.form = new FormGroup({
+        pin: new FormControl(res, [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.pattern('^[0-9]*?[0-9]+$'),
+          (fn) => fn.value.length < 4 ? { minPin: true } : null
+        ])
+      });
     });
   }
 
@@ -55,7 +57,7 @@ export class TeacherPinComponent implements OnInit {
         return this.userService.updateUserRequest(user, this.form.value);
       })
     ).subscribe(() => {
-      this.close();
+      // this.close();
     });
   }
 

@@ -1,13 +1,11 @@
-import {Component, OnInit, Inject, ViewChild, ElementRef, HostListener} from '@angular/core';
-import { User } from '../models/User';
-import { HttpService } from '../services/http-service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {User} from '../models/User';
+import {HttpService} from '../services/http-service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../services/admin.service';
-import {showReportDialog} from '@sentry/browser';
 import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {DomSanitizer} from '@angular/platform-browser';
-import {ScreenService} from '../services/screen.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {filter} from 'rxjs/operators';
 

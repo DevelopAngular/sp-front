@@ -2,7 +2,8 @@ import {Injectable} from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as userActions from '../actions';
-import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
+import * as accountsActions from '../../accounts/actions/accounts.actions';
+import {catchError, concatMap, map} from 'rxjs/operators';
 import {User} from '../../../models/User';
 import {of} from 'rxjs';
 
@@ -56,6 +57,16 @@ export class UserEffects {
               }),
               catchError(error => of(userActions.updateUserFailure({errorMessage: error.message})))
             );
+        })
+      );
+  });
+
+  updateUserSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(userActions.updateUserSuccess),
+        map((action: any) => {
+          return accountsActions.updateAccounts({account: action.user});
         })
       );
   });

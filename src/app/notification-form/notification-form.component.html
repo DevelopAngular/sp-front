@@ -30,6 +30,18 @@
         </div>
         <mat-divider></mat-divider>
       </div>
+
+    <div class="test-notif" *ngIf="loaded">
+      <div class="test-header">Having issues with notifications?</div>
+      <div class="info">Check out our <a href="https://www.smartpass.app/notifications" target="_blank">support guides</a> for more help.</div>
+      <app-gradient-button
+        [size]="'medium'"
+        [textColor]="'#1F195E'"
+        [leftIcon]="'./assets/Latter (Navy).svg'"
+        [gradient]="'#F4F4F4, #F4F4F4'"
+        (buttonClick)="send()"
+      >Send test notification</app-gradient-button>
+    </div>
   </div>
     <div class="notif-empty-state" *ngIf="!isDisabledNotif && !isSafari">
         <img draggable="false" [src]="'./assets/emptyStates/notificationsEmpty.svg' | resolveAsset">

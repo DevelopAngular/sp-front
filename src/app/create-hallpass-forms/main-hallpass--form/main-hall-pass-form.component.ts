@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Location} from '../../models/Location';
 import {Pinnable} from '../../models/Pinnable';
 import {User} from '../../models/User';
@@ -62,7 +62,6 @@ export interface Navigation {
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
   animations: [NextStep],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
@@ -224,9 +223,14 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         .subscribe(rooms => {
           this.FORM_STATE.data.teacherRooms = rooms;
         });
+    this.locationsService.getPassLimitRequest();
+    this.locationsService.listenPassLimitSocket().subscribe(res => {
+      this.locationsService.updatePassLimitRequest(res);
+    });
 
     this.dialogRef
       .backdropClick()
+      .pipe(filter(() => this.FORM_STATE.state !== 1))
       .subscribe(() => {
         this.formService.setFrameMotionDirection('disable');
         this.formService.compressableBoxController.next(false);

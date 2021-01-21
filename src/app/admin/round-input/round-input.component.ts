@@ -1,19 +1,11 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input, OnChanges, OnDestroy,
-  OnInit,
-  Output, SimpleChanges,
-  ViewChild
-} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {BehaviorSubject, fromEvent, Observable, of, Subject} from 'rxjs';
+import {Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
-import {constructUrl} from '../../live-data/helpers';
-import {debounceTime, distinctUntilChanged, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, takeUntil, tap} from 'rxjs/operators';
+import {DeviceDetection} from '../../device-detection.helper';
 
 //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
 
@@ -27,7 +19,7 @@ export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates' |
 })
 export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
 
-  @ViewChild('input') input: ElementRef;
+  @ViewChild('input', { static: true }) input: ElementRef;
 
   @Input() selfSearch: boolean = false;
   @Input() endpoint: string;
@@ -47,6 +39,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() closeIcon: boolean = false;
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
+  @Input() forceFocused$: Subject<any>;
   @Input() pending$: Subject<boolean>;
   @Input() selectReset$: Subject<string>;
   @Input() selections: any[] = [];
@@ -91,6 +84,10 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   get labelColor() {
     if (this.selected) {
       return this.darkTheme.getColor({
@@ -113,6 +110,16 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
       }, 500);
     }
 
+    if (this.forceFocused$) {
+      this.forceFocused$.subscribe(res => {
+        if (res) {
+          this.input.nativeElement.focus();
+        } else {
+          this.input.nativeElement.blur();
+        }
+      });
+    }
+
       fromEvent(this.input.nativeElement, 'input')
         .pipe(
           (this.isSearch ? (distinctUntilChanged(), debounceTime(300)) : tap()),
@@ -126,7 +133,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
               this.showCloseIcon.next(false);
             }, 220);
           }
-          this.ontextupdate.emit(event.target.value);
+          this.ontextupdate.emit(event.target.value.trim());
         });
 
     if (!this.type.includes('multi') && this.type !== 'text') {

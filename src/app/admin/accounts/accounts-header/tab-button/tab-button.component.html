@@ -1,0 +1,8 @@
+<div
+  class="wrapper"
+  appCrossPointerEventTarget
+  (pointerClickEvent)="doClick()"
+  [style.color]="selected ? darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'}) : darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})"
+>
+  <div class="title">{{ title }}</div>
+</div>

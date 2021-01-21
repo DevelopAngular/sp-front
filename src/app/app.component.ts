@@ -1,35 +1,34 @@
-import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter as _filter, find } from 'lodash';
-import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {filter as _filter, find} from 'lodash';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
-import { filter, map, mergeMap, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
-import { BUILD_INFO_REAL } from '../build-info';
-import { DarkThemeSwitch } from './dark-theme-switch';
+import {filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {BUILD_INFO_REAL} from '../build-info';
+import {DarkThemeSwitch} from './dark-theme-switch';
 
-import { DeviceDetection } from './device-detection.helper';
-import { School } from './models/School';
-import { AdminService } from './services/admin.service';
-import { GoogleLoginService } from './services/google-login.service';
-import { HttpService, SPError } from './services/http-service';
-import { KioskModeService } from './services/kiosk-mode.service';
-import { StorageService } from './services/storage.service';
-import { WebConnectionService } from './services/web-connection.service';
-import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
-import { OverlayContainer } from '@angular/cdk/overlay';
-import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
-import { Meta} from '@angular/platform-browser';
-import { NotificationService } from './services/notification-service';
-import { GoogleAnalyticsService } from './services/google-analytics.service';
-import { ShortcutInput } from 'ng-keyboard-shortcuts';
-import { KeyboardShortcutsService } from './services/keyboard-shortcuts.service';
-import { NextReleaseComponent, Update } from './next-release/next-release.component';
-import { User } from './models/User';
-import { UserService } from './services/user.service';
-import { NextReleaseService } from './next-release/services/next-release.service';
-import { ScreenService } from './services/screen.service';
+import {DeviceDetection} from './device-detection.helper';
+import {School} from './models/School';
+import {AdminService} from './services/admin.service';
+import {GoogleLoginService} from './services/google-login.service';
+import {HttpService, SPError} from './services/http-service';
+import {KioskModeService} from './services/kiosk-mode.service';
+import {StorageService} from './services/storage.service';
+import {OverlayContainer} from '@angular/cdk/overlay';
+import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
+import {Meta} from '@angular/platform-browser';
+import {NotificationService} from './services/notification-service';
+import {GoogleAnalyticsService} from './services/google-analytics.service';
+import {ShortcutInput} from 'ng-keyboard-shortcuts';
+import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
+import {NextReleaseComponent, Update} from './next-release/next-release.component';
+import {User} from './models/User';
+import {UserService} from './services/user.service';
+import {NextReleaseService} from './next-release/services/next-release.service';
+import {ScreenService} from './services/screen.service';
+import {ToastService} from './services/toast.service';
 
 declare const window;
 
@@ -50,7 +49,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   shortcuts: ShortcutInput[];
 
   private dialogContainer: HTMLElement;
-  @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
+  @ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
     this.dialogContainer = content.nativeElement;
   }
 
@@ -72,6 +71,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public isKioskMode: boolean;
   public showSupportButton: boolean;
   private openConnectionDialog: boolean;
+  public customToastOpen$: Observable<boolean>;
+  public hasCustomBackdrop$: Observable<boolean>;
 
   private subscriber$ = new Subject();
 
@@ -86,7 +87,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private webConnection: WebConnectionService,
     private dialog: MatDialog,
     private overlayContainer: OverlayContainer,
     private storageService: StorageService,
@@ -96,11 +96,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private googleAnalytics: GoogleAnalyticsService,
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
+    private toastService: ToastService
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
+    this.customToastOpen$ = this.toastService.isOpen$;
+    this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
     this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
       if (event instanceof NavigationEnd) {
         window.history.pushState({}, '');
@@ -110,7 +113,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userService.loadedUser$
       .pipe(
         filter(l => l),
-        switchMap(l => this.userService.user$),
+        switchMap(l => this.userService.user$.pipe(take(1))),
+        filter(user => !!user),
         switchMap((user: User) => {
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -167,7 +171,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
-    this.googleAnalytics.init();
+    // this.googleAnalytics.init();
     const fcm_sw = localStorage.getItem('fcm_sw_registered');
     if (fcm_sw === 'true') {
       this.notifService.initNotifications(true);
@@ -175,7 +179,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 
-    this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
       document.documentElement.style.background = val ? '#0F171E' : '#FBFEFF';
@@ -189,23 +192,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       document.head.appendChild(link);
     }
 
-    this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
-      filter(res => !res && !this.openConnectionDialog))
-      .subscribe(() => {
-        const toastDialog = this.dialog.open(ToastConnectionComponent, {
-          panelClass: 'toasr',
-          hasBackdrop: false,
-          disableClose: true
-        });
-
-        toastDialog.afterOpened().subscribe(() => {
-          this.openConnectionDialog = true;
-        });
-
-        toastDialog.afterClosed().subscribe(() => {
-          this.openConnectionDialog = false;
-        });
-      });
+    // this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
+    //   filter(res => !res && !this.openConnectionDialog))
+    //   .subscribe(() => {
+    //     this.openConnectionDialog = true;
+    //     const toastDialog = this.dialog.open(ToastConnectionComponent, {
+    //       panelClass: 'toasr',
+    //       hasBackdrop: false,
+    //       disableClose: true
+    //     });
+    //
+    //     toastDialog.afterClosed().subscribe(() => {
+    //       this.openConnectionDialog = false;
+    //     });
+    //   });
 
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),

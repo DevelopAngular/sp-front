@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
   <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119610218-1"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5NCCB9C2PJ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-5NCCB9C2PJ', {'groups': 'private'});
-    gtag('config', 'UA-119610218-1', {'groups': 'public'});
-  </script>
+<!--  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119610218-1"></script>-->
+<!--  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5NCCB9C2PJ"></script>-->
+<!--  <script>-->
+<!--    window.dataLayer = window.dataLayer || [];-->
+<!--    function gtag(){dataLayer.push(arguments);}-->
+<!--    gtag('js', new Date());-->
+<!--    gtag('config', 'G-5NCCB9C2PJ', {'groups': 'private'});-->
+<!--    gtag('config', 'UA-119610218-1', {'groups': 'public'});-->
+<!--  </script>-->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-title" content="Smartpass">
+  <meta name="apple-mobile-web-app-title" content="SmartPass">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="white">
@@ -23,7 +23,7 @@
   <title>SmartPass</title>
   <base href="/">
 
-  <link rel="manifest" crossorigin="use-credentials" href="./assets/manifest.json">
+  <link rel="manifest" crossorigin="use-credentials" href="./manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png?v=2bBxdz87Xl">
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png?v=2bBxdz87Xl">
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png?v=2bBxdz87Xl">
@@ -33,7 +33,6 @@
   <meta name="application-name" content="SmartPass">
   <meta name="msapplication-TileColor" content="#04cd33">
   <meta name="msapplication-config" content="./assets/icons/browserconfig.xml?v=2bBxdz87Xl">
-<!--  <meta name="theme-color" content="#ffffff">-->
 
   <link rel="stylesheet" type="text/css" href="./assets/css/preloader.css">
 
@@ -63,40 +62,62 @@
       stroke-dasharray="200"
       class="preloader scale">
       <defs>
-        <filter id="dropshadow" height="130%">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="1"></feGaussianBlur> <!-- stdDeviation is how much to blur -->
-          <feOffset dx="0" dy="0" result="offsetblur"></feOffset> <!-- how much to offset -->
-          <feComponentTransfer>
-            <feFuncA type="linear" slope="0.2"></feFuncA> <!-- slope is the opacity of the shadow -->
-          </feComponentTransfer>
-          <feMerge>
-            <feMergeNode></feMergeNode> <!-- this contains the offset blurred image -->
-            <feMergeNode in="SourceGraphic"></feMergeNode> <!-- this contains the element that the filter is applied to -->
-          </feMerge>
-        </filter>
+        <linearGradient id="Gradient-1" x1="0.5" y1="1" x2="0.5" y2="0">
+          <stop offset="0%" stop-opacity="1" stop-color="#00B476">
+            <animate attributeName="offset" values="0;1;" dur="3s" begin="0" fill="freeze"/>
+          </stop>
+          <stop offset="0%" stop-opacity="1" stop-color="#7f879d">
+            <animate attributeName="offset" values="0;1;" dur="3s" begin="0" fill="freeze"/>
+          </stop>
+        </linearGradient>
+        <linearGradient id="repeat" xlink:href="#Gradient-1" spreadMethod="repeat" />
+<!--        <filter id="dropshadow" height="130%">-->
+<!--          <feGaussianBlur in="SourceAlpha" stdDeviation="1"></feGaussianBlur> &lt;!&ndash; stdDeviation is how much to blur &ndash;&gt;-->
+<!--          <feOffset dx="0" dy="0" result="offsetblur"></feOffset> &lt;!&ndash; how much to offset &ndash;&gt;-->
+<!--          <feComponentTransfer>-->
+<!--            <feFuncA type="linear" slope="0.2"></feFuncA> &lt;!&ndash; slope is the opacity of the shadow &ndash;&gt;-->
+<!--          </feComponentTransfer>-->
+<!--          <feMerge>-->
+<!--            <feMergeNode></feMergeNode> &lt;!&ndash; this contains the offset blurred image &ndash;&gt;-->
+<!--            <feMergeNode in="SourceGraphic"></feMergeNode> &lt;!&ndash; this contains the element that the filter is applied to &ndash;&gt;-->
+<!--          </feMerge>-->
+<!--        </filter>-->
       </defs>
-      <g id="filterShadowRef" filter="url(#dropshadow)">
-        <circle r="30" cx="50" cy="50" fill="transparent"></circle>
-      </g>
-      <g>
-        <svg width="64" height="33" x="20" y="35" viewBox="0 0 150 160">
-          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            <g id="arrow" transform="translate(3.000000, 0.000000)" style="fill: #7F879D" fill-rule="nonzero">
-              <path d="M127.685045,98.1464997 L80.6403711,145.191173 C74.2538542,151.57769 63.9281157,151.606542 57.5771895,145.255616 C51.226263,138.904689 51.2551148,128.578951 57.6416316,122.192434 L104.686305,75.1477605 L57.3461108,27.8075658 C50.9595937,21.4210488 50.9307419,11.0953107 57.2816684,4.74438419 C63.6325949,-1.60654219 73.9583331,-1.57769053 80.34485,4.80882648 L139.415225,63.8792012 C145.703488,70.1674642 145.731895,80.3343446 139.478676,86.5875648 L127.802392,98.2638476 L127.685045,98.1464997 Z M51.229003,99.7185895 L27.7048949,123.242698 C21.3326816,129.614911 11.0584973,129.672126 4.7568622,123.370491 C-1.54477286,117.068856 -1.48755764,106.794672 4.88465572,100.422458 L28.4087639,76.8983503 L4.81684319,53.3064295 C-1.55537032,46.934216 -1.61258544,36.6600316 4.68904964,30.3583967 C10.9906847,24.0567616 21.2648689,24.1139768 27.6370822,30.4861904 L62.7366843,65.5857925 C69.0108639,71.859972 69.0671988,81.9760916 62.862512,88.1807786 L51.2768521,99.7664383 L51.229003,99.7185895 Z" id="Arrow"></path>
-            </g>
+<!--      <g id="filterShadowRef" filter="url(#dropshadow)">-->
+<!--        <circle r="30" cx="50" cy="50" fill="transparent"></circle>-->
+<!--      </g>-->
+<!--      <g>-->
+<!--        <svg width="64" height="33" x="20" y="35" viewBox="0 0 150 160">-->
+<!--          <g stroke="none" stroke-width="1" fill-rule="evenodd">-->
+<!--            <g id="arrow" transform="translate(3.000000, 0.000000)" fill="url(#repeat)" fill-rule="nonzero">-->
+<!--              <path d="M127.685045,98.1464997 L80.6403711,145.191173 C74.2538542,151.57769 63.9281157,151.606542 57.5771895,145.255616 C51.226263,138.904689 51.2551148,128.578951 57.6416316,122.192434 L104.686305,75.1477605 L57.3461108,27.8075658 C50.9595937,21.4210488 50.9307419,11.0953107 57.2816684,4.74438419 C63.6325949,-1.60654219 73.9583331,-1.57769053 80.34485,4.80882648 L139.415225,63.8792012 C145.703488,70.1674642 145.731895,80.3343446 139.478676,86.5875648 L127.802392,98.2638476 L127.685045,98.1464997 Z M51.229003,99.7185895 L27.7048949,123.242698 C21.3326816,129.614911 11.0584973,129.672126 4.7568622,123.370491 C-1.54477286,117.068856 -1.48755764,106.794672 4.88465572,100.422458 L28.4087639,76.8983503 L4.81684319,53.3064295 C-1.55537032,46.934216 -1.61258544,36.6600316 4.68904964,30.3583967 C10.9906847,24.0567616 21.2648689,24.1139768 27.6370822,30.4861904 L62.7366843,65.5857925 C69.0108639,71.859972 69.0671988,81.9760916 62.862512,88.1807786 L51.2768521,99.7664383 L51.229003,99.7185895 Z"></path>-->
+<!--            </g>-->
+<!--          </g>-->
+<!--        </svg>-->
+      <svg width="50px" height="50px" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <g id="arrow" transform="translate(3.000000, 0.000000)" fill="url(#repeat)" fill-rule="nonzero">
+            <path d="M127.685045,98.1464997 L80.6403711,145.191173 C74.2538542,151.57769 63.9281157,151.606542 57.5771895,145.255616 C51.226263,138.904689 51.2551148,128.578951 57.6416316,122.192434 L104.686305,75.1477605 L57.3461108,27.8075658 C50.9595937,21.4210488 50.9307419,11.0953107 57.2816684,4.74438419 C63.6325949,-1.60654219 73.9583331,-1.57769053 80.34485,4.80882648 L139.415225,63.8792012 C145.703488,70.1674642 145.731895,80.3343446 139.478676,86.5875648 L127.802392,98.2638476 L127.685045,98.1464997 Z M51.229003,99.7185895 L27.7048949,123.242698 C21.3326816,129.614911 11.0584973,129.672126 4.7568622,123.370491 C-1.54477286,117.068856 -1.48755764,106.794672 4.88465572,100.422458 L28.4087639,76.8983503 L4.81684319,53.3064295 C-1.55537032,46.934216 -1.61258544,36.6600316 4.68904964,30.3583967 C10.9906847,24.0567616 21.2648689,24.1139768 27.6370822,30.4861904 L62.7366843,65.5857925 C69.0108639,71.859972 69.0671988,81.9760916 62.862512,88.1807786 L51.2768521,99.7664383 L51.229003,99.7185895 Z"></path>
           </g>
-        </svg>
+        </g>
+      </svg>
+    </svg>
+    <svg id="arrow-mobile" style="display: none" width="90px" height="90px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <g id="SP-Arrow-(White)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Logo" transform="translate(3.000000, 0.000000)" fill="#FFFFFF" fill-rule="nonzero">
+          <path d="M127.685045,98.1464997 L80.6403711,145.191173 C74.2538542,151.57769 63.9281157,151.606542 57.5771895,145.255616 C51.226263,138.904689 51.2551148,128.578951 57.6416316,122.192434 L104.686305,75.1477605 L57.3461108,27.8075658 C50.9595937,21.4210488 50.9307419,11.0953107 57.2816684,4.74438419 C63.6325949,-1.60654219 73.9583331,-1.57769053 80.34485,4.80882648 L139.415225,63.8792012 C145.703488,70.1674642 145.731895,80.3343446 139.478676,86.5875648 L127.802392,98.2638476 L127.685045,98.1464997 Z M51.229003,99.7185895 L27.7048949,123.242698 C21.3326816,129.614911 11.0584973,129.672126 4.7568622,123.370491 C-1.54477286,117.068856 -1.48755764,106.794672 4.88465572,100.422458 L28.4087639,76.8983503 L4.81684319,53.3064295 C-1.55537032,46.934216 -1.61258544,36.6600316 4.68904964,30.3583967 C10.9906847,24.0567616 21.2648689,24.1139768 27.6370822,30.4861904 L62.7366843,65.5857925 C69.0108639,71.859972 69.0671988,81.9760916 62.862512,88.1807786 L51.2768521,99.7664383 L51.229003,99.7185895 Z"></path>
+        </g>
       </g>
     </svg>
-    <div style="color: #7F879D; text-align: center;">
-      <span class="percent-display">Loading 0 %</span>
-    </div>
+<!--    <div style="color: #7F879D; text-align: center;">-->
+<!--      <span class="percent-display">Loading 0 %</span>-->
+<!--    </div>-->
   </div>
 </div>
 
 <app-root></app-root>
 
-<script type="text/javascript" src="preloader.js"></script>
+<script type="text/javascript" src="preloader.js?cache=2"></script>
 <noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>
 </html>

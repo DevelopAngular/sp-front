@@ -1,20 +1,31 @@
-import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef} from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  NgZone,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import { LoadingService } from '../../services/loading.service';
-import { DataService } from '../../services/data-service';
-import { User } from '../../models/User';
-import { UserService } from '../../services/user.service';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {LoadingService} from '../../services/loading.service';
+import {DataService} from '../../services/data-service';
+import {User} from '../../models/User';
+import {UserService} from '../../services/user.service';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SettingsComponent} from '../settings/settings.component';
-import {map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
-import {HttpService} from '../../services/http-service';
 import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
+
+import * as moment from 'moment';
 
 declare const window;
 
@@ -23,19 +34,20 @@ declare const window;
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements OnInit {
+export class NavComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('settingsButton') settingsButton: ElementRef;
-  @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
-  @ViewChild('tabRef') tabRef: ElementRef;
+  @ViewChild('settingsButton', { static: true }) settingsButton: ElementRef;
+  @ViewChild('navButtonsContainter', { static: true }) navButtonsContainterRef: ElementRef;
+  @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
   // gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
-    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
-    {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
+    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
+    // {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
+    {title: 'Explore', route : 'explore', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
     {title: 'Rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
     {title: 'Accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
     {title: 'My School', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']}
@@ -45,6 +57,8 @@ export class NavComponent implements OnInit {
 
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
+  currentTab: string;
+  introsData: any;
   public pts: string;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -57,9 +71,7 @@ export class NavComponent implements OnInit {
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
-        public gsProgress: GettingStartedProgressService,
-        private shortcutsService: KeyboardShortcutsService,
-        private http: HttpService
+        private shortcutsService: KeyboardShortcutsService
     ) { }
 
   user: User;
@@ -72,32 +84,25 @@ export class NavComponent implements OnInit {
     return this.pts;
   }
 
+  get showNotificationBadge() {
+    return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
+  }
+
+  ngAfterViewInit() {
+    this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef);
+  }
+
   ngOnInit() {
-    this.http.globalReload$
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap(() => {
-          return this.gsProgress.onboardProgress$;
-        }),
-      ).subscribe(res => {
-        this.process = res.progress;
-        setTimeout(() => {
-          this.hidePointer = this.router.url === '/admin/gettingstarted' && this.process === 100;
-        }, 100);
-      if (res.progress === 100 && this.buttons.find(button => button.title === 'Get Started')) {
-          this.buttons.splice(0, 1);
-        } else if (res.progress < 100 && !this.buttons.find(button => button.title === 'Get Started')) {
-          this.buttons.unshift({title: 'Get Started', route: 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']});
-        }
-      });
-    let urlSplit: string[] = location.pathname.split('/');
-    this.tab = urlSplit.slice(1);
+    const url: string[] = this.router.url.split('/');
+    this.currentTab = url[url.length - 1];
+    this.tab = url.slice(1);
     this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
     this.router.events
       .pipe(takeUntil(this.destroy$))
       .subscribe(value => {
       if ( value instanceof NavigationEnd ) {
-        let urlSplit: string[] = value.url.split('/');
+        const urlSplit: string[] = value.url.split('/');
+        this.currentTab = urlSplit[urlSplit.length - 1];
         this.tab = urlSplit.slice(1);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
         this.hidePointer = this.process === 100 && this.tab.indexOf('gettingstarted') !== -1;
@@ -161,10 +166,16 @@ export class NavComponent implements OnInit {
           const currentButton = this.buttons.find(button => button.route === route[key[0]]);
           this.route(currentButton);
           if (!this.router.url.includes(currentButton.route)) {
-            this.selectTab(this.tabRef.nativeElement, this.navButtonsContainterRef.nativeElement);
+            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef.nativeElement);
           }
         }
     });
+
+    this.userService.introsData$.pipe(filter(res => !!res), takeUntil(this.destroy$))
+      .subscribe(data => {
+        // debugger;
+        this.introsData = data;
+      });
   }
 
   route( button: any) {
@@ -196,15 +207,14 @@ export class NavComponent implements OnInit {
           'trigger': target,
           'isSwitch': this.showButton,
           darkBackground: this.darkTheme.isEnabled$.value,
+          introsData: this.introsData,
+          showNotificationBadge: this.showNotificationBadge
         }
-      });
-
-      settingsRef.beforeClose().subscribe(() => {
-        this.selectedSettings = false;
       });
 
       settingsRef.afterClosed().subscribe(action => {
         UNANIMATED_CONTAINER.next(false);
+        this.selectedSettings = false;
         if (action === 'signout') {
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
@@ -231,15 +241,33 @@ export class NavComponent implements OnInit {
           window.open('https://www.smartpass.app/bugreport');
         } else if (action === 'privacy') {
           window.open('https://www.smartpass.app/legal');
+        } else if (action === 'refer') {
+          if (this.introsData.referral_reminder.universal && !this.introsData.referral_reminder.universal.seen_version) {
+            this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
+          }
+          window.open('https://www.smartpass.app/referrals');
         }
       });
     }
   }
 
+  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 50) {
+    setTimeout(() => {
+      const tabRefsArray = refsArray.toArray();
+      const selectedTabRef = this.buttons.findIndex((button) => button.route === this.currentTab);
+      if (tabRefsArray[selectedTabRef]) {
+        this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
+      }
+    }, timeout);
+  }
+
   selectTab(evt: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
-    this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+    setTimeout(() => {
+      this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+    }, 10);
+
   }
 
   isSelected(route: string) {

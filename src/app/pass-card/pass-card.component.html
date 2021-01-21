@@ -38,10 +38,53 @@
       </div>
     </div>
 
-    <div class="pass-card-content-modal" *ngIf="isModal">
-      <div class="center-block">
-        <app-travel-view [pass]="pass"></app-travel-view>
-      </div>
+  <div class="pass-card-content-modal" *ngIf="isModal">
+    <div class="center-block">
+
+      <app-travel-view *ngIf="pass.cancellable_by_student || data.kioskMode; else message" [pass]="pass"></app-travel-view>
+
+      <ng-template #message>
+        <ng-container *ngIf="!isMobile; else mobile">
+          <app-pager [arrowPosition]="'-93px'" [isStaff]="true" >
+            <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+              <app-travel-view
+                [forStaff]="forStaff"
+                [height]="'170px'"
+                [pass]="pass"
+              ></app-travel-view>
+            </div>
+            <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+              <div style="display: flex; justify-content: center">
+                <div class="message">
+                  <span [style.font-weight]="'bold'">{{ (forStaff ? 'Your message:' : 'Message from ' + pass.issuer.display_name) }}</span><br>
+                  {{ pass.issuer_message ? pass.issuer_message : 'No Message' }}
+                </div>
+              </div>
+            </div>
+          </app-pager>
+        </ng-container>
+
+        <ng-template #mobile>
+          <app-pager [arrowPosition]="'-93px'" [isStaff]="true" >
+            <div class="page-5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+              <app-travel-view
+                [forStaff]="forStaff"
+                [height]="'170px'"
+                [pass]="pass"
+              ></app-travel-view>
+            </div>
+            <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+              <div style="display: flex; justify-content: center">
+                <div class="message">
+                  <span [style.font-weight]="'bold'">{{ (forStaff ? 'Your message:' : 'Message from ' + pass.issuer.display_name) }}</span><br>
+                  {{ pass.issuer_message ? pass.issuer_message : 'No Message' }}
+                </div>
+              </div>
+            </div>
+          </app-pager>
+        </ng-template>
+      </ng-template>
+    </div>
 
       <mat-divider *ngIf="!data.kioskMode"></mat-divider>
 

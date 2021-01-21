@@ -1,9 +1,9 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import { bumpIn } from '../../../animations';
-import { DarkThemeSwitch } from '../../../dark-theme-switch';
-import { CalendarComponent } from '../../calendar/calendar.component';
+import {bumpIn} from '../../../animations';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
+import {CalendarComponent} from '../../calendar/calendar.component';
 import * as moment from 'moment';
-import { MatDialog } from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {filter} from 'rxjs/operators';
 
 @Component({

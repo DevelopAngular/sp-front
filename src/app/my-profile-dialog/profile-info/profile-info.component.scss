@@ -44,7 +44,9 @@
   }
 
   .profile-content {
-    height: 370px;
+    height: 430px;
+    overflow: auto;
+    padding-bottom: 15px;
 
     .block-item {
       padding: 26px 26px 0 26px;

@@ -1,17 +1,16 @@
-﻿import { CommonModule, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SharedModule } from '../shared/shared.module';
-import { AdminPageComponent } from './admin-page/admin-page.component';
-import { AdminRoutingModule } from './admin-routing.module';
-import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
-import { PdfGeneratorService } from './pdf-generator.service';
-import { SettingsComponent } from './settings/settings.component';
-import { AdminSharedModule } from './shared/admin-shared.module';
-import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
-import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
-import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
-import { IosComponentComponent } from './ios-component/ios-component.component';
+﻿import {CommonModule, Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {SharedModule} from '../shared/shared.module';
+import {AdminPageComponent} from './admin-page/admin-page.component';
+import {AdminRoutingModule} from './admin-routing.module';
+import {LinkGeneratedDialogComponent} from './link-generated-dialog/link-generated-dialog.component';
+import {PdfGeneratorService} from './pdf-generator.service';
+import {SettingsComponent} from './settings/settings.component';
+import {AdminSharedModule} from './shared/admin-shared.module';
+import {ColumnsConfigDialogComponent} from './columns-config-dialog/columns-config-dialog.component';
+import {SchoolSettingDialogComponent} from './school-setting-dialog/school-setting-dialog.component';
+import {IosComponentComponent} from './ios-component/ios-component.component';
 import {SearchFilterDialogComponent} from './search/search-filter-dialog/search-filter-dialog.component';
 import {DateTimeFilterComponent} from './search/date-time-filter/date-time-filter.component';
 import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
@@ -25,6 +24,15 @@ import {BulkEditRoomsComponent} from './overlay-container/bulk-edit-rooms/bulk-e
 import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
 import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
 import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
+import {GeneratedTableDialogComponent} from './sp-data-table/generated-table-dialog/generated-table-dialog.component';
+
+import {StatusPopupComponent} from './profile-card-dialog/status-popup/status-popup.component';
+import {EditAvatarComponent} from './profile-card-dialog/edit-avatar/edit-avatar.component';
+import {AccountsModule} from './accounts/accounts.module';
+import {ProfileCardDialogComponent} from './profile-card-dialog/profile-card-dialog.component';
+import {AddUserDialogComponent} from './add-user-dialog/add-user-dialog.component';
+import {SelectRoleComponent} from './accounts/select-role/select-role.component';
+import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-profile.component';
 
 @NgModule({
     imports: [
@@ -33,6 +41,7 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
         AdminRoutingModule,
         FormsModule,
         AdminSharedModule,
+        AccountsModule,
     ],
     declarations: [
         AdminPageComponent,
@@ -40,7 +49,6 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
         LinkGeneratedDialogComponent,
         ColumnsConfigDialogComponent,
         SchoolSettingDialogComponent,
-        AddUserDialogComponent,
         IosComponentComponent,
         SearchFilterDialogComponent,
         DateTimeFilterComponent,
@@ -54,22 +62,19 @@ import {OverlayContainerComponent} from './overlay-container/overlay-container.c
         BulkEditRoomsComponent,
         BulkEditRoomsInFolderComponent,
         ImportRoomsComponent,
-        OverlayContainerComponent
-    ],
-    entryComponents: [
-        LinkGeneratedDialogComponent,
-        ColumnsConfigDialogComponent,
-        SchoolSettingDialogComponent,
-        AddUserDialogComponent,
-        SettingsComponent,
-        SearchFilterDialogComponent,
-        DateTimeFilterComponent,
         OverlayContainerComponent,
+        GeneratedTableDialogComponent,
+        StatusPopupComponent,
+        EditAvatarComponent,
+        ProfileCardDialogComponent,
+        AddUserDialogComponent,
+        SelectRoleComponent,
+        ViewProfileComponent,
+
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
         PdfGeneratorService,
     ],
 })
-export class AdminModule {
-}
+export class AdminModule {}

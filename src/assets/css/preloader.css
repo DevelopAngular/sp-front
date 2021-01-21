@@ -19,6 +19,15 @@
   background-color: #0F171E;
 }
 
+.preloader-container__mobile {
+  background: radial-gradient(circle at 73% 71%, #00B467, #15D593) !important;
+}
+
+.test {
+  width: 96px;
+  height: 100px;
+}
+
 .preloader {
   width: 110px;
   height: 110px;

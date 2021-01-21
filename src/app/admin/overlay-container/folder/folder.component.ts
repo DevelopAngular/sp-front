@@ -1,20 +1,20 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {FormGroup} from '@angular/forms';
+import {DomSanitizer} from '@angular/platform-browser';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {BehaviorSubject, interval, merge, Subject, zip} from 'rxjs';
 
-import { Location } from '../../../models/Location';
-import { Pinnable } from '../../../models/Pinnable';
-import { LocationsService } from '../../../services/locations.service';
-import { OverlayContainerComponent } from '../overlay-container.component';
-import { HallPassesService } from '../../../services/hall-passes.service';
-import { FolderData, OverlayDataService, Pages } from '../overlay-data.service';
-import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
-import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
+import {Location} from '../../../models/Location';
+import {Pinnable} from '../../../models/Pinnable';
+import {LocationsService} from '../../../services/locations.service';
+import {OverlayContainerComponent} from '../overlay-container.component';
+import {HallPassesService} from '../../../services/hall-passes.service';
+import {FolderData, OverlayDataService, Pages} from '../overlay-data.service';
+import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
+import {OptionState, ValidButtons} from '../advanced-options/advanced-options.component';
 
-import { sortBy, cloneDeep, differenceBy, isEqual } from 'lodash';
+import {cloneDeep, differenceBy, isEqual, sortBy} from 'lodash';
 import {NextStep} from '../../../animations';
 import {filter, mapTo, takeUntil, tap} from 'rxjs/operators';
 import {ScrollPositionService} from '../../../scroll-position.service';
@@ -36,7 +36,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   private scrollableAreaName: string;
   private scrollableArea: HTMLElement;
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+  @ViewChild('scrollableArea', { static: true }) set scrollable(scrollable: ElementRef) {
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
 
@@ -220,11 +220,12 @@ export class FolderComponent implements OnInit, OnDestroy {
             this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
           }
         } else {
-          if (this.roomsImFolder.length) {
-            this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
-          } else {
-              this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
-          }
+          // if (this.roomsImFolder.length) {
+          //   this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
+          // } else {
+          //     this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
+          // }
+          this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
         }
       } else {
         this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
@@ -310,7 +311,11 @@ export class FolderComponent implements OnInit, OnDestroy {
       data: { trigger: new ElementRef(target), header, options }
     });
 
-    confirmDialog.afterClosed().pipe(tap(res => UNANIMATED_CONTAINER.next(false), filter(action => !!action)))
+    confirmDialog.afterClosed()
+      .pipe(
+        tap(res => UNANIMATED_CONTAINER.next(false)),
+        filter(action => !!action)
+      )
       .subscribe(() => {
         const pinnable = this.overlayService.pageState.getValue().data.pinnable;
         const deletions = [
@@ -358,22 +363,22 @@ export class FolderComponent implements OnInit, OnDestroy {
         }
 
         if (loc.request_mode === 'any_teacher') {
-            this.advOptState.now.state = 'Any teacher (default)';
+            this.advOptState.now.state = 'Any teacher';
         } else if (loc.request_mode === 'teacher_in_room') {
-            this.advOptState.now.state = 'Any teachers assigned';
+            this.advOptState.now.state = 'Any teachers in room';
         } else if (loc.request_mode === 'all_teachers_in_room') {
-            this.advOptState.now.state = 'All teachers assigned';
+            this.advOptState.now.state = 'All teachers in room';
         } else if (loc.request_mode === 'specific_teachers') {
-            this.advOptState.now.state = 'Certain \n teacher(s)';
+            this.advOptState.now.state = 'Certain \n teachers';
         }
         if (loc.scheduling_request_mode === 'any_teacher') {
-            this.advOptState.future.state = 'Any teacher (default)';
+            this.advOptState.future.state = 'Any teacher';
         } else if (loc.scheduling_request_mode === 'teacher_in_room') {
-            this.advOptState.future.state = 'Any teachers assigned';
+            this.advOptState.future.state = 'Any teachers in room';
         } else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
-            this.advOptState.future.state = 'All teachers assigned';
+            this.advOptState.future.state = 'All teachers in room';
         } else if (loc.scheduling_request_mode === 'specific_teachers') {
-            this.advOptState.future.state = 'Certain \n teacher(s)';
+            this.advOptState.future.state = 'Certain \n teachers';
         }
         return this.advOptState;
     }

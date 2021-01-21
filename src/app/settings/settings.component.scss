@@ -17,6 +17,19 @@
   position: relative;
   border-radius: 10px;
 
+  .user-info {
+    display: flex;
+    padding: 0 0 10px 30px;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: $blue-gray;
+  }
+
   .top-arrow-container {
     position: absolute;
     top: -50px;
@@ -88,6 +101,32 @@
         //padding-left: 25px;
         height: 40px;
         cursor: pointer;
+
+        .release {
+          width: 44px;
+          height: 21px;
+          background-color: #E32C66;
+          border-radius: 11px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          font-size: 13px;
+          margin-left: 20px;
+        }
+
+        .set-up {
+          width: 53px;
+          height: 21px;
+          border-radius: 11px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          font-size: 13px;
+          margin-left: 20px;
+          background-color: #12C29E;
+        }
       }
       .setting-icon {
         width: 20px;
@@ -97,6 +136,7 @@
       .setting-title {
         font-size: 15px;
         margin-left: 15px;
+        white-space: nowrap;
         //color: $blue-gray;
       }
     }

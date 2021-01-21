@@ -6,5 +6,6 @@ export interface AdminsState extends EntityState<User> {
   loaded: boolean;
   nextRequest: string;
   lastAddedAdmins: User[];
+  sortValue: string;
 }
 
