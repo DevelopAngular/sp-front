@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '../services/user.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 import {SideNavService} from '../services/side-nav.service';
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
@@ -41,6 +41,20 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private destroy$: Subject<any> = new Subject<any>();
 
+  @HostListener('window:resize')
+  checkWidth() {
+    if (!this.screenService.isDeviceLargeExtra) {
+      this.sideNavService.toggleLeft$.next(false);
+      this.sideNavService.toggleRight$.next(false);
+    }
+
+    if (!this.screenService.isDeviceLargeExtra && this.screenService.isDeviceMid) {
+      this.sideNavService.toggleRight$.next(false);
+    }
+
+    this.navbarHeight = this.currentNavbarHeight;
+  }
+
   constructor(
     public userService: UserService,
     public darkTheme: DarkThemeSwitch,
@@ -55,8 +69,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private http: HttpService
   ) {
 
-    const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
-
     this.http.schoolsCollection$
       .pipe(
         takeUntil(this.destroy$),
@@ -69,17 +81,17 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser
       .pipe(
+        filter(user => !!user),
+        take(1),
         takeUntil(this.destroy$),
         tap(user => {
           this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
           if (user.roles.includes('hallpass_student')) {
-            this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
-            this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-              excludedRequests, this.dataService));
+            this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
+            this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
           } else {
-            this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-              excludedRequests, this.dataService));
-            this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
+            this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
+            this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
           }
         }),
         switchMap(user => {
@@ -91,6 +103,25 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
       });
+  }
+
+  get titleColor () {
+    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
+  }
+
+  get currentNavbarHeight() {
+    return this.router.url === '/main/hallmonitor' && this.screenService.isDeviceLargeExtra ||
+    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : '78px' ;
+  }
+
+  get showInbox() {
+    if (!this.isStaff) {
+      return this.dataService.inboxState;
+    } else if (!this.inboxHasItems) {
+      return of(false);
+    } else {
+      return of(true);
+    }
   }
 
   ngOnInit() {
@@ -130,7 +161,9 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.navbarHeight = this.currentNavbarHeight;
 
     this.router.events.subscribe( event => {
-        if ( event instanceof NavigationEnd) this.navbarHeight = this.currentNavbarHeight;
+        if ( event instanceof NavigationEnd) {
+          this.navbarHeight = this.currentNavbarHeight;
+        }
     });
   }
 
@@ -143,22 +176,11 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  get showInbox() {
-    if (!this.isStaff) {
-      return this.dataService.inboxState;
-    } else if (!this.inboxHasItems) {
-      return of(false);
-    } else {
-      return of(true);
-    }
-  }
-
   shouldShowRouter() {
     // return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
   }
 
   onSwipe(event) {
-    debugger;
   }
 
   goHome(user) {
@@ -192,29 +214,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.sideNavService.sideNavAction$.next('');
     this.sideNavService.fadeClick$.next(true);
-  }
-
-  get titleColor () {
-    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
-  }
-
-  get currentNavbarHeight() {
-    return this.router.url === '/main/hallmonitor' && this.screenService.isDeviceLargeExtra ||
-    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : '78px' ;
-  }
-
-  @HostListener('window:resize')
-  checkWidth() {
-    if (!this.screenService.isDeviceLargeExtra) {
-      this.sideNavService.toggleLeft$.next(false);
-      this.sideNavService.toggleRight$.next(false);
-    }
-
-    if (!this.screenService.isDeviceLargeExtra && this.screenService.isDeviceMid) {
-      this.sideNavService.toggleRight$.next(false);
-    }
-
-    this.navbarHeight = this.currentNavbarHeight;
   }
 
 }

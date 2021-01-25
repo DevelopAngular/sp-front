@@ -1,19 +1,19 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 import * as moment from 'moment';
 
-import { combineLatest, empty, merge, Observable, of, Subject } from 'rxjs';
-import { map, scan, startWith, switchMap } from 'rxjs/operators';
-import { Paged, PassLike } from '../models';
-import { BaseModel } from '../models/base';
-import { HallPass } from '../models/HallPass';
-import { Invitation } from '../models/Invitation';
-import { Location } from '../models/Location';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { HttpService } from '../services/http-service';
-import { PollingEvent, PollingService } from '../services/polling-service';
-import { TimeService } from '../services/time.service';
+import {combineLatest, concat, empty, merge, Observable, of, Subject} from 'rxjs';
+import {distinctUntilChanged, map, mergeMap, pluck, scan, startWith, switchMap} from 'rxjs/operators';
+import {Paged, PassLike} from '../models';
+import {BaseModel} from '../models/base';
+import {HallPass} from '../models/HallPass';
+import {Invitation} from '../models/Invitation';
+import {Location} from '../models/Location';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {HttpService} from '../services/http-service';
+import {PollingEvent, PollingService} from '../services/polling-service';
+import {TimeService} from '../services/time.service';
 import {
   Action,
   ExternalEvent,
@@ -24,8 +24,8 @@ import {
   PollingEventHandler,
   TransformFunc
 } from './events';
-import { filterHallPasses, filterNewestFirst, identityFilter } from './filters';
-import { constructUrl, QueryParams } from './helpers';
+import {filterHallPasses, filterNewestFirst, identityFilter} from './filters';
+import {constructUrl, QueryParams} from './helpers';
 import {
   AddItem,
   makePollingEventHandler,
@@ -34,7 +34,7 @@ import {
   RemoveRequestOnApprove,
   UpdateItem
 } from './polling-event-handlers';
-import { State } from './state';
+import {State} from './state';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -179,12 +179,19 @@ function makeSchoolFilter(http: HttpService) {
 export class LiveDataService {
 
   private globalReload$ = new Subject();
+  count = 0;
+  initialUrls: string[] = [];
 
   constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
-    this.http.currentSchool$.subscribe((value) => {
-      setTimeout(() => {
-        this.globalReload$.next(null);
-      }, 5);
+    this.http.currentSchoolSubject
+      .pipe(
+        pluck('id'),
+        distinctUntilChanged()
+      )
+      .subscribe((value) => {
+        setTimeout(() => {
+          this.globalReload$.next(null);
+        }, 5);
     });
 
     this.globalReload$.subscribe(() => {
@@ -194,7 +201,8 @@ export class LiveDataService {
 
   private watch<ModelType extends BaseModel, ExternalEventType>(config: WatchData<ModelType, ExternalEventType>):
     Observable<ModelType[]> {
-
+    // this.count += 1;
+    // console.log('COUNT Requests ==>>', this.count);
     // Wrap external events in an object so that we can distinguish event types after they are merged.
     const wrappedExternalEvents: Observable<ExternalEvent<ExternalEventType>> = config.externalEvents.pipe(
       map(event => (<ExternalEvent<ExternalEventType>>{type: 'external-event', event: event}))
@@ -263,7 +271,7 @@ export class LiveDataService {
     const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
       : (json) => json.results.map(raw => config.decoder(raw));
 
-    const fullReload$ = merge(
+    const fullReload$ = concat(
       of('invalidate'),
       this.polling.listen('invalidate'),
       this.globalReload$.pipe(map(() => 'invalidate'))
@@ -277,7 +285,10 @@ export class LiveDataService {
      */
     return fullReload$
       .pipe(
-        switchMap(() => this.http.get<Paged<any>>(config.initialUrl)),
+        // filter(() => !this.initialUrls.find(url => url === config.initialUrl)),
+        mergeMap(() => {
+          return this.http.get<Paged<any>>(config.initialUrl);
+        }),
         map(rawDecoder),
         switchMap(items => events.pipe(scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items)))),
         map(state => state.filtered_passes)

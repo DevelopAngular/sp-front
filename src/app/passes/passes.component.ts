@@ -20,6 +20,7 @@ import {
   refCount,
   startWith,
   switchMap,
+  take,
   takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
@@ -56,6 +57,7 @@ import {StartPassNotificationComponent} from './start-pass-notification/start-pa
 import {LocationsService} from '../services/locations.service';
 
 export class FuturePassProvider implements PassLikeProvider {
+  count = 0;
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
   }
 
@@ -63,14 +65,20 @@ export class FuturePassProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    return this.user$.pipe(switchMap(user => this.liveDataService.watchFutureHallPasses(
-      user.roles.includes('hallpass_student')
-        ? {type: 'student', value: user}
-        : {type: 'issuer', value: user})));
+    return this.user$.pipe(
+      switchMap(user => {
+        // this.count += 1;
+        // console.log('Feature ==>>', this.count);
+        return this.liveDataService.watchFutureHallPasses(
+          user.roles.includes('hallpass_student')
+            ? {type: 'student', value: user}
+            : {type: 'issuer', value: user});
+      }));
   }
 }
 
 export class ActivePassProvider implements PassLikeProvider {
+  count = 0;
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
               private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService,
               ) {
@@ -86,6 +94,8 @@ export class ActivePassProvider implements PassLikeProvider {
 
     const passes$ = this.user$.pipe(
       switchMap(user => {
+        // this.count += 1;
+        // console.log('Active ==>>', this.count);
         return this.liveDataService.watchActiveHallPasses(mergedReplay,
             user.roles.includes('hallpass_student')
               ? {type: 'student', value: user}
@@ -105,6 +115,7 @@ export class ActivePassProvider implements PassLikeProvider {
 }
 
 export class PastPassProvider implements PassLikeProvider {
+  count = 0;
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
   }
 
@@ -114,11 +125,15 @@ export class PastPassProvider implements PassLikeProvider {
 
     return this.user$
       .pipe(
-        switchMap(user => this.liveDataService.watchPastHallPasses(
-          user.roles.includes('hallpass_student')
-            ? {type: 'student', value: user}
-            : {type: 'issuer', value: user}
-          )
+        switchMap(user => {
+          // this.count += 1;
+          // console.log('PAST ==>>', this.count);
+          return this.liveDataService.watchPastHallPasses(
+              user.roles.includes('hallpass_student')
+                ? {type: 'student', value: user}
+                : {type: 'issuer', value: user}
+            );
+          }
         )
       );
   }
@@ -127,25 +142,30 @@ export class PastPassProvider implements PassLikeProvider {
 export class InboxRequestProvider implements PassLikeProvider {
 
   isStudent: boolean;
+  count = 0;
 
   constructor(
     private liveDataService: LiveDataService,
-    private user$: Observable<User>,
-    private excluded$: Observable<PassLike[]> = empty(),
-    private dataService: DataService) {
+    private user: User,
+    ) {
   }
 
   watch(sort: Observable<string>) {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const requests$ = this.user$.pipe(switchMap(user => {
-      this.isStudent = user.isStudent();
-      return this.liveDataService.watchInboxRequests(user);
-    }))
+    // const requests$ = this.user$.pipe(
+    //   switchMap(user => {
+    //   this.isStudent = user.isStudent();
+    //     this.count += 1;
+    //     console.log('Inbox Request ==>>', this.count);
+    //   return this.liveDataService.watchInboxRequests(user);
+    // }))
+
+    const requests$ = this.liveDataService.watchInboxRequests(this.user)
       .pipe(
         map(req => {
-        if (this.isStudent) {
+        if (this.user.isStudent()) {
           return req.filter((r) => !!r.request_time);
         }
         return req;
@@ -157,17 +177,23 @@ export class InboxRequestProvider implements PassLikeProvider {
 }
 
 export class InboxInvitationProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
+  count = 0;
+  constructor(private liveDataService: LiveDataService, private user: User) {
   }
 
   watch(sort: Observable<string>) {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const invitations$ = this.user$.pipe(
-      switchMap(user => this.liveDataService.watchInboxInvitations(user)));
-
-    return invitations$;
+    // const invitations$ = this.user$.pipe(
+    //   switchMap(user => {
+    //     this.count += 1;
+    //     console.log('Inbox Invitation ==>>', this.count);
+    //     return this.liveDataService.watchInboxInvitations(this.user);
+    //   }));
+    //
+    // return invitations$;
+    return this.liveDataService.watchInboxInvitations(this.user);
   }
 }
 
@@ -341,17 +367,21 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const excludedPasses = this.currentPass$.pipe(map(p => p !== null ? [p] : []));
 
+    let count = 0;
+
     const dbUser$ = combineLatest(
       this.userService.effectiveUser.asObservable(),
       this.dataService.currentUser
     ).pipe(
       map(([effectUser, currentUser]) => {
+        // count += 1;
+        // console.log('USER ==>>', count);
         if (effectUser) {
           return effectUser.user;
         } else {
           return currentUser;
         }
-      }));
+      }), take(1));
 
     this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, dbUser$));
     this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, dbUser$, excludedPasses, this.timeService));
@@ -359,6 +389,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser
       .pipe(
+        filter(user => !!user),
+        take(1),
         map(user => {
           this.user = user;
           this.isStaff =
@@ -372,17 +404,14 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }) // TODO filter events to only changes.
       )
       .subscribe(isStudent => {
-      const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
-
-      if (isStudent) {
-        this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
-        this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-          excludedRequests, this.dataService));
-      } else {
-        this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-          excludedRequests, this.dataService));
-        this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
-      }
+        const user = User.fromJSON(this.user);
+        if (isStudent) {
+          this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
+          this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
+        } else {
+          this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
+          this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
+        }
     });
 
     this.isActivePass$ = combineLatest(this.currentPass$, this.timeService.now$, (pass, now) => {
