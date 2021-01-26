@@ -31,6 +31,8 @@ import {
 } from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
 import {PollingService} from './polling-service';
+import {Invitation} from '../models/Invitation';
+import {getInvitationsCollection} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +55,8 @@ export class HallPassesService {
   currentPassesCount$: Observable<number> = this.store.select(getPassesTotalCount);
 
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
+
+  invitations$: Observable<Invitation[]> = this.store.select(getInvitationsCollection);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;

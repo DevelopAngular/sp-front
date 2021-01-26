@@ -35,6 +35,27 @@ import {
   UpdateItem
 } from './polling-event-handlers';
 import {State} from './state';
+import {getPassLikeCollection} from '../ngrx/pass-like-collection/actions';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {
+  getInvitationLoadedState,
+  getInvitationLoadingState,
+  getInvitationsCollection,
+  getInvitationsTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
+import {
+  getRequestsCollection,
+  getRequestsLoaded,
+  getRequestsLoading,
+  getRequestsTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/requests/states';
+import {
+  getExpiredPassesCollection,
+  getExpiredPassesLoaded,
+  getExpiredPassesLoading,
+  getExpiredPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -182,7 +203,27 @@ export class LiveDataService {
   count = 0;
   initialUrls: string[] = [];
 
-  constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
+  invitations$: Observable<Invitation[]> = this.store.select(getInvitationsCollection);
+  invitationsLoading$: Observable<boolean> = this.store.select(getInvitationLoadingState);
+  invitationsLoaded$: Observable<boolean> = this.store.select(getInvitationLoadedState);
+  invitationsTotalNumber: Observable<number> = this.store.select(getInvitationsTotalNumber);
+
+  requests$: Observable<Request[]> = this.store.select(getRequestsCollection);
+  requestsLoading$: Observable<boolean> = this.store.select(getRequestsLoading);
+  requestsLoaded$: Observable<boolean> = this.store.select(getRequestsLoaded);
+  requestsTotalNumber$: Observable<number> = this.store.select(getRequestsTotalNumber);
+
+  expiredPasses$: Observable<HallPass[]> = this.store.select(getExpiredPassesCollection);
+  expiredPassesLoading$: Observable<boolean> = this.store.select(getExpiredPassesLoading);
+  expiredPassesLoaded$: Observable<boolean> = this.store.select(getExpiredPassesLoaded);
+  expiredPassesTotalNumber$: Observable<number> = this.store.select(getExpiredPassesTotalNumber);
+
+  constructor(
+    private http: HttpService,
+    private polling: PollingService,
+    private timeService: TimeService,
+    private store: Store<AppState>,
+  ) {
     this.http.currentSchoolSubject
       .pipe(
         pluck('id'),
@@ -668,6 +709,10 @@ export class LiveDataService {
       }
       return null;
     }));
+  }
+
+  getPassLikeCollectionRequest(user) {
+    this.store.dispatch(getPassLikeCollection({user}));
   }
 
 }
