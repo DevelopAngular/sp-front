@@ -35,7 +35,7 @@ import {
   UpdateItem
 } from './polling-event-handlers';
 import {State} from './state';
-import {getPassLikeCollection} from '../ngrx/pass-like-collection/actions';
+import {getActivePasses, getPassLikeCollection} from '../ngrx/pass-like-collection/actions';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
@@ -56,6 +56,18 @@ import {
   getExpiredPassesLoading,
   getExpiredPassesTotalNumber
 } from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
+import {
+  getFuturePassesCollection,
+  getFuturePassesLoaded,
+  getFuturePassesLoading,
+  getFuturePassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/future-passes/states';
+import {
+  getActivePassesCollection,
+  getActivePassesLoaded,
+  getActivePassesLoading,
+  getActivePassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/active-passes/states';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -217,6 +229,16 @@ export class LiveDataService {
   expiredPassesLoading$: Observable<boolean> = this.store.select(getExpiredPassesLoading);
   expiredPassesLoaded$: Observable<boolean> = this.store.select(getExpiredPassesLoaded);
   expiredPassesTotalNumber$: Observable<number> = this.store.select(getExpiredPassesTotalNumber);
+
+  futurePasses$: Observable<HallPass[]> = this.store.select(getFuturePassesCollection);
+  futurePassesLoading$: Observable<boolean> = this.store.select(getFuturePassesLoading);
+  futurePassesLoaded$: Observable<boolean> = this.store.select(getFuturePassesLoaded);
+  futurePassesTotalNumber$: Observable<number> = this.store.select(getFuturePassesTotalNumber);
+
+  activePasses$: Observable<HallPass[]> = this.store.select(getActivePassesCollection);
+  activePassesLoading$: Observable<boolean> = this.store.select(getActivePassesLoading);
+  activePassesLoaded$: Observable<boolean> = this.store.select(getActivePassesLoaded);
+  activePassesTotalNumber$: Observable<number> = this.store.select(getActivePassesTotalNumber);
 
   constructor(
     private http: HttpService,
@@ -713,6 +735,10 @@ export class LiveDataService {
 
   getPassLikeCollectionRequest(user) {
     this.store.dispatch(getPassLikeCollection({user}));
+  }
+
+  getActivePassesRequest(sortingEvents: Observable<HallPassFilter>, user: User) {
+    this.store.dispatch(getActivePasses({sortingEvents, user}));
   }
 
 }

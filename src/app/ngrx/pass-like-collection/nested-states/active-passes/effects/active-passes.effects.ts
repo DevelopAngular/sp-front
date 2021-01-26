@@ -1,28 +1,28 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {LiveDataService} from '../../../../../live-data/live-data.service';
+import * as activePassesActions from '../actions';
 import {catchError, concatMap, map} from 'rxjs/operators';
-import * as expiredPassesActions from '../actions';
-import {HallPass} from '../../../../../models/HallPass';
 import {of} from 'rxjs';
 
 @Injectable()
-export class ExpiredPassesEffects {
+export class ActivePassesEffects {
 
-  getExpiredPasses$ = createEffect(() => {
+  getActivePasses$ = createEffect(() => {
     return this.actions$
       .pipe(
-        ofType(expiredPassesActions.getExpiredPasses),
+        ofType(activePassesActions.getActivePasses),
         concatMap((action: any) => {
-          return this.liveDataService.watchPastHallPasses(
+          return this.liveDataService.watchActiveHallPasses(action.sortingEvents,
             action.user.roles.includes('hallpass_student')
               ? {type: 'student', value: action.user}
               : {type: 'issuer', value: action.user}
           ).pipe(
-            map((expiredPasses: HallPass[]) => {
-              return expiredPassesActions.getExpiredPassesSuccess({expiredPasses});
+            map((activePasses) => {
+              debugger;
+              return activePassesActions.getActivePassesSuccess({activePasses});
             }),
-            catchError(error => of(expiredPassesActions.getExpiredPassesFailure({errorMessage: error.message})))
+            catchError(error => of(activePassesActions.getActivePassesFailure({errorMessage: error.message})))
           );
         })
       );

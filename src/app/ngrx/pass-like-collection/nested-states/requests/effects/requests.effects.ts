@@ -17,7 +17,6 @@ export class RequestsEffects {
           return this.livDataService.watchInboxRequests(action.user)
             .pipe(
               map((requests: Request[]) => {
-                debugger;
                 return requestsActions.getRequestsSuccess({requests});
               }),
               catchError(error => of(requestsActions.getRequestsFailure({errorMessage: error.message})))

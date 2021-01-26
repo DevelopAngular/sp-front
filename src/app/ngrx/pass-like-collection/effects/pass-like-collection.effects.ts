@@ -14,7 +14,8 @@ export class PassLikeCollectionEffects {
           return [
             passLikeCollectionActions.getInvitations({user: action.user}),
             passLikeCollectionActions.getRequests({user: action.user}),
-            passLikeCollectionActions.getExpiredPasses({user: action.user})
+            passLikeCollectionActions.getExpiredPasses({user: action.user}),
+            passLikeCollectionActions.getFuturePasses({user: action.user}),
           ];
         })
       );

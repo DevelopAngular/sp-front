@@ -17,7 +17,6 @@ export class InvitationsEffects {
           return this.liveDataService.watchInboxInvitations(action.user)
             .pipe(
               map((invitations: Invitation[]) => {
-                debugger;
                 return invitationsActions.getInvitationsSuccess({invitations});
               }),
               catchError(error => of(invitationsActions.getInvitationsFailure({errorMessage: error.message})))

@@ -72,6 +72,8 @@ import {InvitationsEffects} from './ngrx/pass-like-collection/nested-states/invi
 import {PassLikeCollectionEffects} from './ngrx/pass-like-collection/effects/pass-like-collection.effects';
 import {RequestsEffects} from './ngrx/pass-like-collection/nested-states/requests/effects';
 import {ExpiredPassesEffects} from './ngrx/pass-like-collection/nested-states/expired-passes/effects';
+import {FuturePassesEffects} from './ngrx/pass-like-collection/nested-states/future-passes/effects';
+import {ActivePassesEffects} from './ngrx/pass-like-collection/nested-states/active-passes/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -190,7 +192,9 @@ const appRoutes: Routes = [
             PassLikeCollectionEffects,
             InvitationsEffects,
             RequestsEffects,
-            ExpiredPassesEffects
+            ExpiredPassesEffects,
+            FuturePassesEffects,
+            ActivePassesEffects
         ]),
         StoreDevtoolsModule.instrument({}),
         HammerModule,
