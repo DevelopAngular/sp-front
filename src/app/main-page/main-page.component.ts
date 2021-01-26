@@ -7,11 +7,9 @@ import {SideNavService} from '../services/side-nav.service';
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {Request} from '../models/Request';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {InboxInvitationProvider, InboxRequestProvider} from '../passes/passes.component';
 import {NavigationEnd, Router} from '@angular/router';
 import {filter as _filter} from 'lodash';
 import {HttpService} from '../services/http-service';
@@ -89,8 +87,10 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.liveDataService.getActivePassesRequest(of({sort: '-created', search_query: ''}), user);
           this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
           if (user.roles.includes('hallpass_student')) {
-            this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
-            this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
+            this.receivedRequests = this.liveDataService.invitations$;
+            this.sentRequests = this.liveDataService.requests$;
+            // this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
+            // this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
           } else {
             // this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
             // this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));

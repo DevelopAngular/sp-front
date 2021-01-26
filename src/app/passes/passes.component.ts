@@ -31,7 +31,7 @@ import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
 import {exceptPasses, PassLike} from '../models';
 import {HallPass} from '../models/HallPass';
 import {testInvitations, testPasses, testRequests} from '../models/mock_data';
-import {BasicPassLikeProvider, PassLikeProvider, WrappedProvider} from '../models/providers';
+import {BasicPassLikeProvider, PassLikeProvider} from '../models/providers';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {DataService} from '../services/data-service';
@@ -410,8 +410,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(isStudent => {
         const user = User.fromJSON(this.user);
         if (isStudent) {
-          this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
-          this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
+          this.receivedRequests = this.liveDataService.invitations$;
+          this.sentRequests = this.liveDataService.requests$;
+          // this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
+          // this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
         } else {
           this.receivedRequests = this.liveDataService.requests$;
           this.sentRequests = this.liveDataService.invitations$;
