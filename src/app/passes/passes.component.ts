@@ -266,12 +266,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   testRequests: PassLikeProvider;
   testInvitations: PassLikeProvider;
 
-  futurePasses: WrappedProvider;
-  activePasses: WrappedProvider;
-  pastPasses: WrappedProvider;
+  futurePasses: any;
+  activePasses: any;
+  pastPasses: any;
 
-  sentRequests: WrappedProvider;
-  receivedRequests: WrappedProvider;
+  sentRequests: any;
+  receivedRequests: any;
 
   currentPass$ = new BehaviorSubject<HallPass>(null);
   currentRequest$ = new BehaviorSubject<Request>(null);
@@ -383,9 +383,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }), take(1));
 
-    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, dbUser$));
-    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, dbUser$, excludedPasses, this.timeService));
-    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, dbUser$));
+    this.futurePasses = this.liveDataService.futurePasses$;
+    this.activePasses = this.liveDataService.activePasses$;
+    this.pastPasses = this.liveDataService.expiredPasses$;
+
+    // this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, dbUser$));
+    // this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, dbUser$, excludedPasses, this.timeService));
+    // this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, dbUser$));
 
     this.dataService.currentUser
       .pipe(
@@ -409,8 +413,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
           this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
         } else {
-          this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
-          this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
+          this.receivedRequests = this.liveDataService.requests$;
+          this.sentRequests = this.liveDataService.invitations$;
+          // this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
+          // this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
         }
     });
 
@@ -496,35 +502,64 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
+    // this.inboxHasItems = combineLatest(
+    //   this.receivedRequests.length$,
+    //   this.receivedRequests.loaded$,
+    //   this.sentRequests.length$,
+    //   this.sentRequests.loaded$,
+    //   (length1, loaded1, length2, loaded2) => {
+    //     if (loaded1 && loaded2) {
+    //       return (length1 + length2) > 0;
+    //     }
+    //   }
+    // );
     this.inboxHasItems = combineLatest(
-      this.receivedRequests.length$,
-      this.receivedRequests.loaded$,
-      this.sentRequests.length$,
-      this.sentRequests.loaded$,
+      this.liveDataService.requestsTotalNumber$,
+      this.liveDataService.requestsLoaded$,
+      this.liveDataService.invitationsTotalNumber$,
+      this.liveDataService.invitationsLoaded$,
       (length1, loaded1, length2, loaded2) => {
-        if (loaded1 && loaded2) {
-          return (length1 + length2) > 0;
-        }
-      }
+            if (loaded1 && loaded2) {
+              return (length1 + length2) > 0;
+            }
+          }
     );
 
+    // this.inboxLoaded = combineLatest(
+    //   this.receivedRequests.loaded$,
+    //   this.sentRequests.loaded$,
+    //   (l1, l2) => l1 && l2
+    // );
+
     this.inboxLoaded = combineLatest(
-      this.receivedRequests.loaded$,
-      this.sentRequests.loaded$,
+      this.liveDataService.requestsLoaded$,
+      this.liveDataService.invitationsLoaded$,
       (l1, l2) => l1 && l2
     );
 
+    // this.passesHaveItems = combineLatest(
+    //   this.activePasses.length$,
+    //   this.futurePasses.length$,
+    //   this.pastPasses.length$,
+    // ).pipe(map(([con1, con2, con3]) => !con1 && !con2 && !con3));
     this.passesHaveItems = combineLatest(
-      this.activePasses.length$,
-      this.futurePasses.length$,
-      this.pastPasses.length$,
-    ).pipe(map(([con1, con2, con3]) => !con1 && !con2 && !con3));
+      this.liveDataService.activePassesTotalNumber$,
+      this.liveDataService.futurePassesTotalNumber$,
+      this.liveDataService.expiredPassesTotalNumber$,
+      (con1, con2, con3) => !con1 && !con2 && !con3
+    );
 
+    // this.passesLoaded = combineLatest(
+    //   this.activePasses.loaded$,
+    //   this.futurePasses.loaded$,
+    //   this.pastPasses.loaded$,
+    // ).pipe(map(([con1, con2, con3]) => con1 && con2 && con3));
     this.passesLoaded = combineLatest(
-      this.activePasses.loaded$,
-      this.futurePasses.loaded$,
-      this.pastPasses.loaded$,
-    ).pipe(map(([con1, con2, con3]) => con1 && con2 && con3));
+      this.liveDataService.activePassesLoaded$,
+      this.liveDataService.futurePassesLoaded$,
+      this.liveDataService.expiredPassesLoaded$,
+      (con1, con2, con3) => con1 && con2 && con3
+    );
 
     this.showEmptyState = combineLatest(this.passesHaveItems, this.passesLoaded)
       .pipe(map(([items, loaded]) => items && loaded), publishBehavior(true));

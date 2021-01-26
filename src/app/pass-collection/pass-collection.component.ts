@@ -15,13 +15,12 @@ import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {HallPass} from '../models/HallPass';
 import {Invitation} from '../models/Invitation';
-import {PassLikeProvider} from '../models/providers';
 import {Request} from '../models/Request';
 import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, filter, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {delay, filter, switchMap, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -69,14 +68,14 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() grid_gap: string = '10px';
   @Input() isAdminPage: boolean;
   @Input() headerWidth: string = '100%';
-  @Input() passProvider: PassLikeProvider;
+  @Input() passProvider: Observable<PassLike>;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
   @Output() currentPassesEmit = new EventEmitter();
   @Output() passClick = new EventEmitter<boolean>();
 
-  currentPasses$: Observable<PassLike[]>;
+  currentPasses$: Observable<PassLike>;
   currentPasses: PassLike[] = [];
   selectedSort;
 
@@ -131,7 +130,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       if (this.mock) {
 
       } else {
-        this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+        this.currentPasses$ = this.passProvider;
         this.currentPasses$
           .pipe(
             switchMap((_passes) => {

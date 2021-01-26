@@ -5,7 +5,7 @@ import {DataService} from '../services/data-service';
 import {mergeObject} from '../live-data/helpers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {LoadingService} from '../services/loading.service';
-import {PassLikeProvider, WrappedProvider} from '../models/providers';
+import {PassLikeProvider} from '../models/providers';
 import {User} from '../models/User';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {Report} from '../models/Report';
@@ -92,7 +92,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     }
   }
 
-  activePassProvider: WrappedProvider;
+  activePassProvider: any;
 
   inputValue = '';
 
@@ -147,7 +147,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     public screenService: ScreenService,
     private scrollPosition: ScrollPositionService
   ) {
-    this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
+    // this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
+    this.activePassProvider = this.liveDataService.activePasses$;
   }
 
   ngOnInit() {
@@ -178,12 +179,12 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
 
     this.hasPasses = combineLatest(
-        this.activePassProvider.length$,
+        this.liveDataService.activePassesTotalNumber$,
         (l1) => l1 > 0
       );
 
       this.passesLoaded = combineLatest(
-        this.activePassProvider.loaded$,
+        this.liveDataService.activePassesLoaded$,
         (l1) => l1
       ).pipe(
         filter(v => v),

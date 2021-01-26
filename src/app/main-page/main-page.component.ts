@@ -32,8 +32,8 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   currentRequest$ = new BehaviorSubject<Request>(null);
   toggleLeft: Observable<boolean> = new Observable<boolean>();
   toggleRight: Observable<boolean> = new Observable<boolean>();
-  sentRequests: WrappedProvider;
-  receivedRequests: WrappedProvider;
+  sentRequests: any;
+  receivedRequests: any;
   isStaff: boolean;
   data: any;
   navbarHeight: string = '78px';
@@ -92,8 +92,10 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
             this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
             this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
           } else {
-            this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
-            this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
+            // this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
+            // this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
+            this.receivedRequests = this.liveDataService.requests$;
+            this.sentRequests = this.liveDataService.invitations$;
           }
         }),
         switchMap(user => {
@@ -148,11 +150,22 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.goHome(user);
     });
 
+    // this.inboxHasItems = combineLatest(
+    //   this.receivedRequests.length$,
+    //   this.receivedRequests.loaded$,
+    //   this.sentRequests.length$,
+    //   this.sentRequests.loaded$,
+    //   (length1, loaded1, length2, loaded2) => {
+    //     if (loaded1 && loaded2) {
+    //       return (length1 + length2) > 0;
+    //     }
+    //   }
+    // );
     this.inboxHasItems = combineLatest(
-      this.receivedRequests.length$,
-      this.receivedRequests.loaded$,
-      this.sentRequests.length$,
-      this.sentRequests.loaded$,
+      this.liveDataService.requestsTotalNumber$,
+      this.liveDataService.requestsLoaded$,
+      this.liveDataService.invitationsTotalNumber$,
+      this.liveDataService.invitationsLoaded$,
       (length1, loaded1, length2, loaded2) => {
         if (loaded1 && loaded2) {
           return (length1 + length2) > 0;

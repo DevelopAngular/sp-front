@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import * as moment from 'moment';
 
 import {combineLatest, concat, empty, merge, Observable, of, Subject} from 'rxjs';
-import {distinctUntilChanged, map, mergeMap, pluck, scan, startWith, switchMap} from 'rxjs/operators';
+import {distinctUntilChanged, filter, map, mergeMap, pluck, scan, startWith, switchMap} from 'rxjs/operators';
 import {Paged, PassLike} from '../models';
 import {BaseModel} from '../models/base';
 import {HallPass} from '../models/HallPass';
@@ -218,7 +218,7 @@ export class LiveDataService {
   invitations$: Observable<Invitation[]> = this.store.select(getInvitationsCollection);
   invitationsLoading$: Observable<boolean> = this.store.select(getInvitationLoadingState);
   invitationsLoaded$: Observable<boolean> = this.store.select(getInvitationLoadedState);
-  invitationsTotalNumber: Observable<number> = this.store.select(getInvitationsTotalNumber);
+  invitationsTotalNumber$: Observable<number> = this.store.select(getInvitationsTotalNumber);
 
   requests$: Observable<Request[]> = this.store.select(getRequestsCollection);
   requestsLoading$: Observable<boolean> = this.store.select(getRequestsLoading);
@@ -348,8 +348,11 @@ export class LiveDataService {
      */
     return fullReload$
       .pipe(
-        // filter(() => !this.initialUrls.find(url => url === config.initialUrl)),
+        filter(() => !this.initialUrls.find(url => url === config.initialUrl)),
         mergeMap(() => {
+          // this.count += 1;
+          // console.log(config.initialUrl + ' ==>>>', this.count);
+          // this.initialUrls.push(config.initialUrl);
           return this.http.get<Paged<any>>(config.initialUrl);
         }),
         map(rawDecoder),
