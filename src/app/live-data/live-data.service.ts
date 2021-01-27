@@ -35,7 +35,7 @@ import {
   UpdateItem
 } from './polling-event-handlers';
 import {State} from './state';
-import {getActivePasses, getPassLikeCollection} from '../ngrx/pass-like-collection/actions';
+import {getActivePasses, getFromLocationPasses, getPassLikeCollection, getToLocationPasses} from '../ngrx/pass-like-collection/actions';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
@@ -68,6 +68,18 @@ import {
   getActivePassesLoading,
   getActivePassesTotalNumber
 } from '../ngrx/pass-like-collection/nested-states/active-passes/states';
+import {
+  getToLocationLoaded,
+  getToLocationLoading,
+  getToLocationPassesCollection,
+  getToLocationPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/to-location/states';
+import {
+  getFromLocationLoaded,
+  getFromLocationLoading,
+  getFromLocationPassesCollection,
+  getFromLocationPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/from-location/states';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -239,6 +251,16 @@ export class LiveDataService {
   activePassesLoading$: Observable<boolean> = this.store.select(getActivePassesLoading);
   activePassesLoaded$: Observable<boolean> = this.store.select(getActivePassesLoaded);
   activePassesTotalNumber$: Observable<number> = this.store.select(getActivePassesTotalNumber);
+
+  toLocationPasses$: Observable<HallPass[]> = this.store.select(getToLocationPassesCollection);
+  toLocationPassesLoading$: Observable<boolean> = this.store.select(getToLocationLoading);
+  toLocationPassesLoaded$: Observable<boolean> = this.store.select(getToLocationLoaded);
+  toLocationPassesTotalNumber$: Observable<number> = this.store.select(getToLocationPassesTotalNumber);
+
+  fromLocationPasses$: Observable<HallPass[]> = this.store.select(getFromLocationPassesCollection);
+  fromLocationPassesLoading$: Observable<boolean> = this.store.select(getFromLocationLoading);
+  fromLocationPassesLoaded$: Observable<boolean> = this.store.select(getFromLocationLoaded);
+  fromLocationPassesTotalNumber$: Observable<number> = this.store.select(getFromLocationPassesTotalNumber);
 
   constructor(
     private http: HttpService,
@@ -742,6 +764,14 @@ export class LiveDataService {
 
   getActivePassesRequest(sortingEvents: Observable<HallPassFilter>, user: User) {
     this.store.dispatch(getActivePasses({sortingEvents, user}));
+  }
+
+  getToLocationPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null) {
+    this.store.dispatch(getToLocationPasses({sortingEvents, filter, date}));
+  }
+
+  getFromLocationPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null) {
+    this.store.dispatch(getFromLocationPasses({sortingEvents, filter, date}));
   }
 
 }

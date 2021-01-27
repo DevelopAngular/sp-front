@@ -4,6 +4,8 @@ import {requestsReducer} from '../nested-states/requests/reducers';
 import {expiredPassesReducer} from '../nested-states/expired-passes/reducers';
 import {futurePassesReducer} from '../nested-states/future-passes/reducers';
 import {activePassesReducer} from '../nested-states/active-passes/reducers';
+import {toLocationPassesReducer} from '../nested-states/to-location/reducers';
+import {fromLocationPassesReducer} from '../nested-states/from-location/reducers';
 
 export function passLikeCollectionReducer(
   state = passLikeCollectionInitialState,
@@ -14,6 +16,8 @@ export function passLikeCollectionReducer(
     requests: requestsReducer(state.requests, action),
     expiredPasses: expiredPassesReducer(state.expiredPasses, action),
     futurePasses: futurePassesReducer(state.futurePasses, action),
-    activePasses: activePassesReducer(state.activePasses, action)
+    activePasses: activePassesReducer(state.activePasses, action),
+    toLocation: toLocationPassesReducer(state.toLocation, action),
+    fromLocation: fromLocationPassesReducer(state.fromLocation, action)
   };
 }

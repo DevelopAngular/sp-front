@@ -68,14 +68,14 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() grid_gap: string = '10px';
   @Input() isAdminPage: boolean;
   @Input() headerWidth: string = '100%';
-  @Input() passProvider: Observable<PassLike>;
+  @Input() passProvider: Observable<any>;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
   @Output() currentPassesEmit = new EventEmitter();
   @Output() passClick = new EventEmitter<boolean>();
 
-  currentPasses$: Observable<PassLike>;
+  currentPasses$: Observable<any>;
   currentPasses: PassLike[] = [];
   selectedSort;
 
@@ -131,21 +131,21 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
       } else {
         this.currentPasses$ = this.passProvider;
-        this.currentPasses$
-          .pipe(
-            switchMap((_passes) => {
-              if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
-                return of(_passes);
-              } else {
-                this.currentPasses = [];
-                return of(_passes).pipe(delay(500));
-              }
-            })
-          )
-          .subscribe((passes: any) => {
-            this.currentPasses = passes;
-            this.currentPassesEmit.emit(passes);
-          });
+          this.currentPasses$
+            .pipe(
+              switchMap((_passes) => {
+                if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
+                  return of(_passes);
+                } else {
+                  this.currentPasses = [];
+                  return of(_passes).pipe(delay(500));
+                }
+              })
+            )
+            .subscribe((passes: any) => {
+              this.currentPasses = passes;
+              this.currentPassesEmit.emit(passes);
+            });
       }
         if (this.isActive) {
           this.timers.push(window.setInterval(() => {
