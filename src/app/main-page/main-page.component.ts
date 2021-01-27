@@ -77,7 +77,21 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     this.restriction$ = this.userService.blockUserPage$;
 
-    this.dataService.currentUser
+    const dbUser$ = combineLatest(
+      this.userService.effectiveUser.asObservable(),
+      this.dataService.currentUser
+    ).pipe(
+      map(([effectUser, currentUser]) => {
+        // count += 1;
+        // console.log('USER ==>>', count);
+        if (effectUser) {
+          return effectUser.user;
+        } else {
+          return currentUser;
+        }
+      }), take(1));
+
+    dbUser$
       .pipe(
         filter(user => !!user),
         take(1),
@@ -150,17 +164,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.goHome(user);
     });
 
-    // this.inboxHasItems = combineLatest(
-    //   this.receivedRequests.length$,
-    //   this.receivedRequests.loaded$,
-    //   this.sentRequests.length$,
-    //   this.sentRequests.loaded$,
-    //   (length1, loaded1, length2, loaded2) => {
-    //     if (loaded1 && loaded2) {
-    //       return (length1 + length2) > 0;
-    //     }
-    //   }
-    // );
     this.inboxHasItems = combineLatest(
       this.liveDataService.requestsTotalNumber$,
       this.liveDataService.requestsLoaded$,

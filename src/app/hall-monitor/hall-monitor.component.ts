@@ -262,6 +262,11 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.inputValue = search;
     this.searchPending$.next(true);
     this.searchQuery$.next(search);
+    const sort$ = this.dataService.sort$.pipe(map(s => ({sort: s})));
+    const search$ = this.searchQuery$.pipe(map(s => ({search_query: s})));
+
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, search$);
+    this.liveDataService.updateActivePassRequest(merged$, this.user);
   }
 
   back() {

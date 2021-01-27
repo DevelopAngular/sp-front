@@ -14,7 +14,7 @@ import {User} from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {TimeService} from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {LocationsService} from '../services/locations.service';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -142,8 +142,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   testPasses: PassLikeProvider;
   activePasses: WrappedProvider;
-  originPasses: WrappedProvider;
-  destinationPasses: WrappedProvider;
+  originPasses: any;
+  destinationPasses: any;
 
   inputValue = '';
   user: User;
@@ -214,14 +214,21 @@ export class MyRoomComponent implements OnInit, OnDestroy {
          return location && location.length ? location.map(l => Location.fromJSON(l)) : [];
         })
       );
+    selectedLocationArray$.subscribe(locations => {
+      this.liveDataService.getFromLocationPassesRequest(of({sort: '-created', search_query: ''}), locations);
+      this.liveDataService.getToLocationPassesRequest(of({sort: '-created', search_query: ''}), locations);
+    });
 
     // Construct the providers we need.
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
-    this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
-      this.searchDate$, this.searchQuery$));
-    this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, selectedLocationArray$,
-      this.searchDate$, this.searchQuery$));
+    // this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
+    //   this.searchDate$, this.searchQuery$));
+    this.originPasses = this.liveDataService.fromLocationPasses$;
+
+    // this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, selectedLocationArray$,
+    //   this.searchDate$, this.searchQuery$));
+    this.destinationPasses = this.liveDataService.toLocationPasses$;
 
     // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
   }
@@ -332,19 +339,18 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     });
 
     this.hasPasses = combineLatest(
-      this.activePasses.length$,
-      this.originPasses.length$,
-      this.destinationPasses.length$,
-      (l1, l2, l3) => l1 + l2 + l3 > 0
+      // this.activePasses.length$,
+      this.liveDataService.fromLocationPassesTotalNumber$,
+      this.liveDataService.toLocationPassesTotalNumber$,
+      (l2, l3) => l2 + l3 > 0
     );
     this.passesLoaded = combineLatest(
-      this.activePasses.loaded$,
-      this.originPasses.loaded$,
-      this.destinationPasses.loaded$,
-      (l1, l2, l3) => l1 && l2 && l3
+      // this.activePasses.loaded$,
+      this.liveDataService.fromLocationPassesLoaded$,
+      this.liveDataService.toLocationPassesLoaded$,
+      (l2, l3) => l2 && l3
     ).pipe(
       filter(v => v),
-      delay(250),
       tap((res) => this.searchPending$.next(!res))
     );
   }

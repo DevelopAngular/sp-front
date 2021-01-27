@@ -35,7 +35,13 @@ import {
   UpdateItem
 } from './polling-event-handlers';
 import {State} from './state';
-import {getActivePasses, getFromLocationPasses, getPassLikeCollection, getToLocationPasses} from '../ngrx/pass-like-collection/actions';
+import {
+  getActivePasses,
+  getFromLocationPasses,
+  getPassLikeCollection,
+  getToLocationPasses,
+  updateActivePasses
+} from '../ngrx/pass-like-collection/actions';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
@@ -734,8 +740,8 @@ export class LiveDataService {
 
   watchActivePassLike(student: User): Observable<PassLike> {
 
-    const passes$ = this.watchActiveHallPasses(empty(), {type: 'student', value: student});
-    const requests$ = this.watchActiveRequests(student).pipe(map(requests => {
+    const passes$ = this.activePasses$;
+    const requests$ = this.requests$.pipe(map(requests => {
       return requests.filter(req => !req.request_time);
     }));
 
@@ -764,6 +770,10 @@ export class LiveDataService {
 
   getActivePassesRequest(sortingEvents: Observable<HallPassFilter>, user: User) {
     this.store.dispatch(getActivePasses({sortingEvents, user}));
+  }
+
+  updateActivePassRequest(sortingEvents: Observable<HallPassFilter>, user: User) {
+    this.store.dispatch(updateActivePasses({sortingEvents, user}));
   }
 
   getToLocationPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null) {

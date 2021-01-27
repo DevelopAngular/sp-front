@@ -369,22 +369,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let count = 0;
 
-    const dbUser$ = combineLatest(
-      this.userService.effectiveUser.asObservable(),
-      this.dataService.currentUser
-    ).pipe(
-      map(([effectUser, currentUser]) => {
-        // count += 1;
-        // console.log('USER ==>>', count);
-        if (effectUser) {
-          return effectUser.user;
-        } else {
-          return currentUser;
-        }
-      }), take(1));
-
     this.futurePasses = this.liveDataService.futurePasses$;
-    this.activePasses = this.liveDataService.activePasses$;
+    this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;
 
     // this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, dbUser$));
@@ -411,7 +397,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         const user = User.fromJSON(this.user);
         if (isStudent) {
           this.receivedRequests = this.liveDataService.invitations$;
-          this.sentRequests = this.liveDataService.requests$;
+          this.sentRequests = this.liveDataService.requests$.pipe(
+            map(req => req.filter((r) => !!r.request_time)));
           // this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
           // this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
         } else {
@@ -504,17 +491,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
-    // this.inboxHasItems = combineLatest(
-    //   this.receivedRequests.length$,
-    //   this.receivedRequests.loaded$,
-    //   this.sentRequests.length$,
-    //   this.sentRequests.loaded$,
-    //   (length1, loaded1, length2, loaded2) => {
-    //     if (loaded1 && loaded2) {
-    //       return (length1 + length2) > 0;
-    //     }
-    //   }
-    // );
     this.inboxHasItems = combineLatest(
       this.liveDataService.requestsTotalNumber$,
       this.liveDataService.requestsLoaded$,
@@ -527,23 +503,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           }
     );
 
-    // this.inboxLoaded = combineLatest(
-    //   this.receivedRequests.loaded$,
-    //   this.sentRequests.loaded$,
-    //   (l1, l2) => l1 && l2
-    // );
-
     this.inboxLoaded = combineLatest(
       this.liveDataService.requestsLoaded$,
       this.liveDataService.invitationsLoaded$,
       (l1, l2) => l1 && l2
     );
 
-    // this.passesHaveItems = combineLatest(
-    //   this.activePasses.length$,
-    //   this.futurePasses.length$,
-    //   this.pastPasses.length$,
-    // ).pipe(map(([con1, con2, con3]) => !con1 && !con2 && !con3));
     this.passesHaveItems = combineLatest(
       this.liveDataService.activePassesTotalNumber$,
       this.liveDataService.futurePassesTotalNumber$,
@@ -551,11 +516,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       (con1, con2, con3) => !con1 && !con2 && !con3
     );
 
-    // this.passesLoaded = combineLatest(
-    //   this.activePasses.loaded$,
-    //   this.futurePasses.loaded$,
-    //   this.pastPasses.loaded$,
-    // ).pipe(map(([con1, con2, con3]) => con1 && con2 && con3));
     this.passesLoaded = combineLatest(
       this.liveDataService.activePassesLoaded$,
       this.liveDataService.futurePassesLoaded$,
@@ -586,6 +546,16 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  getActivePasses() {
+    const passes$ = this.liveDataService.activePasses$.pipe(
+      withLatestFrom(this.timeService.now$), map(([passes, now]) => {
+        return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
+      })
+    );
+    const excludedPasses = this.currentPass$.pipe(map(p => p !== null ? [p] : []), startWith([]));
+    return combineLatest(passes$, excludedPasses, (passes, excluded) => exceptPasses(passes, excluded));
   }
 
   showMainForm(forLater: boolean): void {
