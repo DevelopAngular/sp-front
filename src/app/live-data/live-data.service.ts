@@ -317,8 +317,6 @@ export class LiveDataService {
 
   private watch<ModelType extends BaseModel, ExternalEventType>(config: WatchData<ModelType, ExternalEventType>):
     Observable<ModelType[]> {
-    // this.count += 1;
-    // console.log('COUNT Requests ==>>', this.count);
     // Wrap external events in an object so that we can distinguish event types after they are merged.
     const wrappedExternalEvents: Observable<ExternalEvent<ExternalEventType>> = config.externalEvents.pipe(
       map(event => (<ExternalEvent<ExternalEventType>>{type: 'external-event', event: event}))
@@ -405,7 +403,9 @@ export class LiveDataService {
         mergeMap(() => {
           this.count += 1;
           console.log(config.initialUrl + ' ==>>>', this.count);
-          // this.initialUrls.push(config.initialUrl);
+          if (config.initialUrl.includes('inbox/teacher')) {
+            this.initialUrls.push(config.initialUrl);
+          }
           return this.http.get<Paged<any>>(config.initialUrl);
         }),
         map(rawDecoder),
@@ -766,7 +766,7 @@ export class LiveDataService {
   watchActivePassLike(student: User): Observable<PassLike> {
 
     const passes$ = this.activePasses$;
-    const requests$ = this.requests$.pipe(map(requests => {
+    const requests$ = this.watchActiveRequests(student).pipe(map(requests => {
       return requests.filter(req => !req.request_time);
     }));
 
