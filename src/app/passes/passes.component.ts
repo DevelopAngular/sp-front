@@ -30,8 +30,7 @@ import {mergeObject} from '../live-data/helpers';
 import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
 import {exceptPasses, PassLike} from '../models';
 import {HallPass} from '../models/HallPass';
-import {testInvitations, testPasses, testRequests} from '../models/mock_data';
-import {BasicPassLikeProvider, PassLikeProvider} from '../models/providers';
+import {PassLikeProvider} from '../models/providers';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {DataService} from '../services/data-service';
@@ -361,21 +360,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private locationsService: LocationsService
     ) {
 
-    this.testPasses = new BasicPassLikeProvider(testPasses);
-    this.testRequests = new BasicPassLikeProvider(testRequests);
-    this.testInvitations = new BasicPassLikeProvider(testInvitations);
-
-    const excludedPasses = this.currentPass$.pipe(map(p => p !== null ? [p] : []));
-
-    let count = 0;
-
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;
-
-    // this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, dbUser$));
-    // this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, dbUser$, excludedPasses, this.timeService));
-    // this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, dbUser$));
 
     this.dataService.currentUser
       .pipe(
@@ -394,18 +381,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }) // TODO filter events to only changes.
       )
       .subscribe(isStudent => {
-        const user = User.fromJSON(this.user);
         if (isStudent) {
           this.receivedRequests = this.liveDataService.invitations$;
           this.sentRequests = this.liveDataService.requests$.pipe(
             map(req => req.filter((r) => !!r.request_time)));
-          // this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
-          // this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
         } else {
           this.receivedRequests = this.liveDataService.requests$;
           this.sentRequests = this.liveDataService.invitations$;
-          // this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
-          // this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
         }
     });
 
@@ -422,6 +404,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.dataService.currentUser.pipe(
+      takeUntil(this.destroy$),
       switchMap((user: User) =>
         user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
     )

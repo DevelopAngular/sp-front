@@ -103,11 +103,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
           if (user.roles.includes('hallpass_student')) {
             this.receivedRequests = this.liveDataService.invitations$;
             this.sentRequests = this.liveDataService.requests$;
-            // this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
-            // this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
           } else {
-            // this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, user));
-            // this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, user));
             this.receivedRequests = this.liveDataService.requests$;
             this.sentRequests = this.liveDataService.invitations$;
           }

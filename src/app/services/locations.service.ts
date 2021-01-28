@@ -1,30 +1,31 @@
-import { Injectable } from '@angular/core';
-import { bufferCount, flatMap, reduce } from 'rxjs/operators';
-import { constructUrl } from '../live-data/helpers';
-import { Paged } from '../models';
-import { HttpService } from './http-service';
-import { User } from '../models/User';
+import {Injectable} from '@angular/core';
+import {bufferCount, flatMap, reduce} from 'rxjs/operators';
+import {constructUrl} from '../live-data/helpers';
+import {Paged} from '../models';
+import {HttpService} from './http-service';
+import {User} from '../models/User';
 import {BehaviorSubject, from, Observable, of} from 'rxjs';
-import { Location } from '../models/Location';
-import { Store } from '@ngrx/store';
-import { AppState } from '../ngrx/app-state/app-state';
-import { getTeacherLocationsCollection } from '../ngrx/teacherLocations/state/locations-getters.state';
-import { getLocsWithTeachers } from '../ngrx/teacherLocations/actions';
+import {Location} from '../models/Location';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getTeacherLocationsCollection} from '../ngrx/teacherLocations/state/locations-getters.state';
+import {getLocsWithTeachers} from '../ngrx/teacherLocations/actions';
 import {
   getCreatedLocation,
   getFoundLocations,
   getLoadedLocations,
   getLoadingLocations,
-  getLocationsCollection, getLocationsFromCategoryGetter,
+  getLocationsCollection,
+  getLocationsFromCategoryGetter,
   getUpdatedLocation
 } from '../ngrx/locations/states/locations-getters.state';
 import {
   getLocations,
   getLocationsFromCategory,
   postLocation,
-  updateLocation,
+  removeLocation,
   searchLocations,
-  removeLocation
+  updateLocation
 } from '../ngrx/locations/actions';
 import {
   getFavoriteLocationsCollection,
@@ -72,7 +73,7 @@ export class LocationsService {
     getLocationsWithCategory(category: string) {
       return this.http.get('v1/locations', {
         params: {
-          category: category,}
+          category: category}
         }
       );
     }
@@ -83,7 +84,7 @@ export class LocationsService {
     }
 
     getLocationsWithTeacher(teacher: User) {
-        return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
+      return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
     }
 
     getLocationsWithManyTeachers(teachers: User[]): Observable<Location[]> {
@@ -94,7 +95,6 @@ export class LocationsService {
             const url = constructUrl('v1/locations', {
               teacher_id: ids,
             });
-
             return this.http.get<Location[]>(url);
           }),
           reduce((acc, arr) => acc.concat(arr), [])

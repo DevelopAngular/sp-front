@@ -20,7 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
 import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
-import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 
 import {DataService} from '../services/data-service';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -295,6 +295,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       .pipe(
         this.loadingService.watchFirst,
         takeUntil(this.destroyer$),
+        take(1),
         switchMap((eu: RepresentedUser) => {
           if (eu) {
               this.effectiveUser = eu;

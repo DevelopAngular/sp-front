@@ -217,25 +217,20 @@ export class MyRoomComponent implements OnInit, OnDestroy {
          return location && location.length ? location.map(l => Location.fromJSON(l)) : [];
         })
       );
-    combineLatest(selectedLocationArray$, this.searchDate$, this.searchQuery$.pipe(map(s => ({search_query: s})))).subscribe(([locations, date, query]) => {
+    combineLatest(
+      selectedLocationArray$,
+      this.searchDate$,
+      this.searchQuery$.pipe(map(s => ({search_query: s})))
+    )
+    .subscribe(([locations, date, query]) => {
       this.liveDataService.getMyRoomActivePassesRequest(mergeObject({sort: '-created', search_query: ''}, of(query)), {type: 'location', value: locations}, date);
       this.liveDataService.getFromLocationPassesRequest(mergeObject({sort: '-created', search_query: ''}, of(query)), locations, date);
       this.liveDataService.getToLocationPassesRequest(mergeObject({sort: '-created', search_query: ''}, of(query)), locations, date);
     });
 
-    // Construct the providers we need.
-    // this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
-    //   this.searchDate$, this.searchQuery$));
     this.activePasses = this.liveDataService.myRoomActivePasses$;
-    // this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
-    //   this.searchDate$, this.searchQuery$));
     this.originPasses = this.liveDataService.fromLocationPasses$;
-
-    // this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, selectedLocationArray$,
-    //   this.searchDate$, this.searchQuery$));
     this.destinationPasses = this.liveDataService.toLocationPasses$;
-
-    // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
   }
 
   setSearchDate(date: Date) {
@@ -294,16 +289,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       this.loadingService.watchFirst,
       tap(([cu, eu]) => {
         this._zone.run(() => {
-
           this.user = cu;
           this.effectiveUser = eu;
           this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
-
-          // if (this.user.isAssistant() && this.effectiveUser) {
-          //   this.canView = this.effectiveUser.roles.includes('access_teacher_room');
-          // } else {
-            this.canView = this.user.roles.includes('access_teacher_room');
-          // }
+          this.canView = this.user.roles.includes('access_teacher_room');
         });
       }),
       switchMap(([cu, eu]) => {
