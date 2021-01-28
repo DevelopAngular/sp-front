@@ -1,9 +1,9 @@
 import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, merge, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {mergeObject} from '../live-data/helpers';
-import {LiveDataService} from '../live-data/live-data.service';
+import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
 import {LoadingService} from '../services/loading.service';
 import {PassLikeProvider} from '../models/providers';
 import {User} from '../models/User';
@@ -135,6 +135,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
   selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
+  sortMode: string = '';
 
   constructor(
     private userService: UserService,
@@ -147,8 +148,9 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     public screenService: ScreenService,
     private scrollPosition: ScrollPositionService
   ) {
+    this.liveDataService.getHallMonitorPassesRequest(of({sort: '-created', search_query: ''}));
     // this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
-    this.activePassProvider = this.liveDataService.activePasses$;
+    this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }
 
   ngOnInit() {
@@ -179,16 +181,15 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
 
     this.hasPasses = combineLatest(
-        this.liveDataService.activePassesTotalNumber$,
+        this.liveDataService.hallMonitorPassesTotalNumber$,
         (l1) => l1 > 0
       );
 
       this.passesLoaded = combineLatest(
-        this.liveDataService.activePassesLoaded$,
+        this.liveDataService.hallMonitorPassesLoaded$,
         (l1) => l1
       ).pipe(
         filter(v => v),
-        delay(250),
         tap((res) => this.searchPending$.next(!res))
       );
 
@@ -262,11 +263,18 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.inputValue = search;
     this.searchPending$.next(true);
     this.searchQuery$.next(search);
-    const sort$ = this.dataService.sort$.pipe(map(s => ({sort: s})));
-    const search$ = this.searchQuery$.pipe(map(s => ({search_query: s})));
+    this.updatePassCollection(this.sortMode);
+  }
 
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, search$);
-    this.liveDataService.updateActivePassRequest(merged$, this.user);
+  updatePassCollection(sort) {
+    this.sortMode = sort;
+    const sort$ = of(this.sortMode).pipe(map(s => ({sort: s})));
+    const search$ = this.searchQuery$.pipe(map(s => ({search_query: s})));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
+
+    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+    merged$.subscribe(mergedReplay);
+    this.liveDataService.updateHallMonitorPassesRequest(merged$);
   }
 
   back() {

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {LiveDataService} from '../../../../../live-data/live-data.service';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import * as expiredPassesActions from '../actions';
 import {HallPass} from '../../../../../models/HallPass';
 import {of} from 'rxjs';
@@ -13,7 +13,7 @@ export class ExpiredPassesEffects {
     return this.actions$
       .pipe(
         ofType(expiredPassesActions.getExpiredPasses),
-        concatMap((action: any) => {
+        switchMap((action: any) => {
           return this.liveDataService.watchPastHallPasses(
             action.user.roles.includes('hallpass_student')
               ? {type: 'student', value: action.user}

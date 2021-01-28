@@ -38,9 +38,11 @@ import {State} from './state';
 import {
   getActivePasses,
   getFromLocationPasses,
+  getHallMonitorPasses,
   getPassLikeCollection,
   getToLocationPasses,
-  updateActivePasses
+  updateActivePasses,
+  updateHallMonitorPasses
 } from '../ngrx/pass-like-collection/actions';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
@@ -86,6 +88,12 @@ import {
   getFromLocationPassesCollection,
   getFromLocationPassesTotalNumber
 } from '../ngrx/pass-like-collection/nested-states/from-location/states';
+import {
+  getHallMonitorPassesCollection,
+  getHallMonitorPassesLoaded,
+  getHallMonitorPassesLoading,
+  getHallMonitorPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/hall-monitor-passes/states/hall-monitor-passes-getters.state';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -267,6 +275,11 @@ export class LiveDataService {
   fromLocationPassesLoading$: Observable<boolean> = this.store.select(getFromLocationLoading);
   fromLocationPassesLoaded$: Observable<boolean> = this.store.select(getFromLocationLoaded);
   fromLocationPassesTotalNumber$: Observable<number> = this.store.select(getFromLocationPassesTotalNumber);
+
+  hallMonitorPasses$: Observable<HallPass[]> = this.store.select(getHallMonitorPassesCollection);
+  hallMonitorPassesLoading$: Observable<boolean> = this.store.select(getHallMonitorPassesLoading);
+  hallMonitorPassesLoaded$: Observable<boolean> = this.store.select(getHallMonitorPassesLoaded);
+  hallMonitorPassesTotalNumber$: Observable<number> = this.store.select(getHallMonitorPassesTotalNumber);
 
   constructor(
     private http: HttpService,
@@ -782,6 +795,14 @@ export class LiveDataService {
 
   getFromLocationPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null) {
     this.store.dispatch(getFromLocationPasses({sortingEvents, filter, date}));
+  }
+
+  getHallMonitorPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: PassFilterType = null, date: Date = null) {
+    this.store.dispatch(getHallMonitorPasses({sortingEvents, filter, date}));
+  }
+
+  updateHallMonitorPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: PassFilterType = null, date: Date = null) {
+    this.store.dispatch(updateHallMonitorPasses({sortingEvents, filter, date}));
   }
 
 }

@@ -10,7 +10,7 @@ import {
   Output
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, merge, Observable, of, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {HallPass} from '../models/HallPass';
@@ -20,7 +20,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, filter, map, switchMap, tap} from 'rxjs/operators';
+import {delay, filter, switchMap, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -29,8 +29,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DropdownComponent} from '../dropdown/dropdown.component';
-import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
-import {mergeObject} from '../live-data/helpers';
+import {LiveDataService} from '../live-data/live-data.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -186,18 +185,12 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
     this.passClick.emit(true);
-    // this.dataService.markRead(pass).subscribe();
+    this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }
 
   onSortSelected(sort: string) {
     this.sort$.next(sort);
-    const sort$ = this.sort$.pipe(map(s => ({sort: s})));
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
-
-    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-    merged$.subscribe(mergedReplay);
-    this.liveDataService.updateActivePassRequest(mergedReplay, this.user);
     this.sortMode.emit(sort);
   }
 

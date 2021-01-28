@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {LiveDataService} from '../../../../../live-data/live-data.service';
 import * as invitationsActions from '../actions';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {Invitation} from '../../../../../models/Invitation';
 
@@ -13,7 +13,7 @@ export class InvitationsEffects {
     return this.actions$
       .pipe(
         ofType(invitationsActions.getInvitations),
-        concatMap((action: any) => {
+        switchMap((action: any) => {
           return this.liveDataService.watchInboxInvitations(action.user)
             .pipe(
               map((invitations: Invitation[]) => {

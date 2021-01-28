@@ -5,3 +5,4 @@ export * from '../nested-states/future-passes/effects';
 export * from '../nested-states/active-passes/effects';
 export * from '../nested-states/to-location/effects';
 export * from '../nested-states/from-location/effects';
+export * from '../nested-states/hall-monitor-passes/effects';

@@ -55,7 +55,10 @@ abstract class RoomPassProvider implements PassLikeProvider {
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
-    return combineLatest(this.locations$, this.date$, (locations, date) => ({locations, date}))
+    return combineLatest(
+      this.locations$,
+      this.date$,
+      (locations, date) => ({locations, date}))
       .pipe(
         switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date))
       );
@@ -214,9 +217,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
          return location && location.length ? location.map(l => Location.fromJSON(l)) : [];
         })
       );
-    selectedLocationArray$.subscribe(locations => {
-      this.liveDataService.getFromLocationPassesRequest(of({sort: '-created', search_query: ''}), locations);
-      this.liveDataService.getToLocationPassesRequest(of({sort: '-created', search_query: ''}), locations);
+    combineLatest(selectedLocationArray$, this.searchDate$, this.searchQuery$.pipe(map(s => ({search_query: s})))).subscribe(([locations, date, query]) => {
+      this.liveDataService.getFromLocationPassesRequest(mergeObject({sort: '-created', search_query: ''}, of(query)), locations, date);
+      this.liveDataService.getToLocationPassesRequest(mergeObject({sort: '-created', search_query: ''}, of(query)), locations, date);
     });
 
     // Construct the providers we need.

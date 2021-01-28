@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {LiveDataService} from '../../../../../live-data/live-data.service';
 import * as fromLocationActions from '../actions';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {HallPass} from '../../../../../models/HallPass';
 import {of} from 'rxjs';
 
@@ -13,7 +13,7 @@ export class FromLocationPassesEffects {
     return this.actions$
       .pipe(
         ofType(fromLocationActions.getFromLocationPasses),
-        concatMap((action: any) => {
+        switchMap((action: any) => {
           return this.liveDataService.watchHallPassesFromLocation(action.sortingEvents, action.filter, action.date)
             .pipe(
               map((fromLocationPasses: HallPass[]) => {
