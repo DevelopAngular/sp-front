@@ -39,6 +39,7 @@ import {
   getActivePasses,
   getFromLocationPasses,
   getHallMonitorPasses,
+  getMyRoomPasses,
   getPassLikeCollection,
   getToLocationPasses,
   updateActivePasses,
@@ -94,6 +95,12 @@ import {
   getHallMonitorPassesLoading,
   getHallMonitorPassesTotalNumber
 } from '../ngrx/pass-like-collection/nested-states/hall-monitor-passes/states/hall-monitor-passes-getters.state';
+import {
+  getMyRoomPassesCollection,
+  getMyRoomPassesLoaded,
+  getMyRoomPassesLoading,
+  getMyRoomPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/my-room-passes/states/my-room-passes-getters.state';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -280,6 +287,11 @@ export class LiveDataService {
   hallMonitorPassesLoading$: Observable<boolean> = this.store.select(getHallMonitorPassesLoading);
   hallMonitorPassesLoaded$: Observable<boolean> = this.store.select(getHallMonitorPassesLoaded);
   hallMonitorPassesTotalNumber$: Observable<number> = this.store.select(getHallMonitorPassesTotalNumber);
+
+  myRoomActivePasses$: Observable<HallPass[]> = this.store.select(getMyRoomPassesCollection);
+  myRoomActivePassesLoading$: Observable<boolean> = this.store.select(getMyRoomPassesLoading);
+  myRoomActivePassesLoaded$: Observable<boolean> = this.store.select(getMyRoomPassesLoaded);
+  myRoomActivePassesTotalNumber$: Observable<number> = this.store.select(getMyRoomPassesTotalNumber);
 
   constructor(
     private http: HttpService,
@@ -803,6 +815,10 @@ export class LiveDataService {
 
   updateHallMonitorPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: PassFilterType = null, date: Date = null) {
     this.store.dispatch(updateHallMonitorPasses({sortingEvents, filter, date}));
+  }
+
+  getMyRoomActivePassesRequest(sortingEvents: Observable<HallPassFilter>, filter: PassFilterType = null, date: Date = null) {
+    this.store.dispatch(getMyRoomPasses({sortingEvents, filter, date}));
   }
 
 }

@@ -6,6 +6,7 @@ import {IActivePassesState} from '../nested-states/active-passes/states';
 import {IToLocationState} from '../nested-states/to-location/states';
 import {IFromLocationState} from '../nested-states/from-location/states';
 import {IHallMonitorPassesState} from '../nested-states/hall-monitor-passes/states';
+import {IMyRoomPassesState} from '../nested-states/my-room-passes/states';
 
 export interface IPassLikeCollectionState {
   invitations?: IInvitationsState;
@@ -16,6 +17,7 @@ export interface IPassLikeCollectionState {
   toLocation?: IToLocationState;
   fromLocation?: IFromLocationState;
   hallMonitorPasses?: IHallMonitorPassesState;
+  myRoomPasses?: IMyRoomPassesState;
 }
 
 export const passLikeCollectionInitialState: IPassLikeCollectionState = {};

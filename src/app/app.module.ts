@@ -77,6 +77,7 @@ import {ActivePassesEffects} from './ngrx/pass-like-collection/nested-states/act
 import {ToLocationPassesEffects} from './ngrx/pass-like-collection/nested-states/to-location/effects';
 import {FromLocationPassesEffects} from './ngrx/pass-like-collection/nested-states/from-location/effects';
 import {HallMonitorPassesEffects} from './ngrx/pass-like-collection/nested-states/hall-monitor-passes/effects';
+import {MyRoomPassesEffects} from './ngrx/pass-like-collection/nested-states/my-room-passes/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -200,7 +201,8 @@ const appRoutes: Routes = [
             ActivePassesEffects,
             ToLocationPassesEffects,
             FromLocationPassesEffects,
-            HallMonitorPassesEffects
+            HallMonitorPassesEffects,
+            MyRoomPassesEffects
         ]),
         StoreDevtoolsModule.instrument({}),
         HammerModule,

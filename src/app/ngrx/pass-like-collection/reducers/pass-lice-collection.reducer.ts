@@ -7,6 +7,7 @@ import {activePassesReducer} from '../nested-states/active-passes/reducers';
 import {toLocationPassesReducer} from '../nested-states/to-location/reducers';
 import {fromLocationPassesReducer} from '../nested-states/from-location/reducers';
 import {hallMonitorPassesReducer} from '../nested-states/hall-monitor-passes/reducers';
+import {myRoomPassesReducer} from '../nested-states/my-room-passes/reducers';
 
 export function passLikeCollectionReducer(
   state = passLikeCollectionInitialState,
@@ -20,6 +21,7 @@ export function passLikeCollectionReducer(
     activePasses: activePassesReducer(state.activePasses, action),
     toLocation: toLocationPassesReducer(state.toLocation, action),
     fromLocation: fromLocationPassesReducer(state.fromLocation, action),
-    hallMonitorPasses: hallMonitorPassesReducer(state.hallMonitorPasses, action)
+    hallMonitorPasses: hallMonitorPassesReducer(state.hallMonitorPasses, action),
+    myRoomPasses: myRoomPassesReducer(state.myRoomPasses, action)
   };
 }

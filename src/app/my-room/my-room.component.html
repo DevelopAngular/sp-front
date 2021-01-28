@@ -136,17 +136,17 @@
 
       <div class="my-room-body" [@collectionsTrigger] = 'collectionsSlideState'>
         <div [style.maxWidth]="collectionWidth" [ngClass]="isIOSTablet ? 'ios-my-room-body-collections' : 'my-room-body-collections'">
-<!--          <app-pass-collection-->
-<!--            [smoothlyUpdating]="true"-->
-<!--            [isActive]="true"-->
-<!--            [forStaff]="isStaff"-->
-<!--            [passProvider]="activePasses"-->
-<!--            [title]="'Active Passes'"-->
-<!--            [icon]="'./assets/Walking (Navy).svg'"-->
-<!--            [columns]="4"-->
-<!--            (currentPassesEmit)="currentPasses$.next($event)"-->
-<!--          >-->
-<!--          </app-pass-collection>-->
+          <app-pass-collection
+            [smoothlyUpdating]="true"
+            [isActive]="true"
+            [forStaff]="isStaff"
+            [passProvider]="activePasses"
+            [title]="'Active Passes'"
+            [icon]="'./assets/Walking (Navy).svg'"
+            [columns]="4"
+            (currentPassesEmit)="currentPasses$.next($event)"
+          >
+          </app-pass-collection>
           <app-pass-collection
             [smoothlyUpdating]="true"
             [forStaff]="isStaff"
