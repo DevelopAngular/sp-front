@@ -1,12 +1,10 @@
 import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, interval, merge, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, merge, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {User} from '../../models/User';
 import {Report} from '../../models/Report';
 import {Pinnable} from '../../models/Pinnable';
-import {ActivePassProvider} from '../../hall-monitor/hall-monitor.component';
-import {LiveDataService} from '../../live-data/live-data.service';
-import {WrappedProvider} from '../../models/providers';
+import {HallPassFilter, LiveDataService} from '../../live-data/live-data.service';
 import {TimeService} from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
@@ -18,6 +16,7 @@ import {ScrollPositionService} from '../../scroll-position.service';
 import {takeRight} from 'lodash';
 import * as moment from 'moment';
 import {School} from '../../models/School';
+import {mergeObject} from '../../live-data/helpers';
 
 
 @Component({
@@ -73,7 +72,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     @ViewChild('bottomShadow', { static: true }) bottomShadow;
     @ViewChild('reportBox', { static: true }) reportBox: ElementRef;
 
-    activePassProvider: WrappedProvider;
+    activePassProvider: any;
     searchQuery$ = new BehaviorSubject('');
     minDate: Date;
     activeCalendar: boolean;
@@ -102,6 +101,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     currentSchool: School;
 
     changeReports$ = new Subject();
+  sortMode: string = '';
 
     @HostListener('scroll', ['$event'])
     onScroll(event) {
@@ -125,7 +125,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
         private scrollPosition: ScrollPositionService
 
     ) {
-      this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
+      this.liveDataService.getHallMonitorPassesRequest(of({sort: '-created', search_query: ''}));
+      this.activePassProvider = this.liveDataService.hallMonitorPasses$;
       this.minDate = this.timeService.nowDate();
       this.currentSchool = this.http.getSchool();
     }
@@ -146,9 +147,9 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
           }
         });
 
-    this.hasPasses = this.activePassProvider.length$.asObservable().pipe(map(l => l > 0));
+    this.hasPasses = this.liveDataService.hallMonitorPassesTotalNumber$.pipe(map(l => l > 0));
 
-    this.passesLoaded = this.activePassProvider.loaded$.pipe(
+    this.passesLoaded = this.liveDataService.hallMonitorPassesLoaded$.pipe(
       filter(v => v),
       delay(250),
       tap((res) => this.searchPending$.next(!res))
@@ -158,6 +159,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
   onSearch(searchValue) {
     this.searchPending$.next(true);
      this.searchQuery$.next(searchValue);
+     this.updatePassCollection(this.sortMode);
   }
 
 
@@ -239,5 +241,16 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+  }
+
+  updatePassCollection(sort) {
+    this.sortMode = sort;
+    const sort$ = of(this.sortMode).pipe(map(s => ({sort: s})));
+    const search$ = this.searchQuery$.pipe(map(s => ({search_query: s})));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
+
+    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+    merged$.subscribe(mergedReplay);
+    this.liveDataService.updateHallMonitorPassesRequest(merged$);
   }
 }

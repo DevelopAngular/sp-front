@@ -401,8 +401,8 @@ export class LiveDataService {
       .pipe(
         // filter(() => !this.initialUrls.find(url => url === config.initialUrl)),
         mergeMap(() => {
-          this.count += 1;
-          console.log(config.initialUrl + ' ==>>>', this.count);
+          // this.count += 1;
+          // console.log(config.initialUrl + ' ==>>>', this.count);
           if (config.initialUrl.includes('inbox/teacher')) {
             this.initialUrls.push(config.initialUrl);
           }
