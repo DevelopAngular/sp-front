@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import { findIndex } from 'lodash';
+import {findIndex, pullAll} from 'lodash';
 import {Select} from '../animations';
 
 @Component({
@@ -21,6 +21,7 @@ export class RestrictionPickerComponent implements OnInit {
   @Input() disabled: boolean;
   @Input() disabledOptions: string[];
   @Input() padding: number = 5;      // px
+  @Input() tooltipText: string;
 
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
 
@@ -28,6 +29,9 @@ export class RestrictionPickerComponent implements OnInit {
 
   ngOnInit() {
     if (this.selectedChoice) {
+      if (this.disabledOptions && this.choices.length - this.disabledOptions.length === 1) {
+        this.selectedChoice = pullAll([...this.choices], [...this.disabledOptions])[0];
+      }
       this.result.emit(this.selectedChoice);
     }
   }
