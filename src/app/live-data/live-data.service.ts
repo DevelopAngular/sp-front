@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 
 import * as moment from 'moment';
 
-import {combineLatest, concat, empty, merge, Observable, of, Subject} from 'rxjs';
-import {distinctUntilChanged, map, mergeMap, pluck, scan, startWith, switchMap} from 'rxjs/operators';
+import {combineLatest, empty, merge, Observable, of, Subject} from 'rxjs';
+import {distinctUntilChanged, exhaustMap, map, pluck, scan, startWith, switchMap} from 'rxjs/operators';
 import {Paged, PassLike} from '../models';
 import {BaseModel} from '../models/base';
 import {HallPass} from '../models/HallPass';
@@ -100,7 +100,7 @@ import {
   getMyRoomPassesLoaded,
   getMyRoomPassesLoading,
   getMyRoomPassesTotalNumber
-} from '../ngrx/pass-like-collection/nested-states/my-room-passes/states/my-room-passes-getters.state';
+} from '../ngrx/pass-like-collection/nested-states/my-room-passes/states';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -299,7 +299,7 @@ export class LiveDataService {
     private timeService: TimeService,
     private store: Store<AppState>,
   ) {
-    this.http.currentSchoolSubject
+    this.http.schoolToggle$
       .pipe(
         pluck('id'),
         distinctUntilChanged()
@@ -385,10 +385,10 @@ export class LiveDataService {
     const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
       : (json) => json.results.map(raw => config.decoder(raw));
 
-    const fullReload$ = concat(
-      of('invalidate'),
-      this.polling.listen('invalidate'),
-      this.globalReload$.pipe(map(() => 'invalidate'))
+    const fullReload$ = merge(
+      of('invalidate 1'),
+      // this.polling.listen('invalidate').pipe(map(() => 'invalidate 2')),
+      this.globalReload$.pipe(map(() => 'invalidate 3'))
     );
 
     /**
@@ -399,17 +399,15 @@ export class LiveDataService {
      */
     return fullReload$
       .pipe(
-        // filter(() => !this.initialUrls.find(url => url === config.initialUrl)),
-        mergeMap(() => {
-          // this.count += 1;
-          // console.log(config.initialUrl + ' ==>>>', this.count);
-          if (config.initialUrl.includes('inbox/teacher')) {
-            this.initialUrls.push(config.initialUrl);
-          }
+        exhaustMap((value) => {
+          this.count += 1;
+          console.log(value + ' ==>>>', this.count);
           return this.http.get<Paged<any>>(config.initialUrl);
         }),
         map(rawDecoder),
-        switchMap(items => events.pipe(scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items)))),
+        switchMap(items => {
+          return events.pipe(scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items)));
+        }),
         map(state => state.filtered_passes)
       );
   }

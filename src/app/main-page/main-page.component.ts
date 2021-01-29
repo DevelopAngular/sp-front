@@ -99,6 +99,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         tap(user => {
           this.liveDataService.getPassLikeCollectionRequest(user);
           this.liveDataService.getActivePassesRequest(of({sort: '-created', search_query: ''}), user);
+          this.liveDataService.getHallMonitorPassesRequest(of({sort: '-created', search_query: ''}));
           this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
           if (user.roles.includes('hallpass_student')) {
             this.receivedRequests = this.liveDataService.invitations$;

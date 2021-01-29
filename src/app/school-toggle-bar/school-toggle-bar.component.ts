@@ -66,6 +66,7 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy, AfterViewIni
       optionDialog.afterClosed().subscribe(data => {
         UNANIMATED_CONTAINER.next(false);
         if (data) {
+          this.http.schoolToggle$.next(data);
           this.http.setSchool(data);
         }
       });

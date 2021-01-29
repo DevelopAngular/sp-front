@@ -12,7 +12,7 @@ export class HallMonitorPassesEffects {
   getHallMonitorPasses$ = createEffect(() => {
     return this.actions$
       .pipe(
-        ofType(hallMonitorActions.getHallMonitorPasses, hallMonitorActions.updateHallMonitorPasses),
+        ofType(hallMonitorActions.getHallMonitorPasses),
         switchMap((action: any) => {
           return this.liveDataService.watchActiveHallPasses(action.sortingEvents, action.filter, action.date)
             .pipe(
@@ -25,21 +25,21 @@ export class HallMonitorPassesEffects {
       );
   });
 
-  // updateHallMonitorPasses$ = createEffect(() => {
-  //   return this.actions$
-  //     .pipe(
-  //       ofType(hallMonitorActions.updateHallMonitorPasses),
-  //       switchMap((action: any) => {
-  //         return this.liveDataService.watchActiveHallPasses(action.sortingEvents, action.filter, action.date)
-  //           .pipe(
-  //             map((hallMonitorPasses: HallPass[]) => {
-  //               return hallMonitorActions.updateHallMonitorPassesSuccess({hallMonitorPasses});
-  //             }),
-  //             catchError(error => of(hallMonitorActions.updateHallMonitorPassesFailure({errorMessage: error.message})))
-  //           )
-  //       })
-  //     );
-  // });
+  updateHallMonitorPasses$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(hallMonitorActions.updateHallMonitorPasses),
+        switchMap((action: any) => {
+          return this.liveDataService.watchActiveHallPasses(action.sortingEvents)
+            .pipe(
+              map((hallMonitorPasses: HallPass[]) => {
+                return hallMonitorActions.updateHallMonitorPassesSuccess({hallMonitorPasses});
+              }),
+              catchError(error => of(hallMonitorActions.updateHallMonitorPassesFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
 
   constructor(
     private actions$: Actions,

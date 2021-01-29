@@ -148,7 +148,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     public screenService: ScreenService,
     private scrollPosition: ScrollPositionService
   ) {
-    this.liveDataService.getHallMonitorPassesRequest(of({sort: '-created', search_query: ''}));
     // this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
     this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }

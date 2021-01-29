@@ -29,7 +29,6 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DropdownComponent} from '../dropdown/dropdown.component';
-import {LiveDataService} from '../live-data/live-data.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -114,8 +113,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private kioskMode: KioskModeService,
       private sanitizer: DomSanitizer,
       public screenService: ScreenService,
-      private cdr: ChangeDetectorRef,
-      private liveDataService: LiveDataService
+      private cdr: ChangeDetectorRef
   ) {}
 
   get gridTemplate() {
@@ -253,17 +251,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
     ];
     UNANIMATED_CONTAINER.next(true);
-    // const sortDialog = this.dialog.open(ConsentMenuComponent, {
-    //     panelClass: 'consent-dialog-container',
-    //     backdropClass: 'invis-backdrop',
-    //     data: {
-    //       'header': 'SORT BY',
-    //       'options': sortOptions,
-    //       'trigger': new ElementRef(event.currentTarget),
-    //       'isSort': true,
-    //       'sortMode': this.dataService.sort$.value
-    //     }
-    // });
 
     const sortDialog = this.dialog.open(DropdownComponent, {
       panelClass: 'consent-dialog-container',

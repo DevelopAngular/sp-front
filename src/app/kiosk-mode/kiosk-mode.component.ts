@@ -2,20 +2,19 @@ import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, V
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {MatDialog} from '@angular/material/dialog';
-import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {combineLatest, of} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {filter, switchMap} from 'rxjs/operators';
+import {filter, switchMap, take} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {DataService} from '../services/data-service';
 import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
-import {ActivePassProvider} from '../my-room/my-room.component';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -24,7 +23,7 @@ import {ActivePassProvider} from '../my-room/my-room.component';
 })
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  activePassesKiosk: WrappedProvider;
+  activePassesKiosk: Observable<HallPass[]>;
 
   cardReaderValue: string;
 
@@ -69,22 +68,17 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
             }
               return this.locationService.getLocationsWithTeacherRequest(user);
           }),
-        filter((res: any[]) => !!res.length)
+        filter((res: any[]) => !!res.length),
+        take(1)
       )
-          .subscribe(locations => {
+      .subscribe(locations => {
           const kioskJwtToken = this.storage.getItem('kioskToken');
           const jwtHelper = new JwtHelperService();
           this.userData = jwtHelper.decodeToken(kioskJwtToken);
           const kioskLocation = locations.find(loc => +loc.id === this.userData.kiosk_location_id);
-            this.activePassesKiosk = new WrappedProvider(
-              new ActivePassProvider(
-                this.liveDataService,
-                of([kioskLocation]),
-                of(this.timeService.nowDate()),
-                of('')
-              )
-            );
-            this.kioskMode.currentRoom$.next(kioskLocation);
+          this.liveDataService.getMyRoomActivePassesRequest(of({sort: '-created', search_query: ''}), {type: 'location', value: [kioskLocation]},this.timeService.nowDate());
+          this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
+          this.kioskMode.currentRoom$.next(kioskLocation);
       });
 
   }

@@ -18,6 +18,7 @@ const reducer = createReducer(
     (state) => ({...state, loading: true, loaded: false})),
   on(
     hallMonitorActions.getHallMonitorPassesSuccess,
+    hallMonitorActions.updateHallMonitorPassesSuccess,
     (state, {hallMonitorPasses}) => {
     return adapter.addAll(hallMonitorPasses, {...state, loading: false, loaded: true});
   })

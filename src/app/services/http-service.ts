@@ -1,9 +1,9 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Injectable, NgZone, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {BehaviorSubject, iif, interval, Observable, of, ReplaySubject, throwError} from 'rxjs';
-import {catchError, concatMap, delay, filter, first, map, mapTo, mergeMap, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, iif, Observable, of, ReplaySubject, throwError} from 'rxjs';
+import {catchError, delay, filter, map, mapTo, mergeMap, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
@@ -16,6 +16,7 @@ import {SafeHtml} from '@angular/platform-browser';
 import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
+import {Subject} from 'rxjs/Subject';
 import AuthResponse = gapi.auth2.AuthResponse;
 
 export const SESSION_STORAGE_KEY = 'accessToken';
@@ -159,6 +160,7 @@ export class HttpService implements OnDestroy {
   public authContext$: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
 
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
+  public schoolToggle$: Subject<School> = new Subject<School>();
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
       filter(v => v),
       switchMap((v) => {
