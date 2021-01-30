@@ -1,4 +1,4 @@
-<div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false">
+<div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false" [style.height]="hideScroll ? '100%' : 'auto'">
   <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
   <div *ngIf="errorToastTrigger | async">
     <app-error-toast

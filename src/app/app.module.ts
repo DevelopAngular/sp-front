@@ -85,12 +85,12 @@ const appRoutes: Routes = [
     path: 'school_signup',
     canActivate: [SchoolSignUpGuard],
     loadChildren: () => import('app/school-sign-up/school-sign-up.module').then(m => m.SchoolSignUpModule),
-    data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: false, authFree: true},
+    data: {hideSchoolToggleBar: true, hubspot: false, authFree: true},
   },
   {
     path: 'accounts_setup',
     loadChildren: () => import('app/accounts-setup/accounts-setup.module').then(m => m.AccountsSetupModule),
-    data: {hideScroll: true, hubspot: true, authFree: true},
+    data: {hubspot: true, authFree: true},
   },
   {
     path: '',
@@ -113,7 +113,6 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule),
     resolve: {currentUser: CurrentUserResolver},
     data: {
-      hideScroll: true,
       hubspot: true,
       authFree: false
     }
@@ -125,6 +124,11 @@ const appRoutes: Routes = [
   {
     path: 'error',
     loadChildren: () => import('app/error/error.module').then(m => m.ErrorModule)
+  },
+  {
+    path: 'forms',
+    loadChildren: () => import('app/forms/forms.module').then(m => m.FormsModule),
+    data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
 
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},

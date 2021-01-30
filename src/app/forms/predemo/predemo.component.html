@@ -1,0 +1,23 @@
+<div id="predemo">
+  <div id="masthead">
+    <div id="logo-wrapper">
+    <app-smartpass-logo [logoAsset]="'./assets/intro/Logo Green.png'"></app-smartpass-logo>
+    </div>
+      <div id="text-wrapper">
+      <h1>Confirm your upcoming demo</h1>
+      <span>{{startTime | date:'MMM dd'}} at {{startTime | date:'h:mm a'}} {{timeZone}} {{ "\u2022" }}
+        with {{assignedTo}}</span>
+    </div>
+  </div>
+  <div id="form-wrapper">
+    <form [formGroup]="predemoForm">
+      <app-list-schools [form]="predemoForm"></app-list-schools>
+      <app-colored-checkbox
+        title="How did you hear about us?"
+        [options]="['Google search', 'Facebook', 'Referral / word of mouth',
+  'Conference', 'Magazine ad', 'Email', 'Other']"
+        [formArray]="predemoForm.controls.hdyhau"></app-colored-checkbox>
+      <button id="confirm" mat-flat-button color="jade" (click)="confirmDemo()">Confirm Demo</button>
+    </form>
+  </div>
+</div>

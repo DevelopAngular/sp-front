@@ -1,0 +1,39 @@
+@import "../../../design-system";
+
+#predemo {
+  background-color: white;
+  padding-bottom: 30px;
+}
+
+#masthead {
+  font-family: $primaryFont;
+  margin: 0 40px 40px 40px;
+  padding-bottom: 30px;
+  background-color: #f4f6ff;
+  border-radius: 0 0 32px 32px;
+
+  #logo-wrapper {
+    padding-left: 30px;
+    padding-top: 30px;
+  }
+
+  #text-wrapper {
+    text-align:center;
+
+    h1 {
+      @include textSize(30px, bold);
+    }
+
+    span {
+      @include textSize(14px);
+    }
+  }
+}
+
+#form-wrapper {
+  @extend .ds-flex-center-center, .ds-flex-column;
+}
+
+#confirm {
+  border-radius: 8px;
+}

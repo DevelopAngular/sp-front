@@ -1,0 +1,51 @@
+<div *ngIf="!submitted; else postWrapper" id="quote-request-wrapper">
+  <div id="quote-request">
+    <form [formGroup]="quoteRequestForm">
+      <div class="row">
+        <app-input input_label="Your name"
+                   width="225px"
+                   [formGroup]="quoteRequestForm"
+                   [controlName]="quoteRequestForm.controls.name"></app-input>
+        <app-input input_label="Position"
+                   width="225px"
+                   [formGroup]="quoteRequestForm"
+                   [controlName]="quoteRequestForm.controls.position"></app-input>
+      </div>
+      <div class="row">
+        <app-input input_label="Email"
+                   width="225px"
+                   [formGroup]="quoteRequestForm"
+                   [controlName]="quoteRequestForm.controls.email"></app-input>
+        <app-input input_label="Phone Number"
+                   width="225px"
+                   [formGroup]="quoteRequestForm"
+                   [controlName]="quoteRequestForm.controls.phone"></app-input>
+      </div>
+    </form>
+    <app-list-schools [form]="quoteRequestForm"></app-list-schools>
+    <div id="confirm-wrapper">
+      <button id="confirm" mat-flat-button color="jade" (click)="confirm()">Request quote</button>
+    </div>
+  </div>
+</div>
+<ng-template #postWrapper>
+  <div id="post-qr-wrapper">
+    <div id="post-qr-title-wrapper"><h1 id="title">Quote request submitted</h1></div>
+    <div id="post-qr-form">
+      <span id="desc">You'll get a quote emailed to you within 24 hours.</span>
+      <hr>
+      <app-colored-checkbox
+        title="How did you hear about us?"
+        [options]="['Google search', 'Facebook', 'Referral / word of mouth',
+  'Conference', 'Magazine ad', 'Email', 'Other']"
+        [formArray]="hdyhau"></app-colored-checkbox>
+    </div>
+    <div id="button-div">
+      <a id="get-demo" mat-flat-button color="jade" href="https://smartpass.app/demo">
+        Get a free, 30 min demo
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </a>
+    </div>
+  </div>
+</ng-template>
+

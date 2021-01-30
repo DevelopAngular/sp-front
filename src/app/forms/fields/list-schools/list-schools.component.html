@@ -1,0 +1,24 @@
+<div id="form" [formGroup]="form">
+  <div id="labels">
+    <span class="school-label">School name</span>
+    <span class="population-label">Approx. # of students</span>
+  </div>
+  <div class="schools"
+       formArrayName="schools"
+       *ngFor="let school of schools.controls; let i = index">
+    <ng-container [formGroupName]="i">
+      <input #locationInput class="school-input" formControlName="name" placeholder="">
+
+      <input type="number" class="population-input" formControlName="population">
+    </ng-container>
+    <button [style.visibility]="showRemove() ? 'visible' : 'hidden'" mat-icon-button (click)="removeSchool(i)">
+      <mat-icon>remove</mat-icon>
+    </button>
+  </div>
+  <div id="add-school-wrapper">
+    <button id="add-school" mat-button (click)="addSchool()">
+      <mat-icon>add</mat-icon>
+      <span>Add a school</span>
+    </button>
+  </div>
+</div>
