@@ -28,9 +28,9 @@ export class AddAccountPopupComponent implements OnInit {
     this.triggerElementRef = this.data['trigger'];
     this.syncData = this.data['syncData'];
 
-    if (this.syncData.is_gg4l_enabled) {
-      this.options.push({ title: 'Add account', icon: './assets/GG4L Icon.svg', action: 'gg4l' });
-    }
+    // if (this.syncData.is_gg4l_enabled) {
+      // this.options.push({ title: 'Add account', icon: './assets/GG4L Icon.svg', action: 'gg4l' });
+    // }
     if (this.syncData.is_gsuite_enabled) {
       this.options.push({title: 'Add Account', icon: './assets/Google (Blue-Gray).svg', action: 'g_suite'});
     }
