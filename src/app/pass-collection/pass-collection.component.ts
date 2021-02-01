@@ -20,7 +20,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {delay, filter, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -80,6 +80,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() scrollable: boolean;
   @Input() filterDate: moment.Moment;
   @Input() user;
+  @Input() selectedSort = null;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
@@ -89,7 +90,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   currentPasses$: Observable<any>;
   currentPasses: PassLike[] = [];
-  selectedSort;
   filtersData$: Observable<{[model: string]: PassFilters}>;
   filtersLoading$: Observable<boolean>;
 
@@ -113,37 +113,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
     if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
       this.grid_template_columns = '157px';
-    }
-  }
-
-  @HostListener('document.scroll', ['$event'])
-  scroll(event) {
-    if (!!this.passesService.expiredPassesNextUrl$.getValue()) {
-      if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {
-        this.passesService.getMoreExpiredPasses()
-          .pipe(
-            map((passes: any) => {
-              if (this.filterDate) {
-                return {
-                  ...passes,
-                  results: passes.results.filter(pass => moment(pass.start_time).isAfter(moment(this.filterDate)))
-                };
-              }
-              return passes;
-            }))
-          .subscribe((res: any) => {
-            this.currentPasses.push(...res.results.map(pass => HallPass.fromJSON(pass)));
-            debugger;
-            this.passesService.expiredPassesNextUrl$.next(res.next ? res.next.substring(res.next.search('v1')) : '');
-            this.cdr.detectChanges();
-          });
-      }
-    } else {
-      if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {
-        this.showBottomShadow = false;
-      } else {
-        this.showBottomShadow = true;
-      }
     }
   }
 
@@ -206,39 +175,35 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.filterModel && this.hasFilterPasses) {
-      this.passesService.getFiltersRequest(this.filterModel);
-      this.filtersData$ = this.passesService.passFilters$;
-      this.filtersLoading$ = this.passesService.passFiltersLoading$;
-      this.filtersData$.pipe(
-        takeUntil(this.destroy$),
-        filter(res => !!res && (this.filterModel && !!res[this.filterModel])))
-        .subscribe(res => {
-          this.selectedSort = res[this.filterModel].default || 'all_time';
-          this.filterPasses.emit(this.selectedSort);
-      });
+    if (this.passProvider) {
+      this.currentPasses$ = this.passProvider;
+      this.currentPasses$
+        .pipe(
+          switchMap((_passes) => {
+            if (_passes.length < 16) {
+              this.showBottomShadow = false;
+            } else {
+              this.showBottomShadow = true;
+            }
+            if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
+              return of(_passes);
+            } else {
+              this.currentPasses = [];
+              return of(_passes).pipe(delay(500));
+            }
+          }),
+          takeUntil(this.destroy$)
+        )
+        .subscribe((passes: any) => {
+          this.currentPasses = passes;
+          this.currentPassesEmit.emit(passes);
+        });
     }
-    this.currentPasses$ = this.passProvider;
-    this.currentPasses$
-      .pipe(
-        switchMap((_passes) => {
-          if (_passes.length < 16) {
-            this.showBottomShadow = false;
-          } else {
-            this.showBottomShadow = true;
-          }
-          if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
-            return of(_passes);
-          } else {
-            this.currentPasses = [];
-            return of(_passes).pipe(delay(500));
-          }
-        }),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((passes: any) => {
-        this.currentPasses = passes;
-        this.currentPassesEmit.emit(passes);
+
+    this.passesService.lastAddedExpiredPasses$.pipe(filter(res => !!res))
+      .subscribe(passes => {
+        this.currentPasses = [...this.currentPasses, ...passes];
+        this.cdr.detectChanges();
       });
 
     if (this.isActive) {

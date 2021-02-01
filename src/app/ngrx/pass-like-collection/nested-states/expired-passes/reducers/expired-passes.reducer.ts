@@ -8,7 +8,8 @@ export const adapter: EntityAdapter<HallPass> = createEntityAdapter<HallPass>();
 
 export const expiredPassesInitialState: IExpiredPassesState = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  lastAddedPasses: null
 });
 
 const reducer = createReducer(
@@ -16,7 +17,18 @@ const reducer = createReducer(
   on(expiredPassesActions.getExpiredPasses, (state) => ({...state, loading: true, loaded: false})),
   on(expiredPassesActions.getExpiredPassesSuccess, (state, {expiredPasses}) => {
     return adapter.addAll(expiredPasses, {...state, loading: false, loaded: true});
+  }),
+  on(expiredPassesActions.getMoreExpiredPassesSuccess, (state, {passes}) => {
+    return {
+      ...state,
+      lastAddedPasses: passes,
+      loading: false,
+      loaded: true
+    };
   })
+  // on(expiredPassesActions.filterExpiredPassesSuccess, (state, {expiredPasses}) => {
+  //   return adapter.setAll()
+  // })
 );
 
 export function expiredPassesReducer(state: any | undefined, action: Action) {

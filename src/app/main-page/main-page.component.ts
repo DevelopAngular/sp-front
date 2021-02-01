@@ -13,6 +13,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NavigationEnd, Router} from '@angular/router';
 import {filter as _filter} from 'lodash';
 import {HttpService} from '../services/http-service';
+import {HallPassesService} from '../services/hall-passes.service';
 
 declare const window;
 
@@ -64,7 +65,8 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private liveDataService: LiveDataService,
     private _zone: NgZone,
     private router: Router,
-    private http: HttpService
+    private http: HttpService,
+    private passesService: HallPassesService
   ) {
 
     this.http.schoolsCollection$
@@ -90,14 +92,15 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
           return currentUser;
         }
       }), take(1));
+    this.passesService.getFiltersRequest('expired-passes');
 
-    dbUser$
+    combineLatest(dbUser$.pipe(filter(res => !!res)), this.passesService.passFilters$.pipe(filter(res => !!res)))
       .pipe(
-        filter(user => !!user),
-        take(1),
         takeUntil(this.destroy$),
-        tap(user => {
+        take(1),
+        tap(([user, filters]) => {
           this.liveDataService.getPassLikeCollectionRequest(user);
+          this.liveDataService.getExpiredPassesRequest(user, filters['expired-passes'].default);
           this.liveDataService.getActivePassesRequest(of({sort: '-created', search_query: ''}), user);
           this.liveDataService.getHallMonitorPassesRequest(of({sort: '-created', search_query: ''}));
           this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
@@ -109,7 +112,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
             this.sentRequests = this.liveDataService.invitations$;
           }
         }),
-        switchMap(user => {
+        switchMap(([user]) => {
           return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
         })
       )

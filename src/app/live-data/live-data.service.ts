@@ -38,6 +38,7 @@ import {State} from './state';
 import {HallPassesService} from '../services/hall-passes.service';
 import {
   getActivePasses,
+  getExpiredPasses,
   getFromLocationPasses,
   getHallMonitorPasses,
   getMyRoomPasses,
@@ -631,7 +632,7 @@ export class LiveDataService {
     });
   }
 
-  watchPastHallPasses(filter?: PassFilterType): Observable<HallPass[]> {
+  watchPastHallPasses(filter?: PassFilterType, limit = 50, timeFilter?: string): Observable<HallPass[]> {
     let queryFilter = '';
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
@@ -662,11 +663,14 @@ export class LiveDataService {
         }
       }
     }
+    if (timeFilter) {
+      queryFilter += `&model_filter=expired-passes&time_filter=${timeFilter}`;
+    }
 
     return this.watch<HallPass, string>({
       externalEvents: empty(),
       eventNamespace: 'hall_pass',
-      initialUrl: `v1/hall_passes?limit=50&active=past${queryFilter}`,
+      initialUrl: `v1/hall_passes?limit=${limit}&active=past${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
@@ -808,6 +812,10 @@ export class LiveDataService {
 
   updateActivePassRequest(sortingEvents: Observable<HallPassFilter>, user: User) {
     this.store.dispatch(updateActivePasses({sortingEvents, user}));
+  }
+
+  getExpiredPassesRequest(user, timeFilter) {
+    this.store.dispatch(getExpiredPasses({user, timeFilter}));
   }
 
   getToLocationPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null) {

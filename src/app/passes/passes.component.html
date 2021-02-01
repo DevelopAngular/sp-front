@@ -125,7 +125,7 @@
             [filterModel]="'expired-passes'"
             [showEmptyHeader]="true"
             [hasFilterPasses]="true"
-            [filterDate]="filterExpiredPass$ | async"
+            [selectedSort]="expiredPassesSelectedSort$ | async"
             (filterPasses)="prepareFilter($event, 'expired-passes')"
           ></app-pass-collection>
         </div>
@@ -160,7 +160,7 @@
 
 
 
-<div class="passes-wrapper" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'" [style.overflow]="isStaff ? 'auto' : 'visible'" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)" #scrollableArea>
+<div class="passes-wrapper" (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'" [style.overflow]="isStaff ? 'auto' : 'visible'" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)" #scrollableArea>
   <h1 class="passes-heading">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">
@@ -228,7 +228,7 @@
         [showEmptyHeader]="true"
         [hasFilterPasses]="true"
         [scrollable]="true"
-        [filterDate]="filterExpiredPass$ | async"
+        [selectedSort]="expiredPassesSelectedSort$ | async"
         (filterPasses)="prepareFilter($event, 'expired-passes')"
       ></app-pass-collection>
     </div>

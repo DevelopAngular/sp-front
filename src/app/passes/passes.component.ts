@@ -20,6 +20,7 @@ import {
   refCount,
   startWith,
   switchMap,
+  take,
   takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
@@ -258,7 +259,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-
   testPasses: PassLikeProvider;
   testRequests: PassLikeProvider;
   testInvitations: PassLikeProvider;
@@ -283,9 +283,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   filterActivePass$: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(null);
   filterFuturePass$: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(null);
-  filterExpiredPass$: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(null);
   filterReceivedPass$: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(null);
   filterSendPass$: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(null);
+
+  filterExpiredPass$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  expiredPassesSelectedSort$: Observable<string>;
 
   showEmptyState: Observable<boolean>;
 
@@ -295,13 +297,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   user: User;
   isStaff = false;
-  isSeen$: BehaviorSubject<boolean>;
   currentScrollPosition: number;
 
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
-  shownotificationBackdrop: boolean;
 
   public schoolsLength$: Observable<number>;
 
@@ -315,6 +315,37 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:scroll', ['$event'])
   scroll(event) {
     this.currentScrollPosition = event.currentTarget.scrollTop;
+    if (!!this.passesService.expiredPassesNextUrl$.getValue()) {
+      // console.log(event.currentTarget.offsetHeight + event.target.scrollTop, event.currentTarget.scrollHeight);
+      if ((event.currentTarget.offsetHeight + event.target.scrollTop) >= event.currentTarget.scrollHeight) {
+        this.expiredPassesSelectedSort$.pipe(take(1))
+          .subscribe(sort => {
+            this.passesService.getMoreExpiredPassesRequest(sort);
+          });
+        // this.passesService.getMoreExpiredPasses()
+        //   .pipe(
+        //     map((passes: any) => {
+        //       // if (this.filterDate) {
+        //       return {
+        //         ...passes,
+        //         results: passes.results.filter(pass => moment(pass.start_time).isAfter(moment(this.filterDate)))
+        //       };
+        //       // }
+        //       return passes;
+        //     }))
+        //   .subscribe((res: any) => {
+        //     // this.currentPasses.push(...res.results.map(pass => HallPass.fromJSON(pass)));
+        //     this.passesService.expiredPassesNextUrl$.next(res.next ? res.next.substring(res.next.search('v1')) : '');
+        //     // this.cdr.detectChanges();
+        //   });
+      }
+    } else {
+      // if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {
+      //   this.showBottomShadow = false;
+      // } else {
+      //   this.showBottomShadow = true;
+      // }
+    }
   }
 
   @HostListener('window:popstate', ['$event'])
@@ -370,19 +401,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
-    this.pastPasses = combineLatest(this.liveDataService.expiredPasses$, this.filterExpiredPass$)
-      .pipe(
-        map(([passes, date]) => {
-          if (date) {
-            return passes.filter(pass => {
-              // console.log(moment(pass.start_time).isAfter(moment(date)));
-              // debugger;
-              return moment(pass.start_time).isAfter(moment(date));
-            });
-          }
-          return passes;
-        })
-      );
+    this.pastPasses = this.liveDataService.expiredPasses$;
+    this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
+      filter(res => !!res),
+      map(filters => filters['expired-passes'].default));
 
     this.userService.user$
       .pipe(
@@ -529,8 +551,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(map(([items, loaded]) => items && loaded), publishBehavior(true));
     (this.showEmptyState as ConnectableObservable<boolean>).connect();
 
-    this.isSeen$ = this.createFormService.isSeen$;
-
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
     }
@@ -538,8 +558,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
     this.locationsService.getFavoriteLocationsRequest();
     this.locationsService.getPassLimitRequest();
-
-    this.passesService.getFiltersRequest('expired-passes');
   }
 
   ngAfterViewInit(): void {
@@ -605,29 +623,29 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  filterPasses(collection, date) {
+  filterPasses(collection, action) {
     if (collection === 'active') {
-      this.filterActivePass$.next(date);
+      this.filterActivePass$.next(action);
     } else if (collection === 'future') {
-      this.filterFuturePass$.next(date);
+      this.filterFuturePass$.next(action);
     } else if (collection === 'expired-passes') {
-      this.filterExpiredPass$.next(date);
+      this.filterExpiredPass$.next(action);
     } else if (collection === 'received-pass-requests') {
-      this.filterReceivedPass$.next(date);
+      this.filterReceivedPass$.next(action);
     } else if (collection === 'sent-pass-requests') {
-      this.filterSendPass$.next(date);
+      this.filterSendPass$.next(action);
     }
   }
 
   prepareFilter(action, collection) {
     if (action === 'past-hour') {
-      this.filterPasses(collection, moment().subtract(1, 'hours'));
+      this.filterPasses(collection, action);
     } else if (action === 'today') {
-      this.filterPasses(collection, moment().startOf('day'));
+      this.filterPasses(collection, action);
     } else if (action === 'past-three-days') {
-      this.filterPasses(collection, moment().subtract(3, 'days').startOf('day'));
+      this.filterPasses(collection, action);
     } else if (action === 'past-seven-days') {
-      this.filterPasses(collection, moment().subtract(7, 'days').startOf('day'));
+      this.filterPasses(collection, action);
     } else {
       this.filterPasses(collection, null);
     }

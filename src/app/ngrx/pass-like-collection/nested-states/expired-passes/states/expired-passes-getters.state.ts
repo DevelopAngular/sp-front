@@ -19,5 +19,10 @@ export const getExpiredPassesLoaded = createSelector(
   (state: IExpiredPassesState) => state.loaded
 );
 
+export const getLastAddedExpiredPasses = createSelector(
+  getExpiredPassesState,
+  (state: IExpiredPassesState) => state.lastAddedPasses
+);
+
 export const getExpiredPassesCollection = adapter.getSelectors(getExpiredPassesState).selectAll;
 export const getExpiredPassesTotalNumber = adapter.getSelectors(getExpiredPassesState).selectTotal;
