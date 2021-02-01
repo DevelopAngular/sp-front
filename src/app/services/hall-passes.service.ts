@@ -35,6 +35,8 @@ import {PollingService} from './polling-service';
 import {getPassFilter, updatePassFilter} from '../ngrx/pass-filters/actions';
 import {getFiltersData, getFiltersDataLoading} from '../ngrx/pass-filters/states';
 import {PassFilters} from '../models/PassFilters';
+import {Invitation} from '../models/Invitation';
+import {getInvitationsCollection} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
 
 @Injectable({
   providedIn: 'root'
@@ -63,6 +65,8 @@ export class HallPassesService {
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
 
   expiredPassesNextUrl$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  invitations$: Observable<Invitation[]> = this.store.select(getInvitationsCollection);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;

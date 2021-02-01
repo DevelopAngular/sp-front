@@ -17,6 +17,7 @@ import {contactTraceReducer} from '../contact-trace/reducers';
 import {toastReducer} from '../toast/reducers';
 import {IntrosReducer} from '../intros/reducers';
 import {PassFiltersReducer} from '../pass-filters/reducers';
+import {passLikeCollectionReducer} from '../pass-like-collection/reducers';
 
 
 export interface AppState {
@@ -39,6 +40,7 @@ export interface AppState {
   readonly toast;
   readonly intros;
   readonly pass_filters;
+  readonly passLikeCollection;
 }
 
 export const reducers = {
@@ -60,5 +62,6 @@ export const reducers = {
   contactTrace: contactTraceReducer,
   toast: toastReducer,
   intros: IntrosReducer,
-  pass_filters: PassFiltersReducer
+  pass_filters: PassFiltersReducer,
+  passLikeCollection: passLikeCollectionReducer
 };

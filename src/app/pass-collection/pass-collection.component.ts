@@ -10,12 +10,11 @@ import {
   Output
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, Observable, of, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {HallPass} from '../models/HallPass';
 import {Invitation} from '../models/Invitation';
-import {PassLikeProvider} from '../models/providers';
 import {Request} from '../models/Request';
 import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
@@ -75,11 +74,12 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() grid_gap: string = '10px';
   @Input() isAdminPage: boolean;
   @Input() headerWidth: string = '100%';
-  @Input() passProvider: PassLikeProvider;
+  @Input() passProvider: Observable<any>;
   @Input() hasFilterPasses: boolean;
   @Input() filterModel: string;
   @Input() scrollable: boolean;
   @Input() filterDate: moment.Moment;
+  @Input() user;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
@@ -87,13 +87,11 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() filterPasses = new EventEmitter();
   @Output() passClick = new EventEmitter<boolean>();
 
-  currentPasses$: ReplaySubject<PassLike[]> = new ReplaySubject<PassLike[]>();
+  currentPasses$: Observable<any>;
   currentPasses: PassLike[] = [];
   selectedSort;
   filtersData$: Observable<{[model: string]: PassFilters}>;
   filtersLoading$: Observable<boolean>;
-
-  user: User;
 
   activePassTime$;
 
@@ -135,6 +133,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             }))
           .subscribe((res: any) => {
             this.currentPasses.push(...res.results.map(pass => HallPass.fromJSON(pass)));
+            debugger;
             this.passesService.expiredPassesNextUrl$.next(res.next ? res.next.substring(res.next.search('v1')) : '');
             this.cdr.detectChanges();
           });
@@ -219,9 +218,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           this.filterPasses.emit(this.selectedSort);
       });
     }
-    this.passProvider.watch(this.sort$.asObservable()).subscribe(res => {
-      this.currentPasses$.next(res);
-    });
+    this.currentPasses$ = this.passProvider;
     this.currentPasses$
       .pipe(
         switchMap((_passes) => {
@@ -283,7 +280,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
     this.passClick.emit(true);
-    // this.dataService.markRead(pass).subscribe();
+    this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }
 

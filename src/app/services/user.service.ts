@@ -8,7 +8,6 @@ import {User} from '../models/User';
 import {PollingService} from './polling-service';
 import {filter, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
-import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
@@ -391,21 +390,16 @@ export class UserService {
             }));
           }
         case 'GG4L':
-          return this.http.currentSchool$.pipe(
-            take(1),
-            switchMap((currentSchool: School) => {
-              if (excludeProfile) {
-                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
-                  search: search,
-                  profile: excludeProfile
-                }));
-              } else {
-                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
-                  search
-                }));
-              }
-            })
-          );
+          if (excludeProfile) {
+            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gg4l_users`, {
+              search: search,
+              profile: excludeProfile
+            }));
+          } else {
+            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gg4l_users`, {
+              search
+            }));
+          }
       }
   }
 

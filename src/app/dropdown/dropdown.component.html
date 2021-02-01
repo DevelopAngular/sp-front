@@ -52,7 +52,7 @@
            (mouseleave)="_option.hovered = false; _option.pressed = false"
       >
         <div class="option-data_leftside">
-          <span style="padding: 5px 0" [style.color]="selectedLocation && location.room === selectedLocation.room && location.title === selectedLocation.title ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ location.title + ' (' + location.room + ' )' }}</span>
+          <span style="padding: 5px 0" [style.color]="selectedLocation && location.room === selectedLocation.room && location.title === selectedLocation.title ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ location.title + ' (' + location.room + ')' }}</span>
         </div>
         <div class="option-data_rightside">
 <!--          <div [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})"-->

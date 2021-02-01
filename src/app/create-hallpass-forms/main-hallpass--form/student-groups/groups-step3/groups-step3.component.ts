@@ -1,21 +1,21 @@
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {StudentList} from '../../../../models/StudentList';
 import {HttpService} from '../../../../services/http-service';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
-import {catchError, map, skip, switchMap} from 'rxjs/operators';
+import {catchError, map, skip, switchMap, takeUntil} from 'rxjs/operators';
 import {UserService} from '../../../../services/user.service';
-import {fromEvent, Observable, throwError} from 'rxjs';
+import {fromEvent, Observable, Subject, throwError} from 'rxjs';
 import * as XLSX from 'xlsx';
 import {User} from '../../../../models/User';
-import {cloneDeep, uniqBy} from 'lodash';
+import {cloneDeep, isEqual, uniqBy} from 'lodash';
 
 @Component({
   selector: 'app-groups-step3',
   templateUrl: './groups-step3.component.html',
   styleUrls: ['./groups-step3.component.scss']
 })
-export class GroupsStep3Component implements OnInit, AfterViewInit {
+export class GroupsStep3Component implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('studentEmails', { static: true }) studentEmailsFile;
 
   @Input() form: FormGroup;
@@ -25,17 +25,6 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
     if (groupToEdit) {
       this.editGroupInitial = groupToEdit;
       this.editGroup = cloneDeep(groupToEdit);
-      console.log(this.editGroup);
-      this.form.get('title').setValue(this.editGroup.title);
-      this.form.get('users').setValue(this.editGroup.users);
-      this.form.valueChanges
-        .pipe(
-          skip(1)
-        )
-        .subscribe((val: any) => {
-          this.allowToSave = true;
-        });
-
     }
   }
 
@@ -43,8 +32,10 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
 
   public uploadedStudents: any;
   public loadingIndicator: boolean = false;
+  public formInitialState;
 
   public allowToSave: boolean = false;
+  private destroy$ = new Subject();
 
 
   constructor(
@@ -54,6 +45,17 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    this.form.get('title').setValue(this.editGroup.title);
+    this.form.get('users').setValue(this.editGroup.users);
+    this.formInitialState = cloneDeep(this.form.value);
+    this.form.valueChanges
+      .pipe(
+        takeUntil(this.destroy$),
+        skip(1)
+      )
+      .subscribe((val: any) => {
+        this.allowToSave = !isEqual(this.formInitialState, val);
+      });
     fromEvent(this.studentEmailsFile.nativeElement , 'change')
       .pipe(
         switchMap((evt: Event) => {
@@ -99,6 +101,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
               }));
           // }));
         }),
+        takeUntil(this.destroy$),
         catchError((err) => {
           this.loadingIndicator = false;
           console.log(err.message);
@@ -108,7 +111,6 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
       )
       .subscribe((students) => {
         this.loadingIndicator = false;
-        console.log(students);
         this.uploadedStudents = students;
         this.editGroup.users = uniqBy(this.editGroup.users.concat(students.existingStudents), 'id');
         this.updateUsers(this.editGroup.users);
@@ -122,8 +124,14 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
       });
 
   }
+
   ngAfterViewInit(): void {
     this.changeDetectionRef.detectChanges();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   updateUsers(evt) {

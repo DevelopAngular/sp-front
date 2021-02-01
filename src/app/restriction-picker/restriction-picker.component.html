@@ -9,6 +9,8 @@
          [style.flex]="'1 1 auto'" [style.height.%]="100"
          [class.divider]="choices.length > 1 && i < choices.length - 1 && selectedChoice !== choice ">
       <div class="choice"
+           [matTooltip]="tooltipText && isDisabled(choice) ? tooltipText : null"
+           matTooltipClass="tooltip"
            [style.opacity]="isDisabled(choice) ? 0.5 : 1"
            [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
            [style.color]="selectedChoice === choice ? selectedColor : color"
