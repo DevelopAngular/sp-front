@@ -320,24 +320,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       if ((event.currentTarget.offsetHeight + event.target.scrollTop) >= event.currentTarget.scrollHeight) {
         this.expiredPassesSelectedSort$.pipe(take(1))
           .subscribe(sort => {
-            this.passesService.getMoreExpiredPassesRequest(sort);
+            this.passesService.getMoreExpiredPassesRequest(this.user, sort, this.passesService.expiredPassesNextUrl$.getValue());
           });
-        // this.passesService.getMoreExpiredPasses()
-        //   .pipe(
-        //     map((passes: any) => {
-        //       // if (this.filterDate) {
-        //       return {
-        //         ...passes,
-        //         results: passes.results.filter(pass => moment(pass.start_time).isAfter(moment(this.filterDate)))
-        //       };
-        //       // }
-        //       return passes;
-        //     }))
-        //   .subscribe((res: any) => {
-        //     // this.currentPasses.push(...res.results.map(pass => HallPass.fromJSON(pass)));
-        //     this.passesService.expiredPassesNextUrl$.next(res.next ? res.next.substring(res.next.search('v1')) : '');
-        //     // this.cdr.detectChanges();
-        //   });
       }
     } else {
       // if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {

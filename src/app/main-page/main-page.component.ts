@@ -84,8 +84,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataService.currentUser
     ).pipe(
       map(([effectUser, currentUser]) => {
-        // count += 1;
-        // console.log('USER ==>>', count);
         if (effectUser) {
           return effectUser.user;
         } else {

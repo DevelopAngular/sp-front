@@ -19,7 +19,6 @@ export class ActivePassesEffects {
               : {type: 'issuer', value: action.user}
           ).pipe(
             map((activePasses) => {
-              debugger;
               return activePassesActions.getActivePassesSuccess({activePasses});
             }),
             catchError(error => of(activePassesActions.getActivePassesFailure({errorMessage: error.message})))

@@ -19,16 +19,8 @@ const reducer = createReducer(
     return adapter.addAll(expiredPasses, {...state, loading: false, loaded: true});
   }),
   on(expiredPassesActions.getMoreExpiredPassesSuccess, (state, {passes}) => {
-    return {
-      ...state,
-      lastAddedPasses: passes,
-      loading: false,
-      loaded: true
-    };
+    return adapter.addMany(passes, {...state, loading: false, loaded: true});
   })
-  // on(expiredPassesActions.filterExpiredPassesSuccess, (state, {expiredPasses}) => {
-  //   return adapter.setAll()
-  // })
 );
 
 export function expiredPassesReducer(state: any | undefined, action: Action) {

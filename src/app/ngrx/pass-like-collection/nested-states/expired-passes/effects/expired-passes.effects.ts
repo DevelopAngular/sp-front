@@ -13,15 +13,17 @@ export class ExpiredPassesEffects {
   getExpiredPasses$ = createEffect(() => {
     return this.actions$
       .pipe(
-        ofType(expiredPassesActions.getExpiredPasses),
+        ofType(
+          expiredPassesActions.getExpiredPasses,
+          expiredPassesActions.filterExpiredPasses
+        ),
         switchMap((action: any) => {
           return this.liveDataService.watchPastHallPasses(
             action.user.roles.includes('hallpass_student')
               ? {type: 'student', value: action.user}
-              : {type: 'issuer', value: action.user}, 50
+              : {type: 'issuer', value: action.user}, 50, action.timeFilter
           ).pipe(
             map((expiredPasses: HallPass[]) => {
-              console.log('TTTTTT ===>>', expiredPasses.length);
               return expiredPassesActions.getExpiredPassesSuccess({expiredPasses});
             }),
             catchError(error => of(expiredPassesActions.getExpiredPassesFailure({errorMessage: error.message})))
@@ -35,11 +37,14 @@ export class ExpiredPassesEffects {
       .pipe(
         ofType(expiredPassesActions.getMoreExpiredPasses),
         switchMap((action: any) => {
-          return this.passesService.getMoreExpiredPasses(action.timeFilter)
-            .pipe(
-              map(({next, results}: {next: string, results: HallPass[]}) => {
-                this.passesService.expiredPassesNextUrl$.next(next ? next.substring(next.search('v1')) : '');
-                return expiredPassesActions.getMoreExpiredPassesSuccess({passes: results});
+          const offset = action.offset ? action.offset : null;
+          return this.liveDataService.watchPastHallPasses(
+            action.user.roles.includes('hallpass_student')
+              ? {type: 'student', value: action.user}
+              : {type: 'issuer', value: action.user}, 50, action.timeFilter, offset
+          ).pipe(
+              map((passes: HallPass[]) => {
+                return expiredPassesActions.getMoreExpiredPassesSuccess({passes});
               }),
               catchError(error => of(expiredPassesActions.getMoreExpiredPassesFailure({errorMessage: error.message})))
             );

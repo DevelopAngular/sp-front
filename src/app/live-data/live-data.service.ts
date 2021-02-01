@@ -392,7 +392,7 @@ export class LiveDataService {
     const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
       : (json) => {
         if (config.initialUrl.includes('&active=past')) {
-          this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('v1')) : '');
+          this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('offset')) : '');
         }
        return json.results.map(raw => config.decoder(raw));
       };
@@ -412,8 +412,6 @@ export class LiveDataService {
     return fullReload$
       .pipe(
         exhaustMap((value) => {
-          this.count += 1;
-          console.log(value + ' ==>>>', this.count);
           return this.http.get<Paged<any>>(config.initialUrl);
         }),
         map(rawDecoder),
@@ -632,7 +630,7 @@ export class LiveDataService {
     });
   }
 
-  watchPastHallPasses(filter?: PassFilterType, limit = 50, timeFilter?: string): Observable<HallPass[]> {
+  watchPastHallPasses(filter?: PassFilterType, limit = 50, timeFilter?: string, offset?: string): Observable<HallPass[]> {
     let queryFilter = '';
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
@@ -665,6 +663,9 @@ export class LiveDataService {
     }
     if (timeFilter) {
       queryFilter += `&model_filter=expired-passes&time_filter=${timeFilter}`;
+    }
+    if (offset) {
+      queryFilter += `&${offset}`;
     }
 
     return this.watch<HallPass, string>({

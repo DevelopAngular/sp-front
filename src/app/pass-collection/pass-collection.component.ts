@@ -282,6 +282,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           }
           this.cdr.detectChanges();
           this.passesService.updateFilterRequest(this.filterModel, this.selectedSort);
+          this.passesService.filterExpiredPassesRequest(this.user, this.selectedSort);
           this.filterPasses.emit(this.selectedSort);
         } else {
           this.openAppearance();
