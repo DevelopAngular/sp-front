@@ -10,20 +10,8 @@ import {
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, ConnectableObservable, interval, merge, Observable, of, Subject,} from 'rxjs';
-import {
-  filter,
-  map,
-  pluck,
-  publishBehavior,
-  publishReplay,
-  refCount,
-  startWith,
-  switchMap,
-  take,
-  takeUntil,
-  withLatestFrom
-} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject,} from 'rxjs';
+import {filter, map, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {LiveDataService} from '../live-data/live-data.service';
@@ -288,9 +276,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   filterExpiredPass$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   expiredPassesSelectedSort$: Observable<string>;
+  isEmptyPassFilter: boolean;
 
   showEmptyState: Observable<boolean>;
-
 
   isOpenedModal: boolean;
   destroy$: Subject<any> = new Subject();
@@ -317,9 +305,15 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentScrollPosition = event.currentTarget.scrollTop;
     if (!!this.passesService.expiredPassesNextUrl$.getValue()) {
       // console.log(event.currentTarget.offsetHeight + event.target.scrollTop, event.currentTarget.scrollHeight);
-      if ((event.currentTarget.offsetHeight + event.target.scrollTop) >= (event.currentTarget.scrollHeight)) {
-        this.expiredPassesSelectedSort$.pipe(take(1))
-          .subscribe(sort => {
+      if ((event.currentTarget.offsetHeight + event.target.scrollTop) >= (event.currentTarget.scrollHeight - 600)) {
+        combineLatest(
+          this.expiredPassesSelectedSort$.pipe(take(1)),
+          this.liveDataService.expiredPassesLoading$.pipe(take(1))
+        ).pipe(
+          filter(([sort, loading]) => !loading),
+          takeUntil(this.destroy$)
+        )
+          .subscribe(([sort, loading]) => {
             this.liveDataService.getExpiredPassesRequest(this.user, sort, this.passesService.expiredPassesNextUrl$.getValue());
           });
       }
@@ -388,11 +382,14 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pastPasses = this.liveDataService.expiredPasses$;
     this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
       filter(res => !!res),
-      map(filters => filters['expired-passes'].default));
+      map(filters => {
+        this.isEmptyPassFilter = !filters['expired-passes'].default;
+        return filters['expired-passes'].default;
+      }));
 
-    this.userService.user$
+    this.dataService.currentUser
       .pipe(
-        filter(user => !!user),
+        take(1),
         map(user => {
           this.user = user;
           this.isStaff =
@@ -532,8 +529,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.showEmptyState = combineLatest(this.passesHaveItems, this.passesLoaded)
-      .pipe(map(([items, loaded]) => items && loaded), publishBehavior(true));
-    (this.showEmptyState as ConnectableObservable<boolean>).connect();
+      .pipe(map(([items, loaded]) => items && loaded && this.isEmptyPassFilter));
 
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';

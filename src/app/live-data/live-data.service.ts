@@ -664,7 +664,7 @@ export class LiveDataService {
     if (timeFilter) {
       queryFilter += `&model_filter=expired-passes&time_filter=${timeFilter}`;
     }
-    if (offset) {
+    if (!!offset) {
       queryFilter += `&${offset}`;
     }
 
