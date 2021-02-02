@@ -15,16 +15,25 @@ export class ExpiredPassesEffects {
       .pipe(
         ofType(
           expiredPassesActions.getExpiredPasses,
-          expiredPassesActions.filterExpiredPasses
+          expiredPassesActions.filterExpiredPasses,
+          expiredPassesActions.getMoreExpiredPasses
         ),
         switchMap((action: any) => {
+          const offset = action.offset ? action.offset : null;
           return this.liveDataService.watchPastHallPasses(
             action.user.roles.includes('hallpass_student')
               ? {type: 'student', value: action.user}
-              : {type: 'issuer', value: action.user}, 50, action.timeFilter
+              : {type: 'issuer', value: action.user},
+            50,
+            action.timeFilter,
+            offset
           ).pipe(
             map((expiredPasses: HallPass[]) => {
-              return expiredPassesActions.getExpiredPassesSuccess({expiredPasses});
+              if (offset) {
+                return expiredPassesActions.getMoreExpiredPassesSuccess({passes: expiredPasses});
+              } else {
+                return expiredPassesActions.getExpiredPassesSuccess({expiredPasses});
+              }
             }),
             catchError(error => of(expiredPassesActions.getExpiredPassesFailure({errorMessage: error.message})))
           );
@@ -32,25 +41,25 @@ export class ExpiredPassesEffects {
       );
   });
 
-  getMoreExpiredPasses$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(expiredPassesActions.getMoreExpiredPasses),
-        switchMap((action: any) => {
-          const offset = action.offset ? action.offset : null;
-          return this.liveDataService.watchPastHallPasses(
-            action.user.roles.includes('hallpass_student')
-              ? {type: 'student', value: action.user}
-              : {type: 'issuer', value: action.user}, 50, action.timeFilter, offset
-          ).pipe(
-              map((passes: HallPass[]) => {
-                return expiredPassesActions.getMoreExpiredPassesSuccess({passes});
-              }),
-              catchError(error => of(expiredPassesActions.getMoreExpiredPassesFailure({errorMessage: error.message})))
-            );
-        })
-      );
-  });
+  // getMoreExpiredPasses$ = createEffect(() => {
+  //   return this.actions$
+  //     .pipe(
+  //       ofType(expiredPassesActions.getMoreExpiredPasses),
+  //       switchMap((action: any) => {
+  //         const offset = action.offset ? action.offset : null;
+  //         return this.liveDataService.watchPastHallPasses(
+  //           action.user.roles.includes('hallpass_student')
+  //             ? {type: 'student', value: action.user}
+  //             : {type: 'issuer', value: action.user}, 50, action.timeFilter, offset
+  //         ).pipe(
+  //             map((passes: HallPass[]) => {
+  //               return expiredPassesActions.getMoreExpiredPassesSuccess({passes});
+  //             }),
+  //             catchError(error => of(expiredPassesActions.getMoreExpiredPassesFailure({errorMessage: error.message})))
+  //           );
+  //       })
+  //     );
+  // });
 
   // filterExpiredPasses$ = createEffect(() => {
   //   return this.actions$

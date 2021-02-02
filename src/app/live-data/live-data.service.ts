@@ -815,8 +815,8 @@ export class LiveDataService {
     this.store.dispatch(updateActivePasses({sortingEvents, user}));
   }
 
-  getExpiredPassesRequest(user, timeFilter) {
-    this.store.dispatch(getExpiredPasses({user, timeFilter}));
+  getExpiredPassesRequest(user, timeFilter, offset = null) {
+    this.store.dispatch(getExpiredPasses({user, timeFilter, offset}));
   }
 
   getToLocationPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null) {

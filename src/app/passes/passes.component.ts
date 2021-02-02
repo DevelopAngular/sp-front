@@ -317,10 +317,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentScrollPosition = event.currentTarget.scrollTop;
     if (!!this.passesService.expiredPassesNextUrl$.getValue()) {
       // console.log(event.currentTarget.offsetHeight + event.target.scrollTop, event.currentTarget.scrollHeight);
-      if ((event.currentTarget.offsetHeight + event.target.scrollTop) >= event.currentTarget.scrollHeight) {
+      if ((event.currentTarget.offsetHeight + event.target.scrollTop) >= (event.currentTarget.scrollHeight)) {
         this.expiredPassesSelectedSort$.pipe(take(1))
           .subscribe(sort => {
-            this.passesService.getMoreExpiredPassesRequest(this.user, sort, this.passesService.expiredPassesNextUrl$.getValue());
+            this.liveDataService.getExpiredPassesRequest(this.user, sort, this.passesService.expiredPassesNextUrl$.getValue());
           });
       }
     } else {

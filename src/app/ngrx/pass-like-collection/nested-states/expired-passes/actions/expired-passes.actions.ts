@@ -4,7 +4,7 @@ import {HallPass} from '../../../../../models/HallPass';
 
 const EXPIREDPASSES = 'Expired Passes';
 
-export const getExpiredPasses = createAction(`[${EXPIREDPASSES}] Get Expired Passes`, props<{user: User, timeFilter: string}>());
+export const getExpiredPasses = createAction(`[${EXPIREDPASSES}] Get Expired Passes`, props<{user: User, timeFilter: string, offset: string}>());
 export const getExpiredPassesSuccess = createAction(`[${EXPIREDPASSES}] Get Expired Passes Success`, props<{expiredPasses: HallPass[]}>());
 export const getExpiredPassesFailure = createAction(`[${EXPIREDPASSES}] Get Expired Passes Failure`, props<{errorMessage: string}>());
 
