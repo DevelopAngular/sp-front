@@ -8,13 +8,15 @@ import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {filter, switchMap, take} from 'rxjs/operators';
+import {filter, switchMap} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {DataService} from '../services/data-service';
 import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
 import {Observable} from 'rxjs/Observable';
+
+declare const window;
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -69,9 +71,9 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
               return this.locationService.getLocationsWithTeacherRequest(user);
           }),
         filter((res: any[]) => !!res.length),
-        take(1)
       )
       .subscribe(locations => {
+          window.appLoaded(500);
           const kioskJwtToken = this.storage.getItem('kioskToken');
           const jwtHelper = new JwtHelperService();
           this.userData = jwtHelper.decodeToken(kioskJwtToken);
