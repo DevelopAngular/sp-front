@@ -29,7 +29,6 @@ import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HallPassesService} from '../services/hall-passes.service';
-import {PassFilters} from '../models/PassFilters';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {User} from '../models/User';
 import {UserService} from '../services/user.service';
@@ -88,19 +87,10 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() passClick = new EventEmitter<boolean>();
 
   currentPasses$: Observable<any>;
-  currentPasses: PassLike[] = [];
-  filtersData$: Observable<{[model: string]: PassFilters}>;
-  filtersLoading$: Observable<boolean>;
-
   activePassTime$;
-
   timers: number[] = [];
-
   timerEvent: Subject<void> = new BehaviorSubject(null);
-
   sort$ = this.dataService.sort$;
-  test: any;
-  showBottomShadow: boolean = true;
 
   destroy$ = new Subject();
 

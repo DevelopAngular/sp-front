@@ -49,7 +49,7 @@
 </div>
 
 <ng-template #emptyMessage>
-  <div class="empty-state" *ngIf="!(filtersLoading$ | async) && hasFilterPasses">
+  <div class="empty-state" *ngIf="hasFilterPasses">
     <img width="80" height="80" [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
     <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
       No expired passes <br/>
