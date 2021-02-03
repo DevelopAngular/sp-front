@@ -26,7 +26,7 @@
         <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
       </div>
   </div>
-  <div *ngIf="(currentPasses$ | async)" [ngClass]="{'scroll-container': scrollable}">
+  <div *ngIf="(currentPasses$ | async) as currentPasses" [ngClass]="{'scroll-container': scrollable}">
     <div *ngIf="currentPasses.length > 0; else emptyMessage">
       <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">

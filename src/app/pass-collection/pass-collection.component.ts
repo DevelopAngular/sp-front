@@ -10,7 +10,7 @@ import {
   Output
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {HallPass} from '../models/HallPass';
@@ -20,9 +20,8 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, filter, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
-import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -176,35 +175,10 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.passProvider) {
-      this.currentPasses$ = this.passProvider;
-      this.currentPasses$
-        .pipe(
-          switchMap((_passes) => {
-            if (_passes.length < 16) {
-              this.showBottomShadow = false;
-            } else {
-              this.showBottomShadow = true;
-            }
-            if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
-              return of(_passes);
-            } else {
-              this.currentPasses = [];
-              return of(_passes).pipe(delay(500));
-            }
-          }),
-          takeUntil(this.destroy$)
-        )
-        .subscribe((passes: any) => {
-          this.currentPasses = passes;
-          this.currentPassesEmit.emit(passes);
-        });
+      this.currentPasses$ = this.passProvider.pipe(
+        tap(passes => this.currentPassesEmit.emit(passes))
+      );
     }
-
-    this.passesService.lastAddedExpiredPasses$.pipe(filter(res => !!res))
-      .subscribe(passes => {
-        this.currentPasses = [...this.currentPasses, ...passes];
-        this.cdr.detectChanges();
-      });
 
     if (this.isActive) {
       this.timers.push(window.setInterval(() => {
