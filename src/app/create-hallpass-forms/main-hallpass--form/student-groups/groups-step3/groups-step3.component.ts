@@ -5,11 +5,10 @@ import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {catchError, map, skip, switchMap, takeUntil} from 'rxjs/operators';
 import {UserService} from '../../../../services/user.service';
-import {fromEvent, Observable, throwError} from 'rxjs';
+import {fromEvent, Observable, Subject, throwError} from 'rxjs';
 import * as XLSX from 'xlsx';
 import {User} from '../../../../models/User';
 import {cloneDeep, isEqual, uniqBy} from 'lodash';
-import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-groups-step3',

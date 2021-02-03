@@ -2,7 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable, NgZone, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {BehaviorSubject, iif, Observable, of, ReplaySubject, throwError} from 'rxjs';
+import {BehaviorSubject, iif, Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
 import {catchError, delay, filter, map, mapTo, mergeMap, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
@@ -16,7 +16,6 @@ import {SafeHtml} from '@angular/platform-browser';
 import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
-import {Subject} from 'rxjs/Subject';
 import AuthResponse = gapi.auth2.AuthResponse;
 
 export const SESSION_STORAGE_KEY = 'accessToken';

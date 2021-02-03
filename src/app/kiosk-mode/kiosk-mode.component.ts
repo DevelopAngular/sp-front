@@ -18,8 +18,6 @@ import {Observable} from 'rxjs/Observable';
 
 declare const window;
 
-declare const window;
-
 @Component({
   selector: 'app-kiosk-mode',
   templateUrl: './kiosk-mode.component.html',
