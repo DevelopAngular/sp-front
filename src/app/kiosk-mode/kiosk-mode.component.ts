@@ -17,6 +17,8 @@ import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
 import {ActivePassProvider} from '../my-room/my-room.component';
 
+declare const window;
+
 @Component({
   selector: 'app-kiosk-mode',
   templateUrl: './kiosk-mode.component.html',
@@ -69,9 +71,10 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
             }
               return this.locationService.getLocationsWithTeacherRequest(user);
           }),
-        filter((res: any[]) => !!res.length)
+        filter((res: any[]) => !!res.length),
       )
-          .subscribe(locations => {
+      .subscribe(locations => {
+          window.appLoaded(500);
           const kioskJwtToken = this.storage.getItem('kioskToken');
           const jwtHelper = new JwtHelperService();
           this.userData = jwtHelper.decodeToken(kioskJwtToken);
