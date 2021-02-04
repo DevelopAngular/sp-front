@@ -518,7 +518,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.liveDataService.activePassesTotalNumber$,
       this.liveDataService.futurePassesTotalNumber$,
       this.liveDataService.expiredPassesTotalNumber$,
-    ).pipe(map(([con1, con2, con3]) => !!con1 && !!con2 && !!con3));
+    ).pipe(map(([con1, con2, con3]) => !!con1 || !!con2 || !!con3));
 
     this.passesLoaded = combineLatest(
       this.liveDataService.activePassesLoaded$,
