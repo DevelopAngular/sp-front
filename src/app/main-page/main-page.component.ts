@@ -90,7 +90,10 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
           return currentUser;
         }
       }), take(1));
-    this.passesService.getFiltersRequest('expired-passes');
+
+    this.http.globalReload$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.passesService.getFiltersRequest('expired-passes');
+    });
 
     combineLatest(dbUser$.pipe(filter(res => !!res)), this.passesService.passFilters$.pipe(filter(res => !!res)))
       .pipe(

@@ -26,7 +26,7 @@
         <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
       </div>
   </div>
-  <div *ngIf="(currentPasses$ | async) as currentPasses" [ngClass]="{'scroll-container': scrollable}">
+  <div *ngIf="(currentPasses$ | async) as currentPasses">
     <div *ngIf="currentPasses.length > 0; else emptyMessage">
       <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">
@@ -49,7 +49,7 @@
 </div>
 
 <ng-template #emptyMessage>
-  <div class="empty-state" *ngIf="hasFilterPasses">
+  <div class="empty-state" *ngIf="hasFilterPasses && showEmptyHeader">
     <img width="80" height="80" [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
     <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
       No expired passes <br/>

@@ -75,7 +75,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() passProvider: Observable<any>;
   @Input() hasFilterPasses: boolean;
   @Input() filterModel: string;
-  @Input() scrollable: boolean;
   @Input() filterDate: moment.Moment;
   @Input() user;
   @Input() selectedSort = null;
