@@ -37,7 +37,7 @@ import {getFiltersData, getFiltersDataLoading} from '../ngrx/pass-filters/states
 import {PassFilters} from '../models/PassFilters';
 import {Invitation} from '../models/Invitation';
 import {getInvitationsCollection} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
-import {filterExpiredPasses, getMoreExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/actions';
+import {filterExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/actions';
 import {getLastAddedExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
 
 @Injectable({
@@ -238,23 +238,9 @@ export class HallPassesService {
     return this.http.patch(`v1/filters/${model}`, {default_time_filter: value});
   }
 
-  getMoreExpiredPassesRequest(user, timeFilter = null, offset = null) {
-    this.store.dispatch(getMoreExpiredPasses({user, timeFilter, offset}));
-  }
-
-  getMoreExpiredPasses(timeFilter) {
-    if (timeFilter) {
-      return this.http.get(this.expiredPassesNextUrl$.getValue() + `&model_filter=expired-passes&time-filter=${timeFilter}`);
-    }
-    return this.http.get(this.expiredPassesNextUrl$.getValue());
-  }
-
   filterExpiredPassesRequest(user, timeFilter) {
     this.store.dispatch(filterExpiredPasses({user, timeFilter}));
   }
 
-  filterExpiredPasses(timeFilter) {
-    return this.http.get(this.expiredPassesNextUrl$.getValue())
-  }
 }
 

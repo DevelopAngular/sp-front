@@ -283,6 +283,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isOpenedModal: boolean;
   destroy$: Subject<any> = new Subject();
 
+  user$: Observable<User>;
   user: User;
   isStaff = false;
   currentScrollPosition: number;
@@ -383,8 +384,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
       filter(res => !!res),
       map(filters => {
-        this.isEmptyPassFilter = !filters['expired-passes'].default;
-        return filters['expired-passes'].default;
+        this.isEmptyPassFilter = !filters['past-passes'].default;
+        return filters['past-passes'].default;
       }));
 
     this.dataService.currentUser
@@ -475,6 +476,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.schoolsLength$ = this.httpService.schoolsLength$;
+    this.user$ = this.userService.user$;
     const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
     if (this.notificationButtonService.dismissExpirtationDate === notifBtnDismissExpires) {
       this.notificationButtonService.dismissButton$.next(false);

@@ -110,7 +110,7 @@
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
           ></app-pass-collection>
         </div>
-        <div class="past-passes pass-collection" *ngIf="(user.show_expired_passes || !isStaff)">
+        <div class="past-passes pass-collection" *ngIf="(user$ | async)?.show_expired_passes || !isStaff">
           <app-pass-collection
             [maxHeight]="'100%'"
             [fromPast]="true"
@@ -122,7 +122,7 @@
             [icon]="'./assets/Expired (Navy).svg'"
             [columns]="3"
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
-            [filterModel]="'expired-passes'"
+            [filterModel]="'past-passes'"
             [showEmptyHeader]="!isEmptyPassFilter"
             [hasFilterPasses]="true"
             [selectedSort]="expiredPassesSelectedSort$ | async"
@@ -217,7 +217,7 @@
         [columns]="3"
       ></app-pass-collection>
     </div>
-    <div class="past-passes pass-collection" *ngIf="(user.show_expired_passes || !isStaff)">
+    <div class="past-passes pass-collection" *ngIf="(user$ | async)?.show_expired_passes || !isStaff">
       <app-pass-collection
         [maxHeight]="'100%'"
         [fromPast]="true"
@@ -227,7 +227,7 @@
         [title]="'Expired Passes'"
         [icon]="'./assets/Expired (Navy).svg'"
         [columns]="3"
-        [filterModel]="'expired-passes'"
+        [filterModel]="'past-passes'"
         [showEmptyHeader]="!isEmptyPassFilter"
         [hasFilterPasses]="true"
         [selectedSort]="expiredPassesSelectedSort$ | async"

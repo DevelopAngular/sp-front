@@ -6,7 +6,7 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {filter, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
+import {exhaustMap, filter, map, mapTo, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -189,11 +189,11 @@ export class UserService {
             this.http.effectiveUserId.next(null);
             this.effectiveUser.next(null);
           }),
-          switchMap(() => {
+          exhaustMap(() => {
             return this.getUserRequest().pipe(filter(res => !!res));
           }),
           map(raw => User.fromJSON(raw)),
-          switchMap((user: User) => {
+          exhaustMap((user: User) => {
             this.blockUserPage$.next(false);
             if (user.isAssistant()) {
               return zip(this.getUserRepresented(), this.http.schoolsCollection$)
@@ -225,7 +225,7 @@ export class UserService {
               return of(user);
             }
           }),
-          switchMap(user => {
+          exhaustMap(user => {
             if (user.isTeacher() && !user.isAssistant()) {
               return this.getUserPinRequest().pipe(mapTo(user));
             } else {

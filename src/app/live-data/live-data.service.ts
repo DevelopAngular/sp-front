@@ -662,7 +662,7 @@ export class LiveDataService {
       }
     }
     if (timeFilter) {
-      queryFilter += `&model_filter=expired-passes&time_filter=${timeFilter}`;
+      queryFilter += `&model_filter=past-passes&time_filter=${timeFilter}`;
     }
     if (!!offset) {
       queryFilter += `&${offset}`;

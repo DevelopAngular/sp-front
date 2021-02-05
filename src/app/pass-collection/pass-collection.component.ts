@@ -229,7 +229,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       data: {
         'trigger': target.currentTarget,
         'sortData': sortOptions,
-        'selectedSort': this.selectedSort,
+        'selectedSort': this.selectedSort || 'all_time',
         'maxHeight': '332px'
       }
     });

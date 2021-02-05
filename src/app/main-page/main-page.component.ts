@@ -92,7 +92,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }), take(1));
 
     this.http.globalReload$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.passesService.getFiltersRequest('expired-passes');
+      this.passesService.getFiltersRequest('past-passes');
     });
 
     combineLatest(dbUser$.pipe(filter(res => !!res)), this.passesService.passFilters$.pipe(filter(res => !!res)))
@@ -101,7 +101,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         take(1),
         tap(([user, filters]) => {
           this.liveDataService.getPassLikeCollectionRequest(user);
-          this.liveDataService.getExpiredPassesRequest(user, filters['expired-passes'].default);
+          this.liveDataService.getExpiredPassesRequest(user, filters['past-passes'].default);
           this.liveDataService.getActivePassesRequest(of({sort: '-created', search_query: ''}), user);
           this.liveDataService.getHallMonitorPassesRequest(of({sort: '-created', search_query: ''}));
           this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
