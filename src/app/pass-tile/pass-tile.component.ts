@@ -1,14 +1,14 @@
-import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
-import { interval, BehaviorSubject, Subject, Observable } from 'rxjs';
-import { bumpIn } from '../animations';
-import { PassLike } from '../models';
-import { TimeService } from '../services/time.service';
-import { getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Request } from '../models/Request';
-import { Invitation } from '../models/Invitation';
-import { filter, takeUntil } from 'rxjs/operators';
-import { ScreenService } from '../services/screen.service';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {BehaviorSubject, interval, Observable, Subject, timer} from 'rxjs';
+import {bumpIn} from '../animations';
+import {PassLike} from '../models';
+import {TimeService} from '../services/time.service';
+import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisible} from './pass-display-util';
+import {DomSanitizer} from '@angular/platform-browser';
+import {Request} from '../models/Request';
+import {Invitation} from '../models/Invitation';
+import {filter, takeUntil} from 'rxjs/operators';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-pass-tile',
@@ -36,6 +36,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   hovered: boolean;
   timers: number[] = [];
   hoverDestroyer$: Subject<any>;
+  isOpen: boolean;
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -85,7 +86,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   constructor(
     private sanitizer: DomSanitizer,
     private timeService: TimeService,
-    private screenService: ScreenService
+    private dialog: MatDialog
   ) {
   }
 
@@ -155,6 +156,18 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
     this.hoverDestroyer$.next();
     this.hoverDestroyer$.complete();
+  }
+
+  studentNameOver() {
+    const destroy$ = new Subject();
+    console.log(this.pass.student);
+    timer(500).subscribe(() => {
+      this.isOpen = true;
+    });
+  }
+
+  studentNameLeave() {
+    this.isOpen = false;
   }
 
 }

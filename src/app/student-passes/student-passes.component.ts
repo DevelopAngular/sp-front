@@ -1,36 +1,12 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output} from '@angular/core';
 import {User} from '../models/User';
 import {interval, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {map, takeUntil} from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
-
-// export class StudentPastPassProvider implements PassLikeProvider {
-//   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
-//   }
-//
-//   watch(sort: Observable<string>) {
-//     const sortReplay = new ReplaySubject<string>(1);
-//     sort.subscribe(sortReplay);
-//
-//     return this.user$
-//       .pipe(
-//         switchMap(user => {
-//           return combineLatest(
-//             this.liveDataService.watchActiveHallPasses(empty(), {type: 'student', value: user}, null, 4),
-//             this.liveDataService.watchPastHallPasses({type: 'student', value: user}, 4)
-//           ).pipe(
-//             map(([active, past]) => {
-//               return [...active, ...past].slice(0, 4);
-//             })
-//           );
-//           }
-//         )
-//       );
-//   }
-// }
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-student-passes',
@@ -40,21 +16,33 @@ import * as moment from 'moment';
 export class StudentPassesComponent implements OnInit, OnDestroy {
 
   @Input() profile: User;
+  @Input() height: number = 75;
+  @Input() isResize: boolean = true;
 
   @Output()
   userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
 
-  height: number = 75;
   lastStudentPasses;
   timerEvent: Subject<any> = new Subject<any>();
 
   destroy$: Subject<any> = new Subject<any>();
 
-  constructor(private livaDataService: LiveDataService) { }
+  constructor(
+    private livaDataService: LiveDataService,
+    @Optional() @Inject(MAT_DIALOG_DATA) private data: any,
+    @Optional() public dialogRef: MatDialogRef<StudentPassesComponent>
+  ) { }
 
   ngOnInit() {
-    // this.lastStudentPasses =
-    //   new StudentPastPassProvider(this.livaDataService, of(this.profile)).watch(of('')).pipe(shareReplay(1));
+    // if (this.data['profile']) {
+    //   this.profile = this.data['profile'];
+    //   this.isResize = this.data['isResize'];
+    //   this.height = this.data['height'];
+    // }
+    this.lastStudentPasses = this.livaDataService.expiredPasses$
+      .pipe(
+        map(passes => passes.filter(pass => pass.student.id === this.profile.id))
+      );
 
     interval(1000).pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.timerEvent.next(null);
@@ -71,7 +59,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   openProfile() {
-    if (this.height === 75) {
+    if (this.height === 75 && this.isResize) {
       const destroy = new Subject();
       interval(20)
         .pipe(takeUntil(destroy))
@@ -86,7 +74,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   closeProfile(event) {
-    if (this.height === 450) {
+    if (this.height === 450 && this.isResize) {
       event.stopPropagation();
       const destroy = new Subject();
       interval(20)

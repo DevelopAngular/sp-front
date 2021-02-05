@@ -29,7 +29,19 @@
   <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">
   <div *ngIf="isBadgeVisible" class="badge">1</div>
 <div *ngIf="forStaff" class="names-overlay"></div>
-<div *ngIf="forStaff" class="names">{{ tileName }}</div>
+<div *ngIf="forStaff" (mouseenter)="studentNameOver()" (mouseleave)="studentNameLeave()" cdkOverlayOrigin #trigger="cdkOverlayOrigin" class="names">
+  {{ tileName }}
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="trigger"
+    [cdkConnectedOverlayOpen]="isOpen"
+    [cdkConnectedOverlayMinWidth]="400"
+  >
+    <app-student-passes [profile]="pass.student" [height]="300" [isResize]="false"></app-student-passes>
+  </ng-template>
+
+</div>
 </div>
   <!--{{boxShadow}}-->
 

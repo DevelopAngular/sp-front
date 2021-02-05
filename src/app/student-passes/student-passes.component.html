@@ -33,16 +33,16 @@
       <div style="margin-left: 8px">Latest Passes</div>
     </div>
     <div class="passes">
-<!--      <div class="pass" *ngFor="let pass of lastStudentPasses | async">-->
-<!--        <app-pass-tile-->
-<!--          [timerEvent]="timerEvent"-->
-<!--          [forFuture]="false"-->
-<!--          [fromPast]="!isActivePass(pass)"-->
-<!--          [isActive]="isActivePass(pass)"-->
-<!--          [forStaff]="false"-->
-<!--          [pass]="pass"-->
-<!--        ></app-pass-tile>-->
-<!--      </div>-->
+      <div class="pass" *ngFor="let pass of lastStudentPasses | async">
+        <app-pass-tile
+          [timerEvent]="timerEvent"
+          [forFuture]="false"
+          [fromPast]="!isActivePass(pass)"
+          [isActive]="isActivePass(pass)"
+          [forStaff]="false"
+          [pass]="pass"
+        ></app-pass-tile>
+      </div>
     </div>
   </div>
 </div>
