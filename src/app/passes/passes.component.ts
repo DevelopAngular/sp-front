@@ -17,7 +17,6 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {LiveDataService} from '../live-data/live-data.service';
 import {exceptPasses} from '../models';
 import {HallPass} from '../models/HallPass';
-import {PassLikeProvider} from '../models/providers';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {DataService} from '../services/data-service';
@@ -246,10 +245,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       updatePosition();
     }
   }
-
-  testPasses: PassLikeProvider;
-  testRequests: PassLikeProvider;
-  testInvitations: PassLikeProvider;
 
   futurePasses: any;
   activePasses: any;
