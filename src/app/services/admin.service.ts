@@ -249,7 +249,7 @@ export class AdminService {
           return obj;
         }, {});
 
-    const url = constructUrl('v1/admin/export/hall_passes', filtered) + '&';
+    const url = constructUrl('v1/admin/export/hall_passes', filtered);
     return this.http.post(url);
   }
 }
