@@ -1,37 +1,36 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { User } from '../models/User';
-import { combineLatest, empty, interval, Observable, of, ReplaySubject, Subject } from 'rxjs';
-import { map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
-import { LiveDataService } from '../live-data/live-data.service';
-import { PassLikeProvider } from '../models/providers';
-import { HallPass } from '../models/HallPass';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {User} from '../models/User';
+import {interval, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {LiveDataService} from '../live-data/live-data.service';
+import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
 
-export class StudentPastPassProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
-  }
-
-  watch(sort: Observable<string>) {
-    const sortReplay = new ReplaySubject<string>(1);
-    sort.subscribe(sortReplay);
-
-    return this.user$
-      .pipe(
-        switchMap(user => {
-          return combineLatest(
-            this.liveDataService.watchActiveHallPasses(empty(), {type: 'student', value: user}, null, 4),
-            this.liveDataService.watchPastHallPasses({type: 'student', value: user}, 4)
-          ).pipe(
-            map(([active, past]) => {
-              return [...active, ...past].slice(0, 4);
-            })
-          );
-          }
-        )
-      );
-  }
-}
+// export class StudentPastPassProvider implements PassLikeProvider {
+//   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
+//   }
+//
+//   watch(sort: Observable<string>) {
+//     const sortReplay = new ReplaySubject<string>(1);
+//     sort.subscribe(sortReplay);
+//
+//     return this.user$
+//       .pipe(
+//         switchMap(user => {
+//           return combineLatest(
+//             this.liveDataService.watchActiveHallPasses(empty(), {type: 'student', value: user}, null, 4),
+//             this.liveDataService.watchPastHallPasses({type: 'student', value: user}, 4)
+//           ).pipe(
+//             map(([active, past]) => {
+//               return [...active, ...past].slice(0, 4);
+//             })
+//           );
+//           }
+//         )
+//       );
+//   }
+// }
 
 @Component({
   selector: 'app-student-passes',
@@ -54,8 +53,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   constructor(private livaDataService: LiveDataService) { }
 
   ngOnInit() {
-    this.lastStudentPasses =
-      new StudentPastPassProvider(this.livaDataService, of(this.profile)).watch(of('')).pipe(shareReplay(1));
+    // this.lastStudentPasses =
+    //   new StudentPastPassProvider(this.livaDataService, of(this.profile)).watch(of('')).pipe(shareReplay(1));
 
     interval(1000).pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.timerEvent.next(null);

@@ -118,7 +118,7 @@ export class RoomComponent implements OnInit, OnDestroy {
        page === Pages.NewRoomInFolder ||
        page === Pages.EditRoomInFolder)
    ) {
-     return ['Any teachers in room', 'All teachers in room'];
+     return ['This Room', 'Both'];
    }
   }
 

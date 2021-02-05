@@ -77,7 +77,7 @@
             </app-display-card>
           </ng-template>
         </div>
-        <div *ngIf="!(passesHaveItems | async) && (passesLoaded | async) && (showEmptyState | async)" class="empty-container">
+        <div *ngIf="(showEmptyState | async) && isEmptyPassFilter" class="empty-container">
           <img class="empty-passes-svg" [src]="'./assets/emptyStates/emptyPasses.svg' | resolveAsset" alt="empty-svg">
           <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Jump Right In</div>
           <div class="text ds-empty-text-info">The hallway will never be the same</div>
@@ -110,7 +110,7 @@
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
           ></app-pass-collection>
         </div>
-        <div class="past-passes pass-collection" *ngIf="user.show_expired_passes || !isStaff">
+        <div class="past-passes pass-collection" *ngIf="(user$ | async)?.show_expired_passes || !isStaff">
           <app-pass-collection
             [maxHeight]="'100%'"
             [fromPast]="true"
@@ -122,10 +122,10 @@
             [icon]="'./assets/Expired (Navy).svg'"
             [columns]="3"
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
-            [filterModel]="'expired-passes'"
-            [showEmptyHeader]="true"
+            [filterModel]="'past-passes'"
+            [showEmptyHeader]="!isEmptyPassFilter"
             [hasFilterPasses]="true"
-            [filterDate]="filterExpiredPass$ | async"
+            [selectedSort]="expiredPassesSelectedSort$ | async"
             (filterPasses)="prepareFilter($event, 'expired-passes')"
           ></app-pass-collection>
         </div>
@@ -160,7 +160,10 @@
 
 
 
-<div class="passes-wrapper" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'" [style.overflow]="isStaff ? 'auto' : 'visible'" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)" #scrollableArea>
+<div class="passes-wrapper"
+     (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'"
+     [style.overflow]="isStaff ? 'auto' : 'visible'"
+     *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)">
   <h1 class="passes-heading">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">
@@ -185,7 +188,7 @@
         </app-display-card>
       </ng-template>
     </div>
-    <div *ngIf="(showEmptyState | async)" class="empty-container">
+    <div *ngIf="(showEmptyState | async) && isEmptyPassFilter" class="empty-container">
       <img class="empty-passes-svg" [src]="'./assets/emptyStates/emptyPasses.svg' | resolveAsset" alt="empty-svg">
       <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Jump Right In</div>
       <div class="text ds-empty-text-info">The hallway will never be the same</div>
@@ -214,7 +217,7 @@
         [columns]="3"
       ></app-pass-collection>
     </div>
-    <div class="past-passes pass-collection" *ngIf="user.show_expired_passes || !isStaff">
+    <div class="past-passes pass-collection" *ngIf="(user$ | async)?.show_expired_passes || !isStaff">
       <app-pass-collection
         [maxHeight]="'100%'"
         [fromPast]="true"
@@ -224,11 +227,10 @@
         [title]="'Expired Passes'"
         [icon]="'./assets/Expired (Navy).svg'"
         [columns]="3"
-        [filterModel]="'expired-passes'"
-        [showEmptyHeader]="true"
+        [filterModel]="'past-passes'"
+        [showEmptyHeader]="!isEmptyPassFilter"
         [hasFilterPasses]="true"
-        [scrollable]="true"
-        [filterDate]="filterExpiredPass$ | async"
+        [selectedSort]="expiredPassesSelectedSort$ | async"
         (filterPasses)="prepareFilter($event, 'expired-passes')"
       ></app-pass-collection>
     </div>
@@ -261,7 +263,7 @@
             [columns]="2"
           ></app-pass-collection>
         </div>
-        <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+        <div *ngIf="!(inboxHasItems | async)" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
           <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
           <div class="text ds-empty-text-info">No pass requests sent or received</div>

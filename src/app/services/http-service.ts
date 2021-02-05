@@ -2,7 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable, NgZone, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {BehaviorSubject, iif, Observable, of, ReplaySubject, throwError} from 'rxjs';
+import {BehaviorSubject, iif, Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
 import {catchError, delay, filter, map, mapTo, mergeMap, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
@@ -159,6 +159,7 @@ export class HttpService implements OnDestroy {
   public authContext$: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
 
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
+  public schoolToggle$: Subject<School> = new Subject<School>();
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
       filter(v => v),
       switchMap((v) => {

@@ -73,7 +73,7 @@ export class LocationsService {
     getLocationsWithCategory(category: string) {
       return this.http.get('v1/locations', {
         params: {
-          category: category,}
+          category: category}
         }
       );
     }
@@ -84,7 +84,7 @@ export class LocationsService {
     }
 
     getLocationsWithTeacher(teacher: User) {
-        return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
+      return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
     }
 
     getLocationsWithManyTeachers(teachers: User[]): Observable<Location[]> {
@@ -95,7 +95,6 @@ export class LocationsService {
             const url = constructUrl('v1/locations', {
               teacher_id: ids,
             });
-
             return this.http.get<Location[]>(url);
           }),
           reduce((acc, arr) => acc.concat(arr), [])
