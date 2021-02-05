@@ -5,6 +5,7 @@ import {School} from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-dropdown',
@@ -59,12 +60,16 @@ export class DropdownComponent implements OnInit {
     this.optionsMaxHeight = data['maxHeight'] || '282px';
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   ngOnInit() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.width = !!this.sortData ? '250px' : '300px';
     // matDialogConfig.height = this.teachers ? '180px' : '215px';
-    matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
+    matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) - (this.isMobile && this.sortData ? 100 : 0)  }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
     this._matDialogRef.backdropClick().subscribe(() => {

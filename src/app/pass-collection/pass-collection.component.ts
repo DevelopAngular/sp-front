@@ -10,20 +10,18 @@ import {
   Output
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, Observable, of, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {HallPass} from '../models/HallPass';
 import {Invitation} from '../models/Invitation';
-import {PassLikeProvider} from '../models/providers';
 import {Request} from '../models/Request';
 import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
-import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -31,7 +29,6 @@ import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HallPassesService} from '../services/hall-passes.service';
-import {PassFilters} from '../models/PassFilters';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {User} from '../models/User';
 import {UserService} from '../services/user.service';
@@ -75,11 +72,12 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() grid_gap: string = '10px';
   @Input() isAdminPage: boolean;
   @Input() headerWidth: string = '100%';
-  @Input() passProvider: PassLikeProvider;
+  @Input() passProvider: Observable<any>;
   @Input() hasFilterPasses: boolean;
   @Input() filterModel: string;
-  @Input() scrollable: boolean;
   @Input() filterDate: moment.Moment;
+  @Input() user;
+  @Input() selectedSort = null;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
@@ -87,23 +85,11 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() filterPasses = new EventEmitter();
   @Output() passClick = new EventEmitter<boolean>();
 
-  currentPasses$: ReplaySubject<PassLike[]> = new ReplaySubject<PassLike[]>();
-  currentPasses: PassLike[] = [];
-  selectedSort;
-  filtersData$: Observable<{[model: string]: PassFilters}>;
-  filtersLoading$: Observable<boolean>;
-
-  user: User;
-
+  currentPasses$: Observable<any>;
   activePassTime$;
-
   timers: number[] = [];
-
   timerEvent: Subject<void> = new BehaviorSubject(null);
-
   sort$ = this.dataService.sort$;
-  test: any;
-  showBottomShadow: boolean = true;
 
   destroy$ = new Subject();
 
@@ -115,36 +101,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
     if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
       this.grid_template_columns = '157px';
-    }
-  }
-
-  @HostListener('document.scroll', ['$event'])
-  scroll(event) {
-    if (!!this.passesService.expiredPassesNextUrl$.getValue()) {
-      if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {
-        this.passesService.getMoreExpiredPasses()
-          .pipe(
-            map((passes: any) => {
-              if (this.filterDate) {
-                return {
-                  ...passes,
-                  results: passes.results.filter(pass => moment(pass.start_time).isAfter(moment(this.filterDate)))
-                };
-              }
-              return passes;
-            }))
-          .subscribe((res: any) => {
-            this.currentPasses.push(...res.results.map(pass => HallPass.fromJSON(pass)));
-            this.passesService.expiredPassesNextUrl$.next(res.next ? res.next.substring(res.next.search('v1')) : '');
-            this.cdr.detectChanges();
-          });
-      }
-    } else {
-      if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {
-        this.showBottomShadow = false;
-      } else {
-        this.showBottomShadow = true;
-      }
     }
   }
 
@@ -207,42 +163,11 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.filterModel && this.hasFilterPasses) {
-      this.passesService.getFiltersRequest(this.filterModel);
-      this.filtersData$ = this.passesService.passFilters$;
-      this.filtersLoading$ = this.passesService.passFiltersLoading$;
-      this.filtersData$.pipe(
-        takeUntil(this.destroy$),
-        filter(res => !!res && (this.filterModel && !!res[this.filterModel])))
-        .subscribe(res => {
-          this.selectedSort = res[this.filterModel].default || 'all_time';
-          this.filterPasses.emit(this.selectedSort);
-      });
+    if (this.passProvider) {
+      this.currentPasses$ = this.passProvider.pipe(
+        tap(passes => this.currentPassesEmit.emit(passes))
+      );
     }
-    this.passProvider.watch(this.sort$.asObservable()).subscribe(res => {
-      this.currentPasses$.next(res);
-    });
-    this.currentPasses$
-      .pipe(
-        switchMap((_passes) => {
-          if (_passes.length < 16) {
-            this.showBottomShadow = false;
-          } else {
-            this.showBottomShadow = true;
-          }
-          if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
-            return of(_passes);
-          } else {
-            this.currentPasses = [];
-            return of(_passes).pipe(delay(500));
-          }
-        }),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((passes: any) => {
-        this.currentPasses = passes;
-        this.currentPassesEmit.emit(passes);
-      });
 
     if (this.isActive) {
       this.timers.push(window.setInterval(() => {
@@ -283,7 +208,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
     this.passClick.emit(true);
-    // this.dataService.markRead(pass).subscribe();
+    this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
   }
 
@@ -304,7 +229,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       data: {
         'trigger': target.currentTarget,
         'sortData': sortOptions,
-        'selectedSort': this.selectedSort,
+        'selectedSort': this.selectedSort || 'all_time',
         'maxHeight': '332px'
       }
     });
@@ -320,6 +245,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           }
           this.cdr.detectChanges();
           this.passesService.updateFilterRequest(this.filterModel, this.selectedSort);
+          this.passesService.filterExpiredPassesRequest(this.user, this.selectedSort);
           this.filterPasses.emit(this.selectedSort);
         } else {
           this.openAppearance();
@@ -330,6 +256,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   openAppearance() {
     this.dialog.open(SpAppearanceComponent, {
       panelClass: 'sp-form-dialog',
+      data: {fromFilter: true}
     });
   }
 

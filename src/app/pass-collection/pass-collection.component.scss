@@ -27,8 +27,8 @@
 }
 
 .scroll-container {
-  max-height: 584px;
-  overflow: auto;
+  //max-height: 584px;
+  //overflow: auto;
 }
 
 @media all and  (max-width: 940px) {
@@ -160,10 +160,11 @@
   display: flex;
   flex-direction: column;
   margin-top: 70px;
+  align-items: center;
 }
 
 .empty-message{
-    font-size: 16pt;
+    font-size: 17px;
     text-align: center;
     color: rgb(126, 135, 157);
     margin-top: 25px;

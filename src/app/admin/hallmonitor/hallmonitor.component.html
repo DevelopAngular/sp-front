@@ -26,7 +26,9 @@
                   [passProvider]="activePassProvider"
                   [title]="'Active Passes'"
                   [icon]="'./assets/Walking (Navy).svg'"
-                  [columns]="4">
+                  [columns]="4"
+                  (sortMode)="updatePassCollection($event)"
+          >
           </app-pass-collection>
           <div *ngIf="!(hasPasses | async) && (passesLoaded | async)"
                [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">

@@ -26,7 +26,7 @@
         <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
       </div>
   </div>
-  <div *ngIf="(currentPasses$ | async)" (scroll)="scroll($event)" [ngClass]="{'scroll-container': scrollable}">
+  <div *ngIf="(currentPasses$ | async) as currentPasses">
     <div *ngIf="currentPasses.length > 0; else emptyMessage">
       <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">
@@ -50,11 +50,11 @@
 </div>
 
 <ng-template #emptyMessage>
-  <div class="empty-state" *ngIf="!(filtersLoading$ | async) && hasFilterPasses">
-    <img [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
+  <div class="empty-state" *ngIf="hasFilterPasses && showEmptyHeader">
+    <img width="80" height="80" [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
     <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
       No expired passes <br/>
-      in the <span style="text-transform: lowercase">{{ selectedText }}</span>
+      <span *ngIf="selectedText !== 'Today'">in the </span><span style="text-transform: lowercase">{{ selectedText }}</span>
     </div>
   </div>
 </ng-template>
@@ -83,7 +83,7 @@
     </ng-template>
 </div>
   </div>
-  <div *ngIf="showBottomShadow" class="bottom-shadow"></div>
+<!--  <div *ngIf="showBottomShadow" class="bottom-shadow"></div>-->
 </div>
 <!-- End -->
 
