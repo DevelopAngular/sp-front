@@ -1,6 +1,9 @@
-import {Component, Input, OnInit, ViewChildren, QueryList, NgZone} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
-import {MapsAPILoader} from '@agm/core';
+import {Component, Input, OnInit, QueryList, ViewChildren, HostListener} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatIconRegistry} from '@angular/material/icon';
+import {DomSanitizer} from '@angular/platform-browser';
+
+declare const window;
 
 @Component({
   selector: 'app-list-schools',
@@ -10,31 +13,26 @@ import {MapsAPILoader} from '@agm/core';
 export class ListSchoolsComponent implements OnInit {
 
   @Input() form: FormGroup;
+  @Input() startTabIndex: number = -1;
+  @Input() autoFocus: boolean = false;
   @ViewChildren('locationInput') locationInputs: QueryList<any>;
 
   inputCount: number = 1;
+  innerWidth: number;
 
   constructor(private fb: FormBuilder,
-              private mapsAPILoader: MapsAPILoader,
-              private ngZone: NgZone) {
+              private matIconRegistry: MatIconRegistry,
+              private domSanitizer: DomSanitizer
+  ) {
+    this.matIconRegistry.addSvgIcon(
+      "minus",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/minus-icon.svg")
+    );
   }
 
   ngOnInit(): void {
     this.addSchool();
-  }
-
-  ngAfterViewInit() {
-    this.mapsAPILoader.load().then(() => {
-      this.locationInputs.forEach((element, index) => {
-        this.addAutoComplete(element.nativeElement, index);
-      });
-      this.locationInputs.changes.subscribe((list) => {
-        if (this.inputCount < list.length) {
-          this.addAutoComplete(list.last.nativeElement, list.length - 1);
-        }
-        this.inputCount = list.length;
-      });
-    });
+    this.innerWidth = window.innerWidth;
   }
 
   get schools(): FormArray {
@@ -44,8 +42,8 @@ export class ListSchoolsComponent implements OnInit {
   addSchool(): void {
     this.schools.push(
       this.fb.group({
-        name: '',
-        population: '',
+        name: ['', Validators.required],
+        population: ['', Validators.required],
       })
     );
   }
@@ -61,31 +59,8 @@ export class ListSchoolsComponent implements OnInit {
     let data = this.schools.removeAt(index);
   }
 
-  addAutoComplete(element, index){
-    const autocomplete = new google.maps.places.Autocomplete(element);
-    autocomplete.setFields(['address_component', 'name']);
-    autocomplete.addListener('place_changed', () => {
-      this.ngZone.run(() => {
-        const place: google.maps.places.PlaceResult = autocomplete.getPlace();
-        let address = place.name;
-        let addressParts = ['administrative_area_level_1', 'country'];
-        addressParts.forEach((element, index) => {
-          let name = this.getAddressPart(place, element);
-          if(name)
-            address += ', ' + name;
-        });
-        this.schools.at(index).get('name').setValue(address);
-
-      });
-    });
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
   }
-
-  getAddressPart(place, part): string {
-    for(let i = 0; i < place.address_components.length; i++) {
-      if (place.address_components[i].types.includes(part))
-        return place.address_components[i].long_name;
-    }
-    return null;
-  }
-
 }

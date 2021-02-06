@@ -4,28 +4,45 @@
       <div class="row">
         <app-input input_label="Your name"
                    width="225px"
+                   [tabAttentive]="true"
+                   [tabIndex]="1"
+                   isFocus="true"
+                   tabAttentive="true"
+                   placeholder="Seymour Skinner"
                    [formGroup]="quoteRequestForm"
                    [controlName]="quoteRequestForm.controls.name"></app-input>
         <app-input input_label="Position"
                    width="225px"
+                   [tabIndex]="2"
+                   [tabAttentive]="true"
+                   placeholder="Ex. Principle"
                    [formGroup]="quoteRequestForm"
                    [controlName]="quoteRequestForm.controls.position"></app-input>
       </div>
       <div class="row">
         <app-input input_label="Email"
                    width="225px"
+                   [tabIndex]="3"
+                   [tabAttentive]="true"
+                   placeholder="wskinner@springfieldhs.org"
                    [formGroup]="quoteRequestForm"
                    [controlName]="quoteRequestForm.controls.email"></app-input>
         <app-input input_label="Phone Number"
                    width="225px"
+                   [tabIndex]="4"
+                   [tabAttentive]="true"
                    [formGroup]="quoteRequestForm"
                    [controlName]="quoteRequestForm.controls.phone"></app-input>
       </div>
+      <app-list-schools [form]="quoteRequestForm" startTabIndex="4"></app-list-schools>
+      <div id="confirm-wrapper">
+        <app-gradient-button
+          id="confirm"
+          [disabled]="!quoteRequestForm.valid"
+          (click)="confirm()">Request Quote
+        </app-gradient-button>
+      </div>
     </form>
-    <app-list-schools [form]="quoteRequestForm"></app-list-schools>
-    <div id="confirm-wrapper">
-      <button id="confirm" mat-flat-button color="jade" (click)="confirm()">Request quote</button>
-    </div>
   </div>
 </div>
 <ng-template #postWrapper>
@@ -41,10 +58,12 @@
         [formArray]="hdyhau"></app-colored-checkbox>
     </div>
     <div id="button-div">
-      <a id="get-demo" mat-flat-button color="jade" href="https://smartpass.app/demo">
-        Get a free, 30 min demo
-        <mat-icon>keyboard_arrow_right</mat-icon>
-      </a>
+      <app-gradient-button
+        id="get-demo"
+        text="Get a free, 30 min demo"
+        buttonLink="https://smartpass.app/demo"
+        linkType="_self">
+      </app-gradient-button>
     </div>
   </div>
 </ng-template>

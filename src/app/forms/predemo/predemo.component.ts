@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
-
-declare const window;
+import {FormsService} from '../../services/forms.service';
 
 @Component({
   selector: 'app-predemo',
@@ -15,10 +14,18 @@ export class PredemoComponent implements OnInit {
   assignedTo: string;
   startTime: Date;
   timeZone: string;
+  submitted: boolean = false;
+
+  completedSchools = true;
+  completedHdyhau = true;
 
   predemoForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute) {
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private formService: FormsService
+  ) {
     this.predemoForm = this.fb.group({
       schools: this.fb.array([]),
       hdyhau: this.fb.array([])
@@ -31,13 +38,33 @@ export class PredemoComponent implements OnInit {
       this.assignedTo = params['assigned_to'];
       this.startTime = new Date(params['event_start_time']);
       this.timeZone = params['time_zone'];
+
+      this.formService.getPredemoComplete(this.meetingId).subscribe(res => {
+        this.completedSchools = res['schools'];
+        this.completedHdyhau = res['hdyhau'];
+        if (this.completedSchools) {
+          this.predemoForm.removeControl('schools');
+        }
+        if (this.completedHdyhau) {
+          this.predemoForm.removeControl('hdyhau');
+        }
+      });
     });
-    //http://localhost:4200/forms/predemo?meetingid=434314234&assigned_to=Michael%20C&event_start_time=2021-02-08T12%3A00%3A00-08%3A00&time_zone=EST
-    window.appLoaded();
+
   }
 
   confirmDemo(): void {
-    console.log(this.predemoForm.getRawValue());
+    if (!this.predemoForm.valid) {
+      return;
+    }
+    let formData = this.predemoForm.getRawValue();
+    this.formService.savePredemoForm(
+      this.meetingId,
+      formData
+    ).subscribe(res => {
+      console.log(res);
+    });
+    this.submitted = true;
   }
 
 }

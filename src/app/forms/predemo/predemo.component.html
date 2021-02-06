@@ -1,23 +1,36 @@
 <div id="predemo">
   <div id="masthead">
     <div id="logo-wrapper">
-    <app-smartpass-logo [logoAsset]="'./assets/intro/Logo Green.png'"></app-smartpass-logo>
+      <app-smartpass-logo [logoAsset]="'./assets/Logo Green.svg'"></app-smartpass-logo>
     </div>
-      <div id="text-wrapper">
+    <div id="text-wrapper">
       <h1>Confirm your upcoming demo</h1>
       <span>{{startTime | date:'MMM dd'}} at {{startTime | date:'h:mm a'}} {{timeZone}} {{ "\u2022" }}
         with {{assignedTo}}</span>
     </div>
   </div>
   <div id="form-wrapper">
-    <form [formGroup]="predemoForm">
-      <app-list-schools [form]="predemoForm"></app-list-schools>
-      <app-colored-checkbox
+    <form [formGroup]="predemoForm" *ngIf="!submitted; else postWrapper">
+      <app-list-schools *ngIf="!completedSchools" [form]="predemoForm" autoFocus="true"></app-list-schools>
+      <app-colored-checkbox *ngIf="!completedHdyhau"
         title="How did you hear about us?"
         [options]="['Google search', 'Facebook', 'Referral / word of mouth',
   'Conference', 'Magazine ad', 'Email', 'Other']"
         [formArray]="predemoForm.controls.hdyhau"></app-colored-checkbox>
-      <button id="confirm" mat-flat-button color="jade" (click)="confirmDemo()">Confirm Demo</button>
+      <app-gradient-button
+        id="confirm"
+        [disabled]="!predemoForm.valid"
+        (click)="confirmDemo()">Confirm Demo
+      </app-gradient-button>
     </form>
   </div>
+  <ng-template #postWrapper>
+    <div id="submitted-wrapper">
+      <div id="text-wrapper">
+        <h1>Demo confirmed</h1>
+        <p>Looking forward to speaking soon. If you have any questions prior to your demo,
+          feel free to send us an email at <a href="emailto:hello@smartpass.app">hello@smartpass.app</a>.</p>
+      </div>
+    </div>
+  </ng-template>
 </div>

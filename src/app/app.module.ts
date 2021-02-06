@@ -82,12 +82,6 @@ const appRoutes: Routes = [
     data: { hideSchoolToggleBar: true}
   },
   {
-    path: 'school_signup',
-    canActivate: [SchoolSignUpGuard],
-    loadChildren: () => import('app/school-sign-up/school-sign-up.module').then(m => m.SchoolSignUpModule),
-    data: {hideSchoolToggleBar: true, hubspot: false, authFree: true},
-  },
-  {
     path: 'accounts_setup',
     loadChildren: () => import('app/accounts-setup/accounts-setup.module').then(m => m.AccountsSetupModule),
     data: {hubspot: true, authFree: true},

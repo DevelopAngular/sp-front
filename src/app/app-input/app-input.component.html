@@ -33,7 +33,7 @@
              [autocomplete]="autocomplete"
              [attr.disabled]="disabled ? '' : null"
              [style.background-color]="isFocus && inp.focused ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
-             tabindex="1"
+             [tabindex]="tabIndex"
              [pattern]="pattern"
              [style.width]="containerWidth"
              [style.height]="height"

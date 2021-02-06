@@ -1,6 +1,7 @@
 @import "../../../design-system";
 
 #predemo {
+  min-height: calc(100vh - 30px);
   background-color: white;
   padding-bottom: 30px;
 }
@@ -18,14 +19,17 @@
   }
 
   #text-wrapper {
-    text-align:center;
+    text-align: center;
 
     h1 {
       @include textSize(30px, bold);
+      padding-left: 20px;
+      padding-right: 20px;
     }
 
     span {
-      @include textSize(14px);
+      font-size: 14px;
+      color: #7F879D;
     }
   }
 }
@@ -36,4 +40,26 @@
 
 #confirm {
   border-radius: 8px;
+}
+
+#submitted-wrapper {
+  @extend .ds-flex-center-center, .ds-flex-column;
+
+  #text-wrapper {
+    width: 350px;
+
+    h1 {
+      @include textSize(29px, bold, #7F879D);
+      text-align: center;
+    }
+
+    p {
+      @include textSize(14px, normal, #7F879D);
+      text-align: center;
+
+      a {
+        @include textSize(14px, normal, $jade);
+      }
+    }
+  }
 }
