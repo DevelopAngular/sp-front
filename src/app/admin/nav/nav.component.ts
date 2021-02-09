@@ -61,7 +61,14 @@ export class NavComponent implements OnInit, AfterViewInit {
   introsData: any;
   public pts: string;
 
+  user: User;
+  showButton: boolean;
+  selectedSettings: boolean;
+  process: number;
+  hidePointer: boolean;
+
   destroy$: Subject<any> = new Subject<any>();
+
     constructor(
         public router: Router,
         private activeRoute: ActivatedRoute,
@@ -73,12 +80,6 @@ export class NavComponent implements OnInit, AfterViewInit {
         public darkTheme: DarkThemeSwitch,
         private shortcutsService: KeyboardShortcutsService,
     ) { }
-
-  user: User;
-  showButton: boolean;
-  selectedSettings: boolean;
-  process: number;
-  hidePointer: boolean;
 
   get pointerTopSpace() {
     return this.pts;
