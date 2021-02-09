@@ -159,6 +159,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   suggestedTeacher: User;
   foundLocations: Location[] = [];
 
+  disableCloseTooltip: boolean;
+
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -488,5 +490,13 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.selectedOptions.push(this.suggestedTeacher);
     this.onUpdate.emit(this.selectedOptions);
     this.isProposed = false;
+  }
+
+  studentNameLeave(event) {
+    setTimeout(() => {
+      if (!this.disableCloseTooltip) {
+        event.isOpenTooltip = false;
+      }
+    }, 500);
   }
 }

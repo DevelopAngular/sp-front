@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {BehaviorSubject, interval, Observable, Subject, timer} from 'rxjs';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {bumpIn} from '../animations';
 import {PassLike} from '../models';
 import {TimeService} from '../services/time.service';
@@ -37,6 +37,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   timers: number[] = [];
   hoverDestroyer$: Subject<any>;
   isOpen: boolean;
+  disableClose: boolean;
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -86,7 +87,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   constructor(
     private sanitizer: DomSanitizer,
     private timeService: TimeService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -159,15 +161,15 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   studentNameOver() {
-    const destroy$ = new Subject();
-    console.log(this.pass.student);
-    timer(500).subscribe(() => {
-      this.isOpen = true;
-    });
+    this.isOpen = true;
   }
 
   studentNameLeave() {
-    this.isOpen = false;
+    setTimeout(() => {
+      if (!this.disableClose) {
+        this.isOpen = false;
+      }
+    }, 500);
   }
 
 }

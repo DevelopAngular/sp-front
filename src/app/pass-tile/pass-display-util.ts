@@ -1,8 +1,8 @@
-import { Util } from '../../Util';
-import { PassLike } from '../models';
-import { HallPass } from '../models/HallPass';
-import { Invitation } from '../models/Invitation';
-import { Request } from '../models/Request';
+import {Util} from '../../Util';
+import {PassLike} from '../models';
+import {HallPass} from '../models/HallPass';
+import {Invitation} from '../models/Invitation';
+import {Request} from '../models/Request';
 
 export function getFormattedPassDate(pass: PassLike) {
   let date: Date;
@@ -42,6 +42,9 @@ export function getInnerPassContent(pass: PassLike, now?: boolean) {
 }
 
 export function getInnerPassName(pass: PassLike) {
+  if (!pass.student) {
+    return '';
+  }
   if (pass.student.first_name === '') {
     return pass.student.display_name;
   }

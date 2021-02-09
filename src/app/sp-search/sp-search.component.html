@@ -43,12 +43,14 @@
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
-               (mouseenter)="changeColor(true, $event)"
-               (mouseleave)="changeColor(false, $event)"
+               (mouseenter)="changeColor(true, $event); cell.isOpenTooltip = true"
+               (mouseleave)="changeColor(false, $event); studentNameLeave(cell)"
                appCrossPointerEventTarget
                (pointerDownEvent)="changeColor(true, $event)"
                (pointerClickEvent)="changeColor(true, $event); addStudent(student)"
                [style.color]="textColor(cell)"
+               cdkOverlayOrigin
+               #trigger="cdkOverlayOrigin"
           >
             <span>
               {{student.display_name}}
@@ -56,6 +58,18 @@
               '(' + (student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : '') + ')'
               }}
             </span>
+
+            <ng-template
+              cdkConnectedOverlay
+              [cdkConnectedOverlayOrigin]="trigger"
+              [cdkConnectedOverlayOpen]="cell.isOpenTooltip"
+              [cdkConnectedOverlayMinWidth]="335"
+              [cdkConnectedOverlayPositions]="[{originY: 'top', originX: 'end', overlayY: 'bottom', overlayX: 'center', offsetY: 360, offsetX: 100 }]"
+            >
+              <div (mouseenter)="disableCloseTooltip = true" (mouseleave)="disableCloseTooltip = false; studentNameLeave(cell)">
+                <app-student-passes [profile]="student" [height]="300" [isResize]="false"></app-student-passes>
+              </div>
+            </ng-template>
           </div>
         </div>
 

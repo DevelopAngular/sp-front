@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {User} from '../models/User';
 import {interval, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
@@ -6,7 +6,6 @@ import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-student-passes',
@@ -29,19 +28,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
 
   constructor(
     private livaDataService: LiveDataService,
-    @Optional() @Inject(MAT_DIALOG_DATA) private data: any,
-    @Optional() public dialogRef: MatDialogRef<StudentPassesComponent>
   ) { }
 
   ngOnInit() {
-    // if (this.data['profile']) {
-    //   this.profile = this.data['profile'];
-    //   this.isResize = this.data['isResize'];
-    //   this.height = this.data['height'];
-    // }
     this.lastStudentPasses = this.livaDataService.expiredPasses$
       .pipe(
-        map(passes => passes.filter(pass => pass.student.id === this.profile.id))
+        map(passes => passes.filter(pass => +pass.student.id === +this.profile.id))
       );
 
     interval(1000).pipe(takeUntil(this.destroy$)).subscribe(() => {

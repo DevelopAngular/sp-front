@@ -21,7 +21,7 @@
       ></app-icon-button>
     </div>
     <ng-template #close>
-      <div class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
+      <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
         <img width="25" height="25" [src]="'./assets/Cancel (Search-Gray).svg' | resolveAsset">
       </div>
     </ng-template>

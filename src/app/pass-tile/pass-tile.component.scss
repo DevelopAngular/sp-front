@@ -36,6 +36,11 @@
     text-align: center;
     cursor: pointer;
     position: relative;
+
+  .overlay {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .tile-title-container {
