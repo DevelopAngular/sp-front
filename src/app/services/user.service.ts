@@ -188,9 +188,10 @@ export class UserService {
           tap(() => {
             this.http.effectiveUserId.next(null);
             this.effectiveUser.next(null);
+            this.getUserRequest();
           }),
           exhaustMap(() => {
-            return this.getUserRequest().pipe(filter(res => !!res));
+            return this.user$.pipe(filter(res => !!res));
           }),
           map(raw => User.fromJSON(raw)),
           exhaustMap((user: User) => {

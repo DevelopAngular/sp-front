@@ -45,7 +45,7 @@
          matTooltipClass="tooltip"
     >
       {{(user?user.display_name : '')}}
-      <img *ngIf="user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
+      <img *ngIf="user && user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
     </div>
     <div [style.display]="'flex'" #settingsButton>
       <app-icon-button

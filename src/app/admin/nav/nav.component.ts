@@ -71,7 +71,7 @@ export class NavComponent implements OnInit, AfterViewInit {
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
-        private shortcutsService: KeyboardShortcutsService
+        private shortcutsService: KeyboardShortcutsService,
     ) { }
 
   user: User;
@@ -109,39 +109,29 @@ export class NavComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.dataService.currentUser
-      .pipe(
-        this.loadingService.watchFirst,
-        takeUntil(this.destroy$)
-        )
+    this.userService.user$
+      .pipe(filter(user => !!user), takeUntil(this.destroy$))
       .subscribe(user => {
-
-        this._zone.run(() => {
-          this.user = user;
-          this.showButton = user.roles.includes('_profile_admin') &&
-                          ( user.roles.includes('_profile_teacher') ||
-                            user.roles.includes('_profile_student') );
-          this.dataService.updateInbox(!this.tab.includes('settings'));
-        });
-      });
-
-    this.userService.userData
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user: any) => {
-      this.buttons.forEach((button) => {
-        if (
-          ((this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}`)
+        this.buttons.forEach((button) => {
+          if (
+            ((this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}`)
             &&
-          !button.requiredRoles.every((_role) => user.roles.includes(_role))
-      ) {
-          this.restrictAccess.emit(true);
-          this.fakeMenu.next(true);
-        } else {
-          this.restrictAccess.emit(false);
-          this.fakeMenu.next(false);
-        }
+            !button.requiredRoles.every((_role) => user.roles.includes(_role))
+          ) {
+            this.restrictAccess.emit(true);
+            this.fakeMenu.next(true);
+          } else {
+            this.restrictAccess.emit(false);
+            this.fakeMenu.next(false);
+          }
+        });
+
+        this.user = user;
+        this.showButton = user.roles.includes('_profile_admin') &&
+                        ( user.roles.includes('_profile_teacher') ||
+                          user.roles.includes('_profile_student') );
+        this.dataService.updateInbox(!this.tab.includes('settings'));
       });
-    });
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
@@ -173,7 +163,6 @@ export class NavComponent implements OnInit, AfterViewInit {
 
     this.userService.introsData$.pipe(filter(res => !!res), takeUntil(this.destroy$))
       .subscribe(data => {
-        // debugger;
         this.introsData = data;
       });
   }
