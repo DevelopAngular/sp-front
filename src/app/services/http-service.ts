@@ -233,7 +233,6 @@ export class HttpService implements OnDestroy {
           return {auth: newToken, server: this.getAuthContext().server};
         })).subscribe(res => {
           this.setAuthContext(res);
-          this.loginService.isAuthenticated$.next(true);
     });
 
     // When HTTPService is being constructed, if the user is already signed in, then authObject will resolve immediately.
