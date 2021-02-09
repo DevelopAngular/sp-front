@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { HttpService } from './http-service';
+import {Injectable} from '@angular/core';
+import {HttpService} from './http-service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {clearContactTraceData, getContacts} from '../ngrx/contact-trace/actions';

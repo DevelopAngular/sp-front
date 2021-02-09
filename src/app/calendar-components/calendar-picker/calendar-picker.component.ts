@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import * as moment from 'moment';
-import { sortBy, findIndex, range } from 'lodash';
+import {findIndex, range, sortBy} from 'lodash';
 import {bumpIn} from '../../animations';
 import {BehaviorSubject} from 'rxjs';
 

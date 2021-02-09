@@ -11,6 +11,7 @@
         [closeIcon]="inputRestrictionXl.closeIcon"
         [style.margin-right]="'40px'"
         [pending$]="searchPending$"
+        [isSearch]="true"
         (ontextupdate)="onSearch($event)"
       ></app-round-input>
       <app-gradient-button
@@ -70,6 +71,8 @@
         [icon]="hallMonitorCollection.icon"
         [columns]="hallMonitorCollection.columns"
         (reportFromPassCard)="onReportFromPassCard($event)"
+        [user]="user"
+        (sortMode)="updatePassCollection($event)"
       ></app-pass-collection>
       <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue != ''">
@@ -97,7 +100,7 @@
 
   <div class="sort-btn" (click)="openSortMenu()" *ngIf="(hasPasses | async) && (passesLoaded | async) && isDeviceLargeExtra ">
     <app-gradient-button
-      [size] = "sortBtn.size"
+      [size]="sortBtn.size"
       [gradient]="sortBtn.gradient"
       [cursor]="sortBtn.cursor"
       [hoverColor]="sortBtn.hoverColor"

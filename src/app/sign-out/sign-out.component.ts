@@ -1,10 +1,10 @@
-import { AfterContentInit, Component } from '@angular/core';
-import { GoogleLoginService } from '../services/google-login.service';
-import { HttpService } from '../services/http-service';
+import {AfterContentInit, Component} from '@angular/core';
+import {GoogleLoginService} from '../services/google-login.service';
+import {HttpService} from '../services/http-service';
 import {environment} from '../../environments/environment';
 import {UserService} from '../services/user.service';
-import {take} from 'rxjs/operators';
 import {StorageService} from '../services/storage.service';
+
 declare const window;
 
 @Component({

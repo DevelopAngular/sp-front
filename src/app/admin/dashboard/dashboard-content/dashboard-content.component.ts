@@ -9,7 +9,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {TimeService} from '../../../services/time.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ThemeService} from 'ng2-charts';
-import {ScrollPositionService} from '../../../scroll-position.service';
 import {UserService} from '../../../services/user.service';
 import {combineLatest, interval, Observable, of, Subject} from 'rxjs';
 import {Report} from '../../../models/Report';
@@ -17,6 +16,7 @@ import {Onboard} from '../../../models/Onboard';
 import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {HallPass} from '../../../models/HallPass';
 import {CalendarComponent} from '../../calendar/calendar.component';
+import {isEmpty} from 'lodash';
 
 @Component({
   selector: 'app-dashboard-content',
@@ -71,7 +71,6 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
     private host: ElementRef,
     public darkTheme: DarkThemeSwitch,
     private chartTheming: ThemeService,
-    private scrollPosition: ScrollPositionService,
     public userService: UserService
   ) { }
 
@@ -196,6 +195,7 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
           this.adminService.getDashboardDataRequest().pipe(filter(res => !!res))
         );
       }),
+      filter(([stats, eventReports, dashboard]) => !isEmpty(stats)),
       takeUntil(this.shareChartData$),
     )
       .subscribe(([stats, eventReports, dashboard]: any) => {

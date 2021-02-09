@@ -1,5 +1,5 @@
-import { createAction, props } from '@ngrx/store';
-import { PassLimit } from '../../../models/PassLimit';
+import {createAction, props} from '@ngrx/store';
+import {PassLimit} from '../../../models/PassLimit';
 
 const PASS_LIMIT = 'Pass Limit';
 

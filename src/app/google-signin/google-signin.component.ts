@@ -1,7 +1,7 @@
 import {Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
 import {GoogleLoginService} from '../services/google-login.service';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import {debounceTime, filter, finalize, pluck, retryWhen, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, finalize, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {AuthContext, HttpService} from '../services/http-service';
 import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';

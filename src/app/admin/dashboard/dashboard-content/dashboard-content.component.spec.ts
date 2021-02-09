@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DashboardContentComponent } from './dashboard-content.component';
+import {DashboardContentComponent} from './dashboard-content.component';
 
 describe('DashboardContentComponent', () => {
   let component: DashboardContentComponent;

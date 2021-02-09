@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { PagesDialogComponent } from './pages-dialog.component';
+import {PagesDialogComponent} from './pages-dialog.component';
 
 describe('PagesDialogComponent', () => {
   let component: PagesDialogComponent;

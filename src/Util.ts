@@ -1,4 +1,4 @@
-﻿import { TimeService } from './app/services/time.service';
+﻿import {TimeService} from './app/services/time.service';
 import * as moment from 'moment';
 
 export class Util{

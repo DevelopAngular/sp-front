@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { TabButtonComponent } from './tab-button.component';
+import {TabButtonComponent} from './tab-button.component';
 
 describe('TabButtonComponent', () => {
   let component: TabButtonComponent;

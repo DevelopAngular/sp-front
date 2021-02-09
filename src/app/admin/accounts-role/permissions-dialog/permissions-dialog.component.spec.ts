@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { PermissionsDialogComponent } from './permissions-dialog.component';
+import {PermissionsDialogComponent} from './permissions-dialog.component';
 
 describe('PermissionsDialogComponent', () => {
   let component: PermissionsDialogComponent;

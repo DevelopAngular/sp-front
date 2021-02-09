@@ -18,7 +18,7 @@ const reducer = createReducer(
   assistantsInitialState,
   on(assistantsActions.getAssistants,
       assistantsActions.removeAssistant,
-    assistantsActions.getMoreAssistants,
+    // assistantsActions.getMoreAssistants,
       state => ({...state, loading: true, loaded: false })),
   on(assistantsActions.getAssistantsSuccess, (state, {assistants, next}) => {
     return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAssistants: [] });

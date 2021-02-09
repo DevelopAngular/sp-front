@@ -20,7 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
 import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
-import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {exhaustMap, filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 
 import {DataService} from '../services/data-service';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -291,11 +291,14 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         });
       });
 
-    this.userService.effectiveUser
+    this.http.globalReload$
       .pipe(
+        switchMap(() => {
+          return this.userService.effectiveUser.pipe(take(1));
+        }),
         this.loadingService.watchFirst,
         takeUntil(this.destroyer$),
-        switchMap((eu: RepresentedUser) => {
+        exhaustMap((eu: RepresentedUser) => {
           if (eu) {
               this.effectiveUser = eu;
               this.buttons.forEach((button) => {
@@ -448,7 +451,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   buttonVisibility(button) {
-    return this.hasRoles(button.requiredRoles) && !button.hidden;
+    return !!button && this.hasRoles(button.requiredRoles) && !button.hidden;
   }
 
   showOptions(event) {

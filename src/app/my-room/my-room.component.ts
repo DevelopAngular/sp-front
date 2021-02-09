@@ -1,20 +1,19 @@
 import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {Util} from '../../Util';
 import {DataService} from '../services/data-service';
 import {mergeObject} from '../live-data/helpers';
-import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
+import {LiveDataService} from '../live-data/live-data.service';
 import {LoadingService} from '../services/loading.service';
-import {PassLike} from '../models';
 import {Location} from '../models/Location';
 import {testPasses} from '../models/mock_data';
-import {BasicPassLikeProvider, PassLikeProvider, WrappedProvider} from '../models/providers';
+import {BasicPassLikeProvider, PassLikeProvider} from '../models/providers';
 import {User} from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {TimeService} from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {LocationsService} from '../services/locations.service';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -36,51 +35,54 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
  */
-abstract class RoomPassProvider implements PassLikeProvider {
+// abstract class RoomPassProvider implements PassLikeProvider {
+//
+//   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
+//   constructor(protected liveDataService: LiveDataService, protected locations$: Observable<Location[]>,
+//               protected date$: Observable<Date>, protected search$: Observable<string>) {
+//   }
+//
+//   protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date): Observable<PassLike[]>;
+//
+//   watch(sort: Observable<string>) {
+//     // merge the sort events and search events into one Observable that emits the current state of both.
+//     const sort$ = sort.pipe(map(s => ({sort: s})));
+//     const search$ = this.search$.pipe(map(s => ({search_query: s})));
+//     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
+//
+//     // Create a subject that will replay the last state. This is necessary because of the use of switchMap.
+//     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+//     merged$.subscribe(mergedReplay);
+//
+//     return combineLatest(
+//       this.locations$,
+//       this.date$,
+//       (locations, date) => ({locations, date}))
+//       .pipe(
+//         switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date))
+//       );
+//   }
+// }
 
-  // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-  constructor(protected liveDataService: LiveDataService, protected locations$: Observable<Location[]>,
-              protected date$: Observable<Date>, protected search$: Observable<string>) {
-  }
+// export class ActivePassProvider extends RoomPassProvider {
+//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+//     return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: locations}, date);
+//   }
+// }
 
-  protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date): Observable<PassLike[]>;
-
-  watch(sort: Observable<string>) {
-    // merge the sort events and search events into one Observable that emits the current state of both.
-    const sort$ = sort.pipe(map(s => ({sort: s})));
-    const search$ = this.search$.pipe(map(s => ({search_query: s})));
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
-
-    // Create a subject that will replay the last state. This is necessary because of the use of switchMap.
-    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-    merged$.subscribe(mergedReplay);
-
-    return combineLatest(this.locations$, this.date$, (locations, date) => ({locations, date}))
-      .pipe(
-        switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date))
-      );
-  }
-}
-
-export class ActivePassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-    return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: locations}, date);
-  }
-}
-
-class OriginPassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
-        // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
-  }
-}
-
-class DestinationPassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-    return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
-        // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
-  }
-}
+// class OriginPassProvider extends RoomPassProvider {
+//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+//     return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
+//         // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
+//   }
+// }
+//
+// class DestinationPassProvider extends RoomPassProvider {
+//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+//     return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
+//         // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
+//   }
+// }
 
 
 @Component({
@@ -141,9 +143,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   testPasses: PassLikeProvider;
-  activePasses: WrappedProvider;
-  originPasses: WrappedProvider;
-  destinationPasses: WrappedProvider;
+  activePasses: any;
+  originPasses: any;
+  destinationPasses: any;
 
   inputValue = '';
   user: User;
@@ -214,16 +216,20 @@ export class MyRoomComponent implements OnInit, OnDestroy {
          return location && location.length ? location.map(l => Location.fromJSON(l)) : [];
         })
       );
+    combineLatest(
+      selectedLocationArray$,
+      this.searchDate$,
+      this.searchQuery$.pipe(map(s => ({search_query: s})))
+    )
+    .subscribe(([locations, date, query]) => {
+      this.liveDataService.getMyRoomActivePassesRequest(mergeObject({sort: '-created', search_query: ''}, of(query)), {type: 'location', value: locations}, date);
+      this.liveDataService.getFromLocationPassesRequest(mergeObject({sort: '-created', search_query: ''}, of(query)), locations, date);
+      this.liveDataService.getToLocationPassesRequest(mergeObject({sort: '-created', search_query: ''}, of(query)), locations, date);
+    });
 
-    // Construct the providers we need.
-    this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
-      this.searchDate$, this.searchQuery$));
-    this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
-      this.searchDate$, this.searchQuery$));
-    this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, selectedLocationArray$,
-      this.searchDate$, this.searchQuery$));
-
-    // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
+    this.activePasses = this.liveDataService.myRoomActivePasses$;
+    this.originPasses = this.liveDataService.fromLocationPasses$;
+    this.destinationPasses = this.liveDataService.toLocationPasses$;
   }
 
   setSearchDate(date: Date) {
@@ -282,16 +288,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       this.loadingService.watchFirst,
       tap(([cu, eu]) => {
         this._zone.run(() => {
-
           this.user = cu;
           this.effectiveUser = eu;
           this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
-
-          // if (this.user.isAssistant() && this.effectiveUser) {
-          //   this.canView = this.effectiveUser.roles.includes('access_teacher_room');
-          // } else {
-            this.canView = this.user.roles.includes('access_teacher_room');
-          // }
+          this.canView = this.user.roles.includes('access_teacher_room');
         });
       }),
       switchMap(([cu, eu]) => {
@@ -332,19 +332,18 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     });
 
     this.hasPasses = combineLatest(
-      this.activePasses.length$,
-      this.originPasses.length$,
-      this.destinationPasses.length$,
+      this.liveDataService.myRoomActivePassesTotalNumber$,
+      this.liveDataService.fromLocationPassesTotalNumber$,
+      this.liveDataService.toLocationPassesTotalNumber$,
       (l1, l2, l3) => l1 + l2 + l3 > 0
     );
     this.passesLoaded = combineLatest(
-      this.activePasses.loaded$,
-      this.originPasses.loaded$,
-      this.destinationPasses.loaded$,
+      this.liveDataService.myRoomActivePassesLoaded$,
+      this.liveDataService.fromLocationPassesLoaded$,
+      this.liveDataService.toLocationPassesLoaded$,
       (l1, l2, l3) => l1 && l2 && l3
     ).pipe(
       filter(v => v),
-      delay(250),
       tap((res) => this.searchPending$.next(!res))
     );
   }

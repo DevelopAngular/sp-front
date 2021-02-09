@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AddRolePopupComponent } from './add-role-popup.component';
+import {AddRolePopupComponent} from './add-role-popup.component';
 
 describe('AddRolePopupComponent', () => {
   let component: AddRolePopupComponent;

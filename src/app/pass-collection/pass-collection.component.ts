@@ -10,26 +10,29 @@ import {
   Output
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {DataService} from '../services/data-service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {HallPass} from '../models/HallPass';
 import {Invitation} from '../models/Invitation';
-import {PassLikeProvider} from '../models/providers';
 import {Request} from '../models/Request';
 import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {delay, filter, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {filter, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
-import {isEqual} from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import {HallPassesService} from '../services/hall-passes.service';
+import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {User} from '../models/User';
+import {UserService} from '../services/user.service';
+import * as moment from 'moment';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -69,25 +72,37 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() grid_gap: string = '10px';
   @Input() isAdminPage: boolean;
   @Input() headerWidth: string = '100%';
-  @Input() passProvider: PassLikeProvider;
+  @Input() passProvider: Observable<any>;
+  @Input() hasFilterPasses: boolean;
+  @Input() filterModel: string;
+  @Input() filterDate: moment.Moment;
+  @Input() user;
+  @Input() selectedSort = null;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
   @Output() currentPassesEmit = new EventEmitter();
+  @Output() filterPasses = new EventEmitter();
   @Output() passClick = new EventEmitter<boolean>();
 
-  currentPasses$: Observable<PassLike[]>;
-  currentPasses: PassLike[] = [];
-  selectedSort;
-
+  currentPasses$: Observable<any>;
   activePassTime$;
-
   timers: number[] = [];
-
   timerEvent: Subject<void> = new BehaviorSubject(null);
-
   sort$ = this.dataService.sort$;
-  test: any;
+
+  destroy$ = new Subject();
+
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    if (this.screenService.isDeviceSmallExtra) {
+      this.grid_template_columns = '143px';
+    }
+
+    if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
+      this.grid_template_columns = '157px';
+    }
+  }
 
   private static getDetailDialog(pass: PassLike): any {
     if (pass instanceof HallPass) {
@@ -113,7 +128,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private kioskMode: KioskModeService,
       private sanitizer: DomSanitizer,
       public screenService: ScreenService,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
+      private passesService: HallPassesService,
+      private userService: UserService,
   ) {}
 
   get gridTemplate() {
@@ -127,41 +144,52 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     return this.grid_gap;
   }
 
-  ngOnInit() {
-      if (this.mock) {
+  get _color() {
+    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
+  }
 
-      } else {
-        this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-        this.currentPasses$
-          .pipe(
-            switchMap((_passes) => {
-              if (isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
-                return of(_passes);
-              } else {
-                this.currentPasses = [];
-                return of(_passes).pipe(delay(500));
-              }
-            })
-          )
-          .subscribe((passes: any) => {
-            this.currentPasses = passes;
-            this.currentPassesEmit.emit(passes);
-          });
-      }
-        if (this.isActive) {
-          this.timers.push(window.setInterval(() => {
-            this.timerEvent.next(null);
-            this.cdr.detectChanges();
-          }, 1000));
-        }
+  get selectedText() {
+    if (this.selectedSort === 'past-hour') {
+      return 'Past hour';
+    } else if (this.selectedSort === 'today') {
+      return 'Today';
+    } else if (this.selectedSort === 'past-three-days') {
+      return 'Past 3 days';
+    } else if (this.selectedSort === 'past-seven-days') {
+      return 'Past 7 days';
+    } else if (this.selectedSort === 'past-seven-days') {
+      return null;
+    }
+  }
+
+  ngOnInit() {
+    if (this.passProvider) {
+      this.currentPasses$ = this.passProvider.pipe(
+        tap(passes => this.currentPassesEmit.emit(passes))
+      );
+    }
+
+    if (this.isActive) {
+      this.timers.push(window.setInterval(() => {
+        this.timerEvent.next(null);
+        this.cdr.detectChanges();
+      }, 1000));
+    }
+
+    this.userService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.user = user;
+    });
   }
 
   ngOnDestroy() {
     this.timers.forEach(id => {
-      // console.log('Clearing interval');
       clearInterval(id);
     });
     this.timers = [];
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   get _icon() {
@@ -172,10 +200,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       setting: null
     });
   }
-  get _color() {
-    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
 
-  }
   getEmptyMessage() {
     return this.emptyMessage;
   }
@@ -183,8 +208,56 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
     this.passClick.emit(true);
-    // this.dataService.markRead(pass).subscribe();
+    this.dataService.markRead(pass).subscribe();
     this.initializeDialog(pass);
+  }
+
+  openFilter(target) {
+    const sortOptions = [
+      { display: 'Past hour', color: this.darkTheme.getColor(), action: 'past-hour'},
+      { display: 'Today', color: this.darkTheme.getColor(), action: 'today'},
+      { display: 'Past 3 days', color: this.darkTheme.getColor(), action: 'past-three-days'},
+      { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past-seven-days'},
+      { display: 'All Time', color: this.darkTheme.getColor(), action: 'all_time', divider: this.user.show_expired_passes && !User.fromJSON(this.user).isStudent() }
+    ];
+    if (this.user.show_expired_passes && User.fromJSON(this.user).isTeacher()) {
+      sortOptions.push({ display: 'Hide Expired Passes', color: this.darkTheme.getColor(), action: 'hide_expired_pass' });
+    }
+    const filterDialog = this.dialog.open(DropdownComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': target.currentTarget,
+        'sortData': sortOptions,
+        'selectedSort': this.selectedSort || 'all_time',
+        'maxHeight': '332px'
+      }
+    });
+
+    filterDialog.afterClosed()
+      .pipe(filter(res => !!res))
+      .subscribe(action => {
+        if (action !== 'hide_expired_pass') {
+          if (this.selectedSort === action || action === 'all_time') {
+            this.selectedSort = null;
+          } else {
+            this.selectedSort = action;
+          }
+          this.cdr.detectChanges();
+          this.passesService.updateFilterRequest(this.filterModel, this.selectedSort);
+          this.passesService.filterExpiredPassesRequest(this.user, this.selectedSort);
+          this.filterPasses.emit(this.selectedSort);
+        } else {
+          this.openAppearance();
+        }
+    });
+  }
+
+  openAppearance() {
+    this.dialog.open(SpAppearanceComponent, {
+      panelClass: 'sp-form-dialog',
+      data: {fromFilter: true}
+    });
   }
 
   onSortSelected(sort: string) {
@@ -244,24 +317,12 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   openSortDialog(event) {
-    // debugger;
     const sortOptions = [
       { display: 'Pass Expiration Time', color: this.darkTheme.getColor(), action: 'expiration_time', toggle: false },
       { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
       { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
     ];
     UNANIMATED_CONTAINER.next(true);
-    // const sortDialog = this.dialog.open(ConsentMenuComponent, {
-    //     panelClass: 'consent-dialog-container',
-    //     backdropClass: 'invis-backdrop',
-    //     data: {
-    //       'header': 'SORT BY',
-    //       'options': sortOptions,
-    //       'trigger': new ElementRef(event.currentTarget),
-    //       'isSort': true,
-    //       'sortMode': this.dataService.sort$.value
-    //     }
-    // });
 
     const sortDialog = this.dialog.open(DropdownComponent, {
       panelClass: 'consent-dialog-container',
@@ -280,19 +341,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       )
       .subscribe(sortMode => {
         this.selectedSort = sortMode;
-        this.onSortSelected(sortMode);
-        // console.log(sortMode);
+        this.onSortSelected(this.selectedSort);
       });
-  }
-
-  @HostListener('window:resize')
-  checkDeviceWidth() {
-    if (this.screenService.isDeviceSmallExtra) {
-      this.grid_template_columns = '143px';
-    }
-
-    if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
-      this.grid_template_columns = '157px';
-    }
   }
 }

@@ -1,19 +1,19 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 import * as moment from 'moment';
 
-import { combineLatest, empty, merge, Observable, of, Subject } from 'rxjs';
-import { map, scan, startWith, switchMap } from 'rxjs/operators';
-import { Paged, PassLike } from '../models';
-import { BaseModel } from '../models/base';
-import { HallPass } from '../models/HallPass';
-import { Invitation } from '../models/Invitation';
-import { Location } from '../models/Location';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { HttpService } from '../services/http-service';
-import { PollingEvent, PollingService } from '../services/polling-service';
-import { TimeService } from '../services/time.service';
+import {combineLatest, empty, merge, Observable, of, Subject} from 'rxjs';
+import {distinctUntilChanged, exhaustMap, map, pluck, scan, startWith, switchMap} from 'rxjs/operators';
+import {Paged, PassLike} from '../models';
+import {BaseModel} from '../models/base';
+import {HallPass} from '../models/HallPass';
+import {Invitation} from '../models/Invitation';
+import {Location} from '../models/Location';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {HttpService} from '../services/http-service';
+import {PollingEvent, PollingService} from '../services/polling-service';
+import {TimeService} from '../services/time.service';
 import {
   Action,
   ExternalEvent,
@@ -24,8 +24,8 @@ import {
   PollingEventHandler,
   TransformFunc
 } from './events';
-import { filterHallPasses, filterNewestFirst, identityFilter } from './filters';
-import { constructUrl, QueryParams } from './helpers';
+import {filterHallPasses, filterNewestFirst, identityFilter} from './filters';
+import {constructUrl, QueryParams} from './helpers';
 import {
   AddItem,
   makePollingEventHandler,
@@ -34,7 +34,75 @@ import {
   RemoveRequestOnApprove,
   UpdateItem
 } from './polling-event-handlers';
-import { State } from './state';
+import {State} from './state';
+import {HallPassesService} from '../services/hall-passes.service';
+import {
+  getActivePasses,
+  getExpiredPasses,
+  getFromLocationPasses,
+  getHallMonitorPasses,
+  getMyRoomPasses,
+  getPassLikeCollection,
+  getToLocationPasses,
+  updateActivePasses,
+  updateHallMonitorPasses
+} from '../ngrx/pass-like-collection/actions';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {
+  getInvitationLoadedState,
+  getInvitationLoadingState,
+  getInvitationsCollection,
+  getInvitationsTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
+import {
+  getRequestsCollection,
+  getRequestsLoaded,
+  getRequestsLoading,
+  getRequestsTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/requests/states';
+import {
+  getExpiredPassesCollection,
+  getExpiredPassesLoaded,
+  getExpiredPassesLoading,
+  getExpiredPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
+import {
+  getFuturePassesCollection,
+  getFuturePassesLoaded,
+  getFuturePassesLoading,
+  getFuturePassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/future-passes/states';
+import {
+  getActivePassesCollection,
+  getActivePassesLoaded,
+  getActivePassesLoading,
+  getActivePassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/active-passes/states';
+import {
+  getToLocationLoaded,
+  getToLocationLoading,
+  getToLocationPassesCollection,
+  getToLocationPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/to-location/states';
+import {
+  getFromLocationLoaded,
+  getFromLocationLoading,
+  getFromLocationPassesCollection,
+  getFromLocationPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/from-location/states';
+import {
+  getHallMonitorPassesCollection,
+  getHallMonitorPassesLoaded,
+  getHallMonitorPassesLoading,
+  getHallMonitorPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/hall-monitor-passes/states/hall-monitor-passes-getters.state';
+import {
+  getMyRoomPassesCollection,
+  getMyRoomPassesLoaded,
+  getMyRoomPassesLoading,
+  getMyRoomPassesTotalNumber
+} from '../ngrx/pass-like-collection/nested-states/my-room-passes/states';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -149,7 +217,10 @@ function mergeFilters<T>(filters: FilterFunc<T>[]): FilterFunc<T> {
 /**
  * Types of filters for hall passes.
  */
-export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location | Location[] };
+export type PassFilterType =
+  { type: 'issuer', value: User } |
+  { type: 'student', value: User } |
+  { type: 'location', value: Location | Location[] };
 
 export type RequestFilterType =
   { type: 'issuer', value: User }
@@ -179,12 +250,70 @@ function makeSchoolFilter(http: HttpService) {
 export class LiveDataService {
 
   private globalReload$ = new Subject();
+  count = 0;
+  initialUrls: string[] = [];
 
-  constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
-    this.http.currentSchool$.subscribe((value) => {
-      setTimeout(() => {
-        this.globalReload$.next(null);
-      }, 5);
+  invitations$: Observable<Invitation[]> = this.store.select(getInvitationsCollection);
+  invitationsLoading$: Observable<boolean> = this.store.select(getInvitationLoadingState);
+  invitationsLoaded$: Observable<boolean> = this.store.select(getInvitationLoadedState);
+  invitationsTotalNumber$: Observable<number> = this.store.select(getInvitationsTotalNumber);
+
+  requests$: Observable<Request[]> = this.store.select(getRequestsCollection);
+  requestsLoading$: Observable<boolean> = this.store.select(getRequestsLoading);
+  requestsLoaded$: Observable<boolean> = this.store.select(getRequestsLoaded);
+  requestsTotalNumber$: Observable<number> = this.store.select(getRequestsTotalNumber);
+
+  expiredPasses$: Observable<HallPass[]> = this.store.select(getExpiredPassesCollection);
+  expiredPassesLoading$: Observable<boolean> = this.store.select(getExpiredPassesLoading);
+  expiredPassesLoaded$: Observable<boolean> = this.store.select(getExpiredPassesLoaded);
+  expiredPassesTotalNumber$: Observable<number> = this.store.select(getExpiredPassesTotalNumber);
+
+  futurePasses$: Observable<HallPass[]> = this.store.select(getFuturePassesCollection);
+  futurePassesLoading$: Observable<boolean> = this.store.select(getFuturePassesLoading);
+  futurePassesLoaded$: Observable<boolean> = this.store.select(getFuturePassesLoaded);
+  futurePassesTotalNumber$: Observable<number> = this.store.select(getFuturePassesTotalNumber);
+
+  activePasses$: Observable<HallPass[]> = this.store.select(getActivePassesCollection);
+  activePassesLoading$: Observable<boolean> = this.store.select(getActivePassesLoading);
+  activePassesLoaded$: Observable<boolean> = this.store.select(getActivePassesLoaded);
+  activePassesTotalNumber$: Observable<number> = this.store.select(getActivePassesTotalNumber);
+
+  toLocationPasses$: Observable<HallPass[]> = this.store.select(getToLocationPassesCollection);
+  toLocationPassesLoading$: Observable<boolean> = this.store.select(getToLocationLoading);
+  toLocationPassesLoaded$: Observable<boolean> = this.store.select(getToLocationLoaded);
+  toLocationPassesTotalNumber$: Observable<number> = this.store.select(getToLocationPassesTotalNumber);
+
+  fromLocationPasses$: Observable<HallPass[]> = this.store.select(getFromLocationPassesCollection);
+  fromLocationPassesLoading$: Observable<boolean> = this.store.select(getFromLocationLoading);
+  fromLocationPassesLoaded$: Observable<boolean> = this.store.select(getFromLocationLoaded);
+  fromLocationPassesTotalNumber$: Observable<number> = this.store.select(getFromLocationPassesTotalNumber);
+
+  hallMonitorPasses$: Observable<HallPass[]> = this.store.select(getHallMonitorPassesCollection);
+  hallMonitorPassesLoading$: Observable<boolean> = this.store.select(getHallMonitorPassesLoading);
+  hallMonitorPassesLoaded$: Observable<boolean> = this.store.select(getHallMonitorPassesLoaded);
+  hallMonitorPassesTotalNumber$: Observable<number> = this.store.select(getHallMonitorPassesTotalNumber);
+
+  myRoomActivePasses$: Observable<HallPass[]> = this.store.select(getMyRoomPassesCollection);
+  myRoomActivePassesLoading$: Observable<boolean> = this.store.select(getMyRoomPassesLoading);
+  myRoomActivePassesLoaded$: Observable<boolean> = this.store.select(getMyRoomPassesLoaded);
+  myRoomActivePassesTotalNumber$: Observable<number> = this.store.select(getMyRoomPassesTotalNumber);
+
+  constructor(
+    private http: HttpService,
+    private polling: PollingService,
+    private timeService: TimeService,
+    private hallPassesService: HallPassesService,
+    private store: Store<AppState>,
+  ) {
+    this.http.schoolToggle$
+      .pipe(
+        pluck('id'),
+        distinctUntilChanged()
+      )
+      .subscribe((value) => {
+        setTimeout(() => {
+          this.globalReload$.next(null);
+        }, 5);
     });
 
     this.globalReload$.subscribe(() => {
@@ -261,12 +390,17 @@ export class LiveDataService {
     };
 
     const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
-      : (json) => json.results.map(raw => config.decoder(raw));
+      : (json) => {
+        if (config.initialUrl.includes('&active=past')) {
+          this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('offset')) : '');
+        }
+       return json.results.map(raw => config.decoder(raw));
+      };
 
     const fullReload$ = merge(
-      of('invalidate'),
-      this.polling.listen('invalidate'),
-      this.globalReload$.pipe(map(() => 'invalidate'))
+      of('invalidate 1'),
+      // this.polling.listen('invalidate').pipe(map(() => 'invalidate 2')),
+      this.globalReload$.pipe(map(() => 'invalidate 3'))
     );
 
     /**
@@ -277,9 +411,13 @@ export class LiveDataService {
      */
     return fullReload$
       .pipe(
-        switchMap(() => this.http.get<Paged<any>>(config.initialUrl)),
+        exhaustMap((value) => {
+          return this.http.get<Paged<any>>(config.initialUrl);
+        }),
         map(rawDecoder),
-        switchMap(items => events.pipe(scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items)))),
+        switchMap(items => {
+          return events.pipe(scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items)));
+        }),
         map(state => state.filtered_passes)
       );
   }
@@ -492,7 +630,7 @@ export class LiveDataService {
     });
   }
 
-  watchPastHallPasses(filter?: PassFilterType): Observable<HallPass[]> {
+  watchPastHallPasses(filter?: PassFilterType, limit = 50, timeFilter?: string, offset?: string): Observable<HallPass[]> {
     let queryFilter = '';
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
@@ -523,11 +661,17 @@ export class LiveDataService {
         }
       }
     }
+    if (timeFilter) {
+      queryFilter += `&model_filter=past-passes&time_filter=${timeFilter}`;
+    }
+    if (!!offset) {
+      queryFilter += `&${offset}`;
+    }
 
     return this.watch<HallPass, string>({
       externalEvents: empty(),
       eventNamespace: 'hall_pass',
-      initialUrl: `v1/hall_passes?limit=20&active=past${queryFilter}`,
+      initialUrl: `v1/hall_passes?limit=${limit}&active=past${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
@@ -635,7 +779,7 @@ export class LiveDataService {
 
   watchActivePassLike(student: User): Observable<PassLike> {
 
-    const passes$ = this.watchActiveHallPasses(empty(), {type: 'student', value: student});
+    const passes$ = this.activePasses$;
     const requests$ = this.watchActiveRequests(student).pipe(map(requests => {
       return requests.filter(req => !req.request_time);
     }));
@@ -657,6 +801,42 @@ export class LiveDataService {
       }
       return null;
     }));
+  }
+
+  getPassLikeCollectionRequest(user) {
+    this.store.dispatch(getPassLikeCollection({user}));
+  }
+
+  getActivePassesRequest(sortingEvents: Observable<HallPassFilter>, user: User) {
+    this.store.dispatch(getActivePasses({sortingEvents, user}));
+  }
+
+  updateActivePassRequest(sortingEvents: Observable<HallPassFilter>, user: User) {
+    this.store.dispatch(updateActivePasses({sortingEvents, user}));
+  }
+
+  getExpiredPassesRequest(user, timeFilter, offset = null) {
+    this.store.dispatch(getExpiredPasses({user, timeFilter, offset}));
+  }
+
+  getToLocationPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null) {
+    this.store.dispatch(getToLocationPasses({sortingEvents, filter, date}));
+  }
+
+  getFromLocationPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null) {
+    this.store.dispatch(getFromLocationPasses({sortingEvents, filter, date}));
+  }
+
+  getHallMonitorPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: PassFilterType = null, date: Date = null) {
+    this.store.dispatch(getHallMonitorPasses({sortingEvents, filter, date}));
+  }
+
+  updateHallMonitorPassesRequest(sortingEvents: Observable<HallPassFilter>, filter: PassFilterType = null, date: Date = null) {
+    this.store.dispatch(updateHallMonitorPasses({sortingEvents, filter, date}));
+  }
+
+  getMyRoomActivePassesRequest(sortingEvents: Observable<HallPassFilter>, filter: PassFilterType = null, date: Date = null) {
+    this.store.dispatch(getMyRoomPasses({sortingEvents, filter, date}));
   }
 
 }

@@ -1,6 +1,6 @@
-import { AppState } from '../../app-state/app-state';
-import { createSelector } from '@ngrx/store';
-import { IToastState } from './toast.state';
+import {AppState} from '../../app-state/app-state';
+import {createSelector} from '@ngrx/store';
+import {IToastState} from './toast.state';
 
 export const toastState = (state: AppState) => state.toast;
 

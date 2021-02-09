@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { GSuiteSetUpComponent } from './g-suite-set-up.component';
+import {GSuiteSetUpComponent} from './g-suite-set-up.component';
 
 describe('GSuiteSetUpComponent', () => {
   let component: GSuiteSetUpComponent;

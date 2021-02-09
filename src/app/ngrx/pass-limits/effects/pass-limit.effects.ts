@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import {Injectable} from '@angular/core';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as passLimitActions from '../actions';
 import {catchError, concatMap, map} from 'rxjs/operators';
 import {LocationsService} from '../../../services/locations.service';

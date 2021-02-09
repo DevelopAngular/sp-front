@@ -148,7 +148,7 @@
 </div>
 
 <div class="host" *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
-      user.isAssistant() && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
+      isAssistant && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
   <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
     <div *ngFor="let button of buttons" class="teacherNav_tab" #tabRefMobile
          appCrossPointerEventTarget

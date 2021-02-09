@@ -66,8 +66,19 @@ import {CustomToastComponent} from './custom-toast/custom-toast.component';
 import {PassesEffects} from './ngrx/passes/effects';
 import {ContactTraceEffects} from './ngrx/contact-trace/effects';
 import {IntrosEffects} from './ngrx/intros/effects/intros.effects';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import {ServiceWorkerModule} from '@angular/service-worker';
+import {FiltersEffects} from './ngrx/pass-filters/effects';
 import {AccessTokenInterceptor} from './services/AccessTokenInterceptor';
+import {InvitationsEffects} from './ngrx/pass-like-collection/nested-states/invitations/effects';
+import {PassLikeCollectionEffects} from './ngrx/pass-like-collection/effects/pass-like-collection.effects';
+import {RequestsEffects} from './ngrx/pass-like-collection/nested-states/requests/effects';
+import {ExpiredPassesEffects} from './ngrx/pass-like-collection/nested-states/expired-passes/effects';
+import {FuturePassesEffects} from './ngrx/pass-like-collection/nested-states/future-passes/effects';
+import {ActivePassesEffects} from './ngrx/pass-like-collection/nested-states/active-passes/effects';
+import {ToLocationPassesEffects} from './ngrx/pass-like-collection/nested-states/to-location/effects';
+import {FromLocationPassesEffects} from './ngrx/pass-like-collection/nested-states/from-location/effects';
+import {HallMonitorPassesEffects} from './ngrx/pass-like-collection/nested-states/hall-monitor-passes/effects';
+import {MyRoomPassesEffects} from './ngrx/pass-like-collection/nested-states/my-room-passes/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -182,7 +193,18 @@ const appRoutes: Routes = [
             PassLimitEffects,
             PassesEffects,
             ContactTraceEffects,
-            IntrosEffects
+            IntrosEffects,
+            PassLikeCollectionEffects,
+            InvitationsEffects,
+            RequestsEffects,
+            ExpiredPassesEffects,
+            FuturePassesEffects,
+            ActivePassesEffects,
+            ToLocationPassesEffects,
+            FromLocationPassesEffects,
+            HallMonitorPassesEffects,
+            MyRoomPassesEffects,
+            FiltersEffects
         ]),
         StoreDevtoolsModule.instrument({}),
         HammerModule,

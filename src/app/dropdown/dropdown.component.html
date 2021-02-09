@@ -7,7 +7,7 @@
      (inputValueEmit)="search($event)"
 >
 
-  <div class="options-wrapper" *ngIf="locations" #optionsWrapper>
+  <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="locations" #optionsWrapper>
     <div class="option" #_option>
 
       <div class="option-data"
@@ -52,7 +52,7 @@
            (mouseleave)="_option.hovered = false; _option.pressed = false"
       >
         <div class="option-data_leftside">
-          <span style="padding: 5px 0" [style.color]="selectedLocation && location.room === selectedLocation.room && location.title === selectedLocation.title ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ location.title + ' (' + location.room + ' )' }}</span>
+          <span style="padding: 5px 0" [style.color]="selectedLocation && location.room === selectedLocation.room && location.title === selectedLocation.title ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ location.title + ' (' + location.room + ')' }}</span>
         </div>
         <div class="option-data_rightside">
 <!--          <div [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})"-->
@@ -68,7 +68,7 @@
     </div>
   </div>
 
-  <div class="options-wrapper" *ngIf="schools" #optionsWrapper>
+  <div class="options-wrapper" [style.max-height]="optionsMaxHeight"  *ngIf="schools" #optionsWrapper>
     <div class="option" *ngFor="let school of schools" #schoolList>
       <div #_option class="option-data"
            [ngClass]="{
@@ -96,7 +96,7 @@
     </div>
   </div>
 
-  <div class="options-wrapper" *ngIf="teachers && selectedTeacher"  style="padding: 15px 25px 60px 25px;" #optionsWrapper>
+  <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="teachers && selectedTeacher"  style="padding: 15px 25px 60px 25px;" #optionsWrapper>
     <div class="option" style="height: 40px;" *ngFor="let teacher of teachers">
       <div #_option class="option-data" style="background-clip: border-box; padding: 0;"
            [ngClass]="{
@@ -129,8 +129,8 @@
     </div>
   </div>
 
-  <div class="options-wrapper" *ngIf="sortData">
-    <div class="option" *ngFor="let sort of sortData" #optionsWrapper>
+  <div class="options-wrapper sort-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="sortData">
+    <div class="option sort" *ngFor="let sort of sortData" #optionsWrapper>
       <div #_st class="option-data"
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
@@ -153,7 +153,7 @@
           </div>
         </div>
       </div>
-<!--      <div class="option-divider"></div>-->
+      <mat-divider style="margin-top: 8px" *ngIf="sort.divider"></mat-divider>
     </div>
   </div>
 </div>

@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { PassLimitTooltipComponent } from './pass-limit-tooltip.component';
+import {PassLimitTooltipComponent} from './pass-limit-tooltip.component';
 
 describe('PassLimitTooltipComponent', () => {
   let component: PassLimitTooltipComponent;

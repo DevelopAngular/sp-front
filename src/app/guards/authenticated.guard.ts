@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
-import { Observable } from 'rxjs';
-import { GoogleLoginService } from '../services/google-login.service';
-import { HttpService } from '../services/http-service';
+import {Observable} from 'rxjs';
+import {GoogleLoginService} from '../services/google-login.service';
 import {map, tap} from 'rxjs/operators';
 import {StorageService} from '../services/storage.service';
 

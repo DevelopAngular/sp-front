@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AdminService} from '../../../services/admin.service';
-import {UserService} from '../../../services/user.service';
 import {SupportService} from '../../../services/support.service';
 
 declare const window;

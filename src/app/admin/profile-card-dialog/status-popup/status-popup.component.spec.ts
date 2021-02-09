@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { StatusPopupComponent } from './status-popup.component';
+import {StatusPopupComponent} from './status-popup.component';
 
 describe('StatusPopupComponent', () => {
   let component: StatusPopupComponent;

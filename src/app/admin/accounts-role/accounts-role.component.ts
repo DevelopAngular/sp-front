@@ -1,6 +1,6 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
@@ -47,7 +47,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   accountRoleData$: Observable<any[]>;
 
-  isLoading$: Observable<boolean>;
+  isLoading$: Observable<boolean> = of(false);
   isLoaded$: Observable<boolean>;
   sort$: Observable<string>;
   sortLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

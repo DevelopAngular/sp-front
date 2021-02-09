@@ -1,4 +1,4 @@
-import { NgGapiClientConfig } from 'ng-gapi';
+import {NgGapiClientConfig} from 'ng-gapi';
 
 export const GOOGLE_CLIENT_ID = '625620388494-6buq49df4o5r1slgah33kgm3a7gbin23.apps.googleusercontent.com';
 

@@ -10,6 +10,7 @@ export class TableService {
   selectRow: Subject<any> = new Subject<any>();
   clearSelectedUsers: Subject<any> = new Subject<any>();
   loadingCSV$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isAllSelected$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() { }
 }

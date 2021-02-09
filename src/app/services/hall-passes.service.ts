@@ -27,10 +27,18 @@ import {
   getPassesNextUrl,
   getPassesTotalCount,
   getSortPassesLoading,
-  getSortPassesValue
+  getSortPassesValue,
+  getTotalPasses
 } from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
 import {PollingService} from './polling-service';
+import {getPassFilter, updatePassFilter} from '../ngrx/pass-filters/actions';
+import {getFiltersData, getFiltersDataLoading} from '../ngrx/pass-filters/states';
+import {PassFilters} from '../models/PassFilters';
+import {Invitation} from '../models/Invitation';
+import {getInvitationsCollection} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
+import {filterExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/actions';
+import {getLastAddedExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
 
 @Injectable({
   providedIn: 'root'
@@ -51,8 +59,17 @@ export class HallPassesService {
   sortPassesLoading$: Observable<boolean> = this.store.select(getSortPassesLoading);
   sortPassesValue$: Observable<string> = this.store.select(getSortPassesValue);
   currentPassesCount$: Observable<number> = this.store.select(getPassesTotalCount);
+  currentCountPassesInPage$: Observable<number> = this.store.select(getTotalPasses);
+
+  passFilters$: Observable<{[model: string]: PassFilters}> = this.store.select(getFiltersData);
+  passFiltersLoading$: Observable<boolean> = this.store.select(getFiltersDataLoading);
 
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
+
+  expiredPassesNextUrl$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  lastAddedExpiredPasses$: Observable<HallPass[]> = this.store.select(getLastAddedExpiredPasses);
+
+  invitations$: Observable<Invitation[]> = this.store.select(getInvitationsCollection);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
@@ -204,5 +221,26 @@ export class HallPassesService {
   watchEndPass() {
     return this.pollingService.listen('hall_pass.end');
   }
+
+  getFiltersRequest(model: string) {
+    this.store.dispatch(getPassFilter({model}));
+  }
+
+  getFilters(model: string) {
+    return this.http.get(`v1/filters/${model}`);
+  }
+
+  updateFilterRequest(model, value) {
+    this.store.dispatch(updatePassFilter({model, value}));
+  }
+
+  updateFilter(model: string, value: string) {
+    return this.http.patch(`v1/filters/${model}`, {default_time_filter: value});
+  }
+
+  filterExpiredPassesRequest(user, timeFilter) {
+    this.store.dispatch(filterExpiredPasses({user, timeFilter}));
+  }
+
 }
 

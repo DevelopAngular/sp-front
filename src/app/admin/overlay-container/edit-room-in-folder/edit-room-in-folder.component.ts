@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormGroup} from '@angular/forms';
 
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
-import { RoomData } from '../overlay-data.service';
-import { ValidButtons } from '../advanced-options/advanced-options.component';
+import {RoomData} from '../overlay-data.service';
+import {ValidButtons} from '../advanced-options/advanced-options.component';
 
 @Component({
   selector: 'app-edit-room-in-folder',

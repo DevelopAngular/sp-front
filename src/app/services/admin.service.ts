@@ -45,7 +45,6 @@ import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
 import {CleverInfo} from '../models/CleverInfo';
 import {constructUrl} from '../live-data/helpers';
-import {isObject} from 'lodash';
 
 @Injectable({
   providedIn: 'root'

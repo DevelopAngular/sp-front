@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SpDataTableComponent } from './sp-data-table.component';
+import {SpDataTableComponent} from './sp-data-table.component';
 
 describe('SpDataTableComponent', () => {
   let component: SpDataTableComponent;

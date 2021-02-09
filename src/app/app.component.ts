@@ -16,8 +16,6 @@ import {GoogleLoginService} from './services/google-login.service';
 import {HttpService, SPError} from './services/http-service';
 import {KioskModeService} from './services/kiosk-mode.service';
 import {StorageService} from './services/storage.service';
-import {WebConnectionService} from './services/web-connection.service';
-import {ToastConnectionComponent} from './toast-connection/toast-connection.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
 import {Meta} from '@angular/platform-browser';

@@ -1,3 +1,5 @@
+@import '../../sp-colors';
+
 @media all and  (max-width: 425px) {
   div.collection-grid-wrapper {
     display: grid;
@@ -24,6 +26,11 @@
   }
 }
 
+.scroll-container {
+  //max-height: 584px;
+  //overflow: auto;
+}
+
 @media all and  (max-width: 940px) {
   div.collection-wrapper {
     width: 100%;
@@ -39,7 +46,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 40px;
-
+    position: relative;
 }
 
 .collection-wrapper, .collection-grid-wrapper, .collection-list-wrapper {
@@ -59,6 +66,12 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+
+  .collection-title {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .collection-icon{
@@ -75,7 +88,7 @@
 }
 
 .collection-title{
-    color: #1F195E;
+    color: $navy;
     font-size: 20px;
     font-weight: bold;
 }
@@ -94,14 +107,8 @@
 
 .collection-grid-wrapper{
     display: grid;
-    //grid-template-columns: repeat(auto-fill, minmax(143px, .3fr));
     margin-top: 15px;
-    //justify-content: space-between;
 }
-//.collection-grid-wrapper::after {
-//    content: '';
-//    flex: auto;
-//}
 
 .tile{
   padding: 0;
@@ -115,13 +122,59 @@
     font-weight: bold;
 }
 
+.filter-button {
+  .icon {
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(244, 244, 244, .75);
+    transition: background-color .2s ease;
+  }
+
+  .selected-button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F0F3FA;
+    border-radius: 15px;
+    width: 123px;
+    height: 31px;
+
+    .selected-title {
+      color: $navy;
+      margin-left: 6px;
+    }
+  }
+}
+
 .sort-selector{
     margin: 0 5px;
 }
 
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  margin-top: 70px;
+  align-items: center;
+}
+
 .empty-message{
-    font-size: 16pt;
+    font-size: 17px;
     text-align: center;
     color: rgb(126, 135, 157);
     margin-top: 25px;
+}
+
+.bottom-shadow {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  border-radius: 12px;
+  background-color: #ffffFF;
+  box-shadow: 0 0 30px 27px white;
 }

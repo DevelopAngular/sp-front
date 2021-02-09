@@ -1,4 +1,4 @@
-import { PassClickDirective } from './pass-click.directive';
+import {PassClickDirective} from './pass-click.directive';
 
 describe('PassClickDirective', () => {
   it('should create an instance', () => {

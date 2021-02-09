@@ -23,10 +23,10 @@ const reducer = createReducer(
   passesInitialState,
   on(
     passesActions.searchPasses,
-    passesActions.getMorePasses,
+    // passesActions.getMorePasses,
       state => ({...state, loading: true, loaded: false})),
   on(passesActions.searchPassesSuccess, (state, {passes, next, totalCount}) => {
-    return adapter.addAll(passes, {...state, loading: false, loaded: true, nextRequest: next, lastAddedPasses: passes, totalCount});
+    return adapter.addAll(passes, {...state, loading: false, loaded: true, nextRequest: next, lastAddedPasses: passes, totalCount, sortValue: 'desc'});
   }),
   on(passesActions.getMorePassesSuccess, (state, {passes, next}) => {
     return adapter.addMany(passes, {...state, loaded: true, loading: false, nextRequest: next, lastAddedPasses: passes, moreLoading: false});
