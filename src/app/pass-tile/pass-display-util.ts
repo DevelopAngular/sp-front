@@ -4,6 +4,7 @@ import {HallPass} from '../models/HallPass';
 import {Invitation} from '../models/Invitation';
 import {Request} from '../models/Request';
 
+
 export function getFormattedPassDate(pass: PassLike) {
   let date: Date;
 
