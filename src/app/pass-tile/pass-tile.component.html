@@ -40,7 +40,7 @@
       <ng-template
         cdkConnectedOverlay
         [cdkConnectedOverlayOrigin]="trigger"
-        [cdkConnectedOverlayOpen]="isOpen"
+        [cdkConnectedOverlayOpen]="isOpenTooltip | async"
         [cdkConnectedOverlayMinWidth]="335"
         [cdkConnectedOverlayPositions]="[{originY: 'top', originX: 'end', overlayY: 'bottom', overlayX: 'center', offsetY: 360, offsetX: 100 }]"
       >

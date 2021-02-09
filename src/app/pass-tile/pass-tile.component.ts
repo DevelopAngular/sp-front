@@ -36,7 +36,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   hovered: boolean;
   timers: number[] = [];
   hoverDestroyer$: Subject<any>;
-  isOpen: boolean;
+  isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   disableClose: boolean;
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -161,13 +161,15 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   studentNameOver() {
-    this.isOpen = true;
+    setTimeout(() => {
+      this.isOpenTooltip.next(true);
+    }, 500);
   }
 
   studentNameLeave() {
     setTimeout(() => {
       if (!this.disableClose) {
-        this.isOpen = false;
+        this.isOpenTooltip.next(false);
       }
     }, 500);
   }

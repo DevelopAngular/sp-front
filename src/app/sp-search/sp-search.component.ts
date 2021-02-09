@@ -160,6 +160,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   foundLocations: Location[] = [];
 
   disableCloseTooltip: boolean;
+  isOpenedTooltip: boolean;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -492,9 +493,19 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.isProposed = false;
   }
 
+  studentNameOver(event) {
+    setTimeout(() => {
+      if (!this.isOpenedTooltip) {
+        this.isOpenedTooltip = true;
+        event.isOpenTooltip = true;
+      }
+    }, 500);
+  }
+
   studentNameLeave(event) {
     setTimeout(() => {
       if (!this.disableCloseTooltip) {
+        this.isOpenedTooltip = false;
         event.isOpenTooltip = false;
       }
     }, 500);
