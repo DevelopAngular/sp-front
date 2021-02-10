@@ -82,7 +82,7 @@ import {
 import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
-import {HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {getSchoolsFailure} from '../ngrx/schools/actions';
@@ -178,6 +178,7 @@ export class UserService {
 
   constructor(
     private http: HttpService,
+    private httpClient: HttpClient,
     private pollingService: PollingService,
     private _logging: Logger,
     private errorHandler: ErrorHandler,
@@ -605,5 +606,18 @@ export class UserService {
 
   sendTestNotification(userId) {
     return this.http.post(`v1/users/${userId}/test_notification`, new Date());
+  }
+
+  bulkAddProfilePictures(files: File[]) {
+    const formData = new FormData();
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-School-Id': this.http.getSchool().id
+      })
+    };
+    files.forEach((file, index) => {
+      formData.append(`${index}`, file);
+    });
+    return this.httpClient.post(`https://c-direct.smartpass.app/api/staging/files/v1/users/bulk-add-pictures`, formData, httpOptions);
   }
 }

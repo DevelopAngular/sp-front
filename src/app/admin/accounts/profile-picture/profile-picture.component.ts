@@ -78,7 +78,7 @@ export class ProfilePictureComponent implements OnInit {
                   const reader = new FileReader();
                   reader.readAsDataURL(file);
                   filesStream.push(fromEvent(reader, 'load').pipe(map((item: any) => {
-                    return { file_name: file.name, file: item.target.result };
+                    return { file_name: file.name, file: file };
                   })));
                 }
               }
@@ -97,12 +97,12 @@ export class ProfilePictureComponent implements OnInit {
             });
             return uniqBy(arrayFiles, 'file_name');
           }),
-          map(files => {
-            return this.parseArrayToObject(files);
-          })
+          // map(files => {
+          //   return this.parseArrayToObject(files);
+          // })
         )
-        .subscribe(files => {
-          this.imagesLength = Object.keys(files).length;
+        .subscribe((files: {file: File, file_name: string}[]) => {
+          this.imagesLength = files.length;
           this.selectedImgFiles = files;
           this.uploadingProgress.images.inProcess = false;
           this.uploadingProgress.images.complete = true;
@@ -110,10 +110,10 @@ export class ProfilePictureComponent implements OnInit {
     }
   }
 
-  page: number = 4;
+  page: number = 2;
   form: FormGroup;
   selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
-  selectedImgFiles;
+  selectedImgFiles: {file: File, file_name: string}[];
   selectedMapFile: File;
   filesToDB: any[] = [];
   imagesLength: number;
@@ -167,7 +167,11 @@ export class ProfilePictureComponent implements OnInit {
   nextPage() {
     this.page += 1;
     if (this.page === 3) {
-      this.issues = this.findIssues();
+      this.userService.bulkAddProfilePictures(this.selectedImgFiles.map(({file, file_name}) => file))
+        .subscribe(res => {
+          debugger;
+        });
+      // this.issues = this.findIssues();
     } else if (this.page === 4) {
 
     }
