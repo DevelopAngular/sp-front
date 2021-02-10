@@ -20,8 +20,8 @@
             <div class="toggle-title">Declinable</div>
             <div class="info-text-1">
               <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
-              <span *ngIf="!form.get('declinable').value">You must also select from where the student will be traveling.</span>
-              <span *ngIf="form.get('declinable').value">You do not need to know the location from where the student will be traveling.</span>
+              <span *ngIf="!form.get('declinable').value">You won't select where the student is coming from.</span>
+              <span *ngIf="form.get('declinable').value"> You'll select where the student is coming from.</span>
             </div>
           </div>
           <div class="toggle">
