@@ -1,4 +1,5 @@
 @import "../../design-system";
+@import '../../sp-colors';
 
 :host {
   position: relative;
@@ -48,6 +49,13 @@
   font-size: 15px;
   text-align: center;
   border-bottom: 1px solid #B5B7BA;
+}
+
+.heading {
+  padding: 20px;
+  color: $blue-gray;
+  font-size: 14px;
+  //text-align: center;
 }
 
 .options-wrapper{

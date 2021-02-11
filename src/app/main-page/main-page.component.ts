@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '../services/user.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 import {SideNavService} from '../services/side-nav.service';
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
@@ -14,6 +14,7 @@ import {NavigationEnd, Router} from '@angular/router';
 import {filter as _filter} from 'lodash';
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
+import {User} from '../models/User';
 
 declare const window;
 
@@ -79,26 +80,27 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     this.restriction$ = this.userService.blockUserPage$;
 
-    const dbUser$ = combineLatest(
-      this.userService.effectiveUser.asObservable(),
-      this.dataService.currentUser
-    ).pipe(
-      map(([effectUser, currentUser]) => {
-        if (effectUser) {
-          return effectUser.user;
+    const dbUser$ = this.http.globalReload$
+    .pipe(
+      switchMap(() => this.userService.user$),
+      filter(user => !!user),
+      map(user => User.fromJSON(user)),
+      switchMap(user => {
+        if (user.isAssistant()) {
+          return this.userService.effectiveUser.pipe(filter(u => !!u), map(u => User.fromJSON(u.user)));
         } else {
-          return currentUser;
+          return of(user);
         }
-      }), take(1));
+      })
+    );
 
     this.http.globalReload$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.passesService.getFiltersRequest('past-passes');
     });
 
-    combineLatest(dbUser$.pipe(filter(res => !!res)), this.passesService.passFilters$.pipe(filter(res => !!res)))
+    combineLatest(dbUser$, this.passesService.passFilters$.pipe(filter(res => !!res)))
       .pipe(
         takeUntil(this.destroy$),
-        take(1),
         tap(([user, filters]) => {
           this.liveDataService.getPassLikeCollectionRequest(user);
           this.liveDataService.getExpiredPassesRequest(user, filters['past-passes'].default);

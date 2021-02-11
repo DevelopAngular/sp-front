@@ -59,20 +59,21 @@
       </div>
 
     </div>
+
     <div [ngClass]="isIOSTablet ? 'ios-user-info' : 'user-info'" [style.flexDirection]="flexDirection">
       <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant"
            appCrossPointerEventTarget
-           (pointerClickEvent)="showTeaches(target)"
-           #target
+           (pointerClickEvent)="showTeaches($event)"
       >
         <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>
         <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
           <span>
-            {{ effectiveUser?.user.display_name }}
+            {{ effectiveUser ? effectiveUser.user.display_name : '' }}
           </span>
           <img width="10" class="ds-ml-5" [src]="getIcon('Chevron Down', 'White', 'Navy')" alt="Chevron Down.svg">
         </div>
       </div>
+
       <ng-template #notAssistant>
         <div
           *ngIf="!isMobile"
@@ -144,6 +145,7 @@
         ></app-icon-button>
       </div>
     </div>
+
   </div>
 </div>
 

@@ -16,3 +16,5 @@ export const filterExpiredPasses = createAction(`[${EXPIREDPASSES}] Filter Passe
 export const filterExpiredPassesSuccess = createAction(`[${EXPIREDPASSES}] Filter Passes Success`, props<{expiredPasses: HallPass[]}>());
 export const filterExpiredPassesFailure = createAction(`[${EXPIREDPASSES}] Filter Passes Failure`, props<{errorMessage: string}>());
 
+export const clearExpiredPasses = createAction(`[${EXPIREDPASSES}] Clear Expired Passes`);
+
