@@ -58,6 +58,7 @@ import {ChangePasswordComponent} from '../my-profile-dialog/change-password/chan
 import {CustomToolTipComponent} from './shared-components/custom-tool-tip/custom-tool-tip.component';
 import {PassLimitTooltipComponent} from './shared-components/pass-limit-tooltip/pass-limit-tooltip.component';
 import {StudentPassesComponent} from '../student-passes/student-passes.component';
+import {StudentPassesInfoCardComponent} from '../student-passes/student-passes-info-card/student-passes-info-card.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -125,7 +126,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ChangePasswordComponent,
     CustomToolTipComponent,
     PassLimitTooltipComponent,
-    StudentPassesComponent
+    StudentPassesComponent,
+    StudentPassesInfoCardComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -176,7 +178,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ChangePasswordComponent,
     TeacherPinStudentComponent,
     PassLimitTooltipComponent,
-    StudentPassesComponent
+    StudentPassesComponent,
+    StudentPassesInfoCardComponent
   ],
   providers: [
     {
