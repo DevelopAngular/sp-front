@@ -88,6 +88,8 @@ import {getIntrosData} from '../ngrx/intros/state';
 import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
+import {uploadProfilePictures} from '../ngrx/profile-pictures/actions';
+import {getProfilePicturesLoaded, getProfilePicturesLoading} from '../ngrx/profile-pictures/states';
 
 @Injectable()
 export class UserService {
@@ -175,6 +177,9 @@ export class UserService {
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
   isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
   blockUserPage$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
+  profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
@@ -618,16 +623,30 @@ export class UserService {
     this.store.dispatch(clearRUsers());
   }
 
-  bulkAddProfilePictures(files: File[]) {
+  uploadProfilePicturesRequest(csvFile: File, pictures: File[]) {
+    this.store.dispatch(uploadProfilePictures({csvFile, pictures}));
+  }
+
+  uploadProfilePictures(file: File) {
+    return this.http.post('v1/users/mapping-file', {user_picture_map: file});
+  }
+
+  bulkAddProfilePictures(uuid: string, files: File[]) {
     const formData = new FormData();
+    const ctx = this.http.getAuthContext();
     const httpOptions = {
       headers: new HttpHeaders({
-        'X-School-Id': this.http.getSchool().id
+        'X-School-Id': this.http.getSchool().id,
+        'Authorization': 'Bearer ' + ctx.auth.access_token
       })
     };
     files.forEach((file, index) => {
       formData.append(`${index}`, file);
     });
-    return this.httpClient.post(`https://c-direct.smartpass.app/api/staging/files/v1/users/bulk-add-pictures`, formData, httpOptions);
+    return this.httpClient.post(
+      `https://c-direct.smartpass.app/api/staging/files/v1/users/jobs/${uuid}/bulk-add-pictures`,
+      formData,
+      httpOptions
+    );
   }
 }

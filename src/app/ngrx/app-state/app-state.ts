@@ -19,6 +19,7 @@ import {IntrosReducer} from '../intros';
 import {PassFiltersReducer} from '../pass-filters/reducers';
 import {passLikeCollectionReducer} from '../pass-like-collection/reducers';
 import {representedUsersReducer} from '../represented-users/reducers';
+import {profilePicturesReducer} from '../profile-pictures/reducers';
 
 
 export interface AppState {
@@ -43,6 +44,7 @@ export interface AppState {
   readonly pass_filters;
   readonly passLikeCollection;
   readonly representedUsers;
+  readonly profilePictures;
 }
 
 export const reducers = {
@@ -66,5 +68,6 @@ export const reducers = {
   intros: IntrosReducer,
   pass_filters: PassFiltersReducer,
   passLikeCollection: passLikeCollectionReducer,
-  representedUsers: representedUsersReducer
+  representedUsers: representedUsersReducer,
+  profilePictures: profilePicturesReducer
 };

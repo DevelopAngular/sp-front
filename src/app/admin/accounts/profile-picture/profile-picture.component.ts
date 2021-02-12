@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {forkJoin, fromEvent, of, zip} from 'rxjs';
+import {fromEvent, of, zip} from 'rxjs';
 import {filter, map, switchMap} from 'rxjs/operators';
 import {isArray, uniqBy} from 'lodash';
 
@@ -21,34 +21,27 @@ export class ProfilePictureComponent implements OnInit {
   @ViewChild('csvFile') set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
       fromEvent(fileRef.nativeElement , 'change')
-        .pipe(
-          switchMap((evt: Event) => {
-            this.selectedMapFile = fileRef.nativeElement.files[0];
-            this.uploadingProgress.csv.inProcess = true;
-            const FR = new FileReader();
-            FR.readAsBinaryString(fileRef.nativeElement.files[0]);
-            return fromEvent(FR, 'load');
-          }),
-          map(( res: any) => {
-            return this.xlsxService.parseXlSXFile(res);
-          }),
-          switchMap(rows => {
-            const validate$ = rows.map(row => {
-              // if (!!row[0]) {
-              //   return this.userService.searchProfileWithFilter(row[0]).pipe(
-              //     map(user => {
-              //       return { user_id: row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: !user };
-              //     })
-              //   );
-              // } else {
-                return of({ user_id: row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
-              // }
-            });
-            return forkJoin(validate$);
-          })
-        )
+        // .pipe(
+        //   switchMap((evt: Event) => {
+        //     this.selectedMapFile = fileRef.nativeElement.files[0];
+        //     this.uploadingProgress.csv.inProcess = true;
+        //     const FR = new FileReader();
+        //     FR.readAsBinaryString(fileRef.nativeElement.files[0]);
+        //     return fromEvent(FR, 'load');
+        //   }),
+        //   map(( res: any) => {
+        //     return this.xlsxService.parseXlSXFile(res);
+        //   }),
+        //   switchMap(rows => {
+        //     const validate$ = rows.map(row => {
+        //         return of({ user_id: row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
+        //     });
+        //     return forkJoin(validate$);
+        //   })
+        // )
         .subscribe((items) => {
-          this.selectedMapFiles = items;
+          // this.selectedMapFiles = items;
+          this.selectedMapFile = fileRef.nativeElement.files[0];
           this.uploadingProgress.csv.inProcess = false;
           this.uploadingProgress.csv.complete = true;
         });
@@ -97,9 +90,6 @@ export class ProfilePictureComponent implements OnInit {
             });
             return uniqBy(arrayFiles, 'file_name');
           }),
-          // map(files => {
-          //   return this.parseArrayToObject(files);
-          // })
         )
         .subscribe((files: {file: File, file_name: string}[]) => {
           this.imagesLength = files.length;
@@ -156,6 +146,12 @@ export class ProfilePictureComponent implements OnInit {
       images: new FormControl(),
       csvFile: new FormControl()
     });
+
+    this.userService.profilePicturesLoaded$
+      .pipe(filter(loaded => this.page === 3 && loaded))
+      .subscribe(() => {
+        this.page = 4;
+      });
   }
 
   parseArrayToObject(array: any[]) {
@@ -167,11 +163,7 @@ export class ProfilePictureComponent implements OnInit {
   nextPage() {
     this.page += 1;
     if (this.page === 3) {
-      this.userService.bulkAddProfilePictures(this.selectedImgFiles.map(({file, file_name}) => file))
-        .subscribe(res => {
-          debugger;
-        });
-      // this.issues = this.findIssues();
+      this.userService.uploadProfilePicturesRequest(this.selectedMapFile, this.selectedImgFiles.map(({file, file_name}) => file));
     } else if (this.page === 4) {
 
     }
