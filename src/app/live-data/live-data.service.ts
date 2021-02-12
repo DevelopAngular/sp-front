@@ -37,6 +37,7 @@ import {
 import {State} from './state';
 import {HallPassesService} from '../services/hall-passes.service';
 import {
+  clearExpiredPasses,
   getActivePasses,
   getExpiredPasses,
   getFromLocationPasses,
@@ -837,6 +838,10 @@ export class LiveDataService {
 
   getMyRoomActivePassesRequest(sortingEvents: Observable<HallPassFilter>, filter: PassFilterType = null, date: Date = null) {
     this.store.dispatch(getMyRoomPasses({sortingEvents, filter, date}));
+  }
+
+  clearExpiredPasses() {
+    this.store.dispatch(clearExpiredPasses());
   }
 
 }

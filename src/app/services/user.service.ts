@@ -1,5 +1,5 @@
 import {ErrorHandler, Injectable} from '@angular/core';
-import {BehaviorSubject, interval, Observable, of, race, ReplaySubject, zip} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, Observable, of, race, ReplaySubject} from 'rxjs';
 import {SentryErrorHandler} from '../error-handler';
 import {HttpService} from './http-service';
 import {constructUrl} from '../live-data/helpers';
@@ -86,6 +86,8 @@ import {HttpHeaders} from '@angular/common/http';
 import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {getSchoolsFailure} from '../ngrx/schools/actions';
+import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
+import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 
 @Injectable()
 export class UserService {
@@ -95,8 +97,8 @@ export class UserService {
   /**
   * Used for acting on behalf of some teacher by his assistant
   */
-  public effectiveUser: ReplaySubject<RepresentedUser> = new ReplaySubject<RepresentedUser>(1);
-  public representedUsers: ReplaySubject<RepresentedUser[]> = new ReplaySubject<RepresentedUser[]>(1);
+  public effectiveUser: Observable<RepresentedUser> = this.store.select(getEffectiveUser);
+  public representedUsers: Observable<RepresentedUser[]> = this.store.select(getRepresentedUsersCollections);
 
   /**
    * Users from store
@@ -181,22 +183,28 @@ export class UserService {
     private pollingService: PollingService,
     private _logging: Logger,
     private errorHandler: ErrorHandler,
-    private store: Store<AppState>
+    private store: Store<AppState>,
   ) {
     this.http.globalReload$
         .pipe(
           tap(() => {
             this.http.effectiveUserId.next(null);
-            this.effectiveUser.next(null);
+            this.clearRepresentedUsers();
+            this.getUserRequest();
           }),
           exhaustMap(() => {
-            return this.getUserRequest().pipe(filter(res => !!res));
+            return this.user$.pipe(filter(res => !!res));
           }),
           map(raw => User.fromJSON(raw)),
+          tap(user => {
+            if (user.isAssistant()) {
+              this.getUserRepresentedRequest();
+            }
+          }),
           exhaustMap((user: User) => {
             this.blockUserPage$.next(false);
             if (user.isAssistant()) {
-              return zip(this.getUserRepresented(), this.http.schoolsCollection$)
+              return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$)
                 .pipe(
                   tap(([users, schools]) => {
                     if (!users.length && schools.length === 1) {
@@ -207,21 +215,12 @@ export class UserService {
                   }),
                   filter(([users, schools]) => !!users.length || schools.length > 1),
                   map(([users, schools]) => {
-                    const normalizedRU = users.map((raw) => {
-                      raw.user = User.fromJSON(raw.user);
-                      return raw;
-                    });
                     if (users && users.length) {
-                      this.representedUsers.next(normalizedRU);
-                      this.effectiveUser.next(normalizedRU[0]);
-                      this.http.effectiveUserId.next(+normalizedRU[0].user.id);
+                      this.http.effectiveUserId.next(+users[0].user.id);
                     }
                     return user;
                   }));
             } else {
-                this.representedUsers.next(null);
-                this.effectiveUser.next(null);
-                this.http.effectiveUserId.next(null);
               return of(user);
             }
           }),
@@ -342,6 +341,10 @@ export class UserService {
 
   saveKioskModeLocation(locId) {
     return this.http.post('auth/kiosk', {location: locId});
+  }
+
+  getUserRepresentedRequest() {
+    this.store.dispatch(getRUsers());
   }
 
   getUserRepresented() {
@@ -600,5 +603,13 @@ export class UserService {
 
   sendTestNotification(userId) {
     return this.http.post(`v1/users/${userId}/test_notification`, new Date());
+  }
+
+  updateEffectiveUser(effectiveUser) {
+    this.store.dispatch(updateEffectiveUser({effectiveUser}));
+  }
+
+  clearRepresentedUsers() {
+    this.store.dispatch(clearRUsers());
   }
 }

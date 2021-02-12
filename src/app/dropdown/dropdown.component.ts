@@ -15,8 +15,10 @@ import {DeviceDetection} from '../device-detection.helper';
 export class DropdownComponent implements OnInit {
   options: HTMLElement;
   @ViewChild('optionsWrapper') set content(content: ElementRef<HTMLElement>) {
-    this.options = content.nativeElement;
-    this.options.scrollTop = this.scrollPosition;
+    if (content) {
+      this.options = content.nativeElement;
+      this.options.scrollTop = this.scrollPosition;
+    }
   }
 
   @ViewChildren('schoolList') schoolList: QueryList<School>;
@@ -37,6 +39,7 @@ export class DropdownComponent implements OnInit {
   sortData: any[];
   selectedSort: any;
   optionsMaxHeight: string;
+  mainHeader: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -58,6 +61,7 @@ export class DropdownComponent implements OnInit {
     this.sortData = data['sortData'];
     this.selectedSort = data['selectedSort'] || '';
     this.optionsMaxHeight = data['maxHeight'] || '282px';
+    this.mainHeader = this.data['mainHeader'];
   }
 
   get isMobile() {
