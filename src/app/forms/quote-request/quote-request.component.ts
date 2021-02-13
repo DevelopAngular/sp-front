@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormsService} from '../../services/forms.service';
 
+declare const gtag: Function;
+
 @Component({
   selector: 'app-quote-request',
   templateUrl: './quote-request.component.html',
@@ -44,6 +46,7 @@ export class QuoteRequestComponent implements OnInit {
             console.log(res);
           });
       });
+      gtag('event', 'quote-request-complete', {});
     });
   }
 

@@ -12,7 +12,7 @@
     margin-top: 2px;
 
     span {
-      @include textSize(12px, bold, false);
+      @include textSize(12px, normal, false);
       color: white;
       border-radius: 12px;
       padding: 2px 8px;

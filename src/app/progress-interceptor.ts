@@ -24,7 +24,8 @@ export class ProgressInterceptor implements HttpInterceptor {
                           'discovery/email_info',
                           'auth/by-token',
                           'o/token',
-                          'pass_requests/'
+                          'pass_requests/',
+                          'forms/quoterequest'
                         ].every(_url => error.url.search(_url) < 0);
 
                         if ( error.status === 0 || (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {

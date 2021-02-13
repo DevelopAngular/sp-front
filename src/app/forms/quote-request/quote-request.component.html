@@ -38,8 +38,9 @@
       <div id="confirm-wrapper">
         <app-gradient-button
           id="confirm"
-          [disabled]="!quoteRequestForm.valid"
-          (click)="confirm()">Request Quote
+          size="custom"
+          minHeight="50px"
+          (click)="confirm()"><span id="confirm-text">Request Quote</span>
         </app-gradient-button>
       </div>
     </form>
