@@ -185,6 +185,7 @@ export class UserService {
     private errorHandler: ErrorHandler,
     private store: Store<AppState>,
   ) {
+
     this.http.globalReload$
         .pipe(
           tap(() => {
@@ -193,7 +194,7 @@ export class UserService {
             this.getUserRequest();
           }),
           exhaustMap(() => {
-            return this.user$.pipe(filter(res => !!res));
+            return this.user$.pipe(filter(res => !!res), take(1));
           }),
           map(raw => User.fromJSON(raw)),
           tap(user => {
