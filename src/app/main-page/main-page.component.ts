@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '../services/user.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 import {SideNavService} from '../services/side-nav.service';
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
@@ -82,10 +82,11 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const dbUser$ = this.http.globalReload$
     .pipe(
-      switchMap(() => this.userService.user$),
-      filter(user => !!user),
+      exhaustMap(() => {
+        return this.userService.user$.pipe(filter(u => !!u), take(1));
+      }),
       map(user => User.fromJSON(user)),
-      switchMap(user => {
+      exhaustMap(user => {
         if (user.isAssistant()) {
           return this.userService.effectiveUser.pipe(filter(u => !!u), map(u => User.fromJSON(u.user)));
         } else {
@@ -94,14 +95,14 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     );
 
-    this.http.globalReload$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.http.globalReload$.subscribe(() => {
       this.passesService.getFiltersRequest('past-passes');
     });
 
-    combineLatest(dbUser$, this.passesService.passFilters$.pipe(filter(res => !!res)))
+    combineLatest(dbUser$, this.passesService.passFilters$.pipe(filter(pass => !!pass), take(1)))
       .pipe(
         takeUntil(this.destroy$),
-        tap(([user, filters]) => {
+        tap(([user, filters]: [user: User, filters: any]) => {
           this.liveDataService.getPassLikeCollectionRequest(user);
           this.liveDataService.getExpiredPassesRequest(user, filters['past-passes'].default);
           this.liveDataService.getActivePassesRequest(of({sort: '-created', search_query: ''}), user);
