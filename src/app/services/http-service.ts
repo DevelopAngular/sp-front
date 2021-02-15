@@ -3,7 +3,7 @@ import {Injectable, NgZone, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {BehaviorSubject, iif, Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
-import {catchError, delay, filter, map, mapTo, mergeMap, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
@@ -162,10 +162,11 @@ export class HttpService implements OnDestroy {
   public schoolToggle$: Subject<School> = new Subject<School>();
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
       filter(v => v),
-      switchMap((v) => {
+      take(1),
+      exhaustMap((v) => {
         return this.getSchoolsRequest();
       }),
-      switchMap(() => this.schoolsCollection$)
+      exhaustMap(() => this.schoolsCollection$.pipe(filter(s => !!s.length), take(1)))
   );
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
   public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
@@ -179,7 +180,7 @@ export class HttpService implements OnDestroy {
   public globalReload$ = this.currentSchool$.pipe(
       filter(school => !!school),
       map(school => school ? school.id : null),
-      delay(5)
+      delay(5),
   );
 
   private hasRequestedToken = false;
