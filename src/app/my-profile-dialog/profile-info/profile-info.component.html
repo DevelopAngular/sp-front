@@ -11,7 +11,7 @@
   <div class="profile-content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="page-1">
       <div class="profile-image">
-
+        <img width="88" height="88" [src]="(user?.profile_picture ? user?.profile_picture : './assets/Avatar Default.svg') | resolveAsset" alt="Avatar">
       </div>
       <div class="block-item">
         <div class="label">Name</div>
