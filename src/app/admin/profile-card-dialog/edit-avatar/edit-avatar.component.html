@@ -17,7 +17,7 @@
         <img class="set-img" [src]="imageUrl" alt="">
         <div class="buttons">
           <div class="cancel" (click)="back()">Cancel</div>
-          <app-gradient-button>Set picture</app-gradient-button>
+          <app-gradient-button appCrossPointerEventTarget (pointerClickEvent)="setPicture()">Set picture</app-gradient-button>
         </div>
       </div>
     </ng-template>

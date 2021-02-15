@@ -54,9 +54,10 @@
              (mouseenter)="avatarContainer.hover = true"
              (mouseleave)="avatarContainer.hover = false"
           >
-            <img width="88" height="88" [src]="'./assets/Default Avatar.svg' | resolveAsset" alt="avatar">
+            <img width="88" height="88" [src]="(user.profile_picture ? user.profile_picture : './assets/Default Avatar.svg') | resolveAsset" alt="avatar">
             <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
-            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">
+            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!user.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+            <img *ngIf="avatarContainer.hover && user.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
           </div>
           <div class="status"
                [matTooltip]="statusDescriptions[profileStatusActive] || null"

@@ -650,4 +650,8 @@ export class UserService {
       httpOptions
     );
   }
+
+  addProfilePicture(userId, file: File) {
+    return this.http.patch(`v1//users/${userId}/profile-picture`, {profile_picture: file});
+  }
 }

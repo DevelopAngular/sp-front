@@ -440,6 +440,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         filter(() => !this.isStaff),
         switchMap(({action, data}) => {
+          debugger;
           if (action === 'message.alert') {
             const isFirstPass: boolean = data.type.includes('first_pass');
             this.screenService.customBackdropEvent$.next(true);

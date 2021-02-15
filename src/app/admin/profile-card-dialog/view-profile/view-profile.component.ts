@@ -394,7 +394,19 @@ export class ViewProfileComponent implements OnInit {
     const ED = this.matDialog.open(EditAvatarComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: { 'trigger': event.currentTarget }
+      data: { 'trigger': event.currentTarget, user: this.user }
+    });
+
+    ED.afterClosed().subscribe(({action, file}) => {
+      if (action === 'add') {
+        this.userService.addProfilePicture(this.user.id, file).subscribe(r => {
+          debugger;
+        });
+      } else if (action === 'edit') {
+        this.userService.addProfilePicture(this.user.id, file).subscribe(r => {
+          debugger;
+        });
+      }
     });
   }
 
