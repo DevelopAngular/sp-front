@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {User} from '../models/User';
 import {interval, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
@@ -6,6 +6,7 @@ import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-student-passes',
@@ -21,10 +22,21 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   @Output()
   userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
 
-  lastStudentPasses;
+  lastStudentPasses: Observable<HallPass[]>;
   timerEvent: Subject<any> = new Subject<any>();
 
+  miniAvatar: boolean;
+
   destroy$: Subject<any> = new Subject<any>();
+
+  @HostListener('document.scroll', ['$event'])
+  scroll(event) {
+    if (event.currentTarget.scrollTop >= 50) {
+      this.miniAvatar = true;
+    } else {
+      this.miniAvatar = false;
+    }
+  }
 
   constructor(
     private livaDataService: LiveDataService,

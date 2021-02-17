@@ -3,35 +3,33 @@
 .student-wrapper {
   border-radius: 13px;
   background-color: #FFFFFF;
-  padding: 10px 15px;
   cursor: pointer;
   box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   position: absolute;
-  //overflow: hidden;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 10000;
   overflow: auto;
-  .content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
 
+  .header {
+    position: sticky;
+    top: 0;
+    background-color: #FFFFFF;
+    z-index: 20;
+    padding: 10px 0;
     .profile-info {
       display: flex;
       align-items: center;
+      padding: 0 17px;
       .profile-image {
-        width: 75px;
-        height: 75px;
-        background-color: powderblue;
+        //width: 75px;
+        //height: 75px;
+        //background-color: powderblue;
         border-radius: 50%;
         margin-right: 12px;
         overflow: hidden;
       }
-
       .title {
         .full-name {
           color: $navy;
@@ -45,19 +43,35 @@
       }
     }
 
-    .open {
-      right: 0;
-      position: absolute;
-    }
-    .close {
-      position: absolute;
-      right: 10px;
-      top: 10px;
+  }
+
+  .open {
+    right: 13px;
+    top: 16px;
+    position: absolute;
+  }
+  .close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    padding: 0 17px;
+
+    .student-info {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
     }
   }
 
   .collection {
-    margin-top: 30px;
+    margin: 30px 0;
+    padding: 0 17px;
 
     .title {
       display: flex;
@@ -72,6 +86,40 @@
       grid-gap: 10px;
       margin-top: 15px;
       grid-template-columns: repeat(auto-fill, 144px);
+
+      .fake-pass {
+        width: 143px;
+        height: 86.5px;
+        border-radius: 12.75px;
+        background-color: #F4F4F4;
+      }
     }
+
+    .emptyState {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .empty-title {
+        font-size: 17px;
+        color: $blue-gray;
+      }
+    }
+  }
+}
+
+.animate {
+  animation : shimmer 3s infinite linear;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 1000px 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
   }
 }
