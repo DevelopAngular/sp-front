@@ -183,11 +183,10 @@ export class HttpService implements OnDestroy {
   );
 
   private hasRequestedToken = false;
-  private baseHref = '/';
 
   constructor(
       @Inject(APP_BASE_HREF)
-      private bHref: string,
+      private baseHref: string,
       private http: HttpClient,
       private loginService: GoogleLoginService,
       private storage: StorageService,
@@ -198,7 +197,7 @@ export class HttpService implements OnDestroy {
       private router: Router
   ) {
 
-    if (bHref === '/app') {
+    if (baseHref === '/app') {
       this.baseHref = '/app/';
     }
 

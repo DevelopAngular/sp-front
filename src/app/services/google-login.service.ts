@@ -67,8 +67,6 @@ export class GoogleLoginService {
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
   // public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
-  public href = '/';
-
   constructor(
       @Inject(APP_BASE_HREF)
       private baseHref: string,
@@ -76,7 +74,7 @@ export class GoogleLoginService {
       private storage: StorageService
   ) {
     if (baseHref === '/app') {
-      this.href = '/app/';
+      this.baseHref = '/app/';
     }
     this.authObject$.subscribe(auth => {
       if (auth) {
