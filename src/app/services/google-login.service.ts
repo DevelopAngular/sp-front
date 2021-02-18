@@ -1,7 +1,8 @@
-import {Injectable, NgZone} from '@angular/core';
+import {Inject, Injectable, NgZone} from '@angular/core';
 import {BehaviorSubject, from, Observable, ReplaySubject, Subject} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {StorageService} from './storage.service';
+import { APP_BASE_HREF } from '@angular/common';
 
 declare const window;
 
@@ -66,10 +67,17 @@ export class GoogleLoginService {
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
   // public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
+  public href = '/';
+
   constructor(
-    private _zone: NgZone,
-    private storage: StorageService
+      @Inject(APP_BASE_HREF)
+      private baseHref: string,
+      private _zone: NgZone,
+      private storage: StorageService
   ) {
+    if (baseHref === '/app') {
+      this.href = '/app/';
+    }
     this.authObject$.subscribe(auth => {
       if (auth) {
         const storageKey = isDemoLogin(auth)
@@ -139,7 +147,7 @@ export class GoogleLoginService {
   }
 
   getRedirectUrl(): string {
-    const url = [window.location.protocol, '//', window.location.host, '/app/'].join('');
+    const url = [window.location.protocol, '//', window.location.host, this.baseHref].join('');
     return url;
   }
 

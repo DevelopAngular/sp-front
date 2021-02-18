@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable, NgZone, OnDestroy} from '@angular/core';
+import {Inject, Injectable, NgZone, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {BehaviorSubject, iif, Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
@@ -16,6 +16,7 @@ import {SafeHtml} from '@angular/platform-browser';
 import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
+import {APP_BASE_HREF} from '@angular/common';
 
 declare const window;
 
@@ -182,8 +183,11 @@ export class HttpService implements OnDestroy {
   );
 
   private hasRequestedToken = false;
+  private baseHref = '/';
 
   constructor(
+      @Inject(APP_BASE_HREF)
+      private bHref: string,
       private http: HttpClient,
       private loginService: GoogleLoginService,
       private storage: StorageService,
@@ -193,6 +197,10 @@ export class HttpService implements OnDestroy {
       private matDialog: MatDialog,
       private router: Router
   ) {
+
+    if (bHref === '/app') {
+      this.baseHref = '/app/';
+    }
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
     // First, if there is a current school loaded, try to use that one.
@@ -485,7 +493,7 @@ export class HttpService implements OnDestroy {
   }
 
   getRedirectUrl(): string {
-    const url = [window.location.protocol, '//', window.location.host, '/app/'].join('');
+    const url = [window.location.protocol, '//', window.location.host, this.baseHref].join('');
     return url;
   }
 
