@@ -1,5 +1,5 @@
 import {createAction, props} from '@ngrx/store';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Location} from '../../../../../models/Location';
 import {HallPass} from '../../../../../models/HallPass';
 

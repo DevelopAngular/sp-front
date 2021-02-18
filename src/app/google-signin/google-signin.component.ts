@@ -32,7 +32,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isLoaded = false;
   public showSpinner = false;
   public loggedWith: number;
-  // public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
   public loginData = {
     demoLoginEnabled: false,
     demoUsername: '',
@@ -74,13 +73,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
-    this.loginService.isGoogleAuthLoaded() // TODO: Remove unused this, it's unused
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(isLoaded => {
-      this._ngZone.run(() => {
-        this.isLoaded = isLoaded;
-      });
-    });
     this.loginService.loginErrorMessage$.subscribe(message => {
       if (message === 'this user is suspended') {
         this.error$.next('Account is suspended. Please contact your school admin.');
@@ -116,7 +108,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         filter((qp: QueryParams) => !!qp.code),
         switchMap((qp) => {
           this.storage.removeItem('context');
-          if (!!qp.scope) {
+          this.disabledButton = false;
+          this.showSpinner = true;
+          if (this.router.url.includes('google_oauth')) {
+            return this.loginGoogle(qp.code as string);
+          } else if (!!qp.scope) {
             return this.loginClever(qp.code as string);
           } else {
             return this.loginSSO(qp.code as string);
@@ -187,6 +183,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     //     }
     //   })
     // );
+    return of(null);
+  }
+
+  loginGoogle(code: string) {
+    window.waitForAppLoaded(true);
+    this.storage.setItem('authType', 'google');
+    this.loginService.updateAuth({google_code: code, type: 'google-login'});
     return of(null);
   }
 
@@ -320,28 +323,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   initLogin() {
     this.loggedWith = LoginMethod.OAuth;
-    this.showSpinner = true;
     this.loginService.showLoginError$.next(false);
     this.loginService.loginErrorMessage$.next(null);
-    this.loginService
-      .signIn(this.loginData.demoUsername)
-      .then(() => {
-        this.showSpinner = false;
-        // window.waitForAppLoaded();
-      })
-      .catch((err) => {
-          console.log(err);
-          if (err && err.error) {
-              if (err.error === 'popup_closed_by_user') {
-                // Do nothing
-              } else if (err.error === 'popup_blocked_by_browser') {
-                  this.loginService.loginErrorMessage$.next('pop up blocked');
-              } else {
-                  this.loginService.showLoginError$.next(true);
-              }
-          }
-        this.showSpinner = false;
-      });
+    this.loginService.signIn(this.loginData.demoUsername);
   }
 
 }

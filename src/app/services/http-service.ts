@@ -16,9 +16,6 @@ import {SafeHtml} from '@angular/platform-browser';
 import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
-import AuthResponse = gapi.auth2.AuthResponse;
-
-export const SESSION_STORAGE_KEY = 'accessToken';
 
 declare const window;
 
@@ -125,6 +122,7 @@ export interface LoginChoice {
   server: LoginServer;
   gg4l_token?: string;
   clever_token?: string;
+  google_token?: string;
   token?: any;
 }
 
@@ -318,6 +316,7 @@ export class HttpService implements OnDestroy {
 
             let gg4l_token: string;
             let clever_token: string;
+            let google_token: string;
 
             const authType = this.storage.getItem('authType');
 
@@ -329,12 +328,14 @@ export class HttpService implements OnDestroy {
                 }
               } else if (authType === 'clever') {
                 clever_token = servers.token.access_token;
+              } else {
+                google_token = servers.token.access_token;
               }
             }
 
-            this.storage.setItem('context', JSON.stringify({ server, gg4l_token, clever_token }));
+            this.storage.setItem('context', JSON.stringify({ server, gg4l_token, clever_token, google_token }));
 
-            return { server, gg4l_token, clever_token };
+            return { server, gg4l_token, clever_token, google_token };
           } else {
             return null;
           }
@@ -408,13 +409,14 @@ export class HttpService implements OnDestroy {
     }));
   }
 
-  private loginGoogleAuth(googleToken: string): Observable<AuthContext> {
+  private loginGoogle(code: string): Observable<AuthContext> {
     // console.log('loginGoogleAuth()');
 
     const c = new FormData();
-    c.append('token', googleToken);
-    c.append('provider', 'google-auth-token');
+    c.append('code', code);
+    c.append('provider', 'google-oauth-code');
     c.append('platform_type', 'web');
+    c.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
 
     const context = this.storage.getItem('context');
 
@@ -427,8 +429,8 @@ export class HttpService implements OnDestroy {
       const config = new FormData();
 
       config.append('client_id', server.client_id);
-      config.append('provider', 'google-auth-token');
-      config.append('token', googleToken);
+      config.append('provider', 'google-access-token');
+      config.append('token', response.google_token);
 
       return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
           map((data: any) => {
@@ -538,8 +540,7 @@ export class HttpService implements OnDestroy {
     } else if (isCleverLogin(authObject)) {
       authContext$ = this.loginClever(authObject.clever_code);
     } else {
-      const idToken = this.storage.getItem('google_id_token');
-      authContext$ = this.loginGoogleAuth(idToken);
+      authContext$ = this.loginGoogle(authObject.google_code);
     }
     return authContext$.pipe(
         catchError(err => {
@@ -593,16 +594,14 @@ export class HttpService implements OnDestroy {
             signOutCatch
         );
       case 'google':
-        return this.loginService.getNewGoogleAuthResponse().pipe(
-            switchMap((value: AuthResponse, _) => {
-              this.storage.setItem('google_id_token', value.id_token);
-              return this.loginGoogleAuth(value.id_token);
-            }),
-            tap({next: (ctx: AuthContext) => {
-                this.setAuthContext(ctx);
-            }}),
-            signOutCatch
-        );
+        const url = GoogleLoginService.googleOAuthUrl + `&redirect_url=${this.getRedirectUrl()}google_oauth`;
+        this.showSignBackIn()
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe( _ => {
+              this.loginService.clearInternal(true);
+              window.location.href = url;
+            });
+        throw new Error('Redirecting to google');
       case 'gg4l':
         this.showSignBackIn()
             .pipe(takeUntil(this.destroyed$))
