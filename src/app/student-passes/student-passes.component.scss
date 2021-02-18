@@ -12,37 +12,40 @@
   z-index: 10000;
   overflow: auto;
 
-  .header {
-    position: sticky;
-    top: 0;
-    background-color: #FFFFFF;
-    z-index: 20;
-    padding: 10px 0;
-    .profile-info {
-      display: flex;
-      align-items: center;
-      padding: 0 17px;
-      .profile-image {
-        //width: 75px;
-        //height: 75px;
-        //background-color: powderblue;
-        border-radius: 50%;
-        margin-right: 12px;
-        overflow: hidden;
-      }
-      .title {
-        .full-name {
-          color: $navy;
-          font-size: 22px;
-        }
-        .email {
-          color: $blue-gray;
-          font-size: 14px;
-          margin-top: 6px;
-        }
-      }
-    }
 
+  .header-container {
+    position: fixed;
+    width: 335px;
+    z-index: 21;
+    border-radius: 13px;
+    overflow: hidden;
+    .header {
+      background-color: #FFFFFF;
+      z-index: 20;
+      padding: 10px 0;
+      .profile-info {
+        display: flex;
+        align-items: center;
+        padding: 0 17px;
+        .profile-image {
+          border-radius: 50%;
+          margin-right: 12px;
+          overflow: hidden;
+        }
+        .title {
+          .full-name {
+            color: $navy;
+            font-size: 22px;
+          }
+          .email {
+            color: $blue-gray;
+            font-size: 14px;
+            margin-top: 6px;
+          }
+        }
+      }
+
+    }
   }
 
   .open {
@@ -61,6 +64,7 @@
     position: relative;
     overflow: hidden;
     padding: 0 17px;
+    margin-top: 85px;
 
     .student-info {
       display: flex;

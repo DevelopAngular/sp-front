@@ -6,28 +6,30 @@
   (scroll)="scroll($event)"
 >
 
-  <div class="header" [style.padding]="height === 75 ? 0 : '10px 0'">
-    <div class="profile-info">
-      <div class="profile-image">
-        <img [width]="miniAvatar ? 42 : 75" [height]="miniAvatar ? 42 : 75" [src]="'./assets/Default Avatar.png' | resolveAsset" alt="Avatar">
-      </div>
-      <div class="title">
-        <div class="full-name">{{ profile.first_name }} {{ profile.last_name }}</div>
-        <div class="email" *ngIf="!miniAvatar">{{ profile.primary_email }}</div>
-      </div>
-
-      <div class="open" *ngIf="height === 75; else close">
-        <app-icon-button
-          [size]="20"
-          [srcString]="'Chevron Right'"
-          [eventBubbling]="true"
-        ></app-icon-button>
-      </div>
-      <ng-template #close>
-        <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
-          <img width="25" height="25" [src]="'./assets/Cancel (Search-Gray).svg' | resolveAsset">
+  <div class="header-container">
+    <div class="header" [style.padding]="height === 75 ? 0 : '10px 0'">
+      <div class="profile-info">
+        <div class="profile-image">
+          <img [width]="miniAvatar ? 42 : 75" [height]="miniAvatar ? 42 : 75" [src]="'./assets/Default Avatar.png' | resolveAsset" alt="Avatar">
         </div>
-      </ng-template>
+        <div class="title">
+          <div class="full-name">{{ profile.first_name }} {{ profile.last_name }}</div>
+          <div class="email" *ngIf="!miniAvatar">{{ profile.primary_email }}</div>
+        </div>
+
+        <div class="open" *ngIf="height === 75; else close">
+          <app-icon-button
+            [size]="20"
+            [srcString]="'Chevron Right'"
+            [eventBubbling]="true"
+          ></app-icon-button>
+        </div>
+        <ng-template #close>
+          <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
+            <img width="25" height="25" [src]="'./assets/Cancel (Search-Gray).svg' | resolveAsset">
+          </div>
+        </ng-template>
+      </div>
     </div>
   </div>
 
