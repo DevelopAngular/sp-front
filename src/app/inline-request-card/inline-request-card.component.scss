@@ -265,6 +265,7 @@
     text-align: left;
     overflow: auto;
     overflow-wrap: break-word;
+    user-select: all !important;
 }
 
 .student-with-edit{
