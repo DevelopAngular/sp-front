@@ -2,7 +2,7 @@
 import {MatDialog} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 import {merge, of, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {filter, takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -99,7 +99,8 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
       this.controlName.setValue(this.input_value);
     }, 50);
 
-    this.controlName.valueChanges.pipe(takeUntil(this.destroy$))
+    this.controlName.valueChanges
+      .pipe(takeUntil(this.destroy$), filter(res => res !== undefined))
       .subscribe(res => {
       this.onUpdate.emit(res);
     });

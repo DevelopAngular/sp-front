@@ -5,7 +5,7 @@ import {
     HttpEvent,
     HttpInterceptor
 } from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {HttpService} from './http-service';
 import {catchError, map, filter, take, switchMap} from 'rxjs/operators';
 import {BehaviorSubject, Subject} from 'rxjs';

@@ -1,7 +1,7 @@
 import {createAction, props} from '@ngrx/store';
 import {User} from '../../../../../models/User';
 import {HallPass} from '../../../../../models/HallPass';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 const ACTIVEPASSES = 'Active Passes';
 

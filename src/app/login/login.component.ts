@@ -7,7 +7,6 @@ import {DomSanitizer, Meta, SafeUrl, Title} from '@angular/platform-browser';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import {GoogleAuthService} from '../services/google-auth.service';
 import {StorageService} from '../services/storage.service';
 import {User} from '../models/User';
 import {Observable, ReplaySubject, Subject, zip} from 'rxjs';
@@ -43,7 +42,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroyer$ = new Subject<any>();
 
   constructor(
-    private googleAuth: GoogleAuthService,
     private httpService: HttpService,
     private userService: UserService,
     private loginService: GoogleLoginService,

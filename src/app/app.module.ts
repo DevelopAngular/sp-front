@@ -6,7 +6,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AgmCoreModule} from '@agm/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AppComponent} from './app.component';
-import {GAPI_CONFIG} from './config';
 import {CurrentUserResolver} from './current-user.resolver';
 import {DataService} from './services/data-service';
 import {provideErrorHandler} from './error-handler';
@@ -18,8 +17,6 @@ import {NotSeenIntroGuard} from './guards/not-seen-intro.guard';
 import {HttpService} from './services/http-service';
 import {LoadingService} from './services/loading.service';
 import {ProgressInterceptor} from './progress-interceptor';
-import {GoogleApiService, SP_GAPI_CONFIG} from './services/google-api.service';
-import {GoogleAuthService} from './services/google-auth.service';
 import {UserService} from './services/user.service';
 import {NotificationService} from './services/notification-service';
 import {AngularFireModule} from '@angular/fire';
@@ -103,6 +100,11 @@ const appRoutes: Routes = [
   },
   {
     path: '',
+    loadChildren: () => import('app/login/login.module').then(m => m.LoginModule),
+    data: { hideSchoolToggleBar: true}
+  },
+  {
+    path: 'google_oauth',
     loadChildren: () => import('app/login/login.module').then(m => m.LoginModule),
     data: { hideSchoolToggleBar: true}
   },
@@ -221,12 +223,9 @@ const appRoutes: Routes = [
         GoogleLoginService,
         LoadingService,
         CurrentUserResolver,
-        GoogleApiService,
-        GoogleAuthService,
         {provide: OverlayContainer, useFactory: InitOverlay},
         {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
         {provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true},
-        {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
         {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
         {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
         provideErrorHandler()
