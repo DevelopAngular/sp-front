@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as teachersActions from '../actions';
-import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
-import {forkJoin, of} from 'rxjs';
+import {catchError, concatMap, map, mapTo, switchMap, take} from 'rxjs/operators';
+import {forkJoin, of, zip} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
@@ -82,6 +82,13 @@ export class TeachersEffects {
         concatMap((action: any) => {
           return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
             .pipe(
+              switchMap((teacher: User) => {
+                if (action.behalf) {
+                  return zip(...action.behalf.map(user => this.userService.addRepresentedUser(+teacher.id, user))).pipe(mapTo(teacher))
+                } else {
+                  return of(teacher);
+                }
+              }),
               map((teacher: User) => {
                 return teachersActions.postTeacherSuccess({teacher});
               })

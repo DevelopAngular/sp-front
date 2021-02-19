@@ -68,8 +68,10 @@ export class AccountsEffects {
           if (action.role === '' || action.role === '_all') {
             return accountsActions.postSelectedAccounts(props);
           } else if (action.role === '_profile_admin') {
+            props = {...props, behalf: action.behalf};
             return roleActions.postAdmin(props);
           } else if (action.role === '_profile_teacher') {
+            props = {...props, behalf: action.behalf};
             return roleActions.postTeacher(props);
           } else if (action.role === '_profile_student') {
             return roleActions.postStudent(props);

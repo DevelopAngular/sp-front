@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as adminsActions from '../actions';
-import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, map, mapTo, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../../../services/user.service';
-import {of} from 'rxjs';
+import {of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
@@ -54,6 +54,13 @@ export class AdminsEffects {
         concatMap((action: any) => {
           return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
             .pipe(
+              switchMap((admin: User) => {
+                if (action.behalf) {
+                  return zip(...action.behalf.map(user => this.userService.addRepresentedUser(+admin.id, user))).pipe(mapTo(admin))
+                } else {
+                  return of(admin);
+                }
+              }),
               map((admin: User) => {
                 return adminsActions.postAdminSuccess({admin});
               })
