@@ -1,7 +1,7 @@
-import {Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
 import {GoogleLoginService} from '../services/google-login.service';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import {filter, finalize, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {AuthContext, HttpService} from '../services/http-service';
 import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
@@ -21,7 +21,8 @@ export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
 @Component({
   selector: 'google-signin',
   templateUrl: './google-signin.component.html',
-  styleUrls: ['./google-signin.component.scss']
+  styleUrls: ['./google-signin.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class GoogleSigninComponent implements OnInit, OnDestroy {
@@ -32,7 +33,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isLoaded = false;
   public showSpinner = false;
   public loggedWith: number;
-  // public gg4lLink = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
   public loginData = {
     demoLoginEnabled: false,
     demoUsername: '',
@@ -54,6 +54,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public showError: boolean;
   public schoolAlreadyText$: Observable<string>;
   public passwordError: boolean;
+  rrrrr;
 
   private changeUserName$: Subject<string> = new Subject<string>();
   private destroy$ = new Subject();
@@ -70,17 +71,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private shortcuts: KeyboardShortcutsService,
     private storage: StorageService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
-    this.loginService.isGoogleAuthLoaded() // TODO: Remove unused this, it's unused
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(isLoaded => {
-      this._ngZone.run(() => {
-        this.isLoaded = isLoaded;
-      });
-    });
     this.loginService.loginErrorMessage$.subscribe(message => {
       if (message === 'this user is suspended') {
         this.error$.next('Account is suspended. Please contact your school admin.');
@@ -110,13 +105,18 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     this.route.queryParams
       .pipe(
         filter((qp: QueryParams) => !!qp.code),
+        tap(() => {
+          this.disabledButton = false;
+          this.showSpinner = true;
+        }),
         switchMap((qp) => {
           this.storage.removeItem('context');
-          if (!!qp.scope) {
+          if (this.router.url.includes('google_oauth')) {
+            return this.loginGoogle(qp.code as string);
+          } else if (!!qp.scope) {
             return this.loginClever(qp.code as string);
           } else {
             return this.loginSSO(qp.code as string);
@@ -124,7 +124,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((auth: AuthContext) => {
-        this.router.navigate(['']);
+        // this.router.navigate(['']);
       console.log(auth);
     });
 
@@ -179,14 +179,13 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     window.waitForAppLoaded(true);
     this.storage.setItem('authType', 'clever');
     this.loginService.updateAuth({clever_code: code, type: 'clever-login'});
-    // return this.httpService.loginClever(code).pipe(
-    //   tap((auth: AuthContext) => {
-    //     if (auth.clever_token) {
-    //       window.waitForAppLoaded(true);
-    //       this.loginService.updateAuth({clever_token: auth.clever_token, type: 'clever-login'});
-    //     }
-    //   })
-    // );
+    return of(null);
+  }
+
+  loginGoogle(code: string) {
+    window.waitForAppLoaded(true);
+    this.storage.setItem('authType', 'google');
+    this.loginService.updateAuth({google_code: code, type: 'google-login'});
     return of(null);
   }
 
@@ -260,6 +259,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         }
         this.disabledButton = false;
         this.signIn();
+        this.cdr.detectChanges();
       }, (_ => {
         this.error$.next(`Couldn't find that username or email`);
         this.showSpinner = false;
@@ -314,34 +314,17 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       .pipe(
         finalize(() => {
           this.showSpinner = false;
+          this.cdr.detectChanges();
         })
       );
   }
 
   initLogin() {
     this.loggedWith = LoginMethod.OAuth;
-    this.showSpinner = true;
     this.loginService.showLoginError$.next(false);
     this.loginService.loginErrorMessage$.next(null);
-    this.loginService
-      .signIn(this.loginData.demoUsername)
-      .then(() => {
-        this.showSpinner = false;
-        // window.waitForAppLoaded();
-      })
-      .catch((err) => {
-          console.log(err);
-          if (err && err.error) {
-              if (err.error === 'popup_closed_by_user') {
-                // Do nothing
-              } else if (err.error === 'popup_blocked_by_browser') {
-                  this.loginService.loginErrorMessage$.next('pop up blocked');
-              } else {
-                  this.loginService.showLoginError$.next(true);
-              }
-          }
-        this.showSpinner = false;
-      });
+    this.loginService.signIn(this.loginData.demoUsername);
+    this.cdr.detectChanges();
   }
 
 }
