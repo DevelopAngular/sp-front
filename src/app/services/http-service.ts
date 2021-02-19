@@ -601,7 +601,7 @@ export class HttpService implements OnDestroy {
             signOutCatch
         );
       case 'google':
-        const url = GoogleLoginService.googleOAuthUrl + `&redirect_url=${this.getRedirectUrl()}google_oauth`;
+        const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
         this.showSignBackIn()
             .pipe(takeUntil(this.destroyed$))
             .subscribe( _ => {
