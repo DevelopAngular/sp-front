@@ -634,6 +634,7 @@ export class HttpService implements OnDestroy {
   showSignBackIn(): Observable<any> {
     const ref = this.matDialog.open(SignedOutToastComponent, {
       panelClass: 'form-dialog-container-white',
+      disableClose: true,
       backdropClass: 'white-backdrop',
       data: {}
     });
