@@ -25,6 +25,14 @@ export class InfoDialogComponent implements OnInit {
     './assets/integrations/100s more.png'
   ];
 
+  get isClever() {
+    return this.integrationName === 'Clever';
+  }
+
+  get gradient() {
+    return this.isClever ? 'radial-gradient(circle at 73% 71%, #4274F6, #4274F6)' : 'radial-gradient(circle at 73% 71%, #5C4AE3, #336DE4)';
+  }
+
   constructor(
     public dialogRef: MatDialogRef<Ggl4SettingsComponent>,
     private formService: CreateFormService
