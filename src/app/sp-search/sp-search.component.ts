@@ -158,6 +158,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   currentSchool: School;
   suggestedTeacher: User;
   foundLocations: Location[] = [];
+  forceFocused$: Subject<boolean> = new Subject<boolean>();
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -193,8 +194,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   changeColor(value, elem) {
-    if (value) {
-      this.renderer.setStyle(elem.target, 'background-color', '#ECF1FF');
+    if (value.hovered) {
+      if (value.pressed) {
+        this.renderer.setStyle(elem.target, 'background-color', '#ECEDF1');
+      } else {
+        this.renderer.setStyle(elem.target, 'background-color', '#F1F2F4');
+      }
     } else {
       this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
