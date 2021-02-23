@@ -132,6 +132,7 @@ export interface AuthContext {
   auth: ServerAuth;
   gg4l_token?: string;
   clever_token?: string;
+  google_token?: string;
 }
 
 export interface SPError {
@@ -144,6 +145,13 @@ class LoginServerError extends Error {
     super(msg);
     // required for instanceof to work properly
     Object.setPrototypeOf(this, LoginServerError.prototype);
+  }
+}
+
+class SilentError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'SPSilentError';
   }
 }
 
@@ -251,8 +259,17 @@ export class HttpService implements OnDestroy {
           tap({next: errOrAuth => {
             if (!errOrAuth.auth) {
               // Next object is error
+              if (errOrAuth instanceof SilentError) {
+                // Do nothing
+              } else if (errOrAuth instanceof Error) {
+                // Some error we declare in code
+                this.loginService.loginErrorMessage$.next(errOrAuth.message);
+              } else {
+                // Direct HTTP Errors
+                this.loginService.showLoginError$.next(true);
+              }
               this.loginService.isAuthenticated$.next(false);
-              this.loginService.showLoginError$.next(true);
+              this.loginService.clearInternal(true);
             }
           }}),
           filter(authObj => !!authObj && !!authObj.auth)
@@ -425,9 +442,16 @@ export class HttpService implements OnDestroy {
     c.append('platform_type', 'web');
     c.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
 
-    const context = this.storage.getItem('context');
+    let context = this.storage.getItem('context');
+    if (!!context) {
+      context = JSON.parse(context);
+    }
 
-    return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
+    if ((!context || !context.google_token) && !code) {
+      return throwError(new LoginServerError('Please sign in again.'));
+    }
+
+    return iif(() => (!!context && !!context.google_token), of(context), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
@@ -449,7 +473,7 @@ export class HttpService implements OnDestroy {
 
             const auth = data as ServerAuth;
 
-            return {auth: auth, server: server} as AuthContext;
+            return {auth: auth, server: server, google_token: response.google_token} as AuthContext;
           }));
 
     }));
@@ -552,7 +576,10 @@ export class HttpService implements OnDestroy {
     return authContext$.pipe(
         catchError(err => {
           console.log('Failed to fetch serverAuth, err: ', err);
-          return of(err);
+          // Attempt to refresh once...
+          return this.doRefresh().pipe(catchError((err2) => {
+            return of(err2);
+          }));
         })
     );
   }
@@ -582,23 +609,44 @@ export class HttpService implements OnDestroy {
       throw err;
     });
 
+    return this.doRefresh().pipe(
+        tap({next: (ctx: AuthContext) => this.setAuthContext(ctx)}),
+        signOutCatch
+    );
+  }
+
+  // This will throw errors if encountered
+  private doRefresh(): Observable<AuthContext> {
     const authType = this.storage.getItem('authType');
-    const {auth, server} = this.getAuthContext();
+
+    if (!authType) {
+      return throwError(new LoginServerError('Please sign in again.'));
+    }
+
     switch (authType) {
       case 'password':
+        // We have to get the context from storage here because this.getAuthContext will be null during first load.
+        const s = this.storage.getItem('context');
+        const refresh_token = this.storage.getItem('refresh_token');
+        if (!s || !refresh_token) {
+          return throwError(new LoginServerError('Please sign in again.'));
+        }
+        const c: AuthContext = JSON.parse(s);
+        const server = c.server;
         const config = new FormData();
         config.append('client_id', server.client_id);
         config.append('grant_type', 'refresh_token');
-        config.append('token', auth.refresh_token);
+        config.append('token', refresh_token);
         return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
             tap({next: o => console.log('Received refresh object: ', o)}),
-            tap({next: (data: Object) => {
+            map((data: Object) => {
               data['expires'] = new Date(new Date() + data['expires_in']);
-              const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
-              this.storage.setItem('refresh_token', updatedAuthContext.auth.refresh_token);
-              this.setAuthContext(updatedAuthContext);
-            }}),
-            signOutCatch
+              const ctx: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+              return ctx;
+            }),
+            tap({next: (ctx: AuthContext) => {
+                this.storage.setItem('refresh_token', ctx.auth.refresh_token);
+            }})
         );
       case 'google':
         const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
@@ -608,28 +656,28 @@ export class HttpService implements OnDestroy {
               this.loginService.clearInternal(true);
               window.location.href = url;
             });
-        throw new Error('Redirecting to google');
+        return throwError(new Error('Redirecting to google'));
       case 'gg4l':
         this.showSignBackIn()
             .pipe(takeUntil(this.destroyed$))
             .subscribe(_ => {
-          this.loginService.clearInternal(true);
-          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
-        });
-        throw new Error('Redirecting to gg4l');
+              this.loginService.clearInternal(true);
+              window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
+            });
+        return throwError(new Error('Redirecting to gg4l'));
       case 'clever':
         this.showSignBackIn()
             .pipe(takeUntil(this.destroyed$))
             .subscribe(_ => {
-          this.loginService.clearInternal(true);
-          const redirect = this.getEncodedRedirectUrl();
-          window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
-        });
-        throw new Error('Redirecting to clever');
+              this.loginService.clearInternal(true);
+              const redirect = this.getEncodedRedirectUrl();
+              window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
+            });
+        return throwError(new Error('Redirecting to clever'));
       default:
-        throw new Error('Unknown authType');
+        return throwError(new Error('Unknown authType'));
     }
-  }
+}
 
   showSignBackIn(): Observable<any> {
     const ref = this.matDialog.open(SignedOutToastComponent, {
