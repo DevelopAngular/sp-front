@@ -17,6 +17,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
+import {JwtHelperService} from '@auth0/angular-jwt';
 
 declare const window;
 
@@ -243,7 +244,6 @@ export class HttpService implements OnDestroy {
         takeUntil(this.destroyed$),
         filter(v => !!v),
         map(newToken => {
-          newToken['expires'] = new Date(new Date() + newToken['expires_in']);
           return {auth: newToken, server: this.getAuthContext().server};
         })).subscribe(res => {
           this.setAuthContext(res);
@@ -385,6 +385,8 @@ export class HttpService implements OnDestroy {
       const config = new FormData();
       config.append('client_id', server.client_id);
 
+      const isKioskMode = this.storage.getItem('kioskToken') != null;
+
       if (password) {
         config.append('grant_type', 'password');
         config.append('username', username);
@@ -393,6 +395,13 @@ export class HttpService implements OnDestroy {
         config.append('grant_type', 'refresh_token');
         const refreshToken = this.storage.getItem('refresh_token');
         config.append('token', refreshToken);
+
+        if (isKioskMode) {
+          const token = this.storage.getItem('kioskToken');
+          const jwt = new JwtHelperService();
+          const locId = jwt.decodeToken(token).kiosk_location_id;
+          config.append('kiosk_mode_location_id', locId);
+        }
       }
 
       if (!navigator.onLine) {
@@ -425,7 +434,10 @@ export class HttpService implements OnDestroy {
             ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
 
             const auth = data as ServerAuth;
-
+            if (isKioskMode) {
+              this.storage.setItem('kioskToken', auth.access_token);
+              this.kioskTokenSubject$.next(auth);
+            }
             return {auth: auth, server: server} as AuthContext;
           })
       );
@@ -615,8 +627,53 @@ export class HttpService implements OnDestroy {
     );
   }
 
+  private doSPTokenRefresh(kioskMode: boolean): Observable<AuthContext> {
+    // We have to get the context from storage here because this.getAuthContext will be null during first load.
+    const s = this.storage.getItem('context');
+    const refresh_token = this.storage.getItem('refresh_token');
+
+    if (!s || !refresh_token) {
+      return throwError(new LoginServerError('Please sign in again.'));
+    }
+
+    const c: AuthContext = JSON.parse(s);
+    const server = c.server;
+    const config = new FormData();
+    config.append('client_id', server.client_id);
+    config.append('grant_type', 'refresh_token');
+    config.append('token', refresh_token);
+
+    if (kioskMode) {
+      const token = this.storage.getItem('kioskToken');
+      const jwt = new JwtHelperService();
+      const locId = jwt.decodeToken(token).kiosk_location_id;
+      config.append('kiosk_mode_location_id', locId);
+    }
+
+    return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+        tap({next: o => console.log('Received refresh object: ', o)}),
+        map((data: Object) => {
+          data['expires'] = new Date(new Date() + data['expires_in']);
+          const ctx: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+          return ctx;
+        }),
+        tap({next: (ctx: AuthContext) => {
+            this.storage.setItem('refresh_token', ctx.auth.refresh_token);
+            if (kioskMode) {
+              this.storage.setItem('kioskToken', ctx.auth.access_token);
+              this.kioskTokenSubject$.next(ctx.auth);
+            }
+          }})
+    );
+  }
+
   // This will throw errors if encountered
   private doRefresh(): Observable<AuthContext> {
+    const isKiosk = this.storage.getItem('kioskToken') != null;
+    if (isKiosk) {
+      return this.doSPTokenRefresh(true);
+    }
+
     const authType = this.storage.getItem('authType');
 
     if (!authType) {
@@ -625,29 +682,7 @@ export class HttpService implements OnDestroy {
 
     switch (authType) {
       case 'password':
-        // We have to get the context from storage here because this.getAuthContext will be null during first load.
-        const s = this.storage.getItem('context');
-        const refresh_token = this.storage.getItem('refresh_token');
-        if (!s || !refresh_token) {
-          return throwError(new LoginServerError('Please sign in again.'));
-        }
-        const c: AuthContext = JSON.parse(s);
-        const server = c.server;
-        const config = new FormData();
-        config.append('client_id', server.client_id);
-        config.append('grant_type', 'refresh_token');
-        config.append('token', refresh_token);
-        return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-            tap({next: o => console.log('Received refresh object: ', o)}),
-            map((data: Object) => {
-              data['expires'] = new Date(new Date() + data['expires_in']);
-              const ctx: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
-              return ctx;
-            }),
-            tap({next: (ctx: AuthContext) => {
-                this.storage.setItem('refresh_token', ctx.auth.refresh_token);
-            }})
-        );
+        return this.doSPTokenRefresh(false);
       case 'google':
         const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
         this.showSignBackIn()

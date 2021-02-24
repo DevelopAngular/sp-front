@@ -12,8 +12,9 @@ const STORAGE_KEY = 'google_auth';
 
 export interface DemoLogin {
   username: string;
-  password: string;
+  password?: string;
   invalid?: boolean;
+  kioskMode: boolean;
   type: 'demo-login';
 }
 
@@ -123,6 +124,7 @@ export class GoogleLoginService {
     this.storage.removeItem('refresh_token');
     this.storage.removeItem('google_id_token');
     this.storage.removeItem('context');
+    this.storage.removeItem('kioskToken');
     this.logout();
   }
 
@@ -150,7 +152,7 @@ export class GoogleLoginService {
   }
 
   signInDemoMode(username: string, password: string) {
-    this.authObject$.next({username: username, password: password, type: 'demo-login'});
+    this.authObject$.next({username: username, password: password, type: 'demo-login', kioskMode: false});
   }
 
   logout() {
