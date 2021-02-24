@@ -22,17 +22,16 @@
     </div>
 
     <div class="right-button">
-      <app-gradient-button
+      <app-gradient-button *ngIf="!isFormIncomplete"
        [minHeight]="'40px'"
        [style.width]="'120px'"
        [gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
        [textColor]="color_profile ? color_profile.solid_color : 'White'"
        [cursor]="'pointer'"
        [fontSize]="'14px'"
-       [disabled]="isFormIncomplete"
        (buttonClick)="onPublish()"
        (disabledButtonClick)="showFormErrors()"
-        [matTooltip]="saveButtonToolTip"
+       [matTooltip]="saveButtonToolTip"
         matTooltipClass="tooltip"
         >
         <span *ngIf="!showPublishSpinner">Save</span>
