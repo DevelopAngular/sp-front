@@ -242,7 +242,8 @@ export class HttpService implements OnDestroy {
 
     this.kioskTokenSubject$.pipe(
         takeUntil(this.destroyed$),
-        filter(v => !!v),
+        filter(v => !!v && !!this.getAuthContext()),
+        take(1),
         map(newToken => {
           return {auth: newToken, server: this.getAuthContext().server};
         })).subscribe(res => {
