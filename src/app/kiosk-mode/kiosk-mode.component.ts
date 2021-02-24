@@ -3,7 +3,7 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {MatDialog} from '@angular/material/dialog';
 import {LiveDataService} from '../live-data/live-data.service';
-import {combineLatest, of, Subject} from 'rxjs';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -13,7 +13,6 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -61,6 +60,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.locationService.getPassLimitRequest();
       combineLatest(this.userService.user$.pipe(take(1)), this.userService.effectiveUser.pipe(take(1))).pipe(
           switchMap(([user, effectiveUser]) => {
             if (effectiveUser) {
