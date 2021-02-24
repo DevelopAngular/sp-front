@@ -564,9 +564,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showMainForm(forLater: boolean): void {
 
-    if (forLater) {
-      this.httpService.dirtyAccessToken();
-    }
+    // if (forLater) {
+    //   this.httpService.dirtyAccessToken();
+    // }
 
     if (!this.isOpenedModal) {
       this.isOpenedModal = true;
