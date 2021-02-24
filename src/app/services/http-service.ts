@@ -17,6 +17,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
+import {JwtHelperService} from '@auth0/angular-jwt';
 
 declare const window;
 
@@ -132,6 +133,7 @@ export interface AuthContext {
   auth: ServerAuth;
   gg4l_token?: string;
   clever_token?: string;
+  google_token?: string;
 }
 
 export interface SPError {
@@ -144,6 +146,13 @@ class LoginServerError extends Error {
     super(msg);
     // required for instanceof to work properly
     Object.setPrototypeOf(this, LoginServerError.prototype);
+  }
+}
+
+class SilentError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'SPSilentError';
   }
 }
 
@@ -233,9 +242,9 @@ export class HttpService implements OnDestroy {
 
     this.kioskTokenSubject$.pipe(
         takeUntil(this.destroyed$),
-        filter(v => !!v),
+        filter(v => !!v && !!this.getAuthContext()),
+        take(1),
         map(newToken => {
-          newToken['expires'] = new Date(new Date() + newToken['expires_in']);
           return {auth: newToken, server: this.getAuthContext().server};
         })).subscribe(res => {
           this.setAuthContext(res);
@@ -251,8 +260,17 @@ export class HttpService implements OnDestroy {
           tap({next: errOrAuth => {
             if (!errOrAuth.auth) {
               // Next object is error
+              if (errOrAuth instanceof SilentError) {
+                // Do nothing
+              } else if (errOrAuth instanceof Error) {
+                // Some error we declare in code
+                this.loginService.loginErrorMessage$.next(errOrAuth.message);
+              } else {
+                // Direct HTTP Errors
+                this.loginService.showLoginError$.next(true);
+              }
               this.loginService.isAuthenticated$.next(false);
-              this.loginService.showLoginError$.next(true);
+              this.loginService.clearInternal(true);
             }
           }}),
           filter(authObj => !!authObj && !!authObj.auth)
@@ -368,6 +386,8 @@ export class HttpService implements OnDestroy {
       const config = new FormData();
       config.append('client_id', server.client_id);
 
+      const isKioskMode = this.storage.getItem('kioskToken') != null;
+
       if (password) {
         config.append('grant_type', 'password');
         config.append('username', username);
@@ -376,6 +396,13 @@ export class HttpService implements OnDestroy {
         config.append('grant_type', 'refresh_token');
         const refreshToken = this.storage.getItem('refresh_token');
         config.append('token', refreshToken);
+
+        if (isKioskMode) {
+          const token = this.storage.getItem('kioskToken');
+          const jwt = new JwtHelperService();
+          const locId = jwt.decodeToken(token).kiosk_location_id;
+          config.append('kiosk_mode_location_id', locId);
+        }
       }
 
       if (!navigator.onLine) {
@@ -408,7 +435,10 @@ export class HttpService implements OnDestroy {
             ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
 
             const auth = data as ServerAuth;
-
+            if (isKioskMode) {
+              this.storage.setItem('kioskToken', auth.access_token);
+              this.kioskTokenSubject$.next(auth);
+            }
             return {auth: auth, server: server} as AuthContext;
           })
       );
@@ -425,9 +455,16 @@ export class HttpService implements OnDestroy {
     c.append('platform_type', 'web');
     c.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
 
-    const context = this.storage.getItem('context');
+    let context = this.storage.getItem('context');
+    if (!!context) {
+      context = JSON.parse(context);
+    }
 
-    return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
+    if ((!context || !context.google_token) && !code) {
+      return throwError(new LoginServerError('Please sign in again.'));
+    }
+
+    return iif(() => (!!context && !!context.google_token), of(context), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
@@ -449,7 +486,7 @@ export class HttpService implements OnDestroy {
 
             const auth = data as ServerAuth;
 
-            return {auth: auth, server: server} as AuthContext;
+            return {auth: auth, server: server, google_token: response.google_token} as AuthContext;
           }));
 
     }));
@@ -552,7 +589,10 @@ export class HttpService implements OnDestroy {
     return authContext$.pipe(
         catchError(err => {
           console.log('Failed to fetch serverAuth, err: ', err);
-          return of(err);
+          // Attempt to refresh once...
+          return this.doRefresh().pipe(catchError((err2) => {
+            return of(err2);
+          }));
         })
     );
   }
@@ -582,24 +622,68 @@ export class HttpService implements OnDestroy {
       throw err;
     });
 
+    return this.doRefresh().pipe(
+        tap({next: (ctx: AuthContext) => this.setAuthContext(ctx)}),
+        signOutCatch
+    );
+  }
+
+  private doSPTokenRefresh(kioskMode: boolean): Observable<AuthContext> {
+    // We have to get the context from storage here because this.getAuthContext will be null during first load.
+    const s = this.storage.getItem('context');
+    const refresh_token = this.storage.getItem('refresh_token');
+
+    if (!s || !refresh_token) {
+      return throwError(new LoginServerError('Please sign in again.'));
+    }
+
+    const c: AuthContext = JSON.parse(s);
+    const server = c.server;
+    const config = new FormData();
+    config.append('client_id', server.client_id);
+    config.append('grant_type', 'refresh_token');
+    config.append('token', refresh_token);
+
+    if (kioskMode) {
+      const token = this.storage.getItem('kioskToken');
+      const jwt = new JwtHelperService();
+      const locId = jwt.decodeToken(token).kiosk_location_id;
+      config.append('kiosk_mode_location_id', locId);
+    }
+
+    return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+        tap({next: o => console.log('Received refresh object: ', o)}),
+        map((data: Object) => {
+          data['expires'] = new Date(new Date() + data['expires_in']);
+          const ctx: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+          return ctx;
+        }),
+        tap({next: (ctx: AuthContext) => {
+            this.storage.setItem('refresh_token', ctx.auth.refresh_token);
+            if (kioskMode) {
+              this.storage.setItem('kioskToken', ctx.auth.access_token);
+              this.kioskTokenSubject$.next(ctx.auth);
+            }
+          }})
+    );
+  }
+
+  // This will throw errors if encountered
+  private doRefresh(): Observable<AuthContext> {
+    const isKiosk = this.storage.getItem('kioskToken') != null;
+    if (isKiosk) {
+      return this.doSPTokenRefresh(true);
+    }
+
     const authType = this.storage.getItem('authType');
-    const {auth, server} = this.getAuthContext();
+
+    if (!authType) {
+      return throwError(new LoginServerError('Please sign in again.'));
+    }
+
     switch (authType) {
       case 'password':
-        const config = new FormData();
-        config.append('client_id', server.client_id);
-        config.append('grant_type', 'refresh_token');
-        config.append('token', auth.refresh_token);
-        return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-            tap({next: o => console.log('Received refresh object: ', o)}),
-            tap({next: (data: Object) => {
-              data['expires'] = new Date(new Date() + data['expires_in']);
-              const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
-              this.storage.setItem('refresh_token', updatedAuthContext.auth.refresh_token);
-              this.setAuthContext(updatedAuthContext);
-            }}),
-            signOutCatch
-        );
+        return this.doSPTokenRefresh(false);
       case 'google':
         const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
         this.showSignBackIn()
@@ -608,28 +692,28 @@ export class HttpService implements OnDestroy {
               this.loginService.clearInternal(true);
               window.location.href = url;
             });
-        throw new Error('Redirecting to google');
+        return throwError(new Error('Redirecting to google'));
       case 'gg4l':
         this.showSignBackIn()
             .pipe(takeUntil(this.destroyed$))
             .subscribe(_ => {
-          this.loginService.clearInternal(true);
-          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
-        });
-        throw new Error('Redirecting to gg4l');
+              this.loginService.clearInternal(true);
+              window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
+            });
+        return throwError(new Error('Redirecting to gg4l'));
       case 'clever':
         this.showSignBackIn()
             .pipe(takeUntil(this.destroyed$))
             .subscribe(_ => {
-          this.loginService.clearInternal(true);
-          const redirect = this.getEncodedRedirectUrl();
-          window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
-        });
-        throw new Error('Redirecting to clever');
+              this.loginService.clearInternal(true);
+              const redirect = this.getEncodedRedirectUrl();
+              window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
+            });
+        return throwError(new Error('Redirecting to clever'));
       default:
-        throw new Error('Unknown authType');
+        return throwError(new Error('Unknown authType'));
     }
-  }
+}
 
   showSignBackIn(): Observable<any> {
     const ref = this.matDialog.open(SignedOutToastComponent, {

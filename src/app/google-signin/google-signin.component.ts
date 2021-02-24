@@ -87,6 +87,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.error$.next('Account does not have any associated teachers. Please contact your school admin.');
       } else if (message === 'pop up blocked') {
         this.error$.next('Pop up blocked. Please allow pop ups.');
+      } else {
+        this.error$.next(message);
       }
       this.passwordError = !!message;
       this.showSpinner = false;
