@@ -92,6 +92,22 @@
           ></app-sp-search>
         </div>
 
+        <div class="role-info" style="width: 100%" *ngIf="user.isTeacher()">
+          <div class="title">Rooms</div>
+          <app-sp-search
+            [width]="'254px'"
+            [listMaxHeight]="'unset'"
+            [focused]="true"
+            [placeholder]="'Search rooms'"
+            [searchTarget]="'rooms'"
+            [cancelButton]="true"
+            [displaySelectedTitle]="false"
+            [chipsMode]="true"
+            [selectedOptions]="teacherRooms"
+            (onUpdate)="teacherRooms = $event"
+          ></app-sp-search>
+        </div>
+
       </div>
       <mat-divider *ngIf="profilePermissions.student.length"></mat-divider>
       <div class="block" *ngIf="profilePermissions.student.length">

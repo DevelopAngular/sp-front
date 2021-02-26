@@ -2,12 +2,13 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as teachersActions from '../actions';
-import {catchError, concatMap, map, mapTo, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, mapTo, switchMap, take} from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
+import {Location} from '../../../../../models/Location';
 
 @Injectable()
 export class TeachersEffects {
@@ -16,10 +17,10 @@ export class TeachersEffects {
     return this.actions$
       .pipe(
         ofType(teachersActions.getTeachers),
-        concatMap((action: any) => {
+        exhaustMap((action: any) => {
           return this.userService.getUsersList(action.role, action.search, action.limit)
             .pipe(
-              switchMap((users => {
+              exhaustMap((users => {
                 return forkJoin({
                   userList: of(users),
                   userLocations: this.locationService.getLocationsWithManyTeachers(users.results)
@@ -201,6 +202,25 @@ export class TeachersEffects {
             })
           );
         }),
+      );
+  });
+
+  updateTeacherLocations$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(teachersActions.updateTeacherLocations),
+        exhaustMap((action: any) => {
+          return zip(...action.locations.map((loc: Location) => {
+            return this.locationService.updateLocation(loc.id, {teachers: loc.teachers.map(t => t.id)});
+          }))
+            .pipe(
+              map((locations: any) => {
+                const profile = {...action.teacher, assignedTo: action.newLocations};
+                return teachersActions.updateTeacherLocationsSuccess({profile});
+              }),
+              catchError(error => of(teachersActions.updateTeacherLocationsFailure({errorMessage: error.message})))
+            );
+        })
       );
   });
 
