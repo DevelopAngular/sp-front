@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as adminsActions from '../actions';
-import {catchError, concatMap, map, mapTo, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, mapTo, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../../../services/user.service';
 import {of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
@@ -14,7 +14,7 @@ export class AdminsEffects {
     return this.actions$
       .pipe(
         ofType(adminsActions.getAdmins),
-        concatMap((action: any) => {
+        exhaustMap((action: any) => {
           return this.userService.getUsersList(action.role, action.search, action.limit)
             .pipe(
               map((users: any) => {

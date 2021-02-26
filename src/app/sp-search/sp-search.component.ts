@@ -397,6 +397,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     if (!this.selectedOptions.includes(location)) {
       this.selectedOptions.push(location);
       this.onUpdate.emit(this.getEmitedValue());
+      this.inputField = false;
     }
   }
 
