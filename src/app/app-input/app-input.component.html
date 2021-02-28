@@ -1,5 +1,5 @@
 <div [formGroup]="formGroup">
-  <div class="InputWrapper">
+  <div [ngClass]="{InputWrapper: true, 'searching': searching}">
     <div style="display: flex; position: relative">
       <label
         [ngClass]="{

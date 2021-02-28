@@ -32,16 +32,12 @@ export class FormsService {
   }
 
   getPredemoComplete(calendlyId) {
-    return this.http.post(this.getUrl('v1/acquisition/predemoGetComplete'), {'calendlyId': calendlyId});
+    return this.http.post(this.getUrl('v1/acquisition/predemoGetComplete'), {'meetingId': calendlyId});
   }
 
   savePredemoForm(calendlyId, data) {
-    console.log({
-      'calendlyId': calendlyId,
-      ...data
-    })
     return this.http.post(this.getUrl('v1/acquisition/predemo'), {
-      'calendlyId': calendlyId,
+      'meetingId': calendlyId,
       ...data
     });
   }
