@@ -1,9 +1,9 @@
 import {Component, ElementRef, Inject, OnInit, Optional} from '@angular/core';
-import {DarkThemeSwitch} from '../dark-theme-switch';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
-import {UserService} from '../services/user.service';
+import {UserService} from '../../services/user.service';
 import {map} from 'rxjs/operators';
-import {User} from '../models/User';
+import {User} from '../../models/User';
 
 declare const window;
 
@@ -33,10 +33,11 @@ export class SupportOptionsComponent implements OnInit {
         { name: 'Chat with us', image: 'Chat', hasShow: !user.isStudent(), hovered: false },
         { name: 'Report a bug', image: 'Bug', hasShow: true, hovered: false, link: 'https://www.smartpass.app/bugreport'},
         { name: 'What’s new?', image: 'Balloons', hasShow: true, hovered: false, link: 'https://www.smartpass.app/updates' },
-        { name: 'Suggest a feature', image: 'Latter', hasShow: !user.isStudent(), hovered: false, link: 'https://wishlist.smartpass.app' }
+        { name: 'Suggest a feature', image: 'Latter', hasShow: !user.isStudent(), hovered: false, isNolt: true }
       ];
       this.updateDialogPosition(user);
     });
+    window.nolt('init', { selector: '.nolt-css-selector', url: 'https://smartpass.nolt.io' });
   }
 
   getUserRole(user: User) {
