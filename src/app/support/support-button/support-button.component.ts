@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {SupportOptionsComponent} from '../support-options/support-options.component';
 import {MatDialog} from '@angular/material/dialog';
-import {SupportService} from '../services/support.service';
+import {SupportService} from '../../services/support.service';
 
 declare const window;
 
