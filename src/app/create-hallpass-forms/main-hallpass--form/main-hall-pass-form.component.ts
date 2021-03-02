@@ -15,6 +15,7 @@ import {ScreenService} from '../../services/screen.service';
 import {DeviceDetection} from '../../device-detection.helper';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms.component';
+import {UserService} from '../../services/user.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -98,6 +99,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private passesService: HallPassesService,
+    private userService: UserService
   ) {}
 
   get isCompressed() {
@@ -190,8 +192,11 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.setFormSize();
     this.setContainerSize('end');
     this.checkDeviceScreen();
-      this.dataService.currentUser
-        .pipe(takeUntil(this.destroy$))
+      this.userService.user$
+        .pipe(
+          takeUntil(this.destroy$),
+          map(user => User.fromJSON(user))
+        )
         .subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAssistant();
           this.user = user;

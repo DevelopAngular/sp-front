@@ -536,6 +536,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cursor = 'default';
     }
 
+    this.userService.getStudentGroupsRequest();
     this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
     this.locationsService.getFavoriteLocationsRequest();
     this.locationsService.getPassLimitRequest();

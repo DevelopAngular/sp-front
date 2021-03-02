@@ -82,7 +82,7 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
 
     this.updateData$.pipe(
       switchMap((evt) => {
-        return this.userService.getStudentGroupsRequest().pipe(
+        return this.userService.studentGroups$.pipe(
           map((groups: StudentList[]) => {
             this.groups = groups;
             return evt;
