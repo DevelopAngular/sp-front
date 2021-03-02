@@ -400,6 +400,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.isStaff) {
             this.dataService.updateInbox(true);
           }
+          this.locationsService.getLocationsWithTeacherRequest(this.user);
           return user.roles.includes('hallpass_student');
         }) // TODO filter events to only changes.
       )
@@ -475,6 +476,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userService.getStudentGroupsRequest();
+    this.passesService.getPinnablesRequest();
     this.schoolsLength$ = this.httpService.schoolsLength$;
     this.user$ = this.userService.user$;
     const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
