@@ -178,17 +178,16 @@
     <div class="delete-button" *ngIf="currentPage === 2">
         <app-gradient-button
                 [hoverColor]="'#DA2370'"
-                [gradient]="'#DA2370, #FB434A'"
+                [gradient]="'#E32C66, #E32C66'"
                 [minHeight]="'40px'"
                 [style.width]="'140px'"
                 [cursor]="'pointer'"
                 [fontSize]="'14px'"
                 (buttonClick)="deleteRoom($event.target)"
-        >Delete Room</app-gradient-button>
+        >Delete room</app-gradient-button>
 
-<!--        <div class="delete-info-text">-->
-<!--            This <b style="color: #7f879d">will</b> erase all active and scheduled passes to and from this room.<br/>-->
-<!--            This <b style="color: #7f879d">will not</b> erase any expired passes to or from this room.-->
-<!--        </div>-->
+        <div class="delete-info-text">
+          Deleting a room will permanently delete the room, but will not delete any active, scheduled, or expired passes to or from this room.
+        </div>
     </div>
 </div>

@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SupportOptionsComponent } from './support-options.component';
+import {SupportOptionsComponent} from './support-options.component';
 
 describe('SupportOptionsComponent', () => {
   let component: SupportOptionsComponent;

@@ -97,7 +97,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (this.dialogRef) {
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
       const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-      const top = rect.top - (!this.isSwitchOption ? 240 : (!this.showGetStarted ? 285 : 330));
+      const top = rect.top - (!this.isSwitchOption ? 285 : 330);
       matDialogConfig.position = {left: `${rect.left - 130}px`, top: `${top}px`};
       this.dialogRef.updatePosition(matDialogConfig.position);
     }

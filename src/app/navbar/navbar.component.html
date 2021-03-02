@@ -94,7 +94,6 @@
           [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
           appCrossPointerEventTarget
          (pointerClickEvent)="inboxClick()"
-
       >
         <app-icon-button [eventBubbling]="true" [srcString]="'Inbox'" [size]="20"></app-icon-button>
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">

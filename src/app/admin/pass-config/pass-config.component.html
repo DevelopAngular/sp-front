@@ -5,17 +5,17 @@
   <div class="host" appSafariScroll (click)="closeChat($event)">
     <div class="pass-config-wrapper" (scroll)="scroll($event)" #scrollableArea *ngIf="onboardProcess$ | async as onboardProcess">
       <div class="pass-config-container" [style.background-color]="darkTheme.getBackground('default')">
-        <div class="pass-config-header" [style.background-color]="darkTheme.getBackground('high', true)">
+        <div class="pass-config-header" [style.background-color]="isSelected ? '#ECF1FF' : darkTheme.getBackground('high', true)">
           <div class="school-logo">
             <div class="school-title">
-              <div *ngIf="bulkSelect; else staticHeader" class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{selectedPinnables.length}} Selected</div>
+              <div *ngIf="bulkSelect; else staticHeader" class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{selectedPinnables.length}} selected rooms</div>
               <ng-template #staticHeader>
                 <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</div>
               </ng-template>
             </div>
 
             <div class="header-settings">
-              <app-gradient-button
+              <app-gradient-button *ngIf="!isSelected; else bulkEditButton"
                 (click)="openSettings()"
                 [cursor]="'pointer'"
                 [gradient]="'#F4F4F4, #F4F4F4'"
@@ -26,26 +26,45 @@
               >
                 Options
               </app-gradient-button>
+
+              <ng-template #bulkEditButton>
+                <app-gradient-button
+                  [gradient]="'#7F879D, #7F879D'"
+                  [cursor]="'pointer'"
+                  [size]="'medium'"
+                  (buttonClick)="buildData('edit')"
+                >Bulk Edit</app-gradient-button>
+              </ng-template>
+
+              <app-gradient-button
+                *ngIf="isSelected"
+                [gradient]="'#7F879D, #7F879D'"
+                [cursor]="'pointer'"
+                [size]="'medium'"
+                [style.margin-left]="'15px'"
+                [leftIcon]="'./assets/New Folder (White).svg'"
+                (buttonClick)="buildData('newFolderWithSelections')"
+              >New Folder with Selection
+              </app-gradient-button>
+
               <app-gradient-button
                 *ngIf="onboardProcess['2.landing:first_room']?.done"
                 (click)="toggleBulk()"
-                [style.margin]="'0 15px 0 15px'"
+                [style.margin]="'0 15px'"
                 [cursor]="'pointer'"
-                [gradient]="'#F4F4F4, #F4F4F4'"
+                [gradient]="!isSelected ? '#F4F4F4, #F4F4F4' : '#1F195E, #1F195E'"
                 [hoverColor]="'#F5F5F5'"
-                [textColor]="'#1F195E'"
+                [textColor]="!isSelected ? '#1F195E' : '#FFFFFF'"
                 [size]="'medium'"
               >
-                {{ (bulkSelect ? 'Done' : 'Edit') }}
+                {{ (isSelected ? 'Done' : 'Edit') }}
               </app-gradient-button>
-              <app-gradient-button
-                [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
+              <app-gradient-button *ngIf="!isSelected"
                 [size]="'medium'"
                 [hoverColor]="'#00B476'"
-                [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
+                [cursor]="'pointer'"
                 (buttonClick)="buttonClicked($event)"
-                [leftIcon]="headerButtonIcon"
-                [disabled]="bulkSelect && !selectedPinnables.length">
+                [leftIcon]="headerButtonIcon">
                 {{headerButtonText}}
               </app-gradient-button>
             </div>

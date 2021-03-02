@@ -31,8 +31,8 @@ export class CreateFormService {
       from: 100,
       halfFrom: 50,
       direction: 'disable',
-      frameSpeed: this.screenService.isDeviceLargeExtra ? '.23s' : '.45s',
-      subFrameSpeed: this.screenService.isDeviceLargeExtra ? '.10s' : '.20s',
+      frameSpeed: this.screenService.isDeviceLargeExtra ? '.23s' : '.27s',
+      subFrameSpeed: this.screenService.isDeviceLargeExtra ? '.10s' : '.15s',
     };
     this.frameMotionDirection$ = new BehaviorSubject(this.transition);
   }

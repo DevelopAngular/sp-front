@@ -111,19 +111,18 @@
     <div class="delete-button" *ngIf="currentPage === 4 && folderRoomsLoaded">
       <app-gradient-button
               [hoverColor]="'#DA2370'"
-              [gradient]="'#DA2370, #FB434A'"
+              [gradient]="'#E32C66, #E32C66'"
               [minHeight]="'40px'"
               [style.width]="'140px'"
               [cursor]="'pointer'"
               [fontSize]="'14px'"
               (buttonClick)="deleteRoom($event.target)"
       >
-        Delete Folder</app-gradient-button>
+        Delete folder</app-gradient-button>
 
-<!--      <div class="delete-info-text">-->
-<!--        This <b style="color: gray">will</b> erase all active and scheduled passes to and from all rooms in this folder.<br/>-->
-<!--        This <b style="color: gray">will not</b> erase any expired passes to or from any rooms in this folder.-->
-<!--      </div>-->
+      <div class="delete-info-text">
+        Deleting a folder will permanently delete all rooms in the folder, but will not delete any active, scheduled, or expired passes to or from the rooms in this folder.
+      </div>
     </div>
   </div>
 </div>

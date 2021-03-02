@@ -52,6 +52,10 @@ export class Gg4lSetUpComponent implements OnInit {
     return this.dialogAction === 'gg4l' ? 'GG4L' : this.dialogAction === 'clever' ? 'Clever' : null;
   }
 
+  get isClever() {
+    return this.integrationName === 'Clever';
+  }
+
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.syncLoading$ = this.adminService.cleverSyncLoading$;

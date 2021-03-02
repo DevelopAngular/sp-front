@@ -28,6 +28,7 @@
         [fieldIconPosition]="'left'"
         [closeIcon]="!cancelButton"
         [focused]="focused"
+        [forceFocused$]="forceFocused$"
         [selectReset$]="inputValue$"
         [boxShadow]="false"
         [pending$]="pending$"
@@ -43,12 +44,15 @@
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
-               (mouseenter)="changeColor(true, $event); studentNameOver(cell)"
-               (mouseleave)="changeColor(false, $event); studentNameLeave(cell)"
+               (mouseenter)="cell.hovered = true; studentNameOver(cell)"
+               (mouseleave)="cell.hovered = false; cell.pressed = false; studentNameLeave(cell)"
                appCrossPointerEventTarget
-               (pointerDownEvent)="changeColor(true, $event)"
-               (pointerClickEvent)="changeColor(true, $event); addStudent(student)"
-               [style.color]="textColor(cell)"
+               (pointerDownEvent)="cell.pressed = true;"
+               (pointerClickEvent)="cell.pressed = false; addStudent(student); forceFocused$.next(true)"
+               (focus)="cell.hovered = true"
+               (blur)="cell.hovered =false"
+               [style.color]="'#555558'"
+               [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
                cdkOverlayOrigin
                #trigger="cdkOverlayOrigin"
           >
@@ -90,12 +94,15 @@
       <div *ngIf="!showDummy; else nolocs" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let location of foundLocations" tabindex="0" class="option-list_item"
-               (mouseenter)="changeColor(true, $event)"
-               (mouseleave)="changeColor(false, $event)"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false; cell.pressed = false"
                appCrossPointerEventTarget
-               (pointerDownEvent)="changeColor(true, $event)"
-               (pointerClickEvent)="changeColor(true, $event); addLocation(location)"
-               [style.color]="textColor(cell)"
+               (pointerDownEvent)="cell.pressed = true;"
+               (pointerClickEvent)="cell.pressed = false; addLocation(location)"
+               [style.color]="'#555558'"
+               (focus)="cell.hovered = true"
+               (blur)="cell.hovered =false"
+               [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
           >
             <span>
              {{ location.title }}
@@ -122,12 +129,15 @@
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let unit of orgunits | async" class="option-list_item"
-               (mouseenter)="changeColor(true, $event)"
-               (mouseleave)="changeColor(false, $event)"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false; cell.pressed = false"
                appCrossPointerEventTarget
-               (pointerDownEvent)="changeColor(true, $event)"
-               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); addUnit(unit)"
-               [style.color]="textColor(cell)"
+               (pointerDownEvent)="cell.pressed = true;"
+               (pointerClickEvent)="cell.pressed = false; inputValue$.next(''); addUnit(unit)"
+               [style.color]="'#555558'"
+               (focus)="cell.hovered = true"
+               (blur)="cell.hovered =false"
+               [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
           >
             <span>
               {{unit.path}}
@@ -151,12 +161,15 @@
       <div *ngIf="searchingRoles?.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let role of searchingRoles" class="option-list_item"
-               (mouseenter)="changeColor(true, $event)"
-               (mouseleave)="changeColor(false, $event)"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false; cell.pressed = false"
                appCrossPointerEventTarget
-               (pointerDownEvent)="changeColor(true, $event)"
-               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); addRole(role)"
-               [style.color]="textColor(cell)"
+               (pointerDownEvent)="cell.pressed = true;"
+               (pointerClickEvent)="cell.pressed = false; inputValue$.next(''); addRole(role)"
+               [style.color]="'#555558'"
+               (focus)="cell.hovered = true"
+               (blur)="cell.hovered =false"
+               [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
           >
             <span>
               {{role.role}}
@@ -170,12 +183,15 @@
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let teacher of ( teacherCollection$ | async)" tabindex="0" class="option-list_item"
-               (mouseenter)="changeColor(true, $event)"
-               (mouseleave)="changeColor(false, $event)"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false; cell.pressed = false"
                appCrossPointerEventTarget
-               (pointerDownEvent)="changeColor(true, $event)"
-               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); addLocalTeacher(teacher)"
-               [style.color]="textColor(cell)"
+               (pointerDownEvent)="cell.pressed = true;"
+               (pointerClickEvent)="cell.pressed = false; inputValue$.next(''); addLocalTeacher(teacher)"
+               [style.color]="'#555558'"
+               (focus)="cell.hovered = true"
+               (blur)="cell.hovered =false"
+               [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
           >
             <span>
                {{teacher.display_name}} ({{teacher.primary_email ? teacher.primary_email.slice(0, teacher.primary_email.indexOf('@')) : teacher.email ? teacher.email.slice(0, teacher.email.indexOf('@')) : ''}})
@@ -199,14 +215,16 @@
       <div *ngIf="(schools | async)?.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noSchoolsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
-          <div *ngFor="let school of schools | async" class="option-list_item"
-               (mouseenter)="changeColor(true, $event)"
-               (mouseleave)="changeColor(false, $event)"
+          <div #cell *ngFor="let school of schools | async" class="option-list_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false; cell.pressed = false"
                appCrossPointerEventTarget
-               (pointerDownEvent)="changeColor(true, $event)"
-               (pointerClickEvent)="changeColor(true, $event); inputValue$.next(''); selectSchool(school)"
-               [style.color]="textColor(cell)"
-               #cell
+               (pointerDownEvent)="cell.pressed = true;"
+               (pointerClickEvent)="cell.pressed = false; inputValue$.next(''); selectSchool(school)"
+               [style.color]="'#555558'"
+               (focus)="cell.hovered = true"
+               (blur)="cell.hovered =false"
+               [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
           >
             <div>
               <div style="text-transform: capitalize; color: #00B476">
@@ -258,9 +276,12 @@
     </div>
     <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
       <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" tabindex="0" class="option-list_item"
-           (mouseenter)="changeColor(true, $event); cell.hovered = true"
-           (mouseleave)="changeColor(false, $event); cell.hovered = false"
-           [style.color]="textColor(cell)"
+           (mouseenter)="cell.hovered = true;"
+           (mouseleave)="cell.hovered = false; cell.pressed = false"
+           [style.color]="'#555558'"
+           (focus)="cell.hovered = true"
+           (blur)="cell.hovered =false"
+           [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
       >
         <span *ngIf="this.searchTarget === 'users'">
           {{selectedOption.display_name}} ({{selectedOption.primary_email ? selectedOption.primary_email.slice(0, selectedOption.primary_email.indexOf('@')) : selectedOption.email ? selectedOption.email.slice(0, selectedOption.email.indexOf('@')) : ''}})

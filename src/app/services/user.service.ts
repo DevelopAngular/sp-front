@@ -88,6 +88,7 @@ import {getIntrosData} from '../ngrx/intros/state';
 import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
+import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 
 @Injectable()
 export class UserService {
@@ -612,5 +613,9 @@ export class UserService {
 
   clearRepresentedUsers() {
     this.store.dispatch(clearRUsers());
+  }
+
+  updateTeacherLocations(teacher, locations, newLocations) {
+    this.store.dispatch(updateTeacherLocations({teacher, locations, newLocations}));
   }
 }

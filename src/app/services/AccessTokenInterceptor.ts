@@ -1,9 +1,8 @@
 import {Injectable, Injector} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpService} from './http-service';
 import {catchError, filter, switchMap, take} from 'rxjs/operators';
-import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
 export class AccessTokenInterceptor implements HttpInterceptor {

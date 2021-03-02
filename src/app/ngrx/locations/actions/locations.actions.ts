@@ -1,5 +1,5 @@
-import { createAction, props } from '@ngrx/store';
-import { Location } from '../../../models/Location';
+import {createAction, props} from '@ngrx/store';
+import {Location} from '../../../models/Location';
 
 const COMPONENT = 'Locations';
 
@@ -26,6 +26,7 @@ export const updateLocationFailure = createAction(`[${COMPONENT}] Update Locatio
 export const removeLocation = createAction(`[${COMPONENT}] Remove Location`, props<{id: string | number}>());
 export const removeLocationSuccess = createAction(`[${COMPONENT}] Remove Location Success`, props<{id: string | number}>());
 export const removeLocationFailure = createAction(`[${COMPONENT}] Remove Location Failure`, props<{errorMessage: string}>());
+
 
 
 

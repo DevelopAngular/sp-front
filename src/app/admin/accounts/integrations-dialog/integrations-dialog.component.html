@@ -44,16 +44,15 @@
 
     <div class="using" *ngIf="!schoolSyncInfo.is_gg4l_enabled || !schoolSyncInfo.is_gsuite_enabled || !schoolSyncInfo.is_clever_enabled">
       <app-integration-card
-        *ngIf="!schoolSyncInfo.is_gg4l_enabled"
-        [icon]="'./assets/GG4L (Blue).svg'"
-        [title]="'GG4L'"
-        [status]="'disconnect'"
+        *ngIf="!schoolSyncInfo.is_clever_enabled"
+        [icon]="'./assets/Clever (Blue).svg'"
+        [title]="'Clever'"
         [style.padding]="'10px'"
-        [subtitle]="'Sync accounts automatically from any SIS through GG4L.'"
-        [learnMoreLink]="'https://www.smartpass.app/gg4l'"
-        (setUp)="openSettings($event,'gg4l')"
-      >
-      </app-integration-card>
+        [status]="'disconnect'"
+        [subtitle]="'Sync accounts automatically from any SIS with Clever.'"
+        [learnMoreLink]="'https://www.smartpass.app/clever'"
+        (setUp)="openSettings($event,'clever')"
+      ></app-integration-card>
       <app-integration-card
         *ngIf="!schoolSyncInfo.is_gsuite_enabled"
         [style.padding]="'10px'"
@@ -66,15 +65,17 @@
       >
       </app-integration-card>
       <app-integration-card
-        *ngIf="!schoolSyncInfo.is_clever_enabled"
-        [icon]="'./assets/Clever (Blue).svg'"
-        [title]="'Clever'"
-        [style.padding]="'10px'"
+        *ngIf="!schoolSyncInfo.is_gg4l_enabled"
+        [icon]="'./assets/GG4L (Blue).svg'"
+        [title]="'GG4L'"
         [status]="'disconnect'"
-        [subtitle]="'Sync accounts automatically from any SIS with Clever.'"
-        [learnMoreLink]="'https://www.smartpass.app/clever'"
-        (setUp)="openSettings($event,'clever')"
-      ></app-integration-card>
+        [style.padding]="'10px'"
+        [subtitle]="'Sync accounts automatically from any SIS through GG4L.'"
+        [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+        (setUp)="openSettings($event,'gg4l')"
+      >
+      </app-integration-card>
+
     </div>
 
   </div>
