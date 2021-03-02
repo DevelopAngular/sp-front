@@ -137,7 +137,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   get isSelected() {
-    return this.selectedPinnables.length && this.bulkSelect;
+    return this.bulkSelect;
   }
 
   ngOnInit() {

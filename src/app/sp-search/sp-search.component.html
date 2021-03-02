@@ -89,7 +89,7 @@
       </ng-template>
     </div>
 
-    <div *ngIf="showOptions && searchTarget === 'rooms'" [ngClass]="{'options-wrapper': foundLocations.length}" [style.height]="foundLocations.length || showDummy ? '235px' : '0px'">
+    <div *ngIf="showOptions && searchTarget === 'rooms'" [ngClass]="{'options-wrapper': foundLocations.length}" [style.height]="foundLocations.length ? '235px' : (showDummy ? '135px' : '0px')">
       <div *ngIf="foundLocations.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else nolocs" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
@@ -112,11 +112,12 @@
 
       </div>
       <ng-template #nolocs>
-        <div class="no-students-dummy">
-          <div>
-            <div class="dummy-image"><img width="150" [src]="'./assets/emptyStates/undraw_graduation_9x4i.svg'" alt="undraw_graduation_9x4i.svg"></div>
-
-            <div class="dummy-text"><span>No {{dummyRoleText}} found</span></div>
+        <div class="no-students-dummy" style="height: 100%">
+          <div style="text-align: center">
+              <div class="dummy-image" style="font-weight: bold; font-size: 17px">No results</div>
+              <div class="dummy-text" style="width: 160px">
+                Create a new room on the Rooms tab
+              </div>
           </div>
         </div>
       </ng-template>

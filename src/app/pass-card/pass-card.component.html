@@ -57,7 +57,7 @@
               <div style="display: flex; justify-content: center">
                 <div class="message">
                   <span [style.font-weight]="'bold'">{{ (forStaff ? 'Your message:' : 'Message from ' + pass.issuer.display_name) }}</span><br>
-                  {{ pass.issuer_message ? pass.issuer_message : 'No Message' }}
+                  <span style="user-select: text">{{ pass.issuer_message ? pass.issuer_message : 'No Message' }}</span>
                 </div>
               </div>
             </div>
@@ -77,7 +77,7 @@
               <div style="display: flex; justify-content: center">
                 <div class="message">
                   <span [style.font-weight]="'bold'">{{ (forStaff ? 'Your message:' : 'Message from ' + pass.issuer.display_name) }}</span><br>
-                  {{ pass.issuer_message ? pass.issuer_message : 'No Message' }}
+                  <span style="user-select: text">{{ pass.issuer_message ? pass.issuer_message : 'No Message' }}</span>
                 </div>
               </div>
             </div>

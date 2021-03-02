@@ -55,7 +55,7 @@
             <div class="page-2-wrapper">
               <div class="message" [style.height]="(forInput?'70px':'164px')">
                 <span [style.font-weight]="'bold'">{{ 'Message from ' + issuerName }}</span><br>
-                {{ invitation.issuer_message ? invitation.issuer_message : 'No Message' }}
+                <span style="user-select: text">{{ invitation.issuer_message ? invitation.issuer_message : 'No Message' }}</span>
               </div>
             </div>
           </div>
@@ -117,7 +117,7 @@
               <div class="page-2-wrapper" style="display: flex; justify-content: center">
                 <div class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
-                  {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
+                  <span style="user-select: text">{{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}</span>
                 </div>
               </div>
             </div>
@@ -137,7 +137,7 @@
               <div class="page-2-wrapper" style="display: flex; justify-content: center">
                 <div class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
-                  {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
+                  <span style="user-select: text">{{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}</span>
                 </div>
               </div>
             </div>

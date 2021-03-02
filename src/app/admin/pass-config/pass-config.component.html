@@ -33,6 +33,7 @@
                   [cursor]="'pointer'"
                   [size]="'medium'"
                   (buttonClick)="buildData('edit')"
+                  [disabled]="!selectedPinnables.length"
                 >Bulk Edit</app-gradient-button>
               </ng-template>
 
@@ -43,6 +44,7 @@
                 [size]="'medium'"
                 [style.margin-left]="'15px'"
                 [leftIcon]="'./assets/New Folder (White).svg'"
+                [disabled]="!selectedPinnables.length"
                 (buttonClick)="buildData('newFolderWithSelections')"
               >New Folder with Selection
               </app-gradient-button>
@@ -50,7 +52,7 @@
               <app-gradient-button
                 *ngIf="onboardProcess['2.landing:first_room']?.done"
                 (click)="toggleBulk()"
-                [style.margin]="'0 15px'"
+                [style.margin]="!isSelected ? '0 15px' : '0 0 0 15px'"
                 [cursor]="'pointer'"
                 [gradient]="!isSelected ? '#F4F4F4, #F4F4F4' : '#1F195E, #1F195E'"
                 [hoverColor]="'#F5F5F5'"
