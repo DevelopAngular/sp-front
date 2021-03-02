@@ -1,12 +1,11 @@
 import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {User} from '../models/User';
-import {interval, Subject} from 'rxjs';
+import {interval, Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
-import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-student-passes',

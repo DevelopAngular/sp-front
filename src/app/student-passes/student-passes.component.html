@@ -18,11 +18,12 @@
         </div>
 
         <div class="open" *ngIf="height === 75; else close">
-          <app-icon-button
-            [size]="20"
-            [srcString]="'Chevron Right'"
-            [eventBubbling]="true"
-          ></app-icon-button>
+          <img width="20" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset" alt="Chevron">
+<!--          <app-icon-button-->
+<!--            [size]="20"-->
+<!--            [srcString]="'Chevron Right'"-->
+<!--            [eventBubbling]="true"-->
+<!--          ></app-icon-button>-->
         </div>
         <ng-template #close>
           <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
