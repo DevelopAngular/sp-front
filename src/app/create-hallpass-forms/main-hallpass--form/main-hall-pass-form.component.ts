@@ -113,6 +113,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.isDeviceMid = this.screenService.isDeviceMid;
     this.isDeviceLarge = this.screenService.isDeviceLarge;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.passesService.getPinnablesRequest();
 
     this.FORM_STATE = {
       step: null,
@@ -204,7 +205,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
       combineLatest(
           this.passesService.pinnables$,
-          this.locationsService.teacherLocations$)
+          this.locationsService.teacherLocations$
+      )
           .pipe(
             filter(([pin, locs]: [Pinnable[], Location[]]) => this.isStaff && !!pin.length && !!locs.length),
               takeUntil(this.destroy$),
