@@ -1,87 +1,93 @@
-<div
-  class="student-wrapper"
-  appCrossPointerEventTarget (pointerClickEvent)="openProfile()"
-  [style.height]="height + 'px'"
-  [style.padding]="height === 75 ? '10px 0' : 0"
-  (scroll)="scroll($event)"
->
 
-  <div class="header-container">
-    <div class="header" [style.padding]="height === 75 ? 0 : '15px 0'">
-      <div class="profile-info">
-        <div class="profile-image">
-          <img [width]="miniAvatar ? 42 : 75" [height]="miniAvatar ? 42 : 75" [src]="'./assets/Default Avatar.png' | resolveAsset" alt="Avatar">
-        </div>
-        <div class="title">
-          <div class="full-name">{{ profile.first_name }} {{ profile.last_name }}</div>
-          <div class="email" *ngIf="!miniAvatar">{{ profile.primary_email }}</div>
-        </div>
+<div class="host">
+  <div
+    class="student-wrapper"
+    [ngClass]="{out: isCloseEvent}"
+    appCrossPointerEventTarget (pointerClickEvent)="openProfile()"
+    [style.height]="height + 'px'"
+    [style.padding]="height === 75 ? '10px 0' : 0"
+    (scroll)="scroll($event)"
+    [style.overflow]="isOpen || !isResize ? 'auto' : 'hidden'"
+  >
 
-        <div class="open" *ngIf="height === 75; else close">
-          <img width="20" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset" alt="Chevron">
-<!--          <app-icon-button-->
-<!--            [size]="20"-->
-<!--            [srcString]="'Chevron Right'"-->
-<!--            [eventBubbling]="true"-->
-<!--          ></app-icon-button>-->
-        </div>
-        <ng-template #close>
-          <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
-            <img width="25" height="25" [src]="'./assets/Cancel (Search-Gray).svg' | resolveAsset">
+    <div class="header-container">
+      <div class="header" [style.padding]="isClose ? 0 : '15px 0'">
+        <div class="profile-info">
+          <div class="profile-image">
+            <img [width]="miniAvatar ? 42 : 75" [height]="miniAvatar ? 42 : 75" [src]="'./assets/Default Avatar.png' | resolveAsset" alt="Avatar">
           </div>
-        </ng-template>
+          <div class="title">
+            <div class="full-name">{{ profile.first_name }} {{ profile.last_name }}</div>
+            <div class="email" *ngIf="!miniAvatar">{{ profile.primary_email }}</div>
+          </div>
+
+          <div class="open" *ngIf="isClose; else close">
+            <img width="20" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset" alt="Chevron">
+            <!--          <app-icon-button-->
+            <!--            [size]="20"-->
+            <!--            [srcString]="'Chevron Right'"-->
+            <!--            [eventBubbling]="true"-->
+            <!--          ></app-icon-button>-->
+          </div>
+          <ng-template #close>
+            <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
+              <img width="25" height="25" [src]="'./assets/Cancel (Gray-White).svg' | resolveAsset">
+            </div>
+          </ng-template>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="content">
+    <div class="content">
 
-    <div class="student-info">
-      <app-student-passes-info-card [number]="0" [title]="'today'"></app-student-passes-info-card>
-      <app-student-passes-info-card [number]="4" [title]="'this week'"></app-student-passes-info-card>
-      <app-student-passes-info-card [number]="15" [title]="'this month'"></app-student-passes-info-card>
-    </div>
-
-  </div>
-
-  <mat-divider></mat-divider>
-
-  <div class="collection-wrapper" *ngIf="height !== 75">
-    <div class="collection">
-      <div class="pass-collection" *ngIf="(lastStudentPasses | async).length; else emptyState">
-        <div class="title">
-          <img width="20" [src]="'./assets/Expired (Navy).svg' | resolveAsset" alt="Expired">
-          <div style="margin-left: 8px">Latest Passes</div>
-        </div>
-        <div class="passes" *ngIf="true; else fakePasses">
-          <div class="pass" *ngFor="let pass of lastStudentPasses | async">
-            <app-pass-tile
-              [timerEvent]="timerEvent"
-              [forFuture]="false"
-              [fromPast]="!isActivePass(pass)"
-              [isActive]="isActivePass(pass)"
-              [forStaff]="false"
-              [pass]="pass"
-            ></app-pass-tile>
-          </div>
-        </div>
-        <ng-template #fakePasses>
-          <div class="passes">
-            <div class="fake-pass animate" *ngFor="let pass of [1, 1, 1, 1, 1, 1]"></div>
-          </div>
-        </ng-template>
+      <div class="student-info">
+        <app-student-passes-info-card [number]="0" [title]="'today'"></app-student-passes-info-card>
+        <app-student-passes-info-card [number]="4" [title]="'this week'"></app-student-passes-info-card>
+        <app-student-passes-info-card [number]="15" [title]="'this month'"></app-student-passes-info-card>
       </div>
 
-      <ng-template #emptyState>
-        <div class="emptyState">
-          <img style="opacity: 0.5" width="60" [src]="'./assets/Passes (Blue-Gray).svg'" alt="Passes">
-          <div class="empty-title">
-            No expired passes
-          </div>
-        </div>
-      </ng-template>
-
     </div>
-  </div>
 
+    <mat-divider></mat-divider>
+
+    <div class="collection-wrapper" *ngIf="height !== 75">
+      <div class="collection">
+        <div class="pass-collection" *ngIf="(lastStudentPasses | async).length; else emptyState">
+          <div class="title">
+            <img width="20" [src]="'./assets/Expired (Navy).svg' | resolveAsset" alt="Expired">
+            <div style="margin-left: 8px">Latest Passes</div>
+          </div>
+          <div class="passes" *ngIf="true; else fakePasses">
+            <div class="pass" *ngFor="let pass of lastStudentPasses | async">
+              <app-pass-tile
+                [timerEvent]="timerEvent"
+                [forFuture]="false"
+                [fromPast]="!isActivePass(pass)"
+                [isActive]="isActivePass(pass)"
+                [forStaff]="false"
+                [pass]="pass"
+              ></app-pass-tile>
+            </div>
+          </div>
+          <ng-template #fakePasses>
+            <div class="passes">
+              <div class="fake-pass animate" *ngFor="let pass of [1, 1, 1, 1, 1, 1]"></div>
+            </div>
+          </ng-template>
+        </div>
+
+        <ng-template #emptyState>
+          <div class="emptyState">
+            <img style="opacity: 0.5" width="60" [src]="'./assets/Passes (Blue-Gray).svg'" alt="Passes">
+            <div class="empty-title">
+              No expired passes
+            </div>
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+
+  </div>
 </div>
+

@@ -4,19 +4,24 @@
   border-radius: 13px;
   background-color: #FFFFFF;
   cursor: pointer;
-  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 10000;
-  overflow: auto;
+  animation: fadeIn .4s forwards;
+  //overflow: auto;
 
   &:hover {
     .open {
       background-color: #F4F4F4;
       border-radius: 50%;
     }
+  }
+
+  &.out {
+    animation: fadeOut .5s forwards;
   }
 
 
@@ -68,7 +73,7 @@
   }
   .close {
     position: absolute;
-    right: 20px;
+    right: 10px;
     top: 10px;
   }
   .content {
@@ -141,5 +146,29 @@
   }
   100% {
     background-position: 1000px 0;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(5%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(5%);
   }
 }

@@ -7,7 +7,7 @@ import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisi
 import {DomSanitizer} from '@angular/platform-browser';
 import {Request} from '../models/Request';
 import {Invitation} from '../models/Invitation';
-import {filter, takeUntil} from 'rxjs/operators';
+import {filter, take, takeUntil} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({
@@ -38,6 +38,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   hoverDestroyer$: Subject<any>;
   isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   disableClose: boolean;
+  destroyOpen$ = new Subject();
+  disableClose$ = new Subject();
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -161,17 +163,23 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   studentNameOver() {
-    setTimeout(() => {
+    interval(300).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
+      console.log(111111);
       this.isOpenTooltip.next(true);
-    }, 500);
+    });
   }
 
   studentNameLeave() {
+    this.destroyOpen$.next();
+    // interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+    //   // debugger;
+    //   this.isOpenTooltip.next(false);
+    // });
     setTimeout(() => {
       if (!this.disableClose) {
         this.isOpenTooltip.next(false);
       }
-    }, 500);
+    }, 300);
   }
 
 }

@@ -30,9 +30,10 @@
   <div *ngIf="isBadgeVisible" class="badge">1</div>
 <div *ngIf="forStaff" class="names-overlay"></div>
   <div
+    #name
     class="overlay"
-    (mouseenter)="studentNameOver()"
-    (mouseleave)="studentNameLeave()"
+    (mouseover)="studentNameOver(); name.leave = false"
+    (mouseout)="studentNameLeave(); name.leave = true"
     cdkOverlayOrigin
     #trigger="cdkOverlayOrigin"
   >
@@ -42,10 +43,10 @@
         [cdkConnectedOverlayOrigin]="trigger"
         [cdkConnectedOverlayOpen]="isOpenTooltip | async"
         [cdkConnectedOverlayMinWidth]="335"
-        [cdkConnectedOverlayPositions]="[{originY: 'top', originX: 'end', overlayY: 'bottom', overlayX: 'center', offsetY: 360, offsetX: 100 }]"
+        [cdkConnectedOverlayPositions]="[{originY: 'top', originX: 'end', overlayY: 'bottom', overlayX: 'center', offsetY: 336, offsetX: 95 }]"
       >
-        <div (mouseenter)="disableClose = true" (mouseleave)="disableClose = false; studentNameLeave()">
-          <app-student-passes [profile]="pass.student" [height]="300" [isResize]="false"></app-student-passes>
+        <div class="student-passes" (mouseenter)="disableClose = true" (mouseleave)="disableClose = false; studentNameLeave()">
+          <app-student-passes [profile]="pass.student" [height]="300" [isResize]="false" [isCloseEvent]="name.leave && !disableClose"></app-student-passes>
         </div>
       </ng-template>
   </div>

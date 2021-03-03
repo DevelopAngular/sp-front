@@ -17,6 +17,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   @Input() profile: User;
   @Input() height: number = 75;
   @Input() isResize: boolean = true;
+  @Input() isCloseEvent: boolean;
 
   @Output()
   userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
@@ -61,15 +62,23 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
     return moment().isBefore(moment(pass.end_time));
   }
 
+  get isOpen() {
+    return this.height === 450;
+  }
+
+  get isClose() {
+    return this.height === 75;
+  }
+
   openProfile() {
-    if (this.height === 75 && this.isResize) {
+    if (this.isClose && this.isResize) {
       const destroy = new Subject();
       interval(20)
         .pipe(takeUntil(destroy))
         .subscribe((res) => {
           this.userClickResult.emit({action: 'open', intervalValue: res});
           this.height += 25;
-          if (this.height === 450) {
+          if (this.isOpen) {
             destroy.next();
           }
         });
@@ -77,7 +86,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   closeProfile(event) {
-    if (this.height === 450 && this.isResize) {
+    if (this.isOpen && this.isResize) {
       event.stopPropagation();
       const destroy = new Subject();
       interval(20)
@@ -85,7 +94,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
         .subscribe((res) => {
           this.userClickResult.emit({action: 'close', intervalValue: res});
           this.height -= 25;
-          if (this.height === 75) {
+          if (this.isClose) {
             destroy.next();
           }
         });
