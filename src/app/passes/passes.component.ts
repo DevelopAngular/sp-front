@@ -400,6 +400,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.isStaff) {
             this.dataService.updateInbox(true);
           }
+          this.locationsService.getLocationsWithTeacherRequest(this.user);
           return user.roles.includes('hallpass_student');
         }) // TODO filter events to only changes.
       )
@@ -564,11 +565,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMainForm(forLater: boolean): void {
-
-    if (forLater) {
-      this.httpService.dirtyAccessToken();
-    }
-
     if (!this.isOpenedModal) {
       this.isOpenedModal = true;
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {

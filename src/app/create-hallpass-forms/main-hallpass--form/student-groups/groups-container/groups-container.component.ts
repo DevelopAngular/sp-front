@@ -73,7 +73,7 @@ export class GroupsContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.userService.getStudentGroupsRequest();
     this.checkCompresingAbbility();
 
     if (this.FORM_STATE) {
