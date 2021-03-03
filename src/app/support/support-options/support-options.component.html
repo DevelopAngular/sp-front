@@ -18,7 +18,8 @@
       <a class="option" id="click-to-chat__cta--text"
          appCrossPointerEventTarget
          [style.background]="option.hovered ? (opt.pressed ? 'rgba(127, 135, 157, .15)' : 'rgba(127, 135, 157, .1)') : 'transparent'"
-         (pointerClickEvent)="openHubspot();"
+         (pointerClickEvent)="!option.isNolt ? openHubspot() : null"
+         [ngClass]="{'nolt-css-selector': option.isNolt}"
          *ngIf="option.hasShow && !option.link"
          (mouseenter)="option.hovered = true"
          (mouseleave)="option.hovered = false"

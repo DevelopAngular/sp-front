@@ -1,4 +1,4 @@
-<div class="wrapper" [ngClass]="{scrollable: openCalendar &&  toggleResult === 'Range', days: toggleResult === 'Days'}" #container>
+<div class="wrapper" #container>
   <div class="sticky-header">
     <div class="toggle-header"
          [style.height]="'70px'"
@@ -12,14 +12,15 @@
     </div>
     <mat-divider></mat-divider>
   </div>
-  <div class="content" [ngSwitch]="toggleResult">
+  <div class="content" [ngSwitch]="toggleResult" [ngClass]="{scrollable: openCalendar &&  toggleResult === 'Range', days: toggleResult === 'Days'}">
     <div class="range-options"  *ngSwitchCase="'Range'">
       <app-toggle-options [options]="rangeOptions" [selectedId]="selectedRangeId" (result)="selectedRangeOption($event)"></app-toggle-options>
-      <div class="calendar-picker" *ngIf="openCalendar">
+      <div class="calendar-picker" #rangeButton *ngIf="openCalendar">
         <app-calendar-picker [selectedDates]="exportDates" [hoveredDates]="exportHoveredDates" (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false" [range]="true"></app-calendar-picker>
       </div>
       <div class="button" #elem *ngIf="selectedDate.start && selectedDate.end && openCalendar">
         <app-gradient-button
+                [style.margin.bottom]="'15px'"
                 [width]="'101px'"
                 [cursor]="'pointer'"
                 [minHeight]="'40px'"

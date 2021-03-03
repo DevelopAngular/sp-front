@@ -95,7 +95,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
         return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
     );
-    // this.router.navigate(['admin/accounts', '_profile_student']);
+    if (this.storage.getItem('accounts_current_page')) {
+      this.router.navigate([this.storage.getItem('accounts_current_page')]);
+    }
 
 
     this.polingService.listen('admin.user_sync.sync_start').pipe(takeUntil(this.destroy$))
@@ -135,14 +137,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
         // this.tableService.loadingCSV$.next(false);
     });
 
-    this.userService.userData.pipe(
+    this.userService.user$.pipe(
       takeUntil(this.destroy$))
       .subscribe((user) => {
       this.user = user;
     });
 
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(takeUntil(this.destroy$), filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         if (event.url === '/admin/accounts' &&
           (this.prevRoute === `/admin/accounts/_profile_student` ||
@@ -152,6 +154,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
           this.router.navigate([this.prevRoute]);
         } else {
           this.prevRoute = event.url;
+          this.storage.setItem('accounts_current_page', event.url);
         }
 
       });

@@ -24,7 +24,7 @@
   </div>
   <ng-template #cleverHeader>
     <div class="header">
-      <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+      <div class="background-header" [style.background]="'#4274F6'" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
       <img class="back-button" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="close()">
       <div class="ds-dialog-title-white"
            [style.margin-left]="'12px'"
@@ -44,7 +44,7 @@
         <div class="subtitle">You’ll need to be a {{ integrationName }} admin to add an application.</div>
         <div class="button">
           <app-gradient-button
-            [gradient]="'#5352E4, #5352E4'"
+            [gradient]="!isClever ? '#5352E4, #5352E4' : '#4274F6, #4274F6'"
             [leftIcon]="'./assets/External Link (White).svg'"
             (buttonClick)="openLink(dialogAction === 'gg4l' ? 'https://www.smartpass.app/gg4l-open' : 'https://www.smartpass.app/clever-open')"
           >Open {{ dialogAction === 'gg4l' ? integrationName + ' Connect' : integrationName }}</app-gradient-button>

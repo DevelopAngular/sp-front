@@ -90,6 +90,7 @@ import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-u
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {uploadProfilePictures} from '../ngrx/profile-pictures/actions';
 import {getProfilePicturesLoaded, getProfilePicturesLoading} from '../ngrx/profile-pictures/states';
+import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 
 @Injectable()
 export class UserService {
@@ -653,5 +654,9 @@ export class UserService {
 
   addProfilePicture(userId, file: File) {
     return this.http.patch(`v1//users/${userId}/profile-picture`, {profile_picture: file});
+  }
+
+  updateTeacherLocations(teacher, locations, newLocations) {
+    this.store.dispatch(updateTeacherLocations({teacher, locations, newLocations}));
   }
 }

@@ -31,6 +31,7 @@ import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {HallPassesService} from '../services/hall-passes.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {GoogleLoginService} from '../services/google-login.service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -198,6 +199,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       public dataService: DataService,
       public dialog: MatDialog,
       public userService: UserService,
+      public loginService: GoogleLoginService,
       public kioskMode: KioskModeService,
       private sanitizer: DomSanitizer,
       private storage: StorageService,
@@ -404,9 +406,13 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     }
     this.kioskMode.currentRoom$.next(kioskRoom);
     this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
-        this.storage.setItem('kioskToken', res.access_token);
-        this.http.kioskTokenSubject$.next(res);
-        this.router.navigate(['main/kioskMode']);
+      // Switch into kiosk mode
+
+      this.storage.setItem('kioskToken', res.access_token);
+      this.storage.setItem('refresh_token', res.refresh_token);
+      this.loginService.updateAuth({username: this.user.primary_email, type: 'demo-login', kioskMode: true});
+      this.http.kioskTokenSubject$.next(res);
+      this.router.navigate(['main/kioskMode']);
     });
 
   }

@@ -48,6 +48,9 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   public assistantLike: {
     user: User,
     behalfOf: User[]
+  } = {
+    user: null,
+    behalfOf: []
   };
   public school: School;
   public syncInfo: SchoolSyncInfo;
@@ -334,19 +337,19 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
 
               if (regexpUsername.test(this.newAlternativeAccount.get('addUsername').value)) {
                 const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
-                if (role !== 'assistant') {
-                  return this.userService
-                    .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
+                if (this.assistantLike.behalfOf.length) {
+                  return this.userService.addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role, this.assistantLike.behalfOf);
                 } else {
                   return this.userService
-                    .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role, this.assistantLike.behalfOf);
+                    .addAccountRequest(this.school.id, data, 'username', rolesToDb, this.data.role);
                 }
               } else if (regexpEmail.test(this.newAlternativeAccount.get('addUsername').value)) {
                 const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
-                if (role !== 'assistant') {
-                  return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
-                } else {
+                if (this.assistantLike.behalfOf.length) {
                   return this.userService.addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role, this.assistantLike.behalfOf);
+                } else {
+                  return this.userService
+                    .addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
                 }
               } else {
                 throw new Error('Format Error');

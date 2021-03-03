@@ -62,7 +62,6 @@ export class ViewProfileComponent implements OnInit {
   public permissionsFormEditState: boolean = false;
   private permissionsFormInitialState;
 
-  public controlsIteratable: any[];
   public disabledState: boolean = false;
   public headerText: string = '';
   public headerIcon: string;
@@ -98,6 +97,9 @@ export class ViewProfileComponent implements OnInit {
 
   assistantToAdd: User[];
   assistantToRemove: User[];
+
+  teacherRooms: Location[];
+  teacherRoomsInitialState: Location[];
 
   constructor(
     public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
@@ -142,6 +144,10 @@ export class ViewProfileComponent implements OnInit {
       this.user = User.fromJSON(this.profile._originalUserProfile);
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
+      if (this.user.isTeacher()) {
+        this.teacherRooms = this.profile._originalUserProfile.assignedTo;
+        this.teacherRoomsInitialState = cloneDeep(this.teacherRooms);
+      }
       if (this.user.isStudent()) {
         this.userRoles.push(this.roles[0]);
       }
@@ -217,16 +223,16 @@ export class ViewProfileComponent implements OnInit {
           `${this.data.orgUnit.title}s Group Syncing`
           : '';
 
-    if (this.data.role === '_profile_teacher') {
-      if (this.data.allAccounts) {
-        this.locationService.getLocationsWithTeacher(this.profile._originalUserProfile)
-          .subscribe(res => {
-            this.teacherAssignedTo = res;
-          });
-      } else {
-        this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo || [];
-      }
-    }
+    // if (this.data.role === '_profile_teacher') {
+    //   if (this.data.allAccounts) {
+    //     this.locationService.getLocationsWithTeacher(this.profile._originalUserProfile)
+    //       .subscribe(res => {
+    //         this.teacherAssignedTo = res;
+    //       });
+    //   } else {
+    //     this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo || [];
+    //   }
+    // }
 
     this.buildPermissions();
 
@@ -269,6 +275,18 @@ export class ViewProfileComponent implements OnInit {
     this.disabledState = true;
     if (this.profileStatusInitial !== this.profileStatusActive) {
       this.userService.updateUserRequest(this.user, {status: this.profileStatusActive});
+    }
+
+    if (!isEqual(this.teacherRoomsInitialState, this.teacherRooms)) {
+      const locsToRemove = differenceBy(this.teacherRoomsInitialState, this.teacherRooms, 'id').map(l => {
+        l.teachers = l.teachers.filter(t => +t.id !== +this.user.id);
+        return l;
+      });
+      const locsToAdd = differenceBy(this.teacherRooms, this.teacherRoomsInitialState, 'id').map(l => {
+        l.teachers = [...l.teachers, this.user];
+        return l;
+      });
+      this.userService.updateTeacherLocations(this.user, [...locsToRemove, ...locsToAdd], this.teacherRooms);
     }
 
     if (!isEqual(this.initialSelectedRoles, this.userRoles)) {
@@ -356,7 +374,8 @@ export class ViewProfileComponent implements OnInit {
       this.permissionsFormEditState ||
       this.assistantForEditState ||
       this.profileStatusInitial !== this.profileStatusActive ||
-      !isEqual(this.initialSelectedRoles, this.userRoles)
+      !isEqual(this.initialSelectedRoles, this.userRoles) ||
+      !isEqual(this.teacherRoomsInitialState, this.teacherRooms)
     ) {
       this.updateProfile().subscribe(() => {
         this.close.emit(true);
