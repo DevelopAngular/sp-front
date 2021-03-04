@@ -33,59 +33,6 @@ import {HallPassesService} from '../services/hall-passes.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
 
-/**
- * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
- */
-// abstract class RoomPassProvider implements PassLikeProvider {
-//
-//   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-//   constructor(protected liveDataService: LiveDataService, protected locations$: Observable<Location[]>,
-//               protected date$: Observable<Date>, protected search$: Observable<string>) {
-//   }
-//
-//   protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date): Observable<PassLike[]>;
-//
-//   watch(sort: Observable<string>) {
-//     // merge the sort events and search events into one Observable that emits the current state of both.
-//     const sort$ = sort.pipe(map(s => ({sort: s})));
-//     const search$ = this.search$.pipe(map(s => ({search_query: s})));
-//     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
-//
-//     // Create a subject that will replay the last state. This is necessary because of the use of switchMap.
-//     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-//     merged$.subscribe(mergedReplay);
-//
-//     return combineLatest(
-//       this.locations$,
-//       this.date$,
-//       (locations, date) => ({locations, date}))
-//       .pipe(
-//         switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date))
-//       );
-//   }
-// }
-
-// export class ActivePassProvider extends RoomPassProvider {
-//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-//     return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: locations}, date);
-//   }
-// }
-
-// class OriginPassProvider extends RoomPassProvider {
-//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-//     return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
-//         // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
-//   }
-// }
-//
-// class DestinationPassProvider extends RoomPassProvider {
-//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-//     return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
-//         // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
-//   }
-// }
-
-
 @Component({
   selector: 'app-my-room',
   templateUrl: './my-room.component.html',
