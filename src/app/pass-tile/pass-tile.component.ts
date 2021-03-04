@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {bumpIn} from '../animations';
 import {PassLike} from '../models';
@@ -8,7 +8,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {Request} from '../models/Request';
 import {Invitation} from '../models/Invitation';
 import {filter, take, takeUntil} from 'rxjs/operators';
-import {MatDialog} from '@angular/material/dialog';
+import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-pass-tile',
@@ -39,7 +39,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   disableClose: boolean;
   destroyOpen$ = new Subject();
-  disableClose$ = new Subject();
+
+  studentPassOverlay: OverlayRef;
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -89,8 +90,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   constructor(
     private sanitizer: DomSanitizer,
     private timeService: TimeService,
-    private dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    public overlay: Overlay
   ) {
   }
 
@@ -164,22 +164,18 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   studentNameOver() {
     interval(300).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
-      console.log(111111);
       this.isOpenTooltip.next(true);
+      const overlayConfig = new OverlayConfig();
+
+      this.overlay.position().global().top('300px');
     });
   }
 
   studentNameLeave() {
     this.destroyOpen$.next();
-    // interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
-    //   // debugger;
-    //   this.isOpenTooltip.next(false);
-    // });
-    setTimeout(() => {
-      if (!this.disableClose) {
-        this.isOpenTooltip.next(false);
-      }
-    }, 300);
+    interval(300).pipe(take(1)).subscribe(() => {
+      this.isOpenTooltip.next(false);
+    });
   }
 
 }

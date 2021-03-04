@@ -1,16 +1,20 @@
 @import '../../sp-colors';
 
+
+.host {
+}
 .student-wrapper {
-  border-radius: 13px;
-  background-color: #FFFFFF;
   cursor: pointer;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 10000;
   animation: fadeIn .4s forwards;
+  background-color: #FFFFFF;
+  border-radius: 13px;
+  //margin-top: 26px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
   //overflow: auto;
 
   &:hover {

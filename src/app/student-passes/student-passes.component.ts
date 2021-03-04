@@ -17,15 +17,16 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   @Input() profile: User;
   @Input() height: number = 75;
   @Input() isResize: boolean = true;
-  @Input() isCloseEvent: boolean;
 
   @Output()
   userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
+  @Input() closeEvent;
 
   lastStudentPasses: Observable<HallPass[]>;
   timerEvent: Subject<any> = new Subject<any>();
 
   miniAvatar: boolean;
+  out: boolean;
 
   destroy$: Subject<any> = new Subject<any>();
 

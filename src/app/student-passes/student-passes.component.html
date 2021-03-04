@@ -2,7 +2,7 @@
 <div class="host">
   <div
     class="student-wrapper"
-    [ngClass]="{out: isCloseEvent}"
+    [ngClass]="{out: closeEvent}"
     appCrossPointerEventTarget (pointerClickEvent)="openProfile()"
     [style.height]="height + 'px'"
     [style.padding]="height === 75 ? '10px 0' : 0"

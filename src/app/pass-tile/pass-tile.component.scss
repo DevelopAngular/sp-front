@@ -124,5 +124,17 @@
 }
 
 .student-passes {
+  height: 300px;
+  width: 100%;
+  &:before {
+    position: absolute;
+    content: '';
+    left: 0;
+    top: -29px;
+    height: 29px;
+    width: 144px;
+
+  }
 }
+
 
