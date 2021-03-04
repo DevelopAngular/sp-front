@@ -400,7 +400,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.isStaff) {
             this.dataService.updateInbox(true);
           }
-          this.locationsService.getLocationsWithTeacherRequest(this.user);
           return user.roles.includes('hallpass_student');
         }) // TODO filter events to only changes.
       )

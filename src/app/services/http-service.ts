@@ -313,6 +313,21 @@ export class HttpService implements OnDestroy {
     this._authContext = ctx; // Will not update websocket, but it's ok for testing.
   }
 
+  checkIfTokenIsKiosk(): boolean {
+    const ctx = this.getAuthContext();
+    if (!ctx) {
+      return false;
+    }
+    const token = ctx.auth.access_token;
+    if (!token) {
+      return false;
+    }
+    const jwt = new JwtHelperService();
+    const decoded = jwt.decodeToken(token);
+
+    return !!decoded.kiosk_location_id;
+  }
+
   private getLoginServers(data: FormData): Observable<LoginChoice> {
     const preferredEnvironment = environment.preferEnvironment;
 
