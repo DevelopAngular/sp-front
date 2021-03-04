@@ -5,7 +5,6 @@ import {DataService} from '../services/data-service';
 import {mergeObject} from '../live-data/helpers';
 import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
 import {LoadingService} from '../services/loading.service';
-import {PassLikeProvider} from '../models/providers';
 import {User} from '../models/User';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {Report} from '../models/Report';
@@ -25,22 +24,6 @@ import {CollectionRestriction} from '../models/collection-restrictions/Collectio
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
-
-export class ActivePassProvider implements PassLikeProvider {
-
-  constructor(private liveDataService: LiveDataService, private searchQueries: Observable<string>) {
-  }
-
-  watch(sort: Observable<string>) {
-
-    const sort$ = sort.pipe(map(s => ({sort: s})));
-    const search$ = this.searchQueries.pipe(map(s => ({search_query: s})));
-
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
-
-    return this.liveDataService.watchActiveHallPasses(merged$);
-  }
-}
 
 @Component({
   selector: 'app-hall-monitor',
