@@ -60,7 +60,7 @@
       z-index: 10;
       .info {
         display: flex;
-        width: 280px;
+        width: 281px;
 
         .title {
           color: white;
@@ -72,8 +72,13 @@
     }
   }
 
+  .divider {
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+
   .footer {
-    margin-top: 25px;
     display: flex;
     flex-direction: column;
     align-items: center;

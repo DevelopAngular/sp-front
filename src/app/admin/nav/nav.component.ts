@@ -221,7 +221,7 @@ export class NavComponent implements OnInit, AfterViewInit {
           window.open('https://smartpass.app/about');
         } else if (action === 'appearance') {
           this.dialog.open(SpAppearanceComponent, {
-            panelClass: 'form-dialog-container',
+            panelClass: 'sp-form-dialog',
           });
         } else if (action === 'wishlist') {
           window.open('https://wishlist.smartpass.app');

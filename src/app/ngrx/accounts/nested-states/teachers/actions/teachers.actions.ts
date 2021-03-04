@@ -38,4 +38,7 @@ export const bulkAddTeacherAccounts = createAction(`[${TEACHER}] Bulk Add Teache
 export const sortTeacherAccounts = createAction(`[${TEACHER}] Sort Teacher Accounts`, props<{teachers: User[], next: string, sortValue: string}>());
 export const sortTeacherAccountsSuccess = createAction(`[${TEACHER}] Sort Teacher Accounts Success`, props<{teachers: User[], next: string, sortValue: string}>());
 
+export const updateTeacherLocations = createAction(`[${TEACHER}] Update Teacher Locations`, props<{teacher: User, locations: Location[], newLocations: Location[]}>());
+export const updateTeacherLocationsSuccess = createAction(`[${TEACHER}] Update Teacher Locations Success`, props<{profile: User}>());
+export const updateTeacherLocationsFailure = createAction(`[${TEACHER}] Update Teacher Locations Failure`, props<{errorMessage: string}>());
 

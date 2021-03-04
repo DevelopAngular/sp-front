@@ -136,6 +136,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     return (this.selectedPinnables.length < 1 || !this.bulkSelect ? './assets/Plus (White).svg' : null);
   }
 
+  get isSelected() {
+    return this.bulkSelect;
+  }
+
   ngOnInit() {
     this.loading$ = this.hallPassService.isLoadingPinnables$;
     this.loaded$ = this.hallPassService.loadedPinnables$;
@@ -212,53 +216,42 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     });
   }
 
-    toggleBulk() {
-        this.bulkSelect = !this.bulkSelect;
-        this.selectedPinnables = [];
-    }
+  toggleBulk() {
+      this.bulkSelect = !this.bulkSelect;
+      this.selectedPinnables = [];
+  }
 
-    buttonClicked(evnt: MouseEvent) {
-        if (!this.buttonMenuOpen) {
-            const target = new ElementRef(evnt.currentTarget);
-            let options = [];
+  buttonClicked(evnt: MouseEvent) {
+   if (!this.buttonMenuOpen) {
+    const target = new ElementRef(evnt.currentTarget);
+    const options = [];
+    options.push(this.genOption('New Room', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newRoom', this.darkTheme.getIcon({iconName: 'Room', darkFill: 'White', lightFill: 'Blue-Gray'})));
+    options.push(this.genOption('New Folder', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newFolder', this.darkTheme.getIcon({iconName: 'Folder', darkFill: 'White', lightFill: 'Blue-Gray'})));
 
-            if(this.selectedPinnables.length > 0 && this.bulkSelect) {
-                options.push(
-                  this.genOption('Bulk Edit Selection',
-                    this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}),
-                    'edit',
-                  )
-                );
-                options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newFolder'));
-            } else {
-                options.push(this.genOption('New Room', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newRoom', this.darkTheme.getIcon({iconName: 'Room', darkFill: 'White', lightFill: 'Blue-Gray'})));
-                options.push(this.genOption('New Folder', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newFolder', this.darkTheme.getIcon({iconName: 'New Folder', darkFill: 'White', lightFill: 'Blue-Gray'})));
-            }
+    UNANIMATED_CONTAINER.next(true);
+    this.buttonMenuOpen = true;
 
-            UNANIMATED_CONTAINER.next(true);
-            this.buttonMenuOpen = true;
+    const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {'options': options, 'trigger': target}
+    });
 
-            const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-                panelClass: 'consent-dialog-container',
-                backdropClass: 'invis-backdrop',
-                data: {'options': options, 'trigger': target}
-            });
-
-            cancelDialog.afterClosed()
-              .pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
-              .subscribe(action => {
-                this.buttonMenuOpen = false;
-                if (action) {
-                    this.selectPinnable({action, selection: this.selectedPinnables});
-                }
-            });
-
+    cancelDialog.afterClosed()
+      .pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
+      .subscribe(action => {
+        this.buttonMenuOpen = false;
+        if (action) {
+            this.selectPinnable({action, selection: this.selectedPinnables});
         }
-    }
+    });
 
-    genOption(display, color, action, icon?) {
-      return { display, color, action, icon };
-    }
+   }
+  }
+
+  genOption(display, color, action, icon?) {
+    return { display, color, action, icon };
+  }
 
   selectPinnable({action, selection}) {
       if (action === 'room/folder_edit' && !isArray(selection)) {
@@ -355,14 +348,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         data: data
       });
       overlayDialog.afterClosed()
-        // .pipe(
-        //   switchMap((res) => {
-        //     if (res) {
-        //       return this.hallPassService.getPinnablesRequest();
-        //     }
-        //     return of(null);
-        //   }),
-        // )
         .subscribe(res => {
           this.selectedPinnables = [];
           this.bulkSelect = false;

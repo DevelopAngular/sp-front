@@ -58,11 +58,11 @@
                 <div class="page-2-wrapper">
                   <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')">
                     <span [style.font-weight]="'bold'">{{ (forStaff?'Message from ' +studentName +':':'Your message:') }}</span><br>
-                    {{ (request.attachment_message===''?'No message':request.attachment_message) }}
+                    <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                     <div *ngIf="request.status==='declined'">
                       <br>
                       <span [style.font-weight]="'bold'">Message from {{ request.teacher.last_name }}:</span><br>
-                      {{ (request.declined_message===''?'No message':request.declined_message) }} <!-- deny_message -->
+                      <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                     </div>
                   </div>
                   <app-card-button *ngIf="forInput" (onClick)="editMessage()" class="edit-button" [width]="'110px'" [height]="'35px'" [gradientColor]="request.color_profile.gradient_color">
@@ -83,11 +83,11 @@
                 <div class="page-2-wrapper">
                   <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')">
                     <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
-                    {{ (request.attachment_message===''?'No message':request.attachment_message) }}
+                    <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                     <div *ngIf="request.status==='declined'">
                       <br>
                       <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
-                      {{ (request.declined_message===''?'No message':request.declined_message) }} <!-- deny_message -->
+                      <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                     </div>
                   </div>
                   <app-card-button *ngIf="forInput" (onClick)="editMessage()" class="edit-button" [width]="'110px'" [height]="'35px'" [gradientColor]="request.color_profile.gradient_color">
@@ -184,11 +184,11 @@
               <div class="page-2-wrapper">
                 <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''"  class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{ (forStaff?'Message from ' +studentName +':':'Your message:') }}</span><br>
-                  {{ (request.attachment_message===''?'No message':request.attachment_message) }}
+                  <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                   <div *ngIf="request.status==='declined'">
                     <br>
                     <span [style.font-weight]="'bold'">Message from {{ request.teacher.last_name }}:</span><br>
-                    {{ (request.declined_message===''?'No message':request.declined_message) }} <!-- deny_message -->
+                    <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                   </div>
                 </div>
                 <app-card-button *ngIf="forInput" (onClick)="editMessage()" class="edit-button" [width]="'110px'" [height]="'35px'" [gradientColor]="request.color_profile.gradient_color">
@@ -208,11 +208,11 @@
               <div class="page-2-wrapper">
                 <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''"  class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
-                  {{ (request.attachment_message===''?'No message':request.attachment_message) }}
+                  <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                   <div *ngIf="request.status==='declined'">
                     <br>
                     <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
-                    {{ (request.declined_message===''?'No message':request.declined_message) }} <!-- deny_message -->
+                    <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                   </div>
                 </div>
                 <app-card-button *ngIf="forInput" (onClick)="editMessage()" class="edit-button" [width]="'110px'" [height]="'35px'" [gradientColor]="request.color_profile.gradient_color">

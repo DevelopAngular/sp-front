@@ -1,3 +1,5 @@
+@import '../../sp-colors';
+
 :host {
   //width: 100%;
   //min-width: 280px;
@@ -97,7 +99,7 @@ mat-input-container.md-input-focused label {
   flex: 1 1 auto;
   display: flex;
   justify-content: center;
-  color: #999999;
+  color: $blue-gray;
   .dummy-image {
     margin: 15px auto;
   }
@@ -173,8 +175,8 @@ mat-input-container.md-input-focused label {
 
     &:focus {
       outline: none;
-      background-color: #ECF1FF !important;
-      color: #1F195E !important;
+      //background-color: #ECF1FF !important;
+      //color: #1F195E !important;
     }
   }
 }

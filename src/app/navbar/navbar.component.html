@@ -1,5 +1,5 @@
 <div class="host"
-     [style.background]="darkTheme.getColor({dark: '#0F171E', white: '#FFFFFF'})"
+     [style.background]="darkTheme.getColor({dark: '#0F171E', white: (isStaff || isAssistant ? '#FFFFFF' : 'transparent' )})"
      [style.position]="(isStaff || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
      [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0"
      *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
@@ -94,7 +94,6 @@
           [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
           appCrossPointerEventTarget
          (pointerClickEvent)="inboxClick()"
-
       >
         <app-icon-button [eventBubbling]="true" [srcString]="'Inbox'" [size]="20"></app-icon-button>
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">

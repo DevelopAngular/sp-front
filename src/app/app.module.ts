@@ -57,7 +57,7 @@ import {ScrollHolderDirective} from './scroll-holder.directive';
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 import {NextReleaseModule} from './next-release/next-release.module';
-import {SupportButtonComponent} from './support-button/support-button.component';
+import {SupportButtonComponent} from './support/support-button/support-button.component';
 import {PassLimitEffects} from './ngrx/pass-limits/effects';
 import {CustomToastComponent} from './custom-toast/custom-toast.component';
 import {PassesEffects} from './ngrx/passes/effects';

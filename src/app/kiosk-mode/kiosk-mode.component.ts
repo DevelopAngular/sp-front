@@ -13,7 +13,6 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
-import {HttpService} from '../services/http-service';
 
 @Component({
   selector: 'app-kiosk-mode',
