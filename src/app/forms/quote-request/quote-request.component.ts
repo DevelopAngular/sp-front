@@ -35,10 +35,16 @@ export class QuoteRequestComponent implements OnInit {
     }
     this.submitted = true;
     let formData = this.quoteRequestForm.getRawValue();
+
+    let schools = formData['schools'];
+    for (var school of schools) {
+      school['population'] = +school['population'];
+    }
+
     this.formService.saveQuoteRequest(
       formData['name'], formData['position'],
       formData['email'], formData['phone'],
-      formData['schools']).subscribe(res => {
+      schools).subscribe(res => {
       let recordId = res['recordId'];
       this.hdyhau.valueChanges.subscribe(data => {
         this.formService.saveHdyhau(recordId, data)
