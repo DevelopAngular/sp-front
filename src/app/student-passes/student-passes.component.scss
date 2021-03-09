@@ -13,9 +13,7 @@
   animation: fadeIn .4s forwards;
   background-color: #FFFFFF;
   border-radius: 13px;
-  //margin-top: 26px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
-  //overflow: auto;
 
   &:hover {
     .open {
@@ -97,6 +95,8 @@
 
   .collection-wrapper {
     background-color: #FBFEFF;
+    height: 291px;
+    overflow: auto;
 
     .collection {
       padding: 17px;

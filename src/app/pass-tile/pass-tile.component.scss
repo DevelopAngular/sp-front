@@ -123,84 +123,23 @@
     user-select: none;
 }
 
-//::ng-deep .cdk-overlay-container .student-panel-1 {
-//  height: 300px;
-//  width: 100%;
-//  &:before {
-//    position: absolute;
-//    content: '';
-//    left: 0;
-//    top: -29px;
-//    height: 29px;
-//    width: 144px;
-//  }
-//}
-//
-//::ng-deep .cdk-overlay-container .student-panel1 {
-//  height: 300px;
-//  width: 100%;
-//  //animation: fadeIn .4s forwards;
-//  &:before {
-//    position: absolute;
-//    content: '';
-//    left: 0;
-//    top: -29px;
-//    height: 29px;
-//    width: 144px;
-//  }
-//}
-//::ng-deep .cdk-overlay-container .student-panel2 {
-//  height: 300px;
-//  width: 100%;
-//  &:before {
-//    position: absolute;
-//    content: '';
-//    right: 0;
-//    top: -29px;
-//    height: 29px;
-//    width: 144px;
-//  }
-//}
-//::ng-deep .cdk-overlay-container .student-panel3 {
-//  height: 300px;
-//  width: 100%;
-//  &:before {
-//    position: absolute;
-//    content: '';
-//    right: 0;
-//    bottom: -29px;
-//    height: 29px;
-//    width: 144px;
-//  }
-//}
-//::ng-deep .cdk-overlay-container .student-panel4 {
-//  height: 300px;
-//  width: 100%;
-//  &:before {
-//    position: absolute;
-//    content: '';
-//    left: 0;
-//    bottom: -29px;
-//    height: 29px;
-//    width: 144px;
-//  }
-//}
-
 .student-passes {
   height: 300px;
   width: 100%;
   cursor: pointer;
-  //position: relative;
-  //animation: fadeIn .4s forwards;
 
   &.student-panel1 {
     &:before {
       position: absolute;
       content: '';
       left: 0;
-      top: -29px;
+      top: -30px;
       height: 29px;
-      width: 144px;
+      width: 143px;
+      background-color: black;
+      opacity: 0.15;
+      border-radius: 0 0 12.75px 12.75px;
+      transition: opacity .7s ease-in;
     }
   }
 
@@ -209,9 +148,13 @@
       position: absolute;
       content: '';
       right: 0;
-      top: -29px;
+      top: -30px;
       height: 29px;
-      width: 144px;
+      width: 143px;
+      background-color: black;
+      opacity: 0.15;
+      border-radius: 0 0 12.75px 12.75px;
+      transition: opacity .3s ease-in;
     }
   }
   &.student-panel3 {
@@ -219,9 +162,13 @@
       position: absolute;
       content: '';
       right: 0;
-      bottom: -29px;
+      bottom: -33px;
       height: 29px;
-      width: 144px;
+      width: 143px;
+      background-color: black;
+      opacity: 0.15;
+      border-radius: 0 0 12.75px 12.75px;
+      transition: opacity .3s ease-in;
     }
   }
   &.student-panel4 {
@@ -229,9 +176,13 @@
       position: absolute;
       content: '';
       left: 0;
-      bottom: -29px;
+      bottom: -33px;
       height: 29px;
-      width: 144px;
+      width: 143px;
+      background-color: black;
+      opacity: 0.15;
+      border-radius: 0 0 12.75px 12.75px;
+      transition: opacity .3s ease-in;
     }
   }
 }

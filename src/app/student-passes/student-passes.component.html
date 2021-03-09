@@ -3,11 +3,11 @@
   <div
     class="student-wrapper"
     [ngClass]="{out: closeEvent}"
-    appCrossPointerEventTarget (pointerClickEvent)="openProfile()"
+    appCrossPointerEventTarget
+    (pointerClickEvent)="openProfile()"
     [style.height]="height + 'px'"
     [style.padding]="height === 75 ? '10px 0' : 0"
-    (scroll)="scroll($event)"
-    [style.overflow]="isOpen || !isResize ? 'auto' : 'hidden'"
+    [style.overflow]="'hidden'"
     (mouseleave)="over.emit()"
   >
 
@@ -15,7 +15,7 @@
       <div class="header" [style.padding]="isClose ? 0 : '15px 0'">
         <div class="profile-info">
           <div class="profile-image">
-            <img [width]="miniAvatar ? 42 : 75" [height]="miniAvatar ? 42 : 75" [src]="'./assets/Default Avatar.png' | resolveAsset" alt="Avatar">
+            <img #profileImage [width]="avatarWidth" [src]="'./assets/Default Avatar.png' | resolveAsset" alt="Avatar">
           </div>
           <div class="title">
             <div class="full-name">{{ profile.first_name }} {{ profile.last_name }}</div>
@@ -24,11 +24,6 @@
 
           <div class="open" *ngIf="isClose; else close">
             <img width="20" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset" alt="Chevron">
-            <!--          <app-icon-button-->
-            <!--            [size]="20"-->
-            <!--            [srcString]="'Chevron Right'"-->
-            <!--            [eventBubbling]="true"-->
-            <!--          ></app-icon-button>-->
           </div>
           <ng-template #close>
             <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
@@ -39,19 +34,18 @@
       </div>
     </div>
 
-    <div class="content">
+    <div class="collection-wrapper" (scroll)="scroll($event)" *ngIf="height !== 75" [style.height]="!isResize ? '300px' : '450px'">
+      <div class="content">
 
-      <div class="student-info">
-        <app-student-passes-info-card [number]="0" [title]="'today'"></app-student-passes-info-card>
-        <app-student-passes-info-card [number]="4" [title]="'this week'"></app-student-passes-info-card>
-        <app-student-passes-info-card [number]="15" [title]="'this month'"></app-student-passes-info-card>
+        <div class="student-info">
+          <app-student-passes-info-card [number]="0" [title]="'today'"></app-student-passes-info-card>
+          <app-student-passes-info-card [number]="4" [title]="'this week'"></app-student-passes-info-card>
+          <app-student-passes-info-card [number]="15" [title]="'this month'"></app-student-passes-info-card>
+        </div>
+
       </div>
 
-    </div>
-
-    <mat-divider></mat-divider>
-
-    <div class="collection-wrapper" *ngIf="height !== 75">
+      <mat-divider></mat-divider>
       <div class="collection">
         <div class="pass-collection" *ngIf="(lastStudentPasses | async).length; else emptyState">
           <div class="title">

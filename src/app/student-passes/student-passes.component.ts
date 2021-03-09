@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {interval, Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
@@ -17,11 +17,13 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   @Input() profile: User;
   @Input() height: number = 75;
   @Input() isResize: boolean = true;
+  @Input() closeEvent: boolean;
 
   @Output()
   userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
   @Output() over = new EventEmitter();
-  @Input() closeEvent;
+
+  @ViewChild('profileImage') profileImage: ElementRef;
 
   lastStudentPasses: Observable<HallPass[]>;
   timerEvent: Subject<any> = new Subject<any>();
@@ -29,19 +31,23 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   miniAvatar: boolean;
   out: boolean;
 
+  avatarWidth: number = 75;
+
   destroy$: Subject<any> = new Subject<any>();
 
   @HostListener('document.scroll', ['$event'])
   scroll(event) {
-    if (event.currentTarget.scrollTop >= 50) {
-      this.miniAvatar = true;
+    if (this.avatarWidth <= 42) {
+      this.avatarWidth += 0.3;
     } else {
-      this.miniAvatar = false;
+      this.avatarWidth -= 0.3;
     }
+    console.log(this.avatarWidth);
   }
 
   constructor(
     private livaDataService: LiveDataService,
+    private renderer: Renderer2
   ) { }
 
   ngOnInit() {

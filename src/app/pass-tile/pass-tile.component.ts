@@ -67,7 +67,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       originY: 'bottom',
       overlayX: 'end',
       overlayY: 'top',
-      offsetX: 71,
+      offsetX: 72,
       offsetY: 37
     },
     {
@@ -76,7 +76,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       originY: 'bottom',
       overlayX: 'end',
       overlayY: 'bottom',
-      offsetX: 71,
+      offsetX: 72,
       offsetY: 3
     },
     {
@@ -158,14 +158,6 @@ export class PassTileComponent implements OnInit, OnDestroy {
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
       });
     }
-
-    // const panel = document.querySelector('#cdk-overlay-0');
-    // if (panel) {
-    //   fromEvent(panel, 'mouseleave').subscribe((event) => {
-    //     event.preventDefault();
-    //     this.disableClose = true; this.studentNameLeave();
-    //   });
-    // }
   }
 
   ngOnDestroy() {
