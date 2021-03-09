@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {bumpIn} from '../animations';
 import {PassLike} from '../models';
@@ -8,14 +8,20 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {Request} from '../models/Request';
 import {Invitation} from '../models/Invitation';
 import {filter, take, takeUntil} from 'rxjs/operators';
-import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
+import {ConnectedPosition, Overlay} from '@angular/cdk/overlay';
+import {animate, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-pass-tile',
   templateUrl: './pass-tile.component.html',
   styleUrls: ['./pass-tile.component.scss'],
   animations: [
-    bumpIn
+    bumpIn,
+    trigger('fadeInOut', [
+      transition(':leave', [
+        animate('300ms', style({ opacity: 0, transform: 'translateY(0%)' })),
+      ]),
+    ])
   ]
 })
 export class PassTileComponent implements OnInit, OnDestroy {
@@ -30,6 +36,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
 
+  @ViewChild('studentPasses') studentPasses: ElementRef;
+
   buttonDown = false;
   timeLeft = '--:--';
   valid: boolean = true;
@@ -41,9 +49,46 @@ export class PassTileComponent implements OnInit, OnDestroy {
   destroyOpen$ = new Subject();
   disableClose$ = new Subject();
 
-  studentPassOverlay: OverlayRef;
-
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  overlayPositions: ConnectedPosition[] = [
+    {
+      panelClass: 'student-panel1',
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetX: -71,
+      offsetY: 37
+    },
+    {
+      panelClass: 'student-panel2',
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetX: 71,
+      offsetY: 37
+    },
+    {
+      panelClass: 'student-panel3',
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'bottom',
+      offsetX: 71,
+      offsetY: 3
+    },
+    {
+      panelClass: 'student-panel4',
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetX: -71,
+      offsetY: 3
+    }
+  ];
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -91,7 +136,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   constructor(
     private sanitizer: DomSanitizer,
     private timeService: TimeService,
-    public overlay: Overlay
+    public overlay: Overlay,
+    private renderer: Renderer2
   ) {
   }
 
@@ -112,6 +158,14 @@ export class PassTileComponent implements OnInit, OnDestroy {
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
       });
     }
+
+    // const panel = document.querySelector('#cdk-overlay-0');
+    // if (panel) {
+    //   fromEvent(panel, 'mouseleave').subscribe((event) => {
+    //     event.preventDefault();
+    //     this.disableClose = true; this.studentNameLeave();
+    //   });
+    // }
   }
 
   ngOnDestroy() {
@@ -166,9 +220,6 @@ export class PassTileComponent implements OnInit, OnDestroy {
   studentNameOver() {
     interval(300).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
       this.isOpenTooltip.next(true);
-      const overlayConfig = new OverlayConfig();
-
-      this.overlay.position().global().top('300px');
     });
   }
 
@@ -179,4 +230,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
     });
   }
 
+  updateOverlayPosition(event) {
+    this.renderer.addClass(this.studentPasses.nativeElement, event.connectionPair.panelClass);
+  }
 }

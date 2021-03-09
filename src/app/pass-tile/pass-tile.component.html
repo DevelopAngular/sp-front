@@ -32,22 +32,25 @@
   <div
     class="overlay"
     (mouseover)="studentNameOver()"
-    (mouseout)="destroyOpen$.next()"
+    (mouseleave)="destroyOpen$.next()"
     cdkOverlayOrigin
     #overlayTrigger="cdkOverlayOrigin"
   >
     <div *ngIf="forStaff" class="names">{{ tileName }}</div>
-      <ng-template
-        cdkConnectedOverlay
-        [cdkConnectedOverlayOrigin]="overlayTrigger"
-        [cdkConnectedOverlayOpen]="isOpenTooltip | async"
-        [cdkConnectedOverlayMinWidth]="335"
-        [cdkConnectedOverlayPositions]="[{originY: 'top', originX: 'end', overlayY: 'bottom', overlayX: 'center', offsetY: 336, offsetX: 95 }]"
-      >
-        <div class="student-passes" (mouseleave)="disableClose$.next(); disableClose = true; studentNameLeave()" (mouseenter)="disableClose = false">
-          <app-student-passes [profile]="pass.student" [height]="300" [isResize]="false" [closeEvent]="disableClose"></app-student-passes>
-        </div>
-      </ng-template>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="overlayTrigger"
+      [cdkConnectedOverlayOpen]="isOpenTooltip | async"
+      [cdkConnectedOverlayWidth]="335"
+      [cdkConnectedOverlayHeight]="300"
+      [cdkConnectedOverlayPositions]="overlayPositions"
+      (positionChange)="updateOverlayPosition($event)"
+    >
+      <div class="student-passes" #studentPasses (mouseleave)="disableClose = true; studentNameLeave()" (mouseenter)="disableClose = false; disableClose$.next()">
+        <app-student-passes [profile]="pass.student" [height]="300" [isResize]="false" [closeEvent]="disableClose"></app-student-passes>
+      </div>
+    </ng-template>
   </div>
 
 </div>

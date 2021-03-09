@@ -8,6 +8,7 @@
     [style.padding]="height === 75 ? '10px 0' : 0"
     (scroll)="scroll($event)"
     [style.overflow]="isOpen || !isResize ? 'auto' : 'hidden'"
+    (mouseleave)="over.emit()"
   >
 
     <div class="header-container">

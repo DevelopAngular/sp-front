@@ -123,17 +123,128 @@
     user-select: none;
 }
 
+//::ng-deep .cdk-overlay-container .student-panel-1 {
+//  height: 300px;
+//  width: 100%;
+//  &:before {
+//    position: absolute;
+//    content: '';
+//    left: 0;
+//    top: -29px;
+//    height: 29px;
+//    width: 144px;
+//  }
+//}
+//
+//::ng-deep .cdk-overlay-container .student-panel1 {
+//  height: 300px;
+//  width: 100%;
+//  //animation: fadeIn .4s forwards;
+//  &:before {
+//    position: absolute;
+//    content: '';
+//    left: 0;
+//    top: -29px;
+//    height: 29px;
+//    width: 144px;
+//  }
+//}
+//::ng-deep .cdk-overlay-container .student-panel2 {
+//  height: 300px;
+//  width: 100%;
+//  &:before {
+//    position: absolute;
+//    content: '';
+//    right: 0;
+//    top: -29px;
+//    height: 29px;
+//    width: 144px;
+//  }
+//}
+//::ng-deep .cdk-overlay-container .student-panel3 {
+//  height: 300px;
+//  width: 100%;
+//  &:before {
+//    position: absolute;
+//    content: '';
+//    right: 0;
+//    bottom: -29px;
+//    height: 29px;
+//    width: 144px;
+//  }
+//}
+//::ng-deep .cdk-overlay-container .student-panel4 {
+//  height: 300px;
+//  width: 100%;
+//  &:before {
+//    position: absolute;
+//    content: '';
+//    left: 0;
+//    bottom: -29px;
+//    height: 29px;
+//    width: 144px;
+//  }
+//}
+
 .student-passes {
   height: 300px;
   width: 100%;
-  &:before {
-    position: absolute;
-    content: '';
-    left: 0;
-    top: -29px;
-    height: 29px;
-    width: 144px;
+  cursor: pointer;
+  //position: relative;
+  //animation: fadeIn .4s forwards;
 
+  &.student-panel1 {
+    &:before {
+      position: absolute;
+      content: '';
+      left: 0;
+      top: -29px;
+      height: 29px;
+      width: 144px;
+    }
+  }
+
+  &.student-panel2 {
+    &:before {
+      position: absolute;
+      content: '';
+      right: 0;
+      top: -29px;
+      height: 29px;
+      width: 144px;
+    }
+  }
+  &.student-panel3 {
+    &:before {
+      position: absolute;
+      content: '';
+      right: 0;
+      bottom: -29px;
+      height: 29px;
+      width: 144px;
+    }
+  }
+  &.student-panel4 {
+    &:before {
+      position: absolute;
+      content: '';
+      left: 0;
+      bottom: -29px;
+      height: 29px;
+      width: 144px;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(5%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0%);
   }
 }
 

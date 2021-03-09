@@ -20,6 +20,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
 
   @Output()
   userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
+  @Output() over = new EventEmitter();
   @Input() closeEvent;
 
   lastStudentPasses: Observable<HallPass[]>;
