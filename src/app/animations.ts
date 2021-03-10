@@ -193,3 +193,43 @@ export const NextStep = trigger('NextStep', [                                   
     ]), { params: { to: -100, halfTo: -50}}
   )
 ]);
+
+export const ResizeProfileImage = trigger('openCloseProfile', [
+  state('open', style({
+    width: '{{size}}px',
+    height: '{{size}}px',
+  }), {params: {size: '75'}}),
+  state('close', style({
+    width: '{{size}}px',
+    height: '{{size}}px',
+  }), {params: {size: '42'}}),
+  transition('open <=> close', [
+    animate('0.5s')
+  ])
+]);
+
+export const showHideProfileEmail = trigger('showHideEmail', [
+  state('open', style({
+    opacity: 1,
+    display: 'block'
+  })),
+  state('close', style({
+    opacity: 0,
+    display: 'none'
+  })),
+  transition('open <=> close', [
+    animate('0.5s')
+  ])
+]);
+
+export const topBottomProfileName = trigger('topBottomName', [
+  state('open', style({
+    top: 0,
+  })),
+  state('close', style({
+    top: '11px'
+  })),
+  transition('open <=> close', [
+    animate('0.5s')
+  ])
+]);

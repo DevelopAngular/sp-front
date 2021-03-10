@@ -47,15 +47,25 @@
           overflow: hidden;
         }
         .title {
+          transition: height .5s ease-in;
+          position: relative;
+          display: flex;
+          align-items: center;
+          width: 200px;
+          height: 50px;
           .full-name {
             color: $navy;
             font-size: 22px;
             font-weight: bold;
+            position: absolute;
+            top: 0;
           }
           .email {
             color: $blue-gray;
             font-size: 14px;
             margin-top: 6px;
+            position: absolute;
+            bottom: 0;
           }
         }
       }

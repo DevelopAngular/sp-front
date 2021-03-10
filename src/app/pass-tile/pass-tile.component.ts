@@ -9,19 +9,13 @@ import {Request} from '../models/Request';
 import {Invitation} from '../models/Invitation';
 import {filter, take, takeUntil} from 'rxjs/operators';
 import {ConnectedPosition, Overlay} from '@angular/cdk/overlay';
-import {animate, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-pass-tile',
   templateUrl: './pass-tile.component.html',
   styleUrls: ['./pass-tile.component.scss'],
   animations: [
-    bumpIn,
-    trigger('fadeInOut', [
-      transition(':leave', [
-        animate('300ms', style({ opacity: 0, transform: 'translateY(0%)' })),
-      ]),
-    ])
+    bumpIn
   ]
 })
 export class PassTileComponent implements OnInit, OnDestroy {

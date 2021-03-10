@@ -6,11 +6,13 @@ import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
+import {ResizeProfileImage, showHideProfileEmail, topBottomProfileName} from '../animations';
 
 @Component({
   selector: 'app-student-passes',
   templateUrl: './student-passes.component.html',
-  styleUrls: ['./student-passes.component.scss']
+  styleUrls: ['./student-passes.component.scss'],
+  animations: [ResizeProfileImage, showHideProfileEmail, topBottomProfileName]
 })
 export class StudentPassesComponent implements OnInit, OnDestroy {
 
@@ -28,21 +30,21 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   lastStudentPasses: Observable<HallPass[]>;
   timerEvent: Subject<any> = new Subject<any>();
 
-  miniAvatar: boolean;
-  out: boolean;
-
-  avatarWidth: number = 75;
+  scrollPosition: number;
+  animationTrigger = {value: 'open', params: {size: '75'}};
 
   destroy$: Subject<any> = new Subject<any>();
 
   @HostListener('document.scroll', ['$event'])
   scroll(event) {
-    if (this.avatarWidth <= 42) {
-      this.avatarWidth += 0.3;
+    if (event.currentTarget.scrollTop >= 50) {
+      this.animationTrigger = {value: 'close', params: {size: '42'}};
     } else {
-      this.avatarWidth -= 0.3;
+      this.animationTrigger = {value: 'open', params: {size: '75'}};
     }
-    console.log(this.avatarWidth);
+    this.scrollPosition = event.currentTarget.scrollTop;
+    // console.log(this.scrollPosition);
+    // console.log(this.avatarWidth);
   }
 
   constructor(
