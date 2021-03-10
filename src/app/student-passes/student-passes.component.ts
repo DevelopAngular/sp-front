@@ -71,7 +71,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   get isOpen() {
-    return this.height === 450;
+    return this.height === 475 || !this.isResize;
   }
 
   get isClose() {
@@ -81,7 +81,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   openProfile() {
     if (this.isClose && this.isResize) {
       const destroy = new Subject();
-      interval(20)
+      interval(15)
         .pipe(takeUntil(destroy))
         .subscribe((res) => {
           this.userClickResult.emit({action: 'open', intervalValue: res});
@@ -97,7 +97,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
     if (this.isOpen && this.isResize) {
       event.stopPropagation();
       const destroy = new Subject();
-      interval(20)
+      interval(15)
         .pipe(takeUntil(destroy))
         .subscribe((res) => {
           this.userClickResult.emit({action: 'close', intervalValue: res});

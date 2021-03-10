@@ -7,10 +7,9 @@
     (pointerClickEvent)="openProfile()"
     [style.height]="height + 'px'"
     [style.padding]="height === 75 ? '10px 0' : 0"
-    [style.overflow]="'hidden'"
+    [style.cursor]="isOpen ? 'default' : 'pointer'"
     (mouseleave)="over.emit()"
   >
-
     <div class="header-container">
       <div class="header" [style.padding]="isClose ? 0 : '15px 0'">
         <div class="profile-info">

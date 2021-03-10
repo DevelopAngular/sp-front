@@ -126,7 +126,11 @@
 .student-passes {
   height: 300px;
   width: 100%;
-  cursor: pointer;
+  //animation: fadeIn .4s forwards;
+  //
+  //&.out {
+  //  animation: fadeOut .4s forwards;
+  //}
 
   &.student-panel1 {
     &:before {
@@ -163,7 +167,7 @@
       content: '';
       right: 0;
       bottom: -33px;
-      height: 29px;
+      height: 33px;
       width: 143px;
       background-color: black;
       opacity: 0.15;
@@ -177,7 +181,7 @@
       content: '';
       left: 0;
       bottom: -33px;
-      height: 29px;
+      height: 33px;
       width: 143px;
       background-color: black;
       opacity: 0.15;

@@ -47,7 +47,7 @@
       [cdkConnectedOverlayPositions]="overlayPositions"
       (positionChange)="updateOverlayPosition($event)"
     >
-      <div class="student-passes" #studentPasses (mouseleave)="disableClose = true; studentNameLeave()" (mouseenter)="disableClose = false; disableClose$.next()">
+      <div class="student-passes" [ngClass]="{out: disableClose}" #studentPasses (mouseleave)="disableClose = true; studentNameLeave()" (mouseenter)="disableClose = false; disableClose$.next()">
         <app-student-passes [profile]="pass.student" [height]="300" [isResize]="false" [closeEvent]="disableClose"></app-student-passes>
       </div>
     </ng-template>

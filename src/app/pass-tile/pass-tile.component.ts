@@ -210,14 +210,14 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   studentNameOver() {
-    interval(300).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
+    interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
       this.isOpenTooltip.next(true);
     });
   }
 
   studentNameLeave() {
     this.destroyOpen$.next();
-    interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+    interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
       this.isOpenTooltip.next(false);
     });
   }
