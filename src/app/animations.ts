@@ -227,7 +227,7 @@ export const topBottomProfileName = trigger('topBottomName', [
     top: 0,
   })),
   state('close', style({
-    top: '11px'
+    top: '13px'
   })),
   transition('open <=> close', [
     animate('0.5s')

@@ -97,6 +97,17 @@
     box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
 }
 
+.overlay-shadow {
+  position: absolute;
+  bottom: 0;
+  height: 29px;
+  width: 100%;
+  background-color: black;
+  opacity: 0.15;
+  border-radius: 0 0 12.75px 12.75px;
+  transition: opacity .3s ease-in;
+}
+
 .names-overlay{
     position: absolute;
     bottom: 0px;
@@ -126,11 +137,6 @@
 .student-passes {
   height: 300px;
   width: 100%;
-  //animation: fadeIn .4s forwards;
-  //
-  //&.out {
-  //  animation: fadeOut .4s forwards;
-  //}
 
   &.student-panel1 {
     &:before {
@@ -140,10 +146,6 @@
       top: -30px;
       height: 29px;
       width: 143px;
-      background-color: black;
-      opacity: 0.15;
-      border-radius: 0 0 12.75px 12.75px;
-      transition: opacity .7s ease-in;
     }
   }
 
@@ -155,10 +157,6 @@
       top: -30px;
       height: 29px;
       width: 143px;
-      background-color: black;
-      opacity: 0.15;
-      border-radius: 0 0 12.75px 12.75px;
-      transition: opacity .3s ease-in;
     }
   }
   &.student-panel3 {
@@ -169,10 +167,6 @@
       bottom: -33px;
       height: 33px;
       width: 143px;
-      background-color: black;
-      opacity: 0.15;
-      border-radius: 0 0 12.75px 12.75px;
-      transition: opacity .3s ease-in;
     }
   }
   &.student-panel4 {
@@ -183,24 +177,7 @@
       bottom: -33px;
       height: 33px;
       width: 143px;
-      background-color: black;
-      opacity: 0.15;
-      border-radius: 0 0 12.75px 12.75px;
-      transition: opacity .3s ease-in;
     }
   }
 }
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(5%);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0%);
-  }
-}
-
 

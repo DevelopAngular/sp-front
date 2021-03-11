@@ -185,3 +185,20 @@ mat-input-container.md-input-focused label {
   -o-animation: appearing .5s ease ;
   animation: appearing .5s ease ;
 }
+
+.student-passes {
+
+  height: 300px;
+  width: 100%;
+
+  &.student-panel1 {
+    &:before {
+      position: absolute;
+      content: '';
+      left: 0;
+      top: -40px;
+      height: 40px;
+      width: 260px;
+    }
+  }
+}

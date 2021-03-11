@@ -1,12 +1,12 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {MapsAPILoader} from '@agm/core';
 import {User} from '../models/User';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {filter as _filter} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
@@ -135,6 +135,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @ViewChild('studentInput') input: ElementRef;
   @ViewChild('wrapper') wrapper: ElementRef;
   @ViewChild('cell') cell: ElementRef;
+  @ViewChild('studentPasses') studentPasses: ElementRef;
 
   private placePredictionService;
   private currentPosition;
@@ -161,7 +162,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   forceFocused$: Subject<boolean> = new Subject<boolean>();
 
   disableCloseTooltip: boolean;
-  isOpenedTooltip: boolean;
+  isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  outAnimation: boolean;
+  showBackgroundOverlay: boolean;
+  destroyOpen$ = new Subject();
+  disableClose$ = new Subject();
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -499,21 +504,22 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.isProposed = false;
   }
 
-  studentNameOver(event) {
-    setTimeout(() => {
-      if (!this.isOpenedTooltip) {
-        this.isOpenedTooltip = true;
-        event.isOpenTooltip = true;
-      }
-    }, 500);
+  studentNameOver(cell) {
+    this.showBackgroundOverlay = true;
+    interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
+      cell.isOpenTooltip = true;
+    });
   }
 
-  studentNameLeave(event) {
-    setTimeout(() => {
-      if (!this.disableCloseTooltip) {
-        this.isOpenedTooltip = false;
-        event.isOpenTooltip = false;
-      }
-    }, 500);
+  studentNameLeave(cell) {
+    this.destroyOpen$.next();
+    this.showBackgroundOverlay = false;
+    interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+      cell.isOpenTooltip = false;
+    });
+  }
+
+  updateOverlayPosition(event) {
+    this.renderer.addClass(this.studentPasses.nativeElement, event.connectionPair.panelClass);
   }
 }

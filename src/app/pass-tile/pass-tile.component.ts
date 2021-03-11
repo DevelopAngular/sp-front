@@ -39,7 +39,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   timers: number[] = [];
   hoverDestroyer$: Subject<any>;
   isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  disableClose: boolean;
+  outAnimation: boolean;
+  showBackgroundOverlay: boolean;
   destroyOpen$ = new Subject();
   disableClose$ = new Subject();
 
@@ -204,6 +205,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   studentNameOver() {
+    this.showBackgroundOverlay = true;
     interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
       this.isOpenTooltip.next(true);
     });
@@ -211,6 +213,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   studentNameLeave() {
     this.destroyOpen$.next();
+    this.showBackgroundOverlay = false;
     interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
       this.isOpenTooltip.next(false);
     });

@@ -45,14 +45,14 @@
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
                (mouseenter)="cell.hovered = true; studentNameOver(cell)"
-               (mouseleave)="cell.hovered = false; cell.pressed = false; studentNameLeave(cell)"
+               (mouseleave)="cell.hovered = false; cell.pressed = false; destroyOpen$.next(); showBackgroundOverlay = false;"
                appCrossPointerEventTarget
                (pointerDownEvent)="cell.pressed = true;"
                (pointerClickEvent)="cell.pressed = false; addStudent(student); forceFocused$.next(true)"
                (focus)="cell.hovered = true"
                (blur)="cell.hovered =false"
                [style.color]="'#555558'"
-               [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
+               [style.background-color]="cell.hovered || cell.isOpenTooltip ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
                cdkOverlayOrigin
                #trigger="cdkOverlayOrigin"
           >
@@ -67,11 +67,14 @@
               cdkConnectedOverlay
               [cdkConnectedOverlayOrigin]="trigger"
               [cdkConnectedOverlayOpen]="cell.isOpenTooltip"
-              [cdkConnectedOverlayMinWidth]="335"
-              [cdkConnectedOverlayPositions]="[{originY: 'top', originX: 'end', overlayY: 'bottom', overlayX: 'center', offsetY: 360, offsetX: 20 }]"
+              [cdkConnectedOverlayWidth]="335"
+              [cdkConnectedOverlayHeight]="300"
+              [cdkConnectedOverlayPositions]="[{panelClass: 'student-panel1', originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetX: 0, offsetY: 0}]"
+              (positionChange)="updateOverlayPosition($event)"
+              [cdkConnectedOverlayScrollStrategy]=""
             >
-              <div (mouseenter)="disableCloseTooltip = true" (mouseleave)="disableCloseTooltip = false; studentNameLeave(cell)">
-                <app-student-passes [profile]="student" [height]="300" [isResize]="false"></app-student-passes>
+              <div class="student-passes" #studentPasses (mouseleave)="outAnimation = true; showBackgroundOverlay = false; studentNameLeave(cell)" (mouseenter)="outAnimation = false; showBackgroundOverlay = true; disableClose$.next()">
+                <app-student-passes [profile]="student" [height]="300" [isResize]="false" [closeEvent]="outAnimation"></app-student-passes>
               </div>
             </ng-template>
           </div>
