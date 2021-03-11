@@ -11,6 +11,9 @@
             </div>
           </div>
         </div>
+        <div *ngIf="passForStudentsComponent" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close()" style="position: absolute; right: 10px; top: 10px; cursor: pointer">
+          <img width="25" height="25" [src]="'./assets/Cancel (Transparent).svg' | resolveAsset" alt="">
+        </div>
 
         <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
 
@@ -137,7 +140,7 @@
 
   </div>
 
-  <div class="student-footer-info" *ngIf="forStaff && isModal">
+  <div class="student-footer-info" *ngIf="forStaff && isModal && showStudentInfoBlock">
     <app-student-passes [profile]="pass.student" (userClickResult)="scaleCard($event)"></app-student-passes>
   </div>
 </div>

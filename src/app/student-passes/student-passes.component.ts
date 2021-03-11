@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {interval, Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
@@ -7,6 +7,8 @@ import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
 import {ResizeProfileImage, showHideProfileEmail, topBottomProfileName} from '../animations';
+import {MatDialog} from '@angular/material/dialog';
+import {PassCardComponent} from '../pass-card/pass-card.component';
 
 @Component({
   selector: 'app-student-passes',
@@ -43,13 +45,11 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
       this.animationTrigger = {value: 'open', params: {size: '75'}};
     }
     this.scrollPosition = event.currentTarget.scrollTop;
-    // console.log(this.scrollPosition);
-    // console.log(this.avatarWidth);
   }
 
   constructor(
     private livaDataService: LiveDataService,
-    private renderer: Renderer2
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -109,6 +109,14 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
           }
         });
     }
+  }
+
+  openPass({pass}) {
+    const expiredPass = this.dialog.open(PassCardComponent, {
+      panelClass: 'teacher-pass-card-dialog-container',
+      backdropClass: 'custom-backdrop',
+      data: {pass, forStaff: true, showStudentInfoBlock: false, passForStudentsComponent: true}
+    });
   }
 
 }

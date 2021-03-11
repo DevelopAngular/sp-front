@@ -68,6 +68,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   performingAction: boolean;
   isModal: boolean;
+  showStudentInfoBlock: boolean = true;
+  passForStudentsComponent: boolean;
 
   isSeen: boolean;
 
@@ -139,7 +141,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose() {
-    return (this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast;
+    return ((this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast) && !this.passForStudentsComponent;
   }
 
   ngOnInit() {
@@ -159,6 +161,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.fromHistory = this.data['fromHistory'];
       this.fromHistoryIndex = this.data['fromHistoryIndex'];
       this.activePassTime$ = this.data['activePassTime$'];
+      this.showStudentInfoBlock = this.data['showStudentInfoBlock'];
+      this.passForStudentsComponent = this.data['passForStudentsComponent'];
     } else {
       this.selectedStudents = this.students;
     }
