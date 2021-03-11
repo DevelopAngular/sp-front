@@ -1,6 +1,7 @@
 
 <div class="host">
   <div
+    [@scalePassCards]="scaleCardTrigger$ | async"
     class="student-wrapper"
     [ngClass]="{out: closeEvent}"
     appCrossPointerEventTarget

@@ -6,6 +6,7 @@ import {Subject} from 'rxjs';
 })
 export class DomCheckerService {
   domElement$: Subject<ElementRef<HTMLElement>> = new Subject<ElementRef<HTMLElement>>();
+  scalePassCard$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
 
   constructor() { }
 }

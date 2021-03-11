@@ -6,15 +6,16 @@ import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
-import {ResizeProfileImage, showHideProfileEmail, topBottomProfileName} from '../animations';
+import {ResizeProfileImage, scalePassCards, showHideProfileEmail, topBottomProfileName} from '../animations';
 import {MatDialog} from '@angular/material/dialog';
 import {PassCardComponent} from '../pass-card/pass-card.component';
+import {DomCheckerService} from '../services/dom-checker.service';
 
 @Component({
   selector: 'app-student-passes',
   templateUrl: './student-passes.component.html',
   styleUrls: ['./student-passes.component.scss'],
-  animations: [ResizeProfileImage, showHideProfileEmail, topBottomProfileName]
+  animations: [ResizeProfileImage, showHideProfileEmail, topBottomProfileName, scalePassCards]
 })
 export class StudentPassesComponent implements OnInit, OnDestroy {
 
@@ -34,6 +35,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
 
   scrollPosition: number;
   animationTrigger = {value: 'open', params: {size: '75'}};
+  scaleCardTrigger$: Subject<string> = new Subject<string>();
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -49,7 +51,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
 
   constructor(
     private livaDataService: LiveDataService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private domCheckerService: DomCheckerService
   ) { }
 
   ngOnInit() {
@@ -112,10 +115,15 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   openPass({pass}) {
+    this.scaleCardTrigger$.next('open');
     const expiredPass = this.dialog.open(PassCardComponent, {
       panelClass: 'teacher-pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {pass, forStaff: true, showStudentInfoBlock: false, passForStudentsComponent: true}
+    });
+
+    expiredPass.afterClosed().subscribe(() => {
+      this.scaleCardTrigger$.next('close');
     });
   }
 

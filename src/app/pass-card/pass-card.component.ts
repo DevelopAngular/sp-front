@@ -18,11 +18,14 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
 import {DeviceDetection} from '../device-detection.helper';
+import {scalePassCards} from '../animations';
+import {DomCheckerService} from '../services/dom-checker.service';
 
 @Component({
   selector: 'app-pass-card',
   templateUrl: './pass-card.component.html',
-  styleUrls: ['./pass-card.component.scss']
+  styleUrls: ['./pass-card.component.scss'],
+  animations: [scalePassCards]
 })
 export class PassCardComponent implements OnInit, OnDestroy {
 
@@ -81,6 +84,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
 
+  scaleCardTrigger$: Subject<string>;
+
   destroy$: Subject<any> = new Subject<any>();
 
 
@@ -96,7 +101,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private timeService: TimeService,
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
-      private http: HttpService
+      private http: HttpService,
+      private domCheckerService: DomCheckerService
   ) {}
 
   getUserName(user: any) {
@@ -146,6 +152,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.scaleCardTrigger$ = this.domCheckerService.scalePassCard$;
     this.currentSchool = this.http.getSchool();
 
     if (this.data['pass']) {

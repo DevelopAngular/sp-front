@@ -233,3 +233,16 @@ export const topBottomProfileName = trigger('topBottomName', [
     animate('0.5s')
   ])
 ]);
+
+export const scalePassCards = trigger('scalePassCards', [
+  state('open', style({
+    'margin-bottom': '50px',
+    height: '410px',
+  })),
+  state('close', style({
+    height: '475px'
+  })),
+  transition('open <=> close', [
+    animate('0.3s')
+  ])
+]);
