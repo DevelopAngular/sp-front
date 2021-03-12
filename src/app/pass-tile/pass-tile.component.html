@@ -28,12 +28,12 @@
   <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">
   <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">
   <div *ngIf="isBadgeVisible" class="badge">1</div>
-<div class="overlay-shadow" *ngIf="showBackgroundOverlay"></div>
+<div class="overlay-shadow" *ngIf="showBackgroundOverlay" (mouseenter)="disableClose$.next()"></div>
 <div *ngIf="forStaff" class="names-overlay"></div>
   <div
     class="overlay"
-    (mouseover)="studentNameOver()"
-    (mouseleave)="destroyOpen$.next(); showBackgroundOverlay = false;"
+    (mouseover)="studentNameOver(); outAnimation = false"
+    (mouseout)="destroyOpen$.next(); showBackgroundOverlay = false"
     cdkOverlayOrigin
     #overlayTrigger="cdkOverlayOrigin"
   >
@@ -48,8 +48,8 @@
       [cdkConnectedOverlayPositions]="overlayPositions"
       (positionChange)="updateOverlayPosition($event)"
     >
-      <div class="student-passes" #studentPasses (mouseleave)="outAnimation = true; showBackgroundOverlay = false; studentNameLeave()" (mouseenter)="outAnimation = false; showBackgroundOverlay = true; disableClose$.next()">
-        <app-student-passes [profile]="pass.student" [height]="300" [isResize]="false" [closeEvent]="outAnimation"></app-student-passes>
+      <div class="student-passes" #studentPasses (mouseout)="outAnimation = true; showBackgroundOverlay = false; studentNameLeave()" (mouseover)="disableClose$.next(); outAnimation = false; showBackgroundOverlay = true;">
+        <app-student-passes [pass]="pass" [profile]="pass.student" [height]="300" [isResize]="false" [closeEvent]="outAnimation"></app-student-passes>
       </div>
     </ng-template>
   </div>

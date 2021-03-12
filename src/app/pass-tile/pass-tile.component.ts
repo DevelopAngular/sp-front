@@ -54,7 +54,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       overlayX: 'start',
       overlayY: 'top',
       offsetX: -71,
-      offsetY: 37
+      offsetY: 35
     },
     {
       panelClass: 'student-panel2',
@@ -63,7 +63,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       overlayX: 'end',
       overlayY: 'top',
       offsetX: 72,
-      offsetY: 37
+      offsetY: 35
     },
     {
       panelClass: 'student-panel3',
@@ -205,6 +205,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   studentNameOver() {
+    this.disableClose$.next();
     this.showBackgroundOverlay = true;
     interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
       this.isOpenTooltip.next(true);

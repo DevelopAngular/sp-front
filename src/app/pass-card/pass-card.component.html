@@ -1,5 +1,5 @@
 <div class="pass-card-container">
-  <div class="pass-card-wrapper" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? (isModal ? '400px' : '451px') : '412px'" ondragstart="return false">
+  <div class="pass-card-wrapper" [@scalePassCards]="scaleCardTrigger$ | async" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? (isModal ? '400px' : '451px') : '412px'" ondragstart="return false">
     <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
@@ -141,15 +141,15 @@
   </div>
 
   <div class="student-footer-info" *ngIf="forStaff && isModal && showStudentInfoBlock">
-    <app-student-passes [profile]="pass.student" (userClickResult)="scaleCard($event)"></app-student-passes>
+    <app-student-passes [pass]="pass" [profile]="pass.student" (userClickResult)="scaleCard($event)"></app-student-passes>
   </div>
 </div>
 
-<app-consent-menu-mobile
-  [display]="cancelEditClick"
-  [header]="header"
-  [options]="options"
-  (cancelClick)="cancelClick()"
-  (backDropClick)="backdropClick()"
-  (receiveOption)="receiveOption($event)">
-</app-consent-menu-mobile>
+<!--<app-consent-menu-mobile-->
+<!--  [display]="cancelEditClick"-->
+<!--  [header]="header"-->
+<!--  [options]="options"-->
+<!--  (cancelClick)="cancelClick()"-->
+<!--  (backDropClick)="backdropClick()"-->
+<!--  (receiveOption)="receiveOption($event)">-->
+<!--</app-consent-menu-mobile>-->

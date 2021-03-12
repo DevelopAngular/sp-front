@@ -6,7 +6,11 @@ import {Subject} from 'rxjs';
 })
 export class DomCheckerService {
   domElement$: Subject<ElementRef<HTMLElement>> = new Subject<ElementRef<HTMLElement>>();
-  scalePassCard$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
+  scalePassCardTrigger$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
+
+  get scalePassCard() {
+    return this.scalePassCardTrigger$.asObservable();
+  }
 
   constructor() { }
 }

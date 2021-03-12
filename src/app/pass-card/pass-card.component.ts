@@ -84,7 +84,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
 
-  scaleCardTrigger$: Subject<string>;
+  scaleCardTrigger$: Observable<string>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -152,7 +152,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    this.scaleCardTrigger$ = this.domCheckerService.scalePassCard$;
+    this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.currentSchool = this.http.getSchool();
 
     if (this.data['pass']) {

@@ -1,5 +1,5 @@
 <div class="invitation-container">
-  <div class="invitation-card-wrapper" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff ? (isModal ? '400px': '451px') : '412px'" ondragstart="return false">
+  <div class="invitation-card-wrapper" [@scalePassCards]="scaleCardTrigger$ | async" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff ? (isModal ? '400px': '451px') : '412px'" ondragstart="return false">
     <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
@@ -179,15 +179,15 @@
   </div>
 
   <div class="student-footer-info" *ngIf="forStaff && isModal">
-    <app-student-passes [profile]="invitation.student" (userClickResult)="scaleCard($event)"></app-student-passes>
+    <app-student-passes [pass]="invitation" [profile]="invitation.student" (userClickResult)="scaleCard($event)"></app-student-passes>
   </div>
 </div>
 
 
-<app-consent-menu-mobile
-  [display]="cancelEditClick"
-  [header]="header"
-  [options]="options"
-  (cancelClick)="cancelClick()"
-  (backDropClick)="backdropClick()"
-  (receiveOption)="receiveOption($event)"></app-consent-menu-mobile>
+<!--<app-consent-menu-mobile-->
+<!--  [display]="cancelEditClick"-->
+<!--  [header]="header"-->
+<!--  [options]="options"-->
+<!--  (cancelClick)="cancelClick()"-->
+<!--  (backDropClick)="backdropClick()"-->
+<!--  (receiveOption)="receiveOption($event)"></app-consent-menu-mobile>-->

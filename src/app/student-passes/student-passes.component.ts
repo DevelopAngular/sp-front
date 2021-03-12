@@ -6,16 +6,17 @@ import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
-import {ResizeProfileImage, scalePassCards, showHideProfileEmail, topBottomProfileName} from '../animations';
+import {ResizeProfileImage, scaleStudentPasses, showHideProfileEmail, topBottomProfileName} from '../animations';
 import {MatDialog} from '@angular/material/dialog';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {DomCheckerService} from '../services/dom-checker.service';
+import {PassLike} from '../models';
 
 @Component({
   selector: 'app-student-passes',
   templateUrl: './student-passes.component.html',
   styleUrls: ['./student-passes.component.scss'],
-  animations: [ResizeProfileImage, showHideProfileEmail, topBottomProfileName, scalePassCards]
+  animations: [ResizeProfileImage, showHideProfileEmail, topBottomProfileName, scaleStudentPasses]
 })
 export class StudentPassesComponent implements OnInit, OnDestroy {
 
@@ -23,6 +24,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   @Input() height: number = 75;
   @Input() isResize: boolean = true;
   @Input() closeEvent: boolean;
+  @Input() pass: PassLike;
 
   @Output()
   userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
@@ -35,7 +37,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
 
   scrollPosition: number;
   animationTrigger = {value: 'open', params: {size: '75'}};
-  scaleCardTrigger$: Subject<string> = new Subject<string>();
+  scaleCardTrigger$: Observable<string>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -56,9 +58,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.lastStudentPasses = this.livaDataService.expiredPasses$
       .pipe(
-        map(passes => passes.filter(pass => +pass.student.id === +this.profile.id))
+        map(passes => {
+          return passes.filter(pass => (+pass.student.id === +this.profile.id) && (+pass.id !== +this.pass.id));
+        })
       );
 
     interval(1000).pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -101,6 +106,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   closeProfile(event) {
     if (this.isOpen && this.isResize) {
       event.stopPropagation();
+      this.animationTrigger = {value: 'open', params: {size: '75'}};
       const destroy = new Subject();
       interval(15)
         .pipe(takeUntil(destroy))
@@ -115,15 +121,15 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   openPass({pass}) {
-    this.scaleCardTrigger$.next('open');
+    this.domCheckerService.scalePassCardTrigger$.next('open');
     const expiredPass = this.dialog.open(PassCardComponent, {
       panelClass: 'teacher-pass-card-dialog-container',
-      backdropClass: 'custom-backdrop',
+      backdropClass: 'invis-backdrop',
       data: {pass, forStaff: true, showStudentInfoBlock: false, passForStudentsComponent: true}
     });
 
     expiredPass.afterClosed().subscribe(() => {
-      this.scaleCardTrigger$.next('close');
+      this.domCheckerService.scalePassCardTrigger$.next('close');
     });
   }
 

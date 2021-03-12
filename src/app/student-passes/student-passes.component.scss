@@ -9,7 +9,6 @@
   left: 0;
   right: 0;
   z-index: 10000;
-  animation: fadeIn .4s forwards;
   background-color: #FFFFFF;
   border-radius: 13px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
@@ -22,8 +21,12 @@
     }
   }
 
+  &.openAnimation {
+    animation: fadeIn .4s forwards;
+  }
+
   &.out {
-    animation: fadeOut .5s forwards;
+    animation: fadeOut .4s forwards;
   }
 
 
@@ -31,7 +34,7 @@
     position: fixed;
     width: 335px;
     z-index: 21;
-    border-radius: 13px;
+    border-radius: 13px 13px 0 0;
     overflow: hidden;
     .header {
       background-color: #FFFFFF;
@@ -107,6 +110,7 @@
   .collection-wrapper {
     background-color: #FBFEFF;
     overflow: auto;
+    border-radius: 13px;
 
     .collection {
       padding: 17px;

@@ -12,8 +12,8 @@ import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
-import {NextStep} from '../animations';
-import {BehaviorSubject, interval, of, Subject} from 'rxjs';
+import {NextStep, scalePassCards} from '../animations';
+import {BehaviorSubject, interval, Observable, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
 import {isNull, uniq, uniqBy} from 'lodash';
@@ -23,12 +23,13 @@ import {DeviceDetection} from '../device-detection.helper';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {StorageService} from '../services/storage.service';
 import {NavbarDataService} from '../main/navbar-data.service';
+import {DomCheckerService} from '../services/dom-checker.service';
 
 @Component({
   selector: 'app-request-card',
   templateUrl: './request-card.component.html',
   styleUrls: ['./request-card.component.scss'],
-  animations: [NextStep]
+  animations: [NextStep, scalePassCards]
 })
 export class RequestCardComponent implements OnInit, OnDestroy {
 
@@ -54,7 +55,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   pinnableOpen: boolean = false;
   user: User;
   isSeen: boolean;
-  pinLoaded: boolean = false;
 
   isModal: boolean;
 
@@ -74,6 +74,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   solidColorRgba2: string;
   removeShadow: boolean;
   leftTextShadow: boolean;
+
+  scaleCardTrigger$: Observable<string>;
+
   destroy$: Subject<any> = new Subject<any>();
 
 
@@ -89,7 +92,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
       private navbarData: NavbarDataService,
-      private storage: StorageService
+      private storage: StorageService,
+      private domCheckerService: DomCheckerService
   ) {}
 
   get invalidDate() {
@@ -124,6 +128,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.frameMotion$ = this.createFormService.getFrameMotionDirection();
 
     if (this.data['pass']) {

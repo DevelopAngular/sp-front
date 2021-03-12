@@ -1,9 +1,9 @@
 
 <div class="host">
   <div
-    [@scalePassCards]="scaleCardTrigger$ | async"
+    [@scaleStudentPasses]="scaleCardTrigger$ | async"
     class="student-wrapper"
-    [ngClass]="{out: closeEvent}"
+    [ngClass]="{out: closeEvent, openAnimation: !isResize}"
     appCrossPointerEventTarget
     (pointerClickEvent)="openProfile()"
     [style.height]="height + 'px'"
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <div class="collection-wrapper" (scroll)="scroll($event)" *ngIf="height !== 75" [style.height]="!isResize ? '300px' : '450px'">
+    <div class="collection-wrapper" (scroll)="scroll($event)" *ngIf="height !== 75" [style.height]="!isResize ? '300px' : '475px'">
       <div class="content">
 
         <div class="student-info">
@@ -57,8 +57,7 @@
               <app-pass-tile
                 [timerEvent]="timerEvent"
                 [forFuture]="false"
-                [fromPast]="!isActivePass(pass)"
-                [isActive]="isActivePass(pass)"
+                [fromPast]="true"
                 [forStaff]="false"
                 [pass]="pass"
                 (tileSelected)="openPass($event)"

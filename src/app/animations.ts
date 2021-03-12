@@ -217,7 +217,7 @@ export const showHideProfileEmail = trigger('showHideEmail', [
     opacity: 0,
     display: 'none'
   })),
-  transition('open <=> close', [
+  transition('* <=> *', [
     animate('0.5s')
   ])
 ]);
@@ -229,20 +229,34 @@ export const topBottomProfileName = trigger('topBottomName', [
   state('close', style({
     top: '13px'
   })),
-  transition('open <=> close', [
+  transition('* <=> *', [
     animate('0.5s')
+  ])
+]);
+
+export const scaleStudentPasses = trigger('scaleStudentPasses', [
+  state('open', style({
+    'margin-bottom': '77px',
+    height: '405px',
+    transform: 'scale(0.97)'
+  })),
+  state('close', style({
+    height: '475px'
+  })),
+  transition('* <=> *', [
+    animate('0.3s')
   ])
 ]);
 
 export const scalePassCards = trigger('scalePassCards', [
   state('open', style({
-    'margin-bottom': '50px',
-    height: '410px',
+    'margin-top': '30px',
+    transform: 'scale(0.93)'
   })),
   state('close', style({
-    height: '475px'
+    transform: 'scale(0.95)'
   })),
-  transition('open <=> close', [
+  transition('* <=> *', [
     animate('0.3s')
   ])
 ]);
