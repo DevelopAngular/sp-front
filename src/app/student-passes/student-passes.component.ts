@@ -1,12 +1,12 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../models/User';
-import {interval, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
-import {ResizeProfileImage, scaleStudentPasses, showHideProfileEmail, topBottomProfileName} from '../animations';
+import {ResizeProfileImage, resizeStudentPasses, scaleStudentPasses, showHideProfileEmail, topBottomProfileName} from '../animations';
 import {MatDialog} from '@angular/material/dialog';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {DomCheckerService} from '../services/dom-checker.service';
@@ -16,7 +16,13 @@ import {PassLike} from '../models';
   selector: 'app-student-passes',
   templateUrl: './student-passes.component.html',
   styleUrls: ['./student-passes.component.scss'],
-  animations: [ResizeProfileImage, showHideProfileEmail, topBottomProfileName, scaleStudentPasses]
+  animations: [
+    ResizeProfileImage,
+    showHideProfileEmail,
+    topBottomProfileName,
+    scaleStudentPasses,
+    resizeStudentPasses
+  ]
 })
 export class StudentPassesComponent implements OnInit, OnDestroy {
 
@@ -38,6 +44,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   scrollPosition: number;
   animationTrigger = {value: 'open', params: {size: '75'}};
   scaleCardTrigger$: Observable<string>;
+  resizeTrigger$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
+  isOpenEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -66,9 +74,9 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
         })
       );
 
-    interval(1000).pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.timerEvent.next(null);
-    });
+    // interval(1000).pipe(takeUntil(this.destroy$)).subscribe(() => {
+    //   this.timerEvent.next(null);
+    // });
   }
 
   ngOnDestroy() {
@@ -89,6 +97,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   openProfile() {
+    // this.resizeTrigger$.next('open');
+    // this.isOpenEvent$.next(true);
     if (this.isClose && this.isResize) {
       const destroy = new Subject();
       interval(15)
@@ -107,6 +117,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
     if (this.isOpen && this.isResize) {
       event.stopPropagation();
       this.animationTrigger = {value: 'open', params: {size: '75'}};
+      // this.resizeTrigger$.next('close');
+      // this.isOpenEvent$.next(false);
       const destroy = new Subject();
       interval(15)
         .pipe(takeUntil(destroy))
