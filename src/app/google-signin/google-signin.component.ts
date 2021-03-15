@@ -107,6 +107,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    let count = 1;
     this.route.queryParams
       .pipe(
         filter((qp: QueryParams) => !!qp.code),
@@ -115,8 +116,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
           this.showSpinner = true;
         }),
         switchMap((qp) => {
+          count += 1;
           this.storage.removeItem('context');
           if (this.router.url.includes('google_oauth')) {
+            console.log('sign in counter ==>>', count);
             return this.loginGoogle(qp.code as string);
           } else if (!!qp.scope) {
             return this.loginClever(qp.code as string);
