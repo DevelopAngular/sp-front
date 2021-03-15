@@ -41,7 +41,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   lastStudentPasses: Observable<HallPass[]>;
   timerEvent: Subject<any> = new Subject<any>();
 
-  scrollPosition: number;
+  isScrollable: boolean;
   animationTrigger = {value: 'open', params: {size: '75'}};
   scaleCardTrigger$: Observable<string>;
   resizeTrigger$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
@@ -52,11 +52,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   @HostListener('document.scroll', ['$event'])
   scroll(event) {
     if (event.currentTarget.scrollTop >= 50) {
+      this.isScrollable = true;
       this.animationTrigger = {value: 'close', params: {size: '42'}};
     } else {
+      this.isScrollable = false;
       this.animationTrigger = {value: 'open', params: {size: '75'}};
     }
-    this.scrollPosition = event.currentTarget.scrollTop;
   }
 
   constructor(
