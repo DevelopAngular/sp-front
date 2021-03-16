@@ -220,7 +220,7 @@ export class HttpService implements OnDestroy {
             filter(schools => !!schools.length),
         )
         .subscribe(schools => {
-          console.log('this.schools$ updated');
+          // console.log('this.schools$ updated');
           const lastSchool = this.currentSchoolSubject.getValue();
           if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
             this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
@@ -256,7 +256,9 @@ export class HttpService implements OnDestroy {
     setTimeout(() => {
       this.loginService.getAuthObject().pipe(
           takeUntil(this.destroyed$),
-          switchMap(authObj => this.fetchServerAuth(authObj)),
+          switchMap(authObj => {
+            return this.fetchServerAuth(authObj);
+          }),
           tap({next: errOrAuth => {
             if (!errOrAuth.auth) {
               // Next object is error
@@ -461,9 +463,7 @@ export class HttpService implements OnDestroy {
     }));
   }
 
-  private loginGoogle(code: string): Observable<AuthContext> {
-    // console.log('loginGoogleAuth()');
-
+  loginGoogle(code: string): Observable<AuthContext> {
     const c = new FormData();
     c.append('code', code);
     c.append('provider', 'google-oauth-code');

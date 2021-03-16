@@ -383,9 +383,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cursor = 'default';
     }
 
-    this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
-    this.locationsService.getFavoriteLocationsRequest();
-    this.locationsService.getPassLimitRequest();
+    this.httpService.globalReload$.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
+        this.locationsService.getFavoriteLocationsRequest();
+        this.locationsService.getPassLimitRequest();
+      });
   }
 
   ngAfterViewInit(): void {

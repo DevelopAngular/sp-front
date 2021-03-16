@@ -54,7 +54,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public showError: boolean;
   public schoolAlreadyText$: Observable<string>;
   public passwordError: boolean;
-  rrrrr;
 
   private changeUserName$: Subject<string> = new Subject<string>();
   private destroy$ = new Subject();
@@ -130,7 +129,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       )
       .subscribe((auth: AuthContext) => {
         // this.router.navigate(['']);
-      console.log(auth);
+      // console.log(auth);
     });
 
     this.loginForm = new FormGroup({
@@ -174,21 +173,18 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   loginSSO(code: string) {
-    window.waitForAppLoaded(true);
     this.storage.setItem('authType', 'gg4l');
     this.loginService.updateAuth({ gg4l_code: code, type: 'gg4l-login'});
     return of (null);
   }
 
   loginClever(code: string) {
-    window.waitForAppLoaded(true);
     this.storage.setItem('authType', 'clever');
     this.loginService.updateAuth({clever_code: code, type: 'clever-login'});
     return of(null);
   }
 
   loginGoogle(code: string) {
-    window.waitForAppLoaded(true);
     this.storage.setItem('authType', 'google');
     this.loginService.updateAuth({google_code: code, type: 'google-login'});
     return of(null);
