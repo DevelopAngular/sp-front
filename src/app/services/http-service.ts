@@ -257,7 +257,6 @@ export class HttpService implements OnDestroy {
       this.loginService.getAuthObject().pipe(
           takeUntil(this.destroyed$),
           switchMap(authObj => {
-            debugger;
             return this.fetchServerAuth(authObj);
           }),
           tap({next: errOrAuth => {
