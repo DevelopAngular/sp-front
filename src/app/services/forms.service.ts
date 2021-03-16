@@ -32,7 +32,7 @@ export class FormsService {
   }
 
   getPredemoComplete(calendlyId) {
-    return this.http.post(this.getUrl('v1/acquisition/predemoGetComplete'), {'meetingId': calendlyId});
+    return this.http.post(this.getUrl('v1/acquisition/predemoGetComplete'), {'meetingID': calendlyId});
   }
 
   savePredemoForm(calendlyId, data) {
@@ -40,5 +40,10 @@ export class FormsService {
       'meetingId': calendlyId,
       ...data
     });
+  }
+
+  querySchools(query) {
+    let url = this.getUrl('v1/acquisition/schoolSearch');
+    return this.http.get(url + '?query=' + query)
   }
 }

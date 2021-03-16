@@ -3,7 +3,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
 import {BehaviorSubject} from 'rxjs';
-import {MapsAPILoader} from '@agm/core';
+import {FormsService} from '../../../services/forms.service';
 
 declare const window;
 
@@ -26,14 +26,13 @@ export class ListSchoolsComponent implements OnInit {
   private placePredictionService;
   private currentPosition;
   backgroundColors: string[] = [];
-  query = new BehaviorSubject<[any[], number]>(null);
   ignoreNextUpdate: boolean = false;
   searchInfo: any[] = [];
 
   constructor(private fb: FormBuilder,
               private matIconRegistry: MatIconRegistry,
               private domSanitizer: DomSanitizer,
-              private mapsApi: MapsAPILoader,
+              private formService: FormsService
   ) {
     this.matIconRegistry.addSvgIcon(
       'minus',
@@ -44,23 +43,6 @@ export class ListSchoolsComponent implements OnInit {
   ngOnInit(): void {
     this.addSchool();
     this.innerWidth = window.innerWidth;
-
-    this.mapsApi.load().then((resource) => {
-      this.currentPosition = new window.google.maps.LatLng({
-        lat: 40.730610,
-        lng: -73.935242
-      });
-      this.placePredictionService = new window.google.maps.places.AutocompleteService();
-    });
-
-    this.query
-      .subscribe(
-        (results) => {
-          if (results !== null) {
-            this.searchInfo[results[1]]['searchSchools'].next(results[0]);
-            this.searchInfo[results[1]]['showOptions'] = true;
-          }
-        });
   }
 
   get schools(): FormArray {
@@ -104,16 +86,20 @@ export class ListSchoolsComponent implements OnInit {
 
   onSearch(search: string, i: number) {
     if (search != undefined && !this.ignoreNextUpdate && search.length >= 4) {
-      this.placePredictionService.getPlacePredictions({
-        location: this.currentPosition,
-        input: search,
-        radius: 100000,
-        types: ['establishment']
-      }, (predictions, status) => {
-        this.query.next([predictions ? predictions : [], i]);
+      this.formService.querySchools(search).subscribe((res: any[]) => {
+        if (res.length < 1) {
+          this.searchInfo[i]['showOptions'] = false;
+        } else {
+          this.searchInfo[i]['searchSchools'] = res.map(school => {
+            return {
+              "name": school['schoolName'],
+              "address": school['city'] + ', ' + school['state']
+            };
+          });
+          this.searchInfo[i]['showOptions'] = true;
+        }
       });
     } else {
-      this.query.next(null);
       this.searchInfo[i]['showOptions'] = false;
     }
     if (this.ignoreNextUpdate) {
@@ -124,7 +110,7 @@ export class ListSchoolsComponent implements OnInit {
   chooseSchool(school, i) {
     this.ignoreNextUpdate = true;
     this.searchInfo[i]['showOptions'] = false;
-    this.schools.at(i).get('name').setValue(school.terms[0].value);
+    this.schools.at(i).get('name').setValue(school.name);
   }
 
   blur(i) {
