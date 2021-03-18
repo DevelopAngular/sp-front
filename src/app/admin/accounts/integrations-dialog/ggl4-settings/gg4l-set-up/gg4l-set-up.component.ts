@@ -1,14 +1,14 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {GG4LSync} from '../../../../models/GG4LSync';
-import {SchoolSyncInfo} from '../../../../models/SchoolSyncInfo';
-import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
-import {AdminService} from '../../../../services/admin.service';
+import {GG4LSync} from '../../../../../models/GG4LSync';
+import {SchoolSyncInfo} from '../../../../../models/SchoolSyncInfo';
+import {CreateFormService} from '../../../../../create-hallpass-forms/create-form.service';
+import {AdminService} from '../../../../../services/admin.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Ggl4SettingsComponent} from '../ggl4-settings.component';
-import {CleverInfo} from '../../../../models/CleverInfo';
-import {Util} from '../../../../../Util';
-import {ConsentMenuComponent} from '../../../../consent-menu/consent-menu.component';
+import {CleverInfo} from '../../../../../models/CleverInfo';
+import {Util} from '../../../../../../Util';
+import {ConsentMenuComponent} from '../../../../../consent-menu/consent-menu.component';
 
 declare const window;
 

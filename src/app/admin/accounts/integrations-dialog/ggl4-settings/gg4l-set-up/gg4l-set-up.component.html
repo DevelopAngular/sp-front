@@ -31,7 +31,7 @@
            [style.z-index]="10"
            [attr.data-motion-translate]="(frameMotion$ | async).direction"
       >Clever Set-up</div>
-      <div class="right-button">
+      <div class="right-button" *ngIf="schoolSyncInfo.is_clever_enabled">
         <app-icon-button [srcString]="'Dots'" [onDarkShade]="true" [size]="17" (clickEvent)="openConsentMenu($event)"></app-icon-button>
       </div>
     </div>
@@ -142,7 +142,7 @@
     <mat-divider></mat-divider>
 
     <div class="footer-content">
-        <div class="link" style="color: #7f879d">Need more help?</div>
+        <div class="link" style="color: #7f879d; white-space: nowrap">Need more help?</div>
         <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/gg4l" target="_blank">See tutorial</a></div>
         <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/meeting" target="_blank">Schedule a call</a></div>
     </div>

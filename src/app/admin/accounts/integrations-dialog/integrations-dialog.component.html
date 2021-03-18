@@ -1,10 +1,13 @@
-<div class="wrapper">
+<div class="wrapper" *ngIf="page === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
   <div class="header">
+    <div class="background-header"></div>
     <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-    <img width="21" height="21" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" alt="Options">
-    <div class="ds-dialog-title" [style.margin-left]="'12px'">Integrations</div>
+    <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <img width="21" height="21" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" alt="Options">
+      <div class="ds-dialog-title" [style.margin-left]="'12px'">Integrations</div>
+    </div>
   </div>
-  <div class="content" *ngIf="schoolSyncInfo$ | async as schoolSyncInfo">
+  <div class="content" *ngIf="schoolSyncInfo$ | async as schoolSyncInfo" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="using" *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled">
       <div class="title">Integrations You’re Using</div>
       <app-integration-card
@@ -79,4 +82,10 @@
     </div>
 
   </div>
+</div>
+<div *ngIf="page === 2 && settingsData.action !== 'g_suite'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+  <app-ggl4-settings [dialogAction]="settingsData.action" [status]="settingsData.status" (backEvent)="back()"></app-ggl4-settings>
+</div>
+<div *ngIf="page === 2 && settingsData.action === 'g_suite'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+  <app-g-suite-settings (backEvent)="back()"></app-g-suite-settings>
 </div>
