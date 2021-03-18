@@ -40,7 +40,7 @@ export class TeacherPinComponent implements OnInit {
     this.userPin$ = this.userService.userPin$;
     this.userPin$.subscribe(res => {
       this.form = new FormGroup({
-        pin: new FormControl(res, [
+        pin: new FormControl(res || '', [
           Validators.required,
           Validators.minLength(4),
           Validators.pattern('^[0-9]*?[0-9]+$'),
