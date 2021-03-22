@@ -3,7 +3,7 @@ import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {delay, filter, map, skip, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {delay, exhaustMap, filter, map, skip, take, takeUntil, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -70,7 +70,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
            return  value.length < 2;
          }
         }),
-        switchMap(() => this.userService.getUserWithTimeout()),
+        take(1),
+        exhaustMap(() => this.userService.user$.pipe(take(1))),
         filter(user => !!user),
       )
       .subscribe(user => {

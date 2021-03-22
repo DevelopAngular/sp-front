@@ -292,7 +292,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         filter(() => !this.isStaff),
         switchMap(({action, data}) => {
-          if (action === 'message.alert') {
+          if (action === 'message.alert' && !this.dialog.getDialogById('startNotification')) {
             const isFirstPass: boolean = data.type.includes('first_pass');
             this.screenService.customBackdropEvent$.next(true);
             const SPNC = this.dialog.open(StartPassNotificationComponent, {
@@ -387,7 +387,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(() => {
         this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
         this.locationsService.getFavoriteLocationsRequest();
-        this.locationsService.getPassLimitRequest();
       });
   }
 

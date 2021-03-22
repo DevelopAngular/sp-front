@@ -356,7 +356,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       // Switch into kiosk mode
 
       this.storage.setItem('kioskToken', res.access_token);
-      this.storage.setItem('refresh_token', res.refresh_token);
+      // this.storage.setItem('refresh_token', res.refresh_token);
       this.loginService.updateAuth({username: this.user.primary_email, type: 'demo-login', kioskMode: true});
       this.http.kioskTokenSubject$.next(res);
       this.router.navigate(['main/kioskMode']);

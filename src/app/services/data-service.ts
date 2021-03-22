@@ -75,6 +75,11 @@ export class DataService {
           this.inboxSource = new BehaviorSubject<boolean>(true);
       }
       this.inboxState = this.inboxSource.asObservable();
+
+      this.polling.listen('error').subscribe((data) => {
+        console.error('WebSocket error message ==>>>', data);
+        this.http.refreshAuthContext();
+      });
   }
 
   openRequestPageMobile() {

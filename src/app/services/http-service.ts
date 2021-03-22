@@ -18,6 +18,7 @@ import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.comp
 import {Router} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {JwtHelperService} from '@auth0/angular-jwt';
+import * as moment from 'moment';
 
 declare const window;
 
@@ -247,7 +248,7 @@ export class HttpService implements OnDestroy {
         map(newToken => {
           return {auth: newToken, server: this.getAuthContext().server};
         })).subscribe(res => {
-          this.setAuthContext(res);
+          this.setAuthContext(res, true);
     });
 
     // When HTTPService is being constructed, if the user is already signed in, then authObject will resolve immediately.
@@ -257,7 +258,7 @@ export class HttpService implements OnDestroy {
       this.loginService.getAuthObject().pipe(
           takeUntil(this.destroyed$),
           switchMap(authObj => {
-            return this.fetchServerAuth(authObj);
+            return this.getUserAuth(authObj);
           }),
           tap({next: errOrAuth => {
             if (!errOrAuth.auth) {
@@ -304,7 +305,22 @@ export class HttpService implements OnDestroy {
     return this._authContext;
   }
 
-  setAuthContext(ctx: AuthContext): void {
+  getUserAuth(authObj) {
+    const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
+    if (auth) {
+      console.error('Token will expire ==>>', moment(auth.auth.expires).add(auth.auth.expires_in, 'seconds').format('DD HH:MM'));
+    }
+    return iif(
+      () => (auth && moment().isSameOrBefore(moment(auth.auth.expires).add(auth.auth.expires_in, 'seconds'))),
+      of(auth),
+      this.fetchServerAuth(authObj)
+    );
+  }
+
+  setAuthContext(ctx: AuthContext, forKioskMode: boolean = false): void {
+    if (ctx && (!this.storage.getItem('auth') || forKioskMode)) {
+      this.storage.setItem('auth',  JSON.stringify(ctx));
+    }
     this._authContext = ctx;
     this.authContext$.next(ctx);
   }
@@ -365,17 +381,15 @@ export class HttpService implements OnDestroy {
             if (servers.token) {
               if (authType === 'gg4l') {
                 gg4l_token = servers.token.auth_token;
-                if (servers.token.refresh_token) {
-                  this.storage.setItem('refresh_token', servers.token.refresh_token);
-                }
+                // if (servers.token.refresh_token) {
+                //   this.storage.setItem('refresh_token', servers.token.refresh_token);
+                // }
               } else if (authType === 'clever') {
                 clever_token = servers.token.access_token;
               } else {
                 google_token = servers.token.access_token;
               }
             }
-
-            this.storage.setItem('context', JSON.stringify({ server, gg4l_token, clever_token, google_token }));
 
             return { server, gg4l_token, clever_token, google_token };
           } else {
@@ -390,9 +404,11 @@ export class HttpService implements OnDestroy {
     c.append('email', username);
     c.append('platform_type', 'web');
 
-    const context = this.storage.getItem('context');
+    const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
 
-    return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
+    const context = authContext ? authContext : null;
+
+    return iif(() => !!context, of(context), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
@@ -404,14 +420,13 @@ export class HttpService implements OnDestroy {
       config.append('client_id', server.client_id);
 
       const isKioskMode = this.storage.getItem('kioskToken') != null;
-
       if (password) {
         config.append('grant_type', 'password');
         config.append('username', username);
         config.append('password', password);
       } else {
         config.append('grant_type', 'refresh_token');
-        const refreshToken = this.storage.getItem('refresh_token');
+        const refreshToken = authContext.auth.refresh_token;
         config.append('token', refreshToken);
 
         if (isKioskMode) {
@@ -444,7 +459,7 @@ export class HttpService implements OnDestroy {
             return this.pwaStorage.setItem('authData', data).pipe(mapTo(data));
           }),
           map((data: any) => {
-            this.storage.setItem('refresh_token', data.refresh_token);
+            // this.storage.setItem('refresh_token', data.refresh_token);
             // don't use TimeService for auth because auth is required for time service
             // to be useful
             data['expires'] = new Date(new Date() + data['expires_in']);
@@ -455,6 +470,9 @@ export class HttpService implements OnDestroy {
             if (isKioskMode) {
               this.storage.setItem('kioskToken', auth.access_token);
               this.kioskTokenSubject$.next(auth);
+            }
+            if (!password) {
+              this.storage.setItem('auth', JSON.stringify({auth: auth, server: server}));
             }
             return {auth: auth, server: server} as AuthContext;
           })
@@ -470,10 +488,8 @@ export class HttpService implements OnDestroy {
     c.append('platform_type', 'web');
     c.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
 
-    let context = this.storage.getItem('context');
-    if (!!context) {
-      context = JSON.parse(context);
-    }
+    const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
+    const context = authContext ? authContext : null;
 
     if ((!context || !context.google_token) && !code) {
       return throwError(new LoginServerError('Please sign in again.'));
@@ -514,9 +530,9 @@ export class HttpService implements OnDestroy {
     c.append('provider', 'gg4l-sso');
     c.append('platform_type', 'web');
 
-    const context = this.storage.getItem('context');
+    const context = this.storage.getItem('auth');
 
-    return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
+    return iif(() => !!context, of(context), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
       if (server === null) {
         return throwError(new LoginServerError('No login server!'));
@@ -561,7 +577,7 @@ export class HttpService implements OnDestroy {
     c.append('platform_type', 'web');
     c.append('redirect_uri', this.getRedirectUrl());
 
-    const context = this.storage.getItem('context');
+    const context = this.storage.getItem('auth');
 
     return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(mergeMap((response: LoginChoice) => {
       const server = response.server;
@@ -645,14 +661,15 @@ export class HttpService implements OnDestroy {
 
   private doSPTokenRefresh(kioskMode: boolean): Observable<AuthContext> {
     // We have to get the context from storage here because this.getAuthContext will be null during first load.
-    const s = this.storage.getItem('context');
-    const refresh_token = this.storage.getItem('refresh_token');
+    const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
+    const s = auth ? auth : null;
+    const refresh_token = auth ? auth.auth.refresh_token : null;
 
     if (!s || !refresh_token) {
       return throwError(new LoginServerError('Please sign in again.'));
     }
 
-    const c: AuthContext = JSON.parse(s);
+    const c: AuthContext = s;
     const server = c.server;
     const config = new FormData();
     config.append('client_id', server.client_id);
@@ -674,11 +691,12 @@ export class HttpService implements OnDestroy {
           return ctx;
         }),
         tap({next: (ctx: AuthContext) => {
-            this.storage.setItem('refresh_token', ctx.auth.refresh_token);
+            // this.storage.setItem('refresh_token', ctx.auth.refresh_token);
             if (kioskMode) {
               this.storage.setItem('kioskToken', ctx.auth.access_token);
               this.kioskTokenSubject$.next(ctx.auth);
             }
+            this.storage.setItem('auth', JSON.stringify(ctx));
           }})
     );
   }
