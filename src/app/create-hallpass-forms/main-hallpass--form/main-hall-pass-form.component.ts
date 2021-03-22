@@ -114,6 +114,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.isDeviceLarge = this.screenService.isDeviceLarge;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.passesService.getPinnablesRequest();
+    this.locationsService.getPassLimitRequest();
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
