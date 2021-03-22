@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
 import {GoogleLoginService} from '../services/google-login.service';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import {filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {AuthContext, HttpService} from '../services/http-service';
+import {filter, finalize, pluck, takeUntil, tap} from 'rxjs/operators';
+import {HttpService} from '../services/http-service';
 import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -112,21 +112,17 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         tap(() => {
           this.disabledButton = false;
           this.showSpinner = true;
-        }),
-        switchMap((qp) => {
-          this.storage.removeItem('context');
-          if (this.router.url.includes('google_oauth')) {
-            return this.loginGoogle(qp.code as string);
-          } else if (!!qp.scope) {
-            return this.loginClever(qp.code as string);
-          } else {
-            return this.loginSSO(qp.code as string);
-          }
         })
       )
-      .subscribe((auth: AuthContext) => {
-        // this.router.navigate(['']);
-      // console.log(auth);
+      .subscribe((qp) => {
+        this.storage.removeItem('context');
+        if (this.router.url.includes('google_oauth')) {
+          return this.loginGoogle(qp.code as string);
+        } else if (!!qp.scope) {
+          return this.loginClever(qp.code as string);
+        } else {
+          return this.loginSSO(qp.code as string);
+        }
     });
 
     this.loginForm = new FormGroup({
