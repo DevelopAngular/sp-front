@@ -307,6 +307,7 @@ export class HttpService implements OnDestroy {
 
   getUserAuth(authObj) {
     const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
+    console.error('Token will expire ==>>', moment(auth.auth.expires).add(auth.auth.expires_in, 'seconds').format('DD HH:MM'));
     return iif(
       () => auth && moment().isSameOrBefore(moment(auth.auth.expires).add(auth.auth.expires_in, 'seconds')),
       of(auth),
@@ -417,7 +418,6 @@ export class HttpService implements OnDestroy {
       config.append('client_id', server.client_id);
 
       const isKioskMode = this.storage.getItem('kioskToken') != null;
-
       if (password) {
         config.append('grant_type', 'password');
         config.append('username', username);
@@ -468,6 +468,9 @@ export class HttpService implements OnDestroy {
             if (isKioskMode) {
               this.storage.setItem('kioskToken', auth.access_token);
               this.kioskTokenSubject$.next(auth);
+            }
+            if (!password) {
+              this.storage.setItem('auth', JSON.stringify({auth: auth, server: server}));
             }
             return {auth: auth, server: server} as AuthContext;
           })
