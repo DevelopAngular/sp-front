@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {HttpService} from '../../../services/http-service';
 import * as schoolsActions from '../actions';
-import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, switchMap} from 'rxjs/operators';
 import {School} from '../../../models/School';
 import {of} from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
@@ -22,7 +22,7 @@ export class SchoolsEffects {
   getSchools$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(schoolsActions.getSchools),
-      concatMap(action => {
+      exhaustMap(action => {
         return this.http.getSchools()
           .pipe(
             map((schools: School[]) => {
