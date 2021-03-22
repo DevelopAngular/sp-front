@@ -25,7 +25,7 @@ export class StudentFilterComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
-    public dialogRef: MatDialogRef<StudentFilterComponent>
+    public dialogRef: MatDialogRef<StudentFilterComponent>,
   ) { }
 
   get isUpdate() {
