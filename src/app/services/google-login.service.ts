@@ -1,8 +1,8 @@
 import {Inject, Injectable, NgZone} from '@angular/core';
-import {BehaviorSubject, from, Observable, ReplaySubject, Subject} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
+import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {StorageService} from './storage.service';
-import { APP_BASE_HREF } from '@angular/common';
+import {APP_BASE_HREF} from '@angular/common';
 
 declare const window;
 
@@ -125,6 +125,7 @@ export class GoogleLoginService {
     this.storage.removeItem('google_id_token');
     this.storage.removeItem('context');
     this.storage.removeItem('kioskToken');
+    this.storage.removeItem('auth');
     this.logout();
   }
 
