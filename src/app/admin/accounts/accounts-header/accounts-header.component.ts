@@ -25,7 +25,7 @@ import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.c
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {IntegrationsDialogComponent} from '../integrations-dialog/integrations-dialog.component';
-import {Ggl4SettingsComponent} from '../ggl4-settings/ggl4-settings.component';
+import {Ggl4SettingsComponent} from '../integrations-dialog/ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from '../g-suite-settings/g-suite-settings.component';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {TableService} from '../../sp-data-table/table.service';

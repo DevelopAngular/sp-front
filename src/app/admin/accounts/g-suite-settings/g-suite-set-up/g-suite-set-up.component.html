@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="header">
     <div class="background-header"></div>
-    <img class="back-button" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close()" [src]="'./assets/Back Button (White).svg' | resolveAsset">
+    <img class="back-button" appCrossPointerEventTarget (pointerClickEvent)="back.emit()" [src]="'./assets/Back Button (White).svg' | resolveAsset">
     <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
       <img width="21" height="21" [src]="'./assets/Google (White).svg' | resolveAsset" alt="Options">
       <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Settings</div>
@@ -44,7 +44,7 @@
     <mat-divider></mat-divider>
 
     <div class="footer-content">
-      <div style="color: #7f879d">Need more help?</div>
+      <div style="color: #7f879d; white-space: nowrap">Need more help?</div>
       <div style="color: #7f879d;">Email <a style="color: #7f879d; outline: none" href="https://www.smartpass.app/support" target="_blank">support@smartpass.app</a></div>
     </div>
   </div>

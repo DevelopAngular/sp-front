@@ -125,6 +125,7 @@ export class GoogleLoginService {
     this.storage.removeItem('google_id_token');
     this.storage.removeItem('context');
     this.storage.removeItem('kioskToken');
+    this.storage.removeItem('auth');
     this.logout();
   }
 

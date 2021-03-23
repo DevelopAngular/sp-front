@@ -1,6 +1,6 @@
-<div class="wrapper">
+<div class="settings-wrapper">
   <div *ngIf="page === 1" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <app-info-dialog [integrationName]="dialogAction === 'gg4l' ? 'GG4L' : dialogAction === 'clever' ? 'Clever' : null" (nextPage)="nextPage()"></app-info-dialog>
+    <app-info-dialog [integrationName]="dialogAction === 'gg4l' ? 'GG4L' : dialogAction === 'clever' ? 'Clever' : null" (nextPage)="nextPage()" (back)="dialog.getDialogById('gg4lSettings') ? dialogRef.close() : backEvent.emit()"></app-info-dialog>
   </div>
   <div *ngIf="page === 2" class="next-step set-up" [@NextStep]="{ value: '', params: frameMotion$ | async}">
     <app-gg4l-set-up

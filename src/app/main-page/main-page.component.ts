@@ -190,7 +190,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    window.appLoaded(1000);
+    window.appLoaded();
   }
 
   ngOnDestroy(): void {

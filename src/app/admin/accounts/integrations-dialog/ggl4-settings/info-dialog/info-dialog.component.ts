@@ -1,8 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material/dialog';
-import {Ggl4SettingsComponent} from '../ggl4-settings.component';
+import {CreateFormService} from '../../../../../create-hallpass-forms/create-form.service';
 
 @Component({
   selector: 'app-info-dialog',
@@ -14,6 +12,7 @@ export class InfoDialogComponent implements OnInit {
   @Input() integrationName: string;
 
   @Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
+  @Output() back: EventEmitter<any> = new EventEmitter<any>();
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -34,7 +33,6 @@ export class InfoDialogComponent implements OnInit {
   }
 
   constructor(
-    public dialogRef: MatDialogRef<Ggl4SettingsComponent>,
     private formService: CreateFormService
   ) { }
 

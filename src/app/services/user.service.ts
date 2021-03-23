@@ -6,7 +6,7 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {exhaustMap, filter, map, mapTo, take, tap} from 'rxjs/operators';
+import {exhaustMap, filter, map, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -226,13 +226,18 @@ export class UserService {
               return of(user);
             }
           }),
-          exhaustMap(user => {
-            if (user.isTeacher() && !user.isAssistant()) {
-              return this.getUserPinRequest().pipe(mapTo(user));
-            } else {
-              return of(user);
+          tap((user) => {
+            if (user.isTeacher() || user.isAssistant()) {
+              this.getUserPinRequest();
             }
           })
+          // exhaustMap(user => {
+          //   if (user.isTeacher() || user.isAssistant()) {
+          //     return this.getUserPinRequest().pipe(mapTo(user));
+          //   } else {
+          //     return of(user);
+          //   }
+          // })
         )
         .subscribe(user => {
           this.userData.next(user);
