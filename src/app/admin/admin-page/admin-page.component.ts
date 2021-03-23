@@ -6,7 +6,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {delay, exhaustMap, filter, map, skip, take, takeUntil, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
 import {HttpService} from '../../services/http-service';
-import {AdminService} from '../../services/admin.service';
 
 declare const window;
 
@@ -29,8 +28,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private httpService: HttpService,
-    private adminService: AdminService
+    private httpService: HttpService
   ) {
 
     this.userService.userData
