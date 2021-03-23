@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../models/User';
-import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
-import {map, takeUntil} from 'rxjs/operators';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
@@ -74,10 +74,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
           return passes.filter(pass => (+pass.student.id === +this.profile.id) && (+pass.id !== +this.pass.id));
         })
       );
-
-    // interval(1000).pipe(takeUntil(this.destroy$)).subscribe(() => {
-    //   this.timerEvent.next(null);
-    // });
   }
 
   ngOnDestroy() {
@@ -90,27 +86,28 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   get isOpen() {
-    return this.height === 475 || !this.isResize;
+    return this.isOpenEvent$.getValue() || !this.isResize;
   }
 
   get isClose() {
-    return this.height === 75;
+    return !this.isOpenEvent$.getValue() && this.isResize;
   }
 
   openProfile() {
-    // this.resizeTrigger$.next('open');
-    // this.isOpenEvent$.next(true);
     if (this.isClose && this.isResize) {
-      const destroy = new Subject();
-      interval(15)
-        .pipe(takeUntil(destroy))
-        .subscribe((res) => {
-          this.userClickResult.emit({action: 'open', intervalValue: res});
-          this.height += 25;
-          if (this.isOpen) {
-            destroy.next();
-          }
-        });
+      this.resizeTrigger$.next('open');
+      this.domCheckerService.scalePassCardTrigger$.next('resize');
+      this.isOpenEvent$.next(true);
+      // const destroy = new Subject();
+      // interval(10)
+      //   .pipe(takeUntil(destroy))
+      //   .subscribe((res) => {
+      //     this.userClickResult.emit({action: 'open', intervalValue: res});
+      //     // this.height += 25;
+      //     if (this.isOpen) {
+      //       destroy.next();
+      //     }
+      //   });
     }
   }
 
@@ -118,18 +115,19 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
     if (this.isOpen && this.isResize) {
       event.stopPropagation();
       this.animationTrigger = {value: 'open', params: {size: '75'}};
-      // this.resizeTrigger$.next('close');
-      // this.isOpenEvent$.next(false);
-      const destroy = new Subject();
-      interval(15)
-        .pipe(takeUntil(destroy))
-        .subscribe((res) => {
-          this.userClickResult.emit({action: 'close', intervalValue: res});
-          this.height -= 25;
-          if (this.isClose) {
-            destroy.next();
-          }
-        });
+      this.resizeTrigger$.next('close');
+      this.isOpenEvent$.next(false);
+      this.domCheckerService.scalePassCardTrigger$.next('unresize');
+      // const destroy = new Subject();
+      // interval(10)
+      //   .pipe(takeUntil(destroy))
+      //   .subscribe((res) => {
+      //     this.userClickResult.emit({action: 'close', intervalValue: res});
+      //     // this.height -= 25;
+      //     if (this.isClose) {
+      //       destroy.next();
+      //     }
+      //   });
     }
   }
 
@@ -138,7 +136,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
     const expiredPass = this.dialog.open(PassCardComponent, {
       panelClass: 'teacher-pass-card-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: {pass, forStaff: true, showStudentInfoBlock: false, passForStudentsComponent: true}
+      data: {pass, forStaff: true, showStudentInfoBlock: !this.isResize, passForStudentsComponent: this.isResize}
     });
 
     expiredPass.afterClosed().subscribe(() => {

@@ -6,7 +6,7 @@ import {Subject} from 'rxjs';
 })
 export class DomCheckerService {
   domElement$: Subject<ElementRef<HTMLElement>> = new Subject<ElementRef<HTMLElement>>();
-  scalePassCardTrigger$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
+  scalePassCardTrigger$: Subject<string> = new Subject<string>();
 
   get scalePassCard() {
     return this.scalePassCardTrigger$.asObservable();
