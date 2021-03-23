@@ -1,7 +1,6 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {map} from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
@@ -11,6 +10,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
+import {HallPassesService} from '../services/hall-passes.service';
 
 @Component({
   selector: 'app-student-passes',
@@ -46,6 +46,9 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   scaleCardTrigger$: Observable<string>;
   resizeTrigger$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
   isOpenEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  loading$: Observable<boolean>;
+  loaded$: Observable<boolean>;
+  passesStats$: Observable<any>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -63,17 +66,22 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   constructor(
     private livaDataService: LiveDataService,
     private dialog: MatDialog,
-    private domCheckerService: DomCheckerService
+    private domCheckerService: DomCheckerService,
+    private passesService: HallPassesService
   ) { }
 
   ngOnInit() {
+    this.passesService.getQuickPreviewPassesRequest(this.profile.id);
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
-    this.lastStudentPasses = this.livaDataService.expiredPasses$
-      .pipe(
-        map(passes => {
-          return passes.filter(pass => (+pass.student.id === +this.profile.id) && (+pass.id !== +this.pass.id));
-        })
-      );
+    this.lastStudentPasses = this.passesService.quickPreviewPasses$;
+    this.loading$ = this.passesService.quickPreviewPassesLoading$;
+    this.loaded$ = this.passesService.quickPreviewPassesLoaded$;
+    this.passesStats$ = this.passesService.quickPreviewPassesStats$;
+      // .pipe(
+      //   map(passes => {
+      //     return passes.filter(pass => (+pass.student.id === +this.profile.id) && (+pass.id !== +this.pass.id));
+      //   })
+      // );
   }
 
   ngOnDestroy() {

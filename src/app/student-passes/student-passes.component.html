@@ -38,49 +38,49 @@
       </div>
     </div>
 
-    <div class="collection-wrapper" (scroll)="scroll($event)" [style.height]="!isResize ? '300px' : '460px'">
+    <div class="collection-wrapper" (scroll)="scroll($event)" [style.height]="!isResize ? '300px' : '4750px'">
       <div class="content">
 
-        <div class="student-info">
-          <app-student-passes-info-card [number]="0" [title]="'today'"></app-student-passes-info-card>
-          <app-student-passes-info-card [number]="4" [title]="'this week'"></app-student-passes-info-card>
-          <app-student-passes-info-card [number]="15" [title]="'this month'"></app-student-passes-info-card>
+        <div class="student-info" *ngIf="passesStats$ | async as stats">
+          <app-student-passes-info-card [number]="stats?.past_passes_today" [title]="'today'"></app-student-passes-info-card>
+          <app-student-passes-info-card [number]="stats?.past_passes_week" [title]="'this week'"></app-student-passes-info-card>
+          <app-student-passes-info-card [number]="stats?.past_passes_month" [title]="'this month'"></app-student-passes-info-card>
         </div>
 
       </div>
 
       <mat-divider></mat-divider>
       <div class="collection">
-        <div class="pass-collection" *ngIf="(lastStudentPasses | async).length; else emptyState">
-          <div class="title">
-            <img width="20" [src]="'./assets/Expired (Navy).svg' | resolveAsset" alt="Expired">
-            <div style="margin-left: 8px">Latest Passes</div>
+        <div class="emptyState" *ngIf="(loaded$ | async) && !(lastStudentPasses | async).length; else passes">
+          <img style="opacity: 0.5" width="60" [src]="'./assets/Passes (Blue-Gray).svg'" alt="Passes">
+          <div class="empty-title">
+            No expired passes
           </div>
-          <div class="passes" *ngIf="true; else fakePasses">
-            <div class="pass" *ngFor="let pass of lastStudentPasses | async">
-              <app-pass-tile
-                [timerEvent]="timerEvent"
-                [forFuture]="false"
-                [fromPast]="true"
-                [forStaff]="false"
-                [pass]="pass"
-                (tileSelected)="openPass($event)"
-              ></app-pass-tile>
-            </div>
-          </div>
-          <ng-template #fakePasses>
-            <div class="passes">
-              <div class="fake-pass animate" *ngFor="let pass of [1, 1, 1, 1, 1, 1]"></div>
-            </div>
-          </ng-template>
         </div>
 
-        <ng-template #emptyState>
-          <div class="emptyState">
-            <img style="opacity: 0.5" width="60" [src]="'./assets/Passes (Blue-Gray).svg'" alt="Passes">
-            <div class="empty-title">
-              No expired passes
+        <ng-template #passes>
+          <div class="pass-collection">
+            <div class="title">
+              <img width="20" [src]="'./assets/Expired (Navy).svg' | resolveAsset" alt="Expired">
+              <div style="margin-left: 8px">Latest Passes</div>
             </div>
+            <div class="passes" *ngIf="!(loading$ | async); else fakePasses">
+              <div class="pass" *ngFor="let pass of lastStudentPasses | async">
+                <app-pass-tile
+                  [timerEvent]="timerEvent"
+                  [forFuture]="false"
+                  [fromPast]="true"
+                  [forStaff]="false"
+                  [pass]="pass"
+                  (tileSelected)="openPass($event)"
+                ></app-pass-tile>
+              </div>
+            </div>
+            <ng-template #fakePasses>
+              <div class="passes">
+                <div class="fake-pass animate" *ngFor="let pass of [1, 1, 1, 1, 1, 1]"></div>
+              </div>
+            </ng-template>
           </div>
         </ng-template>
 

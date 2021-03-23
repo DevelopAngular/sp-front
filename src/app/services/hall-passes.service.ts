@@ -39,6 +39,13 @@ import {Invitation} from '../models/Invitation';
 import {getInvitationsCollection} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
 import {filterExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/actions';
 import {getLastAddedExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
+import {getPreviewPasses} from '../ngrx/quick-preview-passes/actions';
+import {
+  getQuickPreviewPassesCollection,
+  getQuickPreviewPassesLoaded,
+  getQuickPreviewPassesLoading,
+  getQuickPreviewPassesStats
+} from '../ngrx/quick-preview-passes/states';
 
 @Injectable({
   providedIn: 'root'
@@ -70,6 +77,11 @@ export class HallPassesService {
   lastAddedExpiredPasses$: Observable<HallPass[]> = this.store.select(getLastAddedExpiredPasses);
 
   invitations$: Observable<Invitation[]> = this.store.select(getInvitationsCollection);
+
+  quickPreviewPasses$: Observable<HallPass[]> = this.store.select(getQuickPreviewPassesCollection);
+  quickPreviewPassesStats$: Observable<any> = this.store.select(getQuickPreviewPassesStats);
+  quickPreviewPassesLoading$: Observable<boolean> = this.store.select(getQuickPreviewPassesLoading);
+  quickPreviewPassesLoaded$: Observable<boolean> = this.store.select(getQuickPreviewPassesLoaded);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
@@ -240,6 +252,14 @@ export class HallPassesService {
 
   filterExpiredPassesRequest(user, timeFilter) {
     this.store.dispatch(filterExpiredPasses({user, timeFilter}));
+  }
+
+  getQuickPreviewPassesRequest(userId) {
+    this.store.dispatch(getPreviewPasses({userId}));
+  }
+
+  getQuickPreviewPasses(userId) {
+    return this.http.get(`v1/users/${userId}/hall_pass_stats`, {limit: 50});
   }
 
 }
