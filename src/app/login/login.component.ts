@@ -111,7 +111,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     // if (this.isIOSMobile || this.isAndroid) {
-    //   window.appLoaded();
+      window.appLoaded();
     // }
   }
 
