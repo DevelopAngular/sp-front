@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {MapsAPILoader} from '@agm/core';
 import {User} from '../models/User';
 import {BehaviorSubject, interval, of, Subject} from 'rxjs';
@@ -13,6 +13,8 @@ import {ScreenService} from '../services/screen.service';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
 import {DeviceDetection} from '../device-detection.helper';
+import {DomCheckerService} from '../services/dom-checker.service';
+import {Overlay} from '@angular/cdk/overlay';
 
 declare const window;
 
@@ -161,14 +163,20 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   foundLocations: Location[] = [];
   forceFocused$: Subject<boolean> = new Subject<boolean>();
 
-  disableCloseTooltip: boolean;
   isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  outAnimation: boolean;
+  destroyAnimation$: Subject<any> = new Subject<any>();
   showBackgroundOverlay: boolean;
   destroyOpen$ = new Subject();
   disableClose$ = new Subject();
+  overlayScrollStrategy;
 
   destroy$: Subject<any> = new Subject<any>();
+
+  @HostListener('document.scroll', ['$event'])
+  scroll() {
+    this.destroyOpen$.next();
+    this.showBackgroundOverlay = false;
+  }
 
   constructor(
     private userService: UserService,
@@ -178,7 +186,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private renderer: Renderer2,
     public screenService: ScreenService,
-    private locationService: LocationsService
+    private locationService: LocationsService,
+    private domCheckerService: DomCheckerService,
+    public overlay: Overlay,
   ) {}
 
   get isMobile() {
@@ -214,6 +224,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.overlayScrollStrategy = this.overlay.scrollStrategies.close();
     if (this.chipsMode && !this.overrideChipsInputField) {
       this.inputField = false;
     }
@@ -506,9 +517,17 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.isProposed = false;
   }
 
+  setAnimationTrigger(value) {
+    if (!this.showBackgroundOverlay) {
+      interval(50).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
+        this.domCheckerService.fadeInOutTrigger$.next(value);
+      });
+    }
+  }
+
   studentNameOver(cell) {
-    this.showBackgroundOverlay = true;
-    interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
+    this.setAnimationTrigger('fadeIn');
+    interval(700).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
       cell.isOpenTooltip = true;
     });
   }

@@ -87,6 +87,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       offsetY: 3
     }
   ];
+  scrollStrategy;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -142,6 +143,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.valid = this.isActive;
+    this.scrollStrategy = this.overlay.scrollStrategies.block();
     if (this.timerEvent) {
       this.timerEvent.pipe(
         filter(() => !!this.pass['expiration_time']),

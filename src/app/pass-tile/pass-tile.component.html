@@ -45,9 +45,9 @@
       [cdkConnectedOverlayOpen]="isOpenTooltip | async"
       [cdkConnectedOverlayWidth]="335"
       [cdkConnectedOverlayHeight]="300"
-      [cdkConnectedOverlayHasBackdrop]="false"
       [cdkConnectedOverlayPositions]="overlayPositions"
       (positionChange)="updateOverlayPosition($event)"
+      [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
     >
       <div class="student-passes"
            *ngIf="allowPopup"

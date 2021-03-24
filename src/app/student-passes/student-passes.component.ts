@@ -157,7 +157,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     const expiredPass = this.dialog.open(PassCardComponent, {
       panelClass: 'teacher-pass-card-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: {pass, forStaff: true, showStudentInfoBlock: !this.isResize, passForStudentsComponent: this.isResize}
+      data: {pass, forStaff: true, showStudentInfoBlock: !this.isResize, passForStudentsComponent: this.isResize, hideButton: true}
     });
 
     expiredPass.afterClosed().subscribe(() => {

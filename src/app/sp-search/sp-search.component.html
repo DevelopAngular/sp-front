@@ -39,12 +39,12 @@
       </app-round-input>
     </div>
 
-    <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'">
+    <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'" (scroll)="scroll($event)">
       <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
-               (mouseenter)="cell.hovered = true; studentNameOver(cell)"
+               (mouseenter)="cell.hovered = true; showBackgroundOverlay = true; studentNameOver(cell)"
                (mouseleave)="cell.hovered = false; cell.pressed = false; destroyOpen$.next(); showBackgroundOverlay = false;"
                appCrossPointerEventTarget
                (pointerDownEvent)="cell.pressed = true;"
@@ -71,10 +71,13 @@
               [cdkConnectedOverlayHeight]="300"
               [cdkConnectedOverlayPositions]="[{panelClass: 'student-panel1', originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetX: 0, offsetY: 0}]"
               (positionChange)="updateOverlayPosition($event)"
-              [cdkConnectedOverlayScrollStrategy]=""
             >
-              <div class="student-passes" #studentPasses (mouseleave)="outAnimation = true; showBackgroundOverlay = false; studentNameLeave(cell)" (mouseenter)="outAnimation = false; showBackgroundOverlay = true; disableClose$.next()">
-                <app-student-passes [profile]="student" [height]="300" [isResize]="false" [closeEvent]="outAnimation"></app-student-passes>
+              <div class="student-passes"
+                   #studentPasses
+                   (mouseleave)="showBackgroundOverlay = false; setAnimationTrigger('fadeOut'); studentNameLeave(cell)"
+                   (mouseover)="destroyAnimation$.next(); showBackgroundOverlay = true; disableClose$.next()"
+              >
+                <app-student-passes [profile]="student" [height]="300" [isResize]="false" (close)="cell.isOpenTooltip = false"></app-student-passes>
               </div>
             </ng-template>
           </div>
