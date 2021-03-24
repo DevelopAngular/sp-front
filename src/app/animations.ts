@@ -204,7 +204,7 @@ export const ResizeProfileImage = trigger('openCloseProfile', [
     height: '{{size}}px',
   }), {params: {size: '42'}}),
   transition('open <=> close', [
-    animate('0.1s')
+    animate('0.2s')
   ])
 ]);
 
@@ -217,8 +217,8 @@ export const showHideProfileEmail = trigger('showHideEmail', [
     opacity: 0,
     display: 'none'
   })),
-  transition('* => open', animate('0.1s ease-in')),
-  transition('* => close', animate('0.1s ease-out'))
+  transition('* => open', animate('0.2s ease-in')),
+  transition('* => close', animate('0.2s ease-out'))
 ]);
 
 export const topBottomProfileName = trigger('topBottomName', [
@@ -229,7 +229,7 @@ export const topBottomProfileName = trigger('topBottomName', [
     top: '13px'
   })),
   transition('* <=> *', [
-    animate('0.1s')
+    animate('0.2s')
   ])
 ]);
 
@@ -275,4 +275,27 @@ export const resizeStudentPasses = trigger('resizeStudentPasses', [
   })),
   transition('* => open', animate('.1s ease-in')),
   transition('* => close', animate('.1s ease-out'))
+]);
+
+export const studentPassFadeInOut = trigger('studentPassFadeInOut', [
+  transition('* => fadeIn', animate('.2s ease-in', keyframes([
+    style({
+      opacity: 0,
+      transform: 'translateY(5%)'
+    }),
+    style({
+      opacity: 1,
+      transform: 'translateY(0%)'
+    })
+  ]))),
+  transition('* => fadeOut', animate('.2s ease-out', keyframes([
+    style({
+      opacity: 1,
+      transform: 'translateY(0%)'
+    }),
+    style({
+      opacity: 0,
+      transform: 'translateY(5%)'
+    })
+  ])))
 ]);

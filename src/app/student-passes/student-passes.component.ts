@@ -1,11 +1,18 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import * as moment from 'moment';
-import {ResizeProfileImage, resizeStudentPasses, scaleStudentPasses, showHideProfileEmail, topBottomProfileName} from '../animations';
+import {
+  ResizeProfileImage,
+  resizeStudentPasses,
+  scaleStudentPasses,
+  showHideProfileEmail,
+  studentPassFadeInOut,
+  topBottomProfileName
+} from '../animations';
 import {MatDialog} from '@angular/material/dialog';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {DomCheckerService} from '../services/dom-checker.service';
@@ -21,20 +28,20 @@ import {HallPassesService} from '../services/hall-passes.service';
     showHideProfileEmail,
     topBottomProfileName,
     scaleStudentPasses,
-    resizeStudentPasses
+    resizeStudentPasses,
+    studentPassFadeInOut
   ]
 })
-export class StudentPassesComponent implements OnInit, OnDestroy {
+export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() profile: User;
   @Input() height: number = 75;
   @Input() isResize: boolean = true;
-  @Input() closeEvent: boolean;
   @Input() pass: PassLike;
 
   @Output()
   userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
-  @Output() over = new EventEmitter();
+  @Output() close = new EventEmitter();
 
   @ViewChild('profileImage') profileImage: ElementRef;
 
@@ -45,6 +52,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   animationTrigger = {value: 'open', params: {size: '75'}};
   scaleCardTrigger$: Observable<string>;
   resizeTrigger$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
+  fadeInOutTrigger$: Observable<string>;
   isOpenEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   loading$: Observable<boolean>;
   loaded$: Observable<boolean>;
@@ -70,18 +78,20 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
     private passesService: HallPassesService
   ) { }
 
+  ngAfterViewInit() {
+    if (!this.isResize) {
+      this.domCheckerService.fadeInOutTrigger$.next('fadeIn');
+    }
+  }
+
   ngOnInit() {
+    this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
     this.passesService.getQuickPreviewPassesRequest(this.profile.id);
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.lastStudentPasses = this.passesService.quickPreviewPasses$;
     this.loading$ = this.passesService.quickPreviewPassesLoading$;
     this.loaded$ = this.passesService.quickPreviewPassesLoaded$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
-      // .pipe(
-      //   map(passes => {
-      //     return passes.filter(pass => (+pass.student.id === +this.profile.id) && (+pass.id !== +this.pass.id));
-      //   })
-      // );
   }
 
   ngOnDestroy() {
@@ -140,6 +150,9 @@ export class StudentPassesComponent implements OnInit, OnDestroy {
   }
 
   openPass({pass}) {
+    if (!this.isResize) {
+      this.close.emit();
+    }
     this.domCheckerService.scalePassCardTrigger$.next('open');
     const expiredPass = this.dialog.open(PassCardComponent, {
       panelClass: 'teacher-pass-card-dialog-container',

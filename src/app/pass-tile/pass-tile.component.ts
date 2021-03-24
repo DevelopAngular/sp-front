@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
-import {bumpIn} from '../animations';
+import {bumpIn, studentPassFadeInOut} from '../animations';
 import {PassLike} from '../models';
 import {TimeService} from '../services/time.service';
 import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisible} from './pass-display-util';
@@ -9,13 +9,15 @@ import {Request} from '../models/Request';
 import {Invitation} from '../models/Invitation';
 import {filter, take, takeUntil} from 'rxjs/operators';
 import {ConnectedPosition, Overlay} from '@angular/cdk/overlay';
+import {DomCheckerService} from '../services/dom-checker.service';
 
 @Component({
   selector: 'app-pass-tile',
   templateUrl: './pass-tile.component.html',
   styleUrls: ['./pass-tile.component.scss'],
   animations: [
-    bumpIn
+    bumpIn,
+    studentPassFadeInOut
   ]
 })
 export class PassTileComponent implements OnInit, OnDestroy {
@@ -27,6 +29,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Input() isActive = false;
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
+  @Input() allowPopup: boolean;
 
   @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
 
@@ -39,8 +42,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   timers: number[] = [];
   hoverDestroyer$: Subject<any>;
   isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  outAnimation: boolean;
   showBackgroundOverlay: boolean;
+  destroyAnimation$: Subject<any> = new Subject<any>();
   destroyOpen$ = new Subject();
   disableClose$ = new Subject();
 
@@ -132,7 +135,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private timeService: TimeService,
     public overlay: Overlay,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private domCheckerService: DomCheckerService,
   ) {
   }
 
@@ -204,23 +208,39 @@ export class PassTileComponent implements OnInit, OnDestroy {
     this.hoverDestroyer$.complete();
   }
 
+  setAnimationTrigger(value) {
+    if (!this.showBackgroundOverlay) {
+      interval(50).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
+        this.domCheckerService.fadeInOutTrigger$.next(value);
+      });
+    }
+  }
+
   studentNameOver() {
-    this.disableClose$.next();
-    this.showBackgroundOverlay = true;
-    interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
-      this.isOpenTooltip.next(true);
-    });
+    if (this.allowPopup) {
+      this.disableClose$.next();
+      this.setAnimationTrigger('fadeIn');
+      interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
+        this.isOpenTooltip.next(true);
+      });
+    }
   }
 
   studentNameLeave() {
-    this.destroyOpen$.next();
-    this.showBackgroundOverlay = false;
-    interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
-      this.isOpenTooltip.next(false);
-    });
+    if (this.allowPopup) {
+      this.destroyOpen$.next();
+      interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+        this.isOpenTooltip.next(false);
+      });
+    }
   }
 
   updateOverlayPosition(event) {
     this.renderer.addClass(this.studentPasses.nativeElement, event.connectionPair.panelClass);
+  }
+
+  overlayLeave() {
+    this.showBackgroundOverlay = false;
+    this.destroyOpen$.next();
   }
 }

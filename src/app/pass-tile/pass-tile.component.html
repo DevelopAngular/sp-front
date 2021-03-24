@@ -32,8 +32,8 @@
 <div *ngIf="forStaff" class="names-overlay"></div>
   <div
     class="overlay"
-    (mouseover)="studentNameOver(); outAnimation = false"
-    (mouseout)="destroyOpen$.next(); showBackgroundOverlay = false"
+    (mouseover)="showBackgroundOverlay = true; studentNameOver()"
+    (mouseleave)="overlayLeave()"
     cdkOverlayOrigin
     #overlayTrigger="cdkOverlayOrigin"
   >
@@ -45,11 +45,23 @@
       [cdkConnectedOverlayOpen]="isOpenTooltip | async"
       [cdkConnectedOverlayWidth]="335"
       [cdkConnectedOverlayHeight]="300"
+      [cdkConnectedOverlayHasBackdrop]="false"
       [cdkConnectedOverlayPositions]="overlayPositions"
       (positionChange)="updateOverlayPosition($event)"
     >
-      <div class="student-passes" #studentPasses (mouseout)="outAnimation = true; showBackgroundOverlay = false; studentNameLeave()" (mouseover)="disableClose$.next(); outAnimation = false; showBackgroundOverlay = true;">
-        <app-student-passes [pass]="pass" [profile]="pass.student" [height]="300" [isResize]="false" [closeEvent]="outAnimation"></app-student-passes>
+      <div class="student-passes"
+           *ngIf="allowPopup"
+           #studentPasses
+           (mouseleave)="showBackgroundOverlay = false; setAnimationTrigger('fadeOut'); studentNameLeave()"
+           (mouseover)="destroyAnimation$.next(); showBackgroundOverlay = true; disableClose$.next()"
+      >
+        <app-student-passes
+          [pass]="pass"
+          [profile]="pass.student"
+          [height]="300"
+          [isResize]="false"
+          (close)="isOpenTooltip.next(false)"
+        ></app-student-passes>
       </div>
     </ng-template>
   </div>
