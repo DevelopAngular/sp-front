@@ -116,16 +116,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       this.resizeTrigger$.next('open');
       this.domCheckerService.scalePassCardTrigger$.next('resize');
       this.isOpenEvent$.next(true);
-      // const destroy = new Subject();
-      // interval(10)
-      //   .pipe(takeUntil(destroy))
-      //   .subscribe((res) => {
-      //     this.userClickResult.emit({action: 'open', intervalValue: res});
-      //     // this.height += 25;
-      //     if (this.isOpen) {
-      //       destroy.next();
-      //     }
-      //   });
     }
   }
 
@@ -136,16 +126,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       this.resizeTrigger$.next('close');
       this.isOpenEvent$.next(false);
       this.domCheckerService.scalePassCardTrigger$.next('unresize');
-      // const destroy = new Subject();
-      // interval(10)
-      //   .pipe(takeUntil(destroy))
-      //   .subscribe((res) => {
-      //     this.userClickResult.emit({action: 'close', intervalValue: res});
-      //     // this.height -= 25;
-      //     if (this.isClose) {
-      //       destroy.next();
-      //     }
-      //   });
     }
   }
 

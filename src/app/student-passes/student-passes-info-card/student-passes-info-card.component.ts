@@ -9,7 +9,7 @@ export class StudentPassesInfoCardComponent implements OnInit {
 
   @Input() number: string | number;
   @Input() title: string;
-  @Input() showSpinner: boolean;
+  @Input() loading: boolean;
 
   constructor() { }
 

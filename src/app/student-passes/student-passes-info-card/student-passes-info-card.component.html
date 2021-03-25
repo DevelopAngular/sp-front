@@ -1,11 +1,4 @@
-<div class="wrapper">
-  <div class="number">
-    <span *ngIf="showSpinner; else data" class="loading-theme_light-gray spinner">
-      <mat-spinner [diameter]="25" [color]="'accent'"></mat-spinner>
-    </span>
-    <ng-template #data>
-      {{ number }}
-    </ng-template>
-  </div>
-  <div class="title">{{ title }}</div>
+<div class="wrapper" [ngClass]="{animate: loading}">
+  <div class="number" *ngIf="!loading">{{ number }}</div>
+  <div class="title" *ngIf="!loading">{{ title }}</div>
 </div>
