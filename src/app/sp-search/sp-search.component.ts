@@ -527,7 +527,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   studentNameOver(cell) {
     this.setAnimationTrigger('fadeIn');
-    interval(700).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
+    interval(200).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
       cell.isOpenTooltip = true;
     });
   }
