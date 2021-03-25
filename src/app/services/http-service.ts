@@ -308,10 +308,10 @@ export class HttpService implements OnDestroy {
   getUserAuth(authObj) {
     const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
     if (auth) {
-      console.error('Token will expire ==>>', moment(auth.auth.expires).add(auth.auth.expires_in, 'seconds').format('DD HH:MM'));
+      console.error('Token will expire ==>>', moment(auth.auth.expires).format('DD HH:mm'));
     }
     return iif(
-      () => (auth && moment().isSameOrBefore(moment(auth.auth.expires).add(auth.auth.expires_in, 'seconds'))),
+      () => (auth && moment().isSameOrBefore(moment(auth.auth.expires))),
       of(auth),
       this.fetchServerAuth(authObj)
     );
@@ -442,7 +442,7 @@ export class HttpService implements OnDestroy {
         return this.pwaStorage.getItem('authData').pipe(
             map((data: any) => {
               if (data) {
-                data['expires'] = new Date(new Date() + data['expires_in']);
+                data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
 
                 ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
 
@@ -462,7 +462,7 @@ export class HttpService implements OnDestroy {
             // this.storage.setItem('refresh_token', data.refresh_token);
             // don't use TimeService for auth because auth is required for time service
             // to be useful
-            data['expires'] = new Date(new Date() + data['expires_in']);
+            data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
 
             ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
 
@@ -511,7 +511,7 @@ export class HttpService implements OnDestroy {
           map((data: any) => {
             // don't use TimeService for auth because auth is required for time service
             // to be useful
-            data['expires'] = new Date(new Date() + data['expires_in']);
+            data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
 
             ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
 
@@ -548,7 +548,7 @@ export class HttpService implements OnDestroy {
           map((data: any) => {
             // don't use TimeService for auth because auth is required for time service
             // to be useful
-            data['expires'] = new Date(new Date() + data['expires_in']);
+            data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
 
             ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
 
@@ -594,7 +594,7 @@ export class HttpService implements OnDestroy {
           map((data: any) => {
             // don't use TimeService for auth because auth is required for time service
             // to be useful
-            data['expires'] = new Date(new Date() + data['expires_in']);
+            data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
 
             ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
 
@@ -686,7 +686,7 @@ export class HttpService implements OnDestroy {
     return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
         tap({next: o => console.log('Received refresh object: ', o)}),
         map((data: Object) => {
-          data['expires'] = new Date(new Date() + data['expires_in']);
+          data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
           const ctx: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
           return ctx;
         }),
