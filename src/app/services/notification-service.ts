@@ -142,7 +142,6 @@ export class NotificationService {
     const notif = new Notification(notification.notification.title, notifOptions);
     notif.onshow = this.showFunc.bind(this);
     notif.onerror = this.errorFunc.bind(this);
-    console.log(notif);
   }
 
   // noinspection JSMethodCanBeStatic
