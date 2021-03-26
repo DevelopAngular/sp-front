@@ -56,7 +56,9 @@ enum OAuthType {
   google = 'google',
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class GoogleLoginService {
 
   static googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=560691963710-220tggv4d3jo9rpc3l70opj1510keb59.apps.googleusercontent.com&response_type=code&access_type=offline&scope=profile%20email%20openid`

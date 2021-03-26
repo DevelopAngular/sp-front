@@ -157,7 +157,9 @@ class SilentError extends Error {
   }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class HttpService implements OnDestroy {
 
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);

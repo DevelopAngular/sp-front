@@ -90,7 +90,9 @@ import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-u
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UserService {
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
