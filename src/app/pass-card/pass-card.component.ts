@@ -148,7 +148,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose() {
-    return ((this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast) && (!this.passForStudentsComponent && this.hideButton);
+    return ((this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast);
   }
 
   ngOnInit() {

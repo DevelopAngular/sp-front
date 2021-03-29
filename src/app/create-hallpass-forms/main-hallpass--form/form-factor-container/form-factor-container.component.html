@@ -5,15 +5,22 @@
        *ngIf="FORM_STATE.formMode.formFactor === states.HallPass && template">
     <!--HAL-->
     <app-pass-card
+      *ngIf="forStaff"
       [pass]="template"
       [forStaff]="forStaff && !dialogData.kioskModeRoom"
       [forInput]="true"
       [forKioskMode]="!!dialogData.kioskModeRoom"
       [formState]="FORM_STATE"
-      [forFuture]="FORM_STATE.data.date ? true : false"
+      [forFuture]="!!FORM_STATE.data.date"
       [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
       (cardEvent)="onNextStep($event)">
     </app-pass-card>
+
+    <app-big-student-pass-card
+      *ngIf="!forStaff"
+      [pass]="template"
+      [formState]="FORM_STATE"
+    ></app-big-student-pass-card>
   </div>
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
        [style.width]="'334px'"
@@ -24,7 +31,7 @@
       [forStaff]="forStaff"
       [forInput]="true"
       [formState]="FORM_STATE"
-      [forFuture]="FORM_STATE.data.date ? true : false"
+      [forFuture]="!!FORM_STATE.data.date"
       (cardEvent)="onNextStep($event)"
     ></app-request-card>
   </div>
@@ -38,7 +45,7 @@
       [forStaff]="forStaff"
       [forInput]="true"
       [formState]="FORM_STATE"
-      [forFuture]="FORM_STATE.data.date ? true : false"
+      [forFuture]="!!FORM_STATE.data.date"
       [selectedStudents]="FORM_STATE.data.selectedStudents"
       (cardEvent)="onNextStep($event)"
     >

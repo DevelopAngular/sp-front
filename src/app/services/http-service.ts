@@ -71,6 +71,12 @@ function makeConfig(config: Config, school: School, effectiveUserId): Config & {
     headers['X-Effective-User-Id'] = '' + effectiveUserId;
   }
 
+  if (/(proxy)/.test(environment.buildType)) {
+    const auth = JSON.parse(localStorage.getItem('auth'));
+    const token = auth.auth.access_token;
+    headers['Authorization'] = 'Bearer ' + token;
+  }
+
   // console.log('[X-School-Id]: ', headers['X-School-Id'])
   // console.log('[Headers]: ', headers)
   // console.log('[Headers]: ', Object.assign({}, config || {}, {

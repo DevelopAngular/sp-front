@@ -18,6 +18,7 @@ import {PassCardComponent} from '../pass-card/pass-card.component';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
+import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
 
 @Component({
   selector: 'app-student-passes',
@@ -56,7 +57,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   isOpenEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   loading$: Observable<boolean>;
   loaded$: Observable<boolean>;
-  passesStats$: Observable<any>;
+  passesStats$: Observable<QuickPreviewPasses>;
 
   destroy$: Subject<any> = new Subject<any>();
 

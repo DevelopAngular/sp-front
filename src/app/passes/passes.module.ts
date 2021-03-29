@@ -15,13 +15,12 @@ import {StartPassNotificationComponent} from './start-pass-notification/start-pa
     NotificationTurnOnBtnComponent,
     InlineRequestCardComponent,
     InlinePassCardComponent,
-    StartPassNotificationComponent,
+    StartPassNotificationComponent
   ],
   imports: [
     CommonModule,
     PassesRoutingModule,
     SharedModule
-  ],
-  entryComponents: [StartPassNotificationComponent]
+  ]
 })
 export class PassesModule { }

@@ -58,6 +58,8 @@ import {CustomToolTipComponent} from './shared-components/custom-tool-tip/custom
 import {PassLimitTooltipComponent} from './shared-components/pass-limit-tooltip/pass-limit-tooltip.component';
 import {StudentPassesComponent} from '../student-passes/student-passes.component';
 import {StudentPassesInfoCardComponent} from '../student-passes/student-passes-info-card/student-passes-info-card.component';
+import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
+import {StudentMetricsComponent} from '../big-student-pass-card/student-metrics/student-metrics.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -125,7 +127,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     CustomToolTipComponent,
     PassLimitTooltipComponent,
     StudentPassesComponent,
-    StudentPassesInfoCardComponent
+    StudentPassesInfoCardComponent,
+    BigStudentPassCardComponent,
+    StudentMetricsComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -176,7 +180,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     TeacherPinStudentComponent,
     PassLimitTooltipComponent,
     StudentPassesComponent,
-    StudentPassesInfoCardComponent
+    StudentPassesInfoCardComponent,
+    BigStudentPassCardComponent,
+    StudentMetricsComponent
   ],
   providers: [
     {
