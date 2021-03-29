@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {DataTableComponent} from '../data-table/data-table.component';
 import {NavComponent} from '../nav/nav.component';
 import {NavButtonComponent} from '../nav-button/nav-button.component';
 import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
@@ -21,7 +20,6 @@ import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-opt
   ],
   declarations: [
       ColorPalletPickerComponent,
-      DataTableComponent,
       IconPickerComponent,
       NavComponent,
       NavButtonComponent,
@@ -33,7 +31,6 @@ import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-opt
   ],
   exports: [
       ColorPalletPickerComponent,
-      DataTableComponent,
       IconPickerComponent,
       NavComponent,
       NavButtonComponent,

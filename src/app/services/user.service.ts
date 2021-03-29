@@ -1,12 +1,12 @@
-import {ErrorHandler, Injectable} from '@angular/core';
-import {BehaviorSubject, combineLatest, interval, Observable, of, race, ReplaySubject} from 'rxjs';
+import {ErrorHandler, Injectable, OnDestroy} from '@angular/core';
+import {BehaviorSubject, combineLatest, interval, Observable, of, race, ReplaySubject, Subject} from 'rxjs';
 import {SentryErrorHandler} from '../error-handler';
 import {HttpService} from './http-service';
 import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {exhaustMap, filter, map, mapTo, take, tap} from 'rxjs/operators';
+import {exhaustMap, filter, map, mapTo, take, takeUntil, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -90,8 +90,10 @@ import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-u
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 
-@Injectable()
-export class UserService {
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService implements OnDestroy{
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
@@ -179,6 +181,8 @@ export class UserService {
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     private http: HttpService,
     private pollingService: PollingService,
@@ -232,14 +236,15 @@ export class UserService {
             } else {
               return of(user);
             }
-          })
+          }),
+          takeUntil(this.destroy$)
         )
         .subscribe(user => {
           this.userData.next(user);
         });
 
     if (errorHandler instanceof SentryErrorHandler) {
-      this.userData.subscribe(user => {
+      this.userData.pipe(takeUntil(this.destroy$)).subscribe(user => {
         errorHandler.setUserContext({
           id: `${user.id}`,
           email: user.primary_email,
@@ -250,7 +255,12 @@ export class UserService {
       });
     }
 
-    this.pollingService.listen().subscribe(this._logging.debug);
+    this.pollingService.listen().pipe(takeUntil(this.destroy$)).subscribe(this._logging.debug);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getLoadingAccounts(role) {

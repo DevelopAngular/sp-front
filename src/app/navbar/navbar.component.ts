@@ -327,6 +327,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.userService.userData
       .pipe(
+        takeUntil(this.destroyer$),
         filter(user => !user.isAssistant())
       )
       .subscribe(user => {

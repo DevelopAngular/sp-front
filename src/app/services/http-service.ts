@@ -157,7 +157,9 @@ class SilentError extends Error {
   }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class HttpService implements OnDestroy {
 
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
@@ -352,22 +354,12 @@ export class HttpService implements OnDestroy {
     if (preferredEnvironment && typeof preferredEnvironment === 'object') {
       return of({ server: preferredEnvironment as LoginServer });
     }
-
-    let servers$: Observable<LoginResponse>;
-    if (!navigator.onLine) {
-      // servers$ = this.pwaStorage.getItem('servers');
-    } else {
-      const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
-
-      servers$ = this.http.post(discovery, data).pipe(
-          switchMap((servers: LoginResponse) => {
-            return this.pwaStorage.setItem('servers', servers)
-                .pipe(mapTo(servers));
-          })
-      );
-    }
-
-    return servers$.pipe(
+    const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
+    return this.http.post(discovery, data).pipe(
+        switchMap((servers: LoginResponse) => {
+        return this.pwaStorage.setItem('servers', servers)
+          .pipe(mapTo(servers));
+        }),
         map((servers: LoginResponse) => {
           if (servers.servers.length > 0) {
             const server: LoginServer = servers.servers.find(s => s.name === (preferredEnvironment as any)) || servers.servers[0];

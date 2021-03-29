@@ -29,7 +29,6 @@ export class PassLimitEffects {
       .pipe(
         ofType(passLimitActions.updatePassLimit),
         map((action: any) => {
-          // debugger;
           return passLimitActions.updatePassLimitSuccess({pass_limit: action.item.data});
         }),
         catchError(error => of(passLimitActions.updatePassLimitFailure({errorMessage: error.message})))
