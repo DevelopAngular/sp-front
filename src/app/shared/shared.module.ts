@@ -31,7 +31,6 @@ import {SpChipsComponent} from '../sp-chips/sp-chips.component';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
 import {IconButtonComponent} from '../icon-button/icon-button.component';
 import {XsButtonComponent} from '../xs-button/xs-button.component';
-import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
@@ -113,7 +112,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroDialogComponent,
     IntroComponent,
     SortMenuComponent,
-    ConsentMenuMobileComponent,
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
@@ -168,7 +166,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroComponent,
     GoogleSigninComponent,
     CoreModule,
-    ConsentMenuMobileComponent,
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,

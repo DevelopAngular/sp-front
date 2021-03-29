@@ -6,25 +6,17 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AgmCoreModule} from '@agm/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AppComponent} from './app.component';
-import {CurrentUserResolver} from './current-user.resolver';
-import {DataService} from './services/data-service';
 import {provideErrorHandler} from './error-handler';
-import {GoogleLoginService} from './services/google-login.service';
 import {AuthenticatedGuard} from './guards/authenticated.guard';
 import {IsAdminGuard} from './guards/is-admin.guard';
 import {IsStudentOrTeacherGuard} from './guards/is-student-or-teacher.guard';
 import {NotSeenIntroGuard} from './guards/not-seen-intro.guard';
-import {HttpService} from './services/http-service';
-import {LoadingService} from './services/loading.service';
 import {ProgressInterceptor} from './progress-interceptor';
-import {UserService} from './services/user.service';
-import {NotificationService} from './services/notification-service';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireMessagingModule} from '@angular/fire/messaging';
 import {environment} from '../environments/environment';
 import {APP_BASE_HREF} from '@angular/common';
 import {NotKioskModeGuard} from './not-kiosk-mode.guard';
-import {KioskModeService} from './services/kiosk-mode.service';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
@@ -113,7 +105,6 @@ const appRoutes: Routes = [
     path: 'main',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
     loadChildren: () => import('app/main/main.module').then(m => m.MainModule),
-    resolve: {currentUser: CurrentUserResolver},
     data: {
       hubspot: true,
       authFree: false
@@ -123,7 +114,6 @@ const appRoutes: Routes = [
     path: 'admin',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
     loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule),
-    resolve: {currentUser: CurrentUserResolver},
     data: {
       hideScroll: true,
       hubspot: true,
@@ -217,14 +207,6 @@ const appRoutes: Routes = [
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
     ],
     providers: [
-        DataService,
-        HttpService,
-        UserService,
-        KioskModeService,
-        NotificationService,
-        GoogleLoginService,
-        LoadingService,
-        CurrentUserResolver,
         {provide: OverlayContainer, useFactory: InitOverlay},
         {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
         {provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true},

@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
-import { AngularFireMessaging } from '@angular/fire/messaging';
-import { Notification as Notif } from '../models/Notification';
-import { HttpService } from './http-service';
+import {Injectable} from '@angular/core';
+import {AngularFireMessaging} from '@angular/fire/messaging';
+import {Notification as Notif} from '../models/Notification';
+import {HttpService} from './http-service';
 
 import {switchMap, take} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
 
 declare var window: any;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class NotificationService {
 
   listening: boolean = false;
@@ -140,7 +142,6 @@ export class NotificationService {
     const notif = new Notification(notification.notification.title, notifOptions);
     notif.onshow = this.showFunc.bind(this);
     notif.onerror = this.errorFunc.bind(this);
-    console.log(notif);
   }
 
   // noinspection JSMethodCanBeStatic
