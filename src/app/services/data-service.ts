@@ -43,7 +43,9 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
   }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DataService {
   private inboxSource: BehaviorSubject<boolean>;
   public sort$ = new BehaviorSubject<string>(null);

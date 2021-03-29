@@ -75,7 +75,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
-    this.loginService.loginErrorMessage$.subscribe(message => {
+    this.loginService.loginErrorMessage$.pipe(takeUntil(this.destroy$)).subscribe(message => {
       if (message === 'this user is suspended') {
         this.error$.next('Account is suspended. Please contact your school admin.');
       } else if (message === 'this user is disabled') {
@@ -92,7 +92,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.passwordError = !!message;
       this.showSpinner = false;
     });
-    this.loginService.showLoginError$.subscribe((show: boolean) => {
+    this.loginService.showLoginError$.pipe(takeUntil(this.destroy$)).subscribe((show: boolean) => {
       if (show) {
         this.error$.next('Incorrect password. Try again or contact your school admin to reset it.');
         this.passwordError = true;
@@ -108,6 +108,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams
       .pipe(
+        takeUntil(this.destroy$),
         filter((qp: QueryParams) => !!qp.code),
         tap(() => {
           this.disabledButton = false;
@@ -152,7 +153,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.storage.showError$.subscribe(res => {
+    this.storage.showError$.pipe(takeUntil(this.destroy$)).subscribe(res => {
       this.httpService.errorToast$.next({
         header: 'Cookies are blocked',
         message: this.domSanitizer.bypassSecurityTrustHtml('<div>Please un-block your cookies so you can sign into SmartPass. <a style="color: #E32C66" href="https://www.smartpass.app/cookies-error" target="_blank">Need help?</a></div>')
