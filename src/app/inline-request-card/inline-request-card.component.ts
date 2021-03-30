@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {Util} from '../../Util';
 import {Request} from '../models/Request';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
@@ -21,7 +21,7 @@ import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-
   templateUrl: './inline-request-card.component.html',
   styleUrls: ['./inline-request-card.component.scss']
 })
-export class InlineRequestCardComponent implements OnInit {
+export class InlineRequestCardComponent implements OnInit, OnDestroy {
   @Input() request: Request;
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
@@ -94,6 +94,10 @@ export class InlineRequestCardComponent implements OnInit {
       this.activeTeacherPin = !res;
     });
 
+  }
+
+  ngOnDestroy() {
+    this.closeDialog();
   }
 
   formatDateTime() {
