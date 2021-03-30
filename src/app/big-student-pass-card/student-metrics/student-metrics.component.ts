@@ -27,7 +27,7 @@ export class StudentMetricsComponent implements OnInit {
   ngOnInit(): void {
     this.user$ = this.userService.user$.pipe(filter(user => !!user));
     this.user$.pipe(takeUntil(this.destroy$)).subscribe(user => {
-      this.passesService.getQuickPreviewPassesRequest(user.id);
+      this.passesService.getQuickPreviewPassesRequest(user.id, false);
     });
     this.loading$ = this.passesService.quickPreviewPassesLoading$;
     this.passStats$ = this.passesService.quickPreviewPassesStats$;

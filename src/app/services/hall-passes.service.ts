@@ -254,12 +254,12 @@ export class HallPassesService {
     this.store.dispatch(filterExpiredPasses({user, timeFilter}));
   }
 
-  getQuickPreviewPassesRequest(userId) {
-    this.store.dispatch(getPreviewPasses({userId}));
+  getQuickPreviewPassesRequest(userId, pastPasses) {
+    this.store.dispatch(getPreviewPasses({userId, pastPasses}));
   }
 
-  getQuickPreviewPasses(userId) {
-    return this.http.get(`v1/users/${userId}/hall_pass_stats`, {limit: 50});
+  getQuickPreviewPasses(userId, pastPasses) {
+    return this.http.get(`v1/users/${userId}/hall_pass_stats?recent_past_passes=${pastPasses}&limit=50`);
   }
 
 }
