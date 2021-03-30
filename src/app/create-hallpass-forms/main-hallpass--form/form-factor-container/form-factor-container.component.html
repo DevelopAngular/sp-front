@@ -20,6 +20,9 @@
       *ngIf="!forStaff"
       [pass]="template"
       [formState]="FORM_STATE"
+      [passLayout]="'pass'"
+      [forFuture]="!!FORM_STATE.data.date"
+      [forInput]="true"
     ></app-big-student-pass-card>
   </div>
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
@@ -27,6 +30,7 @@
        *ngIf="FORM_STATE.formMode.formFactor === states.Request && template">
     <!--REQ {{FORM_STATE.formMode.formFactor}} | {{states.Request}}-->
     <app-request-card
+      *ngIf="forStaff"
       [request]="template"
       [forStaff]="forStaff"
       [forInput]="true"
@@ -34,6 +38,14 @@
       [forFuture]="!!FORM_STATE.data.date"
       (cardEvent)="onNextStep($event)"
     ></app-request-card>
+    <app-big-student-pass-card
+      *ngIf="!forStaff"
+      [pass]="template"
+      [formState]="FORM_STATE"
+      [passLayout]="'request'"
+      [forFuture]="!!FORM_STATE.data.date"
+      [forInput]="true"
+    ></app-big-student-pass-card>
   </div>
 
   <div [style.height]="forStaff ? '451px' : '412px'"

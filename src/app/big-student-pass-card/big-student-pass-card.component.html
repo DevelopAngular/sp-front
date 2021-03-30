@@ -1,7 +1,36 @@
 <div class="wrapper" style="transform: scale(1.63)">
   <div class="content">
-    <div class="pass">
-      <app-pass-card [formState]="formState" [pass]="pass" [forStaff]="false" [forInput]="true"></app-pass-card>
+    <div class="pass" [ngSwitch]="passLayout">
+      <app-pass-card
+        *ngSwitchCase="'pass'"
+        [formState]="formState"
+        [pass]="pass"
+        [forStaff]="false"
+        [forInput]="forInput"
+        [isActive]="isActive"
+        [forFuture]="forFuture"
+      ></app-pass-card>
+      <app-inline-pass-card
+        *ngSwitchCase="'inlinePass'"
+        [pass]="pass"
+        [forInput]="forInput"
+        [isActive]="isActive"
+        [isOpenBigPass]="true"
+      ></app-inline-pass-card>
+      <app-request-card
+        *ngSwitchCase="'request'"
+        [request]="pass"
+        [forInput]="forInput"
+        [forFuture]="forFuture"
+        [formState]="formState"
+      ></app-request-card>
+      <app-inline-request-card
+        *ngSwitchCase="'inlineRequest'"
+        [request]="pass"
+        [forInput]="forInput"
+        [isOpenBigPass]="true"
+        [forFuture]="forFuture"
+      ></app-inline-request-card>
     </div>
     <div class="metrics">
       <app-student-metrics></app-student-metrics>

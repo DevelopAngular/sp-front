@@ -60,6 +60,9 @@ import {StudentPassesComponent} from '../student-passes/student-passes.component
 import {StudentPassesInfoCardComponent} from '../student-passes/student-passes-info-card/student-passes-info-card.component';
 import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
 import {StudentMetricsComponent} from '../big-student-pass-card/student-metrics/student-metrics.component';
+import {InlinePassCardComponent} from '../inline-pass-card/inline-pass-card.component';
+import {RequestCardComponent} from '../request-card/request-card.component';
+import {InlineRequestCardComponent} from '../inline-request-card/inline-request-card.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -129,7 +132,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StudentPassesComponent,
     StudentPassesInfoCardComponent,
     BigStudentPassCardComponent,
-    StudentMetricsComponent
+    StudentMetricsComponent,
+    InlinePassCardComponent,
+    RequestCardComponent,
+    InlineRequestCardComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -182,7 +188,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StudentPassesComponent,
     StudentPassesInfoCardComponent,
     BigStudentPassCardComponent,
-    StudentMetricsComponent
+    StudentMetricsComponent,
+    InlinePassCardComponent,
+    RequestCardComponent,
+    InlineRequestCardComponent
   ],
   providers: [
     {

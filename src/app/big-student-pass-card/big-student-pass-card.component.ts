@@ -1,10 +1,11 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnDestroy, OnInit, Optional} from '@angular/core';
 
 import {Subject} from 'rxjs';
 
 import {PassLike} from '../models';
-import {MatDialogRef} from '@angular/material/dialog';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+
+export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 
 @Component({
   selector: 'app-big-student-pass-card',
@@ -15,13 +16,24 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
 
   @Input() pass: PassLike;
   @Input() formState: any;
+  @Input() isActive: boolean = false;
+  @Input() forInput: boolean = false;
+  @Input() passLayout: PassLayout;
+  @Input() forFuture: boolean = false;
 
   destroy$: Subject<any> = new Subject<any>();
 
-  constructor(private dialogRef: MatDialogRef<CreateHallpassFormsComponent>) { }
+  constructor(
+    @Optional() @Inject(MAT_DIALOG_DATA) private data: any
+  ) { }
 
   ngOnInit(): void {
-    // this.dialogRef.updatePosition({top: '20%'});
+    if (this.data['pass']) {
+      this.pass = this.data['pass'];
+      this.isActive = this.data['isActive'];
+      this.forInput = this.data['forInput'];
+      this.passLayout = this.data['passLayout'];
+    }
   }
 
   ngOnDestroy() {

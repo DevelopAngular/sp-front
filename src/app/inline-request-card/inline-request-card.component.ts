@@ -1,8 +1,8 @@
-import {Component, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, Optional, Renderer2} from '@angular/core';
 import {Util} from '../../Util';
 import {Request} from '../models/Request';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
@@ -14,6 +14,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
 import {StorageService} from '../services/storage.service';
+import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -25,6 +26,7 @@ export class InlineRequestCardComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
+  @Input() isOpenBigPass: boolean = false;
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -50,7 +52,8 @@ export class InlineRequestCardComponent implements OnInit {
       private screenService: ScreenService,
       private renderer: Renderer2,
       private passesService: HallPassesService,
-      private storage: StorageService
+      private storage: StorageService,
+      @Optional() private dialogRef: MatDialogRef<BigStudentPassCardComponent>
   ) { }
 
   get hasDivider() {
@@ -153,6 +156,7 @@ export class InlineRequestCardComponent implements OnInit {
 
     this.requestService.createRequest(body).subscribe(() => {
         this.requestService.cancelRequest(this.request.id).subscribe(() => {
+          this.closeDialog();
         console.log('pass request resent');
       });
     });
@@ -211,6 +215,7 @@ export class InlineRequestCardComponent implements OnInit {
   chooseAction(action) {
     if (action === 'delete') {
       this.requestService.cancelRequest(this.request.id).subscribe((data) => {
+        this.closeDialog();
         console.log('[Request Canceled]: ', data);
         const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
         if (storageData && storageData[this.request.id]) {
@@ -225,5 +230,28 @@ export class InlineRequestCardComponent implements OnInit {
   closeMenu() {
     this.cancelEditClick = false;
     this.renderer.setStyle(document.body, 'overflow', 'auto');
+  }
+
+  closeDialog() {
+    if (this.dialog.getDialogById('bigPass')) {
+      this.dialogRef.close();
+    }
+  }
+
+  openBigPassCard() {
+    if (!this.isOpenBigPass) {
+      const bigPassCard = this.dialog.open(BigStudentPassCardComponent, {
+        id: 'bigPass',
+        panelClass: 'main-form-dialog-container',
+        data: {
+          pass: this.request,
+          isActive: true,
+          forInput: false,
+          passLayout: 'inlineRequest'
+        }
+      });
+    } else {
+      this.closeDialog();
+    }
   }
 }
