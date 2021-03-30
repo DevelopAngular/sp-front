@@ -9,6 +9,7 @@ export class ScreenService {
 
   enabledLocationTableDnD: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   customBackdropEvent$: Subject<boolean> = new Subject<boolean>();
+  customBackdropStyle$: Subject<any> = new Subject<any>();
 
   constructor() { }
 

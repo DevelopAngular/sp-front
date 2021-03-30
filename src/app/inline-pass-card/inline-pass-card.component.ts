@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit, Optional} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {HallPass} from '../models/HallPass';
 import {HttpService} from '../services/http-service';
 import {DataService} from '../services/data-service';
@@ -7,8 +7,9 @@ import {map, pluck} from 'rxjs/operators';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TimeService} from '../services/time.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -43,7 +44,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
       private timeService: TimeService,
       private shortcutsService: KeyboardShortcutsService,
       private dialog: MatDialog,
-      @Optional() private dialogRef: MatDialogRef<BigStudentPassCardComponent>
+      private screen: ScreenService
   ) { }
 
     get gradient() {
@@ -51,7 +52,6 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit() {
-    console.log('+++>>>>', this.isOpenBigPass);
       this.subscribers$ = merge(of(0), interval(1000)).pipe(map(x => {
           if (!!this.pass && this.isActive) {
               const end: Date = this.pass.expiration_time;
@@ -79,24 +79,33 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscribers$.unsubscribe();
+    this.closeDialog();
   }
 
   endPass() {
     this.performingAction = true;
     this.hallPassService.endPass(this.pass.id).subscribe(data => {
-      this.closeDialog();
       console.log('[Pass Ended]', data);
     });
   }
 
   closeDialog() {
     if (this.dialog.getDialogById('bigPass')) {
-      this.dialogRef.close();
+      this.screen.customBackdropEvent$.next(!!this.dialog.getDialogById('startNotification'));
+      this.screen.customBackdropStyle$.next(null);
+      this.dialog.getDialogById('bigPass').close();
     }
   }
 
   openBigPassCard() {
     if (!this.isOpenBigPass) {
+      this.screen.customBackdropEvent$.next(true);
+      setTimeout(() => {
+        this.screen.customBackdropStyle$.next({
+          'background': this.pass.color_profile.solid_color,
+          opacity: 0.5
+        });
+      }, 50);
       const bigPassCard = this.dialog.open(BigStudentPassCardComponent, {
         id: 'bigPass',
         panelClass: 'main-form-dialog-container',

@@ -1,8 +1,8 @@
-import {Component, ElementRef, Input, OnInit, Optional, Renderer2} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
 import {Util} from '../../Util';
 import {Request} from '../models/Request';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
@@ -53,7 +53,6 @@ export class InlineRequestCardComponent implements OnInit {
       private renderer: Renderer2,
       private passesService: HallPassesService,
       private storage: StorageService,
-      @Optional() private dialogRef: MatDialogRef<BigStudentPassCardComponent>
   ) { }
 
   get hasDivider() {
@@ -234,12 +233,21 @@ export class InlineRequestCardComponent implements OnInit {
 
   closeDialog() {
     if (this.dialog.getDialogById('bigPass')) {
-      this.dialogRef.close();
+      this.screenService.customBackdropEvent$.next(false);
+      this.screenService.customBackdropStyle$.next(null);
+      this.dialog.getDialogById('bigPass').close();
     }
   }
 
   openBigPassCard() {
     if (!this.isOpenBigPass) {
+      this.screenService.customBackdropEvent$.next(true);
+      setTimeout(() => {
+        this.screenService.customBackdropStyle$.next({
+          'background': this.request.color_profile.solid_color,
+          opacity: 0.5
+        });
+      }, 50);
       const bigPassCard = this.dialog.open(BigStudentPassCardComponent, {
         id: 'bigPass',
         panelClass: 'main-form-dialog-container',
