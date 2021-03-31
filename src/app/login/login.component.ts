@@ -69,6 +69,10 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       content: 'Digital hall pass system and school safety solution. Sign-in with your school account. Don\'t have an account? Sign your school up for a free 60 day trial.'
     });
 
+    setTimeout(() => {
+      window.appLoaded();
+    }, 300);
+
     this.loginService.isAuthenticated$.pipe(
       filter(v => v),
       switchMap((v): Observable<[User, Array<string>]> => {
@@ -104,7 +108,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    window.waitForAppLoaded();
   }
 
   ngOnDestroy() {
