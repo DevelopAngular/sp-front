@@ -23,6 +23,7 @@ import {AddAccountPopupComponent} from './add-account-popup/add-account-popup.co
 import {BulkAddComponent} from './bulk-add/bulk-add.component';
 import {AddRolePopupComponent} from './select-role/add-role-popup/add-role-popup.component';
 import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
+import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/pe
     AddAccountPopupComponent,
     BulkAddComponent,
     AddRolePopupComponent,
-    PermissionsDialogComponent
+    PermissionsDialogComponent,
+    EncounterPreventionDialogComponent
   ],
   imports: [
     CommonModule,
