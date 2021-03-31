@@ -14,7 +14,7 @@ export class QuickPreviewPassesEffects {
       .pipe(
         ofType(previewPassesActions.getPreviewPasses),
         exhaustMap((action: any) => {
-          return this.passesService.getQuickPreviewPasses(action.userId)
+          return this.passesService.getQuickPreviewPasses(action.userId, action.pastPasses)
             .pipe(
               map((previewPasses: QuickPreviewPasses) => {
                 return previewPassesActions.getPreviewPassesSuccess({previewPasses});

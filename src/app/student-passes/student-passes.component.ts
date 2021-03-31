@@ -87,7 +87,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   ngOnInit() {
     this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
-    this.passesService.getQuickPreviewPassesRequest(this.profile.id);
+    this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.lastStudentPasses = this.passesService.quickPreviewPasses$;
     this.loading$ = this.passesService.quickPreviewPassesLoading$;
