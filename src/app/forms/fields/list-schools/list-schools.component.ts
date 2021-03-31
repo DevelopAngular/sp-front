@@ -54,6 +54,7 @@ export class ListSchoolsComponent implements OnInit {
       this.fb.group({
         name: ['', Validators.required],
         population: ['', Validators.required],
+        school_digger_id: [null]
       })
     );
     this.searchInfo.push({
@@ -93,7 +94,8 @@ export class ListSchoolsComponent implements OnInit {
           this.searchInfo[i]['searchSchools'] = res.map(school => {
             return {
               "name": school['schoolName'],
-              "address": school['city'] + ', ' + school['state']
+              "address": school['city'] + ', ' + school['state'],
+              "school_digger_id": school['schoolid']
             };
           });
           this.searchInfo[i]['showOptions'] = true;
@@ -105,12 +107,14 @@ export class ListSchoolsComponent implements OnInit {
     if (this.ignoreNextUpdate) {
       this.ignoreNextUpdate = false;
     }
+    this.schools.at(i).get('school_digger_id').setValue(null);
   }
 
   chooseSchool(school, i) {
     this.ignoreNextUpdate = true;
     this.searchInfo[i]['showOptions'] = false;
     this.schools.at(i).get('name').setValue(school.name);
+    this.schools.at(i).get('school_digger_id').setValue(school.school_digger_id);
   }
 
   blur(i) {
