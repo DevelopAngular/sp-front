@@ -10,6 +10,7 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {MatDialog} from '@angular/material/dialog';
 import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
 import {ScreenService} from '../services/screen.service';
+import {Util} from '../../Util';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -100,10 +101,10 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   openBigPassCard() {
     if (!this.isOpenBigPass) {
       this.screen.customBackdropEvent$.next(true);
+      const solidColor = Util.convertHex(this.pass.color_profile.solid_color, 70);
       setTimeout(() => {
         this.screen.customBackdropStyle$.next({
-          'background': this.pass.color_profile.solid_color,
-          opacity: 0.5
+          'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
         });
       }, 50);
       const bigPassCard = this.dialog.open(BigStudentPassCardComponent, {

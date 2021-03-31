@@ -246,10 +246,10 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   openBigPassCard() {
     if (!this.isOpenBigPass) {
       this.screenService.customBackdropEvent$.next(true);
+      const solidColor = Util.convertHex(this.request.color_profile.solid_color, 70);
       setTimeout(() => {
         this.screenService.customBackdropStyle$.next({
-          'background': this.request.color_profile.solid_color,
-          opacity: 0.5
+          'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
         });
       }, 50);
       const bigPassCard = this.dialog.open(BigStudentPassCardComponent, {

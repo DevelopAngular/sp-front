@@ -4,6 +4,7 @@ import {Subject} from 'rxjs';
 
 import {PassLike} from '../models';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {DeviceDetection} from '../device-detection.helper';
 
 export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 
@@ -26,6 +27,10 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) private data: any
   ) { }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
 
   ngOnInit(): void {
     if (this.data['pass']) {
