@@ -1,4 +1,4 @@
-<div class="wrapper" [style.transform]="isMobile ? 'scale(1.17)' : 'scale(1.63)'">
+<div class="wrapper" [style.transform]="isMobile ? 'scale(1.17)' : 'scale(1.60)'">
   <div class="content">
     <div class="pass" [ngSwitch]="passLayout">
       <app-pass-card
@@ -9,6 +9,9 @@
         [forInput]="forInput"
         [isActive]="isActive"
         [forFuture]="forFuture"
+        [isOpenBigPass]="true"
+        [fullScreenButton]="true"
+        (scaleCard)="close()"
       ></app-pass-card>
       <app-inline-pass-card
         *ngSwitchCase="'inlinePass'"
@@ -16,6 +19,7 @@
         [forInput]="forInput"
         [isActive]="isActive"
         [isOpenBigPass]="true"
+        [fullScreen]="true"
       ></app-inline-pass-card>
       <app-request-card
         *ngSwitchCase="'request'"
@@ -23,6 +27,9 @@
         [forInput]="forInput"
         [forFuture]="forFuture"
         [formState]="formState"
+        [isOpenBigPass]="true"
+        [fullScreenButton]="true"
+        (scaleCard)="close()"
       ></app-request-card>
       <app-inline-request-card
         *ngSwitchCase="'inlineRequest'"
@@ -30,6 +37,7 @@
         [forInput]="forInput"
         [isOpenBigPass]="true"
         [forFuture]="forFuture"
+        [fullScreen]="true"
       ></app-inline-request-card>
     </div>
     <div class="metrics">

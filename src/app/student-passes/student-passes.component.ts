@@ -40,8 +40,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   @Input() isResize: boolean = true;
   @Input() pass: PassLike;
 
-  @Output()
-  userClickResult: EventEmitter<{action: string, intervalValue: number}> = new EventEmitter<{action: string, intervalValue: number}>();
   @Output() close = new EventEmitter();
 
   @ViewChild('profileImage') profileImage: ElementRef;

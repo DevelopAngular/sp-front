@@ -20,6 +20,7 @@ import {School} from '../models/School';
 import {DeviceDetection} from '../device-detection.helper';
 import {scalePassCards} from '../animations';
 import {DomCheckerService} from '../services/dom-checker.service';
+import {StorageService} from '../services/storage.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -39,8 +40,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @Input() forKioskMode: boolean = false;
   @Input() formState: Navigation;
   @Input() students: User[] = [];
+  @Input() isOpenBigPass: boolean = false;
+  @Input() fullScreenButton: boolean = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
+  @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
 
@@ -103,7 +107,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
       private http: HttpService,
-      private domCheckerService: DomCheckerService
+      private domCheckerService: DomCheckerService,
+      private storage: StorageService
   ) {}
 
   getUserName(user: any) {
@@ -189,7 +194,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
         });
 
     if (!!this.pass && this.isActive) {
-      // console.log('Starting interval');
       merge(of(0), interval(1000)).pipe(
         map(x => {
         const end: Date = this.pass.expiration_time;
@@ -320,16 +324,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
         .subscribe((data) => {
-        this.performingAction = true;
-        this.dialogRef.close();
+          if (this.isOpenBigPass) {
+            this.storage.setItem('pass_full_screen', true);
+          }
+          this.performingAction = true;
+          this.dialogRef.close();
       });
   }
 
   cancelEdit(evt: MouseEvent) {
-    // if (this.screenService.isDeviceMid) {
-    //   this.cancelEditClick = !this.cancelEditClick;
-    // }
-
     if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
       this.options = [];
@@ -416,13 +419,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.chooseAction(action);
   }
 
-  scaleCard({action, intervalValue}) {
-    if (action === 'open') {
-      const scale = 1 - (intervalValue / 300);
-      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
-    } else if (action === 'close') {
-      const scale = 0.953333 + (intervalValue / 300);
-      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
-    }
+  openBigPassCard() {
+    this.scaleCard.emit(true);
   }
 }

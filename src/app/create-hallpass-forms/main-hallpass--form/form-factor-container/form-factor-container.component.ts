@@ -8,6 +8,7 @@ import {Invitation} from '../../../models/Invitation';
 import {DataService} from '../../../services/data-service';
 import {Pinnable} from '../../../models/Pinnable';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {StorageService} from '../../../services/storage.service';
 
 
 @Component({
@@ -25,14 +26,17 @@ export class FormFactorContainerComponent implements OnInit {
   public states: any = FormFactor;
   public currentState: number;
   public template: Request | HallPass | Invitation | Pinnable;
+  public isOpenBigCard: boolean;
 
   constructor(
     private dataService: DataService,
     private timeService: TimeService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
+    private storage: StorageService
   ) { }
 
   ngOnInit() {
+      this.isOpenBigCard = JSON.parse(this.storage.getItem('pass_full_screen'));
       const now = this.timeService.nowDate();
 
       this.dataService.currentUser
@@ -132,13 +136,16 @@ export class FormFactorContainerComponent implements OnInit {
   onNextStep(evt) {
     this.FORM_STATE = evt;
     this.nextStepEvent.emit(this.FORM_STATE);
-    console.log('FORM FACTOR event ============>', evt);
   }
 
   onBack() {
     this.FORM_STATE.step = 3;
     this.FORM_STATE.state = 1;
     this.nextStepEvent.emit(this.FORM_STATE);
+  }
+
+  openBigPass(value) {
+    this.isOpenBigCard = value;
   }
 
 }

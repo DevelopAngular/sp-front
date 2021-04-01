@@ -14,7 +14,6 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
 import {StorageService} from '../services/storage.service';
-import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -27,6 +26,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
   @Input() isOpenBigPass: boolean = false;
+  @Input() fullScreen: boolean = false;
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -85,6 +85,9 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (JSON.parse(this.storage.getItem('pass_full_screen')) && !this.fullScreen) {
+      this.openBigPassCard();
+    }
     if (this.request) {
       this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
       this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
@@ -105,10 +108,6 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest(evt: MouseEvent) {
-    // if (this.screenService.isDeviceMid) {
-    //   this.cancelEditClick = !this.cancelEditClick;
-    // }
-
     if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
 
@@ -236,34 +235,10 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    if (this.dialog.getDialogById('bigPass')) {
-      this.screenService.customBackdropEvent$.next(false);
-      this.screenService.customBackdropStyle$.next(null);
-      this.dialog.getDialogById('bigPass').close();
-    }
+    this.screenService.closeDialog();
   }
 
   openBigPassCard() {
-    if (!this.isOpenBigPass) {
-      this.screenService.customBackdropEvent$.next(true);
-      const solidColor = Util.convertHex(this.request.color_profile.solid_color, 70);
-      setTimeout(() => {
-        this.screenService.customBackdropStyle$.next({
-          'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
-        });
-      }, 50);
-      const bigPassCard = this.dialog.open(BigStudentPassCardComponent, {
-        id: 'bigPass',
-        panelClass: 'main-form-dialog-container',
-        data: {
-          pass: this.request,
-          isActive: true,
-          forInput: false,
-          passLayout: 'inlineRequest'
-        }
-      });
-    } else {
-      this.closeDialog();
-    }
+    this.screenService.openBigPassCard(this.isOpenBigPass, this.request, 'inlineRequest');
   }
 }

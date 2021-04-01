@@ -17,6 +17,21 @@
     flex-direction: column;
     position: relative;
 
+    .resize-icon {
+      position: absolute;
+      right: -13px;
+      top: -13px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      background-color: white;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .pass-card-header {
       display: flex;
       flex-direction: column;

@@ -5,7 +5,7 @@
        *ngIf="FORM_STATE.formMode.formFactor === states.HallPass && template">
     <!--HAL-->
     <app-pass-card
-      *ngIf="forStaff"
+      *ngIf="!isOpenBigCard"
       [pass]="template"
       [forStaff]="forStaff && !dialogData.kioskModeRoom"
       [forInput]="true"
@@ -13,16 +13,20 @@
       [formState]="FORM_STATE"
       [forFuture]="!!FORM_STATE.data.date"
       [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
-      (cardEvent)="onNextStep($event)">
+      (cardEvent)="onNextStep($event)"
+      (scaleCard)="openBigPass(true)"
+      [fullScreenButton]="true"
+    >
     </app-pass-card>
 
     <app-big-student-pass-card
-      *ngIf="!forStaff"
+      *ngIf="isOpenBigCard"
       [pass]="template"
       [formState]="FORM_STATE"
       [passLayout]="'pass'"
       [forFuture]="!!FORM_STATE.data.date"
       [forInput]="true"
+      (closeCard)="openBigPass(false)"
     ></app-big-student-pass-card>
   </div>
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
@@ -30,21 +34,24 @@
        *ngIf="FORM_STATE.formMode.formFactor === states.Request && template">
     <!--REQ {{FORM_STATE.formMode.formFactor}} | {{states.Request}}-->
     <app-request-card
-      *ngIf="forStaff"
+      *ngIf="!isOpenBigCard"
       [request]="template"
       [forStaff]="forStaff"
       [forInput]="true"
       [formState]="FORM_STATE"
       [forFuture]="!!FORM_STATE.data.date"
       (cardEvent)="onNextStep($event)"
+      (scaleCard)="openBigPass(true)"
+      [fullScreenButton]="true"
     ></app-request-card>
     <app-big-student-pass-card
-      *ngIf="!forStaff"
+      *ngIf="isOpenBigCard"
       [pass]="template"
       [formState]="FORM_STATE"
       [passLayout]="'request'"
       [forFuture]="!!FORM_STATE.data.date"
       [forInput]="true"
+      (closeCard)="openBigPass(false)"
     ></app-big-student-pass-card>
   </div>
 
@@ -59,9 +66,7 @@
       [formState]="FORM_STATE"
       [forFuture]="!!FORM_STATE.data.date"
       [selectedStudents]="FORM_STATE.data.selectedStudents"
-      (cardEvent)="onNextStep($event)"
-    >
-
+      (cardEvent)="onNextStep($event)">
     </app-invitation-card>
   </div>
 </div>

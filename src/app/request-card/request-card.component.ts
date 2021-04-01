@@ -39,8 +39,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   @Input() forInput: boolean = false;
   @Input() forStaff: boolean = false;
   @Input() formState: Navigation;
+  @Input() isOpenBigPass: boolean;
+  @Input() fullScreenButton: boolean = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
 
@@ -303,12 +306,16 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           switchMap(res => {
               return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
                   (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
-          })).subscribe((res) => {
+          }))
+        .subscribe((res) => {
+          if (this.isOpenBigPass) {
+            this.storage.setItem('pass_full_screen', true);
+          }
           this.performingAction = true;
-        if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
-          this.dataService.openRequestPageMobile();
-          this.navbarData.inboxClick$.next(true);
-        }
+          if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
+            this.dataService.openRequestPageMobile();
+            this.navbarData.inboxClick$.next(true);
+          }
           this.dialogRef.close();
       });
       }
@@ -577,16 +584,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     this.hoverDestroyer$.complete();
   }
 
-  scaleCard({action, intervalValue}) {
-    if (action === 'open') {
-      const scale = 1 - (intervalValue / 300);
-      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
-    } else if (action === 'close') {
-      const scale = 0.953333 + (intervalValue / 300);
-      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
-    }
-  }
   goToPin() {
     this.activeTeacherPin = true;
+  }
+
+  openBigPassCard() {
+    this.scaleCard.emit(true);
   }
 }
