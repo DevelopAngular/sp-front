@@ -239,6 +239,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   }
 
   openBigPassCard() {
+    this.storage.setItem('pass_full_screen', !this.isOpenBigPass);
     this.screenService.openBigPassCard(this.isOpenBigPass, this.request, 'inlineRequest');
   }
 }

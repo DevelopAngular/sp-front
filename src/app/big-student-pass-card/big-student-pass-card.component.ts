@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild} from '@angular/core';
 
 import {Subject} from 'rxjs';
 
@@ -31,8 +31,7 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) private data: any,
-    private storage: StorageService,
-    private renderer: Renderer2
+    private storage: StorageService
   ) { }
 
   get isMobile() {
@@ -46,7 +45,6 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
       this.forInput = this.data['forInput'];
       this.passLayout = this.data['passLayout'];
     }
-    console.log('Size ==>>', document.documentElement.clientHeight, document.documentElement.clientWidth);
   }
 
   ngOnDestroy() {

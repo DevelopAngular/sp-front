@@ -5,7 +5,7 @@
        *ngIf="FORM_STATE.formMode.formFactor === states.HallPass && template">
     <!--HAL-->
     <app-pass-card
-      *ngIf="!isOpenBigCard"
+      *ngIf="!isOpenBigCard || forStaff"
       [pass]="template"
       [forStaff]="forStaff && !dialogData.kioskModeRoom"
       [forInput]="true"
@@ -15,7 +15,7 @@
       [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
       (cardEvent)="onNextStep($event)"
       (scaleCard)="openBigPass(true)"
-      [fullScreenButton]="true"
+      [fullScreenButton]="!forStaff"
     >
     </app-pass-card>
 
@@ -34,7 +34,7 @@
        *ngIf="FORM_STATE.formMode.formFactor === states.Request && template">
     <!--REQ {{FORM_STATE.formMode.formFactor}} | {{states.Request}}-->
     <app-request-card
-      *ngIf="!isOpenBigCard"
+      *ngIf="!isOpenBigCard || forStaff"
       [request]="template"
       [forStaff]="forStaff"
       [forInput]="true"
@@ -42,7 +42,7 @@
       [forFuture]="!!FORM_STATE.data.date"
       (cardEvent)="onNextStep($event)"
       (scaleCard)="openBigPass(true)"
-      [fullScreenButton]="true"
+      [fullScreenButton]="!forStaff"
     ></app-request-card>
     <app-big-student-pass-card
       *ngIf="isOpenBigCard"

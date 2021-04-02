@@ -36,7 +36,7 @@ export class FormFactorContainerComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-      this.isOpenBigCard = JSON.parse(this.storage.getItem('pass_full_screen'));
+      this.isOpenBigCard = JSON.parse(this.storage.getItem('pass_full_screen')) && !this.forStaff;
       const now = this.timeService.nowDate();
 
       this.dataService.currentUser

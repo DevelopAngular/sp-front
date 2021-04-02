@@ -96,12 +96,11 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this.storage.setItem('pass_full_screen', false);
     this.screen.closeDialog();
   }
 
   openBigPassCard() {
-    this.storage.setItem('pass_full_screen', true);
+    this.storage.setItem('pass_full_screen', !this.isOpenBigPass);
     this.screen.openBigPassCard(this.isOpenBigPass, this.pass, 'inlinePass');
   }
 
