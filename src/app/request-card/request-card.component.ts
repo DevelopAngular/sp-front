@@ -308,9 +308,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
                   (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
           }))
         .subscribe((res) => {
-          if (this.isOpenBigPass) {
-            this.storage.setItem('pass_full_screen', true);
-          }
           this.performingAction = true;
           if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
             this.dataService.openRequestPageMobile();

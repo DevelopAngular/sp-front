@@ -324,9 +324,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
         .subscribe((data) => {
-          if (this.isOpenBigPass) {
-            this.storage.setItem('pass_full_screen', true);
-          }
           this.performingAction = true;
           this.dialogRef.close();
       });
