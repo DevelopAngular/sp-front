@@ -1,4 +1,4 @@
-<div class="wrapper" [style.transform]="isMobile ? 'scale(1.17)' : 'scale(1.60)'">
+<div class="wrapper" #wrapper [style.transform]="isMobile ? 'scale(1.15)' : 'scale(' + scalePage(wrapper) + ')'">
   <div class="content">
     <div class="pass" [ngSwitch]="passLayout">
       <app-pass-card

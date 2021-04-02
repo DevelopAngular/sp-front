@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, Renderer2, ViewChild} from '@angular/core';
 
 import {Subject} from 'rxjs';
 
@@ -25,11 +25,14 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
 
   @Output() closeCard: EventEmitter<any> = new EventEmitter<any>();
 
+  @ViewChild('wrapper') wrapper: ElementRef;
+
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) private data: any,
-    private storage: StorageService
+    private storage: StorageService,
+    private renderer: Renderer2
   ) { }
 
   get isMobile() {
@@ -43,6 +46,7 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
       this.forInput = this.data['forInput'];
       this.passLayout = this.data['passLayout'];
     }
+    console.log('Size ==>>', document.documentElement.clientHeight, document.documentElement.clientWidth);
   }
 
   ngOnDestroy() {
@@ -53,6 +57,14 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
   close() {
     this.storage.setItem('pass_full_screen', false);
     this.closeCard.emit();
+  }
+
+  scalePage(element: HTMLElement) {
+    const pageWidth = document.documentElement.clientWidth;
+    const pageHeight = document.documentElement.clientHeight / 100 * 90;
+    const popupWidth = element.clientWidth;
+    const popupHeight = element.clientHeight;
+    return Math.min(pageWidth / popupWidth, pageHeight / popupHeight, 1.6);
   }
 
 }
