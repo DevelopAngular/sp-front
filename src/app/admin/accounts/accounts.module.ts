@@ -24,6 +24,7 @@ import {BulkAddComponent} from './bulk-add/bulk-add.component';
 import {AddRolePopupComponent} from './select-role/add-role-popup/add-role-popup.component';
 import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
 import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
+import {OctagonComponent} from './encounter-prevention-dialog/octagon/octagon.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/
     BulkAddComponent,
     AddRolePopupComponent,
     PermissionsDialogComponent,
-    EncounterPreventionDialogComponent
+    EncounterPreventionDialogComponent,
+    OctagonComponent
   ],
   imports: [
     CommonModule,

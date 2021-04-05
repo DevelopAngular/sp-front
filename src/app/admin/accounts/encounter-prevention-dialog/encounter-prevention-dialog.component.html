@@ -3,9 +3,16 @@
     <div class="background-header"></div>
     <div class="header">
       <div class="back-button">
-        <img [src]="'./assets/Back (White).svg'" alt="">
+        <img width="28" [src]="'./assets/Back Button (White).svg' | resolveAsset" alt="">
       </div>
-      <div class="title">Encounter Prevention</div>
+      <div class="header-info">
+        <img width="24" [src]="'./assets/Encounter Group (White).svg'" alt="Encounter">
+        <div class="title">Encounter Prevention</div>
+      </div>
     </div>
+  </div>
+
+  <div class="content">
+    <app-octagon></app-octagon>
   </div>
 </div>
