@@ -31,6 +31,7 @@ import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {TableService} from '../../sp-data-table/table.service';
 import {PermissionsDialogComponent} from '../../accounts-role/permissions-dialog/permissions-dialog.component';
 import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/status-popup.component';
+import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -294,7 +295,12 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   openEncounterPrevention() {
-
+    const encounterDialog = this.matDialog.open(EncounterPreventionDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+    });
   }
 
 }
