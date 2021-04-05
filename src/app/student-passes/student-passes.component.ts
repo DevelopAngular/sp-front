@@ -19,6 +19,7 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-student-passes',
@@ -39,13 +40,13 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   @Input() height: number = 75;
   @Input() isResize: boolean = true;
   @Input() pass: PassLike;
+  @Input() hasProfilePicture: boolean = false;
 
   @Output() close = new EventEmitter();
 
   @ViewChild('profileImage') profileImage: ElementRef;
 
   lastStudentPasses: Observable<HallPass[]>;
-  timerEvent: Subject<any> = new Subject<any>();
 
   isScrollable: boolean;
   animationTrigger = {value: 'open', params: {size: '75'}};
@@ -87,7 +88,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
     this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
-    this.lastStudentPasses = this.passesService.quickPreviewPasses$;
+    this.lastStudentPasses = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loading$ = this.passesService.quickPreviewPassesLoading$;
     this.loaded$ = this.passesService.quickPreviewPassesLoaded$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
@@ -135,8 +136,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     this.domCheckerService.scalePassCardTrigger$.next('open');
     const expiredPass = this.dialog.open(PassCardComponent, {
       panelClass: 'teacher-pass-card-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {pass, forStaff: true, showStudentInfoBlock: !this.isResize, passForStudentsComponent: this.isResize, hideButton: true}
+      backdropClass: this.isResize ? 'invis-backdrop' : 'custom-backdrop',
+      data: {pass, forStaff: true, showStudentInfoBlock: !this.isResize, passForStudentsComponent: this.isResize, hasDeleteButton: true}
     });
 
     expiredPass.afterClosed().subscribe(() => {

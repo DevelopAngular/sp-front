@@ -15,9 +15,9 @@
       [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'"
       [style.border-radius]="isOpen ? '13px 13px 0 0' : '13px'"
     >
-      <div class="header" [style.padding]="isClose ? 0 : '15px 0'">
-        <div class="profile-info">
-          <div class="profile-image">
+      <div class="header" [style.padding]="isClose ? 0 : '15px 0'" [style.height]="">
+        <div class="profile-info" [style.padding]="isScrollable ? '0 0 0 17px' : (hasProfilePicture ? '0 17px' : '10px 17px')">
+          <div class="profile-image" *ngIf="hasProfilePicture">
             <img [@openCloseProfile]="animationTrigger" [width]="75" [height]="75" [src]="'./assets/Default Avatar.png' | resolveAsset" alt="Avatar">
           </div>
           <div class="title">
@@ -78,8 +78,6 @@
             <div class="passes" *ngIf="!(loading$ | async); else fakePasses">
               <div class="pass" *ngFor="let pass of lastStudentPasses | async">
                 <app-pass-tile
-
-                  [timerEvent]="timerEvent"
                   [forFuture]="false"
                   [fromPast]="true"
                   [forStaff]="false"

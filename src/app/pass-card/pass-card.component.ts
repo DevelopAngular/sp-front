@@ -20,7 +20,6 @@ import {School} from '../models/School';
 import {DeviceDetection} from '../device-detection.helper';
 import {scalePassCards} from '../animations';
 import {DomCheckerService} from '../services/dom-checker.service';
-import {StorageService} from '../services/storage.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -107,8 +106,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
       private http: HttpService,
-      private domCheckerService: DomCheckerService,
-      private storage: StorageService
+      private domCheckerService: DomCheckerService
   ) {}
 
   getUserName(user: any) {
@@ -153,7 +151,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose() {
-    return ((this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast);
+    return ((this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast) && !this.hideButton;
   }
 
   ngOnInit() {
