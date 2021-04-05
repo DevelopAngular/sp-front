@@ -268,13 +268,13 @@ export const scalePassCards = trigger('scalePassCards', [
 
 export const resizeStudentPasses = trigger('resizeStudentPasses', [
   state('open', style({
-    height: '475px'
+    height: '475px',
   })),
   state('close', style({
-    height: '75px'
+    height: '75px',
   })),
-  transition('* => open', animate('.1s ease-in')),
-  transition('* => close', animate('.1s ease-out'))
+  transition('* => open', animate('.2s ease-in')),
+  transition('open => close', animate('.2s ease-out'))
 ]);
 
 export const studentPassFadeInOut = trigger('studentPassFadeInOut', [
