@@ -1,3 +1,10 @@
-<div class="wrapper">
+<div class="octagonWrap" [style.transform]="'scale(0.' + size + ')'">
+  <div class="octagon"></div>
 
+  <div class="content-wrapper">
+    <div class="content"></div>
+    <div class="value">
+      <ng-content select=".value"></ng-content>
+    </div>
+  </div>
 </div>

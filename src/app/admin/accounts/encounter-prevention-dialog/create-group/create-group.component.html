@@ -1,0 +1,52 @@
+<div class="wrapper">
+  <div class="group">
+    <div class="label">Students</div>
+    <app-sp-search
+      [chipsMode]="true"
+      [placeholder]="'Select students'"
+      [inputField]="true"
+    ></app-sp-search>
+  </div>
+
+  <div class="group">
+<!--    <div class="label">Group name <span style="font-weight: normal">(optional)</span></div>-->
+    <app-input
+      [width]="'245px'"
+      [height]="'40px'"
+      [formGroup]="form"
+      [input_label]="'Group name (optional)'"
+      [controlName]="form.get('group_name')">
+    </app-input>
+  </div>
+
+  <div class="group">
+    <app-textarea
+      [control]="form.get('notes')"
+      [label]="'Notes (optional)'"
+      [placeholder]="'Ex. Parents requested'"
+      [width]="'351px'"
+      [height]="'75px'"
+    ></app-textarea>
+
+    <div class="info">
+      Teachers may see these notes when they are prevented from creating a pass for a student.
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="label">Weekly report emails</div>
+    <app-sp-search
+      [chipsMode]="true"
+      [placeholder]="'Search staff'"
+      [role]="'_profile_teacher'"
+      [inputField]="true"
+    ></app-sp-search>
+
+    <div class="info">
+      Teachers and admins will get weekly summary reports of any prevented activity.
+    </div>
+  </div>
+
+
+
+</div>

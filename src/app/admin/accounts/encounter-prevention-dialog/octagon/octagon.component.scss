@@ -1,31 +1,47 @@
-.wrapper {
+
+.octagonWrap {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100px;
   height: 100px;
-  background: #E32C66;
-  position: relative;
 
-  &:before {
-    content: '';
-    width: 42px;
-    height: 0;
+  .octagon {
     position: absolute;
-    top: 0;
-    left: 0;
-    border-bottom: 29px solid #E32C66;
-    border-left: 29px solid #FFFFFF;
-    border-right: 29px solid #FFFFFF;
+    top: 0; right: 0; bottom: 0; left: 0;
+    overflow: hidden;
+    transform: rotate(45deg);
+    background: #E32C66;
+
+    &:before {
+      position: absolute;
+      top: -3px; right: -3px; bottom: -3px; left: -3px;
+      transform: rotate(45deg);
+      content: '';
+      border: inherit;
+    }
   }
 
-  &:after {
-    content: '';
-    width: 42px;
-    height: 0;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    border-top: 29px solid #E32C66;
-    border-left: 29px solid #FFFFFF;
-    border-right: 29px solid #FFFFFF;
-  }
+  .content-wrapper {
+    @extend .octagonWrap;
+    width: 88%;
+    height: 88%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
 
+    .content {
+      @extend .octagon;
+      border: 3px solid white;
+    }
+
+    .value {
+      position: absolute;
+      color: white;
+      z-index: 10;
+    }
+  }
 }

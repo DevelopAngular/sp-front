@@ -25,6 +25,7 @@ import {AddRolePopupComponent} from './select-role/add-role-popup/add-role-popup
 import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
 import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {OctagonComponent} from './encounter-prevention-dialog/octagon/octagon.component';
+import {CreateGroupComponent} from './encounter-prevention-dialog/create-group/create-group.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import {OctagonComponent} from './encounter-prevention-dialog/octagon/octagon.co
     AddRolePopupComponent,
     PermissionsDialogComponent,
     EncounterPreventionDialogComponent,
-    OctagonComponent
+    OctagonComponent,
+    CreateGroupComponent
   ],
   imports: [
     CommonModule,

@@ -2,7 +2,7 @@
   <div class="header">
     <div class="background-header"></div>
     <div class="header">
-      <div class="back-button">
+      <div class="back-button" (click)="back()">
         <img width="28" [src]="'./assets/Back Button (White).svg' | resolveAsset" alt="">
       </div>
       <div class="header-info">
@@ -13,6 +13,26 @@
   </div>
 
   <div class="content">
-    <app-octagon></app-octagon>
+    <div class="page-1" *ngIf="page === 1">
+      <app-octagon>
+        <div class="value">
+          <img width="48" [src]="'./assets/Encounter Group (White).svg' | resolveAsset">
+        </div>
+      </app-octagon>
+      <div class="info">
+        <div class="title">Prevent students from having passes at the same time</div>
+        <div class="subtitle">Create your first group of students to get started. You’ll also be able to track how many encounters have been prevented.</div>
+      </div>
+      <app-gradient-button
+        [style.margin-top]="'24px'"
+        [leftIcon]="'./assets/Plus (White).svg'"
+        (buttonClick)="nextPage()"
+      >New group
+      </app-gradient-button>
+    </div>
+
+    <div class="page-2" *ngIf="page === 2">
+      <app-create-group></app-create-group>
+    </div>
   </div>
 </div>

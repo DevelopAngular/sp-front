@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-octagon',
@@ -6,6 +6,8 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./octagon.component.scss']
 })
 export class OctagonComponent implements OnInit {
+
+  @Input() size: number = 68;
 
   constructor() { }
 

@@ -56,6 +56,7 @@ import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-in
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
 import {CustomToolTipComponent} from './shared-components/custom-tool-tip/custom-tool-tip.component';
 import {PassLimitTooltipComponent} from './shared-components/pass-limit-tooltip/pass-limit-tooltip.component';
+import {AppTextareaComponent} from '../app-textarea/app-textarea.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -121,7 +122,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileInfoComponent,
     ChangePasswordComponent,
     CustomToolTipComponent,
-    PassLimitTooltipComponent],
+    PassLimitTooltipComponent,
+    AppTextareaComponent
+  ],
   exports: [
     ReactiveFormsModule,
     ScrollingModule,
@@ -169,7 +172,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileInfoComponent,
     ChangePasswordComponent,
     TeacherPinStudentComponent,
-    PassLimitTooltipComponent
+    PassLimitTooltipComponent,
+    AppTextareaComponent
   ],
   providers: [
     {
