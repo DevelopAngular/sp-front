@@ -1,3 +1,23 @@
 <div class="wrapper">
-
+  <div class="students">
+    <div class="student"
+       #chip
+       *ngFor="let student of state.data.students"
+       (mouseenter)="chip.hovered = true"
+       (mouseleave)="chip.hovered = false"
+    >
+      <div class="student-picture">
+        <img width="23" height="23" [src]="student.profile_picture || './assets/Default Avatar.svg' | resolveAsset" alt="">
+      </div>
+      <div class="name">{{ student.display_name }}</div>
+<!--      <div *ngIf="chip.hovered" class="delete">-->
+<!--        <img [src]="'./assets/Cancel (Navy).svg'" width="16" alt="Check.svg">-->
+<!--      </div>-->
+    </div>
+  </div>
+  <div class="octagon">
+    <app-octagon [size]="28">
+      <div class="value">4</div>
+    </app-octagon>
+  </div>
 </div>

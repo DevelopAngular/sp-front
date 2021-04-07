@@ -9,8 +9,9 @@
         <img width="24" [src]="'./assets/Encounter Group (White).svg'" alt="Encounter">
         <div class="title">Encounter Prevention</div>
       </div>
-      <div class="save-button" *ngIf="state.current_page === 1">
-        <app-gradient-button (buttonClick)="save()">Save</app-gradient-button>
+      <div class="save-button">
+        <app-gradient-button *ngIf="state.current_page === 1" (buttonClick)="save()">Save</app-gradient-button>
+        <app-octagon *ngIf="state.current_page === 2" [size]="35"><div class="value">22</div></app-octagon>
       </div>
     </div>
   </div>
@@ -19,7 +20,7 @@
     <div class="page-0" *ngIf="state.current_page === 0">
       <app-octagon>
         <div class="value">
-          <img width="48" [src]="'./assets/Encounter Group (White).svg' | resolveAsset">
+          <img width="32" [src]="'./assets/Encounter Group (White).svg' | resolveAsset">
         </div>
       </app-octagon>
       <div class="info">
@@ -35,10 +36,10 @@
     </div>
 
     <div class="page-1" *ngIf="state.current_page === 1">
-      <app-create-group></app-create-group>
+      <app-create-group [state]="state" (update)="state = $event"></app-create-group>
     </div>
 
-    <div class="page-2">
+    <div class="page-2" *ngIf="state.current_page === 2">
       <div class="new-group-header">
         <div class="info">
           <img width="16" [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset" alt="">
@@ -48,7 +49,7 @@
       </div>
       <mat-divider></mat-divider>
       <div class="groups">
-        <app-encounter-group></app-encounter-group>
+        <app-encounter-group [state]="state"></app-encounter-group>
       </div>
     </div>
   </div>

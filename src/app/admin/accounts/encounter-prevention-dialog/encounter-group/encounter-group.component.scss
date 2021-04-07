@@ -1,7 +1,58 @@
 @import '../../../../../sp-colors';
 
 .wrapper {
-  width: 100%;
   border-radius: 8px;
   border: 2px solid $blue-gray;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  min-height: 50px;
+  display: flex;
+  position: relative;
+  align-items: center;
+
+  .students {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    .student {
+      background-color: #F7F7F7;
+      border-radius: 8px;
+      height: 31px;
+      padding: 0px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      //margin-right: 10px;
+      //margin-bottom: 10px;
+      margin: 5px;
+      color: #1F194E;
+      white-space: nowrap;
+      position: relative;
+
+      .delete {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        position: absolute;
+        right: 5px;
+        background-color: #F8F8F8;
+        box-shadow: -6px 1px 6px #F8F8F8;
+      }
+
+      .student-picture {
+        border-radius: 50%;
+        width: 23px;
+        height: 23px;
+        overflow: hidden;
+        margin-right: 4px;
+      }
+    }
+
+  }
+
+  .octagon {
+    position: absolute;
+    right: 15px;
+    //transform: scale(0.28);
+    //bottom: -26px;
+  }
 }

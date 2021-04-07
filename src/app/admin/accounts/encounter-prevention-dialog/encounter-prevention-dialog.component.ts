@@ -1,10 +1,22 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
+import {User} from '../../../models/User';
 
 enum Pages {
   'startPage' = 0,
   'newGroup'= 1,
   'editGroup' = 2
+}
+
+export interface EncountersState {
+  prevent_page: number;
+  current_page: number;
+  data: {
+    students: User[],
+    teachers: User[],
+    group_name: string,
+    notes: string
+  };
 }
 
 @Component({
@@ -14,12 +26,15 @@ enum Pages {
 })
 export class EncounterPreventionDialogComponent implements OnInit {
 
-  state: {
-    prevent_page: number,
-    current_page: number
-  } = {
+  state: EncountersState = {
     prevent_page: 0,
-    current_page: 0
+    current_page: 0,
+    data: {
+      students: [],
+      teachers: [],
+      group_name: '',
+      notes: ''
+    }
   };
 
   constructor(private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>) { }
@@ -29,6 +44,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   setState(prevent_page, current_page) {
     this.state = {
+      ...this.state,
       prevent_page,
       current_page
     };
@@ -51,7 +67,6 @@ export class EncounterPreventionDialogComponent implements OnInit {
   }
 
   save() {
-    debugger;
     if (this.state.current_page === Pages.newGroup) {
       this.nextPage();
     }

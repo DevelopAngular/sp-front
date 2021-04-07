@@ -70,6 +70,7 @@
       .info {
         width: 277px;
         text-align: center;
+        margin-top: 15px;
         .title {
           font-size: 17px;
           color: $navy;
@@ -98,6 +99,10 @@
           display: flex;
           color: $blue-gray;
         }
+      }
+
+      .groups {
+        padding: 18px;
       }
     }
   }
