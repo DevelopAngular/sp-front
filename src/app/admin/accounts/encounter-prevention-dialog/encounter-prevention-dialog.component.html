@@ -9,11 +9,14 @@
         <img width="24" [src]="'./assets/Encounter Group (White).svg'" alt="Encounter">
         <div class="title">Encounter Prevention</div>
       </div>
+      <div class="save-button" *ngIf="state.current_page === 1">
+        <app-gradient-button (buttonClick)="save()">Save</app-gradient-button>
+      </div>
     </div>
   </div>
 
   <div class="content">
-    <div class="page-1" *ngIf="page === 1">
+    <div class="page-0" *ngIf="state.current_page === 0">
       <app-octagon>
         <div class="value">
           <img width="48" [src]="'./assets/Encounter Group (White).svg' | resolveAsset">
@@ -31,8 +34,22 @@
       </app-gradient-button>
     </div>
 
-    <div class="page-2" *ngIf="page === 2">
+    <div class="page-1" *ngIf="state.current_page === 1">
       <app-create-group></app-create-group>
+    </div>
+
+    <div class="page-2">
+      <div class="new-group-header">
+        <div class="info">
+          <img width="16" [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset" alt="">
+          <div>Prevent students from having passes at the same time</div>
+        </div>
+        <app-gradient-button [leftIcon]="'./assets/Plus (White).svg'">New group</app-gradient-button>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="groups">
+        <app-encounter-group></app-encounter-group>
+      </div>
     </div>
   </div>
 </div>

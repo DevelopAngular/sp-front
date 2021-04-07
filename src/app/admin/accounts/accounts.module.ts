@@ -26,6 +26,7 @@ import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/pe
 import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {OctagonComponent} from './encounter-prevention-dialog/octagon/octagon.component';
 import {CreateGroupComponent} from './encounter-prevention-dialog/create-group/create-group.component';
+import {EncounterGroupComponent} from './encounter-prevention-dialog/encounter-group/encounter-group.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import {CreateGroupComponent} from './encounter-prevention-dialog/create-group/c
     PermissionsDialogComponent,
     EncounterPreventionDialogComponent,
     OctagonComponent,
-    CreateGroupComponent
+    CreateGroupComponent,
+    EncounterGroupComponent
   ],
   imports: [
     CommonModule,
