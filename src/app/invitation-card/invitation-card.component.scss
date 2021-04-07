@@ -13,98 +13,105 @@
   }
 }
 
-.invitation-card-wrapper {
+.invitation-container {
+  position: relative;
+  width: 335px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  .invitation-card-wrapper {
     width: 335px;
     border-radius: 14px;
     display: flex;
     flex-direction: column;
     position: relative;
+    box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
 
     .pass-card-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .header-content {
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
         align-items: center;
+        padding: 20px;
+        width: 291px;
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            width: 291px;
-
-            .header-info {
-                display: flex;
-                align-items: center;
-            }
+        .header-info {
+          display: flex;
+          align-items: center;
         }
+      }
 
-        .pass-card-header-icon {
-            width: 34px;
-            height: 34px;
+      .pass-card-header-icon {
+        width: 34px;
+        height: 34px;
+      }
+
+      .pass-card-header-text {
+        color: white;
+        font-size: 22px;
+        font-weight: bold;
+        margin-left: 15px;
+
+        .card-subtitle {
+          font-size: 15px;
+          font-weight: normal;
         }
+      }
 
-        .pass-card-header-text {
-            color: white;
-            font-size: 22px;
-            font-weight: bold;
-            margin-left: 15px;
-
-            .card-subtitle {
-                font-size: 15px;
-                font-weight: normal;
-            }
-        }
-
-        .pass-card-header-close {
-            width: 29px;
-            height: 29px;
-            cursor: pointer;
-        }
+      .pass-card-header-close {
+        width: 29px;
+        height: 29px;
+        cursor: pointer;
+      }
     }
 
 
     .invitation-card-content {
-        height: 325px;
+      height: 325px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+
+      .duration-picker {
+        height: 175px;
         display: flex;
+        position: relative;
         flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center;
+        justify-content: flex-end
+      }
 
-        .duration-picker {
-            height: 175px;
-            display: flex;
-            position: relative;
-            flex-direction: column;
-            justify-content: flex-end
+      .button {
+
+        .button-content-text {
+          color: white;
+          font-size: 22px;
+          font-weight: bold;
         }
-
-        .button {
-
-            .button-content-text {
-                color: white;
-                font-size: 22px;
-                font-weight: bold;
-            }
-        }
+      }
 
     }
 
     .invitation-card-footer {
-        position: relative;
-        height: 51px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      position: relative;
+      height: 51px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-        .student-footer {
-            background: rgba(200,200,200,.7);
-            mix-blend-mode: soft-light;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-        }
+      .student-footer {
+        background: rgba(200,200,200,.7);
+        mix-blend-mode: soft-light;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
 
         .student-text {
             position: absolute;
@@ -123,9 +130,9 @@
     }
 
     .invitation-card-content-modal {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
       .resend-button-content{
         width: 297px;
@@ -153,8 +160,8 @@
         color: white;
       }
 
-        .center-block {
-            height: 221px;
+      .center-block {
+        height: 221px;
 
           .message {
             overflow: auto;
@@ -169,24 +176,31 @@
             }
         }
 
-        .bottom-block {
-            height: 92px;
-            color: white;
-            text-align: center;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+      .bottom-block {
+        height: 92px;
+        color: white;
+        text-align: center;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
     }
 
     mat-divider {
-        background-color: white;
-        width: 291px;
-        opacity: 0.4;
+      background-color: white;
+      width: 291px;
+      opacity: 0.4;
     }
+  }
+
+  .student-footer-info {
+    min-height: 95px;
+    margin-top: 8px;
+  }
 }
+
 
 
 .button-content{

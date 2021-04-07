@@ -22,7 +22,7 @@ export class NotificationService {
    * @return true if the browser supports notifications.
    */
   static get hasSupport() {
-    return typeof window !== 'undefined' && 'Notification' in window && !DeviceDetection.isSafari();
+    return (typeof window !== 'undefined' && 'Notification' in window) && !DeviceDetection.isSafari();
   }
 
   /**
