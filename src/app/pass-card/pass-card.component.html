@@ -1,5 +1,13 @@
-<div class="pass-card-wrapper" [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? '451px' : '412px'" ondragstart="return false">
-  <div class="pass-card-header">
+<div class="pass-card-container">
+  <div class="pass-card-wrapper" [@scalePassCards]="scaleCardTrigger$ | async" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? (isModal ? '400px' : '451px') : '412px'" ondragstart="return false">
+
+    <div class="resize-icon" *ngIf="!forStaff && fullScreenButton" [style.color]="pass.color_profile.solid_color" appCrossPointerEventTarget (pointerClickEvent)="openBigPassCard()">
+      <svg width="24px" height="24px" viewBox="0 0 24 24">
+        <use [attr.xlink:href]="isOpenBigPass ? '#Resize Down' : '#Resize Up'"></use>
+      </svg>
+    </div>
+
+    <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
           <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
@@ -10,32 +18,35 @@
             </div>
           </div>
         </div>
+        <div *ngIf="passForStudentsComponent" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close()" style="position: absolute; right: 10px; top: 10px; cursor: pointer">
+          <img width="25" height="25" [src]="'./assets/Cancel (Transparent).svg' | resolveAsset" alt="">
+        </div>
 
         <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
 
       </div>
-    <mat-divider></mat-divider>
-  </div>
-  <div class="pass-card-content" *ngIf="!isModal">
-    <div class="duration-picker">
-      <app-traveltype-picker
-        [width]="(pass.destination.travel_types.length < 2 ? '106px' : '185px')"
-        [height]="'32px'"
-        (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
-      <app-duration-picker [forStaff]="forStaff" [plural]="selectedStudents.length>1" (onChange)="selectedDuration=$event" [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:15"></app-duration-picker>
+      <mat-divider></mat-divider>
     </div>
-    <div class="button">
-      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
-        <div class="start-pass-content">
-          <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-          <div *ngIf="!performingAction" class="start-pass-content-text">
+    <div class="pass-card-content" *ngIf="!isModal">
+      <div class="duration-picker">
+        <app-traveltype-picker
+          [width]="(pass.destination.travel_types.length < 2 ? '106px' : '185px')"
+          [height]="'32px'"
+          (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
+        <app-duration-picker [forStaff]="forStaff" [plural]="selectedStudents.length>1" (onChange)="selectedDuration=$event" [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:15"></app-duration-picker>
+      </div>
+      <div class="button">
+        <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
+          <div class="start-pass-content">
+            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
+            <div *ngIf="!performingAction" class="start-pass-content-text">
               {{((forFuture && forInput)?'Schedule Pass' + (selectedStudents.length > 1 ? 'es' : ''):(forStaff?'Send Pass' + (selectedStudents.length > 1 ? 'es' : ''):'Start Pass' + (selectedStudents.length > 1 ? 'es' : '')))}}</div>
-          <img *ngIf="!performingAction"  class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
-        </div>
-      </app-card-button>
+            <img *ngIf="!performingAction"  class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
+          </div>
+        </app-card-button>
 
+      </div>
     </div>
-  </div>
 
   <div class="pass-card-content-modal" *ngIf="isModal">
     <div class="center-block">
@@ -85,53 +96,83 @@
       </ng-template>
     </div>
 
-    <mat-divider *ngIf="!data.kioskMode"></mat-divider>
+      <mat-divider *ngIf="!data.kioskMode"></mat-divider>
 
-    <div class="top-block" [style.justify-content]="data.kioskMode ? 'flex-start' : 'center'">
+      <div class="top-block" [style.justify-content]="data.kioskMode ? 'flex-start' : 'center'">
 
-      <div *ngIf="isActive && !forStaff">
-        <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (click)="endPass()">
-          <div class="end-pass-content">
-            {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+        <div *ngIf="isActive && !forStaff">
+          <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (click)="endPass()">
+            <div class="end-pass-content">
+              {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+            </div>
+          </app-card-button>
+        </div>
+        <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff">
+          <span style="font-size: 20px; font-weight: bold; color: white">{{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}</span>
+        </div>
+
+        <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff ">
+          <div class="page-1 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
           </div>
-        </app-card-button>
-      </div>
-      <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff">
-        <span style="font-size: 20px; font-weight: bold; color: white">{{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}</span>
-      </div>
+          <div class="page-2 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==2?((activePassTime$ | async) +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
+          </div>
+          <div class="page-3 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
+          </div>
+          <div class="page-4 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
+          </div>
 
-      <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff ">
-        <div class="page-1 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
-        </div>
-        <div class="page-2 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==2?((activePassTime$ | async) +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
-        </div>
-        <div class="page-3 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
-        </div>
-        <div class="page-4 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
-        </div>
-
-        <div class="page-5 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
-        </div>
-        <div class="page-6 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
-        </div>
-        <div class="page-7 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
-        </div>
-        <div class="page-8 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
-        </div>
-      </app-pager>
+          <div class="page-5 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
+          </div>
+          <div class="page-6 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
+          </div>
+          <div class="page-7 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
+          </div>
+          <div class="page-8 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
+          </div>
+        </app-pager>
+      </div>
     </div>
-  </div>
-    <div class="pass-card-footer" *ngIf="forStaff || data.kioskMode">
+    <div class="pass-card-footer" *ngIf="(forStaff || data.kioskMode) && !isModal">
       <div class="student-footer"></div>
       <div class="student-text"> {{ studentText }} </div>
     </div>
 
+  </div>
+
+  <div class="student-footer-info" *ngIf="forStaff && isModal && showStudentInfoBlock">
+    <app-student-passes [pass]="pass" [profile]="pass.student"></app-student-passes>
+  </div>
 </div>
+
+<svg style="display: none">
+  <defs>
+    <symbol id="Resize Up">
+      <g stroke="none" stroke-width="1" fill-rule="evenodd">
+        <g transform="translate(-597.000000, -104.000000)" fill="currentColor" fill-rule="nonzero">
+          <g transform="translate(585.000000, 92.000000)">
+            <path d="M21.8701363,25.0004801 C21.5850418,25.0089749 21.3144532,25.1281246 21.1156963,25.3326869 L14.2099981,32.2383019 L14.2099981,27.2059044 C14.2140599,26.9092893 14.0978727,26.6236631 13.8879102,26.4141068 C13.6779476,26.2045506 13.3920948,26.0889148 13.0954845,26.0935475 C12.4902687,26.1030079 12.0069755,26.6006788 12.0152636,27.2059044 L12.0152636,34.7202073 C11.9562715,35.0703776 12.0703577,35.4274495 12.3214576,35.6785463 C12.5725575,35.9296431 12.9296336,36.0437279 13.2798082,35.9847366 L20.7942017,35.9847366 C21.1899517,35.9903334 21.5580586,35.7824116 21.7575669,35.4405885 C21.9570753,35.0987654 21.9570753,34.6759997 21.7575669,34.3341766 C21.5580586,33.9923535 21.1899517,33.7844317 20.7942017,33.7900286 L15.7617435,33.7900286 L22.6674416,26.884414 C22.9919994,26.5689342 23.0895865,26.0865653 22.9131801,25.6697389 C22.7367738,25.2529125 22.3225627,24.987138 21.8701363,25.0004801 Z M34.8708368,12.0004579 C34.8299462,12.0017503 34.7891598,12.005328 34.7486687,12.0111741 L27.2106697,12.0111741 C26.8149181,12.0055776 26.4468099,12.2134873 26.2473008,12.5552904 C26.0477917,12.8970936 26.0477917,13.3198346 26.2473008,13.6616378 C26.4468099,14.003441 26.8149181,14.2113506 27.2106697,14.2057541 L32.2431469,14.2057541 L25.3374224,21.1109663 C25.0507475,21.3861855 24.9352683,21.7948701 25.0355212,22.1794047 C25.1357741,22.5639393 25.4360933,22.8642362 25.8206565,22.9644815 C26.2052196,23.0647268 26.6139345,22.9492561 26.8891741,22.6626024 L33.7948982,15.7573903 L33.7948982,20.7894943 C33.7893012,21.1852165 33.9972263,21.5532974 34.3390549,21.7527917 C34.6808834,21.952286 35.1036558,21.952286 35.4454843,21.7527917 C35.7873128,21.5532974 35.9952379,21.1852165 35.989641,20.7894943 L35.989641,13.2477684 C36.033876,12.9280053 35.93507,12.6049865 35.719518,12.364676 C35.5039659,12.1243656 35.1935341,11.9911414 34.8708368,12.0004579 L34.8708368,12.0004579 Z"></path>
+          </g>
+        </g>
+      </g>
+    </symbol>
+    <symbol id="Resize Down">
+      <g stroke="none" stroke-width="1" fill-rule="evenodd">
+        <g transform="translate(-597.000000, -104.000000)" fill="currentColor" fill-rule="nonzero">
+          <g transform="translate(585.000000, 92.000000)">
+            <path d="M34.8701363,12.0004801 C34.5850418,12.0089749 34.3144532,12.1281246 34.1156963,12.3326869 L27.2099981,19.2383019 L27.2099981,14.2059044 C27.2140599,13.9092893 27.0978727,13.6236631 26.8879102,13.4141068 C26.6779476,13.2045506 26.3920948,13.0889148 26.0954845,13.0935475 C25.4902687,13.1030079 25.0069755,13.6006788 25.0152636,14.2059044 L25.0152636,21.7202073 C24.9562715,22.0703776 25.0703577,22.4274495 25.3214576,22.6785463 C25.5725575,22.9296431 25.9296336,23.0437279 26.2798082,22.9847366 L33.7942017,22.9847366 C34.1899517,22.9903334 34.5580586,22.7824116 34.7575669,22.4405885 C34.9570753,22.0987654 34.9570753,21.6759997 34.7575669,21.3341766 C34.5580586,20.9923535 34.1899517,20.7844317 33.7942017,20.7900286 L28.7617435,20.7900286 L35.6674416,13.884414 C35.9919994,13.5689342 36.0895865,13.0865653 35.9131801,12.6697389 C35.7367738,12.2529125 35.3225627,11.987138 34.8701363,12.0004801 Z M21.8708368,25.0004579 C21.8299462,25.0017503 21.7891598,25.005328 21.7486687,25.0111741 L14.2106697,25.0111741 C13.8149181,25.0055776 13.4468099,25.2134873 13.2473008,25.5552904 C13.0477917,25.8970936 13.0477917,26.3198346 13.2473008,26.6616378 C13.4468099,27.003441 13.8149181,27.2113506 14.2106697,27.2057541 L19.2431469,27.2057541 L12.3374224,34.1109663 C12.0507475,34.3861855 11.9352683,34.7948701 12.0355212,35.1794047 C12.1357741,35.5639393 12.4360933,35.8642362 12.8206565,35.9644815 C13.2052196,36.0647268 13.6139345,35.9492561 13.8891741,35.6626024 L20.7948982,28.7573903 L20.7948982,33.7894943 C20.7893012,34.1852165 20.9972263,34.5532974 21.3390549,34.7527917 C21.6808834,34.952286 22.1036558,34.952286 22.4454843,34.7527917 C22.7873128,34.5532974 22.9952379,34.1852165 22.989641,33.7894943 L22.989641,26.2477684 C23.033876,25.9280053 22.93507,25.6049865 22.719518,25.364676 C22.5039659,25.1243656 22.1935341,24.9911414 21.8708368,25.0004579 L21.8708368,25.0004579 Z"></path>
+          </g>
+        </g>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+

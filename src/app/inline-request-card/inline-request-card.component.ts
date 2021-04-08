@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {Util} from '../../Util';
 import {Request} from '../models/Request';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
@@ -20,11 +20,13 @@ import {StorageService} from '../services/storage.service';
   templateUrl: './inline-request-card.component.html',
   styleUrls: ['./inline-request-card.component.scss']
 })
-export class InlineRequestCardComponent implements OnInit {
+export class InlineRequestCardComponent implements OnInit, OnDestroy {
   @Input() request: Request;
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
+  @Input() isOpenBigPass: boolean = false;
+  @Input() fullScreen: boolean = false;
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -50,7 +52,7 @@ export class InlineRequestCardComponent implements OnInit {
       private screenService: ScreenService,
       private renderer: Renderer2,
       private passesService: HallPassesService,
-      private storage: StorageService
+      private storage: StorageService,
   ) { }
 
   get hasDivider() {
@@ -83,6 +85,9 @@ export class InlineRequestCardComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (JSON.parse(this.storage.getItem('pass_full_screen')) && !this.fullScreen) {
+      this.openBigPassCard();
+    }
     if (this.request) {
       this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
       this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
@@ -94,15 +99,15 @@ export class InlineRequestCardComponent implements OnInit {
 
   }
 
+  ngOnDestroy() {
+    this.closeDialog();
+  }
+
   formatDateTime() {
     return Util.formatDateTime(this.request.request_time);
   }
 
   cancelRequest(evt: MouseEvent) {
-    // if (this.screenService.isDeviceMid) {
-    //   this.cancelEditClick = !this.cancelEditClick;
-    // }
-
     if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
 
@@ -153,6 +158,7 @@ export class InlineRequestCardComponent implements OnInit {
 
     this.requestService.createRequest(body).subscribe(() => {
         this.requestService.cancelRequest(this.request.id).subscribe(() => {
+          this.closeDialog();
         console.log('pass request resent');
       });
     });
@@ -211,6 +217,7 @@ export class InlineRequestCardComponent implements OnInit {
   chooseAction(action) {
     if (action === 'delete') {
       this.requestService.cancelRequest(this.request.id).subscribe((data) => {
+        this.closeDialog();
         console.log('[Request Canceled]: ', data);
         const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
         if (storageData && storageData[this.request.id]) {
@@ -225,5 +232,14 @@ export class InlineRequestCardComponent implements OnInit {
   closeMenu() {
     this.cancelEditClick = false;
     this.renderer.setStyle(document.body, 'overflow', 'auto');
+  }
+
+  closeDialog() {
+    this.screenService.closeDialog();
+  }
+
+  openBigPassCard() {
+    this.storage.setItem('pass_full_screen', !this.isOpenBigPass);
+    this.screenService.openBigPassCard(this.isOpenBigPass, this.request, 'inlineRequest');
   }
 }

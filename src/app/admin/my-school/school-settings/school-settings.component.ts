@@ -38,7 +38,6 @@ export class SchoolSettingsComponent implements OnInit, OnDestroy {
         this.school = {
           ...school,
           name: school.name,
-          launch_date: school.launch_date ? moment(school.launch_date).format('MMMM DD, YYYY') : 'Not launched',
           created: moment(school.created).format('MMMM DD, YYYY')
         };
         this.schoolForm = new FormGroup({
@@ -54,7 +53,13 @@ export class SchoolSettingsComponent implements OnInit, OnDestroy {
     this.changeSettings$.pipe(
       takeUntil(this.destroy$),
       switchMap(() => {
-        return this.adminService.updateSchoolSettingsRequest(this.school, this.schoolForm.value);
+        return this.adminService.updateSchoolSettingsRequest(this.school,
+          {
+            ...this.schoolForm.value,
+            pass_buffer_time: this.school.pass_buffer_time,
+            display_card_room: this.school.display_card_room
+          }
+          );
       }),
       filter(res => !!res)
       )

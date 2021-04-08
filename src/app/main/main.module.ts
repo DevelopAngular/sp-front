@@ -8,7 +8,6 @@ import {LocationCellComponent} from '../location-cell/location-cell.component';
 import {LocationTableComponent} from '../location-table/location-table.component';
 import {MainPageComponent} from '../main-page/main-page.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
-import {RequestCardComponent} from '../request-card/request-card.component';
 import {SettingsComponent} from '../settings/settings.component';
 import {SharedModule} from '../shared/shared.module';
 import {MainRoutingModule} from './main-routing.module';
@@ -39,60 +38,48 @@ import {PinInputComponent} from '../teacher-pin/pin-input/pin-input.component';
 
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    MainRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
-  declarations: [
-    SettingsComponent,
-    MainHallPassFormComponent,
-    LocationTableComponent,
-    FavoriteFormComponent,
-    ReportFormComponent,
-    RequestCardComponent,
-    InvitationCardComponent,
-    LocationCellComponent,
-    MainPageComponent,
-    FromWhereComponent,
-    ToWhereComponent,
-    ToCategoryComponent,
-    RestrictedTargetComponent,
-    RestrictedMessageComponent,
-    TeacherFooterComponent,
-    StudentFooterComponent,
-    LocationsGroupContainerComponent,
-    GroupsContainerComponent ,
-    GroupsStep1Component,
-    GroupsStep2Component,
-    GroupsStep3Component,
-    WhoYouAreComponent,
-    DateTimeContainerComponent,
-    FormFactorContainerComponent,
-    CreateHallpassFormsComponent,
-    NotificationFormComponent,
-    AnimatedHeaderDirective,
-    DateTimeComponent,
-    NavbarComponent,
-    NavButtonComponent,
-    TeacherPinComponent,
-    AssistantRestrictionComponent,
-    PinInputComponent
-  ],
-  // entryComponents: [
-  //   CreateHallpassFormsComponent,
-  //   FavoriteFormComponent,
-  //   ReportFormComponent,
-  //   RequestCardComponent,
-  //   InvitationCardComponent,
-  //   NotificationFormComponent,
-  //   SettingsComponent,
-  //   TeacherPinComponent
-  // ],
-  providers: [
-  ]
+    imports: [
+        CommonModule,
+        SharedModule,
+        MainRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+    ],
+    declarations: [
+        SettingsComponent,
+        MainHallPassFormComponent,
+        LocationTableComponent,
+        FavoriteFormComponent,
+        ReportFormComponent,
+        InvitationCardComponent,
+        LocationCellComponent,
+        MainPageComponent,
+        FromWhereComponent,
+        ToWhereComponent,
+        ToCategoryComponent,
+        RestrictedTargetComponent,
+        RestrictedMessageComponent,
+        TeacherFooterComponent,
+        StudentFooterComponent,
+        LocationsGroupContainerComponent,
+        GroupsContainerComponent,
+        GroupsStep1Component,
+        GroupsStep2Component,
+        GroupsStep3Component,
+        WhoYouAreComponent,
+        DateTimeContainerComponent,
+        FormFactorContainerComponent,
+        CreateHallpassFormsComponent,
+        NotificationFormComponent,
+        AnimatedHeaderDirective,
+        DateTimeComponent,
+        NavbarComponent,
+        NavButtonComponent,
+        TeacherPinComponent,
+        AssistantRestrictionComponent,
+        PinInputComponent
+    ],
+    providers: []
 })
 export class MainModule {
 }

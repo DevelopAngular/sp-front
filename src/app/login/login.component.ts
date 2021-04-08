@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     setTimeout(() => {
-      window.waitForAppLoaded();
+      window.appLoaded();
     }, 300);
 
     this.loginService.isAuthenticated$.pipe(

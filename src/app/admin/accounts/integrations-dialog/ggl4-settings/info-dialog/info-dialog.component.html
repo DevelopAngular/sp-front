@@ -1,8 +1,6 @@
 <div class="wrapper">
   <div class="background" [style.background]="gradient" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-  <div class="back-button" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close()">
-    <img width="28" [src]="'./assets/Back Button (White).svg'" alt="Back">
-  </div>
+  <img appCrossPointerEventTarget (pointerClickEvent)="back.emit()" class="back-button" width="28" [src]="'./assets/Back Button (White).svg'" alt="Back">
 
   <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="integrations" style="z-index: 10">
@@ -33,13 +31,13 @@
       </div>
     </div>
   </div>
-  <mat-divider class="divider" [style.border-top-color]="'#D8D8D8'"></mat-divider>
+<!--  <mat-divider class="divider" [style.border-top-color]="'#D8D8D8'"></mat-divider>-->
 
   <div class="footer" [style.margin-top]="isClever ? '15px' : '25px'">
     <app-gradient-button
       [gradient]="'#FFFFFF, #FFFFFF'"
       [size]="'medium'"
-      [textColor]="'#484CE6'"
+      [textColor]="isClever ? '#4274F6' : '#484CE6'"
       (buttonClick)="nextPage.emit()"
     >Continue
     </app-gradient-button>

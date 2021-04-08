@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
-import {fromEvent, Subject} from 'rxjs';
-import {filter} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 
 declare const window;
 

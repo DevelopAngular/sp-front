@@ -1,0 +1,19 @@
+<div class="wrapper">
+  <div class="student-info" *ngIf="passStats$ | async as stats">
+    <app-student-passes-info-card
+      [number]="stats?.past_passes_today"
+      [title]="'today'"
+      [loading]="loading$ | async"
+    ></app-student-passes-info-card>
+    <app-student-passes-info-card
+      [number]="stats?.past_passes_week"
+      [title]="'this week'"
+      [loading]="loading$ | async"
+    ></app-student-passes-info-card>
+    <app-student-passes-info-card
+      [number]="stats?.past_passes_month"
+      [title]="'this month'"
+      [loading]="loading$ | async"
+    ></app-student-passes-info-card>
+  </div>
+</div>

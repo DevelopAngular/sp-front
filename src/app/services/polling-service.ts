@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
-import { $WebSocket } from 'angular2-websocket/angular2-websocket';
+import {$WebSocket} from 'angular2-websocket/angular2-websocket';
 import {BehaviorSubject, NEVER, Observable, Subject, Subscription} from 'rxjs';
-import {filter, map, publish, refCount, switchMap, take, tap} from 'rxjs/operators';
-import { AuthContext, HttpService } from './http-service';
-import { Logger } from './logger.service';
-import {headersToString} from 'selenium-webdriver/http';
-import {GoogleLoginService} from './google-login.service';
+import {filter, map, publish, refCount, switchMap, tap} from 'rxjs/operators';
+import {HttpService} from './http-service';
+import {Logger} from './logger.service';
 
 interface RawMessage {
   type: string;

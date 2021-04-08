@@ -1,0 +1,38 @@
+@import '../../../sp-colors';
+
+.wrapper {
+  width: 91px;
+  height: 58px;
+  border: 3px solid #E5E6EB;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  .number {
+    color: $navy;
+    font-size: 20px;
+    margin-bottom: 2px;
+    font-weight: bold;
+  }
+  .title {
+    color: $blue-gray;
+    font-size: 14px;
+  }
+}
+.animate {
+  animation : shimmer 3s infinite linear;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 97px 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -97px 0;
+  }
+  100% {
+    background-position: 97px 0;
+  }
+}

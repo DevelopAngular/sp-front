@@ -21,7 +21,6 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {OverlayModule} from '@angular/cdk/overlay';
-
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({

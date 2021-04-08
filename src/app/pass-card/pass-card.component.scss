@@ -4,18 +4,38 @@
   }
 }
 
-
-.pass-card-wrapper {
+.pass-card-container {
+  position: relative;
+  width: 335px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  .pass-card-wrapper {
     width: 335px;
     border-radius: 14px;
     display: flex;
     flex-direction: column;
     position: relative;
 
+    .resize-icon {
+      position: absolute;
+      right: -13px;
+      top: -13px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      background-color: white;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .pass-card-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
         .header-content {
             display: flex;
@@ -24,98 +44,98 @@
             height: 85px;
             width: 291px;
 
-            .header-info {
-                display: flex;
-                align-items: center;
-            }
+        .header-info {
+          display: flex;
+          align-items: center;
         }
+      }
 
-        .pass-card-header-icon {
-            width: 34px;
-            height: 34px;
+      .pass-card-header-icon {
+        width: 34px;
+        height: 34px;
+      }
+
+      .pass-card-header-text {
+        color: white;
+        font-size: 22px;
+        font-weight: bold;
+        margin-left: 15px;
+
+        .card-subtitle {
+          font-size: 15px;
+          font-weight: normal;
         }
+      }
 
-        .pass-card-header-text {
-            color: white;
-            font-size: 22px;
-            font-weight: bold;
-            margin-left: 15px;
-
-            .card-subtitle {
-                font-size: 15px;
-                font-weight: normal;
-            }
-        }
-
-        .pass-card-header-close {
-            width: 29px;
-            height: 29px;
-            cursor: pointer;
-        }
+      .pass-card-header-close {
+        width: 29px;
+        height: 29px;
+        cursor: pointer;
+      }
     }
 
     .pass-card-content {
-        height: 325px;
+      height: 325px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+
+      .duration-picker {
+        height: 175px;
         display: flex;
+        position: relative;
         flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center;
+        justify-content: flex-end
+      }
 
-        .duration-picker {
-            height: 175px;
-            display: flex;
-            position: relative;
-            flex-direction: column;
-            justify-content: flex-end
+      .button {
+
+        .start-pass-content-text {
+          color: white;
+          font-size: 22px;
+          font-weight: bold;
         }
-
-        .button {
-
-          .start-pass-content-text {
-              color: white;
-              font-size: 22px;
-              font-weight: bold;
-          }
-        }
+      }
 
     }
 
     .pass-card-content-modal {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
         .center-block {
             height: 211px;
         }
 
-        .top-block {
-            height: 102px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-        }
+      .top-block {
+        height: 102px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+      }
     }
 
     .pass-card-footer {
-        position: relative;
-        height: 51px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      position: relative;
+      height: 51px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-        .student-footer {
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
-          background: rgba(200,200,200,.7);
-          mix-blend-mode: soft-light;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-        }
+      .student-footer {
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+        background: rgba(200,200,200,.7);
+        mix-blend-mode: soft-light;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
 
         .student-text {
             position: absolute;
@@ -134,10 +154,11 @@
     }
 
     mat-divider {
-        background-color: white;
-        width: 291px;
-        opacity: 0.4;
+      background-color: white;
+      width: 291px;
+      opacity: 0.4;
     }
+  }
 }
 .message{
   font-size: 16px;
@@ -149,15 +170,10 @@
   //user-select: all !important;
 }
 
-
-
-
-
-
-
-
-
-
+  .student-footer-info {
+    min-height: 95px;
+    margin-top: 8px;
+  }
 
 
 

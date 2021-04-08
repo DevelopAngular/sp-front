@@ -39,12 +39,12 @@
       </app-round-input>
     </div>
 
-    <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'">
+    <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'" (scroll)="scroll($event)">
       <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
-               (mouseenter)="cell.hovered = true;"
+               (mouseenter)="cell.hovered = true; showBackgroundOverlay = true"
                (mouseleave)="cell.hovered = false; cell.pressed = false"
                appCrossPointerEventTarget
                (pointerDownEvent)="cell.pressed = true;"
@@ -52,7 +52,9 @@
                (focus)="cell.hovered = true"
                (blur)="cell.hovered =false"
                [style.color]="'#555558'"
-               [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
+               [style.background-color]="cell.hovered || cell.isOpenTooltip ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
+               cdkOverlayOrigin
+               #trigger="cdkOverlayOrigin"
           >
             <span>
               {{student.display_name}}
@@ -60,6 +62,34 @@
               '(' + (student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : '') + ')'
               }}
             </span>
+
+            <img
+              *ngIf="cell.hovered || cell.isOpenTooltip"
+              width="15"
+              [src]="'./assets/Info (Blue-Gray).svg'"
+              alt="Info"
+              (mouseenter)="studentNameOver(cell)"
+              (mouseleave)="destroyOpen$.next(); showBackgroundOverlay = false;"
+            >
+
+            <ng-template
+              cdkConnectedOverlay
+              [cdkConnectedOverlayOrigin]="trigger"
+              [cdkConnectedOverlayOpen]="cell.isOpenTooltip"
+              [cdkConnectedOverlayWidth]="335"
+              [cdkConnectedOverlayHeight]="300"
+              [cdkConnectedOverlayPositions]="[{panelClass: 'student-panel1', originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetX: 100, offsetY: 0}]"
+              [cdkConnectedOverlayHasBackdrop]="false"
+              (positionChange)="updateOverlayPosition($event)"
+            >
+              <div class="student-passes"
+                   #studentPasses
+                   (mouseleave)="showBackgroundOverlay = false; setAnimationTrigger('fadeOut'); studentNameLeave(cell)"
+                   (mouseover)="destroyAnimation$.next(); showBackgroundOverlay = true; disableClose$.next()"
+              >
+                <app-student-passes [profile]="student" [height]="300" [isResize]="false" (close)="cell.isOpenTooltip = false"></app-student-passes>
+              </div>
+            </ng-template>
           </div>
         </div>
 

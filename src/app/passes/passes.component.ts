@@ -10,8 +10,8 @@ import {
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject,} from 'rxjs';
-import {filter, map, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
+import {filter, map, mapTo, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {LiveDataService} from '../live-data/live-data.service';
@@ -305,18 +305,20 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
                 subtitle: 'When you come back to the room, remember to end your pass!'
               }
             });
-            return SPNC.afterClosed();
+            return SPNC.afterClosed().pipe(mapTo(true));
           } else if (action === 'hall_pass.end') {
             if (this.dialog.getDialogById('startNotification')) {
               this.dialog.getDialogById('startNotification').close();
               return of(true);
             }
           }
-          return of(null);
+          return of(false);
         })
       )
       .subscribe(res => {
-        this.screenService.customBackdropEvent$.next(false);
+        if (res) {
+          this.screenService.customBackdropEvent$.next(false);
+        }
       });
   }
 
