@@ -1,48 +1,13 @@
-
-.octagonWrap {
+.wrapper {
   position: relative;
-  overflow: hidden;
   display: flex;
-  align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
+  align-items: center;
 
-  .octagon {
+  .value {
     position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    overflow: hidden;
-    transform: rotate(45deg);
-    background: #E32C66;
-
-    &:before {
-      position: absolute;
-      top: -3px; right: -3px; bottom: -3px; left: -3px;
-      transform: rotate(45deg);
-      content: '';
-      border: inherit;
-    }
-  }
-
-  .content-wrapper {
-    @extend .octagonWrap;
-    width: 88%;
-    height: 88%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    z-index: 10;
     color: white;
-
-    .content {
-      @extend .octagon;
-      border: 3px solid white;
-    }
-
-    .value {
-      position: absolute;
-      color: white;
-      z-index: 10;
-      font-size: 15px;
-    }
   }
 }
+

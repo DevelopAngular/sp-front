@@ -97,12 +97,34 @@
 
         .info {
           display: flex;
+          align-items: flex-start;
           color: $blue-gray;
         }
       }
 
       .groups {
         padding: 18px;
+      }
+    }
+    .page-3 {
+      .encounter-header {
+        padding: 10px 19px;
+        display: flex;
+        justify-content: space-between;
+
+        .count-preventions {
+          display: flex;
+          align-items: center;
+          .title {
+            font-size: 16px;
+            color: $navy;
+            font-weight: bold;
+            margin-left: 6px;
+          }
+        }
+      }
+      .content {
+        padding: 10px;
       }
     }
   }

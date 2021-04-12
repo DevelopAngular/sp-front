@@ -28,6 +28,7 @@ import {OctagonComponent} from './encounter-prevention-dialog/octagon/octagon.co
 import {CreateGroupComponent} from './encounter-prevention-dialog/create-group/create-group.component';
 import {EncounterGroupComponent} from './encounter-prevention-dialog/encounter-group/encounter-group.component';
 import {ReportDescriptionComponent} from './encounter-prevention-dialog/report-description/report-description.component';
+import {EncounterOptionsComponent} from './encounter-prevention-dialog/encounter-options/encounter-options.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import {ReportDescriptionComponent} from './encounter-prevention-dialog/report-d
     OctagonComponent,
     CreateGroupComponent,
     EncounterGroupComponent,
-    ReportDescriptionComponent
+    ReportDescriptionComponent,
+    EncounterOptionsComponent
   ],
   imports: [
     CommonModule,

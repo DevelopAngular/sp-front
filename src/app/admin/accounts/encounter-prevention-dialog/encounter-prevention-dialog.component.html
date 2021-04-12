@@ -12,6 +12,7 @@
       <div class="save-button">
         <app-gradient-button *ngIf="state.current_page === 1" (buttonClick)="save()">Save</app-gradient-button>
         <app-octagon *ngIf="state.current_page === 2" [size]="35"><div class="value">22</div></app-octagon>
+        <app-icon-button *ngIf="state.current_page === 3" [srcString]="'Dots'" [size]="17" (clickEvent)="openPopup($event)"></app-icon-button>
       </div>
     </div>
   </div>
@@ -43,14 +44,35 @@
       <div class="new-group-header">
         <div class="info">
           <img width="16" [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset" alt="">
-          <div>Prevent students from having passes at the same time</div>
+          <div style="margin-left: 3px">Prevent students from having passes at the same time</div>
         </div>
         <app-gradient-button [leftIcon]="'./assets/Plus (White).svg'">New group</app-gradient-button>
       </div>
       <mat-divider></mat-divider>
       <div class="groups">
         <app-encounter-group [state]="state"></app-encounter-group>
-        <app-report-description></app-report-description>
+      </div>
+    </div>
+
+    <div class="page-3" *ngIf="state.current_page === 3">
+      <div class="encounter-header">
+        <div class="count-preventions">
+          <app-octagon [size]="28">
+            <div class="value">4</div>
+          </app-octagon>
+          <div class="title">Prevented Encounters</div>
+        </div>
+        <div class="button">
+          <app-gradient-button
+            [gradient]="'#F4F4F4, #F4F4F4'"
+            [leftIcon]="'./assets/Chevron Up-Down (Blue-Gray).svg'"
+            [textColor]="'#7F879D'"
+          >Expand all</app-gradient-button>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="content">
+        <app-report-description [date]="'Dec. 9, 2020'" [description]="'Jeremy Perez was going from Ladson to East Bathroom on Dec. 15, 2020 from 11:45 AM to 12:01 PM. At 11:48:04, Leah Olson attempted to make a pass from Clarkson to West Bathroom, but it was prevented.'"></app-report-description>
       </div>
     </div>
   </div>

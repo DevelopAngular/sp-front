@@ -1,10 +1,7 @@
-<div class="octagonWrap" [style.transform]="'scale(0.' + size + ')'">
-  <div class="octagon"></div>
-
-  <div class="content-wrapper">
-    <div class="content"></div>
-    <div class="value">
-      <ng-content select=".value"></ng-content>
-    </div>
+<div class="wrapper" [style.width]="size + 'px'" [style.height]="size + 'px'">
+  <img [width]="size" [height]="size" [src]="'./assets/Octagon (Red).svg'" alt="">
+  <div class="value">
+    <ng-content></ng-content>
   </div>
 </div>
+

@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {resizeReportDescription} from '../../../../animations';
 
 @Component({
@@ -8,6 +8,9 @@ import {resizeReportDescription} from '../../../../animations';
   animations: [resizeReportDescription]
 })
 export class ReportDescriptionComponent implements OnInit {
+
+  @Input() date: string;
+  @Input() description: string;
 
   @ViewChild('wrapper') wrapper: ElementRef;
 

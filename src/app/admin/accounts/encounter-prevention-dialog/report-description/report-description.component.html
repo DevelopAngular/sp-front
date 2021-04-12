@@ -1,7 +1,7 @@
 <div class="wrapper" #wrapper (click)="setStartHeight()" [@grow]="animationTrigger">
   <div class="header">
-    <div class="date">Dec. 9, 2020</div>
+    <div class="date">{{ date }}</div>
     <img width="18" [src]="'./assets/Chevron ' + (isOpen ? 'Up' : 'Down') + ' (Blue-Gray).svg' | resolveAsset" alt="Chevron">
   </div>
-  <div class="description" *ngIf="isOpen">Jeremy Perez was going from Ladson to East Bathroom on Dec. 15, 2020 from 11:45 AM to 12:01 PM. At 11:48:04, Leah Olson attempted to make a pass from Clarkson to West Bathroom, but it was prevented.</div>
+  <div class="description" *ngIf="isOpen">{{ description }}</div>
 </div>
