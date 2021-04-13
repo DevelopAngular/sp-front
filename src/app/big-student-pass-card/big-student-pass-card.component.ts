@@ -1,4 +1,16 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output,
+  ViewChild
+} from '@angular/core';
 
 import {Subject} from 'rxjs';
 
@@ -12,7 +24,8 @@ export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 @Component({
   selector: 'app-big-student-pass-card',
   templateUrl: './big-student-pass-card.component.html',
-  styleUrls: ['./big-student-pass-card.component.scss']
+  styleUrls: ['./big-student-pass-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BigStudentPassCardComponent implements OnInit, OnDestroy {
 

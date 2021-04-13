@@ -217,7 +217,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.dialogRef.close({'report': this.pass.student });
         }
       });
-    this.formService.isSeen$.subscribe(res => this.isSeen = res);
+    // this.formService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   ngOnDestroy() {

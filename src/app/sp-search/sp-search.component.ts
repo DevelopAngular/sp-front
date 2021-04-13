@@ -15,6 +15,7 @@ import {Location} from '../models/Location';
 import {DeviceDetection} from '../device-detection.helper';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {Overlay} from '@angular/cdk/overlay';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 declare const window;
 
@@ -189,10 +190,15 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private locationService: LocationsService,
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
+    private kioskMode: KioskModeService
   ) {}
 
   get isMobile() {
     return DeviceDetection.isMobile();
+  }
+
+  get isKioskMode() {
+    return this.kioskMode.currentRoom$.getValue();
   }
 
   private getEmitedValue() {

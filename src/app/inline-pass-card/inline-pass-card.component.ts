@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {HallPass} from '../models/HallPass';
 import {HttpService} from '../services/http-service';
 import {DataService} from '../services/data-service';
@@ -14,7 +14,8 @@ import {StorageService} from '../services/storage.service';
 @Component({
   selector: 'app-inline-pass-card',
   templateUrl: './inline-pass-card.component.html',
-  styleUrls: ['./inline-pass-card.component.scss']
+  styleUrls: ['./inline-pass-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class InlinePassCardComponent implements OnInit, OnDestroy {
@@ -24,8 +25,8 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   @Input() forInput: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forFuture: boolean = false;
-  @Input() isOpenBigPass: boolean = false;
-  @Input() fullScreen: boolean = false;
+  @Input() isOpenBigPass: boolean;
+  @Input() fullScreen: boolean;
 
   timeLeft: string = '';
   valid: boolean = true;
@@ -46,7 +47,8 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
       private shortcutsService: KeyboardShortcutsService,
       private dialog: MatDialog,
       private screen: ScreenService,
-      private storage: StorageService
+      private storage: StorageService,
+      private cdr: ChangeDetectorRef
   ) { }
 
   get gradient() {
@@ -55,7 +57,9 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (JSON.parse(this.storage.getItem('pass_full_screen')) && !this.fullScreen) {
-      this.openBigPassCard();
+      setTimeout(() => {
+        this.openBigPassCard();
+      }, 10);
     }
     this.subscribers$ = merge(of(0), interval(1000)).pipe(map(x => {
       if (!!this.pass && this.isActive) {
@@ -72,7 +76,9 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
           this.overlayWidth = (this.buttonWidth * (diff / dur));
           return x;
       }
-    })).subscribe();
+    })).subscribe(() => {
+      this.cdr.detectChanges();
+    });
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(pluck('key'))
