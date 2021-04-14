@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.titleService.setTitle('SmartPass Sign-in');
     this.metaService.addTag({
       name: 'description',
-      content: 'Digital hall pass system and school safety solution. Sign-in with your school account. Don\'t have an account? Sign your school up for a free 60 day trial.'
+      content: 'Digital hall pass system and school safety solution. Sign-in with your school account. Don\'t have an account? Schedule a free demo to see how SmartPass can make your school safer and control the flow of students.'
     });
 
     setTimeout(() => {
