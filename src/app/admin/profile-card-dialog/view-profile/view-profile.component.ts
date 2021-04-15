@@ -122,6 +122,13 @@ export class ViewProfileComponent implements OnInit {
     return true;
   }
 
+  get isEdit() {
+    return this.permissionsFormEditState ||
+      this.assistantForEditState ||
+      !isEqual(this.teacherRoomsInitialState, this.teacherRooms) ||
+      !isEqual(this.initialSelectedRoles, this.userRoles);
+  }
+
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     if (this.data.orgUnit) {
@@ -223,17 +230,6 @@ export class ViewProfileComponent implements OnInit {
           `${this.data.orgUnit.title}s Group Syncing`
           : '';
 
-    // if (this.data.role === '_profile_teacher') {
-    //   if (this.data.allAccounts) {
-    //     this.locationService.getLocationsWithTeacher(this.profile._originalUserProfile)
-    //       .subscribe(res => {
-    //         this.teacherAssignedTo = res;
-    //       });
-    //   } else {
-    //     this.teacherAssignedTo = this.profile._originalUserProfile.assignedTo || [];
-    //   }
-    // }
-
     this.buildPermissions();
 
     this.permissionsFormInitialState = cloneDeep(this.permissionsForm.value);
@@ -273,9 +269,6 @@ export class ViewProfileComponent implements OnInit {
   updateProfile(): Observable<any> {
 
     this.disabledState = true;
-    if (this.profileStatusInitial !== this.profileStatusActive) {
-      this.userService.updateUserRequest(this.user, {status: this.profileStatusActive});
-    }
 
     if (!isEqual(this.teacherRoomsInitialState, this.teacherRooms)) {
       const locsToRemove = differenceBy(this.teacherRoomsInitialState, this.teacherRooms, 'id').map(l => {
@@ -351,11 +344,6 @@ export class ViewProfileComponent implements OnInit {
         {label: 'My Room', permission: 'access_teacher_room', icon: 'Room'}
       );
     }
-    // if (this.user.isStudent()) {
-    //   this.profilePermissions.student.push(
-    //     {label: 'Make passes without approval', permission: 'pass_approval'}
-    //   );
-    // }
     const controls = {};
     this.profilePermissions.teacher.concat([...this.profilePermissions.admin, ...this.profilePermissions.assistant, ...this.profilePermissions.student]).forEach(perm => {
       controls[perm.permission] = new FormControl(this.user.roles.includes(perm.permission));
@@ -370,19 +358,19 @@ export class ViewProfileComponent implements OnInit {
   }
 
   back() {
-    if (
-      this.permissionsFormEditState ||
-      this.assistantForEditState ||
-      this.profileStatusInitial !== this.profileStatusActive ||
-      !isEqual(this.initialSelectedRoles, this.userRoles) ||
-      !isEqual(this.teacherRoomsInitialState, this.teacherRooms)
-    ) {
-      this.updateProfile().subscribe(() => {
-        this.close.emit(true);
-      });
-    } else {
+    // if (
+    //   this.permissionsFormEditState ||
+    //   this.assistantForEditState ||
+    //   // this.profileStatusInitial !== this.profileStatusActive ||
+    //   !isEqual(this.initialSelectedRoles, this.userRoles) ||
+    //   !isEqual(this.teacherRoomsInitialState, this.teacherRooms)
+    // ) {
+    //   // this.updateProfile().subscribe(() => {
+    //     this.close.emit(true);
+    //   // });
+    // } else {
       this.close.emit(false);
-    }
+    // }
   }
 
   getIsPermissionOn(permission) {
@@ -404,6 +392,10 @@ export class ViewProfileComponent implements OnInit {
      if (status === 'delete') {
        this.userService.deleteUserRequest(this.profile.id, this.data.role);
        this.close.emit(false);
+     } else {
+       if (this.profileStatusInitial !== status) {
+         this.userService.updateUserRequest(this.user, {status});
+       }
      }
      this.profileStatusActive = status;
    });
@@ -414,6 +406,12 @@ export class ViewProfileComponent implements OnInit {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
       data: { 'trigger': event.currentTarget }
+    });
+  }
+
+  save() {
+    this.updateProfile().subscribe(() => {
+      this.close.emit(true);
     });
   }
 
