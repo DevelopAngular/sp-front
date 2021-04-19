@@ -152,7 +152,7 @@ export class ViewProfileComponent implements OnInit {
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
       if (this.user.isTeacher()) {
-        this.teacherRooms = this.profile._originalUserProfile.assignedTo;
+        this.teacherRooms = cloneDeep(this.profile._originalUserProfile.assignedTo);
         this.teacherRoomsInitialState = cloneDeep(this.teacherRooms);
       }
       if (this.user.isStudent()) {
@@ -279,6 +279,7 @@ export class ViewProfileComponent implements OnInit {
         l.teachers = [...l.teachers, this.user];
         return l;
       });
+
       this.userService.updateTeacherLocations(this.user, [...locsToRemove, ...locsToAdd], this.teacherRooms);
     }
 
