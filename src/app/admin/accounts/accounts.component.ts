@@ -194,7 +194,12 @@ export class AccountsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.adminService.getCountAccountsRequest();
         this.toastService.openToast(
-          {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.', action: 'demo_accounts_down'});
+          {
+            title: 'Demo Accounts Added',
+            subtitle: 'Download the account passwords now.',
+            type: 'success',
+            action: 'demo_accounts_down',
+          });
       });
   }
 }

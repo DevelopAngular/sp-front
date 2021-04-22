@@ -609,7 +609,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
         {
           title: 'Generating CSV...',
           subtitle: 'When it’s ready (1-2min), we’ll send you a download link to your email.',
-          noButton: true
+          type: 'success',
+          showButton: false
         }
       );
     });

@@ -9,6 +9,8 @@ import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
 import {Location} from '../../../../../models/Location';
+import {openToastAction} from '../../../../toast/actions';
+import {Toast} from '../../../../../models/Toast';
 
 @Injectable()
 export class TeachersEffects {
@@ -90,8 +92,9 @@ export class TeachersEffects {
                   return of(teacher);
                 }
               }),
-              map((teacher: User) => {
-                return teachersActions.postTeacherSuccess({teacher});
+              switchMap((teacher: User) => {
+                const toastData = {title: 'Success', subtitle: 'Account created', type: 'success'} as Toast;
+                return [teachersActions.postTeacherSuccess({teacher}), openToastAction({data: toastData})];
               })
             );
         })
