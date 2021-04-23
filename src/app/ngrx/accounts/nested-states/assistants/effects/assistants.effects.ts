@@ -7,8 +7,6 @@ import {forkJoin, of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
-import {Toast} from '../../../../../models/Toast';
-import {openToastAction} from '../../../../toast/actions';
 
 @Injectable()
 export class AssistantsEffects {
@@ -116,15 +114,14 @@ export class AssistantsEffects {
                 }
                 );
               }),
-              switchMap(({user, representedUsers}) => {
+              map(({user, representedUsers}) => {
                 const assistant = {
                   ...user,
                   canActingOnBehalfOf: representedUsers.map((u: any) => {
                     return { user: u.represented_user, roles: u.roles };
                   })
                 };
-                const toastData = {title: 'Success', subtitle: 'Account created', type: 'success'} as Toast;
-                return [assistantsActions.postAssistantSuccess({assistant}), openToastAction({data: toastData})];
+                return assistantsActions.postAssistantSuccess({assistant});
               })
             );
         })

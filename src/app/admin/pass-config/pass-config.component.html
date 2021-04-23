@@ -1,6 +1,3 @@
-<!--<div class="host" #scrollableArea *ngIf="false">-->
-<!--  <app-rooms-set-up (setUpResult)="onboard($event)"></app-rooms-set-up>-->
-<!--</div>-->
 
   <div class="host" appSafariScroll (click)="closeChat($event)">
     <div class="pass-config-wrapper" (scroll)="scroll($event)" #scrollableArea *ngIf="onboardProcess$ | async as onboardProcess">

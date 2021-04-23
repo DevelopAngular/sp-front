@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable, of, Subject} from 'rxjs';
-import {delay, takeUntil} from 'rxjs/operators';
+import {Observable, of, Subject, timer} from 'rxjs';
+import {delay, filter, takeUntil} from 'rxjs/operators';
 import {ToastService} from '../services/toast.service';
 import {Toast} from '../models/Toast';
 
@@ -13,7 +13,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
 
   toggleToast: boolean;
   data$: Observable<Toast>;
-  cancelable: boolean;
+  cancelable: boolean = true;
   data: Toast;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -27,11 +27,15 @@ export class CustomToastComponent implements OnInit, OnDestroy {
     this.data$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       this.data = data;
     });
-    setTimeout(() => {
-      if (this.cancelable && !this.data.showButton) {
+    timer(2000).pipe(filter(() => this.cancelable && !this.data.showButton)).subscribe(() => {
+      // debugger;
+      // if (this.cancelable && !this.data.showButton) {
         this.toastService.closeToast();
-      }
-    }, 2000);
+      // }
+    });
+    // setTimeout(() => {
+    //
+    // }, 2000);
   }
 
   ngOnDestroy() {

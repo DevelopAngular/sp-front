@@ -7,8 +7,6 @@ import {User} from '../../../../../models/User';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {getCountAccounts} from '../../count-accounts/actions';
-import {Toast} from '../../../../../models/Toast';
-import {openToastAction} from '../../../../toast/actions';
 
 @Injectable()
 export class StudentsEffects {
@@ -60,9 +58,8 @@ export class StudentsEffects {
         concatMap((action: any) => {
           return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
             .pipe(
-              switchMap((student: User) => {
-                const toastData = {title: 'Success', subtitle: 'Account created', type: 'success'} as Toast;
-                return [studentsActions.postStudentSuccess({student}), openToastAction({data: toastData})];
+              map((student: User) => {
+                return studentsActions.postStudentSuccess({student});
               })
             );
         })

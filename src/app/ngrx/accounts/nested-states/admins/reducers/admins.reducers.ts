@@ -18,7 +18,7 @@ export const adminsInitialState: AdminsState = adapter.getInitialState({
 const reducer = createReducer(
   adminsInitialState,
   on(adminsActions.getAdmins,
-    adminsActions.removeAdminAccount,
+    // adminsActions.removeAdminAccount,
     // adminsActions.getMoreAdmins,
       state => ({...state, loading: true, loaded: false})),
   on(adminsActions.getAdminsSuccess, (state, {admins, next}) => {

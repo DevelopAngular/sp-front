@@ -6,6 +6,7 @@ import {cloneDeep, isEqual} from 'lodash';
 import {UserService} from '../../../services/user.service';
 import {switchMap} from 'rxjs/operators';
 import {zip} from 'rxjs';
+import {ToastService} from '../../../services/toast.service';
 
 @Component({
   selector: 'app-permissions-dialog',
@@ -28,7 +29,8 @@ export class PermissionsDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<PermissionsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private userService: UserService
+    private userService: UserService,
+    private toast: ToastService
   ) { }
 
   ngOnInit() {
@@ -107,6 +109,7 @@ export class PermissionsDialogComponent implements OnInit {
       });
 
       zip(...requests$).subscribe(() => {
+        this.toast.openToast({title: 'Success', subtitle: 'Accounts permissions updated', type: 'success'});
         this.dialogRef.close(true);
       });
     }

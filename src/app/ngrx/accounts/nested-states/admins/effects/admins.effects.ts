@@ -7,8 +7,6 @@ import {of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
-import {openToastAction} from '../../../../toast/actions';
-import {Toast} from '../../../../../models/Toast';
 
 @Injectable()
 export class AdminsEffects {
@@ -63,9 +61,8 @@ export class AdminsEffects {
                   return of(admin);
                 }
               }),
-              switchMap((admin: User) => {
-                const toastData = {title: 'Success', subtitle: 'Account created', type: 'success'} as Toast;
-                return [adminsActions.postAdminSuccess({admin}), openToastAction({data: toastData})];
+              map((admin: User) => {
+                return adminsActions.postAdminSuccess({admin});
               })
             );
         })

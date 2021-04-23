@@ -18,7 +18,7 @@ export const teachersInitialState: TeachersStates = adapter.getInitialState({
 const reducer = createReducer(
   teachersInitialState,
   on(teachersActions.getTeachers,
-    teachersActions.removeTeacher,
+    // teachersActions.removeTeacher,
     // teachersActions.getMoreTeachers,
     (state) => ({...state, loading: true, loaded: false})),
   on(teachersActions.getTeachersSuccess, (state, {teachers, next}) => {

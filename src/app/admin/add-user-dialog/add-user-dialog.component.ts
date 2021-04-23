@@ -15,6 +15,7 @@ import {Router} from '@angular/router';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 import {AdminService} from '../../services/admin.service';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -84,8 +85,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private adminService: AdminService,
     private router: Router,
-    private shortcuts: KeyboardShortcutsService
-
+    private shortcuts: KeyboardShortcutsService,
+    private toast: ToastService
   ) {
     this.syncInfo = this.data['syncInfo'];
     this.title = this.data['title'];
@@ -114,11 +115,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         return (this.isAssistant && ((this.assistantLike.user || this.newAlternativeAccount.valid)));
     } else if (this.isAssistant && this.typeChosen === this.accountTypes[1]) {
       return this.newAlternativeAccount.valid;
-    }
-    // else if (this.data.role === '_all' && !this.state) {
-    //   return this.newAlternativeAccount.valid;
-    // }
-    else {
+    } else {
       return false;
     }
   }
@@ -158,7 +155,6 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       }
       this.permissionsForm = new FormGroup(group);
       this.permissionsForm.valueChanges.subscribe((formValue) => {
-        // console.log(formValue);
         this.permissionsFormEditState = true;
 
       });
@@ -372,14 +368,18 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe((res) => {
+          this.toast.openToast({
+            title: 'Success',
+            subtitle: 'Account created',
+            type: 'success'
+          });
           this.pendingSubject.next(false);
           this.dialogRef.close(res);
-          // if (this.selectedRoles.length) {
-          //   this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
-          // }
+
         });
-    } else
+    } else {
       this.formSetErrors();
+    }
 
   }
 
@@ -402,7 +402,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           this.selectedUserErrors = false;
         }
     }
-    // console.log(evt);
+
   }
   setSecretary(evtUser, evtBehalfOf) {
     if (evtUser) {
@@ -411,7 +411,6 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     if (evtBehalfOf) {
       this.assistantLike.behalfOf = evtBehalfOf;
     }
-    // console.log(this.assistantLike);
   }
 
   selectRole(roles) {
@@ -421,14 +420,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  showInstructions(role) {
-    this.pdfService.generateProfileInstruction(this.data.role);
-  }
   back() {
     this.dialogRef.close();
   }
 }
-
-// myFiel.valueChanges.pipe(map(value) => {myField: value})
-//
-// {keyFiled: valu}

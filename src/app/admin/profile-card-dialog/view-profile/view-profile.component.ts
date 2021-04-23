@@ -11,10 +11,11 @@ import {UserService} from '../../../services/user.service';
 import {LocationsService} from '../../../services/locations.service';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
 import {cloneDeep, differenceBy, isEqual} from 'lodash';
-import {filter} from 'rxjs/operators';
+import {filter, mapTo} from 'rxjs/operators';
 import {ProfileCardDialogComponent} from '../profile-card-dialog.component';
 import {StatusPopupComponent} from '../status-popup/status-popup.component';
 import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
+import {ToastService} from '../../../services/toast.service';
 
 @Component({
   selector: 'app-view-profile',
@@ -108,7 +109,8 @@ export class ViewProfileComponent implements OnInit {
     private dataService: DataService,
     private userService: UserService,
     private locationService: LocationsService,
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private toast: ToastService
   ) {}
 
   get isAccessAdd() {
@@ -297,7 +299,13 @@ export class ViewProfileComponent implements OnInit {
       }
       zip(...this.userRoles.map(role => {
         return this.userService.addUserToProfileRequest(this.user, role.role.toLowerCase());
-      })).subscribe();
+      })).subscribe(() => {
+        this.toast.openToast({
+          title: 'Success',
+          subtitle: 'Account roles updated',
+          type: 'success'
+        });
+      });
     }
 
    if (this.permissionsFormEditState && this.assistantForEditState) {
@@ -305,17 +313,17 @@ export class ViewProfileComponent implements OnInit {
         this.userService.createUserRolesRequest(this.profile, this.permissionsForm.value, this.data.role),
         ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile.id, user)),
         ...this.assistantToAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile.id, user))
-      );
+      ).pipe(mapTo('permissions'));
     } else {
       if (this.permissionsFormEditState) {
         return this.userService
-          .createUserRolesRequest(this.profile._originalUserProfile, this.permissionsForm.value, this.data.role);
+          .createUserRolesRequest(this.profile._originalUserProfile, this.permissionsForm.value, this.data.role).pipe(mapTo('permissions'));
       }
       if (this.assistantForEditState) {
         return zip(
           ...this.assistantToRemove.map((user) => this.userService.deleteRepresentedUserRequest(this.profile, user)),
           ...this.assistantToAdd.map((user) => this.userService.addRepresentedUserRequest(this.profile, user))
-        );
+        ).pipe(mapTo(''));
       }
     }
     return of(null);
@@ -359,19 +367,7 @@ export class ViewProfileComponent implements OnInit {
   }
 
   back() {
-    // if (
-    //   this.permissionsFormEditState ||
-    //   this.assistantForEditState ||
-    //   // this.profileStatusInitial !== this.profileStatusActive ||
-    //   !isEqual(this.initialSelectedRoles, this.userRoles) ||
-    //   !isEqual(this.teacherRoomsInitialState, this.teacherRooms)
-    // ) {
-    //   // this.updateProfile().subscribe(() => {
-    //     this.close.emit(true);
-    //   // });
-    // } else {
-      this.close.emit(false);
-    // }
+    this.close.emit(false);
   }
 
   getIsPermissionOn(permission) {
@@ -392,10 +388,12 @@ export class ViewProfileComponent implements OnInit {
    SPC.afterClosed().pipe(filter(res => !!res)).subscribe((status) => {
      if (status === 'delete') {
        this.userService.deleteUserRequest(this.profile.id, this.data.role);
-       this.close.emit(false);
+       this.toast.openToast({title: 'Success', subtitle: 'Account deleted', type: 'error'});
+       this.back();
      } else {
        if (this.profileStatusInitial !== status) {
          this.userService.updateUserRequest(this.user, {status});
+         this.toast.openToast({title: 'Success', subtitle: 'Status updated', type: 'success'});
        }
      }
      this.profileStatusActive = status;
@@ -411,7 +409,12 @@ export class ViewProfileComponent implements OnInit {
   }
 
   save() {
-    this.updateProfile().subscribe(() => {
+    this.updateProfile().subscribe((action) => {
+      this.toast.openToast({
+        title: 'Success',
+        subtitle: 'Account updated',
+        type: 'success'
+      });
       this.close.emit(true);
     });
   }

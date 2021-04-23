@@ -17,7 +17,7 @@ export const assistantsInitialState: AssistantsStates = adapter.getInitialState(
 const reducer = createReducer(
   assistantsInitialState,
   on(assistantsActions.getAssistants,
-      assistantsActions.removeAssistant,
+      // assistantsActions.removeAssistant,
     // assistantsActions.getMoreAssistants,
       state => ({...state, loading: true, loaded: false })),
   on(assistantsActions.getAssistantsSuccess, (state, {assistants, next}) => {
