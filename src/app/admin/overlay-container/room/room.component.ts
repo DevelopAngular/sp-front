@@ -17,6 +17,7 @@ import {cloneDeep, isEqual, isNull, omit} from 'lodash';
 import {KeyboardShortcutsService} from '../../../services/keyboard-shortcuts.service';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
+import {ToastService} from '../../../services/toast.service';
 
 @Component({
   selector: 'app-room',
@@ -74,7 +75,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       public overlayService: OverlayDataService,
       private hallPassService: HallPassesService,
       private locationService: LocationsService,
-      private shortcuts: KeyboardShortcutsService
+      private shortcuts: KeyboardShortcutsService,
+      private toast: ToastService
   ) {
   }
 
@@ -309,6 +311,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       const pinnable = this.overlayService.pageState.getValue().data.pinnable;
       if (this.currentPage === Pages.EditRoom) {
         this.hallPassService.deletePinnableRequest(pinnable.id).subscribe(res => {
+          this.toast.openToast({title: 'Success', subtitle: 'Room deleted', type: 'error'});
           this.dialogRef.close();
         });
       } else if (this.currentPage === Pages.EditRoomInFolder) {

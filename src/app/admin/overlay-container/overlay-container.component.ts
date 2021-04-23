@@ -18,6 +18,7 @@ import {CreateFormService} from '../../create-hallpass-forms/create-form.service
 import {FolderData, OverlayDataService, Pages, RoomData} from './overlay-data.service';
 import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lodash';
 import {ColorProfile} from '../../models/ColorProfile';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-overlay-container',
@@ -99,6 +100,7 @@ export class OverlayContainerComponent implements OnInit {
       private formService: CreateFormService,
       public sanitizer: DomSanitizer,
       public overlayService: OverlayDataService,
+      private toast: ToastService
   ) {}
 
   getHeaderData() {
@@ -258,12 +260,6 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showIncompleteButton() {
-    // if (this.currentPage === Pages.BulkEditRooms) {
-    //   return this.roomValidButtons.getValue().incomplete;
-    // } else {
-    //   return (this.roomValidButtons.getValue().incomplete ||
-    //     !this.selectedIcon || !this.color_profile) && this.showCancelButton;
-    // }
     return false;
   }
 
@@ -640,7 +636,10 @@ export class OverlayContainerComponent implements OnInit {
                return this.hallPassService.postPinnableRequest(pinnable);
               })
            )
-         .subscribe(response => this.dialogRef.close(true));
+         .subscribe(response => {
+           this.toast.openToast({title: 'Success', subtitle: 'Room created', type: 'success'});
+           this.dialogRef.close(true);
+         });
     }
 
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
@@ -728,6 +727,7 @@ export class OverlayContainerComponent implements OnInit {
         })
       )
       .subscribe(() => {
+        this.toast.openToast({title: 'Success', subtitle: this.currentPage === Pages.NewFolder ? 'New folder created' : 'Folder updated', type: 'success'});
         this.dialogRef.close(true);
       });
     }
@@ -762,6 +762,7 @@ export class OverlayContainerComponent implements OnInit {
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
             })).subscribe(response => {
+              this.toast.openToast({title: 'Success', subtitle: 'Room updated', type: 'success'});
               this.dialogRef.close(true);
         });
     }
@@ -777,6 +778,7 @@ export class OverlayContainerComponent implements OnInit {
       });
 
       zip(...patchRequests$).subscribe(res => {
+        this.toast.openToast({title: 'Success', subtitle: 'Rooms updated', type: 'success'});
         this.dialogRef.close(true);
       });
     }
