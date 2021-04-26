@@ -28,14 +28,9 @@ export class CustomToastComponent implements OnInit, OnDestroy {
       this.data = data;
     });
     timer(2000).pipe(filter(() => this.cancelable && !this.data.showButton)).subscribe(() => {
-      // debugger;
-      // if (this.cancelable && !this.data.showButton) {
         this.toastService.closeToast();
       // }
     });
-    // setTimeout(() => {
-    //
-    // }, 2000);
   }
 
   ngOnDestroy() {

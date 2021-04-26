@@ -299,13 +299,7 @@ export class ViewProfileComponent implements OnInit {
       }
       zip(...this.userRoles.map(role => {
         return this.userService.addUserToProfileRequest(this.user, role.role.toLowerCase());
-      })).subscribe(() => {
-        this.toast.openToast({
-          title: 'Success',
-          subtitle: 'Account roles updated',
-          type: 'success'
-        });
-      });
+      })).subscribe();
     }
 
    if (this.permissionsFormEditState && this.assistantForEditState) {
@@ -393,7 +387,7 @@ export class ViewProfileComponent implements OnInit {
      } else {
        if (this.profileStatusInitial !== status) {
          this.userService.updateUserRequest(this.user, {status});
-         this.toast.openToast({title: 'Success', subtitle: 'Status updated', type: 'success'});
+         this.toast.openToast({title: 'Success', subtitle: 'Account status updated', type: 'success'});
        }
      }
      this.profileStatusActive = status;

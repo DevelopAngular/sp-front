@@ -8,7 +8,7 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {filter as _filter} from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
@@ -159,13 +159,6 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
 
       });
     }
-    this.http.errorToast$.asObservable()
-      .pipe(
-        filter(v => !!v)
-      )
-      .subscribe(() => {
-        this.pendingSubject.next(false);
-      });
 
     this.shortcuts.onPressKeyEvent$
       .pipe(
@@ -354,15 +347,17 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           }),
           catchError((err) => {
             if (err instanceof HttpErrorResponse) {
-              this.http.errorToast$.next({
-                header: 'Format Error',
-                message: err.error.errors[0]
-              });
+              this.toast.openToast({title: 'Format Error', subtitle: err.error.errors[0], type: 'error'});
+              // this.http.errorToast$.next({
+              //   header: 'Format Error',
+              //   message: err.error.errors[0]
+              // });
             } else if (err.message === 'Format Error') {
-              this.http.errorToast$.next({
-                header: 'Format Error',
-                message: 'User name should be at least 6 symbols length.'
-              });
+              this.toast.openToast({title: 'Format Error', subtitle: 'User name should be at least 6 symbols length.', type: 'error'});
+              // this.http.errorToast$.next({
+              //   header: 'Format Error',
+              //   message: 'User name should be at least 6 symbols length.'
+              // });
             }
             return throwError(err);
           })
@@ -370,8 +365,11 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         .subscribe((res) => {
           this.toast.openToast({
             title: 'Success',
-            subtitle: 'Account created',
-            type: 'success'
+            subtitle: 'New account added',
+            type: 'success',
+            showButton: true,
+            buttonText: 'Open profile',
+            action: 'open_profile'
           });
           this.pendingSubject.next(false);
           this.dialogRef.close(res);

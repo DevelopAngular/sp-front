@@ -5,5 +5,5 @@ export class Toast {
   icon?: string;
   action?: string;
   showButton?: boolean;
-  buttonText?: boolean;
+  buttonText?: string;
 }

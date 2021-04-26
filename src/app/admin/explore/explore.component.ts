@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, iif, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, iif, Observable, of, Subject} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
@@ -23,6 +23,7 @@ import {ToastService} from '../../services/toast.service';
 import {AdminService} from '../../services/admin.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {constructUrl} from '../../live-data/helpers';
+import {UserService} from '../../services/user.service';
 
 declare const window;
 
@@ -114,6 +115,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
   selectedRows: any[] = [];
   allData: any[] = [];
 
+  user$: Observable<User>;
+
   buttonForceTrigger$: Subject<any> = new Subject<any>();
 
   destroyPassClick = new Subject();
@@ -131,6 +134,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private adminService: AdminService,
     public xlsx: XlsxGeneratorService,
+    private userService: UserService
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -159,6 +163,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.user$ = this.userService.user$;
     this.passSearchState = {
       loading$: this.hallPassService.passesLoading$,
       loaded$: this.hallPassService.passesLoaded$,
@@ -604,11 +609,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   exportPasses() {
-    this.adminService.exportCsvPasses(this.queryParams).subscribe(res => {
+    this.adminService.exportCsvPasses(this.queryParams)
+      .pipe(switchMap(res => combineLatest(this.user$, this.passSearchState.countPasses$)))
+      .subscribe(([user, count]) => {
       this.toastService.openToast(
         {
-          title: 'Generating CSV...',
-          subtitle: 'When it’s ready (1-2min), we’ll send you a download link to your email.',
+          title: `${count} passes exporting...`,
+          subtitle: `In a few minutes, check your email (${user.primary_email}) for a link to download the CSV file.`,
           type: 'success',
           showButton: false
         }

@@ -196,9 +196,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
         this.toastService.openToast(
           {
             title: 'Demo Accounts Added',
-            subtitle: 'Download the account passwords now.',
+            subtitle: 'Please download the passwords so you can sign in to the demo accounts.',
             type: 'success',
             action: 'demo_accounts_down',
+            showButton: true,
+            buttonText: 'Download passwords'
           });
       });
   }

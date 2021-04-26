@@ -637,7 +637,7 @@ export class OverlayContainerComponent implements OnInit {
               })
            )
          .subscribe(response => {
-           this.toast.openToast({title: 'Success', subtitle: 'Room created', type: 'success'});
+           this.toast.openToast({title: 'Success', subtitle: 'New room added', type: 'success'});
            this.dialogRef.close(true);
          });
     }
@@ -727,7 +727,7 @@ export class OverlayContainerComponent implements OnInit {
         })
       )
       .subscribe(() => {
-        this.toast.openToast({title: 'Success', subtitle: this.currentPage === Pages.NewFolder ? 'New folder created' : 'Folder updated', type: 'success'});
+        this.toast.openToast({title: 'Success', subtitle: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
         this.dialogRef.close(true);
       });
     }

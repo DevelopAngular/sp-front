@@ -88,14 +88,14 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
       map(() => {
         this.toast.openToast({
           title: 'Success',
-          subtitle: 'Password Changed',
+          subtitle: 'Account password changed',
           type: 'success'
         });
       }),
       catchError(error => {
         if (error.error.errors.indexOf('password is incorrect') !== -1 || error.error.errors.indexOf('key `current_password` is required') !== -1) {
           this.errorMessage$.next('Current password is incorrect.');
-          this.http.errorToast$.next(null);
+          // this.http.errorToast$.next(null);
         }
         return of(null);
       })
