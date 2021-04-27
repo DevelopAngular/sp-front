@@ -12,7 +12,8 @@ export const adminsInitialState: AdminsState = adapter.getInitialState({
   loaded: false,
   nextRequest: null,
   lastAddedAdmins: [],
-  sortValue: ''
+  sortValue: '',
+  addedUser: null
 });
 
 const reducer = createReducer(
@@ -34,7 +35,7 @@ const reducer = createReducer(
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   }),
   on(adminsActions.postAdminSuccess, addUserToAdminProfileSuccess, (state, {admin}) => {
-    return adapter.addOne(admin, {...state, loading: false, loaded: true});
+    return adapter.addOne(admin, {...state, loading: false, loaded: true, addedUser: admin});
   }),
   on(adminsActions.getMoreAdminsSuccess, (state, {admins, next}) => {
     return adapter.addMany(admins, {...state, loading: false, loaded: true, nextRequest: next, lastAddedAdmins: admins});

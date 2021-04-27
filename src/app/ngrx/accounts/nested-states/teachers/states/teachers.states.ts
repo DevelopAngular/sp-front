@@ -7,5 +7,6 @@ export interface TeachersStates extends EntityState<User> {
   nextRequest: string;
   lastAddedTeachers: User[];
   sortValue: string;
+  addedUser: User;
 }
 

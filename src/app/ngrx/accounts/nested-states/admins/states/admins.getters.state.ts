@@ -33,6 +33,11 @@ export const getAdminSort = createSelector(
   (state: AdminsState) => state.sortValue
 );
 
+export const getAddedAdmin = createSelector(
+  getAdminsAccountsProfiles,
+  (state: AdminsState) => state.addedUser
+);
+
 export const getCountAdmins = adapter.getSelectors(getAdminsAccountsProfiles).selectTotal;
 export const getAdminsAccountsEntities = adapter.getSelectors(getAdminsAccountsProfiles).selectEntities;
 

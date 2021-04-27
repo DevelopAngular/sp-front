@@ -32,6 +32,7 @@ import {
   getNextRequestAllAccounts
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
+  getAddedAdmin,
   getAdminsAccountsEntities,
   getAdminsCollections,
   getAdminSort,
@@ -42,6 +43,7 @@ import {
   getNextRequestAdminsAccounts
 } from '../ngrx/accounts/nested-states/admins/states/admins.getters.state';
 import {
+  getAddedTeacher,
   getCountTeachers,
   getLastAddedTeachers,
   getLoadedTeachers,
@@ -52,6 +54,7 @@ import {
   getTeacherSort
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
+  getAddedAssistant,
   getAssistantsAccountsCollection,
   getAssistantsAccountsEntities,
   getAssistantSort,
@@ -62,6 +65,7 @@ import {
   getNextRequestAssistants
 } from '../ngrx/accounts/nested-states/assistants/states';
 import {
+  getAddedStudent,
   getCountStudents,
   getLastAddedStudents,
   getLoadedStudents,
@@ -167,6 +171,13 @@ export class UserService implements OnDestroy{
     _profile_teacher: this.store.select(getTeacherSort),
     _profile_student: this.store.select(getStudentSort),
     _profile_assistant: this.store.select(getAssistantSort)
+  };
+
+  addedAccount$ = {
+    _profile_admin: this.store.select(getAddedAdmin),
+    _profile_teacher: this.store.select(getAddedTeacher),
+    _profile_student: this.store.select(getAddedStudent),
+    _profile_assistant: this.store.select(getAddedAssistant)
   };
 
   user$: Observable<User> = this.store.select(getUserData);

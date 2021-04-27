@@ -3,7 +3,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -18,6 +18,7 @@ import {School} from '../../models/School';
 import {TableService} from '../sp-data-table/table.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {StorageService} from '../../services/storage.service';
+import {ToastService} from '../../services/toast.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -68,7 +69,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     private tableService: TableService,
     private sanitizer: DomSanitizer,
-    private storage: StorageService
+    private storage: StorageService,
+    private toast: ToastService
   ) {
 
   }
@@ -140,6 +142,21 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       .subscribe(value => {
       this.searchValue = value;
     });
+
+    this.toast.toastButtonClick$
+      .pipe(
+        filter((action) => action === 'open_profile'),
+        switchMap(action => this.userService.addedAccount$[this.role]),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(addedUser => {
+        this.toast.closeToast();
+        this.showProfileCard({
+          _originalUserProfile: addedUser,
+          'Last sign-in': 'Never signed in',
+          'Type': 'Standard'
+        });
+      });
 
   }
 
@@ -291,26 +308,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  // findProfileByRole(evt) {
-  //   this.tabVisibility = false;
-  //
-  //   setTimeout(() => {
-  //     if (evt instanceof Location) {
-  //       this.router.navigate(['admin/passconfig'], {
-  //         queryParams: {
-  //           locationId: evt.id,
-  //         }
-  //       });
-  //     } else {
-  //       this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
-  //     }
-  //   }, 250);
-  // }
-
   showProfileCard(evt) {
-    // if (this.role === '_profile_admin') {
-    //   this.profilePermissions['access_user_config'].disabled = evt.id === +this.user.id;
-    // }
     const profileTitle =
       this.role === '_profile_admin' ? 'administrator' :
         this.role === '_profile_teacher' ? 'teacher' :
