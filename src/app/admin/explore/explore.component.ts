@@ -614,7 +614,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       .subscribe(([user, count]) => {
       this.toastService.openToast(
         {
-          title: `${count} passes exporting...`,
+          title: `${this.numberWithCommas(count)} passes exporting...`,
           subtitle: `In a few minutes, check your email (${user.primary_email}) for a link to download the CSV file.`,
           type: 'success',
           showButton: false
