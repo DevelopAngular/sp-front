@@ -525,7 +525,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   setAnimationTrigger(value) {
     if (!this.showBackgroundOverlay) {
-      interval(50).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
+      interval(200).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
         this.domCheckerService.fadeInOutTrigger$.next(value);
       });
     }
@@ -541,7 +541,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   studentNameLeave(cell) {
     this.destroyOpen$.next();
     this.showBackgroundOverlay = false;
-    interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+    interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
       cell.isOpenTooltip = false;
     });
   }
