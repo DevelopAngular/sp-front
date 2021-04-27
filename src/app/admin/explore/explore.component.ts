@@ -265,6 +265,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
               Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
               Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
+              Object.defineProperty(rawObj, 'email', {enumerable: false, value: pass.student.primary_email});
 
               return rawObj;
             });
@@ -329,10 +330,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
               };
 
               Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
-              // Object.defineProperty(result, 'sortStudentName', { enumerable: false, value: contact.student.last_name});
               Object.defineProperty(result, 'date', {enumerable: false, value: moment(contact.initial_contact_date) });
-              // Object.defineProperty(result, 'sortDuration', {enumerable: false, value: duration });
-              // Object.defineProperty(result, '_data', {enumerable: false, value: result });
+
               return result;
             });
             this.allData = response;
@@ -651,12 +650,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
       if (row['Contact connection']) {
         const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
         row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
+      } else {
+        row['Email'] = row.email;
       }
       return omit(row, ['Pass', 'Passes']);
     });
     const fileName = this.currentView$.getValue() === 'pass_search' ?
       'SmartPass-PassSearch' : this.currentView$.getValue() === 'contact_trace' ?
         'SmartPass-ContactTracing' : 'TestCSV';
+
     this.xlsx.generate(exceptPass, fileName);
   }
 }
