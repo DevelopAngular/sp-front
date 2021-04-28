@@ -49,6 +49,8 @@ export class LocationCellComponent implements OnInit, OnDestroy {
 
   @Input() passLimit: PassLimit;
 
+  @Input() isSameRoom: boolean;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 

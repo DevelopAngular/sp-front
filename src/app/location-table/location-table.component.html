@@ -79,6 +79,7 @@
             [showStar]="!!showStars"
             [allowOnStar]="allowOnStar"
             [valid]="isValidLocation(choice.id)"
+            [isSameRoom]="getDisabledTooltip(choice)"
             matTooltipShowDelay="1000"
             [matTooltip]="getDisabledTooltip(choice) ? 'This is the origin' : null"
           >
@@ -119,8 +120,7 @@
             [value]="normalizeLocations(choice)"
             [type]="type"
             [valid]="isValidLocation(choice.id)"
-            matTooltipShowDelay="1000"
-            [matTooltip]="getDisabledTooltip(choice) ? 'This is the origin' : null"
+            [isSameRoom]="getDisabledTooltip(choice)"
           >
           </app-location-cell>
         </div>
