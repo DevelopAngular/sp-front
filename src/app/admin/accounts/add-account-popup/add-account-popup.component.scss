@@ -2,18 +2,20 @@
 
 .wrapper {
   background-color: #FFFFFF;
-  width: 244px;
+  //width: 244px;
   border-radius: 9px;
 
   .options {
-    margin: 6px 0;
+    margin: 10px 2px;
     border-radius: 9px;
     .option {
       display: flex;
-      padding: 14px;
+      padding: 12.5px;
+      border-radius: 7px;
       color: $blue-gray;
       cursor: pointer;
       height: 15px;
+      margin: 3px 0;
 
       &:hover {
         background-color: rgba(127, 135, 157, .1);
