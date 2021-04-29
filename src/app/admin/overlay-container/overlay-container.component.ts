@@ -878,7 +878,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   bulkEditResult({roomData, rooms, buttonState}) {
     const editingRooms = this.editRooms(roomData, rooms);
-    // editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.bulkEditData = {roomData, rooms: editingRooms};
     this.roomValidButtons.next(buttonState);
   }
