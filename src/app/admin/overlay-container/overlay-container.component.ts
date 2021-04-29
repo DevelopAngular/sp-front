@@ -1,10 +1,10 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap,} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap,} from 'rxjs/operators';
 
 import {NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -27,7 +27,7 @@ import {ToastService} from '../../services/toast.service';
   animations: [NextStep]
 
 })
-export class OverlayContainerComponent implements OnInit {
+export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   @ViewChild('block', { static: true }) block: ElementRef;
 
@@ -89,6 +89,8 @@ export class OverlayContainerComponent implements OnInit {
       future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
   };
   frameMotion$: BehaviorSubject<any>;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -349,19 +351,26 @@ export class OverlayContainerComponent implements OnInit {
         }),
         filter((rvb: ValidButtons): boolean => {
           return Object.values(rvb).every(v => !v);
-        })
+        }),
+        takeUntil(this.destroy$)
       )
       .subscribe(() => {
       this.dialogRef.close();
     });
 
-      fromEvent(this.block.nativeElement, 'scroll').subscribe((res: any) => {
+      fromEvent(this.block.nativeElement, 'scroll').pipe(takeUntil(this.destroy$))
+        .subscribe((res: any) => {
         if (res.target.offsetHeight + res.target.scrollTop >= res.target.scrollHeight) {
           this.showBottomShadow = false;
         } else {
           this.showBottomShadow = true;
         }
       });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   buildForm() {
@@ -634,7 +643,8 @@ export class OverlayContainerComponent implements OnInit {
                    location: loc.id,
                };
                return this.hallPassService.postPinnableRequest(pinnable);
-              })
+              }),
+             takeUntil(this.destroy$)
            )
          .subscribe(response => {
            this.toast.openToast({title: 'Success', subtitle: 'New room added', type: 'success'});
@@ -652,19 +662,16 @@ export class OverlayContainerComponent implements OnInit {
           category: this.folderData.folderName + salt
         };
         if (this.pinnable) {
-          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
+          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(takeUntil(this.destroy$))
             .subscribe(res => this.dialogRef.close(true));
         }
-        // else {
-        //   this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)).subscribe(res => this.dialogRef.close(true));
-        // }
       }
       if (this.folderData.roomsToDelete.length) {
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
           return this.locationService.deleteLocationRequest(room.id).pipe(filter(res => !!res));
         });
 
-        forkJoin(deleteRequest$).subscribe();
+        forkJoin(deleteRequest$).pipe(takeUntil(this.destroy$)).subscribe();
       }
       let locationsToDb$;
       const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || !room.category);
@@ -724,7 +731,8 @@ export class OverlayContainerComponent implements OnInit {
           } else {
             return of(null);
           }
-        })
+        }),
+        takeUntil(this.destroy$)
       )
       .subscribe(() => {
         this.toast.openToast({title: 'Success', subtitle: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
@@ -761,7 +769,7 @@ export class OverlayContainerComponent implements OnInit {
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
-            })).subscribe(response => {
+            })).pipe(takeUntil(this.destroy$)).subscribe(response => {
               this.toast.openToast({title: 'Success', subtitle: 'Room updated', type: 'success'});
               this.dialogRef.close(true);
         });
@@ -777,7 +785,7 @@ export class OverlayContainerComponent implements OnInit {
           filter(res => !!res));
       });
 
-      zip(...patchRequests$).subscribe(res => {
+      zip(...patchRequests$).pipe(takeUntil(this.destroy$)).subscribe(res => {
         this.toast.openToast({title: 'Success', subtitle: 'Rooms updated', type: 'success'});
         this.dialogRef.close(true);
       });
@@ -856,7 +864,6 @@ export class OverlayContainerComponent implements OnInit {
     this.oldFolderData = cloneDeep(this.folderData);
     this.folderData.roomsInFolder = differenceBy(this.folderData.roomsInFolder, rooms, 'id');
     const editingRooms = this.editRooms(roomData, rooms);
-    // editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.folderData.roomsInFolder = [...editingRooms, ...this.folderData.roomsInFolder];
     if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
       if (!!this.pinnable) {
@@ -923,24 +930,6 @@ export class OverlayContainerComponent implements OnInit {
     };
   }
 
-  // checkAllowedAdvOpt(rooms: Location[]) {
-  //   return rooms.map(room => {
-  //     if (!room.teachers.length) {
-  //       if ((room.request_mode === 'teacher_in_room' || room.request_mode === 'all_teachers_in_room') && (room.request_send_destination_teachers || room.request_send_origin_teachers)) {
-  //         room.request_mode = 'any_teacher';
-  //         room.request_send_destination_teachers = false;
-  //         room.request_send_origin_teachers = false;
-  //       }
-  //       if ((room.scheduling_request_mode === 'teacher_in_room' || room.scheduling_request_mode === 'all_teachers_in_room') && (room.scheduling_request_send_destination_teachers || room.scheduling_request_send_origin_teachers)) {
-  //         room.scheduling_request_mode = 'any_teacher';
-  //         room.scheduling_request_send_destination_teachers = false;
-  //         room.scheduling_request_send_origin_teachers = false;
-  //       }
-  //     }
-  //     return room;
-  //   });
-  // }
-
   generateRandomString() {
     let random: string = '';
     const characters = 'qwertyu';
@@ -956,7 +945,6 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   setToEditRoom(_room) {
-    // this.formService.setFrameMotionDirection('forward');
     setTimeout(() => {
       this.overlayService.changePage(Pages.EditRoomInFolder, 1, {
         selectedRoomsInFolder: [_room]
