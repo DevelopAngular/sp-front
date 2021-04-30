@@ -109,7 +109,7 @@ export class PermissionsDialogComponent implements OnInit {
       });
 
       zip(...requests$).subscribe(() => {
-        this.toast.openToast({title: 'Success', subtitle: 'Accounts permissions updated', type: 'success'});
+        this.toast.openToast({title: 'Accounts permissions updated', type: 'success'});
         this.dialogRef.close(true);
       });
     }

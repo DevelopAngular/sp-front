@@ -364,8 +364,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         )
         .subscribe((res) => {
           this.toast.openToast({
-            title: 'Success',
-            subtitle: 'New account added',
+            title: 'New account added',
             type: 'success',
             showButton: true,
             buttonText: 'Open profile',

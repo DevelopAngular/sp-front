@@ -7,7 +7,7 @@
       (closeEvent)="errorToastTrigger.next(null)"
     ></app-error-toast>
   </div>
-  <div *ngIf="customToastOpen$ | async">
+  <div class="toast" *ngIf="customToastOpen$ | async">
     <app-custom-toast></app-custom-toast>
   </div>
 

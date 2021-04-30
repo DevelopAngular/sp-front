@@ -311,7 +311,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       const pinnable = this.overlayService.pageState.getValue().data.pinnable;
       if (this.currentPage === Pages.EditRoom) {
         this.hallPassService.deletePinnableRequest(pinnable.id).subscribe(res => {
-          this.toast.openToast({title: 'Success', subtitle: 'Room deleted', type: 'error'});
+          this.toast.openToast({title: 'Room deleted', type: 'error'});
           this.dialogRef.close();
         });
       } else if (this.currentPage === Pages.EditRoomInFolder) {

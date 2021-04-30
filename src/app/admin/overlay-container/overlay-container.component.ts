@@ -647,7 +647,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
              takeUntil(this.destroy$)
            )
          .subscribe(response => {
-           this.toast.openToast({title: 'Success', subtitle: 'New room added', type: 'success'});
+           this.toast.openToast({title: 'New room added', type: 'success'});
            this.dialogRef.close(true);
          });
     }
@@ -735,7 +735,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(() => {
-        this.toast.openToast({title: 'Success', subtitle: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
+        this.toast.openToast({title: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
         this.dialogRef.close(true);
       });
     }
@@ -770,7 +770,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
             })).pipe(takeUntil(this.destroy$)).subscribe(response => {
-              this.toast.openToast({title: 'Success', subtitle: 'Room updated', type: 'success'});
+              this.toast.openToast({title: 'Room updated', type: 'success'});
               this.dialogRef.close(true);
         });
     }
@@ -786,7 +786,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       });
 
       zip(...patchRequests$).pipe(takeUntil(this.destroy$)).subscribe(res => {
-        this.toast.openToast({title: 'Success', subtitle: 'Rooms updated', type: 'success'});
+        this.toast.openToast({title: 'Rooms updated', type: 'success'});
         this.dialogRef.close(true);
       });
     }

@@ -99,12 +99,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
     }
 
 
-    this.polingService.listen('admin.user_sync.sync_start').pipe(takeUntil(this.destroy$))
+    this.polingService.listen('admin.user_sync.sync_start')
+      .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
       this.adminService.syncLoading();
     });
 
-    this.polingService.listen('admin.user_sync.sync_end').pipe(takeUntil(this.destroy$))
+    this.polingService.listen('admin.user_sync.sync_end')
+      .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
       this.adminService.updateCleverInfo(res.data);
     });

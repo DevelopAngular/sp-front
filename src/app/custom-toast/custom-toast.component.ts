@@ -3,11 +3,13 @@ import {Observable, of, Subject, timer} from 'rxjs';
 import {delay, filter, takeUntil} from 'rxjs/operators';
 import {ToastService} from '../services/toast.service';
 import {Toast} from '../models/Toast';
+import {toastSlideInOut} from '../animations';
 
 @Component({
   selector: 'app-custom-toast',
   templateUrl: './custom-toast.component.html',
-  styleUrls: ['./custom-toast.component.scss']
+  styleUrls: ['./custom-toast.component.scss'],
+  animations: [toastSlideInOut]
 })
 export class CustomToastComponent implements OnInit, OnDestroy {
 
@@ -28,8 +30,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
       this.data = data;
     });
     timer(2000).pipe(filter(() => this.cancelable && !this.data.showButton)).subscribe(() => {
-        this.toastService.closeToast();
-      // }
+        this.close();
     });
   }
 
@@ -38,8 +39,10 @@ export class CustomToastComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  close(evt: Event) {
-    evt.stopPropagation();
+  close(evt?: Event) {
+    if (evt) {
+      evt.stopPropagation();
+    }
     this.toggleToast = false;
     of(null).pipe(
       delay(500)
@@ -69,7 +72,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   leave() {
     if (!this.data.showButton) {
       this.cancelable = true;
-      this.toastService.closeToast();
+      this.close();
     }
   }
 }

@@ -382,14 +382,15 @@ export class ViewProfileComponent implements OnInit {
    SPC.afterClosed().pipe(filter(res => !!res)).subscribe((status) => {
      if (status === 'delete') {
        this.userService.deleteUserRequest(this.profile.id, this.data.role);
-       this.toast.openToast({title: 'Success', subtitle: 'Account deleted', type: 'error'});
+       this.toast.openToast({title: 'Account deleted', type: 'error'});
        this.back();
      } else {
        if (this.profileStatusInitial !== status) {
          this.userService.updateUserRequest(this.user, {status});
-         this.toast.openToast({title: 'Success', subtitle: 'Account status updated', type: 'success'});
+         this.toast.openToast({title: 'Account status updated', type: 'success'});
        }
      }
+     this.profileStatusInitial = status;
      this.profileStatusActive = status;
    });
   }

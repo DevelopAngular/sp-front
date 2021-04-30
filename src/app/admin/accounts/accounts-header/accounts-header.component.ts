@@ -239,9 +239,9 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         })
       ).subscribe(res => {
         if (res === 'delete') {
-          this.toast.openToast({title: 'Success', subtitle: `${this.selectedUsers.length} account${this.selectedUsers.length > 1 ? 's' : ''} deleted`, type: 'error'});
+          this.toast.openToast({title: `${this.selectedUsers.length} account${this.selectedUsers.length > 1 ? 's' : ''} deleted`, type: 'error'});
         } else {
-          this.toast.openToast({title: 'Success', subtitle: `${this.selectedUsers.length} account statuses updated`, type: 'success'});
+          this.toast.openToast({title: `${this.selectedUsers.length} account statuses updated`, type: 'success'});
         }
       this.selectedUsers = [];
       this.tableService.clearSelectedUsers.next();

@@ -1,8 +1,8 @@
 <div class="toast-container"
-     [ngStyle]="{'opacity': toggleToast ? '1' : '0'}"
 >
+  <div class="backdrop" *ngIf="data.hasBackdrop"></div>
   <div class="content-wrapper"
-       [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}"
+       [@toastSlideInOut]="toggleToast ? 'open' : 'close'"
        (mouseover)="over()"
        (mouseleave)="leave()"
   >
@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="close-btn" *ngIf="data.showButton" (click)="close($event)">
+      <div class="close-btn" (click)="close($event)">
         <img [src]="'./assets/Close.svg' | resolveAsset" alt="Cancel (Blue-Gray).svg">
       </div>
     </div>

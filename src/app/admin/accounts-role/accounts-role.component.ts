@@ -146,7 +146,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.toast.toastButtonClick$
       .pipe(
         filter((action) => action === 'open_profile'),
-        switchMap(action => this.userService.addedAccount$[this.role]),
+        switchMap(action => {
+          return this.userService.addedAccount$[this.role].pipe(take(1));
+        }),
         takeUntil(this.destroy$)
       )
       .subscribe(addedUser => {

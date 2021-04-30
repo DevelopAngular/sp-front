@@ -329,7 +329,7 @@ export class FolderComponent implements OnInit, OnDestroy {
         }
 
         zip(...deletions).subscribe(res => {
-          this.toast.openToast({title: 'Success', subtitle: 'Folder deleted', type: 'error'});
+          this.toast.openToast({title: 'Folder deleted', type: 'error'});
           this.dialogRef.close();
         });
       });
