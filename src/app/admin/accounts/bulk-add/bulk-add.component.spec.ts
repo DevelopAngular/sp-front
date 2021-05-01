@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { BulkAddComponent } from './bulk-add.component';
+import {BulkAddComponent} from './bulk-add.component';
 
 describe('BulkAddComponent', () => {
   let component: BulkAddComponent;

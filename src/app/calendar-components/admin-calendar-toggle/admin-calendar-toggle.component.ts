@@ -12,6 +12,7 @@ export class AdminCalendarToggleComponent implements OnInit {
   @ViewChild('elem') elem: ElementRef;
   @ViewChild('day') day: ElementRef;
   @ViewChild('dayButton') dayButton: ElementRef;
+  @ViewChild('rangeButton') rangeButton: ElementRef;
   @ViewChild('container', { static: true }) set content(content: ElementRef) {
     if (content) {
       setTimeout(() => {
@@ -172,6 +173,9 @@ export class AdminCalendarToggleComponent implements OnInit {
       this.openCalendar = true;
       this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
       // this.selectedDate = { start: null, end: null };
+      setTimeout(() => {
+        this.rangeButton.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+      }, 100);
         return false;
     } else if (id === 'range_5') {
       this.selectedDate.end = this.currentDate;
@@ -188,7 +192,6 @@ export class AdminCalendarToggleComponent implements OnInit {
           this.settingsRes.emit({toggleResult: this.toggleResult, dayOptId: id});
           this.cdr.detectChanges();
           setTimeout(() => {
-
             this.dayButton.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
           }, 100);
       }

@@ -1,0 +1,48 @@
+<div class="wrapper">
+  <div class="background" [style.background]="gradient" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+  <img appCrossPointerEventTarget (pointerClickEvent)="back.emit()" class="back-button" width="28" [src]="'./assets/Back Button (White).svg'" alt="Back">
+
+  <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+    <div class="integrations" style="z-index: 10">
+<!--      <div *ngFor="let icon of integrations">-->
+<!--        <img width="62" [src]="icon | resolveAsset" alt="int">-->
+<!--      </div>-->
+      <img width="340" height="72" [src]="'./assets/integrations/Group 12@4x.png'" alt="">
+    </div>
+    <div class="header">Sync your accounts from your SIS with {{ integrationName }}</div>
+    <div class="info-list">
+      <div class="info">
+        <img width="24" height="24" [src]="'./assets/Check (White).svg' | resolveAsset">
+        <div class="title">
+          {{ isClever ? 'Sign in with Clever badges, Microsoft ADFS, Google SSO, LDAP and more.' :
+          'Automatically syncs new and updated accounts every 4 hours.' }}
+        </div>
+      </div>
+      <div class="info" style="margin-top: 13px">
+        <img width="24" height="24" [src]="'./assets/Check (White).svg' | resolveAsset">
+        <div class="title">
+          {{ isClever ? 'Easy to setup for schools that already use Clever' :
+          'Student grade-level, profile picture support, and more…'}}
+        </div>
+      </div>
+      <div class="info" style="margin-top: 13px" *ngIf="isClever">
+        <img width="24" height="24" [src]="'./assets/Check (White).svg' | resolveAsset">
+        <div class="title">Recommended if schools need a more robust sync or don't use Google</div>
+      </div>
+    </div>
+  </div>
+<!--  <mat-divider class="divider" [style.border-top-color]="'#D8D8D8'"></mat-divider>-->
+
+  <div class="footer" [style.margin-top]="isClever ? '15px' : '25px'">
+    <app-gradient-button
+      [gradient]="'#FFFFFF, #FFFFFF'"
+      [size]="'medium'"
+      [textColor]="isClever ? '#4274F6' : '#484CE6'"
+      (buttonClick)="nextPage.emit()"
+    >Continue
+    </app-gradient-button>
+    <div class="link" *ngIf="!isClever">
+      <a style="text-decoration: none; color: #FFFFFF; outline: none" [href]="integrationName === 'GG4L' ? 'https://www.smartpass.app/gg4l-setup' : 'https://www.smartpass.app/clever-setup'" target="_blank">What if my school doesn’t use {{ integrationName }}?</a>
+    </div>
+  </div>
+</div>

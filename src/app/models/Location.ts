@@ -1,5 +1,5 @@
-import { BaseModel } from './base';
-import { User } from './User';
+import {BaseModel} from './base';
+import {User} from './User';
 
 export class Location extends BaseModel {
   constructor(public id: string,

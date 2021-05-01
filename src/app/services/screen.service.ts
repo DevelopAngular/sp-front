@@ -1,6 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {DeviceDetection} from '../device-detection.helper';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {Util} from '../../Util';
+import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +11,10 @@ import {BehaviorSubject} from 'rxjs';
 export class ScreenService {
 
   enabledLocationTableDnD: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  customBackdropEvent$: Subject<boolean> = new Subject<boolean>();
+  customBackdropStyle$: Subject<any> = new Subject<any>();
 
-  constructor() { }
+  constructor(private dialog: MatDialog) { }
 
   private extraSmallDeviceBreakPoint = 320;
   private smallDevicesBreakPoint = 375;
@@ -75,5 +80,37 @@ export class ScreenService {
 
   public createCustomBreakPoint(breakPoint: number) {
     return breakPoint > this.windowWidth || breakPoint >= this.windowWidth ;
+  }
+
+  openBigPassCard(isOpenBigPass, pass, layout) {
+    if (!isOpenBigPass) {
+      this.customBackdropEvent$.next(true);
+      const solidColor = Util.convertHex(pass.color_profile.solid_color, 70);
+      setTimeout(() => {
+        this.customBackdropStyle$.next({
+          'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
+        });
+      }, 50);
+      const bigPassCard = this.dialog.open(BigStudentPassCardComponent, {
+        id: 'bigPass',
+        panelClass: 'main-form-dialog-container',
+        data: {
+          pass,
+          isActive: true,
+          forInput: false,
+          passLayout: layout
+        }
+      });
+    } else {
+      this.closeDialog();
+    }
+  }
+
+  closeDialog() {
+    if (this.dialog.getDialogById('bigPass')) {
+      this.customBackdropEvent$.next(!!this.dialog.getDialogById('startNotification'));
+      this.customBackdropStyle$.next(null);
+      this.dialog.getDialogById('bigPass').close();
+    }
   }
 }

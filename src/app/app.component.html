@@ -20,6 +20,7 @@
   <div class="router-outlet">
     <router-outlet></router-outlet>
   </div>
+  <div class="notification-backdrop" *ngIf="hasCustomBackdrop$ | async" [ngStyle]="customBackdropStyle$ | async"></div>
 </div>
 
 <div #dialogContainer [@.disabled]="true"></div>

@@ -5,6 +5,7 @@ import {School} from '../models/School';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-dropdown',
@@ -14,8 +15,10 @@ import {RepresentedUser} from '../navbar/navbar.component';
 export class DropdownComponent implements OnInit {
   options: HTMLElement;
   @ViewChild('optionsWrapper') set content(content: ElementRef<HTMLElement>) {
-    this.options = content.nativeElement;
-    this.options.scrollTop = this.scrollPosition;
+    if (content) {
+      this.options = content.nativeElement;
+      this.options.scrollTop = this.scrollPosition;
+    }
   }
 
   @ViewChildren('schoolList') schoolList: QueryList<School>;
@@ -35,6 +38,8 @@ export class DropdownComponent implements OnInit {
   findElement: ElementRef;
   sortData: any[];
   selectedSort: any;
+  optionsMaxHeight: string;
+  mainHeader: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -55,6 +60,12 @@ export class DropdownComponent implements OnInit {
     this.scrollPosition = data['scrollPosition'];
     this.sortData = data['sortData'];
     this.selectedSort = data['selectedSort'] || '';
+    this.optionsMaxHeight = data['maxHeight'] || '282px';
+    this.mainHeader = this.data['mainHeader'];
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   ngOnInit() {
@@ -62,7 +73,7 @@ export class DropdownComponent implements OnInit {
     const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.width = !!this.sortData ? '250px' : '300px';
     // matDialogConfig.height = this.teachers ? '180px' : '215px';
-    matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
+    matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) - (this.isMobile && this.sortData ? 100 : 0)  }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
     this._matDialogRef.backdropClick().subscribe(() => {

@@ -1,3 +1,4 @@
+
 window.waitForAppLoaded = function(force = false) {
 
   var urlBLackList = [
@@ -39,7 +40,7 @@ window.waitForAppLoaded = function(force = false) {
 
   var arrowRef = document.querySelector('#arrow');
   var preloaderVisibility = false;
-  var percentDisplay = document.querySelector('.percent-display');
+  let arrow_mobile = document.querySelector('#arrow-mobile');
 
   var timerId;
 
@@ -50,12 +51,19 @@ window.waitForAppLoaded = function(force = false) {
     preloaderRef.classList.add('preloader-container__dark');
   }
 
+  if (/android/i.test(navigator.userAgent) || /iPhone/.test(navigator.userAgent)) {
+    preloaderSvg.style.display = 'none';
+    arrow_mobile.style.display = 'block';
+    // rr.setAttribute('width', '96px');
+    preloaderRef.classList.add('preloader-container__mobile');
+  }
+
 
   timerId = setInterval(function() {
-    if (window.safari) {
-      var filterShadowRef = document.getElementById('filterShadowRef');
-          filterShadowRef.setAttribute('filter', `url(${window.location.href}#dropshadow)`);
-    }
+    // if (window.safari) {
+    //   var filterShadowRef = document.getElementById('filterShadowRef');
+    //       filterShadowRef.setAttribute('filter', `url(${window.location.href}#dropshadow)`);
+    // }
     if (preloaderSvg && window.preloader.visibility) {
       window.preloader.opacity = 1;
       preloaderVisibility = true;
@@ -69,15 +77,15 @@ window.waitForAppLoaded = function(force = false) {
           window.preloader.percent = 99;
         }
         window.preloader.n -= 2;
-        percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
+        // percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
         preloaderSvg.style.strokeDashoffset = window.preloader.n;
       }
     } else {
       window.preloader.n = 0;
       window.preloader.percent = 100;
       preloaderSvg.style.strokeDashoffset = window.preloader.n;
-      percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
-      arrowRef.style.fill = '#04CD33';
+      // percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
+      arrowRef.style.fill = '#00B476';
 
       setTimeout(function() {
         preloaderRef.style.opacity = '0';
@@ -87,7 +95,7 @@ window.waitForAppLoaded = function(force = false) {
         window.preloader.percent = 0;
         window.preloader.opacity = 0;
         window.preloader.inProgress = false;
-        arrowRef.style.fill = '#7F879D';
+        // arrowRef.style.fill = '#7F879D';
         preloaderRef.style.display = 'none';
       }, 1500);
       setInterval(function () {

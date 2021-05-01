@@ -20,7 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
 import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
-import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {exhaustMap, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 
 import {DataService} from '../services/data-service';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -277,25 +277,25 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       this.isInboxClicked = res;
     });
 
-    this.userService.userData
+    this.userService.user$
       .pipe(
-        this.loadingService.watchFirst,
+        filter(user => !!user),
         takeUntil(this.destroyer$)
       )
       .subscribe(user => {
-        this._zone.run(() => {
-          this.user = user;
-          this.isStaff = user.isTeacher();
-          this.isAssistant = user.isAssistant();
-          this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
-        });
+          this.user = User.fromJSON(user);
+          this.isStaff = this.user.isTeacher();
+          this.isAssistant = this.user.isAssistant();
+          this.showSwitchButton = [this.user.isAdmin(), this.user.isTeacher(), this.user.isStudent()].filter(val => !!val).length > 1;
       });
 
-    this.userService.effectiveUser
+    this.http.globalReload$
       .pipe(
-        this.loadingService.watchFirst,
+        switchMap(() => {
+          return this.userService.effectiveUser;
+        }),
         takeUntil(this.destroyer$),
-        switchMap((eu: RepresentedUser) => {
+        exhaustMap((eu: RepresentedUser) => {
           if (eu) {
               this.effectiveUser = eu;
               this.buttons.forEach((button) => {
@@ -321,16 +321,13 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       });
 
-    this.userService.representedUsers
-      .pipe(
-        this.loadingService.watchFirst
-      )
-      .subscribe((ru: RepresentedUser[]) => {
-        this.representedUsers = ru;
-      });
+   this.userService.representedUsers.subscribe(res => {
+     this.representedUsers = res;
+   });
 
     this.userService.userData
       .pipe(
+        takeUntil(this.destroyer$),
         filter(user => !user.isAssistant())
       )
       .subscribe(user => {
@@ -448,7 +445,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   buttonVisibility(button) {
-    return this.hasRoles(button.requiredRoles) && !button.hidden;
+    return !!button && this.hasRoles(button.requiredRoles) && !button.hidden;
   }
 
   showOptions(event) {
@@ -488,15 +485,16 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
       data: {
-        'trigger': target,
-        'teachers': this.representedUsers,
-        'selectedTeacher': this.effectiveUser,
-        'user': this.user
-      }
-    });
-    representedUsersDialog.afterClosed().subscribe((v: RepresentedUser) => {
+        trigger: target.currentTarget,
+        heading: 'You can create and manage passes for this teacher.',
+        teachers: this.representedUsers.length > 1 ? this.representedUsers : null,
+        selectedTeacher: this.effectiveUser,
+        mainHeader: `Hi, ${this.user.display_name}`
+
+      }});
+    representedUsersDialog.afterClosed().pipe(filter(res => !!res)).subscribe((v: RepresentedUser) => {
       if (v) {
-        this.userService.effectiveUser.next(v);
+        this.userService.updateEffectiveUser(v);
         this.http.effectiveUserId.next(+v.user.id);
       }
     });

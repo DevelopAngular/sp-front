@@ -19,7 +19,7 @@ const reducer = createReducer(
   teachersInitialState,
   on(teachersActions.getTeachers,
     teachersActions.removeTeacher,
-    teachersActions.getMoreTeachers,
+    // teachersActions.getMoreTeachers,
     (state) => ({...state, loading: true, loaded: false})),
   on(teachersActions.getTeachersSuccess, (state, {teachers, next}) => {
     return adapter.addAll(teachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: []});
@@ -30,6 +30,7 @@ const reducer = createReducer(
   on(teachersActions.updateTeacherActivitySuccess,
     teachersActions.updateTeacherPermissionsSuccess,
     teachersActions.updateTeacherAccount,
+    teachersActions.updateTeacherLocationsSuccess,
     (state, {profile}) => {
     return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
   }),

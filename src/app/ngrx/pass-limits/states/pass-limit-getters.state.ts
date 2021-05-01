@@ -1,5 +1,5 @@
-import { AppState } from '../../app-state/app-state';
-import { adapter } from '../reducers';
+import {AppState} from '../../app-state/app-state';
+import {adapter} from '../reducers';
 
 export const getPassLimitState = (state: AppState) => state.pass_limits;
 

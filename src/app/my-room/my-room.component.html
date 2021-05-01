@@ -15,6 +15,7 @@
           [fieldIconPosition]="'left'"
           [closeIcon]="true"
           [selectReset$]="resetValue"
+          (blurEvent)="isSearchBarClicked = false"
           [pending$]="searchPending$"
           (ontextupdate)="onSearch($event)"
         ></app-round-input>
@@ -89,6 +90,7 @@
               [fieldIconPosition]="'left'"
               [closeIcon]="true"
               [pending$]="searchPending$"
+              [isSearch]="true"
               (ontextupdate)="onSearch($event)"
             ></app-round-input>
           </div>
@@ -152,6 +154,7 @@
             [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
             [icon]="'./assets/SP Arrow Reverse (Navy).svg'"
             [columns]="4"
+            [filterModel]="'passes-from-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
           >
           </app-pass-collection>
@@ -162,6 +165,7 @@
             [title]="'Passes to ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
             [icon]="'./assets/SP Arrow (Navy).svg'"
             [columns]="4"
+            [filterModel]="'passes-to-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
           >
           </app-pass-collection>

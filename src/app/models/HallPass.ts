@@ -1,7 +1,7 @@
-import { BaseModel } from './base';
-import { ColorProfile } from './ColorProfile';
-import { Location } from './Location';
-import { User } from './User';
+import {BaseModel} from './base';
+import {ColorProfile} from './ColorProfile';
+import {Location} from './Location';
+import {User} from './User';
 
 export class HallPass extends BaseModel {
   constructor(public id: string,

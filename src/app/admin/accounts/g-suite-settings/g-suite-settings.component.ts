@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Optional, Output} from '@angular/core';
 import {AdminService} from '../../../services/admin.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
 import {NextStep} from '../../../animations';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-g-suite-settings',
@@ -13,6 +14,8 @@ import {NextStep} from '../../../animations';
 })
 export class GSuiteSettingsComponent implements OnInit {
 
+  @Output() backEvent: EventEmitter<any> = new EventEmitter<any>();
+
   gSuiteInfo$: Observable<GSuiteOrgs>;
   isEditMode: boolean;
 
@@ -20,7 +23,9 @@ export class GSuiteSettingsComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    @Optional() public dialogRef: MatDialogRef<GSuiteSettingsComponent>,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit() {

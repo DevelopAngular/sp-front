@@ -12,9 +12,8 @@ import {GradientButtonComponent} from '../gradient-button/gradient-button.compon
 import {MoovingTilesComponent} from '../mooving-tiles/mooving-tiles.component';
 import {NoAccountComponent} from '../no-account/no-account.component';
 import {CheckUserInputDirective} from './directives/check-user-input.directive';
-import {SupportOptionsComponent} from '../support-options/support-options.component';
+import {SupportOptionsComponent} from '../support/support-options/support-options.component';
 import {ToolTipRendererDirective} from './directives/tool-tip-renderer.directive';
-import {PassClickDirective} from './directives/pass-click.directive';
 import {SwipeEventDirective} from './directives/swipe-event.directive';
 
 @NgModule({
@@ -32,7 +31,6 @@ import {SwipeEventDirective} from './directives/swipe-event.directive';
     CheckUserInputDirective,
     SupportOptionsComponent,
     ToolTipRendererDirective,
-    PassClickDirective,
     SwipeEventDirective
   ],
   imports: [

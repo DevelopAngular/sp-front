@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {HttpService} from '../../../services/http-service';
 import * as schoolsActions from '../actions';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, switchMap} from 'rxjs/operators';
 import {School} from '../../../models/School';
 import {of} from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
@@ -12,6 +12,7 @@ import {GoogleLoginService} from '../../../services/google-login.service';
 import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
+import {CleverInfo} from '../../../models/CleverInfo';
 
 declare const window;
 
@@ -21,7 +22,7 @@ export class SchoolsEffects {
   getSchools$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(schoolsActions.getSchools),
-      concatMap(action => {
+      exhaustMap(action => {
         return this.http.getSchools()
           .pipe(
             map((schools: School[]) => {
@@ -62,15 +63,15 @@ export class SchoolsEffects {
     return this.actions$
       .pipe(
         ofType(schoolsActions.getSchoolsFailure),
-        map((action: any) => {
+        switchMap((action: any) => {
           window.appLoaded();
           this.loginService.loginErrorMessage$.next(action.errorMessage);
-          this.http.clearInternal();
           this.loginService.clearInternal(true);
+          this.http.clearInternal();
           this.http.setSchool(null);
           this.userService.clearUser();
           this.userService.userData.next(null);
-          return schoolsActions.errorToastSuccess();
+          return [schoolsActions.errorToastSuccess(), schoolsActions.clearSchools()];
         })
       );
   });
@@ -176,6 +177,22 @@ export class SchoolsEffects {
             }
           };
           return schoolsActions.updateGSuiteInfoSelectorsSuccess({selectors});
+        })
+      );
+  });
+
+  getSchoolCleverInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.getCleverInfo),
+        switchMap((action: any) => {
+          return this.adminService.getCleverInfo()
+            .pipe(
+              map((cleverInfo: CleverInfo) => {
+                return schoolsActions.getCleverInfoSuccess({cleverInfo});
+              }),
+              catchError(error => of(schoolsActions.getCleverInfoFailure({errorMessage: error.message})))
+            );
         })
       );
   });

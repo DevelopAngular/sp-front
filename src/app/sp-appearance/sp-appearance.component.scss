@@ -40,12 +40,15 @@
         align-items: center;
       }
 
+      .page-layout-wrapper {
+        position: relative;
+      }
+
       .page-layout {
         width: 100%;
         margin-top: 48px;
         display: flex;
         justify-content: space-between;
-
         .header {
           .header-title {
             color: $navy;
@@ -67,7 +70,24 @@
           font-weight: normal;
           margin-top: 10px;
         }
+
+        &.page-position {
+          position: absolute;
+          z-index: 2;
+        }
       }
+      .layout-wrapper {
+        position: absolute;
+        background-color: #F7F7F7;
+        top: 36px;
+        z-index: 1;
+        height: 70px;
+        bottom: 0;
+        right: -14px;
+        left: -19px;
+        border-radius: 6px;
+      }
+
     }
   }
 

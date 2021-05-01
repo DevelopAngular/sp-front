@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as assistantsActions from '../actions';
-import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
@@ -14,7 +14,7 @@ export class AssistantsEffects {
     return this.actions$
       .pipe(
         ofType(assistantsActions.getAssistants),
-        concatMap((action: any) => {
+        exhaustMap((action: any) => {
           return this.userService.getUsersList(action.role, action.search, action.limit)
             .pipe(
               switchMap((userlist: any) => {

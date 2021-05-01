@@ -1,0 +1,193 @@
+@import '../../sp-colors';
+
+
+.host {
+}
+.student-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background-color: #FFFFFF;
+  border-radius: 13px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+
+  &:hover {
+    .open {
+      background-color: #F4F4F4;
+      border-radius: 50%;
+    }
+  }
+
+  //&.openAnimation {
+  //  animation: fadeIn .4s forwards;
+  //}
+  //
+  //&.out {
+  //  animation: fadeOut .4s forwards;
+  //}
+
+
+  .header-container {
+    position: fixed;
+    width: 335px;
+    z-index: 21;
+    border-radius: 13px 13px 0 0;
+    overflow: hidden;
+    .header {
+      background-color: #FFFFFF;
+      z-index: 20;
+      padding: 15px 0;
+      .profile-info {
+        display: flex;
+        align-items: center;
+        transition: padding .2s ease-in;
+        .profile-image {
+          border-radius: 50%;
+          margin-right: 12px;
+          overflow: hidden;
+        }
+        .title {
+          transition: height .5s ease-in;
+          position: relative;
+          display: flex;
+          align-items: center;
+          width: 200px;
+          height: 50px;
+          .full-name {
+            color: $navy;
+            font-size: 22px;
+            font-weight: bold;
+            position: absolute;
+            top: 0;
+          }
+          .email {
+            color: $blue-gray;
+            font-size: 14px;
+            margin-top: 6px;
+            position: absolute;
+            bottom: 0;
+          }
+        }
+      }
+
+    }
+  }
+
+  .open {
+    right: 14px;
+    top: 16px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+  }
+  .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    padding: 0 17px;
+    margin-top: 90px;
+    background-color: #FFFFFF;
+
+    .student-info {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+  }
+
+  .collection-wrapper {
+    background-color: #FBFEFF;
+    overflow: auto;
+    border-radius: 13px;
+
+    .collection {
+      padding: 17px;
+
+      .title {
+        display: flex;
+        align-items: center;
+        color: $navy;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .passes {
+        display: grid;
+        grid-gap: 10px;
+        margin-top: 15px;
+        grid-template-columns: repeat(auto-fill, 144px);
+
+        .fake-pass {
+          width: 143px;
+          height: 86.5px;
+          border-radius: 12.75px;
+          background-color: #F4F4F4;
+        }
+      }
+
+      .emptyState {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .empty-title {
+          font-size: 17px;
+          color: $blue-gray;
+        }
+      }
+    }
+  }
+}
+
+.animate {
+  animation : shimmer 3s infinite linear;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 143px 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -143px 0;
+  }
+  100% {
+    background-position: 143px 0;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(5%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(5%);
+  }
+}

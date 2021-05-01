@@ -27,9 +27,25 @@ import {
   getPassesNextUrl,
   getPassesTotalCount,
   getSortPassesLoading,
-  getSortPassesValue
+  getSortPassesValue,
+  getTotalPasses
 } from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
+import {PollingService} from './polling-service';
+import {getPassFilter, updatePassFilter} from '../ngrx/pass-filters/actions';
+import {getFiltersData, getFiltersDataLoading} from '../ngrx/pass-filters/states';
+import {PassFilters} from '../models/PassFilters';
+import {Invitation} from '../models/Invitation';
+import {getInvitationsCollection} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
+import {filterExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/actions';
+import {getLastAddedExpiredPasses} from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
+import {getPreviewPasses} from '../ngrx/quick-preview-passes/actions';
+import {
+  getQuickPreviewPassesCollection,
+  getQuickPreviewPassesLoaded,
+  getQuickPreviewPassesLoading,
+  getQuickPreviewPassesStats
+} from '../ngrx/quick-preview-passes/states';
 
 @Injectable({
   providedIn: 'root'
@@ -50,15 +66,33 @@ export class HallPassesService {
   sortPassesLoading$: Observable<boolean> = this.store.select(getSortPassesLoading);
   sortPassesValue$: Observable<string> = this.store.select(getSortPassesValue);
   currentPassesCount$: Observable<number> = this.store.select(getPassesTotalCount);
+  currentCountPassesInPage$: Observable<number> = this.store.select(getTotalPasses);
+
+  passFilters$: Observable<{[model: string]: PassFilters}> = this.store.select(getFiltersData);
+  passFiltersLoading$: Observable<boolean> = this.store.select(getFiltersDataLoading);
 
   passesNextUrl$: Observable<string> = this.store.select(getPassesNextUrl);
+
+  expiredPassesNextUrl$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  lastAddedExpiredPasses$: Observable<HallPass[]> = this.store.select(getLastAddedExpiredPasses);
+
+  invitations$: Observable<Invitation[]> = this.store.select(getInvitationsCollection);
+
+  quickPreviewPasses$: Observable<HallPass[]> = this.store.select(getQuickPreviewPassesCollection);
+  quickPreviewPassesStats$: Observable<any> = this.store.select(getQuickPreviewPassesStats);
+  quickPreviewPassesLoading$: Observable<boolean> = this.store.select(getQuickPreviewPassesLoading);
+  quickPreviewPassesLoaded$: Observable<boolean> = this.store.select(getQuickPreviewPassesLoaded);
 
   currentPinnable$: Observable<Pinnable>;
   passStats$;
 
   isOpenPassModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  constructor(private http: HttpService, private store: Store<AppState>) {
+  constructor(
+    private http: HttpService,
+    private store: Store<AppState>,
+    private pollingService: PollingService
+  ) {
     this.pinnables$ = this.store.select(getPinnableCollection);
     this.loadedPinnables$ = this.store.select(getIsLoadedPinnables);
     this.isLoadingPinnables$ = this.store.select(getIsLoadingPinnables);
@@ -187,5 +221,46 @@ export class HallPassesService {
   sortHallPasses(queryParams) {
     return this.http.get(constructUrl('v1/hall_passes', queryParams));
   }
+
+  startPushNotification() {
+    return this.http.post('v1/users/@me/test_push_message', new Date());
+  }
+
+  watchPassStart() {
+    return this.pollingService.listen('message.alert');
+  }
+
+  watchEndPass() {
+    return this.pollingService.listen('hall_pass.end');
+  }
+
+  getFiltersRequest(model: string) {
+    this.store.dispatch(getPassFilter({model}));
+  }
+
+  getFilters(model: string) {
+    return this.http.get(`v1/filters/${model}`);
+  }
+
+  updateFilterRequest(model, value) {
+    this.store.dispatch(updatePassFilter({model, value}));
+  }
+
+  updateFilter(model: string, value: string) {
+    return this.http.patch(`v1/filters/${model}`, {default_time_filter: value});
+  }
+
+  filterExpiredPassesRequest(user, timeFilter) {
+    this.store.dispatch(filterExpiredPasses({user, timeFilter}));
+  }
+
+  getQuickPreviewPassesRequest(userId, pastPasses) {
+    this.store.dispatch(getPreviewPasses({userId, pastPasses}));
+  }
+
+  getQuickPreviewPasses(userId, pastPasses) {
+    return this.http.get(`v1/users/${userId}/hall_pass_stats?recent_past_passes=${pastPasses}&limit=50`);
+  }
+
 }
 

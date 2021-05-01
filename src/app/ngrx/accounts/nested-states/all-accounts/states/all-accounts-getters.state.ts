@@ -1,4 +1,4 @@
-import { adapter } from '../reducers';
+import {adapter} from '../reducers';
 import {getAccountsState, IAccountsState} from '../../../states';
 import {createSelector} from '@ngrx/store';
 import {AllAccountsState} from './all-accounts.state';

@@ -13,7 +13,9 @@
           "options": {
             "customWebpackConfig": {
               "path": "./extra-webpack.config.js",
-              "mergeStrategies": { "externals": "replace" }
+              "mergeStrategies": {
+                "externals": "replace"
+              }
             },
             "allowedCommonJsDependencies": [
               "lodash",
@@ -37,7 +39,7 @@
               "src/assets",
               "src/preloader.js",
               "src/firebase-messaging-sw.js",
-              "src/assets/manifest.json"
+              "src/manifest.json"
             ],
             "styles": [
               "src/styles.scss",
@@ -83,7 +85,7 @@
                 }
               ],
               "serviceWorker": true,
-              "ngswConfigPath": "./src/ngsw-config.json"
+              "ngswConfigPath": "src/ngsw-config.json"
             },
             "production": {
               "optimization": true,
@@ -102,7 +104,7 @@
                 }
               ],
               "serviceWorker": true,
-              "ngswConfigPath": "./src/ngsw-config.json"
+              "ngswConfigPath": "src/ngsw-config.json"
             }
           }
         },
@@ -149,7 +151,7 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/assets/manifest.json"
+              "src/manifest.json"
             ]
           }
         },
@@ -202,5 +204,8 @@
     "@schematics/angular:directive": {
       "prefix": "app"
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

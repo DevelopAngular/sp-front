@@ -16,6 +16,7 @@ import {HttpService} from '../../services/http-service';
 export class ChangePasswordComponent implements OnInit, OnDestroy {
 
   @Input() user: User;
+  me: User;
 
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
   @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
@@ -24,7 +25,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   form: FormGroup;
   showOldPasswordInput: boolean;
   errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-  me: User;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -35,8 +35,12 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     private http: HttpService
     ) { }
 
-  get isAdmin() {
-    return this.user && this.user.roles.includes('_profile_admin') && this.router.url.includes('/admin');
+  // get isAdmin() {
+  //   return this.user && this.user.roles.includes('_profile_admin') && this.router.url.includes('/admin');
+  // }
+
+  get isSelf() {
+    return this.me.id === this.user.id;
   }
 
   get isSaveButton() {
@@ -54,7 +58,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
         this.me = user;
     });
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    this.showOldPasswordInput = !this.router.url.includes('/admin') || this.user.id === this.me.id;
+    this.showOldPasswordInput = this.isSelf;
     this.form = new FormGroup({
       oldPassword: new FormControl('', [Validators.required]),
       newPassword: new FormControl('', [
@@ -74,7 +78,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
   updateUserPassword() {
     iif(
-      () => this.isAdmin,
+      () => !this.isSelf,
       this.userService.updateUser(this.user.id, {password: this.form.get('newPassword').value}),
       this.userService.updateUser(this.user.id, {
         password: this.form.get('newPassword').value,

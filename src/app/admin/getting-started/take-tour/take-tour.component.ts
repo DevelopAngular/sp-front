@@ -3,8 +3,6 @@ import {Router} from '@angular/router';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {GettingStartedProgressService} from '../../getting-started-progress.service';
-import {filter, map, switchMap, take} from 'rxjs/operators';
-import {of} from 'rxjs';
 
 declare const window;
 

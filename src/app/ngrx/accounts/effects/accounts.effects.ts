@@ -68,8 +68,10 @@ export class AccountsEffects {
           if (action.role === '' || action.role === '_all') {
             return accountsActions.postSelectedAccounts(props);
           } else if (action.role === '_profile_admin') {
+            props = {...props, behalf: action.behalf};
             return roleActions.postAdmin(props);
           } else if (action.role === '_profile_teacher') {
+            props = {...props, behalf: action.behalf};
             return roleActions.postTeacher(props);
           } else if (action.role === '_profile_student') {
             return roleActions.postStudent(props);
@@ -274,9 +276,8 @@ export class AccountsEffects {
            return this.userService.sortTableHeader(queryParams)
              .pipe(
                map(({next, results}) => {
-                 const nextUrl = limit === results.length ? null : next;
                  const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
-                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next: nextUrl, sortValue});
+                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next, sortValue});
                }),
                catchError(error => of(accountsActions.sortAccountsFailure({errorMessage: error.message})))
              );

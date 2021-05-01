@@ -1,8 +1,26 @@
 <div class="wrapper">
   <div class="spinner-container" [style.right]="showPrintButtons ? '45px' : 0" *ngIf="loading$ | async">
-    <div class="loading-theme_blue-gray spinner ds-flex-center-center">
-      <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
+    <div class="sceleton-container">
+      <div class="sceleton-item" *ngFor="let item of generateFakeItems(); first as isFirst; last as isLast">
+        <div class="sceleton-item-container" [style.height]="itemSize + 'px'">
+          <div class="sceleton-item-checkbox">
+            <mat-checkbox [style.color]="'#7f879d'"></mat-checkbox>
+          </div>
+          <div class="sceleton-item-content" [style.height]="itemSize + 'px'">
+            <div class="first-col" *ngIf="currentPage === 'pass_search'" [style.width]="currentPage === 'pass_search' ? '80px' : 'auto'">
+              <div class="pass-icon animate" [style.background]="'#F4F4F4'"></div>
+            </div>
+            <div class="columns">
+              <div class="fake-sceleton animate"></div>
+            </div>
+          </div>
+        </div>
+        <mat-divider *ngIf="!isLast" [style.color]="'#7f879d'"></mat-divider>
+      </div>
     </div>
+<!--    <div class="loading-theme_blue-gray spinner ds-flex-center-center">-->
+<!--      <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>-->
+<!--    </div>-->
   </div>
   <div class="empty-state" *ngIf="showEmptyState">
     <div class="empty-content">
@@ -17,17 +35,17 @@
         <ng-container matColumnDef="select" *ngIf="isCheckbox | async" sticky>
           <th mat-header-cell *matHeaderCellDef style="padding: 0 15px;">
             <mat-checkbox (change)="$event ? masterToggle() : null"
-                          [checked]="selection.hasValue() && isAllSelected()"
-                          [style.color]="selection.hasValue() ? '#1F195E' : '#7F879D'"
-                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          [checked]="selectedHasValue() && isAllSelected()"
+                          [style.color]="selectedHasValue() ? '#1F195E' : '#7F879D'"
+                          [indeterminate]="selectedHasValue() && !isAllSelected()"
                           [aria-label]="checkboxLabel()">
             </mat-checkbox>
           </th>
           <td mat-cell *matCellDef="let row" style="padding: 0 15px;" (click)="$event.stopPropagation(); select(row)">
             <mat-checkbox (click)="$event.stopPropagation();"
                           (change)="$event ? select(row) : null"
-                          [checked]="selection.isSelected(row)"
-                          [style.color]="selection.isSelected(row) ? '#1F195E' : '#7F879D'"
+                          [checked]="isSelected(row)"
+                          [style.color]="isSelected(row) ? '#1F195E' : '#7F879D'"
                           [aria-label]="checkboxLabel(row)">
             </mat-checkbox>
           </td>
@@ -36,7 +54,7 @@
         <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns; last as isLast; first as isFirst" [sticky]="isFirst">
           <ng-container *ngIf="column !== 'Pass' && column !== 'Passes'; else passNoSort">
             <th
-              [style.border-right]="!isLast ? '1px solid #7E879D' : 'none'"
+              [style.border-right]="'0.5pt solid #B0B4C0'"
               style="cursor: pointer"
               [style.background-color]="sort && sort === 'asc' && sortColumn === column || sort && sort === 'desc' && sortColumn === column ? '#e5e6eb' : '#D3D6DE'"
               mat-header-cell
@@ -49,8 +67,8 @@
               </div>
               <ng-template #sortIcon>
                 <div class="sort-icon" [style.right]="!showPrintButtons && isLast ? '55px' : '25px'">
-                  <mat-icon class="icon" [ngStyle]="{'color': sort && sort === 'asc' && sortColumn === column ? '#666D81' : '#7F879D'}">arrow_drop_up</mat-icon>
-                  <mat-icon class="icon" [ngStyle]="{'color': sort && sort === 'desc' && sortColumn === column ? '#666D81' : '#7F879D'}">arrow_drop_down</mat-icon>
+                  <mat-icon class="icon" [ngStyle]="{'color': sort && sort === 'asc' && sortColumn === column ? '#666D81' : '#B1B6C3'}">arrow_drop_up</mat-icon>
+                  <mat-icon class="icon" [ngStyle]="{'color': sort && sort === 'desc' && sortColumn === column ? '#666D81' : '#B1B6C3'}">arrow_drop_down</mat-icon>
                 </div>
               </ng-template>
             </th>
@@ -66,28 +84,28 @@
             </th>
           </ng-template>
 
-          <td
-            mat-cell
-            [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
-            [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
-            *matCellDef="let element"
-            [innerHTML]="element[column]"
-          ></td>
+            <td
+              mat-cell
+              [ngClass]="{'fake-container': !element[column]}"
+              [style.opacity]="!element[column] && !isLast ? 0 : 1"
+              [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
+              [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
+              *matCellDef="let element"
+              [innerHTML]="element[column] ? element[column] : fakeTemplate">
+            </td>
+
+
         </ng-container>
 
         <tr class="header" mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
-
-        <!-- cdkVirtualScrollViewport uses transform: translateY to correct for all elements that are removed.
-        We will use a plcaholder row in the table instead because the translate causes problems with the sticky header -->
-        <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>
 
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
             #rowCont
             (mouseenter)="rowCont.hover = true"
             (mouseleave)="rowCont.hover = false"
-            [style.background-color]="selection.isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick ? '#F1F2F4' : '#FFFFFF'"
-            [style.cursor]="isRowClick ? 'pointer' : 'default'"
-            appCrossPointerEventTarget (pointerClickEvent)="isRowClick ? rowOnClick(row) : null">
+            [style.background-color]="isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick && !row.isFake ? '#F1F2F4' : '#FFFFFF'"
+            [style.cursor]="isRowClick && !row.isFake ? 'pointer' : 'default'"
+            appCrossPointerEventTarget (pointerClickEvent)="isRowClick && !row.isFake ? rowOnClick(row) : null">
         </tr>
       </table>
     </cdk-virtual-scroll-viewport>
@@ -99,13 +117,15 @@
           <mat-spinner [diameter]="25" [color]="'primary'"></mat-spinner>
         </div>
         <ng-template #image>
-          <img width="20" [src]="'./assets/' + option.icon + ' ('+ (selection.selected.length && !isFirst ? 'Navy' : 'Blue-Gray') +').svg' | resolveAsset">
+          <img width="20" [src]="'./assets/' + option.icon + ' ('+ (!isFirst ? 'Navy' : 'Blue-Gray') +').svg' | resolveAsset">
         </ng-template>
       </div>
     </div>
   </div>
   <div class="column-button" *ngIf="!showPrintButtons" appCrossPointerEventTarget (pointerClickEvent)="openOption('column', $event)">
-    <img width="20" [src]="'./assets/Columns (Blue-Gray).svg'" alt="Columns">
+    <div class="button-content">
+      <img width="20" [src]="'./assets/Columns (Blue-Gray).svg'" alt="Columns">
+    </div>
   </div>
 
 </div>

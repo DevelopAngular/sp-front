@@ -1,17 +1,16 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject ,  Observable, Subject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
-import { HttpService } from './http-service';
-import { PassLike } from '../models/index';
-import { Invitation } from '../models/Invitation';
-import { Location } from '../models/Location';
-import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { PollingService } from './polling-service';
-import { UserService } from './user.service';
-import { HallPass } from '../models/HallPass';
+import {HttpService} from './http-service';
+import {PassLike} from '../models/index';
+import {Invitation} from '../models/Invitation';
+import {Location} from '../models/Location';
+import {Request} from '../models/Request';
+import {User} from '../models/User';
+import {PollingService} from './polling-service';
+import {UserService} from './user.service';
+import {HallPass} from '../models/HallPass';
 import {StorageService} from './storage.service';
-import {NavbarDataService} from '../main/navbar-data.service';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
@@ -44,13 +43,18 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
   }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DataService {
   private inboxSource: BehaviorSubject<boolean>;
   public sort$ = new BehaviorSubject<string>(null);
   inboxState;
 
   currentUser = this.userService.userData.asObservable();
+
+  receivedRequests: any;
+  sentRequests: any;
 
   currentPassesForCalendar$ = new Subject();
   private updateInvitations = new BehaviorSubject<void>(null);
@@ -64,13 +68,7 @@ export class DataService {
       private http: HttpService,
       private polling: PollingService,
       private storage: StorageService,
-  )
-  {
-    this.polling.listen('pass_invitation')
-      .subscribe((pollingEvent) => {
-        // this.updateInvitations.next(null);
-        // console.log('[Invitation Poll]', pollingEvent);
-      });
+  ) {
       let test = this.storage.getItem('showInbox');
           test = JSON.parse(test);
       if (typeof test === 'boolean') {
@@ -79,6 +77,11 @@ export class DataService {
           this.inboxSource = new BehaviorSubject<boolean>(true);
       }
       this.inboxState = this.inboxSource.asObservable();
+
+      this.polling.listen('error').subscribe((data) => {
+        console.error('WebSocket error message ==>>>', data);
+        this.http.refreshAuthContext();
+      });
   }
 
   openRequestPageMobile() {

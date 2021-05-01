@@ -9,8 +9,9 @@
             [forStaff]="isStaff"
             [forFuture]="true"
             [isActive]="false"
-            [passProvider]="isStaff?receivedRequests:sentRequests"
-            [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+            [passProvider]="isStaff ? receivedRequests : sentRequests"
+            [title]="isStaff ? 'Received':'Sent'"
+            [icon]="'./assets/' + (isStaff ? 'Received' : 'Lock') + ' (Navy).svg'"
             [columns]="2"
           ></app-pass-collection>
         </div>
@@ -19,8 +20,8 @@
             [forStaff]="isStaff"
             [forFuture]="true"
             [isActive]="false"
-            [passProvider]="isStaff?sentRequests:receivedRequests"
-            [title]="isStaff?'Sent':'Received'"
+            [passProvider]="isStaff ? sentRequests : receivedRequests"
+            [title]="isStaff ? 'Sent' : 'Received'"
             [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
             [columns]="2"
           ></app-pass-collection>
@@ -43,6 +44,7 @@
   <div
       class="passes-wrapper passes-mobile-height"
       [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'"
+      [style.touch-action]="'auto'"
       *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
       [@PassesSlideTopBottom]
       [style.padding-bottom]="isSmartphone ? '50px' : '0px'"
@@ -50,7 +52,8 @@
       [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' "
       #scrollableArea
       (scroll)="scroll($event)"
-      (swiperight)="openSettings(true)"
+      appSwipeEvent
+      (swipeRight)="openSettings(true)"
     >
       <div class="main-page-left">
         <div class="current-pass" [style.margin-bottom]="'15px'">
@@ -74,7 +77,7 @@
             </app-display-card>
           </ng-template>
         </div>
-        <div *ngIf="!(passesHaveItems | async) && (passesLoaded | async) && (showEmptyState | async)" class="empty-container">
+        <div *ngIf="(showEmptyState | async) && isEmptyPassFilter" class="empty-container">
           <img class="empty-passes-svg" [src]="'./assets/emptyStates/emptyPasses.svg' | resolveAsset" alt="empty-svg">
           <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Jump Right In</div>
           <div class="text ds-empty-text-info">The hallway will never be the same</div>
@@ -107,7 +110,7 @@
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
           ></app-pass-collection>
         </div>
-        <div class="past-passes pass-collection">
+        <div class="past-passes pass-collection" *ngIf="(user$ | async)?.show_expired_passes || !isStaff">
           <app-pass-collection
             [maxHeight]="'100%'"
             [fromPast]="true"
@@ -119,6 +122,11 @@
             [icon]="'./assets/Expired (Navy).svg'"
             [columns]="3"
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
+            [filterModel]="'past-passes'"
+            [showEmptyHeader]="!isEmptyPassFilter"
+            [hasFilterPasses]="true"
+            [selectedSort]="expiredPassesSelectedSort$ | async"
+            (filterPasses)="prepareFilter($event, 'expired-passes')"
           ></app-pass-collection>
         </div>
       </div>
@@ -131,9 +139,9 @@
                 [forFuture]="true"
                 [isActive]="false"
                 [style.width]="'262px'"
-                [passProvider]="isStaff?receivedRequests:sentRequests"
-                [title]="isStaff?'Received':'Sent'"
-                [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+                [passProvider]="isStaff ? receivedRequests : sentRequests"
+                [title]="isStaff ? 'Received' : 'Sent'"
+                [icon]="'./assets/' +( isStaff ? 'Received' : 'Lock' ) +' (Navy).svg'"
                 [columns]="2"
               ></app-pass-collection>
             </div>
@@ -152,7 +160,10 @@
 
 
 
-<div class="passes-wrapper" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'" [style.overflow]="isStaff ? 'auto' : 'visible'" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)" #scrollableArea>
+<div class="passes-wrapper"
+     (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'"
+     [style.overflow]="isStaff ? 'auto' : 'visible'"
+     *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)">
   <h1 class="passes-heading">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">
@@ -177,7 +188,7 @@
         </app-display-card>
       </ng-template>
     </div>
-    <div *ngIf="(showEmptyState | async)" class="empty-container">
+    <div *ngIf="(showEmptyState | async) && isEmptyPassFilter" class="empty-container">
       <img class="empty-passes-svg" [src]="'./assets/emptyStates/emptyPasses.svg' | resolveAsset" alt="empty-svg">
       <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Jump Right In</div>
       <div class="text ds-empty-text-info">The hallway will never be the same</div>
@@ -206,7 +217,7 @@
         [columns]="3"
       ></app-pass-collection>
     </div>
-    <div class="past-passes pass-collection">
+    <div class="past-passes pass-collection" *ngIf="(user$ | async)?.show_expired_passes || !isStaff">
       <app-pass-collection
         [maxHeight]="'100%'"
         [fromPast]="true"
@@ -216,6 +227,11 @@
         [title]="'Expired Passes'"
         [icon]="'./assets/Expired (Navy).svg'"
         [columns]="3"
+        [filterModel]="'past-passes'"
+        [showEmptyHeader]="!isEmptyPassFilter"
+        [hasFilterPasses]="true"
+        [selectedSort]="expiredPassesSelectedSort$ | async"
+        (filterPasses)="prepareFilter($event, 'expired-passes')"
       ></app-pass-collection>
     </div>
   </div>
@@ -225,30 +241,29 @@
         <div class="requests-or-invitations">
           <app-notification-turn-on-btn></app-notification-turn-on-btn>
           <app-pass-collection
-                  [forStaff]="isStaff"
-                  [forFuture]="true"
-                  [isActive]="false"
-                  [style.width]="'301px'"
-                  [passProvider]="isStaff?receivedRequests:sentRequests"
-                  [title]="isStaff?'Received':'Sent'"
-                  [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
-                  [columns]="2"
-                  (passClick)="passClick($event)"
+            [forStaff]="isStaff"
+            [forFuture]="true"
+            [isActive]="false"
+            [style.width]="'301px'"
+            [passProvider]="isStaff?receivedRequests:sentRequests"
+            [title]="isStaff ? 'Received' : 'Sent'"
+            [icon]="'./assets/' +( isStaff ? 'Received' : 'Lock' ) +' (Navy).svg'"
+            [columns]="2"
           ></app-pass-collection>
         </div>
         <div class="requests-or-invitations">
           <app-pass-collection
-                  [forStaff]="isStaff"
-                  [forFuture]="true"
-                  [isActive]="false"
-                  [style.width]="'301px'"
-                  [passProvider]="isStaff?sentRequests:receivedRequests"
-                  [title]="isStaff?'Sent':'Received'"
-                  [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
-                  [columns]="2"
+            [forStaff]="isStaff"
+            [forFuture]="true"
+            [isActive]="false"
+            [style.width]="'301px'"
+            [passProvider]="isStaff?sentRequests:receivedRequests"
+            [title]="isStaff ? 'Sent' : 'Received'"
+            [icon]="'./assets/' +( isStaff ? 'Lock' : 'Received' ) +' (Navy).svg'"
+            [columns]="2"
           ></app-pass-collection>
         </div>
-        <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+        <div *ngIf="!(inboxHasItems | async)" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
           <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
           <div class="text ds-empty-text-info">No pass requests sent or received</div>

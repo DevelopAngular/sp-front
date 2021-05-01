@@ -11,7 +11,7 @@ export class FormsService {
   }
 
   getUrl(address): string {
-    return `https://smartpass.app/api/staging/${address}`;
+    return `https://smartpass.app/api/prod-us-central/${address}`;
   }
 
   saveQuoteRequest(name, position, email, phone, schools) {

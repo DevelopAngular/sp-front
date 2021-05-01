@@ -1,31 +1,31 @@
-
-<div class="invitation-card-wrapper" [style.background-image]="gradient" [style.height]="forStaff ? '451px' : '412px'" ondragstart="return false">
-  <div class="pass-card-header">
-    <div class="header-content">
-      <div class="header-info">
-        <img  class="pass-card-header-icon" [src]="invitation.icon | resolveAsset">
-        <div class="pass-card-header-text">
-          {{ invitation.destination.title }}
-          <div class="card-subtitle" *ngIf="fromPast || forFuture">
-            {{ formatDateTime(invitation.date_choices[0]) }}
+<div class="invitation-container">
+  <div class="invitation-card-wrapper" [@scalePassCards]="scaleCardTrigger$ | async" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff ? (isModal ? '400px': '451px') : '412px'" ondragstart="return false">
+    <div class="pass-card-header">
+      <div class="header-content">
+        <div class="header-info">
+          <img  class="pass-card-header-icon" [src]="invitation.icon | resolveAsset">
+          <div class="pass-card-header-text">
+            {{ invitation.destination.title }}
+            <div class="card-subtitle" *ngIf="fromPast || forFuture">
+              {{ formatDateTime(invitation.date_choices[0]) }}
+            </div>
           </div>
         </div>
+        <app-icon-button [srcString]="'./assets/' +(forStaff && !invalidDate ? (forInput?'Chevron Left': 'Delete') :'Dots') +' (Transparent).svg'" [size]="20" [onDarkShade]="true" (clickEvent)="denyInvitation($event)"></app-icon-button>
       </div>
-      <app-icon-button [srcString]="'./assets/' +(forStaff && !invalidDate ? (forInput?'Chevron Left': 'Delete') :'Dots') +' (Transparent).svg'" [size]="20" [onDarkShade]="true" (clickEvent)="denyInvitation($event)"></app-icon-button>
+      <mat-divider></mat-divider>
     </div>
-    <mat-divider></mat-divider>
-  </div>
 
-  <div class="invitation-card-content" *ngIf="!isModal">
-    <div class="duration-picker">
-      <app-traveltype-picker *ngIf="forStaff && forInput" [width]="(invitation.destination.travel_types.length < 2 ? '96px' : '145px')" [height]="'28px'" (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>
-      <app-duration-picker *ngIf="forStaff && forInput" [forStaff]="forStaff" [plural]="durationPlural" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
-    </div>
-    <div class="button" *ngIf="forStaff">
+    <div class="invitation-card-content" *ngIf="!isModal">
+      <div class="duration-picker">
+        <app-traveltype-picker *ngIf="forStaff && forInput" [width]="(invitation.destination.travel_types.length < 2 ? '96px' : '145px')" [height]="'28px'" (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>
+        <app-duration-picker *ngIf="forStaff && forInput" [forStaff]="forStaff" [plural]="durationPlural" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
+      </div>
+      <div class="button" *ngIf="forStaff">
         <div *ngIf="forInput">
           <app-card-button (onClick)="newInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
             <div class="button-content">
-              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
               <div *ngIf="!performingAction" class="button-content-text">
                 {{ 'Send Pass Request' + (selectedStudents.length > 1 ? 's' : '') }}
               </div>
@@ -34,11 +34,11 @@
           </app-card-button>
         </div>
       </div>
-  </div>
+    </div>
 
-  <div class="invitation-card-content-modal" *ngIf="isModal">
+    <div class="invitation-card-content-modal" *ngIf="isModal">
 
-    <div *ngIf="!forStaff" class="student-view">
+      <div *ngIf="!forStaff" class="student-view">
 
       <div class="center-block" [class.center]="invalidDate">
 
@@ -55,23 +55,23 @@
             <div class="page-2-wrapper">
               <div class="message" [style.height]="(forInput?'70px':'164px')">
                 <span [style.font-weight]="'bold'">{{ 'Message from ' + issuerName }}</span><br>
-                {{ invitation.issuer_message ? invitation.issuer_message : 'No Message' }}
+                <span style="user-select: text">{{ invitation.issuer_message ? invitation.issuer_message : 'No Message' }}</span>
               </div>
             </div>
           </div>
         </app-pager>
 
-        <app-card-button *ngIf="!forInput && !forStaff && invalidDate" (onClick)="changeDate()" [width]="'297px'" [height]="'81px'" [gradientColor]="invitation.color_profile.gradient_color">
-          <div class="resend-button-content">
-            <div class="resend-button-content-title">Change Date & Time</div>
-            <div class="resend-button-content-subtitle">Resend Pass Request to Teacher</div>
-          </div>
-        </app-card-button>
-      </div>
+          <app-card-button *ngIf="!forInput && !forStaff && invalidDate" (onClick)="changeDate()" [width]="'297px'" [height]="'81px'" [gradientColor]="invitation.color_profile.gradient_color">
+            <div class="resend-button-content">
+              <div class="resend-button-content-title">Change Date & Time</div>
+              <div class="resend-button-content-subtitle">Resend Pass Request to Teacher</div>
+            </div>
+          </app-card-button>
+        </div>
 
       <mat-divider *ngIf="false"></mat-divider>
 
-      <div class="bottom-block">
+        <div class="bottom-block">
 
         <div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">
           <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
@@ -117,7 +117,7 @@
               <div class="page-2-wrapper" style="display: flex; justify-content: center">
                 <div class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
-                  {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
+                  <span style="user-select: text">{{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}</span>
                 </div>
               </div>
             </div>
@@ -137,7 +137,7 @@
               <div class="page-2-wrapper" style="display: flex; justify-content: center">
                 <div class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{ 'Your message:' }}</span><br>
-                  {{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}
+                  <span style="user-select: text">{{ invitation.issuer_message ? invitation.issuer_message : 'No message' }}</span>
                 </div>
               </div>
             </div>
@@ -145,43 +145,40 @@
         </ng-template>
       </div>
 
-      <mat-divider></mat-divider>
+        <mat-divider></mat-divider>
 
-      <div class="bottom-block">
-        <app-pager *ngIf="invitation.status !== 'pending'; else pending" [page]="2">
-          <div class="page-1" [attr.data-motion-translate]="true">
-            <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
-          </div>
-          <div class="page-2" [attr.data-motion-translate]="true">
-            <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
-          </div>
+        <div class="bottom-block">
+          <app-pager *ngIf="invitation.status !== 'pending'; else pending" [page]="2">
+            <div class="page-1" [attr.data-motion-translate]="true">
+              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
+            </div>
+            <div class="page-2" [attr.data-motion-translate]="true">
+              <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
+            </div>
 
-          <div class="page-5" [attr.data-motion-translate]="true">
-            <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
-          </div>
-          <div class="page-6" [attr.data-motion-translate]="true">
-            <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
-          </div>
-        </app-pager>
-        <ng-template #pending>
-          <div>
-            <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
-          </div>
-        </ng-template>
+            <div class="page-5" [attr.data-motion-translate]="true">
+              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
+            </div>
+            <div class="page-6" [attr.data-motion-translate]="true">
+              <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
+            </div>
+          </app-pager>
+          <ng-template #pending>
+            <div>
+              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
+            </div>
+          </ng-template>
+        </div>
       </div>
     </div>
+
+      <div class="invitation-card-footer" *ngIf="forStaff && !isModal">
+        <div class="student-footer"></div>
+        <div class="student-text"> {{ studentText }} </div>
+      </div>
   </div>
 
-  <div class="invitation-card-footer" *ngIf="forStaff">
-    <div class="student-footer"></div>
-    <div class="student-text"> {{ studentText }} </div>
+  <div class="student-footer-info" *ngIf="forStaff && isModal">
+    <app-student-passes [pass]="invitation" [profile]="invitation.student"></app-student-passes>
   </div>
 </div>
-
-<app-consent-menu-mobile
-  [display]="cancelEditClick"
-  [header]="header"
-  [options]="options"
-  (cancelClick)="cancelClick()"
-  (backDropClick)="backdropClick()"
-  (receiveOption)="receiveOption($event)"></app-consent-menu-mobile>

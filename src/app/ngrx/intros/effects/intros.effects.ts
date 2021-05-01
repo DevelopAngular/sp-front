@@ -24,6 +24,29 @@ export class IntrosEffects {
       );
   });
 
+  updateIntrosMain$ = createEffect(() => {
+    return this.action$
+      .pipe(
+        ofType(introsActions.updateIntrosMain),
+        switchMap((action) => {
+          return this.userService.updateIntros(action.device, action.version)
+            .pipe(
+              map(data => {
+                const updatedData = {
+                  ...action.intros,
+                  main_intro: {
+                    ...action.intros.main_intro,
+                    [action.device]: {seen_version: action.version}
+                  }
+                };
+                return introsActions.updateIntrosMainSuccess({data: updatedData});
+              }),
+              catchError(error => of(introsActions.updateIntrosMainFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   updateIntros$ = createEffect(() => {
     return this.action$
       .pipe(

@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {HallPass} from '../models/HallPass';
 import {Util} from '../../Util';
@@ -18,11 +18,14 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
 import {DeviceDetection} from '../device-detection.helper';
+import {scalePassCards} from '../animations';
+import {DomCheckerService} from '../services/dom-checker.service';
 
 @Component({
   selector: 'app-pass-card',
   templateUrl: './pass-card.component.html',
-  styleUrls: ['./pass-card.component.scss']
+  styleUrls: ['./pass-card.component.scss'],
+  animations: [scalePassCards]
 })
 export class PassCardComponent implements OnInit, OnDestroy {
 
@@ -36,8 +39,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @Input() forKioskMode: boolean = false;
   @Input() formState: Navigation;
   @Input() students: User[] = [];
+  @Input() isOpenBigPass: boolean = false;
+  @Input() fullScreenButton: boolean = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
+  @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  @ViewChild('cardWrapper') cardWrapper: ElementRef;
 
   timeLeft: string = '';
   valid: boolean = true;
@@ -66,6 +74,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   performingAction: boolean;
   isModal: boolean;
+  showStudentInfoBlock: boolean = true;
+  passForStudentsComponent: boolean;
+  hideButton: boolean;
 
   isSeen: boolean;
 
@@ -76,6 +87,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   cancelEditClick: boolean;
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
+
+  scaleCardTrigger$: Observable<string>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -92,7 +105,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private timeService: TimeService,
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
-      private http: HttpService
+      private http: HttpService,
+      private domCheckerService: DomCheckerService
   ) {}
 
   getUserName(user: any) {
@@ -137,11 +151,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose() {
-    return (this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast;
+    return ((this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast) && !this.hideButton;
   }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.currentSchool = this.http.getSchool();
 
     if (this.data['pass']) {
@@ -157,6 +172,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.fromHistory = this.data['fromHistory'];
       this.fromHistoryIndex = this.data['fromHistoryIndex'];
       this.activePassTime$ = this.data['activePassTime$'];
+      this.showStudentInfoBlock = this.data['showStudentInfoBlock'];
+      this.passForStudentsComponent = this.data['passForStudentsComponent'];
+      this.hideButton = this.data['hasDeleteButton'];
     } else {
       this.selectedStudents = this.students;
     }
@@ -174,7 +192,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
         });
 
     if (!!this.pass && this.isActive) {
-      // console.log('Starting interval');
       merge(of(0), interval(1000)).pipe(
         map(x => {
         const end: Date = this.pass.expiration_time;
@@ -300,17 +317,17 @@ export class PassCardComponent implements OnInit, OnDestroy {
         body['self_issued'] = true;
     }
      const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
-      getRequest$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
-        this.performingAction = true;
-        this.dialogRef.close();
+      getRequest$.pipe(
+        // switchMap(() => this.hallPassService.startPushNotification()),
+        takeUntil(this.destroy$)
+      )
+        .subscribe((data) => {
+          this.performingAction = true;
+          this.dialogRef.close();
       });
   }
 
   cancelEdit(evt: MouseEvent) {
-    // if (this.screenService.isDeviceMid) {
-    //   this.cancelEditClick = !this.cancelEditClick;
-    // }
-
     if (!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
       this.options = [];
@@ -332,7 +349,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
               this.cardEvent.emit(this.formState);
             return false;
         } else if(this.forFuture){
-          this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
+          this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete', './assets/Delete (Red).svg'));
           this.header = 'Are you sure you want to delete this scheduled pass?';
         }
       }
@@ -381,28 +398,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       });
   }
 
-  genOption(display, color, action) {
-    return {display: display, color: color, action: action};
+  genOption(display, color, action, icon?) {
+    return {display: display, color: color, action: action, icon};
   }
-
-    openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-        let data = {
-            'pass': templatePass,
-            'fromPast': false,
-            'fromHistory': fromHistory,
-            'fromHistoryIndex': fromHistoryIndex,
-            'forFuture': forLater,
-            'forInput': true,
-            'forStaff': forStaff,
-            'selectedStudents': selectedStudents,
-        };
-        this.dialog.open(component, {
-            panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-            backdropClass: 'custom-backdrop',
-            disableClose: true,
-            data: data
-        });
-    }
 
   cancelClick() {
     this.cancelEditClick = false;
@@ -414,5 +412,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   receiveOption(action) {
     this.chooseAction(action);
+  }
+
+  openBigPassCard() {
+    this.scaleCard.emit(true);
   }
 }

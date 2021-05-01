@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ColumnOptionsComponent } from './column-options.component';
+import {ColumnOptionsComponent} from './column-options.component';
 
 describe('ColumnOptionsComponent', () => {
   let component: ColumnOptionsComponent;

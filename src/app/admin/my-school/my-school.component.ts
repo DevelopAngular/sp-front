@@ -38,8 +38,6 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   buttonDown: boolean;
 
   openSchoolPage: boolean;
-  updateProgress$: Subject<boolean> = new Subject<boolean>();
-  updateLaunchDate$: Subject<boolean> = new Subject<boolean>();
   launchDay: moment.Moment;
   countLaunchDay: number;
   loaded: boolean;
@@ -70,79 +68,15 @@ export class MySchoolComponent implements OnInit, OnDestroy {
       }),
       tap((school: School) => {
         this.currentSchool = school;
-        this.selectedDate = this.currentSchool.launch_date ? moment(this.currentSchool.launch_date) : null;
-        this.buildLaunchDay();
       }),
-      // switchMap(() => this.adminService.onboardProcessData$),
-      // filter((res: any[]) => !!res.length),
-      // switchMap((res: any[]) => {
-      //   const start = res.find(setting => setting.name === 'launch_day_prep:start');
-      //   const end = res.find(setting => setting.name === 'launch_day_prep:end');
-      //   if (!start.done) {
-      //     return this.gsProgress.updateProgress(start.name);
-      //   } else if (!!start.done && !!end.done) {
-      //     this.openSchoolPage = true;
-      //     return of(true);
-      //   }
-      //   // this.openSchoolPage = false;
-      //   return of(null);
-      // })
     ).subscribe(() => {
         this.loaded = true;
     });
-
-    // this.updateProgress$
-    //   .pipe(
-    //     filter(res => !!res),
-    //     switchMap(isOpen => {
-    //       return this.adminService.onboardProcessData$;
-    //     }),
-    //     switchMap((res: any[]) => {
-    //       const end = res.find(setting => setting.name === 'launch_day_prep:end');
-    //       if (!end.done) {
-    //         return this.gsProgress.updateProgress(end.name);
-    //       } else {
-    //         return of(null);
-    //       }
-    //     })
-    //   ).subscribe();
-
-    // this.updateLaunchDate$
-    //   .pipe(
-    //     switchMap(() => {
-    //       return this.adminService.updateSchoolSettingsRequest(this.currentSchool, {launch_date: this.selectedDate.toISOString()});
-    //     }),
-    //     filter(res => !!res)
-    //   )
-    //   .subscribe(res => {
-    //   this.http.currentSchoolSubject.next(res);
-    //   this.buildLaunchDay();
-    //   this.updateProgress$.next(true);
-    // });
-  }
-
-  buildLaunchDay() {
-    this.launchDay = this.currentSchool.launch_date ? moment(this.currentSchool.launch_date) : null;
-    this.countLaunchDay = this.launchDay ? this.launchDay.diff(moment(), 'days') : null;
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  updateLaunchDay(date: moment.Moment) {
-    this.selectedDate = date.startOf('day');
-  }
-
-  selected(date) {
-    this.updateLaunchDay(date);
-    this.updateLaunchDate$.next(true);
-  }
-
-  saveRequest() {
-    this.openSchoolPage = true;
-    this.updateLaunchDate$.next(true);
   }
 
   redirect(button) {

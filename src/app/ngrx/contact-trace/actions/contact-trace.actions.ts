@@ -1,5 +1,5 @@
-import { createAction, props } from '@ngrx/store';
-import { ContactTrace } from '../../../models/ContactTrace';
+import {createAction, props} from '@ngrx/store';
+import {ContactTrace} from '../../../models/ContactTrace';
 
 const CONTACTTRACE = 'Contact Trace';
 

@@ -304,6 +304,16 @@
     top: 50%;
     transform: translate(-50%,-50%);
   }
+
+  .bottom-shadow {
+    position: absolute;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    border-radius: 12px;
+    background-color: #ffffFF;
+    box-shadow: 0px -3px 30px 16px rgba(255, 255, 255, 1);
+  }
 }
 
 

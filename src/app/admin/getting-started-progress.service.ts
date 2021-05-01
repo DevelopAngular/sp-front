@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import {filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {BehaviorSubject} from 'rxjs';

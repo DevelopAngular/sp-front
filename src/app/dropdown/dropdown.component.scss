@@ -1,4 +1,5 @@
 @import "../../design-system";
+@import '../../sp-colors';
 
 :host {
   position: relative;
@@ -50,14 +51,25 @@
   border-bottom: 1px solid #B5B7BA;
 }
 
+.heading {
+  padding: 20px;
+  color: $blue-gray;
+  font-size: 14px;
+  //text-align: center;
+}
+
 .options-wrapper{
     width: 100%;
     padding: 22px 0;
     height: auto;
-    max-height: 282px;
+    //max-height: 282px;
     //height: calc(100% - 50px);
     overflow: auto;
-    box-sizing: border-box
+    box-sizing: border-box;
+
+  &.sort-wrapper{
+      padding: 15px 0;
+    }
 }
 .assistant-greeting {
   position: absolute;
@@ -75,19 +87,23 @@
 }
 .option{
     width: inherit;
-    height: 40px;
+    padding: 2px 0;
     display: flex;
     flex-direction: column;
     cursor: pointer;
     text-align: left;
+
+  &.sort{
+    padding: 0;
+  }
 }
 
 
 .option-data{
-  height: inherit;
+  height: 40px;
   color: #134482;
-  font-size: 15px;
-  padding: 2px 26px;
+  font-size: 14px;
+  padding: 0 26px;
   display: flex;
   cursor: pointer;
   justify-content: space-between;
@@ -97,7 +113,7 @@
   }
 
   .option-data_leftside {
-    font-weight: bold;
+    font-weight: normal;
   }
   .option-data_rightside {
     display: flex;

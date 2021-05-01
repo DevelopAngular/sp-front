@@ -622,8 +622,8 @@ export class OverlayContainerComponent implements OnInit {
                 max_allowed_time: +this.roomData.timeLimit,
                 max_passes_from: +this.passLimitForm.get('from').value,
                 max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
-                max_passes_to: +this.passLimitForm.get('to').value,
-                max_passes_to_active: this.passLimitForm.get('toEnabled').value,
+                max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
+                max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
                 ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)
@@ -743,8 +743,8 @@ export class OverlayContainerComponent implements OnInit {
             max_allowed_time: +this.roomData.timeLimit,
             max_passes_from: +this.passLimitForm.get('from').value,
             max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
-            max_passes_to: +this.passLimitForm.get('to').value,
-            max_passes_to_active: this.passLimitForm.get('toEnabled').value,
+            max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
+            max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
         };
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
@@ -916,8 +916,8 @@ export class OverlayContainerComponent implements OnInit {
       max_allowed_time: +room.timeLimit,
       max_passes_from: +this.passLimitForm.get('from').value,
       max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
-      max_passes_to: +this.passLimitForm.get('to').value,
-      max_passes_to_active: this.passLimitForm.get('toEnabled').value,
+      max_passes_to: this.passLimitForm.valid ? +this.passLimitForm.get('to').value : 0,
+      max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
     };
   }
 

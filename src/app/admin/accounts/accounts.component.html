@@ -56,6 +56,15 @@
                 (setUp)="openSettingsDialog('g_suite', $event)"
               >
               </app-integration-card>
+              <app-integration-card
+                [style.margin-top]="'20px'"
+                [icon]="'./assets/Clever (Blue).svg'"
+                [title]="'Clever'"
+                [status]="schoolSyncInfoData.is_clever_enabled ? 'done' : 'disconnect'"
+                [subtitle]="schoolSyncInfoData.is_clever_enabled? 'Last Sync: ' + formatDate((cleverSyncInfo$ | async).last_successful_sync) : 'Sync accounts automatically from any SIS with Clever.'"
+                [learnMoreLink]="'https://www.smartpass.app/clever'"
+                (setUp)="openSettingsDialog('clever', $event)"
+              ></app-integration-card>
             </div>
           </div>
         </div>

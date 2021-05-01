@@ -1,14 +1,13 @@
-import {ErrorHandler, Injectable} from '@angular/core';
-import {interval, Observable, of, race, ReplaySubject} from 'rxjs';
+import {ErrorHandler, Injectable, OnDestroy} from '@angular/core';
+import {BehaviorSubject, combineLatest, interval, Observable, of, race, ReplaySubject, Subject} from 'rxjs';
 import {SentryErrorHandler} from '../error-handler';
 import {HttpService} from './http-service';
 import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {filter, map, mapTo, switchMap, take, tap} from 'rxjs/operators';
+import {exhaustMap, filter, map, take, takeUntil, tap} from 'rxjs/operators';
 import {Paged} from '../models';
-import {School} from '../models/School';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
@@ -84,19 +83,25 @@ import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/
 import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpHeaders} from '@angular/common/http';
-import {getIntros, updateIntros} from '../ngrx/intros/actions';
+import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
+import {getSchoolsFailure} from '../ngrx/schools/actions';
+import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
+import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
+import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 
-@Injectable()
-export class UserService {
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService implements OnDestroy{
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
   /**
   * Used for acting on behalf of some teacher by his assistant
   */
-  public effectiveUser: ReplaySubject<RepresentedUser> = new ReplaySubject<RepresentedUser>(1);
-  public representedUsers: ReplaySubject<RepresentedUser[]> = new ReplaySubject<RepresentedUser[]>(1);
+  public effectiveUser: Observable<RepresentedUser> = this.store.select(getEffectiveUser);
+  public representedUsers: Observable<RepresentedUser[]> = this.store.select(getRepresentedUsersCollections);
 
   /**
    * Users from store
@@ -172,8 +177,11 @@ export class UserService {
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
   isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
+  blockUserPage$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private http: HttpService,
@@ -182,53 +190,59 @@ export class UserService {
     private errorHandler: ErrorHandler,
     private store: Store<AppState>,
   ) {
+
     this.http.globalReload$
         .pipe(
           tap(() => {
             this.http.effectiveUserId.next(null);
-            this.effectiveUser.next(null);
+            this.clearRepresentedUsers();
+            this.getUserRequest();
           }),
-          switchMap(() => {
-            return this.getUserRequest().pipe(filter(res => !!res));
+          exhaustMap(() => {
+            return this.user$.pipe(filter(res => !!res), take(1));
           }),
           map(raw => User.fromJSON(raw)),
-          switchMap((user: User) => {
+          tap(user => {
             if (user.isAssistant()) {
-              return this.getUserRepresented()
+              this.getUserRepresentedRequest();
+            }
+          }),
+          exhaustMap((user: User) => {
+            this.blockUserPage$.next(false);
+            if (user.isAssistant()) {
+              return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$)
                 .pipe(
-                  map((users: RepresentedUser[]) => {
-                    const normalizedRU = users.map((raw) => {
-                      raw.user = User.fromJSON(raw.user);
-                      return raw;
-                    });
+                  tap(([users, schools]) => {
+                    if (!users.length && schools.length === 1) {
+                      this.store.dispatch(getSchoolsFailure({errorMessage: 'Assistant does`t have teachers'}));
+                    } else if (!users.length && schools.length > 1) {
+                      this.blockUserPage$.next(true);
+                    }
+                  }),
+                  filter(([users, schools]) => !!users.length || schools.length > 1),
+                  map(([users, schools]) => {
                     if (users && users.length) {
-                      this.representedUsers.next(normalizedRU);
-                      this.effectiveUser.next(normalizedRU[0]);
-                      this.http.effectiveUserId.next(+normalizedRU[0].user.id);
+                      this.http.effectiveUserId.next(+users[0].user.id);
                     }
                     return user;
                   }));
             } else {
-                this.representedUsers.next(null);
-                this.effectiveUser.next(null);
-                this.http.effectiveUserId.next(null);
               return of(user);
             }
           }),
-          switchMap(user => {
-            if (user.isTeacher() && !user.isAssistant()) {
-              return this.getUserPinRequest().pipe(mapTo(user));
-            } else {
-              return of(user);
+          tap((user) => {
+            if (user.isTeacher() || user.isAssistant()) {
+              this.getUserPinRequest();
             }
-          })
+          }),
+          takeUntil(this.destroy$)
         )
         .subscribe(user => {
           this.userData.next(user);
         });
 
     if (errorHandler instanceof SentryErrorHandler) {
-      this.userData.subscribe(user => {
+      this.userData.pipe(takeUntil(this.destroy$)).subscribe(user => {
         errorHandler.setUserContext({
           id: `${user.id}`,
           email: user.primary_email,
@@ -239,7 +253,12 @@ export class UserService {
       });
     }
 
-    this.pollingService.listen().subscribe(this._logging.debug);
+    this.pollingService.listen().pipe(takeUntil(this.destroy$)).subscribe(this._logging.debug);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getLoadingAccounts(role) {
@@ -317,6 +336,11 @@ export class UserService {
     this.store.dispatch(updateIntros({intros, device, version}));
   }
 
+  updateIntrosMainRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosMain({intros, device, version}));
+    return of(null);
+  }
+
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
@@ -327,6 +351,10 @@ export class UserService {
 
   saveKioskModeLocation(locId) {
     return this.http.post('auth/kiosk', {location: locId});
+  }
+
+  getUserRepresentedRequest() {
+    this.store.dispatch(getRUsers());
   }
 
   getUserRepresented() {
@@ -375,21 +403,16 @@ export class UserService {
             }));
           }
         case 'GG4L':
-          return this.http.currentSchool$.pipe(
-            take(1),
-            switchMap((currentSchool: School) => {
-              if (excludeProfile) {
-                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
-                  search: search,
-                  profile: excludeProfile
-                }));
-              } else {
-                return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gg4l_users`, {
-                  search
-                }));
-              }
-            })
-          );
+          if (excludeProfile) {
+            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gg4l_users`, {
+              search: search,
+              profile: excludeProfile
+            }));
+          } else {
+            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gg4l_users`, {
+              search
+            }));
+          }
       }
   }
 
@@ -590,5 +613,17 @@ export class UserService {
 
   sendTestNotification(userId) {
     return this.http.post(`v1/users/${userId}/test_notification`, new Date());
+  }
+
+  updateEffectiveUser(effectiveUser) {
+    this.store.dispatch(updateEffectiveUser({effectiveUser}));
+  }
+
+  clearRepresentedUsers() {
+    this.store.dispatch(clearRUsers());
+  }
+
+  updateTeacherLocations(teacher, locations, newLocations) {
+    this.store.dispatch(updateTeacherLocations({teacher, locations, newLocations}));
   }
 }

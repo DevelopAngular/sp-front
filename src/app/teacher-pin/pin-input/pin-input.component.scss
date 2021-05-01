@@ -1,0 +1,50 @@
+@import "../../../sp-colors";
+
+.wrapper {
+  position: relative;
+  width: 90px;
+  height: 42px;
+  background-color: #F4F4F4;
+  border-radius: .5rem;
+  display: flex;
+  align-items: center;
+  //overflow: hidden;
+
+  input {
+    border: 2px solid transparent;
+    width: 90px;
+    height: 42px;
+    position: absolute;
+    outline: none;
+    z-index: 1;
+    background: transparent;
+    border-radius: .5rem;
+    letter-spacing: 5px;
+    font-size: 18px;
+    padding: 0 10px 0 14px;
+
+    //&:focus {
+    //  border: 2px solid $navy;
+    //}
+  }
+
+  .background {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fake {
+      background-color: #D8D8D8;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin: 3px
+    }
+}

@@ -12,12 +12,23 @@ export class CustomToastComponent implements OnInit {
 
   toggleToast: boolean;
   data$: Observable<any>;
+  cancelable: boolean;
+  data: any;
 
   constructor(private toastService: ToastService) { }
 
   ngOnInit() {
     this.data$ = this.toastService.data$;
     setTimeout(() => { this.toggleToast = true; }, 250);
+
+    this.data$.subscribe((data) => {
+      this.data = data;
+    });
+    setTimeout(() => {
+      if (this.cancelable && this.data.noButton) {
+        this.toastService.closeToast();
+      }
+    }, 2000);
   }
 
   close(evt: Event) {
@@ -34,4 +45,14 @@ export class CustomToastComponent implements OnInit {
     this.toastService.toastButtonClick$.next(action);
   }
 
+  over() {
+    this.cancelable = false;
+  }
+
+  leave() {
+    if (this.data.noButton) {
+      this.cancelable = true;
+      this.toastService.closeToast();
+    }
+  }
 }

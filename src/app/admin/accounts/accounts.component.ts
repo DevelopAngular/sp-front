@@ -17,12 +17,14 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../services/locations.service';
 import {GG4LSync} from '../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
-import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
+import {Ggl4SettingsComponent} from './integrations-dialog/ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
 import {ToastService} from '../../services/toast.service';
 import {Onboard} from '../../models/Onboard';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {TableService} from '../sp-data-table/table.service';
+import {CleverInfo} from '../../models/CleverInfo';
+import {PollingService} from '../../services/polling-service';
 
 declare const window;
 
@@ -38,6 +40,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   gg4lSettingsData$: Observable<GG4LSync>;
   schoolSyncInfoData$: Observable<SchoolSyncInfo>;
+  cleverSyncInfo$: Observable<CleverInfo>;
   prevRoute: string;
 
   destroy$ = new Subject();
@@ -66,7 +69,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private locationService: LocationsService,
     private toastService: ToastService,
     private xlsxGeneratorService: XlsxGeneratorService,
-    private tableService: TableService
+    private tableService: TableService,
+    private polingService: PollingService
   ) {}
 
   formatDate(date) {
@@ -78,17 +82,32 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
     this.gg4lSettingsData$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfoData$ = this.adminService.schoolSyncInfo$;
+    this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
 
     this.onboardProcess$ = this.http.globalReload$.pipe(
       tap(() => this.adminService.getCountAccountsRequest().pipe(take(1))),
       tap(() => this.adminService.getGG4LSyncInfoRequest()),
       tap(() => this.adminService.getSpSyncingRequest()),
       tap(() => this.adminService.getGSuiteOrgsRequest()),
+      tap(() => this.adminService.getCleverInfoRequest()),
       switchMap(() => {
         return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
     );
-    // this.router.navigate(['admin/accounts', '_profile_student']);
+    if (this.storage.getItem('accounts_current_page')) {
+      this.router.navigate([this.storage.getItem('accounts_current_page')]);
+    }
+
+
+    this.polingService.listen('admin.user_sync.sync_start').pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+      this.adminService.syncLoading();
+    });
+
+    this.polingService.listen('admin.user_sync.sync_end').pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+      this.adminService.updateCleverInfo(res.data);
+    });
 
     this.toastService.toastButtonClick$
       .pipe(
@@ -117,14 +136,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
         // this.tableService.loadingCSV$.next(false);
     });
 
-    this.userService.userData.pipe(
+    this.userService.user$.pipe(
       takeUntil(this.destroy$))
       .subscribe((user) => {
       this.user = user;
     });
 
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(takeUntil(this.destroy$), filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         if (event.url === '/admin/accounts' &&
           (this.prevRoute === `/admin/accounts/_profile_student` ||
@@ -134,6 +153,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
           this.router.navigate([this.prevRoute]);
         } else {
           this.prevRoute = event.url;
+          this.storage.setItem('accounts_current_page', event.url);
         }
 
       });
@@ -144,29 +164,19 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // openSyncSettings() {
-  //   const SS = this.matDialog.open(SyncSettingsComponent, {
-  //     panelClass: 'accounts-profiles-dialog',
-  //     backdropClass: 'custom-bd',
-  //     data: {gg4lInfo: this.gg4lSettingsData$}
-  //   });
-  // }
-  //
-  // openNewTab(url) {
-  //   window.open(url);
-  // }
-
   openSettingsDialog(action, status) {
-    if (action === 'gg4l') {
+    if (action === 'gg4l' || action === 'clever') {
       const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
+        id: 'gg4lSettings',
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
-        data: { status }
+        data: { status, action }
       });
     } else if (action === 'g_suite') {
       const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
+        id: 'g_suiteSettings',
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',

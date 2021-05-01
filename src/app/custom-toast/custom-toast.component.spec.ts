@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CustomToastComponent } from './custom-toast.component';
+import {CustomToastComponent} from './custom-toast.component';
 
 describe('CustomToastComponent', () => {
   let component: CustomToastComponent;

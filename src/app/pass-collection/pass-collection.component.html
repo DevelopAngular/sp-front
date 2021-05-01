@@ -1,28 +1,44 @@
-<div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length> 0 || showEmptyHeader; else emptyMessage">
-  <!--<pre>{{test | json}}</pre>-->
+<div class="collection-wrapper" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
   <div class="collection-header" [style.width]="headerWidth">
+    <div class="collection-title">
       <img draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
       <div class="collection-title" [style.color]="_color">
         {{title}}
       </div>
-
-      <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
-        <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
+    </div>
+      <div class="filter-button"
+         *ngIf="hasFilterPasses"
+         appCrossPointerEventTarget
+         (pointerClickEvent)="openFilter($event)"
+      >
+        <div class="icon" *ngIf="!selectedSort || selectedSort === 'all_time'; else sort">
+          <img width="15" draggable="false" [src]="'./assets/Filter (Blue-Gray).svg' | resolveAsset" alt="Filter">
+        </div>
+        <ng-template #sort>
+          <div class="selected-button" *ngIf="!!selectedSort">
+            <img width="15" draggable="false" [src]="'./assets/Filter (Navy).svg' | resolveAsset" alt="Filter">
+            <div class="selected-title">{{ selectedText }}</div>
+          </div>
+        </ng-template>
 
       </div>
+      <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
+        <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
+      </div>
   </div>
-  <div *ngIf="(currentPasses$ | async)">
+  <div *ngIf="(currentPasses$ | async) as currentPasses">
     <div *ngIf="currentPasses.length > 0; else emptyMessage">
       <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">
           <app-pass-tile
-                         (tileSelected)="showPass($event)"
-                         [timerEvent]="timerEvent"
-                         [fromPast]="fromPast"
-                         [forFuture]="forFuture"
-                         [isActive]="isActive"
-                         [forStaff]="forStaff"
-                         [pass]="pass"
+           (tileSelected)="showPass($event)"
+           [timerEvent]="timerEvent"
+           [fromPast]="fromPast"
+           [forFuture]="forFuture"
+           [isActive]="isActive"
+           [forStaff]="forStaff"
+           [pass]="pass"
+           [allowPopup]="true"
           ></app-pass-tile>
         </div>
       </div>
@@ -31,12 +47,17 @@
           <app-pass-cell *ngFor="let pass of currentPasses" (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
         </div>
       </ng-template>
-    <ng-template #emptyMessage>
-      <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-        {{ getEmptyMessage() }}
-      </div>
-    </ng-template>
 </div>
+
+<ng-template #emptyMessage>
+  <div class="empty-state" *ngIf="hasFilterPasses && showEmptyHeader">
+    <img width="80" height="80" [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
+    <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+      No expired passes <br/>
+      <span *ngIf="selectedText !== 'Today'">in the </span><span style="text-transform: lowercase">{{ selectedText }}</span>
+    </div>
+  </div>
+</ng-template>
 
 <!-- Needs for Intro page -->
 
@@ -62,6 +83,7 @@
     </ng-template>
 </div>
   </div>
+<!--  <div *ngIf="showBottomShadow" class="bottom-shadow"></div>-->
 </div>
 <!-- End -->
 

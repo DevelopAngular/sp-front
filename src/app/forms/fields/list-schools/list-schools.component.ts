@@ -36,7 +36,7 @@ export class ListSchoolsComponent implements OnInit {
   ) {
     this.matIconRegistry.addSvgIcon(
       'minus',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/icons/minus-icon.svg')
+      this.domSanitizer.bypassSecurityTrustResourceUrl('./assets/icons/minus-icon.svg')
     );
   }
 

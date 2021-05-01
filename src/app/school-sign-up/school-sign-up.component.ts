@@ -1,20 +1,8 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
-import { environment } from '../../environments/environment';
+import {environment} from '../../environments/environment';
 import {constructUrl, QueryParams} from '../live-data/helpers';
-import {
-  catchError,
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  map,
-  pluck,
-  switchMap,
-  take,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
+import {catchError, debounceTime, delay, distinctUntilChanged, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
-import {GoogleAuthService} from '../services/google-auth.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {HttpService} from '../services/http-service';
 import {JwtHelperService} from '@auth0/angular-jwt';
@@ -26,7 +14,6 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
-import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -108,7 +95,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
 
   constructor(
-    private googleAuth: GoogleAuthService,
     private http: HttpClient,
     private httpService: HttpService,
     private userService: UserService,
@@ -216,15 +202,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
             );
         })
       );
-  }
-
-  initLogin() {
-    return this.loginService.GoogleOauth.signIn()
-      .then((auth) => {
-        console.log(auth);
-        return auth.getAuthResponse();
-      });
-
   }
   createSchool() {
     window.waitForAppLoaded(true);

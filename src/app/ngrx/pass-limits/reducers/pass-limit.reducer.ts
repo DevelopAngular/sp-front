@@ -21,6 +21,7 @@ const reducer = createReducer(
   on(passLimitActions.updatePassLimitSuccess, (state, {pass_limit}) => {
     let currentItem = {...state.entities[pass_limit.location_id]};
     currentItem = {
+      id: currentItem.id,
       ...currentItem,
       from_count: pass_limit.passes_from,
       to_count: pass_limit.passes_to

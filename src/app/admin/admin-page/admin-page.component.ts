@@ -1,12 +1,11 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 
-import {combineLatest, BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import { UserService } from '../../services/user.service';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {delay, filter, map, skip, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {delay, exhaustMap, filter, map, skip, take, takeUntil, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
 import {HttpService} from '../../services/http-service';
-import {AdminService} from '../../services/admin.service';
 
 declare const window;
 
@@ -29,8 +28,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private httpService: HttpService,
-    private adminService: AdminService
+    private httpService: HttpService
   ) {
 
     this.userService.userData
@@ -70,7 +68,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
            return  value.length < 2;
          }
         }),
-        switchMap(() => this.userService.getUserWithTimeout()),
+        take(1),
+        exhaustMap(() => this.userService.user$.pipe(take(1))),
         filter(user => !!user),
       )
       .subscribe(user => {

@@ -1,4 +1,4 @@
-import { ToolTipRendererDirective } from './tool-tip-renderer.directive';
+import {ToolTipRendererDirective} from './tool-tip-renderer.directive';
 
 describe('ToolTipRendererDirective', () => {
   it('should create an instance', () => {

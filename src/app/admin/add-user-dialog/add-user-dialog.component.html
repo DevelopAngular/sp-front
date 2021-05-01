@@ -126,12 +126,13 @@
         </div>
 
         <div class="assistant-content" *ngIf="isAssistant" #rc>
-          <div class="info">As an assistant, choose from existing teacher(s) so this user can act on behalf of the specified accounts.</div>
+<!--          <div class="info">As an assistant, choose from existing teacher(s) so this user can act on behalf of the specified accounts.</div>-->
           <div class="active-on-user ds-w-100" *ngIf="isAssistant">
             <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
             <div class="profile-search">
               <app-sp-search
                 [focused]="false"
+                [chipsMode]="true"
                 [placeholder]="'Search existing teachers'"
                 [dummyRoleText]="'teachers'"
                 [selectedOptions]="assistantLike.behalfOf"

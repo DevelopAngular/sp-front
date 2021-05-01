@@ -14,7 +14,7 @@
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
     "ng-ci-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
     "fcm": "concat ./dist/ngsw-worker.js ./dist/firebase-messaging-sw.js -o ./dist/combined-worker.js",
-    "proxy": "ng serve --configuration=proxy --proxyConfig=src/proxy.conf.json --host=192.168.2.210"
+    "proxy": "ng serve --configuration=proxy --proxyConfig=src/proxy.conf.json --host=192.168.114.108"
   },
   "private": true,
   "dependencies": {
@@ -48,14 +48,12 @@
     "firebase": "^5.10.1",
     "font-awesome": "^4.7.0",
     "fuse.js": "^3.4.4",
-    "gapi-client": "^0.0.3",
     "hammerjs": "^2.0.8",
     "http-server": "^0.11.1",
     "jspdf": "^1.5.3",
     "localtunnel": "^1.9.2",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
-    "ng-gapi": "^0.0.51",
     "ng-keyboard-shortcuts": "^10.1.16",
     "ng2-charts": "^2.4.2",
     "ng2-dragula": "^2.1.1",

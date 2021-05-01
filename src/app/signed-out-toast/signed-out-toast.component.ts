@@ -17,8 +17,8 @@ export class SignedOutToastComponent implements OnInit {
   ngOnInit() {
 
   }
-  signBackIn() {
-    this.router.navigate(['sign-out']);
+  signBackInTapped() {
+    // this.router.navigate(['sign-out']);
     this.dialogRef.close();
   }
 }

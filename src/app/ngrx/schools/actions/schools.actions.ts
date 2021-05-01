@@ -1,8 +1,9 @@
-import { createAction, props } from '@ngrx/store';
-import { School } from '../../../models/School';
-import { GG4LSync } from '../../../models/GG4LSync';
-import { SchoolSyncInfo } from '../../../models/SchoolSyncInfo';
+import {createAction, props} from '@ngrx/store';
+import {School} from '../../../models/School';
+import {GG4LSync} from '../../../models/GG4LSync';
+import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
+import {CleverInfo} from '../../../models/CleverInfo';
 
 const COMPONENT = 'Schools';
 
@@ -38,3 +39,14 @@ export const getGSuiteSyncInfoFailure = createAction(`[${COMPONENT}] Get GSuite 
 
 export const updateGSuiteInfoSelectors = createAction(`[${COMPONENT}] Update GSuite Selectors`, props<{selectors: any}>());
 export const updateGSuiteInfoSelectorsSuccess = createAction(`[${COMPONENT}] Update GSuite Selectors Success`, props<{selectors: any}>());
+
+export const getCleverInfo = createAction(`[${COMPONENT}] Get Clever Info`);
+export const getCleverInfoSuccess = createAction(`[${COMPONENT}] Get Clever Info Success`, props<{cleverInfo: CleverInfo}>());
+export const getCleverInfoFailure = createAction(`[${COMPONENT}] Get Clever Info Failure`, props<{errorMessage: string}>());
+
+export const syncClever = createAction(`[${COMPONENT}] Sync Clever`);
+
+export const updateCleverInfo = createAction(`[${COMPONENT}] Update Clever Info`, props<{cleverInfo: CleverInfo}>());
+
+export const clearSchools = createAction(`[${COMPONENT}] Clear Schools`);
+

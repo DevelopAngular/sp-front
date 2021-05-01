@@ -61,7 +61,14 @@ export class NavComponent implements OnInit, AfterViewInit {
   introsData: any;
   public pts: string;
 
+  user: User;
+  showButton: boolean;
+  selectedSettings: boolean;
+  process: number;
+  hidePointer: boolean;
+
   destroy$: Subject<any> = new Subject<any>();
+
     constructor(
         public router: Router,
         private activeRoute: ActivatedRoute,
@@ -71,14 +78,8 @@ export class NavComponent implements OnInit, AfterViewInit {
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
-        private shortcutsService: KeyboardShortcutsService
+        private shortcutsService: KeyboardShortcutsService,
     ) { }
-
-  user: User;
-  showButton: boolean;
-  selectedSettings: boolean;
-  process: number;
-  hidePointer: boolean;
 
   get pointerTopSpace() {
     return this.pts;
@@ -109,39 +110,29 @@ export class NavComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.dataService.currentUser
-      .pipe(
-        this.loadingService.watchFirst,
-        takeUntil(this.destroy$)
-        )
+    this.userService.user$
+      .pipe(filter(user => !!user), takeUntil(this.destroy$))
       .subscribe(user => {
-
-        this._zone.run(() => {
-          this.user = user;
-          this.showButton = user.roles.includes('_profile_admin') &&
-                          ( user.roles.includes('_profile_teacher') ||
-                            user.roles.includes('_profile_student') );
-          this.dataService.updateInbox(!this.tab.includes('settings'));
-        });
-      });
-
-    this.userService.userData
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user: any) => {
-      this.buttons.forEach((button) => {
-        if (
-          ((this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}`)
+        this.buttons.forEach((button) => {
+          if (
+            ((this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}`)
             &&
-          !button.requiredRoles.every((_role) => user.roles.includes(_role))
-      ) {
-          this.restrictAccess.emit(true);
-          this.fakeMenu.next(true);
-        } else {
-          this.restrictAccess.emit(false);
-          this.fakeMenu.next(false);
-        }
+            !button.requiredRoles.every((_role) => user.roles.includes(_role))
+          ) {
+            this.restrictAccess.emit(true);
+            this.fakeMenu.next(true);
+          } else {
+            this.restrictAccess.emit(false);
+            this.fakeMenu.next(false);
+          }
+        });
+
+        this.user = user;
+        this.showButton = user.roles.includes('_profile_admin') &&
+                        ( user.roles.includes('_profile_teacher') ||
+                          user.roles.includes('_profile_student') );
+        this.dataService.updateInbox(!this.tab.includes('settings'));
       });
-    });
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
@@ -173,7 +164,6 @@ export class NavComponent implements OnInit, AfterViewInit {
 
     this.userService.introsData$.pipe(filter(res => !!res), takeUntil(this.destroy$))
       .subscribe(data => {
-        // debugger;
         this.introsData = data;
       });
   }
@@ -231,7 +221,7 @@ export class NavComponent implements OnInit, AfterViewInit {
           window.open('https://smartpass.app/about');
         } else if (action === 'appearance') {
           this.dialog.open(SpAppearanceComponent, {
-            panelClass: 'form-dialog-container',
+            panelClass: 'sp-form-dialog',
           });
         } else if (action === 'wishlist') {
           window.open('https://wishlist.smartpass.app');
@@ -264,7 +254,10 @@ export class NavComponent implements OnInit, AfterViewInit {
   selectTab(evt: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
-    this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+    setTimeout(() => {
+      this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+    }, 10);
+
   }
 
   isSelected(route: string) {

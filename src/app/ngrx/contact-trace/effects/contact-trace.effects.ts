@@ -4,7 +4,7 @@ import {ContactTraceService} from '../../../services/contact-trace.service';
 import {catchError, concatMap, map} from 'rxjs/operators';
 import {ContactTrace} from '../../../models/ContactTrace';
 import * as contactTraceActions from '../actions';
-import { of } from 'rxjs';
+import {of} from 'rxjs';
 
 @Injectable()
 export class ContactTraceEffects {

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import {Injectable} from '@angular/core';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as passLimitActions from '../actions';
 import {catchError, concatMap, map} from 'rxjs/operators';
 import {LocationsService} from '../../../services/locations.service';
@@ -29,7 +29,6 @@ export class PassLimitEffects {
       .pipe(
         ofType(passLimitActions.updatePassLimit),
         map((action: any) => {
-          // debugger;
           return passLimitActions.updatePassLimitSuccess({pass_limit: action.item.data});
         }),
         catchError(error => of(passLimitActions.updatePassLimitFailure({errorMessage: error.message})))

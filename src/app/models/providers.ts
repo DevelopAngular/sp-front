@@ -1,5 +1,5 @@
-import { of ,  BehaviorSubject ,  Observable } from 'rxjs';
-import { PassLike } from './index';
+import {BehaviorSubject, Observable, of} from 'rxjs';
+import {PassLike} from './index';
 import {tap} from 'rxjs/operators';
 
 /**
@@ -37,7 +37,7 @@ export class WrappedProvider implements PassLikeProvider {
   constructor(private parent: PassLikeProvider) {
   }
 
-  watch(sort: Observable<string>) {
+  watch(sort?: Observable<string>) {
 
     return this.parent.watch(sort)
       .pipe(

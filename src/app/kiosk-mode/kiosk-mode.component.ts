@@ -2,20 +2,17 @@ import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, V
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {MatDialog} from '@angular/material/dialog';
-import {WrappedProvider} from '../models/providers';
 import {LiveDataService} from '../live-data/live-data.service';
-import {combineLatest, of} from 'rxjs';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {filter, switchMap} from 'rxjs/operators';
+import {filter, switchMap, take, takeUntil} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
-import {DataService} from '../services/data-service';
 import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
-import {ActivePassProvider} from '../my-room/my-room.component';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -24,7 +21,7 @@ import {ActivePassProvider} from '../my-room/my-room.component';
 })
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  activePassesKiosk: WrappedProvider;
+  activePassesKiosk: Observable<HallPass[]>;
 
   cardReaderValue: string;
 
@@ -40,6 +37,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       user_id: number
   };
 
+  destroy$: Subject<any> = new Subject<any>();
+
   @ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
   @HostListener('window:keyup', ['$event'])
@@ -52,7 +51,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
       private dialog: MatDialog,
       private kioskMode: KioskModeService,
-      private dataService: DataService,
       private locationService: LocationsService,
       private liveDataService: LiveDataService,
       private userService: UserService,
@@ -62,29 +60,29 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-      combineLatest(this.dataService.currentUser, this.userService.effectiveUser).pipe(
+    this.locationService.getPassLimitRequest();
+      combineLatest(this.userService.user$.pipe(take(1)), this.userService.effectiveUser.pipe(take(1))).pipe(
           switchMap(([user, effectiveUser]) => {
             if (effectiveUser) {
               return this.locationService.getLocationsWithTeacherRequest(effectiveUser.user);
             }
               return this.locationService.getLocationsWithTeacherRequest(user);
           }),
-        filter((res: any[]) => !!res.length)
+        filter((res: any[]) => !!res.length),
+        takeUntil(this.destroy$)
       )
-          .subscribe(locations => {
+      .subscribe(locations => {
           const kioskJwtToken = this.storage.getItem('kioskToken');
           const jwtHelper = new JwtHelperService();
           this.userData = jwtHelper.decodeToken(kioskJwtToken);
           const kioskLocation = locations.find(loc => +loc.id === this.userData.kiosk_location_id);
-            this.activePassesKiosk = new WrappedProvider(
-              new ActivePassProvider(
-                this.liveDataService,
-                of([kioskLocation]),
-                of(this.timeService.nowDate()),
-                of('')
-              )
-            );
-            this.kioskMode.currentRoom$.next(kioskLocation);
+          this.liveDataService.getMyRoomActivePassesRequest(
+            of({sort: '-created', search_query: ''}),
+            {type: 'location', value: [kioskLocation]},
+            this.timeService.nowDate()
+          );
+          this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
+          this.kioskMode.currentRoom$.next(kioskLocation);
       });
 
   }
@@ -96,6 +94,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   cardReader(event: KeyboardEvent) {
@@ -115,7 +115,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
                           return of(null);
                       }
                   }
-              })
+              }),
+            takeUntil(this.destroy$)
           ).subscribe();
       }
   }

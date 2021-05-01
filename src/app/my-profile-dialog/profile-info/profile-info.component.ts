@@ -38,6 +38,8 @@ export class ProfileInfoComponent implements OnInit {
       return 'Connected with G Suite';
     } else if (account.sync_types.indexOf('gg4l') !== -1) {
       return 'Connected with GG4L';
+    } else if (account.sync_types.indexOf('clever') !== -1) {
+      return 'Connected with Clever';
     } else if (!account.sync_types.length) {
       return 'Standard account';
     }

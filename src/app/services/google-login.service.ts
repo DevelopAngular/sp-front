@@ -1,10 +1,8 @@
-import {Injectable, NgZone} from '@angular/core';
+import {Inject, Injectable, NgZone, OnDestroy} from '@angular/core';
 import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
-import {GoogleAuthService} from './google-auth.service';
+import {filter, takeUntil} from 'rxjs/operators';
 import {StorageService} from './storage.service';
-import AuthResponse = gapi.auth2.AuthResponse;
-import GoogleAuth = gapi.auth2.GoogleAuth;
+import {APP_BASE_HREF} from '@angular/common';
 
 declare const window;
 
@@ -14,18 +12,25 @@ const STORAGE_KEY = 'google_auth';
 
 export interface DemoLogin {
   username: string;
-  password: string;
+  password?: string;
   invalid?: boolean;
+  kioskMode: boolean;
   type: 'demo-login';
 }
 
 export interface Gg4lLogin {
-  gg4l_token: string;
+  gg4l_code: string;
   type: 'gg4l-login';
 }
 
-export interface GG4LResponse {
-  code: string;
+export interface CleverLogin {
+  clever_code: string;
+  type: 'clever-login';
+}
+
+export interface GoogleLogin {
+  google_code: string;
+  type: 'google-login';
 }
 
 
@@ -37,26 +42,46 @@ export function isGg4lLogin(d: any): d is Gg4lLogin {
   return (<Gg4lLogin>d).type === 'gg4l-login';
 }
 
-type AuthObject = AuthResponse | DemoLogin | Gg4lLogin;
+export function isCleverLogin(d: any): d is CleverLogin {
+  return (<CleverLogin>d).type === 'clever-login';
+}
 
-@Injectable()
-export class GoogleLoginService {
+export function isGoogleLogin(d: any): d is GoogleLogin {
+  return (<GoogleLogin>d).type === 'google-login';
+}
 
-  private googleAuthTool = new BehaviorSubject<GoogleAuth>(null);
+type AuthObject = GoogleLogin | DemoLogin | Gg4lLogin | CleverLogin;
 
-  private authToken$ = new BehaviorSubject<AuthObject>(null);
+enum OAuthType {
+  google = 'google',
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GoogleLoginService implements OnDestroy{
+
+  static googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=560691963710-220tggv4d3jo9rpc3l70opj1510keb59.apps.googleusercontent.com&response_type=code&access_type=offline&scope=profile%20email%20openid`
+
+  private authObject$ = new BehaviorSubject<AuthObject>(null);
 
   public showLoginError$ = new BehaviorSubject(false);
   public loginErrorMessage$: Subject<string> = new Subject<string>();
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
   // public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
-    private googleAuth: GoogleAuthService,
-    private _zone: NgZone,
-    private storage: StorageService
+      @Inject(APP_BASE_HREF)
+      private baseHref: string,
+      private _zone: NgZone,
+      private storage: StorageService
   ) {
-    this.authToken$.subscribe(auth => {
+    if (baseHref === '/app') {
+      this.baseHref = '/app/';
+    }
+    this.authObject$.pipe(takeUntil(this.destroy$)).subscribe(auth => {
       if (auth) {
         const storageKey = isDemoLogin(auth)
                            ? JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type})
@@ -66,34 +91,11 @@ export class GoogleLoginService {
       }
     });
 
-    this.googleAuth.getAuth().subscribe(auth => {
-      this.googleAuthTool.next(auth as any);
-    });
-
-    // this.googleAuthTool.subscribe(tool =>
-    //   console.log('google auth tool: ', tool, 'user currently signed in: ', tool ? tool.isSignedIn.get() : null));
-
-    this.googleAuthTool
-      .pipe(
-        filter(e => !!e),
-        take(1)
-      )
-      .subscribe(auth => {
-        if (!auth.isSignedIn.get()) {
-          return;
-        }
-        const resp = auth.currentUser.get().getAuthResponse();
-        if (resp.expires_at > Date.now()) {
-          this.updateAuth(resp);
-        }
-      });
-
-
     const savedAuth = this.storage.getItem(STORAGE_KEY);
     if (savedAuth) {
-      console.log('Loading saved auth:', savedAuth);
-      const auth: AuthResponse = JSON.parse(savedAuth);
-      if (auth.id_token !== undefined || isDemoLogin(auth) || isGg4lLogin(auth)) {
+      // console.log('Loading saved auth:', savedAuth);
+      const auth = JSON.parse(savedAuth);
+      if (isGoogleLogin(auth) || isDemoLogin(auth) || isGg4lLogin(auth) || isCleverLogin(auth)) {
         this.updateAuth(auth);
       } else {
         this.isAuthenticated$.next(false);
@@ -104,68 +106,24 @@ export class GoogleLoginService {
 
   }
 
-  public get GoogleOauth() {
-
-    const auth = this.googleAuthTool.value;
-
-    if (!auth) {
-      console.error('Auth not loaded!');
-      return;
-    } else {
-      return auth;
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  isAuthLoaded(): Observable<boolean> {
-    return this.googleAuthTool.pipe(map(tool => tool !== null));
-  }
-
-  private needNewToken(): boolean {
-    if (!this.authToken$.value) {
-      return true;
-    }
-
-    if (isDemoLogin(this.authToken$.value)) {
-      return !!this.authToken$.value.invalid;
-    }
-
-    if (isGg4lLogin(this.authToken$.value)) {
-      return false;
-    }
-
-    const threshold = 5 * 60 * 1000; // 5 minutes
-    // don't use TimeService for auth because auth is required for time service
-    // to be useful
-    return this.authToken$.value.expires_at <= Date.now() + threshold;
-  }
-
-  getIdToken(): Observable<DemoLogin | Gg4lLogin | string> {
-    if (this.needNewToken()) {
-      this.authToken$.next(null);
-      this.isAuthenticated$.next(false);
-      this.storage.removeItem(STORAGE_KEY);
-    }
-
-    return this.authToken$.pipe(
-      filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
-      map(a => {
-        return (isDemoLogin(a) || isGg4lLogin(a)) ? a : a.id_token;
-      })
+  // Returns authObject
+  getAuthObject(): Observable<AuthObject> {
+    return this.authObject$.pipe(
+      filter(t => !!t)
     );
   }
 
   public updateAuth(auth: AuthObject) {
-    this.authToken$.next(auth);
-  }
-
-  setAuthenticated() {
-    // console.log('setAuthenticated()');
-    this.isAuthenticated$.next(true);
-    this.showLoginError$.next(false);
+    this.authObject$.next(auth);
   }
 
   clearInternal(permanent: boolean = false) {
-    this.authToken$.next(null);
+    this.authObject$.next(null);
 
     if (!permanent) {
       this.isAuthenticated$.next(false);
@@ -173,10 +131,11 @@ export class GoogleLoginService {
 
     this.storage.removeItem(STORAGE_KEY);
     this.storage.removeItem('refresh_token');
+    this.storage.removeItem('google_id_token');
+    this.storage.removeItem('context');
+    this.storage.removeItem('kioskToken');
+    this.storage.removeItem('auth');
     this.logout();
-  }
-
-  simpleSignOn(code: string) {
   }
 
   /**
@@ -189,46 +148,25 @@ export class GoogleLoginService {
    */
 
   public signIn(userEmail?: string) {
-    const auth: any = this.GoogleOauth;
-
-    if (!auth) {
-      this.storage.showError$.next(true);
-      console.error('Auth not loaded!');
-      return;
+    // TODO IMPLEMENT THIS
+    let url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+    if (userEmail) {
+      url = url + `&login_hint=${userEmail}`;
     }
-
-    return auth.signIn({ login_hint: userEmail }).then(user => {
-      this._zone.run(() => {
-        console.log(user.getAuthResponse());
-        this.updateAuth(user.getAuthResponse());
-      });
-    });
-
+    window.location.href = url;
   }
 
-  updateGoogleToken() {
-    const auth = this.googleAuthTool.getValue();
-    const user = auth.currentUser.get();
-    user.reloadAuthResponse().then(res => {
-      this.updateAuth(res);
-    });
+  getRedirectUrl(): string {
+    const url = [window.location.protocol, '//', window.location.host, this.baseHref].join('');
+    return url;
   }
 
   signInDemoMode(username: string, password: string) {
-    this.authToken$.next({username: username, password: password, type: 'demo-login'});
+    this.authObject$.next({username: username, password: password, type: 'demo-login', kioskMode: false});
   }
 
   logout() {
-    const auth = this.googleAuthTool.getValue();
-    if (auth === null) {
-      return;
-    }
-
-    const user = auth.currentUser.get();
-    if (user) {
-      user.disconnect();
-      auth.signOut();
-    }
+    // IMPLEMENT LOGOUT, not sure if this is needed.
 
   }
 

@@ -9,12 +9,11 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {combineLatest, Subject} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
-import {takeUntil} from 'rxjs/operators';
+import {filter, takeUntil, withLatestFrom} from 'rxjs/operators';
 import * as moment from 'moment';
-import {NotificationService} from '../services/notification-service';
 
 export interface Setting {
   hidden: boolean;
@@ -52,6 +51,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
   currentBuildTime = BUILD_DATE;
+  teacherPin$: Observable<string | number>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -67,9 +67,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       public kioskMode: KioskModeService,
       private router: Router,
       private pwaStorage: LocalStorage,
-      private userService: UserService,
-      private notificationService: NotificationService
-
+      private userService: UserService
   ) {
     // this.initializeSettings();
   }
@@ -87,9 +85,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    combineLatest(this.userService.user$, this.userService.introsData$)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([user, intros]) => {
+    this.teacherPin$ = this.userService.userPin$;
+    this.userService.introsData$
+      .pipe(withLatestFrom(this.userService.user$.pipe(filter(user => !!user))), takeUntil(this.destroy$))
+      .subscribe(([intros, user]) => {
         this._zone.run(() => {
           this.user = User.fromJSON(user);
           this.intosData = intros;
@@ -245,7 +244,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': this.isKioskMode || !NotificationService.hasPermission,
+      'hidden': this.isMobile,
       'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',

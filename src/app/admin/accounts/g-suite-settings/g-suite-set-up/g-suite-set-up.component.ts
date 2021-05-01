@@ -3,8 +3,6 @@ import {GSuiteOrgs} from '../../../../models/GSuiteOrgs';
 import {Util} from '../../../../../Util';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material/dialog';
-import {GSuiteSettingsComponent} from '../g-suite-settings.component';
 
 @Component({
   selector: 'app-g-suite-set-up',
@@ -16,11 +14,11 @@ export class GSuiteSetUpComponent implements OnInit {
   @Input() gSuiteInfo: GSuiteOrgs;
 
   @Output() openEditMode: EventEmitter<any> = new EventEmitter<any>();
+  @Output() back: EventEmitter<any> = new EventEmitter<any>();
 
   frameMotion$: BehaviorSubject<any>;
 
   constructor(
-    public dialogRef: MatDialogRef<GSuiteSettingsComponent>,
     private formService: CreateFormService
   ) { }
 

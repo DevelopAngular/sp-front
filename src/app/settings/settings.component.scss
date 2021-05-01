@@ -114,6 +114,19 @@
           font-size: 13px;
           margin-left: 20px;
         }
+
+        .set-up {
+          width: 53px;
+          height: 21px;
+          border-radius: 11px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          font-size: 13px;
+          margin-left: 20px;
+          background-color: #12C29E;
+        }
       }
       .setting-icon {
         width: 20px;
@@ -123,6 +136,7 @@
       .setting-title {
         font-size: 15px;
         margin-left: 15px;
+        white-space: nowrap;
         //color: $blue-gray;
       }
     }

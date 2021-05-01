@@ -15,6 +15,7 @@ import {ScreenService} from '../../services/screen.service';
 import {DeviceDetection} from '../../device-detection.helper';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms.component';
+import {UserService} from '../../services/user.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -98,6 +99,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private passesService: HallPassesService,
+    private userService: UserService
   ) {}
 
   get isCompressed() {
@@ -111,7 +113,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.isDeviceMid = this.screenService.isDeviceMid;
     this.isDeviceLarge = this.screenService.isDeviceLarge;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-
+    this.passesService.getPinnablesRequest();
+    this.locationsService.getPassLimitRequest();
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -190,16 +193,22 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.setFormSize();
     this.setContainerSize('end');
     this.checkDeviceScreen();
-      this.dataService.currentUser
-        .pipe(takeUntil(this.destroy$))
+      this.userService.user$
+        .pipe(
+          takeUntil(this.destroy$),
+          map(user => User.fromJSON(user))
+        )
         .subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAssistant();
           this.user = user;
-      });
+          this.locationsService.getLocationsWithTeacherRequest(this.user);
+
+        });
 
       combineLatest(
-          this.passesService.getPinnablesRequest(),
-          this.locationsService.getLocationsWithTeacherRequest(this.user))
+          this.passesService.pinnables$,
+          this.locationsService.teacherLocations$
+      )
           .pipe(
             filter(([pin, locs]: [Pinnable[], Location[]]) => this.isStaff && !!pin.length && !!locs.length),
               takeUntil(this.destroy$),
@@ -223,7 +232,6 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         .subscribe(rooms => {
           this.FORM_STATE.data.teacherRooms = rooms;
         });
-    this.locationsService.getPassLimitRequest();
     this.locationsService.listenPassLimitSocket().subscribe(res => {
       this.locationsService.updatePassLimitRequest(res);
     });
@@ -291,7 +299,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         break;
       case 4:
         this.formSize.width =  `335px`;
-        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
+        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '528px';
         break;
     }
   }

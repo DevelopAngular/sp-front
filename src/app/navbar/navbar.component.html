@@ -1,5 +1,5 @@
 <div class="host"
-     [style.background]="darkTheme.getColor({dark: '#0F171E', white : (!isStaff ? 'transparent' : '#FFFFFF')})"
+     [style.background]="darkTheme.getColor({dark: '#0F171E', white: (isStaff || isAssistant ? '#FFFFFF' : 'transparent' )})"
      [style.position]="(isStaff || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
      [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0"
      *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
@@ -13,17 +13,12 @@
     </div>
     <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
 
-      <div *ngIf="isStaff && !this.screenService.isDeviceLargeExtra && !user.isAssistant() " class="teacherNav">
+      <div *ngIf="isStaff && !this.screenService.isDeviceLargeExtra && user && !user.isAssistant() " class="teacherNav">
         <div *ngFor="let button of buttons; let i = index" class="teacherNav_tab">
           <ng-container *ngIf="buttonVisibility(button)">
             <div
                  #tabRef
                  [style.transition]="'transform .4s ease'"
-                 appCrossPointerEventTarget
-                 (pointerClickEvent)="tabRef.style.transform = 'unset'"
-                 (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
-                 (pointerCancelEvent)="tabRef.style.transform = 'unset'"
-
             >
               <app-nav-button
                       [selected]="tab === button.route"
@@ -37,7 +32,7 @@
         <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>
       </div>
 
-      <div *ngIf="user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra && !isStaff" class="teacherNav">
+      <div *ngIf="user && user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra && !isStaff" class="teacherNav">
         <div *ngFor="let button of buttons" class="teacherNav_tab">
           <ng-container *ngIf="buttonVisibility(button)">
             <div
@@ -64,32 +59,33 @@
       </div>
 
     </div>
+
     <div [ngClass]="isIOSTablet ? 'ios-user-info' : 'user-info'" [style.flexDirection]="flexDirection">
-      <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant"
+      <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant"
            appCrossPointerEventTarget
-           (pointerClickEvent)="showTeaches(target)"
-           #target
+           (pointerClickEvent)="showTeaches($event)"
       >
         <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>
         <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
           <span>
-            {{ effectiveUser?.user.display_name }}
+            {{ effectiveUser ? effectiveUser.user.display_name : '' }}
           </span>
           <img width="10" class="ds-ml-5" [src]="getIcon('Chevron Down', 'White', 'Navy')" alt="Chevron Down.svg">
         </div>
       </div>
+
       <ng-template #notAssistant>
         <div
           *ngIf="!isMobile"
           [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
           [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})"
-          [matTooltip]="user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
+          [matTooltip]="user && user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
           matTooltipClass="tooltip"
         >
           <span>
             {{ user?user.display_name:'' }}
           </span>
-          <img *ngIf="user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
+          <img *ngIf="user && user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
         </div>
       </ng-template>
 
@@ -98,7 +94,6 @@
           [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
           appCrossPointerEventTarget
          (pointerClickEvent)="inboxClick()"
-
       >
         <app-icon-button [eventBubbling]="true" [srcString]="'Inbox'" [size]="20"></app-icon-button>
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
@@ -149,11 +144,12 @@
         ></app-icon-button>
       </div>
     </div>
+
   </div>
 </div>
 
 <div class="host" *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
-      user.isAssistant() && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
+      isAssistant && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
   <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
     <div *ngFor="let button of buttons" class="teacherNav_tab" #tabRefMobile
          appCrossPointerEventTarget

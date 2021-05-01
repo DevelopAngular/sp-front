@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { GeneratedTableDialogComponent } from './generated-table-dialog.component';
+import {GeneratedTableDialogComponent} from './generated-table-dialog.component';
 
 describe('GeneratedTableDialogComponent', () => {
   let component: GeneratedTableDialogComponent;

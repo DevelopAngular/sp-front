@@ -29,7 +29,7 @@
             </div>
           </div>
         </div>
-        <div data-grammarly-issue-container [style.width]="'100%'" [style.padding]="'0px 25px'" [style.width.%]="85">
+        <div style="width: 100%; display: flex; justify-content: center">
           <textarea
             #messageBox
             (keyup.enter)="sendRequest()"
@@ -49,15 +49,16 @@
           >
           </textarea>
         </div>
-        <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">
-          <app-gradient-button size="editable"
-                               [hoverColor]="'#04CD33'"
-                               [cursor]="'pointer'"
-                               [minWidth]="messageBoxViewRestriction.btnWidth"
-                               [minHeight]="messageBoxViewRestriction.btnHeight"
-                               [fontSize]="messageBoxViewRestriction.fontSize"
-                               (buttonClick)="sendRequest()"
-                               class="message-button">
+        <div style="margin-right: 25px" *ngIf="formState.forInput || formState.missedRequest">
+          <app-gradient-button
+           [gradient]="gradient"
+           [cursor]="'pointer'"
+           [minWidth]="messageBoxViewRestriction.btnWidth"
+           [minHeight]="messageBoxViewRestriction.btnHeight"
+           [fontSize]="messageBoxViewRestriction.fontSize"
+           (buttonClick)="sendRequest()"
+           class="message-button"
+          >
             {{(message.value ? 'Next' : 'Skip')}}
           </app-gradient-button>
         </div>

@@ -17,8 +17,12 @@ import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filt
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {StorageService} from '../../services/storage.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
-import {cloneDeep, isEqual} from 'lodash';
+import {cloneDeep, isEqual, omit} from 'lodash';
 import {TableService} from '../sp-data-table/table.service';
+import {ToastService} from '../../services/toast.service';
+import {AdminService} from '../../services/admin.service';
+import {XlsxGeneratorService} from '../xlsx-generator.service';
+import {constructUrl} from '../../live-data/helpers';
 
 declare const window;
 
@@ -70,7 +74,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     isEmpty?: boolean,
     sortPasses$?: Observable<string>,
     sortPassesLoading$?: Observable<boolean>,
-    countPasses$?: Observable<number>
+    countPasses$?: Observable<number>,
+    isAllSelected$: Observable<boolean>
   };
   contactTraceState: {
     loading$: Observable<boolean>,
@@ -98,14 +103,16 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
+  queryParams: any;
 
   adminCalendarOptions;
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
-  sortColumn: string;
+  sortColumn: string = 'Pass start time';
   currentColumns: any;
   selectedRows: any[] = [];
+  allData: any[] = [];
 
   buttonForceTrigger$: Subject<any> = new Subject<any>();
 
@@ -113,14 +120,17 @@ export class ExploreComponent implements OnInit, OnDestroy {
   destroy$ = new Subject();
 
   constructor(
-    private dialog: MatDialog,
+    public dialog: MatDialog,
     private hallPassService: HallPassesService,
     private cdr: ChangeDetectorRef,
     private domSanitizer: DomSanitizer,
     private http: HttpService,
     private contactTraceService: ContactTraceService,
     private storage: StorageService,
-    private tableService: TableService
+    private tableService: TableService,
+    private toastService: ToastService,
+    private adminService: AdminService,
+    public xlsx: XlsxGeneratorService,
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -154,7 +164,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
       loaded$: this.hallPassService.passesLoaded$,
       sortPasses$: this.hallPassService.sortPassesValue$,
       sortPassesLoading$: this.hallPassService.sortPassesLoading$,
-      countPasses$: this.hallPassService.currentPassesCount$
+      countPasses$: this.hallPassService.currentPassesCount$,
+      isAllSelected$: this.tableService.isAllSelected$
     };
     this.contactTraceState = {
       loading$: this.contactTraceService.contactTraceLoading$,
@@ -170,6 +181,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     )
       .subscribe((view: string) => {
         this.destroyPassClick.next();
+        this.allData = [];
         if (view === 'pass_search') {
           this.passSearchData = {
             selectedStudents: null,
@@ -222,9 +234,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
               }];
             }
             this.passSearchState.isEmpty = false;
-            return passes.map(pass => {
+            const response = passes.map(pass => {
               const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
-              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" onClick="passClick(${pass.id})" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
+              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
 <!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
               let rawObj: any = {
@@ -246,14 +258,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
               rawObj = this.storage.getItem(`order${this.currentView$.getValue()}`) ? currentObj : rawObj;
 
               Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
-              // Object.defineProperty(rawObj, 'sortStudentName', { enumerable: false, value: pass.student.last_name});
               Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
-              // Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
               Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
-              // Object.defineProperty(rawObj, '_data', {enumerable: false, value: rawObj });
 
               return rawObj;
             });
+            this.allData = response;
+            return response;
           })
         );
 
@@ -274,7 +285,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             }
             this.contactTraceState.isEmpty = false;
             this.contact_trace_passes = {};
-            return contacts.map(contact => {
+            const response = contacts.map(contact => {
               const duration = moment.duration(contact.total_contact_duration, 'seconds');
               const connection: any[] =
                 contact.contact_paths.length === 2 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) ?
@@ -319,6 +330,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
               // Object.defineProperty(result, '_data', {enumerable: false, value: result });
               return result;
             });
+            this.allData = response;
+            return response;
           })
         );
 
@@ -394,6 +407,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
+        id: `${action}_filter`,
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
@@ -431,6 +445,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         });
     } else if (action === 'calendar') {
       const calendar = this.dialog.open(DateTimeFilterComponent, {
+        id: 'calendar_filter',
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
@@ -489,23 +504,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
-  search(limit: number = 100000) {
-    let url = `v1/hall_passes?limit=${limit}&`;
+  search(limit: number = 300) {
+    const queryParams: any = {};
+
     if (this.passSearchData.selectedDestinationRooms) {
-      this.passSearchData.selectedDestinationRooms.forEach(room => {
-        url += 'destination=' + room.id + '&';
-      });
+      queryParams['destination'] = this.passSearchData.selectedDestinationRooms.map(l => l['id']);
     }
     if (this.passSearchData.selectedOriginRooms) {
-      this.passSearchData.selectedOriginRooms.forEach(room => {
-        url += 'origin=' + room.id + '&';
-      });
+      queryParams['origin'] = this.passSearchData.selectedOriginRooms.map(l => l['id']);
     }
     if (this.passSearchData.selectedStudents) {
       const students: any[] = this.passSearchData.selectedStudents.map(s => s['id']);
-      Array.from(Array(students.length).keys()).map(i => {
-        url += 'student=' + students[i] + '&';
-      });
+      queryParams['student'] = students;
     }
 
     if (this.passSearchData.selectedDate) {
@@ -513,15 +523,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
       let end;
       if (this.passSearchData.selectedDate['start']) {
         start = this.passSearchData.selectedDate['start'].toISOString();
-        url += (start ? ('created_after=' + start + '&') : '');
+        queryParams['created_after'] = start;
       }
       if (this.passSearchData.selectedDate['end']) {
         end = this.passSearchData.selectedDate['end'].toISOString();
-        url += (end ? ('end_time_before=' + end) : '');
+        queryParams['end_time_before'] = end;
       }
     }
-    url = url + 'total_count=true';
+    queryParams['limit'] = limit;
+    queryParams['total_count'] = 'true';
+    this.queryParams = queryParams;
 
+    const url = constructUrl('v1/hall_passes', queryParams);
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
   }
@@ -568,9 +581,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
             queryParams.sort = sort && sort === 'asc' ? '-start_time' : 'start_time';
         }
         if (sort === 'desc') {
-          delete queryParams.sort;
+          if (this.currentView$.getValue() === 'pass_search') {
+            queryParams.sort = 'start_time';
+          } else {
+            delete queryParams.sort;
+          }
         }
         queryParams.limit = 300;
+        this.queryParams = queryParams;
         this.hallPassService.sortHallPassesRequest(queryParams);
       });
   }
@@ -583,5 +601,54 @@ export class ExploreComponent implements OnInit, OnDestroy {
       this.buttonForceTrigger$.next('calendar');
       return;
     }
+  }
+
+  exportPasses() {
+    this.adminService.exportCsvPasses(this.queryParams).subscribe(res => {
+      this.toastService.openToast(
+        {
+          title: 'Generating CSV...',
+          subtitle: 'When it’s ready (1-2min), we’ll send you a download link to your email.',
+          noButton: true
+        }
+      );
+    });
+  }
+
+  numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  downloadPasses(countAllData) {
+    if ((this.selectedRows.length > 300 || ((!this.selectedRows.length && countAllData > 300) || (this.tableService.isAllSelected$.getValue() && countAllData > 300)))) {
+      this.exportPasses();
+    } else {
+      this.generateCSV();
+      // this.toastService.openToast(
+      //   {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
+      // );
+    }
+  }
+
+  generateCSV() {
+    // If we are generating CSV locally, use all data from datasource if no selection.
+    let rows: any[];
+    if (this.selectedRows.length) {
+      rows = this.selectedRows;
+    } else {
+      rows = this.allData;
+    }
+
+    const exceptPass = rows.map(row => {
+      if (row['Contact connection']) {
+        const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
+        row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
+      }
+      return omit(row, ['Pass', 'Passes']);
+    });
+    const fileName = this.currentView$.getValue() === 'pass_search' ?
+      'SmartPass-PassSearch' : this.currentView$.getValue() === 'contact_trace' ?
+        'SmartPass-ContactTracing' : 'TestCSV';
+    this.xlsx.generate(exceptPass, fileName);
   }
 }
