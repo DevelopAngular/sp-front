@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormsService} from '../../services/forms.service';
+import {GoogleAnalyticsService} from '../../services/google-analytics.service';
 
 declare const gtag: Function;
 
@@ -15,7 +16,11 @@ export class QuoteRequestComponent implements OnInit {
   hdyhau: FormArray;
   submitted: boolean = false;
 
-  constructor(private fb: FormBuilder, private formService: FormsService) {
+  constructor(
+    private fb: FormBuilder,
+    private formService: FormsService,
+    private googleAnalytics: GoogleAnalyticsService,
+  ) {
   }
 
   ngOnInit(): void {
@@ -47,7 +52,7 @@ export class QuoteRequestComponent implements OnInit {
             console.log(res);
           });
       });
-      gtag('event', 'quote-request-complete', {});
+      this.googleAnalytics.emitEvent('quote-request-complete', {});
     });
   }
 

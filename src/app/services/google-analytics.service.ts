@@ -33,4 +33,9 @@ export class GoogleAnalyticsService {
       }
     });
   }
+
+  public emitEvent(name, params) {
+    gtag('event', name, params);
+  }
+
 }

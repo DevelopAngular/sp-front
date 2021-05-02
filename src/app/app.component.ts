@@ -172,7 +172,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
-    // this.googleAnalytics.init();
+    this.googleAnalytics.init();
     const fcm_sw = localStorage.getItem('fcm_sw_registered');
     if (fcm_sw === 'true') {
       this.notifService.initNotifications(true);
