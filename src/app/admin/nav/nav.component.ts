@@ -4,6 +4,7 @@ import {
   ElementRef,
   EventEmitter,
   NgZone,
+  OnDestroy,
   OnInit,
   Output,
   QueryList,
@@ -34,7 +35,7 @@ declare const window;
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements OnInit, AfterViewInit {
+export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('settingsButton', { static: true }) settingsButton: ElementRef;
   @ViewChild('navButtonsContainter', { static: true }) navButtonsContainterRef: ElementRef;
@@ -149,7 +150,7 @@ export class NavComponent implements OnInit, AfterViewInit {
           const route = {
             '1': 'dashboard',
             '2': 'hallmonitor',
-            '3': 'search',
+            '3': 'explore',
             '4': 'passconfig',
             '5': 'accounts',
             '6': 'myschool'
@@ -157,7 +158,7 @@ export class NavComponent implements OnInit, AfterViewInit {
           const currentButton = this.buttons.find(button => button.route === route[key[0]]);
           this.route(currentButton);
           if (!this.router.url.includes(currentButton.route)) {
-            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef.nativeElement);
+            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef);
           }
         }
     });
@@ -166,6 +167,11 @@ export class NavComponent implements OnInit, AfterViewInit {
       .subscribe(data => {
         this.introsData = data;
       });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   route( button: any) {
