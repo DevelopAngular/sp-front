@@ -7,7 +7,7 @@ import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {map, pluck, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, interval, merge, Observable, of, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -209,7 +209,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       }), takeUntil(this.destroy$)).subscribe();
     }
     this.shortcutsService.onPressKeyEvent$
-      .pipe(pluck('key'), takeUntil(this.destroy$))
+      .pipe(filter(() => this.forStaff), pluck('key'), takeUntil(this.destroy$))
       .subscribe(key => {
         if (key[0] === 'e') {
           this.endPass();
@@ -217,7 +217,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.dialogRef.close({'report': this.pass.student });
         }
       });
-    // this.formService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   ngOnDestroy() {
@@ -225,7 +224,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  updateDuration(dur:number){
+  updateDuration(dur: number) {
     this.returnData['duration'] = dur;
   }
 
