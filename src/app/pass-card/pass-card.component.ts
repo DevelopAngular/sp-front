@@ -401,10 +401,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
     return {display: display, color: color, action: action, icon};
   }
 
-  cancelClick() {
-    this.cancelEditClick = false;
-  }
-
   backdropClick() {
     this.cancelEditClick = false;
   }
