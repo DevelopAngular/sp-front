@@ -30,7 +30,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public appLink: string;
   public titleText: string;
-  // public isMobileDevice = false;
   public trustedBackgroundUrl: SafeUrl;
   public pending$: Observable<boolean>;
   public formPosition: string = '70px';
@@ -71,7 +70,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       window.appLoaded();
-    }, 300);
+    }, 700);
 
     this.loginService.isAuthenticated$.pipe(
       filter(v => v),
