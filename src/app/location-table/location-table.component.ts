@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {HttpService} from '../services/http-service';
 import {Location} from '../models/Location';
-import {delay, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
 import {filter as _filter, sortBy} from 'lodash';
@@ -103,8 +103,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           }
         }, {});
       }),
-      takeUntil(this.destroy$),
-      delay(3000)
+      takeUntil(this.destroy$)
     )
       .subscribe(res => {
         this.pinnables = res;
