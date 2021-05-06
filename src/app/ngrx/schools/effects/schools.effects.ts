@@ -30,7 +30,8 @@ export class SchoolsEffects {
               return schoolsActions.getSchoolsSuccess({schools});
             }),
             catchError(error => {
-              return of(schoolsActions.getSchoolsFailure({errorMessage: error.error.detail}));
+              const errorMessage = error && error.error && error.error.detail ? error.error.detail : 'School loading error';
+              return of(schoolsActions.getSchoolsFailure({errorMessage}));
             })
           );
       })
