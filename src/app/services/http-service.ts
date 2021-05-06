@@ -628,17 +628,10 @@ export class HttpService implements OnDestroy {
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
     if (!this.getAuthContext()) {
-      throw new Error('No authContext');
+      return throwError(new LoginServerError('No authContext'));
     }
 
     return predicate(this.getAuthContext());
-    // return this.authContext.pipe(
-    //     // Switching this from switchMap to concatMap, allows refreshAuthContext to complete successfully.
-    //     // refreshAuthContext gets cancelled when authContextSubject.next is called, so it never completes!
-    //     concatMap(ctx => {
-    //       return predicate(ctx);
-    //     }),
-    //     first());
   }
 
   // Used in AccessTokenInterceptor to trigger refresh
