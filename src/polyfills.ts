@@ -23,3 +23,13 @@ import 'core-js/es6/array';
  */
 // import 'intl/locale-data/jsonp/en';
 (window as any).global = window;
+(window as any).appLoaded = function(timeout) {
+  const timerId = setInterval(function() {
+    if ((window as any).preloader) {
+      (window as any).preloader.visibility = false;
+      clearInterval(timerId);
+    } else {
+      clearInterval(timerId);
+    }
+  }, timeout);
+};
