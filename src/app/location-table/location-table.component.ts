@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {HttpService} from '../services/http-service';
 import {Location} from '../models/Location';
-import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {delay, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
 import {filter as _filter, sortBy} from 'lodash';
@@ -103,7 +103,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           }
         }, {});
       }),
-      takeUntil(this.destroy$)
+      takeUntil(this.destroy$),
+      delay(3000)
     )
       .subscribe(res => {
         this.pinnables = res;
@@ -210,7 +211,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
   normalizeLocations(loc) {
-    if (this.currentPage !== 'from' && !this.isFavoriteForm) {
+    if (this.pinnables && (this.currentPage !== 'from' && !this.isFavoriteForm)) {
       if (loc.category) {
         if (!this.pinnables[loc.category] || !this.pinnables[loc.category].gradient_color) {
           loc.gradient = '#7f879d, #7f879d';
