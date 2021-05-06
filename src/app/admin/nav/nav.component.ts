@@ -27,6 +27,7 @@ import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component
 import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
 
 import * as moment from 'moment';
+import {DeviceDetection} from '../../device-detection.helper';
 
 declare const window;
 
@@ -86,6 +87,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.pts;
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   get showNotificationBadge() {
     return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
   }
@@ -137,6 +142,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         takeUntil(this.destroy$),
         pluck('key')
       ).subscribe(key => {

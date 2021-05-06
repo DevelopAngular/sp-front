@@ -216,6 +216,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.underlinePosition();
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         pluck('key'),
         takeUntil(this.destroyer$)
       )

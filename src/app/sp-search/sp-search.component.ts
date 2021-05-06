@@ -6,7 +6,7 @@ import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {filter as _filter} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
@@ -287,6 +287,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         takeUntil(this.destroy$),
         pluck('key')
       )

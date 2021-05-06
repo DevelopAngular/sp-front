@@ -135,6 +135,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
     this.shortcuts.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         takeUntil(this.destroy$),
         pluck('key')
       )
