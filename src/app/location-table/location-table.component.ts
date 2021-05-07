@@ -88,6 +88,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       public tooltipService: TooltipDataService
   ) {}
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   ngOnInit() {
     this.pinnableService.loadedPinnables$.pipe(
       filter(res => res && !this.isFavoriteForm),
@@ -193,6 +197,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        filter(() => this.isMobile),
         pluck('key'),
         takeUntil(this.destroy$)
       )
