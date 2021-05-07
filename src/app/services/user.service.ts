@@ -255,11 +255,11 @@ export class UserService implements OnDestroy{
     if (errorHandler instanceof SentryErrorHandler) {
       this.userData.pipe(takeUntil(this.destroy$)).subscribe(user => {
         errorHandler.setUserContext({
-          id: `${user.id}`,
-          email: user.primary_email,
-          is_student: user.isStudent(),
-          is_teacher: user.isTeacher(),
-          is_admin: user.isAdmin(),
+          id: user && user.id ? `${user.id}` : 'unknown',
+          email: user && user.primary_email ? user.primary_email : 'unknown',
+          is_student: user ? user.isStudent() : false,
+          is_teacher: user ? user.isTeacher() : false,
+          is_admin: user ? user.isAdmin() : false,
         });
       });
     }
