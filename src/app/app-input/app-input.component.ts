@@ -35,6 +35,8 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showPasswordButton: boolean;
   @Input() timeInput: boolean;
   @Input() pattern: string;
+  @Input() tabIndex: number = 1;
+  @Input() tabAttentive: boolean = false;
 
   @Input() formGroup;
   @Input() controlName;
@@ -118,6 +120,10 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   updateFocus(el) {
+
+    if(this.tabAttentive) {
+      this.isFocus = true;
+    }
 
     this.initialValue = this.input_value;
 

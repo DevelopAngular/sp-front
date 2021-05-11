@@ -54,7 +54,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public isAuthenticated = null;
-  public hideScroll: boolean = false;
+  public hideScroll: boolean = true;
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
@@ -172,7 +172,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
-    // this.googleAnalytics.init();
+    this.googleAnalytics.init();
     const fcm_sw = localStorage.getItem('fcm_sw_registered');
     if (fcm_sw === 'true') {
       this.notifService.initNotifications(true);

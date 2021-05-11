@@ -66,6 +66,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() download: boolean = false;
   @Input() documentType: docType;
   @Input() isGradient: boolean;
+  @Input() customBackground: string = '';
   @Output() buttonClick = new EventEmitter<any>();
   @Output() disabledButtonClick = new EventEmitter<any>();
 
@@ -140,6 +141,9 @@ export class GradientButtonComponent implements OnInit {
   }
 
   get styleGradient() {
+    if(this.customBackground.length != 0)
+      return this.customBackground;
+
     // We're fine using arbitrary styles here because they must match a very strict regex.
     if (this.isGradient) {
         if (this.buttonDown) {
