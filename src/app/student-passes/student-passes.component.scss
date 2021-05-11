@@ -114,7 +114,10 @@
     border-radius: 13px;
 
     .collection {
-      padding: 17px;
+      //padding: 17px;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
 
       .title {
         display: flex;

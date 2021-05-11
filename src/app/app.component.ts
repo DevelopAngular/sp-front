@@ -133,7 +133,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         filter((release: Array<Update>) => !!release.length),
         switchMap((release) => {
-          // release = [release[0]];
           let config;
           if (DeviceDetection.isMobile()) {
             config = {

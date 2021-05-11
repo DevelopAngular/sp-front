@@ -20,6 +20,7 @@ import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
 import {map} from 'rxjs/operators';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-student-passes',
@@ -109,6 +110,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   get isClose() {
     return !this.isOpenEvent$.getValue() && this.isResize;
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   openProfile() {
