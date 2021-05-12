@@ -8,11 +8,9 @@ import {LinkGeneratedDialogComponent} from './link-generated-dialog/link-generat
 import {PdfGeneratorService} from './pdf-generator.service';
 import {SettingsComponent} from './settings/settings.component';
 import {AdminSharedModule} from './shared/admin-shared.module';
-import {ColumnsConfigDialogComponent} from './columns-config-dialog/columns-config-dialog.component';
 import {SchoolSettingDialogComponent} from './school-setting-dialog/school-setting-dialog.component';
-import {IosComponentComponent} from './ios-component/ios-component.component';
-import {SearchFilterDialogComponent} from './search/search-filter-dialog/search-filter-dialog.component';
-import {DateTimeFilterComponent} from './search/date-time-filter/date-time-filter.component';
+import {SearchFilterDialogComponent} from './explore/search-filter-dialog/search-filter-dialog.component';
+import {DateTimeFilterComponent} from './explore/date-time-filter/date-time-filter.component';
 import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
 import {AdvancedOptionsComponent} from './overlay-container/advanced-options/advanced-options.component';
 import {AddExistingRoomComponent} from './overlay-container/add-existing-room/add-existing-room.component';
@@ -47,9 +45,7 @@ import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-prof
         AdminPageComponent,
         SettingsComponent,
         LinkGeneratedDialogComponent,
-        ColumnsConfigDialogComponent,
         SchoolSettingDialogComponent,
-        IosComponentComponent,
         SearchFilterDialogComponent,
         DateTimeFilterComponent,
         RoomsSearchComponent,

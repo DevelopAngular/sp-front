@@ -31,15 +31,15 @@ import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {UserService} from '../services/user.service';
 import {DeviceDetection} from '../device-detection.helper';
-import * as moment from 'moment';
 import {NotificationButtonService} from '../services/notification-button.service';
-
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {SideNavService} from '../services/side-nav.service';
 import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 import {LocationsService} from '../services/locations.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-passes',

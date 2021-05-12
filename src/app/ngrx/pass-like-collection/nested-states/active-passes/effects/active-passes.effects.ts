@@ -27,25 +27,6 @@ export class ActivePassesEffects {
       );
   });
 
-  // updateActivePasses$ = createEffect(() => {
-  //   return this.actions$
-  //     .pipe(
-  //       ofType(activePassesActions.updateActivePasses),
-  //       concatMap((action: any) => {
-  //         return this.liveDataService.watchActiveHallPasses(action.sortingEvents,
-  //           action.user.roles.includes('hallpass_student')
-  //             ? {type: 'student', value: action.user}
-  //             : {type: 'issuer', value: action.user}
-  //         ).pipe(
-  //           map((activePasses) => {
-  //             return activePassesActions.getActivePassesSuccess({activePasses});
-  //           }),
-  //           catchError(error => of(activePassesActions.getActivePassesFailure({errorMessage: error.message})))
-  //         );
-  //       })
-  //     );
-  // });
-
   constructor(
     private actions$: Actions,
     private liveDataService: LiveDataService

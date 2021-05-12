@@ -316,7 +316,7 @@ export class HttpService implements OnDestroy {
   getUserAuth(authObj) {
     const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
     if (auth) {
-      console.error('Token will expire ==>>', moment(auth.auth.expires).format('DD HH:mm'));
+      console.log('Token will expire ==>>', moment(auth.auth.expires).format('DD HH:mm'));
     }
     return iif(
       () => (auth && moment().isSameOrBefore(moment(auth.auth.expires))),

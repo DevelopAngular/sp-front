@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {LoadingService} from '../../services/loading.service';
 import {DataService} from '../../services/data-service';
 import {User} from '../../models/User';
 import {UserService} from '../../services/user.service';
@@ -76,7 +75,6 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
         private activeRoute: ActivatedRoute,
         private dataService: DataService,
         private userService: UserService,
-        public loadingService: LoadingService,
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,

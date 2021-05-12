@@ -6,14 +6,13 @@ import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
-import * as moment from 'moment';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
 import {ContactTraceService} from '../../services/contact-trace.service';
 import {ContactTrace} from '../../models/ContactTrace';
-import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filter.component';
+import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {StorageService} from '../../services/storage.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
@@ -24,6 +23,7 @@ import {AdminService} from '../../services/admin.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
+import * as moment from 'moment';
 
 declare const window;
 

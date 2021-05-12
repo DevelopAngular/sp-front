@@ -124,10 +124,6 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/sign-out/sign-out.module').then(m => m.SignOutModule)
   },
   {
-    path: 'error',
-    loadChildren: () => import('app/error/error.module').then(m => m.ErrorModule)
-  },
-  {
     path: 'forms',
     loadChildren: () => import('app/forms/forms.module').then(m => m.FormsModule),
     data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
