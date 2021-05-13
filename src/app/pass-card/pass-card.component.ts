@@ -111,9 +111,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   getUserName(user: any) {
     if (user instanceof User) {
-      return user.isSameObject(this.user)?'Me':user.first_name.substr(0, 1) +'. ' +user.last_name;
+      return user.isSameObject(this.user) ? 'Me' : user.first_name.substr(0, 1) + '. ' + user.last_name;
     } else {
-      return user.first_name.substr(0, 1) +'. ' +user.last_name;
+      return user.first_name.substr(0, 1) + '. ' + user.last_name;
     }
   }
 
@@ -142,11 +142,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
     return DeviceDetection.isMobile();
   }
 
-  get closeIcon(){
-    if(((this.isActive && this.forStaff) || this.forMonitor)){
+  get closeIcon() {
+    if (((this.isActive && this.forStaff) || this.forMonitor)){
       return './assets/Dots (Transparent).svg';
-    } else{
-      return './assets/'+(this.forInput?'Chevron Left ': 'Delete ') + '(Transparent).svg';
+    } else {
+      return './assets/' + (this.forInput ? 'Chevron Left ' : 'Delete ') + '(Transparent).svg';
     }
   }
 
@@ -238,24 +238,30 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   getDuration() {
-    let start: Date = this.pass.start_time;
-    let end: Date = this.pass.end_time;
-    let timeDiff = Math.abs(start.getTime() - end.getTime());
-    let diffSecs = Math.ceil(timeDiff / 1000);
-    return Math.floor(diffSecs/60) +':' +(diffSecs%60<10?'0':'') +diffSecs%60;
+    const start: Date = this.pass.start_time;
+    const end: Date = this.pass.end_time;
+    const timeDiff = Math.abs(start.getTime() - end.getTime());
+    const diffSecs = Math.ceil(timeDiff / 1000);
+    return Math.floor(diffSecs / 60) + ':' + (diffSecs % 60 < 10 ? '0' : '') + diffSecs % 60;
   }
 
   buildPages() {
-    if(this.pass.parent_invitation){
-      this.buildPage('Pass Request Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.flow_start), (this.pagerPages+1));
-      this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages+1));
-    } else if(this.pass.parent_request){
-      this.buildPage('Pass Request Sent', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.flow_start), (this.pagerPages+1));
-      this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
-    } else if(this.forFuture && this.pass.issuer ) {
-       this.buildPage('Pass Created', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
+    if (this.pass.parent_invitation) {
+      this.buildPage('Pass Request Sent', 'by ' +
+        this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.flow_start), (this.pagerPages + 1));
+      this.buildPage('Pass Request Accepted', 'by ' +
+        this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages + 1));
+    } else if (this.pass.parent_request) {
+      this.buildPage('Pass Request Sent', 'by ' +
+        this.getUserName(this.pass.student), this.formatDateTime(this.pass.flow_start), (this.pagerPages + 1));
+      this.buildPage('Pass Request Accepted', 'by ' +
+        this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages + 1));
+    } else if (this.forFuture && this.pass.issuer ) {
+       this.buildPage('Pass Created', 'by ' +
+         this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages + 1));
     } else if (this.pass.issuer) {
-      this.buildPage('Pass Created', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      this.buildPage('Pass Created', 'by ' +
+        this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages + 1));
     }
 
     if (this.isActive) {
@@ -263,30 +269,30 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.activePage = (this.pagerPages);
     } else if (this.fromPast) {
       this.buildPage('Pass Started', '', this.formatDateTime(this.pass.start_time), (this.pagerPages+1));
-      let start: Date = this.pass.start_time;
-      let end: Date = this.pass.end_time;
-      let diff: number = (end.getTime() - start.getTime()) / 1000;
-      let mins: number = Math.floor(Math.floor(diff) / 60);
-      let secs: number = Math.abs(Math.floor(diff) % 60);
-      let totalTime = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      this.buildPage('Pass Ended', '', totalTime +" - Total Time", (this.pagerPages+1));
+      const start: Date = this.pass.start_time;
+      const end: Date = this.pass.end_time;
+      const diff: number = (end.getTime() - start.getTime()) / 1000;
+      const mins: number = Math.floor(Math.floor(diff) / 60);
+      const secs: number = Math.abs(Math.floor(diff) % 60);
+      const totalTime = mins + ':' + (secs < 10 ? '0' + secs : secs);
+      this.buildPage('Pass Ended', '', totalTime + ' - Total Time', (this.pagerPages + 1));
     }
   }
 
   buildPage(title: string, subtitle: string, stamp: string, page: number){
-    if(page === 1){
+    if (page === 1) {
       this.p1Title = title;
       this.p1Subtitle = subtitle;
       this.p1Stamp = stamp;
-    } else if(page === 2){
+    } else if (page === 2) {
       this.p2Title = title;
       this.p2Subtitle = subtitle;
       this.p2Stamp = stamp;
-    } else if(page === 3){
+    } else if (page === 3) {
       this.p3Title = title;
       this.p3Subtitle = subtitle;
       this.p3Stamp = stamp;
-    } else if(page === 4){
+    } else if (page === 4) {
       this.p4Title = title;
       this.p4Subtitle = subtitle;
       this.p4Stamp = stamp;
@@ -317,7 +323,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
      const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
       getRequest$.pipe(
-        // switchMap(() => this.hallPassService.startPushNotification()),
         takeUntil(this.destroy$)
       )
         .subscribe((data) => {
@@ -332,7 +337,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.options = [];
       this.header = '';
 
-      if((this.isActive && this.forStaff) || this.forMonitor){
+      if ((this.isActive && this.forStaff) || this.forMonitor) {
 
         if (this.user.isTeacher() && !this.data['hideReport']) {
           this.options.push(this.genOption('Report Student', '#E32C66', 'report'));
@@ -340,20 +345,19 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.options.push(this.genOption('End Pass', '#E32C66', 'end'));
 
         this.header = '';
-      } else{
+      } else {
         if (this.forInput) {
             this.formState.step = 3;
               this.formState.previousStep = 4;
               this.formService.setFrameMotionDirection('disable');
               this.cardEvent.emit(this.formState);
             return false;
-        } else if(this.forFuture){
+        } else if (this.forFuture) {
           this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete', './assets/Delete (Red).svg'));
           this.header = 'Are you sure you want to delete this scheduled pass?';
         }
       }
 
-      // if (!this.screenService.isDeviceMid) {
         UNANIMATED_CONTAINER.next(true);
         this.cancelOpen = true;
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
@@ -369,15 +373,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
           .subscribe(action => {
           this.chooseAction(action);
         });
-      // }
 
     }
   }
 
   chooseAction(action) {
     this.cancelOpen = false;
-    if(action === 'delete') {
-      let body = {};
+    if (action === 'delete') {
+      const body = {};
       this.hallPassService.cancelPass(this.pass.id, body)
         .subscribe((httpData) => {
         this.dialogRef.close();

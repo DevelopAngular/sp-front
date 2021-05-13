@@ -1,6 +1,6 @@
 <div *ngIf="user" style="position: relative; height: auto; min-height: calc(100% - 78px); overflow: visible" #scrollableArea>
   <div *ngIf="canView" class="hall-monitor-wrapper">
-    <div [ngClass]="isIOSTablet ? 'ios-hall-monitor-top' : 'hall-monitor-top'">
+    <div [ngClass]="isIOSTablet ? 'ios-hall-monitor-top' : 'hall-monitor-top'" [style.background-color]="darkTheme.getBackground('low', false)">
       <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
       <app-round-input
         [type]="inputRestrictionXl.type"
@@ -57,7 +57,7 @@
           </div>
         </ng-container>
       </ng-template>
-      <p *ngIf="screenService.isDeviceMid && !isIpadSearchBar" class="hall-monitor-title">Hall Monitor</p>
+      <p *ngIf="screenService.isDeviceMid && !isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})" class="hall-monitor-title">Hall Monitor</p>
     </div>
     <div class="hall-monitor-bottom">
       <app-pass-collection

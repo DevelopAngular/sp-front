@@ -396,7 +396,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           filter(res => !!res)
         )
         .subscribe(data => {
-          // console.log(data);
           this.holdScrollPosition = data.scrollPosition;
           this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
           this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
@@ -405,7 +404,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   showOptions(target: HTMLElement) {
-    // debugger
     this.optionsClick = !this.optionsClick;
     if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
       this.openOptionsMenu();

@@ -234,7 +234,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         return filters['past-passes'].default;
       }));
 
-    this.dataService.currentUser
+    this.userService.user$
       .pipe(
         take(1),
         map(user => {
@@ -274,9 +274,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser.pipe(
       takeUntil(this.destroy$),
-      switchMap((user: User) =>
-        user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
-    )
+      switchMap((user: User) => {
+        return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+      }
+    ))
       .subscribe(passLike => {
         this._zone.run(() => {
           if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
