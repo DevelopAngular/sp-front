@@ -41,7 +41,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.dialogRef.close(this.starChangesIds);
+    this.dialogRef.close(this.starChanges);
   }
 
   onStar(loc: any) {

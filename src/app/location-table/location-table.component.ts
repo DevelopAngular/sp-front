@@ -11,6 +11,7 @@ import {HallPassesService} from '../services/hall-passes.service';
 import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
 import {DeviceDetection} from '../device-detection.helper';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 
 export interface Paged<T> {
@@ -56,7 +57,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
-  @Output() onUpdate: EventEmitter<number[]> = new EventEmitter<number[]>();
+  @Output() onUpdate: EventEmitter<Location[]> = new EventEmitter<Location[]>();
 
   @ViewChild('item') currentItem: ElementRef;
 
@@ -238,13 +239,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  updateOrderLocation(locations) {
-    const body = {'locations': locations.map(loc => loc.id)};
-    this.locationService.updateFavoriteLocations(body)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((res: number[]) => {
-        this.onUpdate.emit(res);
-    });
+  updateOrderLocation(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.starredChoices, event.previousIndex, event.currentIndex);
+    this.onUpdate.emit(this.starredChoices);
   }
 
 

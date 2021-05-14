@@ -502,10 +502,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
               backdropClass: 'custom-backdrop',
           });
 
-          favRef.afterClosed().pipe(switchMap(data => {
-              const body = {'locations': data };
-              return this.locationService.updateFavoriteLocations(body);
-          })).subscribe();
+          favRef.afterClosed().subscribe((data) => {
+            this.locationService.updateFavoriteLocationsRequest(data);
+          });
 
       } else if (action === 'notifications') {
 

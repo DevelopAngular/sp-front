@@ -22,12 +22,13 @@
 
       <!-- Favorite Window -->
       <div class="favorite" *ngIf="favoritesLoaded && isFavoriteForm && !forKioskMode && pinnablesLoaded">
-        <div
-             class="choices"
-             [dragula]="(screenService.enabledLocationTableDnD | async) ? 'locations' : null"
-             (dragulaModelChange)="updateOrderLocation($event)"
+        <div class="choices"
+             cdkDropList
+             (cdkDropListDropped)="updateOrderLocation($event)"
+             [cdkDropListDisabled]="isMobile"
         >
-          <div class="choice" *ngFor="let choice of starredChoices">
+          <div class="choice" *ngFor="let choice of starredChoices" cdkDrag>
+            <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
             <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
               (onSelect)="choiceSelected($event)"
               (onStar)="star($event)"
@@ -42,22 +43,6 @@
             </app-location-cell>
           </div>
         </div>
-        <ng-template #noDnd>
-          <div class="choices">
-            <div class="choice" *ngFor="let choice of starredChoices">
-              <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
-                (onSelect)="choiceSelected($event)"
-                (onStar)="star($event)"
-                [value]="choice"
-                [type]="type"
-                [starred]="true"
-                [showStar]="!!showStars"
-                [allowOnStar]="allowOnStar"
-              >
-              </app-location-cell>
-            </div>
-          </div>
-        </ng-template>
       </div>
 
 
