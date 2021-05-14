@@ -274,6 +274,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           this.isStaff = this.user.isTeacher();
           this.isAssistant = this.user.isAssistant();
           this.showSwitchButton = [this.user.isAdmin(), this.user.isTeacher(), this.user.isStudent()].filter(val => !!val).length > 1;
+          if (!this.isAssistant) {
+            this.buttons.forEach((button) => {
+              if (
+                ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
+                &&
+                !this.hasRoles(button.requiredRoles)
+              ) {
+                this.fakeMenu.next(true);
+              }
+            });
+          }
       });
 
     this.http.globalReload$
@@ -308,26 +319,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       });
 
-   this.userService.representedUsers.subscribe(res => {
-     this.representedUsers = res;
+   this.userService.representedUsers.pipe(takeUntil(this.destroyer$))
+     .subscribe(res => {
+      this.representedUsers = res;
    });
-
-    this.userService.userData
-      .pipe(
-        takeUntil(this.destroyer$),
-        filter(user => !user.isAssistant())
-      )
-      .subscribe(user => {
-      this.buttons.forEach((button) => {
-        if (
-          ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
-          &&
-          !this.hasRoles(button.requiredRoles)
-        ) {
-            this.fakeMenu.next(true);
-          }
-      });
-    });
 
 
     this.sideNavService.sideNavAction

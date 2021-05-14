@@ -240,8 +240,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   updateOrderLocation(locations) {
     const body = {'locations': locations.map(loc => loc.id)};
-    this.locationService.updateFavoriteLocations(body).pipe(takeUntil(this.destroy$)).subscribe((res: number[]) => {
-      this.onUpdate.emit(res);
+    this.locationService.updateFavoriteLocations(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res: number[]) => {
+        this.onUpdate.emit(res);
     });
   }
 
