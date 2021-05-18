@@ -202,6 +202,10 @@ export class HttpService implements OnDestroy {
 
   private hasRequestedToken = false;
 
+  private cannotRefreshGoogle = new Error('cannot refresh google');
+  private cannotRefreshGG4L = new Error('cannot refresh gg4l');
+  private cannotRefreshClever = new Error('cannot refresh clever');
+
   constructor(
       @Inject(APP_BASE_HREF)
       private baseHref: string,
@@ -645,7 +649,20 @@ export class HttpService implements OnDestroy {
   refreshAuthContext(): Observable<any> {
     const signOutCatch = catchError(err => {
       this.showSignBackIn().subscribe( _ => {
-        this.router.navigate(['sign-out']);
+        if (err === this.cannotRefreshGoogle) {
+          const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+          this.loginService.clearInternal(true);
+          window.location.href = url;
+        } else if (err === this.cannotRefreshGG4L) {
+          this.loginService.clearInternal(true);
+          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
+        } else if (err === this.cannotRefreshClever) {
+          this.loginService.clearInternal(true);
+          const redirect = this.getEncodedRedirectUrl();
+          window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
+        } else {
+          this.router.navigate(['sign-out']);
+        }
       });
       this.loginService.isAuthenticated$.next(false);
       throw err;
@@ -723,7 +740,7 @@ export class HttpService implements OnDestroy {
               this.loginService.clearInternal(true);
               window.location.href = url;
             });
-        return throwError(new Error('Redirecting to google'));
+        return throwError(this.cannotRefreshGoogle);
       case 'gg4l':
         this.showSignBackIn()
             .pipe(takeUntil(this.destroyed$))
@@ -731,16 +748,9 @@ export class HttpService implements OnDestroy {
               this.loginService.clearInternal(true);
               window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
             });
-        return throwError(new Error('Redirecting to gg4l'));
+        return throwError(this.cannotRefreshGG4L);
       case 'clever':
-        this.showSignBackIn()
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(_ => {
-              this.loginService.clearInternal(true);
-              const redirect = this.getEncodedRedirectUrl();
-              window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
-            });
-        return throwError(new Error('Redirecting to clever'));
+        return throwError(this.cannotRefreshClever);
       default:
         return throwError(new Error('Unknown authType'));
     }
