@@ -1,0 +1,8 @@
+<div class="calendar-wrapper">
+  <!--  <div class="top-arrow-container">-->
+  <!--    <div class="top-arrow"></div>-->
+  <!--  </div>-->
+  <div class="date-container">
+    <app-admin-calendar-toggle [date]="selectedDate" [selectedOptions]="calendarOptions" (settingsRes)="saveOptions($event)" (adminCalendarRes)="calendarResult($event)"></app-admin-calendar-toggle>
+  </div>
+</div>
