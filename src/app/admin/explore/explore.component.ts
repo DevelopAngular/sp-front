@@ -24,6 +24,7 @@ import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
+import {Report} from '../../models/Report';
 
 declare const window;
 
@@ -63,7 +64,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   views: View = {
     'pass_search': {id: 1, title: 'Pass Search', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
-    // 'report_search': {id: 2, title: 'Reports search', color: 'red', icon: 'Report Search', action: 'report_search'},
+    'report_search': {id: 2, title: 'Reports search', color: 'red', icon: 'Report Search', action: 'report_search'},
     'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
@@ -79,6 +80,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
     isAllSelected$: Observable<boolean>
   };
   contactTraceState: {
+    loading$: Observable<boolean>,
+    loaded$: Observable<boolean>,
+    length$: Observable<number>,
+    isEmpty?: boolean
+  };
+  reportSearchState: {
     loading$: Observable<boolean>,
     loaded$: Observable<boolean>,
     length$: Observable<number>,
@@ -104,6 +111,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
+  reportsSearchData$: Observable<any[]>;
   queryParams: any;
 
   adminCalendarOptions;
@@ -177,6 +185,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
       loaded$: this.contactTraceService.contactTraceLoaded$,
       length$: this.contactTraceService.contactTraceTotalLength$
     };
+    this.reportSearchState = {
+      loaded$: this.adminService.reports.loaded$,
+      loading$: this.adminService.reports.loading$,
+      length$: this.adminService.reports.length
+    };
 
     this.http.globalReload$.pipe(
       switchMap(() => {
@@ -204,11 +217,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
             selectedStudents: null,
             selectedDate: null
           };
-          // this.adminCalendarOptions = {
-          //   rangeId: 'range_5',
-          //   toggleResult: 'Range'
-          // };
           return this.contactTraceService.contactTraceLoaded$;
+        } else if (view === 'report_search') {
+          this.adminService.getReportsData(300);
         }
       });
 
@@ -338,6 +349,29 @@ export class ExploreComponent implements OnInit, OnDestroy {
             return response;
           })
         );
+
+      this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
+        filter(res => this.currentView$.getValue() === 'report_search'),
+        map((reports: Report[]) => {
+          if (!reports.length) {
+            this.contactTraceState.isEmpty = true;
+            return [{
+              'Student Name': null,
+              'Message': null,
+              'Submitted by': null,
+              'Date submitted': null
+            }];
+          }
+          return reports.map(report => {
+            return {
+              'Student Name': report.student.display_name,
+              'Message': report.message,
+              'Submitted by': report.issuer.display_name,
+              'Date submitted': ''
+            };
+          });
+        })
+      );
 
       this.tableService.selectRow.asObservable()
         .pipe(takeUntil(this.destroy$))

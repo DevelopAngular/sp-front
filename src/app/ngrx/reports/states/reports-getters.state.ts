@@ -1,4 +1,4 @@
-import { AppState } from '../../app-state/app-state';
+import {AppState} from '../../app-state/app-state';
 import {adapter} from '../reducers';
 import {createSelector} from '@ngrx/store';
 import {IGetReportsRequest} from './reports.state';
@@ -6,7 +6,7 @@ import {IGetReportsRequest} from './reports.state';
 export const getReportsState = (state: AppState) => state.reports;
 
 export const getReportsCollection = adapter.getSelectors(getReportsState).selectAll;
-// export const getReportsEntities = adapter.getSelectors(getReportsState).selectEntities;
+export const getReportsLength = adapter.getSelectors(getReportsState).selectTotal;
 
 export const getIsLoadedReports = createSelector(
   getReportsState,

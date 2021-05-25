@@ -11,7 +11,8 @@ import {
   getFoundReports,
   getIsLoadedReports,
   getIsLoadingReports,
-  getReportsCollection
+  getReportsCollection,
+  getReportsLength
 } from '../ngrx/reports/states/reports-getters.state';
 import {getReports, postReport, searchReports} from '../ngrx/reports/actions';
 import {getCountAccountsResult} from '../ngrx/accounts/nested-states/count-accounts/state/count-accouns-getters.state';
@@ -56,6 +57,7 @@ export class AdminService {
     reports$: this.store.select(getReportsCollection),
     loaded$: this.store.select(getIsLoadedReports),
     loading$: this.store.select(getIsLoadingReports),
+    length: this.store.select(getReportsLength),
     foundReports: this.store.select(getFoundReports),
     addedReports: this.store.select(getAddedReports)
   };

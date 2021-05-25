@@ -184,5 +184,15 @@
       </ng-template>
     </div>
 
+    <div class="report-search" *ngIf="views[currentView].id === 2">
+      <app-sp-data-table
+        [isCheckbox]="isCheckbox$"
+        [data$]="reportsSearchData$"
+        [loading$]="reportSearchState.loading$"
+        [currentPage]="currentView$.value"
+        [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+      ></app-sp-data-table>
+    </div>
+
   </div>
 </div>
