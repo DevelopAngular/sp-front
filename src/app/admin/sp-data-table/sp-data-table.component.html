@@ -87,6 +87,7 @@
             <td
               mat-cell
               [ngClass]="{'fake-container': !element[column]}"
+              [style.height]="!element[column] ? itemSize + 'px' : 'auto'"
               [style.opacity]="!element[column] && !isLast ? 0 : 1"
               [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
@@ -94,13 +95,13 @@
               [innerHTML]="element[column] ? element[column] : fakeTemplate">
             </td>
 
-
         </ng-container>
 
         <tr class="header" mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
 
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
             #rowCont
+            [style.height]="itemSize + 'px'"
             (mouseenter)="rowCont.hover = true"
             (mouseleave)="rowCont.hover = false"
             [style.background-color]="isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick && !row.isFake ? '#F1F2F4' : '#FFFFFF'"

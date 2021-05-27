@@ -25,6 +25,7 @@ import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
 import {Report} from '../../models/Report';
+import {Util} from '../../../Util';
 
 declare const window;
 
@@ -52,6 +53,7 @@ export interface SearchData {
   selectedDate: {start: moment.Moment, end: moment.Moment};
   selectedDestinationRooms?: any[];
   selectedOriginRooms?: any[];
+  selectedTeachers?: User[];
 }
 
 @Component({
@@ -77,7 +79,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     sortPasses$?: Observable<string>,
     sortPassesLoading$?: Observable<boolean>,
     countPasses$?: Observable<number>,
-    isAllSelected$: Observable<boolean>
+    isAllSelected$: Observable<boolean>,
+    nextUrl$: Observable<string>
   };
   contactTraceState: {
     loading$: Observable<boolean>,
@@ -89,6 +92,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     loading$: Observable<boolean>,
     loaded$: Observable<boolean>,
     length$: Observable<number>,
+    nextUrl$: Observable<string>,
     isEmpty?: boolean
   };
   isSearched: boolean;
@@ -108,6 +112,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
   contact_trace_passes: {
     [id: number]: HallPass
   } = {};
+
+  reportSearchData: SearchData = {
+    selectedStudents: null,
+    selectedTeachers: null,
+    selectedDate: null
+  };
 
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
@@ -178,6 +188,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       sortPasses$: this.hallPassService.sortPassesValue$,
       sortPassesLoading$: this.hallPassService.sortPassesLoading$,
       countPasses$: this.hallPassService.currentPassesCount$,
+      nextUrl$: this.hallPassService.passesNextUrl$,
       isAllSelected$: this.tableService.isAllSelected$
     };
     this.contactTraceState = {
@@ -188,7 +199,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.reportSearchState = {
       loaded$: this.adminService.reports.loaded$,
       loading$: this.adminService.reports.loading$,
-      length$: this.adminService.reports.length
+      length$: this.adminService.reports.length,
+      nextUrl$: this.adminService.reports.nextUrl$
     };
 
     this.http.globalReload$.pipe(
@@ -219,7 +231,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
           };
           return this.contactTraceService.contactTraceLoaded$;
         } else if (view === 'report_search') {
-          this.adminService.getReportsData(300);
+          this.reportSearchData = {
+            selectedStudents: null,
+            selectedDate: null,
+            selectedTeachers: null
+          };
+          this.searchReports();
         }
       });
 
@@ -354,7 +371,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         filter(res => this.currentView$.getValue() === 'report_search'),
         map((reports: Report[]) => {
           if (!reports.length) {
-            this.contactTraceState.isEmpty = true;
+            this.reportSearchState.isEmpty = true;
             return [{
               'Student Name': null,
               'Message': null,
@@ -362,13 +379,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
               'Date submitted': null
             }];
           }
+          this.reportSearchState.isEmpty = false;
           return reports.map(report => {
-            return {
+            const result = {
               'Student Name': report.student.display_name,
-              'Message': report.message,
+              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="message">${report.message || 'No report message'}</div>`),
               'Submitted by': report.issuer.display_name,
-              'Date submitted': ''
+              'Date submitted': moment(report.created).format('MM/DD HH:mm A')
             };
+
+            Object.defineProperty(result, 'id', { enumerable: false, value: report.id});
+
+            return result;
           });
         })
       );
@@ -417,8 +439,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   passClick(id) {
-    iif(() => this.currentView$.getValue() === 'pass_search', this.hallPassService.passesEntities$.pipe(take(1)), of(this.contact_trace_passes))
-      .pipe(
+    iif(
+      () => this.currentView$.getValue() === 'pass_search',
+      this.hallPassService.passesEntities$.pipe(take(1)),
+      of(this.contact_trace_passes)
+    ).pipe(
         takeUntil(this.destroyPassClick),
         map(passes => {
           return passes[id];
@@ -450,10 +475,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': new ElementRef(event).nativeElement,
-          'selectedStudents': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedStudents : this.contactTraceData.selectedStudents,
+          'selectedStudents': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedStudents : (this.currentView$.getValue() === 'report_search' ? this.reportSearchData.selectedStudents : this.contactTraceData.selectedStudents),
           'type': action === 'students' ? 'selectedStudents' : 'rooms',
           'rooms': this.currentView$.getValue() === 'pass_search' ? (action === 'origin' ? this.passSearchData.selectedOriginRooms : this.passSearchData.selectedDestinationRooms) : this.contactTraceData.selectedDestinationRooms,
-          'multiSelect': this.currentView$.getValue() === 'pass_search'
+          'multiSelect': this.currentView$.getValue() === 'pass_search' || this.currentView$.getValue() === 'report_search'
         }
       });
 
@@ -472,13 +497,37 @@ export class ExploreComponent implements OnInit, OnDestroy {
           } else if (type === 'selectedStudents') {
             if (this.currentView$.getValue() === 'pass_search') {
               this.passSearchData.selectedStudents = students;
+            } else if (this.currentView$.getValue() === 'report_search') {
+              this.reportSearchData.selectedStudents = students;
             } else {
               this.contactTraceData.selectedStudents = students;
             }
           }
-          if (this.isSearched || this.currentView$.getValue() === 'contact_trace') {
+          if (this.isSearched || this.currentView$.getValue() === 'contact_trace' || this.currentView$.getValue() === 'report_search') {
             this.autoSearch();
           }
+          this.cdr.detectChanges();
+        });
+    } else if (action === 'teachers') {
+      const teacherFilter = this.dialog.open(StudentFilterComponent, {
+        id: `${action}_filter`,
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {
+          'trigger': new ElementRef(event).nativeElement,
+          'selectedTeachers': this.reportSearchData.selectedTeachers,
+          'type': 'selectedTeachers',
+          'multiSelect': true
+        }
+      });
+
+      teacherFilter.afterClosed()
+        .pipe(
+          tap(() => UNANIMATED_CONTAINER.next(false)),
+          filter(res => res)
+        ).subscribe(({students, type}) => {
+          this.reportSearchData.selectedTeachers = students;
+          this.autoSearch();
           this.cdr.detectChanges();
         });
     } else if (action === 'calendar') {
@@ -488,7 +537,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         backdropClass: 'invis-backdrop',
         data: {
           target: new ElementRef(event),
-          date: (this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedDate : this.contactTraceData.selectedDate),
+          date: (this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedDate : (this.currentView$.getValue() === 'report_search' ? this.reportSearchData.selectedDate : this.contactTraceData.selectedDate)),
           options: this.adminCalendarOptions
         }
       });
@@ -506,14 +555,20 @@ export class ExploreComponent implements OnInit, OnDestroy {
             } else {
               this.passSearchData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
             }
-          } else {
+          } else if (this.currentView$.getValue() === 'contact_trace') {
             if (!date.start) {
               this.contactTraceData.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
             } else {
               this.contactTraceData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
             }
+          } else if (this.currentView$.getValue() === 'report_search') {
+            if (!date.start) {
+              this.reportSearchData.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
+            } else {
+              this.reportSearchData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
+            }
           }
-        if (this.isSearched || this.currentView$.getValue() === 'contact_trace') {
+        if (this.isSearched || this.currentView$.getValue() === 'contact_trace' || this.currentView$.getValue() === 'report_search') {
           this.autoSearch();
         }
         this.cdr.detectChanges();
@@ -523,6 +578,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   loadMorePasses() {
     this.hallPassService.getMorePasses();
+  }
+
+  loadMoreReports() {
+    this.adminService.getMoreReports();
   }
 
   autoSearch() {
@@ -539,6 +598,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
       this.contactTraceService.clearContactTraceDataRequest();
       this.showContactTraceTable = false;
       this.contactTraceState.isEmpty = false;
+    } else if (this.currentView$.getValue() === 'report_search') {
+      this.searchReports();
     }
   }
 
@@ -552,8 +613,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       queryParams['origin'] = this.passSearchData.selectedOriginRooms.map(l => l['id']);
     }
     if (this.passSearchData.selectedStudents) {
-      const students: any[] = this.passSearchData.selectedStudents.map(s => s['id']);
-      queryParams['student'] = students;
+      queryParams['student'] = this.passSearchData.selectedStudents.map(s => s['id']);
     }
 
     if (this.passSearchData.selectedDate) {
@@ -575,6 +635,29 @@ export class ExploreComponent implements OnInit, OnDestroy {
     const url = constructUrl('v1/hall_passes', queryParams);
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
+  }
+
+  searchReports(limit = 100) {
+    const queryParams: any = {limit};
+    if (this.reportSearchData.selectedStudents) {
+      queryParams['student'] = this.reportSearchData.selectedStudents.map(s => s.id);
+    }
+    if (this.reportSearchData.selectedTeachers) {
+      queryParams['issuer'] = this.reportSearchData.selectedTeachers.map(t => t.id);
+    }
+    if (this.reportSearchData.selectedDate) {
+      let start;
+      let end;
+      if (this.reportSearchData.selectedDate['start']) {
+        start = this.reportSearchData.selectedDate['start'].toISOString();
+        queryParams['created_after'] = start;
+      }
+      if (this.reportSearchData.selectedDate['end']) {
+        end = this.reportSearchData.selectedDate['end'].toISOString();
+        queryParams['end_time_before'] = end;
+      }
+    }
+    this.adminService.getReportsData(queryParams);
   }
 
   contactTrace() {
@@ -657,7 +740,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return Util.numberWithCommas(x);
   }
 
   downloadPasses(countAllData) {
@@ -665,9 +748,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
       this.exportPasses();
     } else {
       this.generateCSV();
-      // this.toastService.openToast(
-      //   {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
-      // );
     }
   }
 

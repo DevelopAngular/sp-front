@@ -28,5 +28,10 @@ export const getAddedReports = createSelector(
   (state: IGetReportsRequest) => state.addedReports
 );
 
+export const getReportsNextUrl = createSelector(
+  getReportsState,
+  (state: IGetReportsRequest) => state.next
+);
+
 
 

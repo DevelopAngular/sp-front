@@ -182,9 +182,9 @@
     text-transform: capitalize;
   }
 
-  .mat-row {
-    height: 33px;
-  }
+  //.mat-row {
+  //  height: 33px;
+  //}
 
   .mat-cell, .mat-header-cell {
     padding-left: 22px;
@@ -285,6 +285,7 @@ mat-cell {
   white-space: unset !important;
   flex: 0 0 145px !important;
   min-width: 145px !important;
+  max-width: 145px !important;
   overflow-wrap: break-word;
   left: 46px !important;
   word-break: break-word;
@@ -314,6 +315,20 @@ mat-cell {
   white-space: unset !important;
   flex: 0 0 200px !important;
   min-width: 200px !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .mat-column-Message {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 200px !important;
+  max-width: 200px !important;
   overflow-wrap: break-word;
   word-break: break-word;
   -ms-hyphens: auto;
@@ -469,7 +484,17 @@ mat-cell {
   position: absolute;
   right: 0;
   left: 0;
-  height: 33px;
+  //height: 33px;
+}
+
+::ng-deep .message {
+  position: relative;
+  min-width: 270px;
+  height: 54px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 @keyframes shimmer {
