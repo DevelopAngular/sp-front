@@ -21,6 +21,7 @@
           [isFavoriteForm]="true"
           [searchExceptFavourites]="true"
           [showStars]="true"
+          (onUpdate)="this.starChanges = $event"
         >
         </app-location-table>
       </div>
