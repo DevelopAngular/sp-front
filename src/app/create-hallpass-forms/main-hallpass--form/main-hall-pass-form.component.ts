@@ -114,7 +114,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.isDeviceLarge = this.screenService.isDeviceLarge;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.passesService.getPinnablesRequest();
-
+    this.locationsService.getPassLimitRequest();
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -201,7 +201,9 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         .subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAssistant();
           this.user = user;
-      });
+          this.locationsService.getLocationsWithTeacherRequest(this.user);
+
+        });
 
       combineLatest(
           this.passesService.pinnables$,
@@ -297,7 +299,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         break;
       case 4:
         this.formSize.width =  `335px`;
-        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
+        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '528px';
         break;
     }
   }

@@ -11,13 +11,14 @@ export const assistantsInitialState: AssistantsStates = adapter.getInitialState(
   loaded: false,
   nextRequest: null,
   lastAddedAssistants: [],
-  sortValue: ''
+  sortValue: '',
+  addedUser: null
 });
 
 const reducer = createReducer(
   assistantsInitialState,
   on(assistantsActions.getAssistants,
-      assistantsActions.removeAssistant,
+      // assistantsActions.removeAssistant,
     // assistantsActions.getMoreAssistants,
       state => ({...state, loading: true, loaded: false })),
   on(assistantsActions.getAssistantsSuccess, (state, {assistants, next}) => {
@@ -43,7 +44,7 @@ const reducer = createReducer(
     return adapter.addMany(assistants, {...state, lastAddedAssistants: assistants, nextRequest: next});
   }),
   on(assistantsActions.postAssistantSuccess, assistantsActions.addUserToAssistantProfileSuccess, (state, {assistant}) => {
-    return adapter.addOne(assistant, {...state, loading: false, loaded: true});
+    return adapter.addOne(assistant, {...state, loading: false, loaded: true, addedUser: assistant});
   }),
   on(assistantsActions.getMoreAssistantsFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
   on(assistantsActions.bulkAddAssistantAccounts, (state, {assistants}) => {

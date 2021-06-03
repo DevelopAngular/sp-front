@@ -1,0 +1,31 @@
+@import '../../../../design-system';
+
+#colored-checkbox-wrapper {
+  margin-bottom: 20px;
+
+  #title {
+    @include textSize(14px, bold);
+    margin-bottom: 8px;
+  }
+
+  #option {
+    margin-top: 2px;
+
+    span {
+      @include textSize(12px, normal, false);
+      color: white;
+      border-radius: 12px;
+      padding: 2px 8px;
+    }
+  }
+}
+
+::ng-deep mat-checkbox.navy.mat-checkbox-checked .mat-checkbox-background {
+  background-color: $navy;
+}
+
+::ng-deep mat-checkbox.small.mat-checkbox .mat-checkbox-inner-container {
+  padding-top: 1px;
+  width: 14px;
+  height: 14px;
+}

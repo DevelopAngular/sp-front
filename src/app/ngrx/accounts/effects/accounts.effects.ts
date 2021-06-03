@@ -9,6 +9,8 @@ import {PostRoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
 import {User} from '../../../models/User';
 import {forkJoin, of} from 'rxjs';
+import {openToastAction} from '../../toast/actions';
+import {Toast} from '../../../models/Toast';
 
 @Injectable()
 export class AccountsEffects {
@@ -217,8 +219,9 @@ export class AccountsEffects {
          concatMap((action: any) => {
            return this.userService.addBulkAccounts(action.accounts)
              .pipe(
-               map((users: User[]) => {
-                 return accountsActions.bulkAddAccountsSuccess({accounts: users});
+               switchMap((users: User[]) => {
+                 const toastData: Toast = {title: 'Success', subtitle: `${users.length} accounts added`, type: 'success'};
+                 return [accountsActions.bulkAddAccountsSuccess({accounts: users}), openToastAction({data: toastData})];
                }),
               catchError(error => of(accountsActions.bulkAddAccountsFailure({errorMessage: error.message})))
              );

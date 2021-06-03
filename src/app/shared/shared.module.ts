@@ -30,8 +30,6 @@ import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-togg
 import {SpChipsComponent} from '../sp-chips/sp-chips.component';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
 import {IconButtonComponent} from '../icon-button/icon-button.component';
-import {XsButtonComponent} from '../xs-button/xs-button.component';
-import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
@@ -57,6 +55,13 @@ import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-in
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
 import {CustomToolTipComponent} from './shared-components/custom-tool-tip/custom-tool-tip.component';
 import {PassLimitTooltipComponent} from './shared-components/pass-limit-tooltip/pass-limit-tooltip.component';
+import {StudentPassesComponent} from '../student-passes/student-passes.component';
+import {StudentPassesInfoCardComponent} from '../student-passes/student-passes-info-card/student-passes-info-card.component';
+import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
+import {StudentMetricsComponent} from '../big-student-pass-card/student-metrics/student-metrics.component';
+import {InlinePassCardComponent} from '../inline-pass-card/inline-pass-card.component';
+import {RequestCardComponent} from '../request-card/request-card.component';
+import {InlineRequestCardComponent} from '../inline-request-card/inline-request-card.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -102,7 +107,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ToggleOptionsComponent,
     SpChipsComponent,
     IconButtonComponent,
-    XsButtonComponent,
     CreatePassButtonComponent,
     IosCalendarWheelComponent,
     IosCalendarComponent,
@@ -111,7 +115,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroDialogComponent,
     IntroComponent,
     SortMenuComponent,
-    ConsentMenuMobileComponent,
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
@@ -123,7 +126,15 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileInfoComponent,
     ChangePasswordComponent,
     CustomToolTipComponent,
-    PassLimitTooltipComponent],
+    PassLimitTooltipComponent,
+    StudentPassesComponent,
+    StudentPassesInfoCardComponent,
+    BigStudentPassCardComponent,
+    StudentMetricsComponent,
+    InlinePassCardComponent,
+    RequestCardComponent,
+    InlineRequestCardComponent
+  ],
   exports: [
     ReactiveFormsModule,
     ScrollingModule,
@@ -154,7 +165,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ToggleOptionsComponent,
     SpChipsComponent,
     IconButtonComponent,
-    XsButtonComponent,
     CreatePassButtonComponent,
     IosCalendarWheelComponent,
     IosCalendarComponent,
@@ -163,7 +173,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IntroComponent,
     GoogleSigninComponent,
     CoreModule,
-    ConsentMenuMobileComponent,
     PrivacyCardComponent,
     ProfileComponent,
     AccountGroupsComponent,
@@ -172,7 +181,14 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileInfoComponent,
     ChangePasswordComponent,
     TeacherPinStudentComponent,
-    PassLimitTooltipComponent
+    PassLimitTooltipComponent,
+    StudentPassesComponent,
+    StudentPassesInfoCardComponent,
+    BigStudentPassCardComponent,
+    StudentMetricsComponent,
+    InlinePassCardComponent,
+    RequestCardComponent,
+    InlineRequestCardComponent
   ],
   providers: [
     {

@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
 import {GoogleLoginService} from '../services/google-login.service';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import {filter, finalize, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {AuthContext, HttpService} from '../services/http-service';
+import {filter, finalize, pluck, takeUntil, tap} from 'rxjs/operators';
+import {HttpService} from '../services/http-service';
 import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
 import {environment} from '../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -13,6 +13,7 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {QueryParams} from '../live-data/helpers';
 import {StorageService} from '../services/storage.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {ToastService} from '../services/toast.service';
 
 declare const window;
 
@@ -54,7 +55,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public showError: boolean;
   public schoolAlreadyText$: Observable<string>;
   public passwordError: boolean;
-  rrrrr;
 
   private changeUserName$: Subject<string> = new Subject<string>();
   private destroy$ = new Subject();
@@ -72,11 +72,12 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private shortcuts: KeyboardShortcutsService,
     private storage: StorageService,
     private domSanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toast: ToastService
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
-    this.loginService.loginErrorMessage$.subscribe(message => {
+    this.loginService.loginErrorMessage$.pipe(takeUntil(this.destroy$)).subscribe(message => {
       if (message === 'this user is suspended') {
         this.error$.next('Account is suspended. Please contact your school admin.');
       } else if (message === 'this user is disabled') {
@@ -93,7 +94,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.passwordError = !!message;
       this.showSpinner = false;
     });
-    this.loginService.showLoginError$.subscribe((show: boolean) => {
+    this.loginService.showLoginError$.pipe(takeUntil(this.destroy$)).subscribe((show: boolean) => {
       if (show) {
         this.error$.next('Incorrect password. Try again or contact your school admin to reset it.');
         this.passwordError = true;
@@ -109,25 +110,22 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams
       .pipe(
+        takeUntil(this.destroy$),
         filter((qp: QueryParams) => !!qp.code),
         tap(() => {
           this.disabledButton = false;
           this.showSpinner = true;
-        }),
-        switchMap((qp) => {
-          this.storage.removeItem('context');
-          if (this.router.url.includes('google_oauth')) {
-            return this.loginGoogle(qp.code as string);
-          } else if (!!qp.scope) {
-            return this.loginClever(qp.code as string);
-          } else {
-            return this.loginSSO(qp.code as string);
-          }
         })
       )
-      .subscribe((auth: AuthContext) => {
-        // this.router.navigate(['']);
-      console.log(auth);
+      .subscribe((qp) => {
+        this.storage.removeItem('context');
+        if (this.router.url.includes('google_oauth')) {
+          return this.loginGoogle(qp.code as string);
+        } else if (!!qp.scope) {
+          return this.loginClever(qp.code as string);
+        } else {
+          return this.loginSSO(qp.code as string);
+        }
     });
 
     this.loginForm = new FormGroup({
@@ -137,6 +135,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
     this.shortcuts.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         takeUntil(this.destroy$),
         pluck('key')
       )
@@ -157,11 +156,12 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.storage.showError$.subscribe(res => {
-      this.httpService.errorToast$.next({
-        header: 'Cookies are blocked',
-        message: this.domSanitizer.bypassSecurityTrustHtml('<div>Please un-block your cookies so you can sign into SmartPass. <a style="color: #E32C66" href="https://www.smartpass.app/cookies-error" target="_blank">Need help?</a></div>')
-      });
+    this.storage.showError$.pipe(takeUntil(this.destroy$)).subscribe(res => {
+      this.toast.openToast({title: 'Cookies are blocked', subtitle: 'Please un-block your cookies so you can sign into SmartPass.', type: 'error'});
+      // this.httpService.errorToast$.next({
+      //   header: 'Cookies are blocked',
+      //   message: this.domSanitizer.bypassSecurityTrustHtml('<div>Please un-block your cookies so you can sign into SmartPass. <a style="color: #E32C66" href="https://www.smartpass.app/cookies-error" target="_blank">Need help?</a></div>')
+      // });
     });
   }
 
@@ -171,21 +171,18 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   loginSSO(code: string) {
-    window.waitForAppLoaded(true);
     this.storage.setItem('authType', 'gg4l');
     this.loginService.updateAuth({ gg4l_code: code, type: 'gg4l-login'});
     return of (null);
   }
 
   loginClever(code: string) {
-    window.waitForAppLoaded(true);
     this.storage.setItem('authType', 'clever');
     this.loginService.updateAuth({clever_code: code, type: 'clever-login'});
     return of(null);
   }
 
   loginGoogle(code: string) {
-    window.waitForAppLoaded(true);
     this.storage.setItem('authType', 'google');
     this.loginService.updateAuth({google_code: code, type: 'google-login'});
     return of(null);

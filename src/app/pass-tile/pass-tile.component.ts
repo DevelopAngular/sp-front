@@ -1,21 +1,24 @@
-import {Component, Input, OnInit, Output, OnDestroy, EventEmitter, ViewChild, ElementRef} from '@angular/core';
-import {interval, BehaviorSubject, Subject, Observable} from 'rxjs';
-import { bumpIn } from '../animations';
-import { PassLike } from '../models';
-import { TimeService } from '../services/time.service';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
+import {bumpIn, studentPassFadeInOut} from '../animations';
+import {PassLike} from '../models';
+import {TimeService} from '../services/time.service';
 import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisible} from './pass-display-util';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Request } from '../models/Request';
-import { Invitation } from '../models/Invitation';
-import {filter, takeUntil} from 'rxjs/operators';
-import {ScreenService} from '../services/screen.service';
+import {DomSanitizer} from '@angular/platform-browser';
+import {Request} from '../models/Request';
+import {Invitation} from '../models/Invitation';
+import {filter, take, takeUntil} from 'rxjs/operators';
+import {ConnectedPosition, Overlay} from '@angular/cdk/overlay';
+import {DomCheckerService} from '../services/dom-checker.service';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 @Component({
   selector: 'app-pass-tile',
   templateUrl: './pass-tile.component.html',
   styleUrls: ['./pass-tile.component.scss'],
   animations: [
-    bumpIn
+    bumpIn,
+    studentPassFadeInOut
   ]
 })
 export class PassTileComponent implements OnInit, OnDestroy {
@@ -27,9 +30,12 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Input() isActive = false;
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
+  @Input() allowPopup: boolean;
   @Input() profileImage: boolean;
 
   @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
+
+  @ViewChild('studentPasses') studentPasses: ElementRef;
 
   buttonDown = false;
   timeLeft = '--:--';
@@ -37,8 +43,53 @@ export class PassTileComponent implements OnInit, OnDestroy {
   hovered: boolean;
   timers: number[] = [];
   hoverDestroyer$: Subject<any>;
+  isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  showBackgroundOverlay: boolean;
+  destroyAnimation$: Subject<any> = new Subject<any>();
+  destroyOpen$ = new Subject();
+  disableClose$ = new Subject();
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  overlayPositions: ConnectedPosition[] = [
+    {
+      panelClass: 'student-panel1',
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetX: -71,
+      offsetY: 35
+    },
+    {
+      panelClass: 'student-panel2',
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetX: 72,
+      offsetY: 35
+    },
+    {
+      panelClass: 'student-panel3',
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'bottom',
+      offsetX: 72,
+      offsetY: 3
+    },
+    {
+      panelClass: 'student-panel4',
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetX: -71,
+      offsetY: 3
+    }
+  ];
+  scrollStrategy;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -83,15 +134,23 @@ export class PassTileComponent implements OnInit, OnDestroy {
     }
   }
 
+  get isKioskMode() {
+    return !!this.kioskMode.currentRoom$.getValue();
+  }
+
   constructor(
     private sanitizer: DomSanitizer,
     private timeService: TimeService,
-    private screenService: ScreenService
+    public overlay: Overlay,
+    private renderer: Renderer2,
+    private domCheckerService: DomCheckerService,
+    private kioskMode: KioskModeService
   ) {
   }
 
   ngOnInit() {
     this.valid = this.isActive;
+    this.scrollStrategy = this.overlay.scrollStrategies.block();
     if (this.timerEvent) {
       this.timerEvent.pipe(
         filter(() => !!this.pass['expiration_time']),
@@ -158,4 +217,39 @@ export class PassTileComponent implements OnInit, OnDestroy {
     this.hoverDestroyer$.complete();
   }
 
+  setAnimationTrigger(value) {
+    if (!this.showBackgroundOverlay) {
+      interval(200).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
+        this.domCheckerService.fadeInOutTrigger$.next(value);
+      });
+    }
+  }
+
+  studentNameOver() {
+    if (this.allowPopup && !this.isKioskMode) {
+      this.disableClose$.next();
+      this.setAnimationTrigger('fadeIn');
+      interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
+        this.isOpenTooltip.next(true);
+      });
+    }
+  }
+
+  studentNameLeave() {
+    if (this.allowPopup && !this.isKioskMode) {
+      this.destroyOpen$.next();
+      interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+        this.isOpenTooltip.next(false);
+      });
+    }
+  }
+
+  updateOverlayPosition(event) {
+    this.renderer.addClass(this.studentPasses.nativeElement, event.connectionPair.panelClass);
+  }
+
+  overlayLeave() {
+    this.showBackgroundOverlay = false;
+    this.destroyOpen$.next();
+  }
 }

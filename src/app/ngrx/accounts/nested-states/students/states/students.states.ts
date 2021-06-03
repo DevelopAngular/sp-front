@@ -7,4 +7,5 @@ export interface StudentsStates extends EntityState<User> {
   lastAddedStudents: User[];
   nextRequest: string;
   sortValue: string;
+  addedUser: User;
 }

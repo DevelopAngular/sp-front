@@ -36,6 +36,11 @@ export const getStudentSort = createSelector(
   (state: StudentsStates) => state.sortValue
 );
 
+export const getAddedStudent = createSelector(
+  getStudentsAccountsProfiles,
+  (state: StudentsStates) => state.addedUser
+);
+
 export const getCountStudents = adapter.getSelectors(getStudentsAccountsProfiles).selectTotal;
 export const getStudentsAccountsEntities = adapter.getSelectors(getStudentsAccountsProfiles).selectEntities;
 

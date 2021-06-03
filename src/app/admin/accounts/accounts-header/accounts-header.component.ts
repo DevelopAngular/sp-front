@@ -19,18 +19,19 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
-import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {IntegrationsDialogComponent} from '../integrations-dialog/integrations-dialog.component';
-import {Ggl4SettingsComponent} from '../ggl4-settings/ggl4-settings.component';
+import {Ggl4SettingsComponent} from '../integrations-dialog/ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from '../g-suite-settings/g-suite-settings.component';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {TableService} from '../../sp-data-table/table.service';
 import {PermissionsDialogComponent} from '../../accounts-role/permissions-dialog/permissions-dialog.component';
 import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/status-popup.component';
+import {ToastService} from '../../../services/toast.service';
 import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
 
 @Component({
@@ -77,7 +78,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     private matDialog: MatDialog,
     private userService: UserService,
     private router: Router,
-    private tableService: TableService
+    private tableService: TableService,
+    private toast: ToastService
   ) { }
 
   ngOnInit() {
@@ -190,12 +192,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   updateTab(route) {
-    // if (route) {
       this.router.navigate(['/admin/accounts/', route]);
       this.forceFocus$.next(true);
-    // } else {
-    //   this.router.navigate(['/admin/accounts']);
-    // }
   }
 
   selectTab(event: HTMLElement, container: HTMLElement) {
@@ -233,14 +231,19 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
           if (res === 'delete') {
             return zip(...this.selectedUsers.map(user => {
               return this.userService.deleteUserRequest(user.id, this.currentTab);
-            }));
+            })).pipe(mapTo(res));
           } else {
             return zip(...this.selectedUsers.map(user => {
               return this.userService.updateUserRequest(user, {status: res});
-            }));
+            })).pipe(mapTo(res));
           }
         })
       ).subscribe(res => {
+        if (res === 'delete') {
+          this.toast.openToast({title: `${this.selectedUsers.length} account${this.selectedUsers.length > 1 ? 's' : ''} deleted`, type: 'error'});
+        } else {
+          this.toast.openToast({title: `${this.selectedUsers.length} account statuses updated`, type: 'success'});
+        }
       this.selectedUsers = [];
       this.tableService.clearSelectedUsers.next();
         setTimeout(() => {
@@ -300,53 +303,4 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     this.selectedUsers = [];
     this.tableService.clearSelectedUsers.next();
   }
-
-  // promptConfirmation(eventTarget: HTMLElement, option: string = '') {
-  //
-  //   if (!eventTarget.classList.contains('button')) {
-  //     (eventTarget as any) = eventTarget.closest('.button');
-  //   }
-  //
-  //   eventTarget.style.opacity = '0.75';
-  //   let header: string;
-  //   let options: any[];
-  //
-  //   switch (option) {
-  //     case 'delete_from_profile':
-  //       header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
-  //       options = [{display: `Confirm Delete`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
-  //       break;
-  //   }
-  //   UNANIMATED_CONTAINER.next(true);
-  //
-  //   const DR = this.matDialog.open(ConsentMenuComponent, {
-  //     data: {
-  //       role: '_all',
-  //       selectedUsers: this.selectedUsers,
-  //       restrictions: false,
-  //       header: header,
-  //       options: options,
-  //       trigger: new ElementRef(eventTarget)
-  //     },
-  //     panelClass: 'consent-dialog-container',
-  //     backdropClass: 'invis-backdrop',
-  //   });
-  //   DR.afterClosed()
-  //     .pipe(
-  //       switchMap((action): Observable<any> => {
-  //         eventTarget.style.opacity = '1';
-  //         switch (action) {
-  //           case 'delete_from_profile':
-  //             return zip(...this.selectedUsers.map((user) => this.userService.deleteUserRequest(user['id'], ''))).pipe(mapTo(true));
-  //           default:
-  //             return of(false);
-  //         }
-  //       }),
-  //       tap(() => UNANIMATED_CONTAINER.next(false))
-  //     )
-  //     .subscribe(() => {
-  //       this.selectedUsers = [];
-  //     });
-  // }
-
 }

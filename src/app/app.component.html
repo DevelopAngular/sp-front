@@ -1,4 +1,4 @@
-<div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false">
+<div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false" [style.height]="'100%'" [style.min-height]="!hideScroll ? '100%' : 'auto'">
   <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
   <div *ngIf="errorToastTrigger | async">
     <app-error-toast
@@ -7,7 +7,7 @@
       (closeEvent)="errorToastTrigger.next(null)"
     ></app-error-toast>
   </div>
-  <div *ngIf="customToastOpen$ | async">
+  <div class="toast" *ngIf="customToastOpen$ | async">
     <app-custom-toast></app-custom-toast>
   </div>
 
@@ -20,7 +20,7 @@
   <div class="router-outlet">
     <router-outlet></router-outlet>
   </div>
-  <div class="notification-backdrop" *ngIf="hasCustomBackdrop$ | async"></div>
+  <div class="notification-backdrop" *ngIf="hasCustomBackdrop$ | async" [ngStyle]="customBackdropStyle$ | async"></div>
 </div>
 
 <div #dialogContainer [@.disabled]="true"></div>

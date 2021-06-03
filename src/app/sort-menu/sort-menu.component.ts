@@ -26,14 +26,6 @@ export class SortMenuComponent implements OnInit, OnDestroy {
     private renderer: Renderer2
   ) {}
 
-  changeColor(value, elem) {
-    if (value) {
-      this.renderer.setStyle(elem.target, 'background-color', '#ECF1FF');
-    } else {
-      this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
-    }
-  }
-
   ngOnInit() {
     this.items = this.data['items'];
     this.selectedItem = this.data['selectedItem'];

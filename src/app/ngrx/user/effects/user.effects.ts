@@ -3,7 +3,7 @@ import {UserService} from '../../../services/user.service';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as userActions from '../actions';
 import * as accountsActions from '../../accounts/actions/accounts.actions';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map} from 'rxjs/operators';
 import {User} from '../../../models/User';
 import {of} from 'rxjs';
 
@@ -46,7 +46,7 @@ export class UserEffects {
     return this.actions$
       .pipe(
         ofType(userActions.updateUserAction),
-        concatMap((action: any) => {
+        exhaustMap((action: any) => {
           return this.userService.updateUser(action.user.id, action.data)
             .pipe(
               map((user: User) => {

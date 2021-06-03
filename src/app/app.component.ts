@@ -53,15 +53,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogContainer = content.nativeElement;
   }
 
-  @HostListener('window:popstate', ['$event'])
-  back(event) {
-    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
-      window.history.pushState({}, '');
-    }
-  }
-
   public isAuthenticated = null;
-  public hideScroll: boolean = false;
+  public hideScroll: boolean = true;
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
@@ -70,11 +63,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public darkThemeEnabled: boolean;
   public isKioskMode: boolean;
   public showSupportButton: boolean;
-  private openConnectionDialog: boolean;
   public customToastOpen$: Observable<boolean>;
   public hasCustomBackdrop$: Observable<boolean>;
+  public customBackdropStyle$: Observable<any>;
 
   private subscriber$ = new Subject();
+
+  @HostListener('window:popstate', ['$event'])
+  back(event) {
+    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
+      window.history.pushState({}, '');
+    }
+  }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
@@ -104,6 +104,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.customToastOpen$ = this.toastService.isOpen$;
     this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
+    this.customBackdropStyle$ = this.screen.customBackdropStyle$;
     this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
       if (event instanceof NavigationEnd) {
         window.history.pushState({}, '');
@@ -132,7 +133,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         filter((release: Array<Update>) => !!release.length),
         switchMap((release) => {
-          // release = [release[0]];
           let config;
           if (DeviceDetection.isMobile()) {
             config = {
@@ -171,7 +171,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
 
-    // this.googleAnalytics.init();
+    this.googleAnalytics.init();
     const fcm_sw = localStorage.getItem('fcm_sw_registered');
     if (fcm_sw === 'true') {
       this.notifService.initNotifications(true);

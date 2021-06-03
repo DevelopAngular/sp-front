@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>Shape</title>
+    <g id="Web" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Pre-demo" transform="translate(-885.000000, -307.000000)" fill="#D3D6DE" fill-rule="nonzero">
+            <g id="icons8-minus" transform="translate(885.000000, 307.000000)">
+                <path d="M10,0 C4.4775,0 0,4.4775 0,10 C0,15.5225 4.4775,20 10,20 C15.5225,20 20,15.5225 20,10 C20,4.4775 15.5225,0 10,0 Z M15,10.8333333 L5,10.8333333 C4.54,10.8333333 4.16666667,10.4608333 4.16666667,10 C4.16666667,9.53916667 4.54,9.16666667 5,9.16666667 L15,9.16666667 C15.46,9.16666667 15.8333333,9.53916667 15.8333333,10 C15.8333333,10.4608333 15.46,10.8333333 15,10.8333333 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

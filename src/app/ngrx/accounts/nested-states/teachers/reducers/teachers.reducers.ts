@@ -12,13 +12,14 @@ export const teachersInitialState: TeachersStates = adapter.getInitialState({
   loaded: false,
   nextRequest: null,
   lastAddedTeachers: [],
-  sortValue: ''
+  sortValue: '',
+  addedUser: null
 });
 
 const reducer = createReducer(
   teachersInitialState,
   on(teachersActions.getTeachers,
-    teachersActions.removeTeacher,
+    // teachersActions.removeTeacher,
     // teachersActions.getMoreTeachers,
     (state) => ({...state, loading: true, loaded: false})),
   on(teachersActions.getTeachersSuccess, (state, {teachers, next}) => {
@@ -38,7 +39,7 @@ const reducer = createReducer(
     return adapter.addMany(moreTeachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: moreTeachers});
   }),
   on(teachersActions.postTeacherSuccess, addUserToTeacherProfileSuccess, (state, {teacher}) => {
-    return adapter.addOne(teacher, {...state, loading: false, loaded: true});
+    return adapter.addOne(teacher, {...state, loading: false, loaded: true, addedUser: teacher});
   }),
   on(teachersActions.getMoreTeachersFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
   on(teachersActions.bulkAddTeacherAccounts, (state, {teachers}) => {

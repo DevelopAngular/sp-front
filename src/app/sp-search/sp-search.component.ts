@@ -1,18 +1,21 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {MapsAPILoader} from '@agm/core';
 import {User} from '../models/User';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {filter as _filter} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
 import {DeviceDetection} from '../device-detection.helper';
+import {DomCheckerService} from '../services/dom-checker.service';
+import {Overlay} from '@angular/cdk/overlay';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 declare const window;
 
@@ -135,6 +138,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @ViewChild('studentInput') input: ElementRef;
   @ViewChild('wrapper') wrapper: ElementRef;
   @ViewChild('cell') cell: ElementRef;
+  @ViewChild('studentPasses') studentPasses: ElementRef;
 
   private placePredictionService;
   private currentPosition;
@@ -160,7 +164,20 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   foundLocations: Location[] = [];
   forceFocused$: Subject<boolean> = new Subject<boolean>();
 
+  isOpenTooltip: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  destroyAnimation$: Subject<any> = new Subject<any>();
+  showBackgroundOverlay: boolean;
+  destroyOpen$ = new Subject();
+  disableClose$ = new Subject();
+  overlayScrollStrategy;
+
   destroy$: Subject<any> = new Subject<any>();
+
+  @HostListener('document.scroll', ['$event'])
+  scroll() {
+    this.destroyOpen$.next();
+    this.showBackgroundOverlay = false;
+  }
 
   constructor(
     private userService: UserService,
@@ -170,11 +187,18 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private renderer: Renderer2,
     public screenService: ScreenService,
-    private locationService: LocationsService
+    private locationService: LocationsService,
+    private domCheckerService: DomCheckerService,
+    public overlay: Overlay,
+    private kioskMode: KioskModeService
   ) {}
 
   get isMobile() {
     return DeviceDetection.isMobile();
+  }
+
+  get isKioskMode() {
+    return this.kioskMode.currentRoom$.getValue();
   }
 
   private getEmitedValue() {
@@ -206,6 +230,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.overlayScrollStrategy = this.overlay.scrollStrategies.close();
     if (this.chipsMode && !this.overrideChipsInputField) {
       this.inputField = false;
     }
@@ -262,6 +287,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         takeUntil(this.destroy$),
         pluck('key')
       )
@@ -397,7 +423,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     if (!this.selectedOptions.includes(location)) {
       this.selectedOptions.push(location);
       this.onUpdate.emit(this.getEmitedValue());
-      this.inputField = false;
+      if (this.chipsMode) {
+        this.inputField = false;
+      }
     }
   }
 
@@ -494,5 +522,32 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.selectedOptions.push(this.suggestedTeacher);
     this.onUpdate.emit(this.selectedOptions);
     this.isProposed = false;
+  }
+
+  setAnimationTrigger(value) {
+    if (!this.showBackgroundOverlay) {
+      interval(200).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
+        this.domCheckerService.fadeInOutTrigger$.next(value);
+      });
+    }
+  }
+
+  studentNameOver(cell) {
+    this.setAnimationTrigger('fadeIn');
+    interval(200).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
+      cell.isOpenTooltip = true;
+    });
+  }
+
+  studentNameLeave(cell) {
+    this.destroyOpen$.next();
+    this.showBackgroundOverlay = false;
+    interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+      cell.isOpenTooltip = false;
+    });
+  }
+
+  updateOverlayPosition(event) {
+    this.renderer.addClass(this.studentPasses.nativeElement, event.connectionPair.panelClass);
   }
 }

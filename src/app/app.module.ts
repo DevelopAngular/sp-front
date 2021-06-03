@@ -6,25 +6,17 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AgmCoreModule} from '@agm/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AppComponent} from './app.component';
-import {CurrentUserResolver} from './current-user.resolver';
-import {DataService} from './services/data-service';
 import {provideErrorHandler} from './error-handler';
-import {GoogleLoginService} from './services/google-login.service';
 import {AuthenticatedGuard} from './guards/authenticated.guard';
 import {IsAdminGuard} from './guards/is-admin.guard';
 import {IsStudentOrTeacherGuard} from './guards/is-student-or-teacher.guard';
 import {NotSeenIntroGuard} from './guards/not-seen-intro.guard';
-import {HttpService} from './services/http-service';
-import {LoadingService} from './services/loading.service';
 import {ProgressInterceptor} from './progress-interceptor';
-import {UserService} from './services/user.service';
-import {NotificationService} from './services/notification-service';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireMessagingModule} from '@angular/fire/messaging';
 import {environment} from '../environments/environment';
 import {APP_BASE_HREF} from '@angular/common';
 import {NotKioskModeGuard} from './not-kiosk-mode.guard';
-import {KioskModeService} from './services/kiosk-mode.service';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
@@ -77,6 +69,7 @@ import {FromLocationPassesEffects} from './ngrx/pass-like-collection/nested-stat
 import {HallMonitorPassesEffects} from './ngrx/pass-like-collection/nested-states/hall-monitor-passes/effects';
 import {MyRoomPassesEffects} from './ngrx/pass-like-collection/nested-states/my-room-passes/effects';
 import {RepresentedUsersEffects} from './ngrx/represented-users/effects';
+import {QuickPreviewPassesEffects} from './ngrx/quick-preview-passes/effects';
 import {ProfilePicturesEffects} from './ngrx/profile-pictures/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -113,7 +106,6 @@ const appRoutes: Routes = [
     path: 'main',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
     loadChildren: () => import('app/main/main.module').then(m => m.MainModule),
-    resolve: {currentUser: CurrentUserResolver},
     data: {
       hubspot: true,
       authFree: false
@@ -123,9 +115,7 @@ const appRoutes: Routes = [
     path: 'admin',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
     loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule),
-    resolve: {currentUser: CurrentUserResolver},
     data: {
-      hideScroll: true,
       hubspot: true,
       authFree: false
     }
@@ -135,8 +125,9 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/sign-out/sign-out.module').then(m => m.SignOutModule)
   },
   {
-    path: 'error',
-    loadChildren: () => import('app/error/error.module').then(m => m.ErrorModule)
+    path: 'forms',
+    loadChildren: () => import('app/forms/forms.module').then(m => m.FormsModule),
+    data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
 
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -160,79 +151,72 @@ const appRoutes: Routes = [
     NextReleaseModule,
     KeyboardShortcutsModule.forRoot(),
 
-        RouterModule.forRoot(
-            appRoutes,
-            {
-                enableTracing: false,
-            }
-        ),
-        OAuthModule.forRoot(),
-        AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
-        AngularFireMessagingModule,
-        AgmCoreModule.forRoot({
-            apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
-            libraries: ['places']
-        }),
-        StoreModule.forRoot(reducers),
-        EffectsModule.forRoot([
-            ReportsEffects,
-            PinnablesEffects,
-            AccountsEffects,
-            AllAccountsEffects,
-            AdminsEffects,
-            TeachersEffects,
-            AssistantsEffects,
-            StudentsEffects,
-            CountAccountsEffects,
-            TeacherLocationsEffects,
-            DashboardEffects,
-            PassStatsEffects,
-            StudentGroupsEffects,
-            LocationsEffects,
-            FavoriteLocationsEffects,
-            ColorsEffects,
-            SchoolsEffects,
-            UserEffects,
-            ProcessEffects,
-            PassLimitEffects,
-            PassesEffects,
-            ContactTraceEffects,
-            IntrosEffects,
-            PassLikeCollectionEffects,
-            InvitationsEffects,
-            RequestsEffects,
-            ExpiredPassesEffects,
-            FuturePassesEffects,
-            ActivePassesEffects,
-            ToLocationPassesEffects,
-            FromLocationPassesEffects,
-            HallMonitorPassesEffects,
-            MyRoomPassesEffects,
-            FiltersEffects,
-            RepresentedUsersEffects,
-            ProfilePicturesEffects
-        ]),
-        StoreDevtoolsModule.instrument({}),
-        HammerModule,
-        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
-    ],
-    providers: [
-        DataService,
-        HttpService,
-        UserService,
-        KioskModeService,
-        NotificationService,
-        GoogleLoginService,
-        LoadingService,
-        CurrentUserResolver,
-        {provide: OverlayContainer, useFactory: InitOverlay},
-        {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
-        {provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true},
-        {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
-        {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
-        provideErrorHandler()
-    ],
-    bootstrap: [AppComponent]
+    RouterModule.forRoot(
+      appRoutes,
+      {
+        enableTracing: false,
+      }
+    ),
+    OAuthModule.forRoot(),
+    AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
+    AngularFireMessagingModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
+      libraries: ['places']
+    }),
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([
+      ReportsEffects,
+      PinnablesEffects,
+      AccountsEffects,
+      AllAccountsEffects,
+      AdminsEffects,
+      TeachersEffects,
+      AssistantsEffects,
+      StudentsEffects,
+      CountAccountsEffects,
+      TeacherLocationsEffects,
+      DashboardEffects,
+      PassStatsEffects,
+      StudentGroupsEffects,
+      LocationsEffects,
+      FavoriteLocationsEffects,
+      ColorsEffects,
+      SchoolsEffects,
+      UserEffects,
+      ProcessEffects,
+      PassLimitEffects,
+      PassesEffects,
+      ContactTraceEffects,
+      IntrosEffects,
+      PassLikeCollectionEffects,
+      InvitationsEffects,
+      RequestsEffects,
+      ExpiredPassesEffects,
+      FuturePassesEffects,
+      ActivePassesEffects,
+      ToLocationPassesEffects,
+      FromLocationPassesEffects,
+      HallMonitorPassesEffects,
+      MyRoomPassesEffects,
+      FiltersEffects,
+      RepresentedUsersEffects,
+      QuickPreviewPassesEffects,
+      ProfilePicturesEffects
+    ]),
+    StoreDevtoolsModule.instrument({}),
+    HammerModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
+  ],
+  providers: [
+    {provide: OverlayContainer, useFactory: InitOverlay},
+    {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true},
+    {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
+    {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
+    provideErrorHandler()
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor() {}

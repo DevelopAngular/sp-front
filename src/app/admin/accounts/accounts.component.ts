@@ -17,7 +17,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../services/locations.service';
 import {GG4LSync} from '../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
-import {Ggl4SettingsComponent} from './ggl4-settings/ggl4-settings.component';
+import {Ggl4SettingsComponent} from './integrations-dialog/ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
 import {ToastService} from '../../services/toast.service';
 import {Onboard} from '../../models/Onboard';
@@ -100,12 +100,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
     }
 
 
-    this.polingService.listen('admin.user_sync.sync_start').pipe(takeUntil(this.destroy$))
+    this.polingService.listen('admin.user_sync.sync_start')
+      .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
       this.adminService.syncLoading();
     });
 
-    this.polingService.listen('admin.user_sync.sync_end').pipe(takeUntil(this.destroy$))
+    this.polingService.listen('admin.user_sync.sync_end')
+      .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
       this.adminService.updateCleverInfo(res.data);
     });
@@ -168,6 +170,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   openSettingsDialog(action, status) {
     if (action === 'gg4l' || action === 'clever') {
       const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
+        id: 'gg4lSettings',
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
@@ -176,6 +179,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       });
     } else if (action === 'g_suite') {
       const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
+        id: 'g_suiteSettings',
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
@@ -193,7 +197,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.adminService.getCountAccountsRequest();
         this.toastService.openToast(
-          {title: 'Demo Accounts Added', subtitle: 'Download the account passwords now.', action: 'demo_accounts_down'});
+          {
+            title: 'Demo Accounts Added',
+            subtitle: 'Please download the passwords so you can sign in to the demo accounts.',
+            type: 'success',
+            action: 'demo_accounts_down',
+            showButton: true,
+            buttonText: 'Download passwords'
+          });
       });
   }
 

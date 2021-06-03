@@ -1,7 +1,6 @@
 ﻿import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
-import {DataService} from '../services/data-service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {DeviceDetection} from '../device-detection.helper';
 
@@ -38,7 +37,6 @@ export class ConsentMenuComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public data: any[],
       _matDialogRef: MatDialogRef<ConsentMenuComponent>,
       private sanitizer: DomSanitizer,
-      private dataService: DataService,
       public darkTheme: DarkThemeSwitch
   ) {
     this.header = data['header'];

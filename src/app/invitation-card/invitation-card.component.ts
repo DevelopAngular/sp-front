@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnInit, Output, ViewChild} from '@angular/core';
 import {Invitation} from '../models/Invitation';
 import {User} from '../models/User';
 import {Location} from '../models/Location';
@@ -13,18 +13,21 @@ import {filter, switchMap, tap} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {RequestsService} from '../services/requests.service';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {NavbarDataService} from '../main/navbar-data.service';
+import {DomCheckerService} from '../services/dom-checker.service';
+import {scalePassCards} from '../animations';
 
 @Component({
   selector: 'app-invitation-card',
   templateUrl: './invitation-card.component.html',
-  styleUrls: ['./invitation-card.component.scss']
+  styleUrls: ['./invitation-card.component.scss'],
+  animations: [scalePassCards]
 })
 export class InvitationCardComponent implements OnInit {
 
@@ -38,6 +41,8 @@ export class InvitationCardComponent implements OnInit {
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
 
+  @ViewChild('cardWrapper') cardWrapper: ElementRef;
+
   selectedOrigin: Location;
   denyOpen: boolean = false;
   selectedDuration: number;
@@ -50,6 +55,7 @@ export class InvitationCardComponent implements OnInit {
   locationChangeOpen: boolean;
 
   frameMotion$: BehaviorSubject<any>;
+  scaleCardTrigger$: Observable<string>;
 
   isModal: boolean;
   isSeen: boolean;
@@ -69,7 +75,8 @@ export class InvitationCardComponent implements OnInit {
       private createFormService: CreateFormService,
       private screenService: ScreenService,
       private http: HttpService,
-      private navbarData: NavbarDataService
+      private navbarData: NavbarDataService,
+      private domCheckerService: DomCheckerService
   ) {}
 
   get isMobile() {
@@ -101,9 +108,9 @@ export class InvitationCardComponent implements OnInit {
       }
     }
 
-    get studentEmail() {
-        return this.invitation.student.primary_email.split('@', 1)[0];
-    }
+  get studentEmail() {
+      return this.invitation.student.primary_email.split('@', 1)[0];
+  }
 
   get status() {
     return this.invitation.status.charAt(0).toUpperCase() + this.invitation.status.slice(1);
@@ -118,6 +125,7 @@ export class InvitationCardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.frameMotion$ = this.createFormService.getFrameMotionDirection();
     this.currentSchool = this.http.getSchool();
     if (this.data['pass']) {
@@ -141,7 +149,6 @@ export class InvitationCardComponent implements OnInit {
         this.user = user;
       });
     });
-  this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   formatDateTime(date: Date) {
@@ -341,5 +348,15 @@ export class InvitationCardComponent implements OnInit {
 
   receiveOption(action: any) {
     this.chooseAction(action);
+  }
+
+  scaleCard({action, intervalValue}) {
+    if (action === 'open') {
+      const scale = 1 - (intervalValue / 300);
+      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
+    } else if (action === 'close') {
+      const scale = 0.953333 + (intervalValue / 300);
+      this.cardWrapper.nativeElement.style.transform = `scale(${scale})`;
+    }
   }
 }

@@ -1,12 +1,12 @@
-import {ErrorHandler, Injectable} from '@angular/core';
-import {BehaviorSubject, combineLatest, interval, Observable, of, race, ReplaySubject} from 'rxjs';
+import {ErrorHandler, Injectable, OnDestroy} from '@angular/core';
+import {BehaviorSubject, combineLatest, interval, Observable, of, race, ReplaySubject, Subject} from 'rxjs';
 import {SentryErrorHandler} from '../error-handler';
 import {HttpService} from './http-service';
 import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {exhaustMap, filter, map, mapTo, take, tap} from 'rxjs/operators';
+import {exhaustMap, filter, map, take, takeUntil, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -32,6 +32,7 @@ import {
   getNextRequestAllAccounts
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
+  getAddedAdmin,
   getAdminsAccountsEntities,
   getAdminsCollections,
   getAdminSort,
@@ -42,6 +43,7 @@ import {
   getNextRequestAdminsAccounts
 } from '../ngrx/accounts/nested-states/admins/states/admins.getters.state';
 import {
+  getAddedTeacher,
   getCountTeachers,
   getLastAddedTeachers,
   getLoadedTeachers,
@@ -52,6 +54,7 @@ import {
   getTeacherSort
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
+  getAddedAssistant,
   getAssistantsAccountsCollection,
   getAssistantsAccountsEntities,
   getAssistantSort,
@@ -62,6 +65,7 @@ import {
   getNextRequestAssistants
 } from '../ngrx/accounts/nested-states/assistants/states';
 import {
+  getAddedStudent,
   getCountStudents,
   getLastAddedStudents,
   getLoadedStudents,
@@ -92,8 +96,10 @@ import {uploadProfilePictures} from '../ngrx/profile-pictures/actions';
 import {getProfilePicturesLoaded, getProfilePicturesLoading} from '../ngrx/profile-pictures/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 
-@Injectable()
-export class UserService {
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService implements OnDestroy{
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
@@ -169,6 +175,13 @@ export class UserService {
     _profile_assistant: this.store.select(getAssistantSort)
   };
 
+  addedAccount$ = {
+    _profile_admin: this.store.select(getAddedAdmin),
+    _profile_teacher: this.store.select(getAddedTeacher),
+    _profile_student: this.store.select(getAddedStudent),
+    _profile_assistant: this.store.select(getAddedAssistant)
+  };
+
   user$: Observable<User> = this.store.select(getUserData);
   userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
   loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
@@ -183,6 +196,8 @@ export class UserService {
   profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private http: HttpService,
@@ -232,31 +247,35 @@ export class UserService {
               return of(user);
             }
           }),
-          exhaustMap(user => {
-            if (user.isTeacher() && !user.isAssistant()) {
-              return this.getUserPinRequest().pipe(mapTo(user));
-            } else {
-              return of(user);
+          tap((user) => {
+            if (user.isTeacher() || user.isAssistant()) {
+              this.getUserPinRequest();
             }
-          })
+          }),
+          takeUntil(this.destroy$)
         )
         .subscribe(user => {
           this.userData.next(user);
         });
 
     if (errorHandler instanceof SentryErrorHandler) {
-      this.userData.subscribe(user => {
+      this.userData.pipe(takeUntil(this.destroy$)).subscribe(user => {
         errorHandler.setUserContext({
-          id: `${user.id}`,
-          email: user.primary_email,
-          is_student: user.isStudent(),
-          is_teacher: user.isTeacher(),
-          is_admin: user.isAdmin(),
+          id: user && user.id ? `${user.id}` : 'unknown',
+          email: user && user.primary_email ? user.primary_email : 'unknown',
+          is_student: user ? user.isStudent() : false,
+          is_teacher: user ? user.isTeacher() : false,
+          is_admin: user ? user.isAdmin() : false,
         });
       });
     }
 
-    this.pollingService.listen().subscribe(this._logging.debug);
+    this.pollingService.listen().pipe(takeUntil(this.destroy$)).subscribe(this._logging.debug);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getLoadingAccounts(role) {

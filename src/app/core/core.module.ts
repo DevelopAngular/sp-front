@@ -10,11 +10,9 @@ import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.di
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
 import {MoovingTilesComponent} from '../mooving-tiles/mooving-tiles.component';
-import {NoAccountComponent} from '../no-account/no-account.component';
 import {CheckUserInputDirective} from './directives/check-user-input.directive';
 import {SupportOptionsComponent} from '../support/support-options/support-options.component';
 import {ToolTipRendererDirective} from './directives/tool-tip-renderer.directive';
-import {PassClickDirective} from './directives/pass-click.directive';
 import {SwipeEventDirective} from './directives/swipe-event.directive';
 
 @NgModule({
@@ -28,11 +26,9 @@ import {SwipeEventDirective} from './directives/swipe-event.directive';
     GradientButtonComponent,
     CrossPointerEventTargetDirective,
     MoovingTilesComponent,
-    NoAccountComponent,
     CheckUserInputDirective,
     SupportOptionsComponent,
     ToolTipRendererDirective,
-    PassClickDirective,
     SwipeEventDirective
   ],
   imports: [
@@ -50,18 +46,9 @@ import {SwipeEventDirective} from './directives/swipe-event.directive';
         SignedOutToastComponent,
         GradientButtonComponent,
         MoovingTilesComponent,
-        NoAccountComponent,
         ToolTipRendererDirective,
         CheckUserInputDirective,
         SwipeEventDirective
-    ],
-  entryComponents: [
-    ErrorToastComponent,
-    ToastConnectionComponent,
-    DropdownComponent,
-    SignedOutToastComponent,
-    NoAccountComponent,
-    SupportOptionsComponent
-  ],
+    ]
 })
 export class CoreModule { }

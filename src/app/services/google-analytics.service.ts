@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
 
 declare const gtag: Function;
 
@@ -33,4 +33,9 @@ export class GoogleAnalyticsService {
       }
     });
   }
+
+  public emitEvent(name, params) {
+    gtag('event', name, params);
+  }
+
 }

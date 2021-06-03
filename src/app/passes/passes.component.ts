@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject,} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
 import {filter, map, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
@@ -31,156 +31,15 @@ import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {UserService} from '../services/user.service';
 import {DeviceDetection} from '../device-detection.helper';
-import * as moment from 'moment';
 import {NotificationButtonService} from '../services/notification-button.service';
-
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {SideNavService} from '../services/side-nav.service';
 import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 import {LocationsService} from '../services/locations.service';
-
-// export class FuturePassProvider implements PassLikeProvider {
-//   count = 0;
-//   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
-//   }
-//
-//   watch(sort: Observable<string>) {
-//     const sortReplay = new ReplaySubject<string>(1);
-//     sort.subscribe(sortReplay);
-//
-//     return this.user$.pipe(
-//       switchMap(user => {
-//         // this.count += 1;
-//         // console.log('Feature ==>>', this.count);
-//         return this.liveDataService.watchFutureHallPasses(
-//           user.roles.includes('hallpass_student')
-//             ? {type: 'student', value: user}
-//             : {type: 'issuer', value: user});
-//       }));
-//   }
-// }
-//
-// export class ActivePassProvider implements PassLikeProvider {
-//   count = 0;
-//   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
-//               private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService,
-//               ) {
-//   }
-//
-//   watch(sort: Observable<string>) {
-//
-//     const sort$ = sort.pipe(map(s => ({sort: s})));
-//     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
-//
-//     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-//     merged$.subscribe(mergedReplay);
-//
-//     const passes$ = this.user$.pipe(
-//       switchMap(user => {
-//         // this.count += 1;
-//         // console.log('Active ==>>', this.count);
-//         return this.liveDataService.watchActiveHallPasses(mergedReplay,
-//             user.roles.includes('hallpass_student')
-//               ? {type: 'student', value: user}
-//               : {type: 'issuer', value: user}
-//               );
-//         }
-//       ),
-//       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-//         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
-//       })
-//     );
-//
-//     const excluded$ = this.excluded$.pipe(startWith([]));
-//
-//     return combineLatest(passes$, excluded$, (passes, excluded) => exceptPasses(passes, excluded));
-//   }
-// }
-//
-// export class PastPassProvider implements PassLikeProvider {
-//   count = 0;
-//   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
-//   }
-//
-//   watch(sort: Observable<string>) {
-//     const sortReplay = new ReplaySubject<string>(1);
-//     sort.subscribe(sortReplay);
-//
-//     return this.user$
-//       .pipe(
-//         switchMap(user => {
-//           // this.count += 1;
-//           // console.log('PAST ==>>', this.count);
-//           return this.liveDataService.watchPastHallPasses(
-//               user.roles.includes('hallpass_student')
-//                 ? {type: 'student', value: user}
-//                 : {type: 'issuer', value: user}
-//             );
-//           }
-//         )
-//       );
-//   }
-// }
-//
-// export class InboxRequestProvider implements PassLikeProvider {
-//
-//   isStudent: boolean;
-//   count = 0;
-//
-//   constructor(
-//     private liveDataService: LiveDataService,
-//     private user: User,
-//     ) {
-//   }
-//
-//   watch(sort: Observable<string>) {
-//     const sortReplay = new ReplaySubject<string>(1);
-//     sort.subscribe(sortReplay);
-//
-//     // const requests$ = this.user$.pipe(
-//     //   switchMap(user => {
-//     //   this.isStudent = user.isStudent();
-//     //     this.count += 1;
-//     //     console.log('Inbox Request ==>>', this.count);
-//     //   return this.liveDataService.watchInboxRequests(user);
-//     // }))
-//
-//     const requests$ = this.liveDataService.watchInboxRequests(this.user)
-//       .pipe(
-//         map(req => {
-//         if (this.user.isStudent()) {
-//           return req.filter((r) => !!r.request_time);
-//         }
-//         return req;
-//       }));
-//
-//     return requests$;
-//   }
-//
-// }
-//
-// export class InboxInvitationProvider implements PassLikeProvider {
-//   count = 0;
-//   constructor(private liveDataService: LiveDataService, private user: User) {
-//   }
-//
-//   watch(sort: Observable<string>) {
-//     const sortReplay = new ReplaySubject<string>(1);
-//     sort.subscribe(sortReplay);
-//
-//     // const invitations$ = this.user$.pipe(
-//     //   switchMap(user => {
-//     //     this.count += 1;
-//     //     console.log('Inbox Invitation ==>>', this.count);
-//     //     return this.liveDataService.watchInboxInvitations(this.user);
-//     //   }));
-//     //
-//     // return invitations$;
-//     return this.liveDataService.watchInboxInvitations(this.user);
-//   }
-// }
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-passes',
@@ -233,7 +92,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(scrollObserver)
           )
           .subscribe((v) => {
-            console.log('Subscribe ==>>', v);
             if (v) {
               this.scrollableArea.scrollTo({top: scrollOffset});
               scrollObserver.next();
@@ -300,7 +158,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   scroll(event) {
     this.currentScrollPosition = event.currentTarget.scrollTop;
     if (!!this.passesService.expiredPassesNextUrl$.getValue()) {
-      // console.log(event.currentTarget.offsetHeight + event.target.scrollTop, event.currentTarget.scrollHeight);
       if ((event.currentTarget.offsetHeight + event.target.scrollTop) >= (event.currentTarget.scrollHeight - 600)) {
         combineLatest(
           this.expiredPassesSelectedSort$.pipe(take(1)),
@@ -313,12 +170,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             this.liveDataService.getExpiredPassesRequest(this.user, sort, this.passesService.expiredPassesNextUrl$.getValue());
           });
       }
-    } else {
-      // if (this.scrollable && (event.target.offsetHeight + event.target.scrollTop) >= event.target.scrollHeight - 1) {
-      //   this.showBottomShadow = false;
-      // } else {
-      //   this.showBottomShadow = true;
-      // }
     }
   }
 
@@ -383,7 +234,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         return filters['past-passes'].default;
       }));
 
-    this.dataService.currentUser
+    this.userService.user$
       .pipe(
         take(1),
         map(user => {
@@ -395,7 +246,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.isStaff) {
             this.dataService.updateInbox(true);
           }
-          this.locationsService.getLocationsWithTeacherRequest(this.user);
           return user.roles.includes('hallpass_student');
         }) // TODO filter events to only changes.
       )
@@ -424,9 +274,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser.pipe(
       takeUntil(this.destroy$),
-      switchMap((user: User) =>
-        user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
-    )
+      switchMap((user: User) => {
+        return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+      }
+    ))
       .subscribe(passLike => {
         this._zone.run(() => {
           if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
@@ -441,8 +292,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         filter(() => !this.isStaff),
         switchMap(({action, data}) => {
-          debugger;
-          if (action === 'message.alert') {
+          if (action === 'message.alert' && !this.dialog.getDialogById('startNotification')) {
             const isFirstPass: boolean = data.type.includes('first_pass');
             this.screenService.customBackdropEvent$.next(true);
             const SPNC = this.dialog.open(StartPassNotificationComponent, {
@@ -456,18 +306,20 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
                 subtitle: 'When you come back to the room, remember to end your pass!'
               }
             });
-            return SPNC.afterClosed();
+            SPNC.afterClosed().subscribe(() => this.screenService.customBackdropEvent$.next(false));
           } else if (action === 'hall_pass.end') {
             if (this.dialog.getDialogById('startNotification')) {
               this.dialog.getDialogById('startNotification').close();
               return of(true);
             }
           }
-          return of(null);
+          return of(false);
         })
       )
       .subscribe(res => {
-        this.screenService.customBackdropEvent$.next(false);
+        if (res) {
+          this.screenService.customBackdropEvent$.next(false);
+        }
       });
   }
 
@@ -533,9 +385,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cursor = 'default';
     }
 
-    this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
-    this.locationsService.getFavoriteLocationsRequest();
-    this.locationsService.getPassLimitRequest();
+    this.httpService.globalReload$.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
+        this.locationsService.getFavoriteLocationsRequest();
+      });
   }
 
   ngAfterViewInit(): void {

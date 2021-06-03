@@ -1,0 +1,13 @@
+<div id="colored-checkbox-wrapper">
+  <div id="title" *ngIf="title">
+    <span>{{title}}</span>
+  </div>
+  <section>
+    <div *ngFor="let option of options; index as i" id="option">
+      <mat-checkbox class="navy small" (change)="onSelectionChange(option, $event.checked)">
+        <span [style.background-image]="getBackgroundGradient(i)">{{option}}</span>
+      </mat-checkbox>
+    </div>
+  </section>
+</div>
+

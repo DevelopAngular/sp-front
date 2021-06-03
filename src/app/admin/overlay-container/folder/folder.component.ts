@@ -20,6 +20,7 @@ import {filter, mapTo, takeUntil, tap} from 'rxjs/operators';
 import {ScrollPositionService} from '../../../scroll-position.service';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
+import {ToastService} from '../../../services/toast.service';
 
 @Component({
   selector: 'app-folder',
@@ -126,6 +127,7 @@ export class FolderComponent implements OnInit, OnDestroy {
       private sanitizer: DomSanitizer,
       private formService: CreateFormService,
       private scrollPosition: ScrollPositionService,
+      private toast: ToastService
   ) {}
 
   get folderNameTitle() {
@@ -327,6 +329,7 @@ export class FolderComponent implements OnInit, OnDestroy {
         }
 
         zip(...deletions).subscribe(res => {
+          this.toast.openToast({title: 'Folder deleted', type: 'error'});
           this.dialogRef.close();
         });
       });

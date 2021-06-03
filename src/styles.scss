@@ -146,10 +146,11 @@ div {
 .teacher-pass-card-dialog-container .mat-dialog-container {
   border-radius: 14px;
   overflow: visible;
-  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: none;
   margin: 0;
   padding: 0;
-  height: 451px;
+  //height: 451px;
+  background-color: transparent;
 }
 
 .student-pass-card-dialog-container .mat-dialog-container {
@@ -198,7 +199,7 @@ div {
   border-radius: 16px;
   box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  //margin: 10px;
+  z-index: 10;
   padding: 0;
 }
 
@@ -506,4 +507,9 @@ body {
   body {
     //display: none !important;
   }
+}
+
+.mat-jade {
+  color: white !important;
+  background-color: $jade !important;
 }

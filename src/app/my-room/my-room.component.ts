@@ -33,59 +33,6 @@ import {HallPassesService} from '../services/hall-passes.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
 
-/**
- * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
- */
-// abstract class RoomPassProvider implements PassLikeProvider {
-//
-//   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-//   constructor(protected liveDataService: LiveDataService, protected locations$: Observable<Location[]>,
-//               protected date$: Observable<Date>, protected search$: Observable<string>) {
-//   }
-//
-//   protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date): Observable<PassLike[]>;
-//
-//   watch(sort: Observable<string>) {
-//     // merge the sort events and search events into one Observable that emits the current state of both.
-//     const sort$ = sort.pipe(map(s => ({sort: s})));
-//     const search$ = this.search$.pipe(map(s => ({search_query: s})));
-//     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
-//
-//     // Create a subject that will replay the last state. This is necessary because of the use of switchMap.
-//     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-//     merged$.subscribe(mergedReplay);
-//
-//     return combineLatest(
-//       this.locations$,
-//       this.date$,
-//       (locations, date) => ({locations, date}))
-//       .pipe(
-//         switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date))
-//       );
-//   }
-// }
-
-// export class ActivePassProvider extends RoomPassProvider {
-//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-//     return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: locations}, date);
-//   }
-// }
-
-// class OriginPassProvider extends RoomPassProvider {
-//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-//     return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
-//         // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
-//   }
-// }
-//
-// class DestinationPassProvider extends RoomPassProvider {
-//   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-//     return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
-//         // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
-//   }
-// }
-
-
 @Component({
   selector: 'app-my-room',
   templateUrl: './my-room.component.html',
@@ -409,7 +356,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       // Switch into kiosk mode
 
       this.storage.setItem('kioskToken', res.access_token);
-      this.storage.setItem('refresh_token', res.refresh_token);
+      // this.storage.setItem('refresh_token', res.refresh_token);
       this.loginService.updateAuth({username: this.user.primary_email, type: 'demo-login', kioskMode: true});
       this.http.kioskTokenSubject$.next(res);
       this.router.navigate(['main/kioskMode']);
@@ -449,7 +396,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           filter(res => !!res)
         )
         .subscribe(data => {
-          // console.log(data);
           this.holdScrollPosition = data.scrollPosition;
           this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
           this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
@@ -458,7 +404,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   showOptions(target: HTMLElement) {
-    // debugger
     this.optionsClick = !this.optionsClick;
     if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
       this.openOptionsMenu();
@@ -488,7 +433,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   openOptionsMenu() {
-    // debugger
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: {bottom: '0'},
         panelClass: 'options-dialog',

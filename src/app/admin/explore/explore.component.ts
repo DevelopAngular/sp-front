@@ -1,19 +1,18 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, iif, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, iif, Observable, of, Subject} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
-import * as moment from 'moment';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
 import {ContactTraceService} from '../../services/contact-trace.service';
 import {ContactTrace} from '../../models/ContactTrace';
-import {DateTimeFilterComponent} from '../search/date-time-filter/date-time-filter.component';
+import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {StorageService} from '../../services/storage.service';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
@@ -23,6 +22,8 @@ import {ToastService} from '../../services/toast.service';
 import {AdminService} from '../../services/admin.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {constructUrl} from '../../live-data/helpers';
+import {UserService} from '../../services/user.service';
+import * as moment from 'moment';
 
 declare const window;
 
@@ -114,6 +115,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
   selectedRows: any[] = [];
   allData: any[] = [];
 
+  user$: Observable<User>;
+
   buttonForceTrigger$: Subject<any> = new Subject<any>();
 
   destroyPassClick = new Subject();
@@ -131,6 +134,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private adminService: AdminService,
     public xlsx: XlsxGeneratorService,
+    private userService: UserService
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -159,6 +163,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.user$ = this.userService.user$;
     this.passSearchState = {
       loading$: this.hallPassService.passesLoading$,
       loaded$: this.hallPassService.passesLoaded$,
@@ -260,6 +265,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
               Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
               Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
+              Object.defineProperty(rawObj, 'email', {enumerable: false, value: pass.student.primary_email});
 
               return rawObj;
             });
@@ -324,10 +330,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
               };
 
               Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
-              // Object.defineProperty(result, 'sortStudentName', { enumerable: false, value: contact.student.last_name});
               Object.defineProperty(result, 'date', {enumerable: false, value: moment(contact.initial_contact_date) });
-              // Object.defineProperty(result, 'sortDuration', {enumerable: false, value: duration });
-              // Object.defineProperty(result, '_data', {enumerable: false, value: result });
+
               return result;
             });
             this.allData = response;
@@ -604,12 +608,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   exportPasses() {
-    this.adminService.exportCsvPasses(this.queryParams).subscribe(res => {
+    this.adminService.exportCsvPasses(this.queryParams)
+      .pipe(switchMap(res => combineLatest(this.user$, this.passSearchState.countPasses$)))
+      .subscribe(([user, count]) => {
       this.toastService.openToast(
         {
-          title: 'Generating CSV...',
-          subtitle: 'When it’s ready (1-2min), we’ll send you a download link to your email.',
-          noButton: true
+          title: `${this.numberWithCommas(count)} passes exporting...`,
+          subtitle: `In a few minutes, check your email (${user.primary_email}) for a link to download the CSV file.`,
+          type: 'success',
+          showButton: false
         }
       );
     });
@@ -643,12 +650,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
       if (row['Contact connection']) {
         const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
         row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
+      } else {
+        row['Email'] = row.email;
       }
       return omit(row, ['Pass', 'Passes']);
     });
     const fileName = this.currentView$.getValue() === 'pass_search' ?
       'SmartPass-PassSearch' : this.currentView$.getValue() === 'contact_trace' ?
         'SmartPass-ContactTracing' : 'TestCSV';
+
     this.xlsx.generate(exceptPass, fileName);
   }
 }

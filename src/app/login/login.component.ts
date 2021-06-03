@@ -30,7 +30,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public appLink: string;
   public titleText: string;
-  // public isMobileDevice = false;
   public trustedBackgroundUrl: SafeUrl;
   public pending$: Observable<boolean>;
   public formPosition: string = '70px';
@@ -66,12 +65,12 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.titleService.setTitle('SmartPass Sign-in');
     this.metaService.addTag({
       name: 'description',
-      content: 'Digital hall pass system and school safety solution. Sign-in with your school account. Don\'t have an account? Sign your school up for a free 60 day trial.'
+      content: 'Digital hall pass system and school safety solution. Sign-in with your school account. Don\'t have an account? Schedule a free demo to see how SmartPass can make your school safer and control the flow of students.'
     });
 
-    if (this.isIOSMobile || this.isAndroid) {
-      window.waitForAppLoaded();
-    }
+    setTimeout(() => {
+      window.appLoaded();
+    }, 700);
 
     this.loginService.isAuthenticated$.pipe(
       filter(v => v),
@@ -99,20 +98,15 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
 
     if (this.isIOSMobile) {
-      // this.isMobileDevice = true;
       this.appLink = 'https://itunes.apple.com/us/app/smartpass-mobile/id1387337686?mt=8';
       this.titleText = 'Download SmartPass on the App Store to start making passes.';
     } else if (this.isAndroid) {
-      // this.isMobileDevice = true;
       this.appLink = 'https://play.google.com/store/apps/details?id=app.smartpass.smartpass';
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
   }
 
   ngAfterViewInit() {
-    // if (this.isIOSMobile || this.isAndroid) {
-      window.appLoaded();
-    // }
   }
 
   ngOnDestroy() {

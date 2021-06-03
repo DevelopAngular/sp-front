@@ -1,6 +1,6 @@
-import {Inject, Injectable, NgZone} from '@angular/core';
+import {Inject, Injectable, NgZone, OnDestroy} from '@angular/core';
 import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
-import {filter} from 'rxjs/operators';
+import {filter, takeUntil} from 'rxjs/operators';
 import {StorageService} from './storage.service';
 import {APP_BASE_HREF} from '@angular/common';
 
@@ -56,8 +56,10 @@ enum OAuthType {
   google = 'google',
 }
 
-@Injectable()
-export class GoogleLoginService {
+@Injectable({
+  providedIn: 'root'
+})
+export class GoogleLoginService implements OnDestroy{
 
   static googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=560691963710-220tggv4d3jo9rpc3l70opj1510keb59.apps.googleusercontent.com&response_type=code&access_type=offline&scope=profile%20email%20openid`
 
@@ -68,6 +70,8 @@ export class GoogleLoginService {
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
   // public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
       @Inject(APP_BASE_HREF)
       private baseHref: string,
@@ -77,7 +81,7 @@ export class GoogleLoginService {
     if (baseHref === '/app') {
       this.baseHref = '/app/';
     }
-    this.authObject$.subscribe(auth => {
+    this.authObject$.pipe(takeUntil(this.destroy$)).subscribe(auth => {
       if (auth) {
         const storageKey = isDemoLogin(auth)
                            ? JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type})
@@ -89,7 +93,7 @@ export class GoogleLoginService {
 
     const savedAuth = this.storage.getItem(STORAGE_KEY);
     if (savedAuth) {
-      console.log('Loading saved auth:', savedAuth);
+      // console.log('Loading saved auth:', savedAuth);
       const auth = JSON.parse(savedAuth);
       if (isGoogleLogin(auth) || isDemoLogin(auth) || isGg4lLogin(auth) || isCleverLogin(auth)) {
         this.updateAuth(auth);
@@ -100,6 +104,11 @@ export class GoogleLoginService {
       this.isAuthenticated$.next(false);
     }
 
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // Returns authObject
@@ -125,6 +134,7 @@ export class GoogleLoginService {
     this.storage.removeItem('google_id_token');
     this.storage.removeItem('context');
     this.storage.removeItem('kioskToken');
+    this.storage.removeItem('auth');
     this.logout();
   }
 

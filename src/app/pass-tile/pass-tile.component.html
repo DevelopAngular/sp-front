@@ -37,6 +37,43 @@
 <!--    <div *ngIf="forStaff && !profileImage" class="names-overlay"></div>-->
   </div>
   <div *ngIf="forStaff" class="names">{{ tileName }}</div>
+  <div class="overlay-shadow" *ngIf="showBackgroundOverlay && !isKioskMode" (mouseenter)="disableClose$.next()"></div>
+  <div *ngIf="forStaff && !isKioskMode" class="names-overlay"></div>
+  <div
+    class="overlay"
+    (mouseover)="showBackgroundOverlay = true; studentNameOver()"
+    (mouseleave)="overlayLeave()"
+    cdkOverlayOrigin
+    #overlayTrigger="cdkOverlayOrigin"
+  >
+    <div *ngIf="forStaff" class="names">{{ tileName }}</div>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="overlayTrigger"
+      [cdkConnectedOverlayOpen]="isOpenTooltip | async"
+      [cdkConnectedOverlayWidth]="335"
+      [cdkConnectedOverlayHeight]="300"
+      [cdkConnectedOverlayPositions]="overlayPositions"
+      (positionChange)="updateOverlayPosition($event)"
+      [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
+    >
+      <div class="student-passes"
+           *ngIf="allowPopup && !isKioskMode"
+           #studentPasses
+           (mouseleave)="showBackgroundOverlay = false; setAnimationTrigger('fadeOut'); studentNameLeave()"
+           (mouseover)="destroyAnimation$.next(); showBackgroundOverlay = true; disableClose$.next()"
+      >
+        <app-student-passes
+          [pass]="pass"
+          [profile]="pass.student"
+          [height]="300"
+          [isResize]="false"
+          (close)="isOpenTooltip.next(false)"
+        ></app-student-passes>
+      </div>
+    </ng-template>
+  </div>
 
 
 </div>
