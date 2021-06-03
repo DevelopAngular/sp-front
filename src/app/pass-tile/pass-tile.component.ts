@@ -59,7 +59,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       overlayX: 'start',
       overlayY: 'top',
       offsetX: -71,
-      offsetY: 35
+      offsetY: 175
     },
     {
       panelClass: 'student-panel2',
@@ -68,7 +68,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       overlayX: 'end',
       overlayY: 'top',
       offsetX: 72,
-      offsetY: 35
+      offsetY: 175
     },
     {
       panelClass: 'student-panel3',
@@ -77,7 +77,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       overlayX: 'end',
       overlayY: 'bottom',
       offsetX: 72,
-      offsetY: 3
+      offsetY: 142
     },
     {
       panelClass: 'student-panel4',
@@ -86,7 +86,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
       overlayX: 'start',
       overlayY: 'bottom',
       offsetX: -71,
-      offsetY: 3
+      offsetY: 142
     }
   ];
   scrollStrategy;
