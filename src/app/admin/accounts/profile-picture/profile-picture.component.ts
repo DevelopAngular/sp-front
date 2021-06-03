@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {fromEvent, of, zip} from 'rxjs';
-import {filter, map, switchMap} from 'rxjs/operators';
+import {fromEvent, of, Subject, zip} from 'rxjs';
+import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {isArray, uniqBy} from 'lodash';
 
 import {XlsxService} from '../../../services/xlsx.service';
@@ -16,7 +16,9 @@ import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component
   templateUrl: './profile-picture.component.html',
   styleUrls: ['./profile-picture.component.scss']
 })
-export class ProfilePictureComponent implements OnInit {
+export class ProfilePictureComponent implements OnInit, OnDestroy {
+
+  @Output() backEmit: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('csvFile') set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
@@ -113,6 +115,8 @@ export class ProfilePictureComponent implements OnInit {
   };
   issues = [];
 
+  destroy$: Subject<any> = new Subject<any>();
+
   fakeUsers = [
     {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
     {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
@@ -148,10 +152,18 @@ export class ProfilePictureComponent implements OnInit {
     });
 
     this.userService.profilePicturesLoaded$
-      .pipe(filter(loaded => this.page === 3 && loaded))
+      .pipe(
+        filter(loaded => this.page === 3 && loaded),
+        takeUntil(this.destroy$)
+      )
       .subscribe(() => {
         this.page = 4;
       });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   parseArrayToObject(array: any[]) {
@@ -167,6 +179,10 @@ export class ProfilePictureComponent implements OnInit {
     } else if (this.page === 4) {
 
     }
+  }
+
+  back() {
+    this.backEmit.emit();
   }
 
   findIssues() {

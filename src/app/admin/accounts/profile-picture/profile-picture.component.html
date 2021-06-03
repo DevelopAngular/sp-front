@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="heading" #header>
     <div class="back-button">
-      <img (click)="dialogRef.close()" *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+      <img (click)="back()" *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
       <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3">Cancel</div>
     </div>
     <div class="ds-dialog-title-white ds-flex-center-center">

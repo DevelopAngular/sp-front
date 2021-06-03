@@ -92,9 +92,12 @@
 
   </div>
 </div>
-<div *ngIf="page === 2 && settingsData.action !== 'g_suite'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+<div *ngIf="page === 2 && (settingsData.action === 'clever' || settingsData.action === 'gg4l')" [@NextStep]="{ value: '', params: frameMotion$ | async}">
   <app-ggl4-settings [dialogAction]="settingsData.action" [status]="settingsData.status" (backEvent)="back()"></app-ggl4-settings>
 </div>
 <div *ngIf="page === 2 && settingsData.action === 'g_suite'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
   <app-g-suite-settings (backEvent)="back()"></app-g-suite-settings>
+</div>
+<div *ngIf="page === 2 && settingsData.action === 'profile_pictures'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+  <app-profile-picture (backEmit)="back()"></app-profile-picture>
 </div>

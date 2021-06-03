@@ -13,6 +13,7 @@ export class ProfilePicturesEffects {
       .pipe(
         ofType(profilePicturesActions.uploadProfilePictures),
         exhaustMap((action: any) => {
+          debugger;
           return this.userService.uploadProfilePictures(action.csvFile)
             .pipe(
               map(data => {
