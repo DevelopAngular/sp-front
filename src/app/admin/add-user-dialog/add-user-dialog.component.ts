@@ -341,23 +341,15 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
                     .addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
                 }
               } else {
-                throw new Error('Format Error');
+                return throwError(new Error('Format Error'));
               }
             }
           }),
           catchError((err) => {
             if (err instanceof HttpErrorResponse) {
               this.toast.openToast({title: 'Format Error', subtitle: err.error.errors[0], type: 'error'});
-              // this.http.errorToast$.next({
-              //   header: 'Format Error',
-              //   message: err.error.errors[0]
-              // });
             } else if (err.message === 'Format Error') {
               this.toast.openToast({title: 'Format Error', subtitle: 'User name should be at least 6 symbols length.', type: 'error'});
-              // this.http.errorToast$.next({
-              //   header: 'Format Error',
-              //   message: 'User name should be at least 6 symbols length.'
-              // });
             }
             return throwError(err);
           })
