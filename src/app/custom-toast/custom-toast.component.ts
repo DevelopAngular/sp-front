@@ -30,6 +30,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
     this.data$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       this.data = data;
     });
+
     timer(2300)
       .pipe(
         filter(() => !this.data.showButton),

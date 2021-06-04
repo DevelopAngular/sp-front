@@ -17,7 +17,7 @@
           <app-gradient-button
             *ngIf="data.showButton"
             [gradient]="'#F4F4F4, #F4F4F4'"
-            [leftIcon]="data.icon ? data.icon  : './assets/Download (Navy).svg'"
+            [leftIcon]="data.icon ? data.icon  : null"
             [textColor]="'#1F195E'"
             (buttonClick)="download(data.action)">
             {{ data.buttonText ? data.buttonText : 'Download' }}

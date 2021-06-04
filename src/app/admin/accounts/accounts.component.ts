@@ -202,6 +202,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
             type: 'success',
             action: 'demo_accounts_down',
             showButton: true,
+            icon: './assets/Download (Navy).svg',
             buttonText: 'Download passwords'
           });
       });
