@@ -10,6 +10,7 @@ import {
   getIsLoadedPinnables,
   getIsLoadingPinnables,
   getPinnableCollection,
+  getPinnableEntities,
   getPinnablesIds
 } from '../ngrx/pinnables/states';
 import {arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
@@ -46,6 +47,7 @@ import {
   getQuickPreviewPassesLoading,
   getQuickPreviewPassesStats
 } from '../ngrx/quick-preview-passes/states';
+import {Dictionary} from '@ngrx/entity';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +58,7 @@ export class HallPassesService {
   loadedPinnables$: Observable<boolean>;
   isLoadingPinnables$: Observable<boolean>;
   pinnablesCollectionIds$: Observable<number[] | string[]>;
+  pinnablesEntities$: Observable<Dictionary<Pinnable>> = this.store.select(getPinnableEntities);
   isLoadingArranged$: Observable<boolean> = this.store.select(getArrangedLoading);
 
   passesEntities$: Observable<{[id: number]: HallPass}> = this.store.select(getPassesEntities);

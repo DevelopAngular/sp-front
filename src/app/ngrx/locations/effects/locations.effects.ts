@@ -1,10 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {LocationsService} from '../../../services/locations.service';
-import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
-import * as locationsActions from '../actions';
+import {catchError, concatMap, exhaustMap, filter, map, switchMap, take} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {Location} from '../../../models/Location';
+import {HallPassesService} from '../../../services/hall-passes.service';
+import * as locationsActions from '../actions';
+import * as pinnablesActions from '../../pinnables/actions';
+import {Pinnable} from '../../../models/Pinnable';
 
 @Injectable()
 export class LocationsEffects {
@@ -91,6 +94,27 @@ export class LocationsEffects {
       );
   });
 
+  updateLocationSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(locationsActions.updateLocationSuccess),
+        exhaustMap((action: any) => {
+          return this.passesService.pinnables$.pipe(
+            take(1),
+            map((pinnables) => pinnables.find(p => p.location.id === action.location.id)),
+            filter((pinnable) => !!pinnable),
+            map((pinnable: Pinnable) => {
+              const updatedPinnable = {
+                ...pinnable,
+                location: action.location
+              };
+              return pinnablesActions.updatePinnableSuccess({pinnable: updatedPinnable as Pinnable});
+            })
+          );
+        })
+      );
+  });
+
   removeLocation$ = createEffect(() => {
     return this.actions$
       .pipe(
@@ -109,6 +133,7 @@ export class LocationsEffects {
 
   constructor(
     private actions$: Actions,
-    private locService: LocationsService
+    private locService: LocationsService,
+    private passesService: HallPassesService
   ) {}
 }
