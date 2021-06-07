@@ -205,7 +205,10 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         debounceTime(500),
         take(1),
-        switchMap(value => {
+        switchMap((value: string) => {
+          if (!value.includes('@')) {
+            value = value + '@spnx.local';
+          }
           return this.userService.checkUserEmail(value)
             .pipe(
               take(1),
