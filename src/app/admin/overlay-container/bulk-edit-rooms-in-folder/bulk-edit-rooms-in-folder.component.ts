@@ -98,14 +98,15 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
         (this.roomData.travelType.length ||
           !isNull(this.roomData.restricted) ||
           !isNull(this.roomData.scheduling_restricted) ||
-          this.roomData.timeLimit) && !this.advOptionsButtons
+          this.roomData.timeLimit ||
+          this.roomData.selectedTeachers.length) && !this.advOptionsButtons
       ) {
         this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
       } else if (
         (this.roomData.travelType.length ||
           !isNull(this.roomData.restricted) ||
           !isNull(this.roomData.scheduling_restricted) ||
-          this.roomData.timeLimit) && this.advOptionsButtons
+          this.roomData.timeLimit || this.roomData.selectedTeachers.length) && this.advOptionsButtons
       ) {
         if (this.advOptionsButtons.incomplete) {
           this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
