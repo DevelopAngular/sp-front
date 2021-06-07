@@ -653,22 +653,34 @@ export class UserService implements OnDestroy{
   }
 
   bulkAddProfilePictures(uuid: string, files: File[]) {
-    const formData = new FormData();
-    const ctx = this.http.getAuthContext();
+    const file_names = files.map(file => file.name);
+    const content_types = files.map(file => file.type);
+    return this.http.post('v1/file_uploads/bulk_create_url', {file_names, content_types});
+    // const formData = new FormData();
+    // const ctx = this.http.getAuthContext();
+    // const httpOptions = {
+    //   headers: new HttpHeaders({
+    //     'X-School-Id': this.http.getSchool().id,
+    //     'Authorization': 'Bearer ' + ctx.auth.access_token
+    //   })
+    // };
+    // files.forEach((file, index) => {
+    //   formData.append(`${index}`, file);
+    // });
+    // return this.httpClient.post(
+    //   `https://c-direct.smartpass.app/api/staging/files/v1/users/jobs/${uuid}/bulk-add-pictures`,
+    //   formData,
+    //   httpOptions
+    // );
+  }
+
+  setProfilePictureToGoogle(url: string, file: File, content_type: string) {
     const httpOptions = {
-      headers: new HttpHeaders({
-        'X-School-Id': this.http.getSchool().id,
-        'Authorization': 'Bearer ' + ctx.auth.access_token
-      })
-    };
-    files.forEach((file, index) => {
-      formData.append(`${index}`, file);
-    });
-    return this.httpClient.post(
-      `https://c-direct.smartpass.app/api/staging/files/v1/users/jobs/${uuid}/bulk-add-pictures`,
-      formData,
-      httpOptions
-    );
+        headers: new HttpHeaders({
+          'Content-Type': content_type
+        })
+      };
+    return this.httpClient.put(url, file, httpOptions);
   }
 
   addProfilePicture(userId, file: File) {

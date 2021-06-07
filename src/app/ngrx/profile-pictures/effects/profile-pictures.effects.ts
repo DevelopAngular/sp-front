@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../services/user.service';
 import * as profilePicturesActions from '../actions';
-import {catchError, exhaustMap, map} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {catchError, exhaustMap, map, switchMap} from 'rxjs/operators';
+import {of, zip} from 'rxjs';
 
 @Injectable()
 export class ProfilePicturesEffects {
@@ -13,7 +13,6 @@ export class ProfilePicturesEffects {
       .pipe(
         ofType(profilePicturesActions.uploadProfilePictures),
         exhaustMap((action: any) => {
-          debugger;
           return this.userService.uploadProfilePictures(action.csvFile)
             .pipe(
               map(data => {
@@ -42,11 +41,31 @@ export class ProfilePicturesEffects {
         exhaustMap((action: any) => {
           return this.userService.bulkAddProfilePictures(action.uuid, action.pictures)
             .pipe(
-              map(profiles => {
-                return profilePicturesActions.postProfilePicturesSuccess({profiles});
+              switchMap((profiles: any[]) => {
+                const urls =  profiles.map(prof => prof.upload_url);
+                const content_types = profiles.map(prof => prof.content_type);
+                return [profilePicturesActions.setProfilePictureToGoogle({ urls, files: action.pictures,  content_types }), profilePicturesActions.postProfilePicturesSuccess({profiles})];
               }),
               catchError(error => of(profilePicturesActions.postProfilePicturesFailure({errorMessage: error.message})))
             );
+        })
+      );
+  });
+
+  postProfilePicturesToGoogle$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.setProfilePictureToGoogle),
+        exhaustMap((action: any) => {
+          const requests$ = action.urls.map((url, index) => {
+            return this.userService.setProfilePictureToGoogle(url, action.files[index], action.content_types[index]);
+          });
+          return zip(...requests$).pipe(
+            map((res) => {
+              return profilePicturesActions.setProfilePictureToGoogleSuccess();
+            }),
+            catchError(error => of(profilePicturesActions.setProfilePictureToGoogleFailure({errorMessage: error.message})))
+          );
         })
       );
   });
