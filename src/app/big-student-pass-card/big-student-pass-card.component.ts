@@ -73,8 +73,8 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
   scalePage(element: HTMLElement) {
     const pageWidth = document.documentElement.clientWidth;
     const pageHeight = document.documentElement.clientHeight / 100 * 90;
-    const popupWidth = element.clientWidth;
-    const popupHeight = element.clientHeight;
+    const popupWidth = 335;
+    const popupHeight = 527;
     return Math.min(pageWidth / popupWidth, pageHeight / popupHeight, 1.6);
   }
 
