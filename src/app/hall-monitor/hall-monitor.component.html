@@ -73,6 +73,7 @@
         (reportFromPassCard)="onReportFromPassCard($event)"
         [user]="user"
         (sortMode)="updatePassCollection($event)"
+        [selectedSort]="'expiration_time'"
       ></app-pass-collection>
       <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue != ''">

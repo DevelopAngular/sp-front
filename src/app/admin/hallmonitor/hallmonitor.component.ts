@@ -158,8 +158,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
 
   onSearch(searchValue) {
     this.searchPending$.next(true);
-     this.searchQuery$.next(searchValue);
-     this.updatePassCollection(this.sortMode);
+    this.searchQuery$.next(searchValue);
+    this.updatePassCollection(this.sortMode);
   }
 
 
