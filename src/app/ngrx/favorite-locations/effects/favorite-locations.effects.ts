@@ -31,7 +31,7 @@ export class FavoriteLocationsEffects {
         ofType(favLocActions.updateFavoriteLocations),
         exhaustMap((action: any) => {
           const locationIds = action.locations.map(loc => +loc.id);
-          return this.locService.updateFavoriteLocations(locationIds)
+          return this.locService.updateFavoriteLocations({locations: locationIds})
             .pipe(
               map((locIds) => {
                 return favLocActions.updateFavoriteLocationsSuccess({locations: action.locations});

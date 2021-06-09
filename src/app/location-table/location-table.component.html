@@ -25,9 +25,8 @@
         <div class="choices"
              cdkDropList
              (cdkDropListDropped)="updateOrderLocation($event)"
-             [cdkDropListDisabled]="isMobile"
         >
-          <div class="choice" *ngFor="let choice of starredChoices" cdkDrag>
+          <div class="choice" *ngFor="let choice of starredChoices">
             <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
             <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
               (onSelect)="choiceSelected($event)"
@@ -39,7 +38,7 @@
               [starred]="true"
               [showStar]="!!showStars"
               [allowOnStar]="allowOnStar"
-            >
+              [isFavorite]="true">
             </app-location-cell>
           </div>
         </div>

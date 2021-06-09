@@ -4,30 +4,31 @@
       <div class="hallpass-box">
         <div class="hall-monitor-top">
           <app-round-input
-                  [type]="'text'"
-                  [width]="'260px'"
-                  [placeholder]="'Search'"
-                  [closeIcon]="true"
-                  [pending$]="searchPending$"
-                  (ontextupdate)="onSearch($event)">
-
+            [type]="'text'"
+            [width]="'260px'"
+            [placeholder]="'Search'"
+            [closeIcon]="true"
+            [pending$]="searchPending$"
+            (ontextupdate)="onSearch($event)"
+          >
           </app-round-input>
         </div>
         <div class="hall-monitor-bottom">
           <app-pass-collection
-                  [hasSort]="true"
-                  [isActive]="true"
-                  [isAdminPage]="true"
-                  [showEmptyHeader]="true"
-                  [columnViewIcon]="false"
-                  [forStaff]="true"
-                  [forMonitor]="true"
-                  [style.width]="'600px'"
-                  [passProvider]="activePassProvider"
-                  [title]="'Active Passes'"
-                  [icon]="'./assets/Walking (Navy).svg'"
-                  [columns]="4"
-                  (sortMode)="updatePassCollection($event)"
+            [hasSort]="true"
+            [isActive]="true"
+            [isAdminPage]="true"
+            [showEmptyHeader]="true"
+            [columnViewIcon]="false"
+            [forStaff]="true"
+            [forMonitor]="true"
+            [style.width]="'600px'"
+            [passProvider]="activePassProvider"
+            [title]="'Active Passes'"
+            [icon]="'./assets/Walking (Navy).svg'"
+            [columns]="4"
+            (sortMode)="updatePassCollection($event)"
+            [selectedSort]="'expiration_time'"
           >
           </app-pass-collection>
           <div *ngIf="!(hasPasses | async) && (passesLoaded | async)"
@@ -49,9 +50,7 @@
 
     <div class="reported-students">
       <div class="reported-students-internal" #reportBox (scroll)="onScroll($event)">
-        <div *ngIf="pending" class="loading-theme_blue-gray spinner ds-flex-center-center ds-w-100 ds-h-100"
-
-        >
+        <div *ngIf="pending" class="loading-theme_blue-gray spinner ds-flex-center-center ds-w-100 ds-h-100">
           <mat-spinner [diameter]="35" [color]="'primary'"></mat-spinner>
         </div>
 

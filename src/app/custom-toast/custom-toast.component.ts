@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, of, Subject, timer} from 'rxjs';
-import {delay, filter, takeUntil} from 'rxjs/operators';
+import {delay, filter, takeUntil, tap} from 'rxjs/operators';
 import {ToastService} from '../services/toast.service';
 import {Toast} from '../models/Toast';
 import {toastSlideInOut} from '../animations';
@@ -19,6 +19,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   data: Toast;
 
   destroy$: Subject<any> = new Subject<any>();
+  destroyClose$: Subject<any> = new Subject<any>();
 
   constructor(private toastService: ToastService) { }
 
@@ -29,8 +30,15 @@ export class CustomToastComponent implements OnInit, OnDestroy {
     this.data$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       this.data = data;
     });
-    timer(2000).pipe(filter(() => this.cancelable && !this.data.showButton)).subscribe(() => {
-        this.close();
+
+    timer(2300)
+      .pipe(
+        filter(() => !this.data.showButton),
+        tap(() => this.toggleToast = false),
+        delay(200),
+        takeUntil(this.destroyClose$)
+      ).subscribe(() => {
+        this.toastService.closeToast();
     });
   }
 
@@ -41,14 +49,13 @@ export class CustomToastComponent implements OnInit, OnDestroy {
 
   close(evt?: Event) {
     if (evt) {
+      this.toggleToast = false;
       evt.stopPropagation();
+      setTimeout(() => {
+        this.toastService.closeToast();
+      }, 200);
+      return;
     }
-    this.toggleToast = false;
-    of(null).pipe(
-      delay(500)
-    ).subscribe(() => {
-      this.toastService.closeToast();
-    });
   }
 
   download(action) {
@@ -66,13 +73,19 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   }
 
   over() {
-    this.cancelable = false;
+    this.destroyClose$.next();
   }
 
   leave() {
     if (!this.data.showButton) {
-      this.cancelable = true;
-      this.close();
+      of(null).pipe(
+        delay(2300),
+        tap(() => this.toggleToast = false),
+        delay(200),
+      ).subscribe(() => {
+        this.toggleToast = false;
+        this.toastService.closeToast();
+      });
     }
   }
 }

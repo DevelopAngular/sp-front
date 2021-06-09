@@ -74,14 +74,16 @@ export class BulkEditRoomsComponent implements OnInit {
       (this.roomData.travelType.length ||
         !isNull(this.roomData.restricted) ||
         !isNull(this.roomData.scheduling_restricted) ||
-        this.roomData.timeLimit) && !this.advOptionsButtons
+        this.roomData.timeLimit ||
+        this.roomData.selectedTeachers.length) && !this.advOptionsButtons
     ) {
       this.roomsValidButtons = {publish: true, incomplete: false, cancel: true};
     } else if (
       (this.roomData.travelType.length ||
         !isNull(this.roomData.restricted) ||
         !isNull(this.roomData.scheduling_restricted) ||
-        this.roomData.timeLimit) && this.advOptionsButtons
+        this.roomData.timeLimit ||
+        this.roomData.selectedTeachers.length) && this.advOptionsButtons
     ) {
       if (this.advOptionsButtons.incomplete) {
         this.roomsValidButtons = {publish: false, incomplete: true, cancel: true};

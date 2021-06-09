@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 
@@ -8,7 +8,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
   styleUrls: ['./sort-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SortMenuComponent implements OnInit, OnDestroy {
+export class SortMenuComponent implements OnInit {
 
   @ViewChild('_item') item: ElementRef;
 
@@ -22,17 +22,13 @@ export class SortMenuComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<SortMenuComponent>,
-    public darkTheme: DarkThemeSwitch,
-    private renderer: Renderer2
+    public darkTheme: DarkThemeSwitch
   ) {}
 
   ngOnInit() {
     this.items = this.data['items'];
     this.selectedItem = this.data['selectedItem'];
     this.showAllRooms = this.data['showAll'];
-  }
-
-  ngOnDestroy(): void {
   }
 
   selectSortOption(location): void {
