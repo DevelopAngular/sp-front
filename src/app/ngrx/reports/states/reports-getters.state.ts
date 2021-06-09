@@ -7,6 +7,7 @@ export const getReportsState = (state: AppState) => state.reports;
 
 export const getReportsCollection = adapter.getSelectors(getReportsState).selectAll;
 export const getReportsLength = adapter.getSelectors(getReportsState).selectTotal;
+export const getReportsEntities = adapter.getSelectors(getReportsState).selectEntities;
 
 export const getIsLoadedReports = createSelector(
   getReportsState,

@@ -228,10 +228,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       this.selectedObjects = {};
     }
 
-    this.tableService.updateTableColumns$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((columns: string[]) => {
-        this.columnsToDisplay = ['select', this.displayedColumns[0], ...columns];
+    this.tableService.updateTableColumns$.pipe(withLatestFrom(this.isCheckbox), takeUntil(this.destroy$))
+      .subscribe(([columns, isCheckbox]) => {
+        this.columnsToDisplay = isCheckbox ? ['select', this.displayedColumns[0], ...columns] : [this.displayedColumns[0], ...columns];
         this.cdr.detectChanges();
       });
 

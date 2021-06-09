@@ -487,14 +487,23 @@ mat-cell {
   //height: 33px;
 }
 
+.noCheckbox {
+  left: 0 !important;
+}
+
 ::ng-deep .message {
   position: relative;
   min-width: 270px;
-  height: 54px;
+  //height: 38px;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+::ng-deep .report {
+  height: 60px;
+  margin-top: 5px
 }
 
 @keyframes shimmer {

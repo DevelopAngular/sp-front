@@ -202,15 +202,19 @@
 
     <div class="report-search" *ngIf="views[currentView].id === 2">
       <app-sp-data-table
+        [isCheckbox]="isCheckbox$"
         [data$]="reportsSearchData$"
         [loading$]="reportSearchState.loading$"
         [currentPage]="currentView$.value"
         [showEmptyState]="reportSearchState.isEmpty && reportSearchState.loaded$ | async"
+        [emptyIcon]="'./assets/Report Search (Blue-Gray).svg'"
+        [emptyText]="'No reports found with the selected filters.'"
         [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
-        [itemSize]="67"
+        [itemSize]="66"
         [isRowClick]="true"
         [showPrintButtons]="false"
         (loadMoreData)="loadMoreReports()"
+        (rowClickEvent)="openReportDialog($event)"
         [disabledInfinityScroll]="!(reportSearchState.nextUrl$ | async)"
       ></app-sp-data-table>
     </div>

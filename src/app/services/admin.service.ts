@@ -12,6 +12,7 @@ import {
   getIsLoadedReports,
   getIsLoadingReports,
   getReportsCollection,
+  getReportsEntities,
   getReportsLength,
   getReportsNextUrl
 } from '../ngrx/reports/states/reports-getters.state';
@@ -61,7 +62,8 @@ export class AdminService {
     length: this.store.select(getReportsLength),
     foundReports: this.store.select(getFoundReports),
     addedReports: this.store.select(getAddedReports),
-    nextUrl$: this.store.select(getReportsNextUrl)
+    nextUrl$: this.store.select(getReportsNextUrl),
+    entities$: this.store.select(getReportsEntities)
   };
 
   colorProfiles$: Observable<ColorProfile[]> = this.store.select(getColorProfilesCollection);

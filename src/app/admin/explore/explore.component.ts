@@ -26,6 +26,7 @@ import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
 import {Report} from '../../models/Report';
 import {Util} from '../../../Util';
+import {Dictionary} from '@ngrx/entity';
 
 declare const window;
 
@@ -66,7 +67,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   views: View = {
     'pass_search': {id: 1, title: 'Pass Search', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
-    'report_search': {id: 2, title: 'Reports search', color: 'red', icon: 'Report Search', action: 'report_search'},
+    'report_search': {id: 2, title: 'Reports search', color: '#E32C66', icon: 'Report Search', action: 'report_search'},
     'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
@@ -93,6 +94,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     loaded$: Observable<boolean>,
     length$: Observable<number>,
     nextUrl$: Observable<string>,
+    entities$: Observable<Dictionary<Report>>
     isEmpty?: boolean
   };
   isSearched: boolean;
@@ -200,7 +202,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
       loaded$: this.adminService.reports.loaded$,
       loading$: this.adminService.reports.loading$,
       length$: this.adminService.reports.length,
-      nextUrl$: this.adminService.reports.nextUrl$
+      nextUrl$: this.adminService.reports.nextUrl$,
+      entities$: this.adminService.reports.entities$
     };
 
     this.http.globalReload$.pipe(
@@ -213,6 +216,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.destroyPassClick.next();
         this.allData = [];
         if (view === 'pass_search') {
+          this.isCheckbox$.next(true);
           this.passSearchData = {
             selectedStudents: null,
             selectedDestinationRooms: null,
@@ -222,6 +226,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.search(300);
           return this.hallPassService.passesLoaded$;
         } else if (view === 'contact_trace') {
+          this.isCheckbox$.next(true);
           this.showContactTraceTable = false;
           this.clearContactTraceData();
           this.adminCalendarOptions = null;
@@ -231,6 +236,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           };
           return this.contactTraceService.contactTraceLoaded$;
         } else if (view === 'report_search') {
+          this.isCheckbox$.next(false);
           this.reportSearchData = {
             selectedStudents: null,
             selectedDate: null,
@@ -382,10 +388,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.reportSearchState.isEmpty = false;
           return reports.map(report => {
             const result = {
-              'Student Name': report.student.display_name,
-              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="message">${report.message || 'No report message'}</div>`),
-              'Submitted by': report.issuer.display_name,
-              'Date submitted': moment(report.created).format('MM/DD HH:mm A')
+              'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
+              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
+              'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
+              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD HH:mm A')}</div>`)
             };
 
             Object.defineProperty(result, 'id', { enumerable: false, value: report.id});
@@ -749,6 +755,17 @@ export class ExploreComponent implements OnInit, OnDestroy {
     } else {
       this.generateCSV();
     }
+  }
+
+  openReportDialog(report) {
+    this.reportSearchState.entities$
+      .pipe(
+        take(1),
+        map(reports => reports[report.id])
+      )
+      .subscribe(selectedReport => {
+        debugger;
+    });
   }
 
   generateCSV() {
