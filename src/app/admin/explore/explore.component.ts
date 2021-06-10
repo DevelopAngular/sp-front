@@ -27,6 +27,7 @@ import * as moment from 'moment';
 import {Report} from '../../models/Report';
 import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
+import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
 
 declare const window;
 
@@ -764,7 +765,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
         map(reports => reports[report.id])
       )
       .subscribe(selectedReport => {
-        debugger;
+        this.dialog.open(ReportInfoDialogComponent, {
+          panelClass: 'overlay-dialog',
+          backdropClass: 'custom-bd',
+          data: {report: selectedReport}
+        });
     });
   }
 
