@@ -2,7 +2,7 @@ import {Location} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {fromEvent, of, zip} from 'rxjs';
+import {fromEvent, Observable, of, zip} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {LinkGeneratedDialogComponent} from './link-generated-dialog/link-generated-dialog.component';
@@ -44,6 +44,8 @@ export class PdfGeneratorService {
   private ARROW_IMG: string;
   private ARROW_DOUBLE_IMG: string;
   private A4: any;
+
+  public pdfUrl: string;
 
   constructor(
     public httpService: HttpClient,
@@ -285,7 +287,7 @@ export class PdfGeneratorService {
 
   }
 
-  generateReport(data: any[], orientation: string = 'p', page: string = '', title?: string): void {
+  generateReport(data: any[], orientation: string = 'p', page: string = '', title?: string): Observable<any> {
 
     const prettyNow = prettyDate(this.timeService.nowDate());
 
@@ -319,213 +321,217 @@ export class PdfGeneratorService {
     const _headers: string[] = Object.keys(data.map ? data[0] : data);
     const _data: any[] = data;
 
-    this
+    return this
       .prepareBaseTemplate(orientation)
-      .subscribe((res) => {
-        console.log(this.A4);
+      .pipe(
+        tap((res) => {
+          // console.log(this.A4);
 
-        const doc = res;
+          const doc = res;
 
-        let pageCounter: number = 1;
+          let pageCounter: number = 1;
 
-        const table = {
-          top: page === 'hallmonitor' ? 70 : 153,
-          left: 29,
-          right: 29,
-          lh: 35,
-          sp: Math.round((this.A4.width - (29 * 2)) / _headers.length),
-          col: 11,
+          const table = {
+            top: page === 'hallmonitor' ? 70 : 153,
+            left: 29,
+            right: 29,
+            lh: 35,
+            sp: Math.round((this.A4.width - (29 * 2)) / _headers.length),
+            col: 11,
 
-          drawPagination: (total) => {
-            console.log(total);
-            doc.setFontSize(14);
-            doc.setTextColor('#333333');
+            drawPagination: (total) => {
+              console.log(total);
+              doc.setFontSize(14);
+              doc.setTextColor('#333333');
 
-            for (let pagePointer = 1; pagePointer <= total; pagePointer++) {
-              console.log(pagePointer, `Page ${pagePointer} of ${total}`);
+              for (let pagePointer = 1; pagePointer <= total; pagePointer++) {
+                console.log(pagePointer, `Page ${pagePointer} of ${total}`);
 
-              const _pagination = `Page ${pagePointer} of ${total}`;
+                const _pagination = `Page ${pagePointer} of ${total}`;
 
-              doc.setPage(pagePointer);
+                doc.setPage(pagePointer);
 
-              doc.text(this.A4.width - table.right - (doc.getStringUnitWidth(_pagination) * 14), this.A4.height - 21, _pagination);
-            }
-
-            doc.setFontSize(12);
-            doc.setTextColor('#333333');
-          },
-          drawHeaders: (__headers: string[]) => {
-
-            doc.setFontSize(12);
-            doc.setTextColor('#1F194E');
-            doc.setFontStyle('bold');
-
-            __headers.forEach((header, n) => {
-              if (n === 1) {
-                doc.text(table.left + (table.sp * n) + 55, table.top - 6, header);
-              } else if (n === 2) {
-                doc.text(table.left + (table.sp * n) + 45, table.top - 6, header);
-              } else {
-                doc.text(table.left + (table.sp * n), table.top - 6, header);
+                doc.text(this.A4.width - table.right - (doc.getStringUnitWidth(_pagination) * 14), this.A4.height - 21, _pagination);
               }
-            });
 
-            doc.setLineWidth(1.5);
-            doc.line(table.left, table.top + 6, this.A4.width - table.right, table.top + 6);
-          },
-          drawCellWithImg: (imgCell, headerIndex, rowIndex ) => {
-            const cell = imgCell;
-            const i = headerIndex;
-            const n = rowIndex;
+              doc.setFontSize(12);
+              doc.setTextColor('#333333');
+            },
+            drawHeaders: (__headers: string[]) => {
 
-            if (cell['TT'] === 'OW') {
-              doc.addImage(this.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 45, table.top - 14 + table.lh * (n + 1) - 3, 15, 15);
-            } else {
-              doc.addImage(this.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 45, table.top - 11 + table.lh * (n + 1) - 3, 23, 11);
-            }
-          },
-          drawRows: (__data) => {
+              doc.setFontSize(12);
+              doc.setTextColor('#1F194E');
+              doc.setFontStyle('bold');
 
-            this.drawLogo(doc);
-            this.drawLink(doc);
+              __headers.forEach((header, n) => {
+                if (n === 1) {
+                  doc.text(table.left + (table.sp * n) + 55, table.top - 6, header);
+                } else if (n === 2) {
+                  doc.text(table.left + (table.sp * n) + 45, table.top - 6, header);
+                } else {
+                  doc.text(table.left + (table.sp * n), table.top - 6, header);
+                }
+              });
 
-            doc.setLineWidth(0.5);
-            doc.setFontSize(12);
-            doc.setTextColor('#555555');
-            doc.setFontStyle('normal');
+              doc.setLineWidth(1.5);
+              doc.line(table.left, table.top + 6, this.A4.width - table.right, table.top + 6);
+            },
+            drawCellWithImg: (imgCell, headerIndex, rowIndex ) => {
+              const cell = imgCell;
+              const i = headerIndex;
+              const n = rowIndex;
 
-            const ctx = this;
+              if (cell['TT'] === 'OW') {
+                doc.addImage(this.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 45, table.top - 14 + table.lh * (n + 1) - 3, 15, 15);
+              } else {
+                doc.addImage(this.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 45, table.top - 11 + table.lh * (n + 1) - 3, 23, 11);
+              }
+            },
+            drawRows: (__data) => {
 
-            function __internalIteration(d) {
+              this.drawLogo(doc);
+              this.drawLink(doc);
 
-              let breakLoop: boolean = false;
-              let cell, n;
-              if (d && d.length) {
-                for (let j = 0; j < d.length; j++) {
-                  cell = d[j];
-                  n = j;
-                  if ((table.top + table.lh * (n + 1)) < (ctx.A4.height - 50)) {
-                    _headers.forEach((header, i) => {
-                      if (i === 1) {
-                        if (header === 'TT') {
-                          table.drawCellWithImg(cell, i, n);
+              doc.setLineWidth(0.5);
+              doc.setFontSize(12);
+              doc.setTextColor('#555555');
+              doc.setFontStyle('normal');
+
+              const ctx = this;
+
+              function __internalIteration(d) {
+
+                let breakLoop: boolean = false;
+                let cell, n;
+                if (d && d.length) {
+                  for (let j = 0; j < d.length; j++) {
+                    cell = d[j];
+                    n = j;
+                    if ((table.top + table.lh * (n + 1)) < (ctx.A4.height - 50)) {
+                      _headers.forEach((header, i) => {
+                        if (i === 1) {
+                          if (header === 'TT') {
+                            table.drawCellWithImg(cell, i, n);
+                          } else {
+                            doc.text(table.left + (table.sp * i) + 55, table.top + table.lh * (n + 1) - 5, cell[_headers[i]]);
+                          }
                         } else {
-                          doc.text(table.left + (table.sp * i) + 55, table.top + table.lh * (n + 1) - 5, cell[_headers[i]]);
-                        }
-                      } else {
-                        if (header === 'TT') {
-                          table.drawCellWithImg(cell, i, n);
-                        } else {
-                          try {
-                            if (header === 'Student Name' && cell['Student Name'].length > 28) {
-                              const rowTextArray = cell[_headers[i]].split(' (');
-                              const rowText = [rowTextArray[0], '(' + rowTextArray[1]];
-                              doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1) - 13, rowText);
-                            } else {
-                              doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1) - 5, cell[_headers[i]]);
+                          if (header === 'TT') {
+                            table.drawCellWithImg(cell, i, n);
+                          } else {
+                            try {
+                              if (header === 'Student Name' && cell['Student Name'].length > 28) {
+                                const rowTextArray = cell[_headers[i]].split(' (');
+                                const rowText = [rowTextArray[0], '(' + rowTextArray[1]];
+                                doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1) - 13, rowText);
+                              } else {
+                                doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1) - 5, cell[_headers[i]]);
+                              }
+                            } catch (e) {
+                              console.log(e);
+                              doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), 'error');
                             }
-                          } catch (e) {
-                            console.log(e);
-                            doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), 'error');
                           }
                         }
-                      }
-                    });
-                    doc.line(table.left, (table.top + table.lh * (n + 1)) + 8, ctx.A4.width - table.right, table.top + table.lh * (n + 1) + 8);
-                  } else {
-                    doc.addPage();
-                    table.top = 29;
-                    doc.setPage(++pageCounter);
-                    ctx.drawLogo(doc);
-                    ctx.drawLink(doc);
-                    breakLoop = true;
-                    break;
+                      });
+                      doc.line(table.left, (table.top + table.lh * (n + 1)) + 8, ctx.A4.width - table.right, table.top + table.lh * (n + 1) + 8);
+                    } else {
+                      doc.addPage();
+                      table.top = 29;
+                      doc.setPage(++pageCounter);
+                      ctx.drawLogo(doc);
+                      ctx.drawLink(doc);
+                      breakLoop = true;
+                      break;
+                    }
                   }
                 }
+                if (breakLoop) {
+                  __internalIteration(d.slice(n));
+                } else {
+                  return;
+                }
               }
-              if (breakLoop) {
-                __internalIteration(d.slice(n));
-              } else {
-                return;
-              }
+
+              __internalIteration(__data);
+            },
+            drawUnstructRows: (__data) => {
+              this.drawLogo(doc);
+              this.drawLink(doc);
+              doc.setTextColor('#000000');
+              doc.setFontSize(14);
+              doc.setFontStyle('bold');
+              doc.text(table.left, table.top + table.lh * (1 + 1), __data.student_name);
+              doc.setTextColor('#666666');
+              const rightSpace = doc.getStringUnitWidth(__data.created) * 14;
+              doc.text(this.A4.width - table.right - rightSpace, table.top + table.lh * (1 + 1), __data.created);
+              doc.setFontSize(12);
+              doc.text(table.left, table.top + table.lh * (2 + 1), `Reported by ${__data.issuer}:`);
+              doc.setFontStyle('normal');
+              doc.text(table.left, table.top + table.lh * (3 + 1) - 16, doc.splitTextToSize(__data.message, 550));
             }
-
-            __internalIteration(__data);
-          },
-          drawUnstructRows: (__data) => {
-            this.drawLogo(doc);
-            this.drawLink(doc);
-            doc.setTextColor('#000000');
-            doc.setFontSize(14);
-            doc.setFontStyle('bold');
-            doc.text(table.left, table.top + table.lh * (1 + 1), __data.student_name);
-            doc.setTextColor('#666666');
-            const rightSpace = doc.getStringUnitWidth(__data.created) * 14;
-            doc.text(this.A4.width - table.right - rightSpace, table.top + table.lh * (1 + 1), __data.created);
-            doc.setFontSize(12);
-            doc.text(table.left, table.top + table.lh * (2 + 1), `Reported by ${__data.issuer}:`);
-            doc.setFontStyle('normal');
-            doc.text(table.left, table.top + table.lh * (3 + 1) - 16, doc.splitTextToSize(__data.message, 550));
-          }
-        };
-
-
-        this.drawDocHeader(doc, heading.header);
-        // doc.setFontSize(24);
-        // doc.setFontStyle('bold');
-        //
-        // const headerWidth = doc.getStringUnitWidth(heading.header) * 24;
-        // const headerRoundSpace = this.A4.width - headerWidth;
-        //
-        // doc.text((headerRoundSpace / 2), 57, heading.header);
-        //
-        // doc.line(table.left, 72, this.A4.width - table.right, 72);
-        // doc.setFontSize(14);
-
-        if (heading.title && heading.title.length) {
-          const titleStrings = doc.splitTextToSize(heading.title, this.A4.width - (29 * 4));
-          titleStrings.forEach((str, i) => {
-            doc.text(table.left, 110 - 5 + (i * 16), str);
-          });
-        }
-
-        if (page === 'hallmonitor') {
-          doc.addImage(this.REPORT_IMG, 'PNG', 55, 33, 30, 30);
-          table.drawUnstructRows(_data);
-        } else {
-          table.drawHeaders(_headers);
-          table.drawRows(_data);
-        }
-        table.drawPagination(pageCounter);
-
-        const isSafari = !!window.safari;
-
-        const linkConsumer = (pdfLink) => {
-          // Show the link to the user. The important part here is that the link is opened by the
-          // user from an href attribute on an <a> tag or the new window is opened during a click event.
-          // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
-
-          // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
-          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, page !== 'hallmonitor' ? data : null);
-        };
-
-        const blob = doc.output('blob', {filename: 'test'});
-        // create a blob link for the PDF
-        if (isSafari) {
-
-          // Safari will not open URLs from createObjectURL() so this
-          // hack with a FileReader is used instead.
-
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            linkConsumer(reader.result);
           };
-          reader.readAsDataURL(blob);
 
-        } else {
-          linkConsumer(URL.createObjectURL(blob));
-        }
 
-      });
+          this.drawDocHeader(doc, heading.header);
+          // doc.setFontSize(24);
+          // doc.setFontStyle('bold');
+          //
+          // const headerWidth = doc.getStringUnitWidth(heading.header) * 24;
+          // const headerRoundSpace = this.A4.width - headerWidth;
+          //
+          // doc.text((headerRoundSpace / 2), 57, heading.header);
+          //
+          // doc.line(table.left, 72, this.A4.width - table.right, 72);
+          // doc.setFontSize(14);
+
+          if (heading.title && heading.title.length) {
+            const titleStrings = doc.splitTextToSize(heading.title, this.A4.width - (29 * 4));
+            titleStrings.forEach((str, i) => {
+              doc.text(table.left, 110 - 5 + (i * 16), str);
+            });
+          }
+
+          if (page === 'hallmonitor') {
+            doc.addImage(this.REPORT_IMG, 'PNG', 55, 33, 30, 30);
+            table.drawUnstructRows(_data);
+          } else {
+            table.drawHeaders(_headers);
+            table.drawRows(_data);
+          }
+          table.drawPagination(pageCounter);
+
+          const isSafari = !!window.safari;
+
+          const linkConsumer = (pdfLink) => {
+            // Show the link to the user. The important part here is that the link is opened by the
+            // user from an href attribute on an <a> tag or the new window is opened during a click event.
+            // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
+
+            // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
+            if (page !== 'hallmonitor') {
+              LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, page !== 'hallmonitor' ? data : null);
+            }
+          };
+
+          const blob = doc.output('blob', {filename: 'test'});
+          // create a blob link for the PDF
+          // if (isSafari) {
+          //
+          //   // Safari will not open URLs from createObjectURL() so this
+          //   // hack with a FileReader is used instead.
+          //
+          //   const reader = new FileReader();
+          //   reader.onloadend = () => {
+          //     linkConsumer(reader.result);
+          //   };
+          //   reader.readAsDataURL(blob);
+          //
+          // } else {
+          this.pdfUrl = URL.createObjectURL(blob);
+          linkConsumer(this.pdfUrl);
+          // }
+        })
+      )
   }
 }

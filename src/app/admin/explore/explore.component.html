@@ -215,6 +215,8 @@
         [showPrintButtons]="false"
         (loadMoreData)="loadMoreReports()"
         (rowClickEvent)="openReportDialog($event)"
+        [sort]="'desc'"
+        [sortColumn]="'Date submitted'"
         [disabledInfinityScroll]="!(reportSearchState.nextUrl$ | async)"
       ></app-sp-data-table>
     </div>

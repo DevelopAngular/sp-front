@@ -1,10 +1,14 @@
 import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Report} from '../../../models/Report';
 import {Subject} from 'rxjs';
 
-import * as moment from 'moment';
+import {Report} from '../../../models/Report';
 import {PdfGeneratorService} from '../../pdf-generator.service';
+
+import * as moment from 'moment';
+import {takeUntil} from 'rxjs/operators';
+
+declare const window;
 
 @Component({
   selector: 'app-report-info-dialog',
@@ -17,6 +21,8 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
 
   report: Report;
   showBottomShadow: boolean = true;
+
+  pdfUrl: string;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -36,11 +42,12 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   ) { }
 
   get dateFormat() {
-    return moment(this.report.created).format('HH:mm A on MMM DD, YYYY');
+    return moment(this.report.created).format('MMM DD, YYYY on hh:mm A');
   }
 
   ngOnInit(): void {
     this.report = this.data['report'];
+    this.generatePDF();
   }
 
   ngOnDestroy() {
@@ -59,7 +66,15 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
       message: this.report.message,
       student_name: this.report.student.display_name + `(${this.report.student.primary_email})`
     };
-    this.pdfService.generateReport(report as any, 'p', 'hallmonitor');
+    this.pdfService.generateReport(report as any, 'p', 'hallmonitor')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+      this.pdfUrl = this.pdfService.pdfUrl;
+    });
+  }
+
+  openPdfLink() {
+    window.open(this.pdfUrl, '_blank');
   }
 
 }

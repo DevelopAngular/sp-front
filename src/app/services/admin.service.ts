@@ -87,8 +87,7 @@ export class AdminService {
   /// Reports
 
   getReportsRequest(queryParams) {
-    const limit = {limit: 10};
-    return this.http.get(constructUrl(`v1/event_reports`, limit));
+    return this.http.get(constructUrl(`v1/event_reports`, queryParams));
   }
 
   getReportsData(queryParams) {

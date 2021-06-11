@@ -2,7 +2,7 @@
   <div class="header">
     <img class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
     <div class="title">Report</div>
-    <app-icon-button class="print" [size]="17" [srcString]="'Print'" (clickEvent)="generatePDF()"></app-icon-button>
+    <app-icon-button class="print" [onDarkShade]="true" [size]="17" [srcString]="'Print'" (clickEvent)="openPdfLink()"></app-icon-button>
   </div>
   <div class="content" (scroll)="scroll($event)">
     <div class="block">
