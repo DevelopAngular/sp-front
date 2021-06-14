@@ -1,0 +1,29 @@
+<div id="colored-checkbox-wrapper">
+  <div id="title" *ngIf="title">
+    <span>{{title}}</span>
+  </div>
+  <section>
+    <div *ngFor="let option of options; index as i" id="option">
+      <mat-checkbox class="navy small" (change)="onSelectionChange(option, $event.checked)">
+        <span [style.background-color]="'#' + gradients[i]">{{option}}</span>
+      </mat-checkbox>
+    </div>
+    <div *ngIf="other" id="other-option">
+      <mat-checkbox class="navy small" (change)="onSelectionChange('other', $event)">
+        <span [style.background-color]="'#' + otherGradient">Other</span>
+      </mat-checkbox>
+    </div>
+  </section>
+  <div id="other-input-container">
+    <app-input
+      *ngIf="otherSelected"
+      id="other-input"
+      width="150px"
+      placeholder="Other"
+      [isFocus]="true"
+      [formGroup]="this.otherFormGroup"
+      [controlName]="this.otherFormGroup.get('other')">
+    </app-input>
+  </div>
+</div>
+

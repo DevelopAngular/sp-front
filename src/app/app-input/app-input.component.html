@@ -1,11 +1,11 @@
 <div [formGroup]="formGroup">
-  <div class="InputWrapper">
+  <div [ngClass]="{InputWrapper: true}">
     <div style="display: flex; position: relative">
       <label
         [ngClass]="{
         'ds-dialog-heading': controlName.valid || controlName.pending || isFocus,
         'ds-dialog-heading-gray': controlName.invalid,
-        'clserrorLabel': !isFocus && (controlName.invalid && controlName.errors && controlName.dirty)
+        'clserrorLabel': !isFocus && (controlName.invalid && controlName.errors && controlName.dirty) || forceError
         }"
       >
         {{input_label}}
@@ -33,7 +33,7 @@
              [autocomplete]="autocomplete"
              [attr.disabled]="disabled ? '' : null"
              [style.background-color]="isFocus && inp.focused ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
-             tabindex="1"
+             [tabindex]="tabIndex"
              [pattern]="pattern"
              [style.width]="containerWidth"
              [style.height]="height"
@@ -50,7 +50,7 @@
              (mouseleave)="hovered = false"
              (click)="isFocus = true; updateFocus(inp)"
              [placeholder]="(placeholder=='' ? '' : placeholder)"
-             [ngClass]="{ clserrorInput: (controlName.invalid && controlName.errors && controlName.dirty) && !isFocus }"
+             [ngClass]="{ clserrorInput: (controlName.invalid && controlName.errors && controlName.dirty) && !isFocus || forceError }"
              spellcheck="false" #inp />
       <div class="min"
            (click)="isFocus = true;updateFocus(inp)"
@@ -75,7 +75,7 @@
             controlName.errors.max ||
             controlName.errors.min ||
             controlName.errors.minPin
-            )"
+            ) || forceError"
       >
         <img
           [matTooltip]="
@@ -110,7 +110,7 @@
         !controlName.errors.email &&
         !controlName.errors.max &&
         !controlName.errors.min
-        )'
+        ) || forceError'
         class="success-icon"
         [src]="'./assets/Report (Red).svg' | resolveAsset"
       />

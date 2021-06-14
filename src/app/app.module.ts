@@ -115,7 +115,6 @@ const appRoutes: Routes = [
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
     loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule),
     data: {
-      hideScroll: true,
       hubspot: true,
       authFree: false
     }
@@ -127,6 +126,11 @@ const appRoutes: Routes = [
   {
     path: 'error',
     loadChildren: () => import('app/error/error.module').then(m => m.ErrorModule)
+  },
+  {
+    path: 'forms',
+    loadChildren: () => import('app/forms/forms.module').then(m => m.FormsModule),
+    data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
 
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},

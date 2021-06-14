@@ -3,6 +3,8 @@ window.waitForAppLoaded = function(force = false) {
 
   var urlBLackList = [
     'school_signup',
+    'forms/predemo',
+    'forms/quoterequest'
   ];
 
   var allowPreloader = urlBLackList.every(function(item) {
