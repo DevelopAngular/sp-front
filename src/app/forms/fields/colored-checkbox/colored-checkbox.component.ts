@@ -1,15 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormControl} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 const DEFAULT_GRADIENTS = [
-  ['#E38314', '#EAB219'],
-  ['#0B9FC1', '#00C0C7'],
-  ['#E7A700', '#EFCE00'],
-  ['#5DBB21', '#78D118'],
-  ['#F52B4F', '#F37426'],
-  ['#5C4AE3', '#336DE4'],
-  ['#022F68', '#2F66AB'],
-]
+  'E48C15',
+  '07ABC3',
+  'EBBB00',
+  '72CC1B',
+  'F53D45',
+  '5352E4',
+];
+const DEFAULT_OTHER_GRADIENT = '134482';
 
 @Component({
   selector: 'app-colored-checkbox',
@@ -20,29 +20,50 @@ export class ColoredCheckboxComponent implements OnInit {
 
   @Input() title: string = null;
   @Input() options: string[];
-  @Input() gradients: string[][] = DEFAULT_GRADIENTS;
+  @Input() other: boolean = false;
+  @Input() gradients: string[] = DEFAULT_GRADIENTS;
+  @Input() otherGradient: string = DEFAULT_OTHER_GRADIENT;
   @Input() formArray: FormArray;
 
   selectedOptions: string[] = [];
+  otherSelected: boolean = false;
+  otherFormGroup: FormGroup;
 
-  constructor() {
+  constructor(private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
-  }
-
-  onSelectionChange(option, checked): void {
-    if (checked) {
-      if (!this.formArray.value.includes(option)) {
-        this.formArray.push(new FormControl(option));
-      }
-    } else if (this.formArray.value.includes(option)) {
-      this.formArray.removeAt(this.formArray.value.findIndex(o => o === option));
+    if (this.other) {
+      this.otherFormGroup = this.fb.group({
+        other: ['', Validators.required]
+      });
     }
   }
 
-  getBackgroundGradient(i){
+  onSelectionChange(option, event): void {
+    if (event.checked) {
+      if (option == 'other') {
+        this.otherSelected = true;
+        this.formArray.push(this.otherFormGroup.get('other'));
+      } else if (!this.formArray.value.includes(option)) {
+        this.formArray.push(new FormControl(option));
+      }
+    } else {
+      if (option == 'other' && this.otherSelected) {
+        this.otherSelected = false;
+        this.formArray.removeAt(this.formArray.value.findIndex(o => o === this.otherFormGroup.get('other')));
+      } else if (this.formArray.value.includes(option)) {
+        this.formArray.removeAt(this.formArray.value.findIndex(o => o === option));
+      }
+    }
+  }
+
+  getBackgroundGradient(i) {
     return `linear-gradient(to bottom right, ${this.gradients[i][0]}, ${this.gradients[i][1]})`;
+  }
+
+  getOtherBackgroundGradient() {
+    return `linear-gradient(to bottom right, ${this.otherGradient[0]}, ${this.otherGradient[1]})`;
   }
 
 }
