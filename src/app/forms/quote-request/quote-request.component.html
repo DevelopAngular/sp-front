@@ -59,8 +59,10 @@
       <app-colored-checkbox
         title="How did you hear about us?"
         [options]="['Google search', 'Facebook', 'Referral / word of mouth',
-  'Conference', 'Magazine ad', 'Email', 'Other']"
-        [formArray]="hdyhau"></app-colored-checkbox>
+  'Conference', 'Magazine ad', 'Email']"
+        [formArray]="hdyhau"
+        [other]="true">
+      </app-colored-checkbox>
     </div>
   </div>
 </ng-template>
