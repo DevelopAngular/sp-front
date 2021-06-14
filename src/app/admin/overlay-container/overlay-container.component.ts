@@ -896,6 +896,8 @@ export class OverlayContainerComponent implements OnInit {
       room.roomName = room.title;
       room.roomNumber = room.room;
       room.selectedTeachers = room.teachers;
+      room.travel_types = room.travelType;
+
       return {
         ...this.normalizeRoomData(room),
         ...this.normalizeAdvOptData(roomData),
