@@ -1,6 +1,6 @@
 import {Injectable, Injector} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpService} from './http-service';
 import {catchError, filter, switchMap, take} from 'rxjs/operators';
 
@@ -47,18 +47,17 @@ export class AccessTokenInterceptor implements HttpInterceptor {
             } else {
                 this.refreshingTokenSubject.next(true);
                 console.log('Going to refresh access token');
-                return of(null);
-                // return http.refreshAuthContext().pipe(
-                //     switchMap(() => {
-                //         console.log('Refreshed access token successfully');
-                //         this.refreshingTokenSubject.next(false);
-                //         return next.handle(this.addAccessToken(http, req));
-                //     }),
-                //     catchError(err2 => {
-                //       console.log('Refresh error: ', err2);
-                //       throw err2;
-                //     })
-                // );
+                return http.refreshAuthContext().pipe(
+                    switchMap(() => {
+                        console.log('Refreshed access token successfully');
+                        this.refreshingTokenSubject.next(false);
+                        return next.handle(this.addAccessToken(http, req));
+                    }),
+                    catchError(err2 => {
+                      console.log('Refresh error: ', err2);
+                      throw err2;
+                    })
+                );
             }
         }));
     }

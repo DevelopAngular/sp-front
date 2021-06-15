@@ -10,13 +10,15 @@
                    tabAttentive="true"
                    placeholder="Seymour Skinner"
                    [formGroup]="quoteRequestForm"
+                   [forceError]="showErrors && !quoteRequestForm.controls.name.valid"
                    [controlName]="quoteRequestForm.controls.name"></app-input>
         <app-input input_label="Position"
                    width="225px"
                    [tabIndex]="2"
                    [tabAttentive]="true"
-                   placeholder="Ex. Principle"
+                   placeholder="Ex. Principal"
                    [formGroup]="quoteRequestForm"
+                   [forceError]="showErrors && !quoteRequestForm.controls.position.valid"
                    [controlName]="quoteRequestForm.controls.position"></app-input>
       </div>
       <div class="row">
@@ -26,20 +28,22 @@
                    [tabAttentive]="true"
                    placeholder="wskinner@springfieldhs.org"
                    [formGroup]="quoteRequestForm"
+                   [forceError]="showErrors && !quoteRequestForm.controls.email.valid"
                    [controlName]="quoteRequestForm.controls.email"></app-input>
-        <app-input input_label="Phone Number"
+        <app-input input_label="Phone number"
                    width="225px"
                    [tabIndex]="4"
                    [tabAttentive]="true"
                    [formGroup]="quoteRequestForm"
+                   [forceError]="showErrors && !quoteRequestForm.controls.phone.valid"
                    [controlName]="quoteRequestForm.controls.phone"></app-input>
       </div>
-      <app-list-schools [form]="quoteRequestForm" startTabIndex="4"></app-list-schools>
+      <app-list-schools [form]="quoteRequestForm" [showErrors]="showErrors" startTabIndex="4"></app-list-schools>
       <div id="confirm-wrapper">
         <app-gradient-button
           id="confirm"
           size="custom"
-          minHeight="50px"
+          minHeight="70px"
           (click)="confirm()"><span id="confirm-text">Request Quote</span>
         </app-gradient-button>
       </div>
@@ -55,16 +59,10 @@
       <app-colored-checkbox
         title="How did you hear about us?"
         [options]="['Google search', 'Facebook', 'Referral / word of mouth',
-  'Conference', 'Magazine ad', 'Email', 'Other']"
-        [formArray]="hdyhau"></app-colored-checkbox>
-    </div>
-    <div id="button-div">
-      <app-gradient-button
-        id="get-demo"
-        text="Get a free, 30 min demo"
-        buttonLink="https://smartpass.app/demo"
-        linkType="_self">
-      </app-gradient-button>
+  'Conference', 'Magazine ad', 'Email']"
+        [formArray]="hdyhau"
+        [other]="true">
+      </app-colored-checkbox>
     </div>
   </div>
 </ng-template>

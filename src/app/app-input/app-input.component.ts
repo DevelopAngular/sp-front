@@ -37,6 +37,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() pattern: string;
   @Input() tabIndex: number = 1;
   @Input() tabAttentive: boolean = false;
+  @Input() forceError: boolean = false;
 
   @Input() formGroup;
   @Input() controlName;

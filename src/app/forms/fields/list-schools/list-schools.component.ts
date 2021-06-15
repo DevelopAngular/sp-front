@@ -17,6 +17,7 @@ export class ListSchoolsComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() startTabIndex: number = -1;
   @Input() autoFocus: boolean = false;
+  @Input() showErrors: boolean = false;
   @ViewChildren('locationInput') locationInputs: QueryList<any>;
 
   inputCount: number = 1;

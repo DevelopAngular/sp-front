@@ -6,7 +6,7 @@
       <div class="mini-row">
         <div class="search-wrapper">
           <div class="input-wrapper">
-            <app-input [input_label]="(i == 0 || innerWidth < 560) ? 'School Name' : ''"
+            <app-input [input_label]="(i == 0 || innerWidth < 560) ? 'School name' : ''"
                        [width]="innerWidth < 560 ? '225px' : '300px'"
                        [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
                        [isFocus]="i == 0 && autoFocus"
@@ -14,6 +14,7 @@
                        placeholder="Springfield High School"
                        [formGroup]="school"
                        [controlName]="school.controls.name"
+                       [forceError]="showErrors && !school.controls.name.valid"
                        (blurEvent)="blur(i)"
                        (onUpdate)="onSearch($event, i)"></app-input>
           </div>
@@ -57,12 +58,13 @@
         </div>
       </div>
       <div class="input-wrapper">
-        <app-input [input_label]="(i == 0 || innerWidth < 560) ? 'Approx # of People' : ''"
+        <app-input [input_label]="(i == 0 || innerWidth < 560) ? 'Approx. # of students' : ''"
                    [width]="innerWidth < 560 ? '100px' : '150px'"
                    [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
                    tabAttentive="true"
                    placeholder="1656"
                    [formGroup]="school"
+                   [forceError]="showErrors && !school.controls.population.valid"
                    [controlName]="school.controls.population"></app-input>
       </div>
     </ng-container>
