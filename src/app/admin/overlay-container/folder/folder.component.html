@@ -22,7 +22,7 @@
             <mat-checkbox
               style="margin-left: 12px;margin-right: 15px"
               [checked]="roomsImFolder.length === selectedRooms.length"
-              [indeterminate]="roomsImFolder.length && roomsImFolder.length < selectedRooms.length"
+              [indeterminate]="!!selectedRooms.length && (selectedRooms.length < roomsImFolder.length)"
               (change)="selectedRoomsEvent($event, null, true)"
             >
             </mat-checkbox>
