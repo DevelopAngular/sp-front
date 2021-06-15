@@ -15,8 +15,10 @@
       <app-colored-checkbox *ngIf="!completedHdyhau"
         title="How did you hear about us?"
         [options]="['Google search', 'Facebook', 'Referral / word of mouth',
-  'Conference', 'Magazine ad', 'Email', 'Other']"
-        [formArray]="predemoForm.controls.hdyhau"></app-colored-checkbox>
+  'Conference', 'Magazine ad', 'Email']"
+        [other]="true"
+        [formArray]="predemoForm.controls.hdyhau">
+      </app-colored-checkbox>
       <app-gradient-button
         id="confirm"
         [disabled]="!predemoForm.valid"

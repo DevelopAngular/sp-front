@@ -920,7 +920,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       }
       room.roomName = room.title;
       room.roomNumber = room.room;
-
+      room.travel_types = room.travelType;
       return {
         ...this.normalizeRoomData(room),
         ...this.normalizeAdvOptData(roomData),

@@ -15,6 +15,7 @@ export class QuoteRequestComponent implements OnInit {
   quoteRequestForm: FormGroup;
   hdyhau: FormArray;
   submitted: boolean = false;
+  showErrors: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +37,7 @@ export class QuoteRequestComponent implements OnInit {
 
   confirm(): void {
     if (!this.quoteRequestForm.valid) {
+      this.showErrors = true;
       return;
     }
     this.submitted = true;

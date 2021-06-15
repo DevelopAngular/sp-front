@@ -177,6 +177,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   loginClever(code: string) {
+    this.httpService.clearInternal();
     this.storage.setItem('authType', 'clever');
     this.loginService.updateAuth({clever_code: code, type: 'clever-login'});
     return of(null);
