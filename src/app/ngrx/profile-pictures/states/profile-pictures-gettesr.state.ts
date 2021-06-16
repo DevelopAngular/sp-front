@@ -1,13 +1,11 @@
 import {AppState} from '../../app-state/app-state';
 import {createSelector} from '@ngrx/store';
 import {IProfilePicturesState} from './profile-pictures.state';
+import {adapter} from '../reducers';
 
 export const getProfilePicturesState = (state: AppState) => state.profilePictures;
-
-export const getProfilePictures = createSelector(
-  getProfilePicturesState,
-  (state: IProfilePicturesState) => state.data
-);
+export const getProfilePicturesCollection = adapter.getSelectors(getProfilePicturesState).selectAll;
+export const getProfilePicturesEntities = adapter.getSelectors(getProfilePicturesState).selectEntities;
 
 export const getProfilePicturesLoading = createSelector(
   getProfilePicturesState,
@@ -17,4 +15,9 @@ export const getProfilePicturesLoading = createSelector(
 export const getProfilePicturesLoaded = createSelector(
   getProfilePicturesState,
   (state: IProfilePicturesState) => state.loaded
+);
+
+export const getProfilesMap = createSelector(
+  getProfilePicturesState,
+  (state: IProfilePicturesState) => state.profilesMap
 );

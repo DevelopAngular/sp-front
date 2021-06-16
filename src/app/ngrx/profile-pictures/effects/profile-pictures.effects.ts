@@ -4,49 +4,46 @@ import {UserService} from '../../../services/user.service';
 import * as profilePicturesActions from '../actions';
 import {catchError, exhaustMap, map, switchMap} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
+import {ProfilePicture} from '../../../models/ProfilePicture';
+import {ProfileMap} from '../../../models/ProfileMap';
 
 @Injectable()
 export class ProfilePicturesEffects {
-
-  uploadProfilePictures$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(profilePicturesActions.uploadProfilePictures),
-        exhaustMap((action: any) => {
-          return this.userService.uploadProfilePictures(action.csvFile)
-            .pipe(
-              map(data => {
-                return profilePicturesActions.uploadProfilePicturesSuccess({data, pictures: action.pictures});
-              }),
-              catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
-            );
-        })
-      );
-  });
-
-  uploadProfilePicturesSuccess$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(profilePicturesActions.uploadProfilePicturesSuccess),
-        map((action: any) => {
-          return profilePicturesActions.postProfilePictures({uuid: action.data.uuid, pictures: action.pictures});
-        })
-      );
-  });
 
   postProfilePictures$ = createEffect(() => {
     return this.actions$
       .pipe(
         ofType(profilePicturesActions.postProfilePictures),
         exhaustMap((action: any) => {
-          return this.userService.bulkAddProfilePictures(action.uuid, action.pictures)
+          return this.userService.bulkAddProfilePictures(action.pictures)
             .pipe(
-              switchMap((profiles: any[]) => {
-                const urls =  profiles.map(prof => prof.upload_url);
-                const content_types = profiles.map(prof => prof.content_type);
-                return [profilePicturesActions.setProfilePictureToGoogle({ urls, files: action.pictures,  content_types }), profilePicturesActions.postProfilePicturesSuccess({profiles})];
+              switchMap((images: ProfilePicture[]) => {
+                const urls =  images.map(prof => prof.upload_url);
+                const content_types = images.map(prof => prof.content_type);
+                const images_ids = images.map(p => p.id);
+                return [
+                  profilePicturesActions.setProfilePictureToGoogle({ urls, files: action.pictures,  content_types }),
+                  profilePicturesActions.uploadProfilePictures({picturesIds: images_ids, userIds: action.userIds}),
+                  profilePicturesActions.postProfilePicturesSuccess({images})
+                ];
               }),
               catchError(error => of(profilePicturesActions.postProfilePicturesFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  uploadProfilePictures$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.uploadProfilePictures),
+        exhaustMap((action: any) => {
+          return this.userService.uploadProfilePictures(action.picturesIds, action.userIds)
+            .pipe(
+              map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
+                return profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos});
+              }),
+              catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
             );
         })
       );

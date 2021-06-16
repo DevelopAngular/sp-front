@@ -1,18 +1,26 @@
 import {IProfilePicturesState} from '../states';
 import {Action, createReducer, on} from '@ngrx/store';
 import * as profilePicturesActions from '../actions';
+import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
+import {ProfilePicture} from '../../../models/ProfilePicture';
 
-export const profilePicturesInitialState: IProfilePicturesState = {
-  loaded: false,
+export const adapter: EntityAdapter<ProfilePicture> = createEntityAdapter<ProfilePicture>();
+
+export const profilePicturesInitialState: IProfilePicturesState = adapter.getInitialState({
   loading: false,
-  data: null
-};
+  loaded: false,
+  profilesMap: []
+});
 
 const reducer = createReducer(
   profilePicturesInitialState,
-  on(profilePicturesActions.uploadProfilePictures, (state) => ({...state, loading: true, loaded: false})),
-  on(profilePicturesActions.postProfilePicturesSuccess, (state, {profiles}) => {
-    return {...state, loading: false, loaded: true, data: profiles};
+  on(
+    profilePicturesActions.uploadProfilePictures, (state) => ({...state, loading: true, loaded: false})),
+  on(profilePicturesActions.postProfilePicturesSuccess, (state, {images}) => {
+    return adapter.addAll(images, {...state});
+  }),
+  on(profilePicturesActions.uploadProfilePicturesSuccess, (state, {profiles}) => {
+    return {...state, loading: false, loaded: true, profilesMap: profiles};
   })
 );
 

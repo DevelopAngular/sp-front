@@ -92,9 +92,10 @@ import {getIntrosData} from '../ngrx/intros/state';
 import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
-import {uploadProfilePictures} from '../ngrx/profile-pictures/actions';
-import {getProfilePicturesLoaded, getProfilePicturesLoading} from '../ngrx/profile-pictures/states';
+import {postProfilePictures} from '../ngrx/profile-pictures/actions';
+import {getProfilePicturesLoaded, getProfilePicturesLoading, getProfilesMap} from '../ngrx/profile-pictures/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
+import {ProfileMap} from '../models/ProfileMap';
 
 @Injectable({
   providedIn: 'root'
@@ -194,6 +195,7 @@ export class UserService implements OnDestroy{
 
   profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
   profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
+  profilesMap$: Observable<ProfileMap[]> = this.store.select(getProfilesMap);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
@@ -593,6 +595,7 @@ export class UserService implements OnDestroy{
     if (limit) {
       params.limit = limit;
     }
+    params.include_numbers = true;
 
     return this.http.get<any>(constructUrl('v1/users', params));
   }
@@ -644,15 +647,15 @@ export class UserService implements OnDestroy{
     this.store.dispatch(clearRUsers());
   }
 
-  uploadProfilePicturesRequest(csvFile: File, pictures: File[]) {
-    this.store.dispatch(uploadProfilePictures({csvFile, pictures}));
+  postProfilePicturesRequest(userIds: string[] | number[], pictures: File[]) {
+    this.store.dispatch(postProfilePictures({pictures, userIds}));
   }
 
-  uploadProfilePictures(file: File) {
-    return this.http.post('v1/users/mapping-file', {user_picture_map: file});
+  uploadProfilePictures(image_files, user_ids) {
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/attach_profile_pictures`, {image_files, user_ids, commit: true});
   }
 
-  bulkAddProfilePictures(uuid: string, files: File[]) {
+  bulkAddProfilePictures(files: File[]) {
     const file_names = files.map(file => file.name);
     const content_types = files.map(file => file.type);
     return this.http.post('v1/file_uploads/bulk_create_url', {file_names, content_types});
