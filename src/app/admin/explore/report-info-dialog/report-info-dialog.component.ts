@@ -42,7 +42,7 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   ) { }
 
   get dateFormat() {
-    return moment(this.report.created).format('MMM DD, YYYY on hh:mm A');
+    return moment(this.report.created).format('MMM DD, YYYY') + ' at ' + moment(this.report.created).format('hh:mm A');
   }
 
   ngOnInit(): void {
@@ -64,9 +64,10 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
       created: this.dateFormat,
       issuer: this.report.issuer.display_name,
       message: this.report.message,
-      student_name: this.report.student.display_name + `(${this.report.student.primary_email})`
+      student_name: this.report.student.display_name + ` (${this.report.student.primary_email})`
     };
-    this.pdfService.generateReport(report as any, 'p', 'hallmonitor')
+    Object.defineProperty(report, 'date', {enumerable: false, value: this.report.created});
+    this.pdfService.generateReport(report as any, 'p', 'explore')
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
       this.pdfUrl = this.pdfService.pdfUrl;

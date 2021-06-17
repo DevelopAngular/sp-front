@@ -9,6 +9,7 @@ import {LinkGeneratedDialogComponent} from './link-generated-dialog/link-generat
 import {OPEN_SANS_BOLD, OPEN_SANS_REGULAR} from './pdf-fonts';
 import {StorageService} from '../services/storage.service';
 import {prettyDate} from './helpers';
+import * as moment from 'moment';
 
 declare const jsPDF;
 declare const window;
@@ -287,7 +288,7 @@ export class PdfGeneratorService {
 
   }
 
-  generateReport(data: any[], orientation: string = 'p', page: string = '', title?: string): Observable<any> {
+  generateReport(data: any, orientation: string = 'p', page: string = '', title?: string): Observable<any> {
 
     const prettyNow = prettyDate(this.timeService.nowDate());
 
@@ -310,9 +311,9 @@ export class PdfGeneratorService {
           title: title
         };
         break;
-      case 'hallmonitor':
+      case 'explore':
         heading = {
-          header: 'Administrative Hall Monitor Report',
+          header: 'SmartPass Report',
           title: ''
         };
         break;
@@ -328,11 +329,18 @@ export class PdfGeneratorService {
           // console.log(this.A4);
 
           const doc = res;
+          if (page === 'explore') {
+            doc.setProperties({
+              title: `${moment(data.date).format('DD / hh:mm A')} - Smartpass Support`,
+            });
+            doc.viewerPreferences({'DisplayDocTitle': true});
+          }
+
 
           let pageCounter: number = 1;
 
           const table = {
-            top: page === 'hallmonitor' ? 70 : 153,
+            top: page === 'explore' ? 70 : 153,
             left: 29,
             right: 29,
             lh: 35,
@@ -492,7 +500,7 @@ export class PdfGeneratorService {
             });
           }
 
-          if (page === 'hallmonitor') {
+          if (page === 'explore') {
             doc.addImage(this.REPORT_IMG, 'PNG', 55, 33, 30, 30);
             table.drawUnstructRows(_data);
           } else {
@@ -509,7 +517,7 @@ export class PdfGeneratorService {
             // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
 
             // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
-            if (page !== 'hallmonitor') {
+            if (page !== 'explore') {
               LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, page !== 'hallmonitor' ? data : null);
             }
           };
