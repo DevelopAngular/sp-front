@@ -331,7 +331,7 @@ export class PdfGeneratorService {
           const doc = res;
           if (page === 'explore') {
             doc.setProperties({
-              title: `${moment(data.date).format('DD / hh:mm A')} - Smartpass Support`,
+              title: `Smartpass Support - ${moment(data.date).format('DD / hh:mm A')}`,
             });
             doc.viewerPreferences({'DisplayDocTitle': true});
           }
