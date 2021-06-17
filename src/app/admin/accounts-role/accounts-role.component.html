@@ -17,7 +17,7 @@
           [showEmptyState]="userEmptyState && (isLoaded$ | async)"
           [emptyIcon]="'./assets/Users (Blue-Gray).svg'"
           [emptyText]="getCountAccounts(accounts$ | async) > 1 ? 'No ' + role.substring(9) + ' accounts found' : 'There are no students in this school yet'"
-          [countAllData]="getCountAccounts(accounts$ | async)"
+          [disabledInfinityScroll]="!(accountRoleNextUrl$ | async)"
         ></app-sp-data-table>
     </div>
   </div>
