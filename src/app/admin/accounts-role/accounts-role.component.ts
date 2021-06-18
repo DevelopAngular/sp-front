@@ -47,6 +47,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public currentColumns: any = {};
 
   accountRoleData$: Observable<any[]>;
+  accountRoleNextUrl$: Observable<string>;
 
   isLoading$: Observable<boolean> = of(false);
   isLoaded$: Observable<boolean>;
@@ -88,6 +89,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
           this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
           this.sort$ = this.userService.accountSort$[this.role];
+          this.accountRoleNextUrl$ = this.userService.nextRequests$[this.role];
         }),
         switchMap(() => {
           return this.userService.getAccountsRole(this.role);

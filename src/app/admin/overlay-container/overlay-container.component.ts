@@ -131,7 +131,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           this.titleColor = '#1F195E';
           this.folderRoomsLoaded = true;
           break;
-        case 'editRoom':
+      case 'editRoom':
             this.overlayService.changePage(Pages.EditRoom, 0, {
                 pinnable: this.pinnable,
                 advancedOptions: this.generateAdvOptionsModel(this.pinnable.location)
