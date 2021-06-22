@@ -169,16 +169,12 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         switchMap(() => {
           return this.userService.isLoadedAccounts$.student.pipe(
             switchMap(loaded => {
-              if (loaded) {
-                return this.userService.accounts.studentAccounts;
-              } else {
-                this.userService.getUsersList('')
-              }
+              return this.userService.getUsersList('_profile_student');
             })
           );
         })
       )
-      .subscribe(() => {
+      .subscribe((students) => {
         this.page = 4;
       });
   }
@@ -197,8 +193,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   nextPage() {
     this.page += 1;
     if (this.page === 3) {
-      console.log(this.selectedMapFiles);
-      console.log(this.selectedImgFiles);
       this.errors = this.findIssues();
       this.userService.postProfilePicturesRequest(
         this.filesToDB.map(f => f.user_id),
@@ -207,6 +201,11 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     } else if (this.page === 4) {
 
     }
+  }
+
+  generateErrorsCsv() {
+    console.log(this.errors);
+    debugger;
   }
 
   back() {

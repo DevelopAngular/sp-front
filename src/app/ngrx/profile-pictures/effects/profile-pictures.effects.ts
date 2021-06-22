@@ -22,13 +22,39 @@ export class ProfilePicturesEffects {
                 const content_types = images.map(prof => prof.content_type);
                 const images_ids = images.map(p => p.id);
                 return [
-                  profilePicturesActions.setProfilePictureToGoogle({ urls, files: action.pictures,  content_types }),
-                  profilePicturesActions.uploadProfilePictures({picturesIds: images_ids, userIds: action.userIds}),
+                  profilePicturesActions.setProfilePictureToGoogle({
+                    urls,
+                    files: action.pictures,
+                    content_types,
+                    picturesIds: images_ids,
+                    userIds: action.userIds
+                  }),
                   profilePicturesActions.postProfilePicturesSuccess({images})
                 ];
               }),
               catchError(error => of(profilePicturesActions.postProfilePicturesFailure({errorMessage: error.message})))
             );
+        })
+      );
+  });
+
+  postProfilePicturesToGoogle$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.setProfilePictureToGoogle),
+        exhaustMap((action: any) => {
+          const requests$ = action.urls.map((url, index) => {
+            return this.userService.setProfilePictureToGoogle(url, action.files[index], action.content_types[index]);
+          });
+          return zip(...requests$).pipe(
+            switchMap((res) => {
+              return [
+                profilePicturesActions.setProfilePictureToGoogleSuccess(),
+                profilePicturesActions.uploadProfilePictures({picturesIds: action.picturesIds, userIds: action.userIds})
+              ];
+            }),
+            catchError(error => of(profilePicturesActions.setProfilePictureToGoogleFailure({errorMessage: error.message})))
+          );
         })
       );
   });
@@ -45,24 +71,6 @@ export class ProfilePicturesEffects {
               }),
               catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
             );
-        })
-      );
-  });
-
-  postProfilePicturesToGoogle$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(profilePicturesActions.setProfilePictureToGoogle),
-        exhaustMap((action: any) => {
-          const requests$ = action.urls.map((url, index) => {
-            return this.userService.setProfilePictureToGoogle(url, action.files[index], action.content_types[index]);
-          });
-          return zip(...requests$).pipe(
-            map((res) => {
-              return profilePicturesActions.setProfilePictureToGoogleSuccess();
-            }),
-            catchError(error => of(profilePicturesActions.setProfilePictureToGoogleFailure({errorMessage: error.message})))
-          );
         })
       );
   });
