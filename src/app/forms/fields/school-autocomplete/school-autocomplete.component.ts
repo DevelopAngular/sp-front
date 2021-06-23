@@ -37,7 +37,7 @@ export class SchoolAutocompleteComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSearch(search: string, i: number) {
+  onSearch(search: string) {
     if (search != undefined && !this.ignoreNextUpdate && search.length >= 4) {
       this.formService.querySchools(search).subscribe((res: any[]) => {
         if (res.length < 1) {
@@ -69,7 +69,7 @@ export class SchoolAutocompleteComponent implements OnInit {
     this.address.emit(null);
   }
 
-  chooseSchool(school, i) {
+  chooseSchool(school) {
     this.ignoreNextUpdate = true;
     this.showOptions = false;
 
@@ -78,14 +78,14 @@ export class SchoolAutocompleteComponent implements OnInit {
     this.address.emit(school.addressFull);
   }
 
-  blur(i) {
+  blur() {
     if (!this.showOptions) {
       return;
     }
     this.showOptions = this.mouseIn;
   }
 
-  showSearch(i) {
+  showSearch() {
     return this.showOptions && !this.blockSearch;
   }
 

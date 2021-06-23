@@ -8,10 +8,10 @@
                [formGroup]="formGroup"
                [controlName]="formControl"
                [forceError]="forceError"
-               (blurEvent)="blur(i)"
-               (onUpdate)="onSearch($event, i)"></app-input>
+               (blurEvent)="blur()"
+               (onUpdate)="onSearch($event)"></app-input>
   </div>
-  <div *ngIf="showSearch(i)"
+  <div *ngIf="showSearch()"
        class="search-autocomplete"
        [ngClass]="{'options-wrapper': showOptions}"
        [style.top]="i == 0 ? '70px' : '50px'"
@@ -25,7 +25,7 @@
            appCrossPointerEventTarget
            (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
            (pointerClickEvent)="backgroundColors[a] = '#F4F4F4'"
-           (click)="chooseSchool(school, i)"
+           (click)="chooseSchool(school)"
            [style.background-color]="backgroundColors[a]"
            [style.color]="textColor(cell)">
         <div>
