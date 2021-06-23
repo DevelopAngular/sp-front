@@ -1,16 +1,26 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-<!--  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119610218-1"></script>-->
-<!--  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5NCCB9C2PJ"></script>-->
+  <!-- Google Tag Manager -->
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-<!--    gtag('config', 'G-5NCCB9C2PJ', {'groups': 'private'});-->
-    gtag('config', 'UA-119610218-1', {'groups': 'public'});
+    var whitelistedURLs = [
+      'forms/predemo',
+      'forms/quoterequest',
+    ]
+    var useGTAG = whitelistedURLs.some(function(item) {
+      console.log()
+      return window.location.pathname.search(new RegExp(item, 'i')) !== -1;
+    })
+
+    if (useGTAG) {
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-PDXGG48');
+    }
   </script>
+  <!-- End Google Tag Manager -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-title" content="SmartPass">
