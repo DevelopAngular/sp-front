@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as XLSX from 'xlsx';
 
 @Injectable({
@@ -14,5 +14,13 @@ export class XlsxService {
     const stringCollection = raw.Sheets[sn];
     const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
     return data.slice(1);
+  }
+
+  generate(jsonObj, fileName: string = 'TestCSV') {
+    const WorkBook = XLSX.utils.book_new();
+    const sheet = XLSX.utils.json_to_sheet(jsonObj);
+    XLSX.utils.book_append_sheet(WorkBook, sheet);
+    // sheet['!cols'] = [{wpx: 170}, {wpx: 120}, {wpx: 120}, {wpx: 120}, {wpx: 120}, {wpx: 120}];
+    XLSX.writeFile(WorkBook, `${fileName}.csv`, {bookType: 'csv'});
   }
 }

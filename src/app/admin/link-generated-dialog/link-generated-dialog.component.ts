@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {XlsxGeneratorService} from '../xlsx-generator.service';
+import {XlsxService} from '../../services/xlsx.service';
 
 export interface LinkGeneratedDialogData {
   name: string;
@@ -32,7 +32,7 @@ export class LinkGeneratedDialogComponent implements OnInit {
       private sanitizer: DomSanitizer,
       @Inject(MAT_DIALOG_DATA) public data: LinkGeneratedDialogData,
       public dialogRef: MatDialogRef<LinkGeneratedDialogComponent>,
-      public xlsx: XlsxGeneratorService
+      public xlsx: XlsxService
       ) {
     this.name = data.name;
     this.pdflink = this.sanitizer.bypassSecurityTrustUrl(data.pdfLink);

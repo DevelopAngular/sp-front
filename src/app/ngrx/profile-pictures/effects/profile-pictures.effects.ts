@@ -6,6 +6,8 @@ import {catchError, exhaustMap, map, switchMap} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {ProfileMap} from '../../../models/ProfileMap';
+import {User} from '../../../models/User';
+import {Dictionary} from '@ngrx/entity';
 
 @Injectable()
 export class ProfilePicturesEffects {
@@ -64,12 +66,29 @@ export class ProfilePicturesEffects {
       .pipe(
         ofType(profilePicturesActions.uploadProfilePictures),
         exhaustMap((action: any) => {
-          return this.userService.uploadProfilePictures(action.picturesIds, action.userIds)
+          return this.userService.getUsersList('_profile_student', '', null, true)
             .pipe(
-              map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
-                return profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos});
+              map((students: User[]) => {
+                return students.reduce((acc, user) => {
+                  if (user.extras.clever_student_number) {
+                    return { ...acc, [user.extras.clever_student_number]: user };
+                  }
+                  return { ...acc, [user.primary_email]: user };
+                }, {});
               }),
-              catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
+              map((students: Dictionary<User>) => {
+                return action.userIds.map(id => students[id]);
+              }),
+              switchMap((students: User[]) => {
+                const stud = students.filter(s => !!s).map(s => s.id);
+                return this.userService.uploadProfilePictures(action.picturesIds, stud)
+                  .pipe(
+                    map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
+                      return profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos, users: students});
+                    }),
+                    catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
+                  );
+              })
             );
         })
       );

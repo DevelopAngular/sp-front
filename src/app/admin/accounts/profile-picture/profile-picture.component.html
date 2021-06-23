@@ -155,9 +155,9 @@
     <div class="page" *ngIf="page === 4">
       <div class="upload-info">
         <div class="upload-title">Upload complete</div>
-        <div class="info"><span style="font-weight: bold">New pictures: </span><span>1500 students</span></div>
-        <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>1500 students</span></div>
-        <div class="info"><span style="font-weight: bold">Errors: </span><span>5 errors <span (click)="generateErrorsCsv()" style="color: #E32C66; cursor: pointer;">[Download]</span></span></div>
+        <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ allProfiles.length }} students</span></div>
+        <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ allProfiles.length }} students</span></div>
+        <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <span *ngIf="errors.length" (click)="generateErrorsCsv()" style="color: #E32C66; cursor: pointer;">[Download]</span></span></div>
       </div>
 
       <div class="uploaded-users">
@@ -168,20 +168,21 @@
             [focused]="true"
             [width]="'242px'"
             [minWidth]="'242px'"
+            (ontextupdate)="searchUsers($event)"
           ></app-round-input>
         </div>
 
         <div class="user-list">
-          <div class="user" *ngFor="let user of fakeUsers">
+          <div class="user" *ngFor="let user of uploadedProfiles">
             <div class="user-container">
-              <div><img class="picture" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar"></div>
+              <div><img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar"></div>
               <div class="profile-info">
-                <div class="name">{{ user.name }}</div>
-                <div class="info"><span style="font-weight: bold">Student Number: </span><span>{{ user.number }}</span></div>
-                <div class="info"><span style="font-weight: bold">Image Filename: </span><span>{{ user.file }}</span></div>
+                <div class="name">{{ user.display_name }}</div>
+                <div class="info" *ngIf="user.student_number"><span style="font-weight: bold">Student Number: </span><span>{{ user.student_number }}</span></div>
+                <div class="info"><span style="font-weight: bold">Image Filename: </span><span>{{ user.file_name }}</span></div>
               </div>
             </div>
-            <mat-divider></mat-divider>
+            <mat-divider *ngIf="uploadedProfiles.length > 1"></mat-divider>
           </div>
         </div>
       </div>

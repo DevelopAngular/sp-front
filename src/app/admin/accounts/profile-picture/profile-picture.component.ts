@@ -3,7 +3,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 
 import {forkJoin, fromEvent, of, Subject, zip} from 'rxjs';
 import {catchError, filter, map, switchMap, takeUntil} from 'rxjs/operators';
-import {isArray, uniqBy} from 'lodash';
+import {cloneDeep, isArray, uniqBy} from 'lodash';
 
 import {XlsxService} from '../../../services/xlsx.service';
 import {ZipService} from '../../../services/zip.service';
@@ -123,29 +123,12 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   };
   issues = [];
   errorUpload: boolean;
-  errors;
+  errors = [];
 
   destroy$: Subject<any> = new Subject<any>();
 
-  fakeUsers = [
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'},
-    {name: 'Peter Luba', number: 232323, file: '2342.jpeg'}
-  ];
+  uploadedProfiles: any = [];
+  allProfiles: any = [];
 
   constructor(
     public dialogRef: MatDialogRef<ProfilePictureComponent>,
@@ -167,14 +150,28 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         filter(loaded => this.page === 3 && loaded),
         takeUntil(this.destroy$),
         switchMap(() => {
-          return this.userService.isLoadedAccounts$.student.pipe(
-            switchMap(loaded => {
-              return this.userService.getUsersList('_profile_student');
-            })
+          const files = this.filesToDB.reduce((acc, curr) => {
+            return { ...acc, [curr.user_id]: curr };
+          }, {});
+          return zip(
+            this.userService.profiles$,
+            of(files)
           );
+        }),
+        map(([students, files]) => {
+          return students.map(student => {
+            const user = {
+              ...student,
+              file_name: student.extras.clever_student_number ? files[student.extras.clever_student_number].file.name : files[student.primary_email].file.name,
+              student_number: student.extras.clever_student_number
+            };
+            return user;
+          });
         })
       )
       .subscribe((students) => {
+        this.uploadedProfiles = students;
+        this.allProfiles = cloneDeep(this.uploadedProfiles);
         this.page = 4;
       });
   }
@@ -194,6 +191,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.page += 1;
     if (this.page === 3) {
       this.errors = this.findIssues();
+      debugger;
       this.userService.postProfilePicturesRequest(
         this.filesToDB.map(f => f.user_id),
         this.filesToDB.map(f => f.file)
@@ -216,11 +214,11 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     const errors = [];
     this.selectedMapFiles.forEach(file => {
       if (!file.file_name) {
-        errors.push({fileNotListed: file});
+        errors.push({'User ID': file.user_id, 'error': 'Image filename not listed'});
       } else if (!file.user_id) {
-        errors.push({noUserIdListed: file});
+        errors.push({'Image filename': file.file_name, 'error': 'User ID not listed'});
       } else if (file.file_name && !this.selectedImgFiles[file.file_name]) {
-        errors.push({noImgFound: file});
+        errors.push({'User ID': file.user_id, 'error': 'No image found'});
       } else {
         this.filesToDB.push({user_id: file.user_id, file: this.selectedImgFiles[file.file_name].file});
       }
@@ -256,6 +254,12 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
       if (action === 'cancel') {
         this.page -= 1;
       }
+    });
+  }
+
+  searchUsers(search) {
+    this.uploadedProfiles = this.allProfiles.filter(profile => {
+      return profile.display_name.toLowerCase().includes(search.toLowerCase());
     });
   }
 }

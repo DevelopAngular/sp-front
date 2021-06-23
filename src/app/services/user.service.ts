@@ -93,9 +93,8 @@ import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {postProfilePictures} from '../ngrx/profile-pictures/actions';
-import {getProfilePicturesLoaded, getProfilePicturesLoading, getProfilesMap} from '../ngrx/profile-pictures/states';
+import {getProfilePicturesLoaded, getProfilePicturesLoading, getProfiles} from '../ngrx/profile-pictures/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
-import {ProfileMap} from '../models/ProfileMap';
 
 @Injectable({
   providedIn: 'root'
@@ -195,7 +194,7 @@ export class UserService implements OnDestroy{
 
   profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
   profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
-  profilesMap$: Observable<ProfileMap[]> = this.store.select(getProfilesMap);
+  profiles$: Observable<User[]> = this.store.select(getProfiles);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
@@ -583,7 +582,7 @@ export class UserService implements OnDestroy{
     return this.getAccountsRole(role);
   }
 
-  getUsersList(role: string = '', search: string = '', limit: number = 0) {
+  getUsersList(role: string = '', search: string = '', limit: number = 0, include_numbers?: boolean) {
     const params: any = {};
     if (role !== '' && role !== '_all') {
       params.role = role;
@@ -595,7 +594,9 @@ export class UserService implements OnDestroy{
     if (limit) {
       params.limit = limit;
     }
-    params.include_numbers = true;
+    if (include_numbers) {
+      params.include_numbers = true;
+    }
 
     return this.http.get<any>(constructUrl('v1/users', params));
   }
