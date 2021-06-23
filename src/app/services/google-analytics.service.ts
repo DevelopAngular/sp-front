@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 
-declare const gtag: Function;
+declare const dataLayer;
 
 @Injectable({
   providedIn: 'root'
@@ -18,16 +18,16 @@ export class GoogleAnalyticsService {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         if (event.urlAfterRedirects.includes('/school_signup?key') || event.urlAfterRedirects === '/' || event.urlAfterRedirects === '/admin/gettingstarted') {
-          gtag('event', 'sign_in', {
+          dataLayer.push({
+            'event': 'sign_in',
             'send_to': 'public',
-            'page_path': event.urlAfterRedirects,
-            'event_callback': function (key) {}
+            'page_path': event.urlAfterRedirects
           });
         } else {
-          gtag('event', 'other', {
+          dataLayer.push({
+            'event': 'other',
             'send_to': 'private',
-            'page_path': event.urlAfterRedirects,
-            'event_callback': function (key) {}
+            'page_path': event.urlAfterRedirects
           });
         }
       }
@@ -35,7 +35,7 @@ export class GoogleAnalyticsService {
   }
 
   public emitEvent(name, params) {
-    gtag('event', name, params);
+    dataLayer.push({'event': name, ...params});
   }
 
 }

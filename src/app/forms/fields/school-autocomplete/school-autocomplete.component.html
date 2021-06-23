@@ -1,0 +1,45 @@
+<div class="search-wrapper">
+  <div class="input-wrapper">
+    <app-input [width]="width"
+               tabAttentive="true"
+               placeholder="Springfield High School"
+               [input_label]="inputLabel"
+               [tabIndex]="tabIndex"
+               [formGroup]="formGroup"
+               [controlName]="formControl"
+               [forceError]="forceError"
+               (blurEvent)="blur(i)"
+               (onUpdate)="onSearch($event, i)"></app-input>
+  </div>
+  <div *ngIf="showSearch(i)"
+       class="search-autocomplete"
+       [ngClass]="{'options-wrapper': showOptions}"
+       [style.top]="i == 0 ? '70px' : '50px'"
+       (mouseenter)="mouseIn = true"
+       (mouseleave)="mouseIn = false">
+    <div class="option-list_scrollable">
+      <div #cell *ngFor="let school of searchSchools; let a = index"
+           class="option-list_item"
+           (mouseenter)="backgroundColors[a] = '#F4F4F4'"
+           (mouseleave)="backgroundColors[a] = '#FFFFFF'"
+           appCrossPointerEventTarget
+           (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
+           (pointerClickEvent)="backgroundColors[a] = '#F4F4F4'"
+           (click)="chooseSchool(school, i)"
+           [style.background-color]="backgroundColors[a]"
+           [style.color]="textColor(cell)">
+        <div>
+          <div style="text-transform: capitalize; color: #00B476">
+            {{school.name}}
+          </div>
+          <div style="color: #1F194E">
+            {{school.address}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="search-options">
+      <a (click)="blockSearch = true">School not listed?</a>
+    </div>
+  </div>
+</div>
