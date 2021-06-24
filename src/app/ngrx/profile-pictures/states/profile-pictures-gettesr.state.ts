@@ -32,7 +32,7 @@ export const getProfiles = createSelector(
   getProfilesMap,
   getUpdatedProfiles,
   (pm, up) => pm.map((profile) => {
-    const user: User = up.find(u => +u.id === profile.user_id);
+    const user: User = up.filter(s => !!s).find(u => +u.id === profile.user_id);
     return {...user, profile_picture: profile.photo_url } as User;
   })
 );

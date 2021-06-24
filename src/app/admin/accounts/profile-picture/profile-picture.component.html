@@ -172,7 +172,7 @@
           ></app-round-input>
         </div>
 
-        <div class="user-list">
+        <div class="user-list" *ngIf="uploadedProfiles.length; else empty">
           <div class="user" *ngFor="let user of uploadedProfiles">
             <div class="user-container">
               <div><img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar"></div>
@@ -185,6 +185,11 @@
             <mat-divider *ngIf="uploadedProfiles.length > 1"></mat-divider>
           </div>
         </div>
+        <ng-template #empty>
+          <div>
+            No students found
+          </div>
+        </ng-template>
       </div>
     </div>
 

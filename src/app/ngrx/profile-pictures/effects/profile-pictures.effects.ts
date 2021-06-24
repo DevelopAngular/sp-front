@@ -8,6 +8,7 @@ import {ProfilePicture} from '../../../models/ProfilePicture';
 import {ProfileMap} from '../../../models/ProfileMap';
 import {User} from '../../../models/User';
 import {Dictionary} from '@ngrx/entity';
+import {ToastService} from '../../../services/toast.service';
 
 @Injectable()
 export class ProfilePicturesEffects {
@@ -77,26 +78,49 @@ export class ProfilePicturesEffects {
                 }, {});
               }),
               map((students: Dictionary<User>) => {
-                return action.userIds.map(id => students[id]);
+                return action.userIds.map((id, index) => {
+                  if (students[id]) {
+                    return students[id];
+                  } else {
+                    this.userService.profilePicturesErrors$.next({'User ID': id, error: 'No user with this id was found'});
+                    action.picturesIds.splice(index, 1);
+                  }
+                });
               }),
               switchMap((students: User[]) => {
                 const stud = students.filter(s => !!s).map(s => s.id);
-                return this.userService.uploadProfilePictures(action.picturesIds, stud)
-                  .pipe(
-                    map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
-                      return profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos, users: students});
-                    }),
-                    catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
-                  );
+                if (stud.length && action.picturesIds.length) {
+                  return this.userService.uploadProfilePictures(action.picturesIds, stud)
+                    .pipe(
+                      map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
+                        return profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos, users: students});
+                      }),
+                      catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
+                    );
+                } else {
+                  return [profilePicturesActions.uploadProfilePicturesFailure({errorMessage: 'Please check if the data is correct'})];
+                }
               })
             );
         })
       );
   });
 
+  uploadPicturesFailure$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.uploadProfilePicturesFailure),
+        map((action: any) => {
+          this.toastService.openToast({title: 'Error', subtitle: action.errorMessage, type: 'error'});
+          return profilePicturesActions.showErrorToast();
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
-    private userService: UserService
+    private userService: UserService,
+    private toastService: ToastService
   ) {
   }
 }

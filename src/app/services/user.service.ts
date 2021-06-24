@@ -99,7 +99,7 @@ import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/ac
 @Injectable({
   providedIn: 'root'
 })
-export class UserService implements OnDestroy{
+export class UserService implements OnDestroy {
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
@@ -195,6 +195,7 @@ export class UserService implements OnDestroy{
   profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
   profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
   profiles$: Observable<User[]> = this.store.select(getProfiles);
+  profilePicturesErrors$: Subject<{[id: string]: string, error: string}> = new Subject();
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 

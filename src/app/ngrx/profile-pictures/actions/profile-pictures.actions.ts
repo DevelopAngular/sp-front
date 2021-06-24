@@ -16,5 +16,6 @@ export const uploadProfilePicturesFailure = createAction(`[${PPICRURES}] Upload 
 export const setProfilePictureToGoogle = createAction(`[${PPICRURES}] Set Profile Picture To Google`, props<{urls: string[], files: File[], content_types: string[], userIds: string[] | number[], picturesIds: string[] | number[]}>());
 export const setProfilePictureToGoogleSuccess = createAction(`[${PPICRURES}] Set Profile Picture To Google Success`);
 export const setProfilePictureToGoogleFailure = createAction(`[${PPICRURES}] Set Profile Picture To Google Failure`, props<{errorMessage: string}>());
+export const showErrorToast = createAction(`[${PPICRURES}] Show Error Toast`);
 
 

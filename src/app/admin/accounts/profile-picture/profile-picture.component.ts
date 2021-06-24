@@ -174,6 +174,10 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         this.allProfiles = cloneDeep(this.uploadedProfiles);
         this.page = 4;
       });
+
+    this.userService.profilePicturesErrors$.pipe(takeUntil(this.destroy$)).subscribe(er => {
+      this.errors.push(er);
+    });
   }
 
   ngOnDestroy() {
@@ -191,19 +195,33 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.page += 1;
     if (this.page === 3) {
       this.errors = this.findIssues();
-      debugger;
-      this.userService.postProfilePicturesRequest(
-        this.filesToDB.map(f => f.user_id),
-        this.filesToDB.map(f => f.file)
-      );
+      const userIds = this.filesToDB.map(f => f.user_id);
+      const files = this.filesToDB.map(f => f.file);
+      if (userIds.length && files.length) {
+        this.userService.postProfilePicturesRequest(
+          userIds,
+          files
+        );
+      } else {
+        this.toastService.openToast({title: 'Error', subtitle: 'Please check if the data is correct', type: 'error'});
+        this.page -= 1;
+        this.selectedMapFiles = [];
+        this.selectedImgFiles = [];
+        this.errors = [];
+        this.selectedMapFile = null;
+        this.uploadingProgress = {
+          images: { inProcess: false, complete: false, error: null },
+          csv: { inProcess: false, complete: false, error: null }
+        };
+        this.form.reset();
+      }
     } else if (this.page === 4) {
 
     }
   }
 
   generateErrorsCsv() {
-    console.log(this.errors);
-    debugger;
+    this.xlsxService.generate(this.errors, 'Errors');
   }
 
   back() {
