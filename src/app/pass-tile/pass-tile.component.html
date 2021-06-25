@@ -36,7 +36,7 @@
 <!--    <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">-->
 <!--    <div *ngIf="forStaff && !profileImage" class="names-overlay"></div>-->
   </div>
-  <div *ngIf="forStaff" class="names">{{ tileName }}</div>
+<!--  <div *ngIf="forStaff" class="names">{{ tileName }}</div>-->
   <div class="overlay-shadow" *ngIf="showBackgroundOverlay && !isKioskMode" (mouseenter)="disableClose$.next()"></div>
   <div *ngIf="forStaff && !isKioskMode" class="names-overlay"></div>
   <div

@@ -23,8 +23,9 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
   @ViewChild('csvFile') set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
-      fromEvent(fileRef.nativeElement , 'change')
+      fromEvent(fileRef.nativeElement, 'change')
         .pipe(
+          filter(() => fileRef.nativeElement.files.length),
           switchMap((evt: Event) => {
             this.selectedMapFile = fileRef.nativeElement.files[0];
             this.uploadingProgress.csv.inProcess = true;
@@ -62,6 +63,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     if (fileRef && fileRef.nativeElement) {
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
+          filter(() => fileRef.nativeElement.files.length),
           switchMap((event) => {
             const filesStream = [];
             if (fileRef.nativeElement.files.length === 1) {

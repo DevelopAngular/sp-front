@@ -81,12 +81,18 @@
           width: 38px;
           height: 38px;
           border-radius: 50%;
-          background-color: #07ABC3;
+          background-color: #FFFFFF;
+          border: 2px solid #07ABC3;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #FFFFFF;
+          color: #07ABC3;
           font-size: 20px;
+
+          &.selected {
+            background-color: #07ABC3;
+            color: #FFFFFF;
+          }
         }
       }
 
@@ -101,9 +107,9 @@
 
       .button {
         width: 100%;
-        height: 80px;
+        height: 65px;
+        margin-left: 47px;
         display: flex;
-        justify-content: center;
         align-items: center;
       }
 
@@ -111,7 +117,7 @@
         width: 100%;
         height: 80px;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: flex-end;
         align-items: center;
       }
 

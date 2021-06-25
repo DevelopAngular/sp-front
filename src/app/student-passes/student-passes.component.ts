@@ -41,7 +41,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   @Input() height: number = 75;
   @Input() isResize: boolean = true;
   @Input() pass: PassLike;
-  @Input() hasProfilePicture: boolean = false;
+  @Input() hasProfilePicture: boolean = true;
 
   @Output() close = new EventEmitter();
 
