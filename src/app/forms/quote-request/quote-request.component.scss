@@ -9,7 +9,6 @@
     display: flex;
     align-items: center;
     min-height: calc(100vh - 30px);
-    background-color: white;
     padding-top: 30px;
 
     .row {
@@ -23,6 +22,10 @@
       display: flex;
       align-content: flex-start;
       flex-direction: column;
+      background-color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 20px 0px;
     }
 
     #confirm-wrapper {
@@ -39,7 +42,6 @@
 @media only screen and (max-width: 559px) {
   #quote-request-wrapper {
     min-height: calc(100vh - 30px);
-    background-color: white;
     padding-top: 30px;
     padding-left: 30px;
     padding-right: 30px;
@@ -51,6 +53,17 @@
     #confirm {
       width: 100%;
     }
+
+    .app-input-wrapper {
+      margin-bottom: 10px;
+    }
+
+    form {
+      background-color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 20px 0px;
+    }
   }
 }
 
@@ -61,40 +74,43 @@
 #post-qr-wrapper {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  height: 100%;
-  min-height: 100%;
-  background-color: white;
 
-  #post-qr-title-wrapper {
-    width: 100%;
+  #post-qr-sub-wrapper {
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 20px 0px;
 
-    h1 {
-      @include textSize(24px, bold);
-      text-align: center;
-    }
-  }
+    #post-qr-title-wrapper {
+      width: auto;
 
-  #post-qr-form {
-    span {
-      @include textSize(14px, normal, $search-gray);
-      margin-bottom: 10px;
+      h1 {
+        @include textSize(24px, bold);
+        text-align: center;
+      }
     }
 
-    hr {
-      color: #7F879D;
-      width: 150px;
-      margin-bottom: 30px;
+    #post-qr-form {
+      span {
+        @include textSize(14px, normal, $search-gray);
+        margin-bottom: 10px;
+      }
+
+      hr {
+        color: #7F879D;
+        width: 150px;
+        margin-bottom: 30px;
+      }
     }
-  }
 
-  #button-div {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
+    #button-div {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
 
-  #get-demo {
-    width: 200px;
+    #get-demo {
+      width: 200px;
+    }
   }
 }

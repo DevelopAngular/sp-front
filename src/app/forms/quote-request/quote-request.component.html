@@ -2,41 +2,49 @@
   <div id="quote-request">
     <form [formGroup]="quoteRequestForm">
       <div class="row">
-        <app-input input_label="Your name"
-                   width="225px"
-                   [tabAttentive]="true"
-                   [tabIndex]="1"
-                   isFocus="true"
-                   tabAttentive="true"
-                   placeholder="Seymour Skinner"
-                   [formGroup]="quoteRequestForm"
-                   [forceError]="showErrors && !quoteRequestForm.controls.name.valid"
-                   [controlName]="quoteRequestForm.controls.name"></app-input>
-        <app-input input_label="Position"
-                   width="225px"
-                   [tabIndex]="2"
-                   [tabAttentive]="true"
-                   placeholder="Ex. Principal"
-                   [formGroup]="quoteRequestForm"
-                   [forceError]="showErrors && !quoteRequestForm.controls.position.valid"
-                   [controlName]="quoteRequestForm.controls.position"></app-input>
+        <div class="app-input-wrapper">
+          <app-input input_label="Your name"
+                     width="225px"
+                     [tabAttentive]="true"
+                     [tabIndex]="1"
+                     isFocus="true"
+                     tabAttentive="true"
+                     placeholder="Seymour Skinner"
+                     [formGroup]="quoteRequestForm"
+                     [forceError]="showErrors && !quoteRequestForm.controls.name.valid"
+                     [controlName]="quoteRequestForm.controls.name"></app-input>
+        </div>
+        <div class="app-input-wrapper">
+          <app-input input_label="Position"
+                     width="225px"
+                     [tabIndex]="2"
+                     [tabAttentive]="true"
+                     placeholder="Ex. Principal"
+                     [formGroup]="quoteRequestForm"
+                     [forceError]="showErrors && !quoteRequestForm.controls.position.valid"
+                     [controlName]="quoteRequestForm.controls.position"></app-input>
+        </div>
       </div>
       <div class="row">
-        <app-input input_label="Email"
-                   width="225px"
-                   [tabIndex]="3"
-                   [tabAttentive]="true"
-                   placeholder="wskinner@springfieldhs.org"
-                   [formGroup]="quoteRequestForm"
-                   [forceError]="showErrors && !quoteRequestForm.controls.email.valid"
-                   [controlName]="quoteRequestForm.controls.email"></app-input>
-        <app-input input_label="Phone number"
-                   width="225px"
-                   [tabIndex]="4"
-                   [tabAttentive]="true"
-                   [formGroup]="quoteRequestForm"
-                   [forceError]="showErrors && !quoteRequestForm.controls.phone.valid"
-                   [controlName]="quoteRequestForm.controls.phone"></app-input>
+        <div class="app-input-wrapper">
+          <app-input input_label="Email"
+                     width="225px"
+                     [tabIndex]="3"
+                     [tabAttentive]="true"
+                     placeholder="wskinner@springfieldhs.org"
+                     [formGroup]="quoteRequestForm"
+                     [forceError]="showErrors && !quoteRequestForm.controls.email.valid"
+                     [controlName]="quoteRequestForm.controls.email"></app-input>
+        </div>
+        <div class="app-input-wrapper">
+          <app-input input_label="Phone number"
+                     width="225px"
+                     [tabIndex]="4"
+                     [tabAttentive]="true"
+                     [formGroup]="quoteRequestForm"
+                     [forceError]="showErrors && !quoteRequestForm.controls.phone.valid"
+                     [controlName]="quoteRequestForm.controls.phone"></app-input>
+        </div>
       </div>
       <app-list-schools [form]="quoteRequestForm" [showErrors]="showErrors" startTabIndex="4"></app-list-schools>
       <div id="confirm-wrapper">
@@ -52,17 +60,19 @@
 </div>
 <ng-template #postWrapper>
   <div id="post-qr-wrapper">
-    <div id="post-qr-title-wrapper"><h1 id="title">Quote request submitted</h1></div>
-    <div id="post-qr-form">
-      <span id="desc">You'll get a quote emailed to you within 24 hours.</span>
-      <hr>
-      <app-colored-checkbox
-        title="How did you hear about us?"
-        [options]="['Google search', 'Facebook', 'Referral / word of mouth',
+    <div id="post-qr-sub-wrapper">
+      <div id="post-qr-form">
+        <div id="post-qr-title-wrapper"><h1 id="title">Quote request submitted</h1></div>
+        <span id="desc">You'll get a quote emailed to you within 24 hours.</span>
+        <hr>
+        <app-colored-checkbox
+          title="How did you hear about us?"
+          [options]="['Google search', 'Facebook', 'Referral / word of mouth',
   'Conference', 'Magazine ad', 'Email']"
-        [formArray]="hdyhau"
-        [other]="true">
-      </app-colored-checkbox>
+          [formArray]="hdyhau"
+          [other]="true">
+        </app-colored-checkbox>
+      </div>
     </div>
   </div>
 </ng-template>
