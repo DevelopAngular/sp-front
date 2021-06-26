@@ -28,8 +28,29 @@
       box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 20px 0px;
     }
 
+    #top-overlay {
+      position: relative;
+      z-index: 2;
+      height: 20px;
+      margin-bottom: -20px;
+      transition: box-shadow 0.5s;
+    }
+
+    #bottom-overlay {
+      position: relative;
+      z-index: 2;
+      height: 20px;
+      margin-top: -20px;
+      transition: box-shadow 0.5s;
+    }
+
+    #main-form {
+      padding: 0 10px;
+    }
+
     #confirm-wrapper {
-      padding-right: 40px
+      padding-right: 40px;
+      padding-top: 20px;
     }
 
     #confirm {
@@ -74,6 +95,9 @@
 #post-qr-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 30px);
+  padding-top: 30px;
 
   #post-qr-sub-wrapper {
     background-color: white;

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ElementRef, ViewChild, HostListener} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormsService} from '../../services/forms.service';
 import {GoogleAnalyticsService} from '../../services/google-analytics.service';
@@ -12,10 +12,16 @@ declare const gtag: Function;
 })
 export class QuoteRequestComponent implements OnInit {
 
+  @ViewChild('mainForm') mainForm: ElementRef;
+
   quoteRequestForm: FormGroup;
   hdyhau: FormArray;
   submitted: boolean = false;
   showErrors: boolean = false;
+  height: number;
+  heightSet: boolean = false;
+  topShadow: boolean = false;
+  bottomShadow: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -33,6 +39,25 @@ export class QuoteRequestComponent implements OnInit {
       schools: this.fb.array([])
     });
     this.hdyhau = this.fb.array([]);
+  }
+
+  ngAfterViewInit() {
+    this.height = this.mainForm.nativeElement.offsetHeight;
+    this.heightSet = true;
+  }
+
+  @HostListener('scroll', ['$event'])
+  onScroll(event: any) {
+    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight - 10) {
+      this.topShadow = true;
+      this.bottomShadow = false;
+    } else if (event.target.scrollTop <= 10) {
+      this.bottomShadow = true;
+      this.topShadow = false;
+    } else {
+      this.topShadow = true;
+      this.bottomShadow = true;
+    }
   }
 
   confirm(): void {
