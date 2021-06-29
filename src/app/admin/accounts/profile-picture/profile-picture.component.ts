@@ -82,7 +82,8 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
                 } else if (extension === 'jpeg' || extension === 'jpg' || extension === 'png') {
                   const reader = new FileReader();
                   reader.readAsDataURL(file);
-                  filesStream.push(fromEvent(reader, 'load').pipe(map((item: any) => {
+                  filesStream.push(fromEvent(reader, 'load').pipe(
+                    map((item: any) => {
                     return { file_name: file.name, file: file };
                   })));
                 }

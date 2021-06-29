@@ -602,6 +602,10 @@ export class UserService implements OnDestroy {
     return this.http.get<any>(constructUrl('v1/users', params));
   }
 
+  // getStudentsTeachers() {
+  //   return this.http.get<any>('v1/users?role=_profile_teacher&role=_profile_student&include_numbers=true');
+  // }
+
   getMoreUserListRequest(role) {
     this.store.dispatch(getMoreAccounts({role}));
     return this.lastAddedAccounts$[role];
@@ -659,7 +663,7 @@ export class UserService implements OnDestroy {
 
   bulkAddProfilePictures(files: File[]) {
     const file_names = files.map(file => file.name);
-    const content_types = files.map(file => file.type);
+    const content_types = files.map(file => file.type ? file.type : 'image/jpeg');
     return this.http.post('v1/file_uploads/bulk_create_url', {file_names, content_types});
     // const formData = new FormData();
     // const ctx = this.http.getAuthContext();

@@ -7,7 +7,6 @@ import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {ProfileMap} from '../../../models/ProfileMap';
 import {User} from '../../../models/User';
-import {Dictionary} from '@ngrx/entity';
 import {ToastService} from '../../../services/toast.service';
 
 @Injectable()
@@ -21,15 +20,17 @@ export class ProfilePicturesEffects {
           return this.userService.bulkAddProfilePictures(action.pictures)
             .pipe(
               switchMap((images: ProfilePicture[]) => {
-                const urls =  images.map(prof => prof.upload_url);
+                const urls = images.map(prof => prof.upload_url);
                 const content_types = images.map(prof => prof.content_type);
-                const images_ids = images.map(p => p.id);
+                const images_data = images.reduce((acc, pic, index) => {
+                  return {...acc, [action.userIds[index]]: pic.id };
+                }, {});
                 return [
                   profilePicturesActions.setProfilePictureToGoogle({
                     urls,
                     files: action.pictures,
                     content_types,
-                    picturesIds: images_ids,
+                    images_data,
                     userIds: action.userIds
                   }),
                   profilePicturesActions.postProfilePicturesSuccess({images})
@@ -53,7 +54,7 @@ export class ProfilePicturesEffects {
             switchMap((res) => {
               return [
                 profilePicturesActions.setProfilePictureToGoogleSuccess(),
-                profilePicturesActions.uploadProfilePictures({picturesIds: action.picturesIds, userIds: action.userIds})
+                profilePicturesActions.uploadProfilePictures({images_data: action.images_data, userIds: action.userIds})
               ];
             }),
             catchError(error => of(profilePicturesActions.setProfilePictureToGoogleFailure({errorMessage: error.message})))
@@ -67,8 +68,13 @@ export class ProfilePicturesEffects {
       .pipe(
         ofType(profilePicturesActions.uploadProfilePictures),
         exhaustMap((action: any) => {
-          return this.userService.getUsersList('_profile_student', '', null, true)
+          return zip(
+            this.userService.getUsersList('_profile_student', '', null, true),
+            this.userService.getUsersList('_profile_teacher', '', null, true),
+            this.userService.getUsersList('_profile_assistant', '', null, true)
+          )
             .pipe(
+              map(([students, teachers, assistants]) => [...students, ...teachers, ...assistants]),
               map((students: User[]) => {
                 return students.reduce((acc, user) => {
                   if (user.extras.clever_student_number) {
@@ -77,20 +83,26 @@ export class ProfilePicturesEffects {
                   return { ...acc, [user.primary_email]: user };
                 }, {});
               }),
-              map((students: Dictionary<User>) => {
+              map((students) => {
                 return action.userIds.map((id, index) => {
                   if (students[id]) {
                     return students[id];
                   } else {
                     this.userService.profilePicturesErrors$.next({'User ID': id, error: 'No user with this id was found'});
-                    action.picturesIds.splice(index, 1);
                   }
                 });
               }),
-              switchMap((students: User[]) => {
-                const stud = students.filter(s => !!s).map(s => s.id);
-                if (stud.length && action.picturesIds.length) {
-                  return this.userService.uploadProfilePictures(action.picturesIds, stud)
+              switchMap((students) => {
+                console.log(students);
+                console.log(action.images_data);
+                const data = students.filter(s => !!s).map((s: User) => {
+                  const pictureId = s.extras.clever_student_number ?
+                    action.images_data[s.extras.clever_student_number] :
+                    action.images_data[s.primary_email];
+                  return { userId: s.id, pictureId};
+                });
+                if (data.length) {
+                  return this.userService.uploadProfilePictures(data.map(d => d.pictureId), data.map(d => d.userId))
                     .pipe(
                       map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
                         return profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos, users: students});

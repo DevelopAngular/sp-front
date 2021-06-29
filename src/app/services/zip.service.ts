@@ -19,7 +19,7 @@ export class ZipService {
           const arrayNames = [];
           for (const item in data.files) {
             const extension = item.split('.')[item.toLowerCase().split('.').length - 1];
-           if (item[0] !== '_' && (extension === 'jpeg' || extension === 'png')) {
+           if (item[0] !== '_' && (extension === 'jpeg' || extension === 'png' || extension === 'jpg')) {
              arrayNames.push(item);
              arrayFiles.push(data.files[item].async('blob'));
            }
