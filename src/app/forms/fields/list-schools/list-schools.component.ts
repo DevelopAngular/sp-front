@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, Output, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -19,6 +19,8 @@ export class ListSchoolsComponent implements OnInit {
   @Input() autoFocus: boolean = false;
   @Input() showErrors: boolean = false;
   @ViewChildren('locationInput') locationInputs: QueryList<any>;
+
+  @Output() schoolCount = new EventEmitter<number>();
 
   inputCount: number = 1;
   innerWidth: number;
@@ -64,6 +66,7 @@ export class ListSchoolsComponent implements OnInit {
       blockSearch: false,
       searchSchools: new BehaviorSubject(null)
     });
+    this.schoolCount.emit(this.searchInfo.length);
   }
 
   showRemove(): boolean {
@@ -76,6 +79,7 @@ export class ListSchoolsComponent implements OnInit {
   removeSchool(index): void {
     let data = this.schools.removeAt(index);
     this.searchInfo.splice(index, 1);
+    this.schoolCount.emit(this.searchInfo.length);
   }
 
   textColor(item) {

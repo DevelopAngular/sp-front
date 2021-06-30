@@ -1,6 +1,7 @@
 @import "../../../../design-system";
 
 #form {
+  width: 100%;
   margin-bottom: 20px;
 }
 
@@ -51,17 +52,16 @@
     font-size: 12px;
 
     margin-top: 12px;
-    margin-right: 36px;
     padding-left: 8px;
     padding-right: 8px;
   }
 }
 
 .search-autocomplete {
-  position: absolute;
+  position: absolute !important;
   z-index: 9 !important;
   background-color: white;
-  box-shadow: 0 0px 7px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.1);
   height: 180px;
   padding-top: 5px;
   display: block;
