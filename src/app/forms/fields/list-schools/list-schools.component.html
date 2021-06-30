@@ -24,6 +24,7 @@
                [style.top]="i == 0 ? '70px' : '50px'"
                (mouseenter)="searchInfo[i]['mouseIn'] = true"
                (mouseleave)="searchInfo[i]['mouseIn'] = false">
+            <div style="position: fixed;">
               <div class="option-list_scrollable">
                 <div #cell *ngFor="let school of searchInfo[i]['searchSchools']; let a = index"
                      class="option-list_item"
@@ -45,8 +46,9 @@
                   </div>
                 </div>
               </div>
-            <div class="search-options">
-              <a (click)="searchInfo[i]['blockSearch'] = true">School not listed?</a>
+              <div class="search-options">
+                <a (click)="searchInfo[i]['blockSearch'] = true">School not listed?</a>
+              </div>
             </div>
           </div>
         </div>

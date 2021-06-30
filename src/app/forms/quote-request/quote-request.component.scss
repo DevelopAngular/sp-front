@@ -7,14 +7,13 @@
     justify-content: center;
     flex-direction: column;
     display: flex;
-    align-items: center;
-    min-height: calc(100vh - 30px);
     padding-top: 30px;
+
+    background-color: #F5F8FF;
 
     .row {
       display: flex;
       justify-content: space-between;
-      padding-right: 40px;
       padding-bottom: 10px;
     }
 
@@ -29,18 +28,14 @@
     }
 
     #top-overlay {
-      position: relative;
       z-index: 2;
-      height: 20px;
-      margin-bottom: -20px;
+      pointer-events:none;
       transition: box-shadow 0.5s;
     }
 
     #bottom-overlay {
-      position: relative;
       z-index: 2;
-      height: 20px;
-      margin-top: -20px;
+      pointer-events:none;
       transition: box-shadow 0.5s;
     }
 
@@ -49,7 +44,8 @@
     }
 
     #confirm-wrapper {
-      padding-right: 40px;
+      padding-right: 10px;
+      padding-right: 10px;
       padding-top: 20px;
     }
 
@@ -111,19 +107,6 @@
       h1 {
         @include textSize(24px, bold);
         text-align: center;
-      }
-    }
-
-    #post-qr-form {
-      span {
-        @include textSize(14px, normal, $search-gray);
-        margin-bottom: 10px;
-      }
-
-      hr {
-        color: #7F879D;
-        width: 150px;
-        margin-bottom: 30px;
       }
     }
 

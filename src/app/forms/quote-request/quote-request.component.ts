@@ -23,6 +23,8 @@ export class QuoteRequestComponent implements OnInit {
   topShadow: boolean = false;
   bottomShadow: boolean = false;
 
+  schoolCount: number = 1;
+
   constructor(
     private fb: FormBuilder,
     private formService: FormsService,
@@ -58,6 +60,7 @@ export class QuoteRequestComponent implements OnInit {
       this.topShadow = true;
       this.bottomShadow = true;
     }
+    console.log(this.topShadow);
   }
 
   confirm(): void {
@@ -81,6 +84,16 @@ export class QuoteRequestComponent implements OnInit {
       });
       this.googleAnalytics.emitEvent('quote-request-complete', {});
     });
+  }
+
+  schoolCountChange(count) {
+    if (2 <= count)
+      this.bottomShadow = true;
+    else {
+      this.topShadow = false;
+      this.bottomShadow = false;
+    }
+
   }
 
 }

@@ -2,7 +2,9 @@
   <div id="quote-request">
     <form [formGroup]="quoteRequestForm">
       <div id="top-overlay"
-           [style.box-shadow]="topShadow ? '0px 40px 40px -40px #FFF inset' : null"></div>
+           [style.height.px]="height"
+           [style.margin-bottom.px]="-height"
+           [style.box-shadow]="topShadow ? '0px 1px 14px rgba(256, 256, 256, 0.17) inset' : null"></div>
       <div #mainForm
            id="main-form"
            [style.height.px]="heightSet ? height: null"
@@ -11,7 +13,7 @@
         <div class="row">
           <div class="app-input-wrapper">
             <app-input input_label="Your name"
-                       width="225px"
+                       width="245px"
                        [tabAttentive]="true"
                        [tabIndex]="1"
                        isFocus="true"
@@ -23,7 +25,7 @@
           </div>
           <div class="app-input-wrapper">
             <app-input input_label="Position"
-                       width="225px"
+                       width="245px"
                        [tabIndex]="2"
                        [tabAttentive]="true"
                        placeholder="Ex. Principal"
@@ -35,7 +37,7 @@
         <div class="row">
           <div class="app-input-wrapper">
             <app-input input_label="Email"
-                       width="225px"
+                       width="245px"
                        [tabIndex]="3"
                        [tabAttentive]="true"
                        placeholder="wskinner@springfieldhs.org"
@@ -45,7 +47,7 @@
           </div>
           <div class="app-input-wrapper">
             <app-input input_label="Phone number"
-                       width="225px"
+                       width="245px"
                        [tabIndex]="4"
                        [tabAttentive]="true"
                        [formGroup]="quoteRequestForm"
@@ -53,15 +55,17 @@
                        [controlName]="quoteRequestForm.controls.phone"></app-input>
           </div>
         </div>
-        <app-list-schools [form]="quoteRequestForm" [showErrors]="showErrors" startTabIndex="4"></app-list-schools>
+        <app-list-schools [form]="quoteRequestForm" [showErrors]="showErrors" (schoolCount)="schoolCountChange($event)" startTabIndex="4"></app-list-schools>
       </div>
-
       <div id="bottom-overlay"
-           [style.box-shadow]="bottomShadow ? '0px -10px 10px -10px #000 inset' : null"></div>
+           [style.height.px]="height"
+           [style.margin-top.px]="-height"
+           [style.box-shadow]="bottomShadow ? '0px -1px 14px rgba(0, 0, 0, 0.17) inset' : null"></div>
       <div id="confirm-wrapper">
         <app-gradient-button
           id="confirm"
           size="custom"
+          width="542px"
           minHeight="70px"
           (click)="confirm()"><span id="confirm-text">Request Quote</span>
         </app-gradient-button>
@@ -74,8 +78,6 @@
     <div id="post-qr-sub-wrapper">
       <div id="post-qr-form">
         <div id="post-qr-title-wrapper"><h1 id="title">Quote request submitted</h1></div>
-        <span id="desc">You'll get a quote emailed to you within 24 hours.</span>
-        <hr>
         <app-colored-checkbox
           title="How did you hear about us?"
           [options]="['Google search', 'Facebook', 'Referral / word of mouth',
