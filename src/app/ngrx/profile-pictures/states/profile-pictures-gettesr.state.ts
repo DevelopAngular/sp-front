@@ -36,3 +36,8 @@ export const getProfiles = createSelector(
     return {...user, profile_picture: profile.photo_url } as User;
   })
 );
+
+export const getProfilePicturesLoaderPercent = createSelector(
+  getProfilePicturesState,
+  (state: IProfilePicturesState) => state.loaderPercent
+);

@@ -93,7 +93,12 @@ import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {postProfilePictures} from '../ngrx/profile-pictures/actions';
-import {getProfilePicturesLoaded, getProfilePicturesLoading, getProfiles} from '../ngrx/profile-pictures/states';
+import {
+  getProfilePicturesLoaded,
+  getProfilePicturesLoaderPercent,
+  getProfilePicturesLoading,
+  getProfiles
+} from '../ngrx/profile-pictures/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 
 @Injectable({
@@ -195,6 +200,7 @@ export class UserService implements OnDestroy {
   profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
   profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
   profiles$: Observable<User[]> = this.store.select(getProfiles);
+  profilePictureLoaderPercent$: Observable<number> = this.store.select(getProfilePicturesLoaderPercent);
   profilePicturesErrors$: Subject<{[id: string]: string, error: string}> = new Subject();
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
@@ -602,10 +608,6 @@ export class UserService implements OnDestroy {
     return this.http.get<any>(constructUrl('v1/users', params));
   }
 
-  // getStudentsTeachers() {
-  //   return this.http.get<any>('v1/users?role=_profile_teacher&role=_profile_student&include_numbers=true');
-  // }
-
   getMoreUserListRequest(role) {
     this.store.dispatch(getMoreAccounts({role}));
     return this.lastAddedAccounts$[role];
@@ -665,22 +667,6 @@ export class UserService implements OnDestroy {
     const file_names = files.map(file => file.name);
     const content_types = files.map(file => file.type ? file.type : 'image/jpeg');
     return this.http.post('v1/file_uploads/bulk_create_url', {file_names, content_types});
-    // const formData = new FormData();
-    // const ctx = this.http.getAuthContext();
-    // const httpOptions = {
-    //   headers: new HttpHeaders({
-    //     'X-School-Id': this.http.getSchool().id,
-    //     'Authorization': 'Bearer ' + ctx.auth.access_token
-    //   })
-    // };
-    // files.forEach((file, index) => {
-    //   formData.append(`${index}`, file);
-    // });
-    // return this.httpClient.post(
-    //   `https://c-direct.smartpass.app/api/staging/files/v1/users/jobs/${uuid}/bulk-add-pictures`,
-    //   formData,
-    //   httpOptions
-    // );
   }
 
   setProfilePictureToGoogle(url: string, file: File, content_type: string) {

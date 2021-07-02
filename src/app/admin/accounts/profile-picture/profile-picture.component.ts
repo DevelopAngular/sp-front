@@ -1,7 +1,7 @@
-import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {forkJoin, fromEvent, of, Subject, zip} from 'rxjs';
+import {forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
 import {catchError, filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
@@ -113,6 +113,8 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     }
   }
 
+  @ViewChild('fgf1') stop: ElementRef;
+
   page: number = 2;
   form: FormGroup;
   selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
@@ -124,6 +126,8 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     images: { inProcess: false, complete: false, error: null },
     csv: { inProcess: false, complete: false, error: null }
   };
+  picturesLoaderPercent$: Observable<number>;
+
   issues = [];
   errorUpload: boolean;
   errors = [];
@@ -139,13 +143,19 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     private zipService: ZipService,
     private dialog: MatDialog,
     private userService: UserService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private renderer: Renderer2
   ) { }
 
   ngOnInit() {
     this.form = new FormGroup({
       images: new FormControl(),
       csvFile: new FormControl()
+    });
+    this.picturesLoaderPercent$ = this.userService.profilePictureLoaderPercent$;
+
+    this.picturesLoaderPercent$.pipe(filter((v) => !!v && !!this.stop)).subscribe(res => {
+      this.renderer.setAttribute(this.stop.nativeElement, 'offset', `${res}%`);
     });
 
     this.userService.profilePicturesLoaded$

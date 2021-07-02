@@ -8,4 +8,5 @@ export interface IProfilePicturesState extends EntityState<ProfilePicture> {
   loaded: boolean;
   profilesMap: ProfileMap[];
   updatedProfiles: User[];
+  loaderPercent: number;
 }

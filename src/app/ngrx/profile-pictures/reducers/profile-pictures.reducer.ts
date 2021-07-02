@@ -10,7 +10,8 @@ export const profilePicturesInitialState: IProfilePicturesState = adapter.getIni
   loading: false,
   loaded: false,
   profilesMap: [],
-  updatedProfiles: []
+  updatedProfiles: [],
+  loaderPercent: 0
 });
 
 const reducer = createReducer(
@@ -22,6 +23,9 @@ const reducer = createReducer(
   }),
   on(profilePicturesActions.uploadProfilePicturesSuccess, (state, {profiles, users}) => {
     return {...state, loading: false, loaded: true, profilesMap: profiles, updatedProfiles: users};
+  }),
+  on(profilePicturesActions.changeProfilePictureLoader, (state, {percent}) => {
+    return { ...state, loaderPercent: percent };
   })
 );
 

@@ -26,12 +26,13 @@ export class ZipService {
           }
           return forkJoin({
             names: of(arrayNames),
-            files: of(arrayFiles)
+            files: from(Promise.all(arrayFiles))
           });
         }),
         map(({names, files}) => {
           return names.map((name, i) => {
-            return { file_name: name, file: new File([files[i]], name) };
+            const newFile = new File([files[i]], name, {type: 'image/jpeg'});
+            return { file_name: name, file: newFile };
           });
         })
       );
