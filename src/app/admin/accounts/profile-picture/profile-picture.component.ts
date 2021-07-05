@@ -218,19 +218,23 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
       } else {
         this.toastService.openToast({title: 'Error', subtitle: 'Please check if the data is correct', type: 'error'});
         this.page -= 1;
-        this.selectedMapFiles = [];
-        this.selectedImgFiles = [];
-        this.errors = [];
-        this.selectedMapFile = null;
-        this.uploadingProgress = {
-          images: { inProcess: false, complete: false, error: null },
-          csv: { inProcess: false, complete: false, error: null }
-        };
-        this.form.reset();
+        this.clearData();
       }
     } else if (this.page === 4) {
 
     }
+  }
+
+  clearData() {
+    this.selectedMapFiles = [];
+    this.selectedImgFiles = [];
+    this.errors = [];
+    this.selectedMapFile = null;
+    this.uploadingProgress = {
+      images: { inProcess: false, complete: false, error: null },
+      csv: { inProcess: false, complete: false, error: null }
+    };
+    this.form.reset();
   }
 
   generateErrorsCsv() {

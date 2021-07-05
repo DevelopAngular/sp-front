@@ -197,7 +197,7 @@
             [style.margin-top]="'11px'"
             [rightIcon]="'./assets/Chevron Right (White).svg'"
             [gradient]="'#07ABC3, #07ABC3'"
-            (buttonClick)="page = 2"
+            (buttonClick)="clearData(); page = 2"
           >New Upload</app-gradient-button>
         </div>
         <div class="upload-info">
@@ -214,9 +214,9 @@
         <div class="ds-dialog-title" style="margin-bottom: 18px">Upload History</div>
         <div class="upload-info">
           <div class="upload-title">Dec. 16, 2020 at 2:34 PM</div>
-          <div class="info"><span style="font-weight: bold">New pictures: </span><span>1500 students</span></div>
-          <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>1500 students</span></div>
-          <div class="info"><span style="font-weight: bold">Errors: </span><span>5 errors</span></div>
+          <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ allProfiles.length }} students</span></div>
+          <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ allProfiles.length }} students</span></div>
+          <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors</span></div>
           <img class="info-icon" [src]="'./assets/Circle Download (Blue-Gray).svg'" alt="">
         </div>
       </div>
