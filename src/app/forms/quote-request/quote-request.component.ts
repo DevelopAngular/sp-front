@@ -60,7 +60,6 @@ export class QuoteRequestComponent implements OnInit {
       this.topShadow = true;
       this.bottomShadow = true;
     }
-    console.log(this.topShadow);
   }
 
   confirm(): void {

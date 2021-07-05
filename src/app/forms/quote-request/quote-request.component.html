@@ -4,7 +4,7 @@
       <div id="top-overlay"
            [style.height.px]="height"
            [style.margin-bottom.px]="-height"
-           [style.box-shadow]="topShadow ? '0px 1px 14px rgba(256, 256, 256, 0.17) inset' : null"></div>
+           [style.box-shadow]="topShadow ? '0px 7px 14px #FFFFFF inset' : null"></div>
       <div #mainForm
            id="main-form"
            [style.height.px]="heightSet ? height: null"
@@ -60,7 +60,7 @@
       <div id="bottom-overlay"
            [style.height.px]="height"
            [style.margin-top.px]="-height"
-           [style.box-shadow]="bottomShadow ? '0px -1px 14px rgba(0, 0, 0, 0.17) inset' : null"></div>
+           [style.box-shadow]="bottomShadow ? '0px -15px 14px -15px rgba(0, 0, 0, 0.17) inset' : null"></div>
       <div id="confirm-wrapper">
         <app-gradient-button
           id="confirm"

@@ -3,10 +3,11 @@
 @media only screen and (min-width: 560px) {
   #quote-request-wrapper {
     display: flex;
+    height: calc(100vh - 30px);
+
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: column;
-    display: flex;
     padding-top: 30px;
 
     background-color: #F5F8FF;
