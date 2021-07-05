@@ -32,6 +32,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Input() timerEvent: Subject<any>;
   @Input() allowPopup: boolean;
   @Input() profileImage: boolean;
+  @Input() isMiniCard: boolean;
 
   @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
 
