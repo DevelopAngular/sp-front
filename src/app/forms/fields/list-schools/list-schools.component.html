@@ -24,7 +24,7 @@
                [style.top]="i == 0 ? '70px' : '50px'"
                (mouseenter)="searchInfo[i]['mouseIn'] = true"
                (mouseleave)="searchInfo[i]['mouseIn'] = false">
-            <div style="position: fixed;">
+            <div style="position: sticky;">
               <div class="option-list_scrollable">
                 <div #cell *ngFor="let school of searchInfo[i]['searchSchools']; let a = index"
                      class="option-list_item"
@@ -52,8 +52,8 @@
             </div>
           </div>
         </div>
-        <div class="remove-wrapper" *ngIf="innerWidth < 560">
-          <button class="remove" [style.visibility]="showRemove() ? 'visible' : 'hidden'" mat-icon-button
+        <div class="remove-wrapper" *ngIf="showRemove() && innerWidth < 560">
+          <button class="remove" mat-icon-button
                   (click)="removeSchool(i)">
             <mat-icon svgIcon="minus"></mat-icon>
           </button>
@@ -61,7 +61,7 @@
       </div>
       <div class="input-wrapper">
         <app-input [input_label]="(i == 0 || innerWidth < 560) ? 'Approx. # of students' : ''"
-                   [width]="innerWidth < 560 ? '100px' : '150px'"
+                   [width]="innerWidth < 560 ? '100px' : (showRemove() ? '150px' : '190px')"
                    [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
                    tabAttentive="true"
                    placeholder="1656"
@@ -70,8 +70,8 @@
                    [controlName]="school.controls.population"></app-input>
       </div>
     </ng-container>
-    <div class="remove-wrapper" *ngIf="innerWidth >= 560" [style.padding-top]="i == 0 ? '20px' : '2px'">
-      <button class="remove" [style.visibility]="showRemove() ? 'visible' : 'hidden'" mat-icon-button
+    <div class="remove-wrapper" *ngIf="showRemove() && innerWidth >= 560" [style.padding-top]="i == 0 ? '20px' : '2px'">
+      <button class="remove" mat-icon-button
               (click)="removeSchool(i)">
         <mat-icon svgIcon="minus"></mat-icon>
       </button>
