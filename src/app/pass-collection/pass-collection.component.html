@@ -6,13 +6,17 @@
         {{title}}
       </div>
     </div>
-    <div class="search" *ngIf="searchPanel && (currentPasses$ | async).length">
-      <app-round-input
-        [isSearch]="true"
-        [placeholder]="'Search active passes'"
-        [focused]="true"
-      ></app-round-input>
-    </div>
+    <ng-container *ngIf="currentPasses$ | async as passes">
+      <div class="search" *ngIf="searchPanel && (passes.length || !!search)">
+        <app-round-input
+          [isSearch]="true"
+          [placeholder]="'Search ' + (randomObject$ | async)"
+          [focused]="true"
+          (ontextupdate)="search = $event; searchValue.emit($event)"
+        ></app-round-input>
+      </div>
+    </ng-container>
+
       <div class="filter-button"
          *ngIf="hasFilterPasses"
          appCrossPointerEventTarget
