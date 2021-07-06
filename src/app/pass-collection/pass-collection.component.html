@@ -6,7 +6,7 @@
         {{title}}
       </div>
     </div>
-    <div class="search" *ngIf="searchPanel">
+    <div class="search" *ngIf="searchPanel && (currentPasses$ | async).length">
       <app-round-input
         [isSearch]="true"
         [placeholder]="'Search active passes'"
