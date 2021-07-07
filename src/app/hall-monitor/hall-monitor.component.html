@@ -1,64 +1,67 @@
 <div *ngIf="user" style="position: relative; height: auto; min-height: calc(100% - 78px); overflow: visible" #scrollableArea>
   <div *ngIf="canView" class="hall-monitor-wrapper">
-    <div [ngClass]="isIOSTablet ? 'ios-hall-monitor-top' : 'hall-monitor-top'" [style.background-color]="darkTheme.getBackground('low', false)">
-      <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
-      <app-round-input
-        [type]="inputRestrictionXl.type"
-        [minWidth]="inputRestrictionXl.minWidth"
-        [width]="inputRestrictionXl.width"
-        [placeholder]="inputRestrictionXl.placeholder"
-        [fieldIconPosition]="inputRestrictionXl.fieldIconPosition"
-        [closeIcon]="inputRestrictionXl.closeIcon"
-        [style.margin-right]="'40px'"
-        [pending$]="searchPending$"
-        [isSearch]="true"
-        (ontextupdate)="onSearch($event)"
-      ></app-round-input>
-      <app-gradient-button
-        [gradient]="reportBtn.gradient"
-        [cursor]="reportBtn.cursor"
-        [hoverColor]="reportBtn.hoverColor"
-        [minWidth]="reportBtn.minWidth"
-        [minHeight]="reportBtn.minHeight"
-        [fontSize]="reportBtn.fontSize"
-        [leftIcon]="reportBtn.leftIcon"
-        [padding]="reportBtn.padding"
-        (buttonClick)="openReportForm()"
-      >Report Student(s)</app-gradient-button>
-      </ng-container>
+    <div class="ios-hall-monitor-top" *ngIf="isDeviceLargeExtra" [style.background-color]="darkTheme.getBackground('low', false)">
+      <div [ngClass]="isIOSTablet ? 'ios-options-wrapper' : 'options-wrapper'" (click)="toggleSearchBar()">
+        <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
+      </div>
+      <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
+        <app-round-input
+          [focused]="true"
+          [type]="inputRestrictionSm.type"
+          [minWidth]="inputRestrictionSm.minWidth"
+          [width]="'90%'"
+          [placeholder]="inputRestrictionSm.placeholder"
+          [backgroundColor]="'#F4F4F4'"
+          [fieldIconPosition]="inputRestrictionSm.fieldIconPosition"
+          [closeIcon]="inputRestrictionSm.closeIcon"
+          (ontextupdate)="onSearch($event)"
+          (blurEvent)="toggleSearchBar()"
+          [selectReset$] = "resetvalue"
+        ></app-round-input>
+      </div>
 
-      <ng-template #hallMontiorTopMobile>
-        <ng-container>
-          <div [ngClass]="isIOSTablet ?  'ios-options-wrapper' : 'options-wrapper'" (click)="toggleSearchBar()">
-            <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
-          </div>
-          <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
-              <app-round-input
-                [focused]="true"
-                [type]="inputRestrictionSm.type"
-                [minWidth]="inputRestrictionSm.minWidth"
-                [width]="'90%'"
-                [placeholder]="inputRestrictionSm.placeholder"
-                [backgroundColor]="'#F4F4F4'"
-                [fieldIconPosition]="inputRestrictionSm.fieldIconPosition"
-                [closeIcon]="inputRestrictionSm.closeIcon"
-                (ontextupdate)="onSearch($event)"
-                (blurEvent)="toggleSearchBar()"
-                [selectReset$] = "resetvalue"
-              ></app-round-input>
-          </div>
+      <div class="cancel-wrapper" *ngIf="isIpadSearchBar">
+        <span class="cancel" (click)="cleanSearchValue();">Cancel</span>
+      </div>
 
-          <div class="cancel-wrapper" *ngIf="isIpadSearchBar">
-            <span class="cancel" (click)="cleanSearchValue();">Cancel</span>
-          </div>
-
-          <div [ngClass]="isIOSTablet ?  'ios-options-wrapper' : 'options-wrapper'" *ngIf="!isIpadSearchBar">
-            <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>
-          </div>
-        </ng-container>
-      </ng-template>
-      <p *ngIf="screenService.isDeviceMid && !isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})" class="hall-monitor-title">Hall Monitor</p>
+      <div [ngClass]="isIOSTablet ?  'ios-options-wrapper' : 'options-wrapper'" *ngIf="!isIpadSearchBar">
+        <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>
+      </div>
     </div>
+<!--    <div *ngIf="!isDeviceLargeExtra" class="hall-monitor-top" [style.background-color]="darkTheme.getBackground('low', false)">-->
+<!--      <ng-container>-->
+<!--      <app-round-input-->
+<!--        [type]="inputRestrictionXl.type"-->
+<!--        [minWidth]="inputRestrictionXl.minWidth"-->
+<!--        [width]="inputRestrictionXl.width"-->
+<!--        [placeholder]="inputRestrictionXl.placeholder"-->
+<!--        [fieldIconPosition]="inputRestrictionXl.fieldIconPosition"-->
+<!--        [closeIcon]="inputRestrictionXl.closeIcon"-->
+<!--        [style.margin-right]="'40px'"-->
+<!--        [pending$]="searchPending$"-->
+<!--        [isSearch]="true"-->
+<!--        (ontextupdate)="onSearch($event)"-->
+<!--      ></app-round-input>-->
+<!--      <app-gradient-button-->
+<!--        [gradient]="reportBtn.gradient"-->
+<!--        [cursor]="reportBtn.cursor"-->
+<!--        [hoverColor]="reportBtn.hoverColor"-->
+<!--        [minWidth]="reportBtn.minWidth"-->
+<!--        [minHeight]="reportBtn.minHeight"-->
+<!--        [fontSize]="reportBtn.fontSize"-->
+<!--        [leftIcon]="reportBtn.leftIcon"-->
+<!--        [padding]="reportBtn.padding"-->
+<!--        (buttonClick)="openReportForm()"-->
+<!--      >Report Student(s)</app-gradient-button>-->
+<!--      </ng-container>-->
+
+<!--&lt;!&ndash;      <ng-template #hallMontiorTopMobile>&ndash;&gt;-->
+<!--&lt;!&ndash;        <ng-container>&ndash;&gt;-->
+<!--&lt;!&ndash;         &ndash;&gt;-->
+<!--&lt;!&ndash;        </ng-container>&ndash;&gt;-->
+<!--&lt;!&ndash;      </ng-template>&ndash;&gt;-->
+<!--      <p *ngIf="screenService.isDeviceMid && !isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})" class="hall-monitor-title">Hall Monitor</p>-->
+<!--    </div>-->
     <div class="hall-monitor-bottom">
       <app-pass-collection
         [hasSort]="hallMonitorCollection.hasSort"
@@ -74,17 +77,19 @@
         [user]="user"
         (sortMode)="updatePassCollection($event)"
         [selectedSort]="'expiration_time'"
+        [searchPanel]="true"
+        (searchValue)="onSearch($event)"
       ></app-pass-collection>
       <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-        <div class="empty-container" *ngIf="inputValue != ''">
-          <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
-          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>
-          <div class="small-text ds-empty-text-info">Search again or click the report button</div>
+        <div class="empty-container" *ngIf="inputValue">
+          <img width="74px" height="74px" class="empty-svg" [src]="'./assets/Pass Search (Gray).svg' | resolveAsset" alt="empty-svg">
+<!--          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>-->
+          <div class="empty-text">No active passes for the keyword “{{ inputValue }}”</div>
         </div>
-        <div class="empty-container" *ngIf="inputValue==''">
-          <img class="empty-svg" [src]="'./assets/emptyStates/emptyHall.svg' | resolveAsset" alt="empty-svg">
-          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Take the Day Off</div>
-          <div class="small-text ds-empty-text-info">There aren't any active passes now</div>
+        <div class="empty-container" *ngIf="!inputValue">
+          <img width="74px" height="74px" class="empty-svg" [src]="'./assets/NoPasses (Gray).svg' | resolveAsset" alt="empty-svg">
+<!--          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Take the Day Off</div>-->
+          <div class="empty-text">No active passes</div>
         </div>
       </div>
     </div>
