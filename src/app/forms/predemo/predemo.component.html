@@ -1,27 +1,28 @@
 <div id="predemo">
   <div id="masthead">
     <div id="logo-wrapper">
-      <app-smartpass-logo [logoAsset]="'./assets/Logo (Green).svg'"></app-smartpass-logo>
+      <a href="www.smartpass.app">
+        <app-smartpass-logo [logoAsset]="'./assets/Logo (Green).svg'"></app-smartpass-logo>
+      </a>
     </div>
     <div id="text-wrapper">
       <h1>Confirm your upcoming demo</h1>
-      <span>{{startTime | date:'MMM dd'}} at {{startTime | date:'h:mm a'}} {{timeZone}} {{ "\u2022" }}
+      <span>{{startTime | date:'MMM dd'}} at {{startTime | date:'h:mm a'}} ({{timeZone}}) {{ "\u2022" }}
         with {{assignedTo}}</span>
     </div>
   </div>
   <div id="form-wrapper">
     <form [formGroup]="predemoForm" *ngIf="!submitted; else postWrapper">
-      <app-list-schools *ngIf="!completedSchools" [form]="predemoForm" autoFocus="true"></app-list-schools>
+      <app-list-schools *ngIf="!completedSchools" [form]="predemoForm" [showErrors]="showErrors"  autoFocus="true"></app-list-schools>
       <app-colored-checkbox *ngIf="!completedHdyhau"
-        title="How did you hear about us?"
-        [options]="['Google search', 'Facebook', 'Referral / word of mouth',
+                            title="How did you hear about us?"
+                            [options]="['Google search', 'Facebook', 'Referral / word of mouth',
   'Conference', 'Magazine ad', 'Email']"
-        [other]="true"
-        [formArray]="predemoForm.controls.hdyhau">
+                            [other]="true"
+                            [formArray]="predemoForm.controls.hdyhau">
       </app-colored-checkbox>
       <app-gradient-button
         id="confirm"
-        [disabled]="!predemoForm.valid"
         (click)="confirmDemo()">Confirm demo
       </app-gradient-button>
     </form>

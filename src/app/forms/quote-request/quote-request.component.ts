@@ -1,4 +1,4 @@
-import {Component, OnInit, ElementRef, ViewChild, HostListener} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild, Renderer2} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormsService} from '../../services/forms.service';
 import {GoogleAnalyticsService} from '../../services/google-analytics.service';
@@ -18,7 +18,6 @@ export class QuoteRequestComponent implements OnInit {
   hdyhau: FormArray;
   submitted: boolean = false;
   showErrors: boolean = false;
-  height: number;
   heightSet: boolean = false;
   topShadow: boolean = false;
   bottomShadow: boolean = false;
@@ -29,6 +28,7 @@ export class QuoteRequestComponent implements OnInit {
     private fb: FormBuilder,
     private formService: FormsService,
     private googleAnalytics: GoogleAnalyticsService,
+    private renderer2: Renderer2,
   ) {
   }
 
@@ -41,11 +41,12 @@ export class QuoteRequestComponent implements OnInit {
       schools: this.fb.array([])
     });
     this.hdyhau = this.fb.array([]);
+    this.submitted = this.getCookie('form-complete') == 'true';
   }
 
   ngAfterViewInit() {
-    this.height = this.mainForm.nativeElement.offsetHeight;
-    this.heightSet = true;
+    let height = `${this.mainForm.nativeElement.offsetHeight}px`;
+    this.renderer2.setStyle(this.mainForm.nativeElement, "height", height);
   }
 
   @HostListener('scroll', ['$event'])
@@ -68,6 +69,7 @@ export class QuoteRequestComponent implements OnInit {
       return;
     }
     this.submitted = true;
+    this.setCookie('form-complete', true, 'smartpass.app');
     let formData = this.quoteRequestForm.getRawValue();
 
     this.formService.saveQuoteRequest(
@@ -81,7 +83,7 @@ export class QuoteRequestComponent implements OnInit {
             console.log(res);
           });
       });
-      this.googleAnalytics.emitEvent('quote-request-complete', {});
+      this.googleAnalytics.emitEvent('quote_request_submit', {});
     });
   }
 
@@ -92,7 +94,32 @@ export class QuoteRequestComponent implements OnInit {
       this.topShadow = false;
       this.bottomShadow = false;
     }
+    this.schoolCount = count;
+  }
 
+  getCookie(name) {
+    let cookieValues = document.cookie.split(';').map(
+      cookie => {
+        cookie = cookie.replace(/^\s+/g, '');
+        if (cookie.indexOf(name + '=') == 0)
+          return cookie.substring(name.length + 1, cookie.length);
+        return undefined;
+      }
+    ).filter(cookieValue => {
+      return cookieValue !== undefined;
+    });
+
+    if (cookieValues.length != 0)
+      return cookieValues[0];
+    return undefined;
+  }
+
+  setCookie(name, value, path) {
+    let date = new Date();
+    date.setTime(date.getTime() + 31 * 24 * 60 * 60 * 1000);
+    let expires = `expires=${date.toUTCString()}`;
+    let cpath = path ? `; path=${path}` : '';
+    document.cookie = `${name}=${value}; ${expires}${cpath}`;
   }
 
 }

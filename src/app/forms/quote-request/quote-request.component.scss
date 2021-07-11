@@ -29,18 +29,24 @@
     }
 
     #top-overlay {
-      z-index: 2;
+      height: 50px;
+      margin-bottom: -50px;
+      z-index: 3;
       pointer-events:none;
       transition: box-shadow 0.5s;
     }
 
     #bottom-overlay {
-      z-index: 2;
+      height: 50px;
+      margin-top: -50px;
+      z-index: 3;
       pointer-events:none;
       transition: box-shadow 0.5s;
     }
 
     #main-form {
+      height: initial;
+      overflow: scroll;
       padding: 0 10px;
     }
 
@@ -93,6 +99,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #F5F8FF;
   min-height: calc(100vh - 30px);
   padding-top: 30px;
 

@@ -2,13 +2,9 @@
   <div id="quote-request">
     <form [formGroup]="quoteRequestForm">
       <div id="top-overlay"
-           [style.height.px]="height"
-           [style.margin-bottom.px]="-height"
            [style.box-shadow]="topShadow ? '0px 7px 14px #FFFFFF inset' : null"></div>
       <div #mainForm
            id="main-form"
-           [style.height.px]="heightSet ? height: null"
-           [style.overflow]="heightSet ? 'scroll' : 'visible'"
            (scroll)="onScroll($event)">
         <div class="row">
           <div class="app-input-wrapper">
@@ -58,8 +54,6 @@
         <app-list-schools [form]="quoteRequestForm" [showErrors]="showErrors" (schoolCount)="schoolCountChange($event)" startTabIndex="4"></app-list-schools>
       </div>
       <div id="bottom-overlay"
-           [style.height.px]="height"
-           [style.margin-top.px]="-height"
            [style.box-shadow]="bottomShadow ? '0px -15px 14px -15px rgba(0, 0, 0, 0.17) inset' : null"></div>
       <div id="confirm-wrapper">
         <app-gradient-button
