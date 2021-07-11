@@ -15,6 +15,7 @@ export class PredemoComponent implements OnInit {
   startTime: Date;
   timeZone: string;
   submitted: boolean = false;
+  showErrors: boolean = false;
 
   completedSchools = true;
   completedHdyhau = true;
@@ -55,6 +56,7 @@ export class PredemoComponent implements OnInit {
 
   confirmDemo(): void {
     if (!this.predemoForm.valid) {
+      this.showErrors = true;
       return;
     }
     let formData = this.predemoForm.getRawValue();

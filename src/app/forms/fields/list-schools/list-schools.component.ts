@@ -133,6 +133,12 @@ export class ListSchoolsComponent implements OnInit {
     return this.searchInfo[i]['showOptions'] && !this.searchInfo[i]['blockSearch'];
   }
 
+  getSearchPosition(i) {
+    if (this.locationInputs === undefined)
+      return 0;
+    return this.locationInputs.toArray()[i].input.nativeElement.getBoundingClientRect().y + 60;
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.innerWidth = window.innerWidth;
