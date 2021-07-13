@@ -1,5 +1,6 @@
 <div id="form" [formGroup]="form">
-  <div class="schools"
+  <div #schoolContainer
+       class="schools"
        formArrayName="schools"
        *ngFor="let school of schools.controls; let i = index">
     <ng-container [formGroupName]="i" class="row">
@@ -7,8 +8,8 @@
         <div class="search-wrapper">
           <div class="input-wrapper">
             <app-input #locationInput
-                       [input_label]="(i == 0 || innerWidth < 560) ? 'School name' : ''"
-                       [width]="innerWidth < 560 ? '225px' : '300px'"
+                       [input_label]="(i == 0 || mobile) ? 'School name' : ''"
+                       [width]="getSchoolInputWidth()"
                        [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
                        [isFocus]="i == 0 && autoFocus"
                        tabAttentive="true"
@@ -55,16 +56,10 @@
             </div>
           </div>
         </div>
-        <div class="remove-wrapper" *ngIf="showRemove() && innerWidth < 560">
-          <button class="remove" mat-icon-button
-                  (click)="removeSchool(i)">
-            <mat-icon svgIcon="minus"></mat-icon>
-          </button>
-        </div>
       </div>
-      <div class="input-wrapper">
-        <app-input [input_label]="(i == 0 || innerWidth < 560) ? 'Approx. # of students' : ''"
-                   [width]="innerWidth < 560 ? '100px' : (showRemove() ? '150px' : '190px')"
+      <div class="input-wrapper approx-students-wrapper">
+        <app-input [input_label]="(i == 0 || mobile) ? 'Approx. # of students' : ''"
+                   [width]="getApproxInputWidth()"
                    [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
                    tabAttentive="true"
                    placeholder="1656"
@@ -73,7 +68,7 @@
                    [controlName]="school.controls.population"></app-input>
       </div>
     </ng-container>
-    <div class="remove-wrapper" *ngIf="showRemove() && innerWidth >= 560" [style.padding-top]="i == 0 ? '20px' : '2px'">
+    <div class="remove-wrapper" *ngIf="showRemove()" [style.padding-top]="mobile ? '0' : (i == 0 ? '20px' : '2px')">
       <button class="remove" mat-icon-button
               (click)="removeSchool(i)">
         <mat-icon svgIcon="minus"></mat-icon>
