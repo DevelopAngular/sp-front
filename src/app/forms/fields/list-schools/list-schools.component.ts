@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Input, Output, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -24,6 +24,7 @@ export class ListSchoolsComponent implements OnInit {
 
   inputCount: number = 1;
   innerWidth: number;
+  mobile: boolean;
 
   // Search Variables
   private placePredictionService;
@@ -46,6 +47,7 @@ export class ListSchoolsComponent implements OnInit {
   ngOnInit(): void {
     this.addSchool();
     this.innerWidth = window.innerWidth;
+    this.mobile = this.innerWidth < 560;
   }
 
   get schools(): FormArray {
@@ -98,9 +100,9 @@ export class ListSchoolsComponent implements OnInit {
         } else {
           this.searchInfo[i]['searchSchools'] = res.map(school => {
             return {
-              "name": school['schoolName'],
-              "address": school['city'] + ', ' + school['state'],
-              "school_digger_id": school['schoolid']
+              'name': school['schoolName'],
+              'address': school['city'] + ', ' + school['state'],
+              'school_digger_id': school['schoolid']
             };
           });
           this.searchInfo[i]['showOptions'] = true;
@@ -134,9 +136,26 @@ export class ListSchoolsComponent implements OnInit {
   }
 
   getSearchPosition(i) {
-    if (this.locationInputs === undefined)
+    if (this.locationInputs === undefined) {
       return 0;
+    }
     return this.locationInputs.toArray()[i].input.nativeElement.getBoundingClientRect().y + 60;
+  }
+
+  getSchoolInputWidth() {
+    if (!this.mobile) {
+      return '300px';
+    } else {
+      return '245px';
+    }
+  }
+
+  getApproxInputWidth() {
+    if (!this.mobile) {
+      return this.showRemove() ? '150px' : '190px';
+    } else {
+      return this.showRemove() ? '195px' : '245px';
+    }
   }
 
   @HostListener('window:resize', ['$event'])

@@ -21,6 +21,7 @@ export class QuoteRequestComponent implements OnInit {
   heightSet: boolean = false;
   topShadow: boolean = false;
   bottomShadow: boolean = false;
+  mobile: boolean;
 
   schoolCount: number = 1;
 
@@ -41,7 +42,7 @@ export class QuoteRequestComponent implements OnInit {
       schools: this.fb.array([])
     });
     this.hdyhau = this.fb.array([]);
-    this.submitted = this.getCookie('form-complete') == 'true';
+    this.mobile = window.innerWidth < 560;
   }
 
   ngAfterViewInit() {
@@ -69,7 +70,6 @@ export class QuoteRequestComponent implements OnInit {
       return;
     }
     this.submitted = true;
-    this.setCookie('form-complete', true, 'smartpass.app');
     let formData = this.quoteRequestForm.getRawValue();
 
     this.formService.saveQuoteRequest(
@@ -97,29 +97,12 @@ export class QuoteRequestComponent implements OnInit {
     this.schoolCount = count;
   }
 
-  getCookie(name) {
-    let cookieValues = document.cookie.split(';').map(
-      cookie => {
-        cookie = cookie.replace(/^\s+/g, '');
-        if (cookie.indexOf(name + '=') == 0)
-          return cookie.substring(name.length + 1, cookie.length);
-        return undefined;
-      }
-    ).filter(cookieValue => {
-      return cookieValue !== undefined;
-    });
-
-    if (cookieValues.length != 0)
-      return cookieValues[0];
-    return undefined;
-  }
-
-  setCookie(name, value, path) {
-    let date = new Date();
-    date.setTime(date.getTime() + 31 * 24 * 60 * 60 * 1000);
-    let expires = `expires=${date.toUTCString()}`;
-    let cpath = path ? `; path=${path}` : '';
-    document.cookie = `${name}=${value}; ${expires}${cpath}`;
+  getButtonWidth() {
+    if (!this.mobile) {
+      return '542px';
+    } else {
+      return '279px';
+    }
   }
 
 }

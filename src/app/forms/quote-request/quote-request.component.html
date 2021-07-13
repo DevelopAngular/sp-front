@@ -5,6 +5,7 @@
            [style.box-shadow]="topShadow ? '0px 7px 14px #FFFFFF inset' : null"></div>
       <div #mainForm
            id="main-form"
+           [style.padding-right]="(mobile && schoolCount > 1) ? '4px' : '10px'"
            (scroll)="onScroll($event)">
         <div class="row">
           <div class="app-input-wrapper">
@@ -59,7 +60,7 @@
         <app-gradient-button
           id="confirm"
           size="custom"
-          width="542px"
+          [width]="getButtonWidth()"
           minHeight="70px"
           (click)="confirm()"><span id="confirm-text">Request Quote</span>
         </app-gradient-button>

@@ -33,13 +33,29 @@
       justify-content: flex-start;
     }
 
-    .remove-wrapper {
-      padding-top: 22px;
+    .approx-students-wrapper {
+      display: inline-block;
+      width: min-content;
+      overflow: clip;
     }
 
-    .input-wrapper {
-      margin-bottom: 20px;
+    .remove-wrapper {
+      width: 40px;
+      height: 60px;
+      display: inline-flex;
+      padding: 0 8px;
+      float: right;
+      padding-bottom: 4px;
+      align-items: flex-end;
     }
+
+    .remove {
+      width: auto;
+    }
+  }
+
+  .search-autocomplete {
+    max-width: 250px;
   }
 }
 
@@ -67,7 +83,7 @@
   background-color: blue;
   background-color: white;
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.17);
-  height: 180px;
+  max-height: 180px;
   padding-top: 5px;
   display: block;
   border-radius: 5px;
