@@ -18,7 +18,7 @@ export class QuoteRequestComponent implements OnInit {
   hdyhau: FormArray;
   submitted: boolean = false;
   showErrors: boolean = false;
-  heightSet: boolean = false;
+  height: string;
   topShadow: boolean = false;
   bottomShadow: boolean = false;
   mobile: boolean;
@@ -46,8 +46,7 @@ export class QuoteRequestComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    let height = `${this.mainForm.nativeElement.offsetHeight}px`;
-    this.renderer2.setStyle(this.mainForm.nativeElement, "height", height);
+    this.height = `${this.mainForm.nativeElement.offsetHeight}px`;
   }
 
   @HostListener('scroll', ['$event'])
@@ -88,9 +87,10 @@ export class QuoteRequestComponent implements OnInit {
   }
 
   schoolCountChange(count) {
-    if (2 <= count)
+    if (2 <= count) {
       this.bottomShadow = true;
-    else {
+      this.renderer2.setStyle(this.mainForm.nativeElement, "height", this.height);
+    } else {
       this.topShadow = false;
       this.bottomShadow = false;
     }
