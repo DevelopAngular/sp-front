@@ -145,7 +145,10 @@
   justify-content: space-between;
 
   a {
-    @include textSize(14px, normal, $blue-gray)
+    @include textSize(14px, normal, $blue-gray);
+
+    display: block;
+    width: calc(100% - 20px);
     margin-left: 20px;
   }
 }
