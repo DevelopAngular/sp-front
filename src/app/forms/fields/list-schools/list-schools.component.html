@@ -37,6 +37,7 @@
                        (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
                        (pointerClickEvent)="backgroundColors[a] = '#F4F4F4'"
                        (click)="chooseSchool(school, i)"
+                       (ontouchend)="chooseSchool(school, i)"
                        [style.background-color]="backgroundColors[a]"
                        [style.color]="textColor(cell)">
                     <div>
@@ -50,7 +51,10 @@
                   </div>
                 </div>
                 <div class="search-options">
-                  <a (click)="searchInfo[i]['blockSearch'] = true">School not listed?</a>
+                  <a
+                    (click)="searchInfo[i]['blockSearch'] = true"
+                    (ontouchend)="searchInfo[i]['blockSearch'] = true"
+                  >School not listed?</a>
                 </div>
               </div>
             </div>
