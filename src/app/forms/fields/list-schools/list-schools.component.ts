@@ -139,7 +139,12 @@ export class ListSchoolsComponent implements OnInit {
     if (this.locationInputs === undefined) {
       return 0;
     }
-    return this.locationInputs.toArray()[i].input.nativeElement.getBoundingClientRect().y + 60;
+    let searchElement = this.locationInputs.toArray()[i].input
+    let searchPosition = searchElement.nativeElement.getBoundingClientRect().y;
+    if (this.mobile)
+      return searchPosition + 60;
+    else
+      return searchPosition + 60;
   }
 
   getSchoolInputWidth() {
@@ -156,6 +161,13 @@ export class ListSchoolsComponent implements OnInit {
     } else {
       return this.showRemove() ? '195px' : '245px';
     }
+  }
+
+  pointerDownEvent(school, i, a) {
+    this.backgroundColors[a] = '#F4F4F4';
+
+    if (this.mobile)
+      this.chooseSchool(school, i);
   }
 
   @HostListener('window:resize', ['$event'])

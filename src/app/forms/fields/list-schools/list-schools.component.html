@@ -34,10 +34,9 @@
                        (mouseenter)="backgroundColors[a] = '#F4F4F4'"
                        (mouseleave)="backgroundColors[a] = '#FFFFFF'"
                        appCrossPointerEventTarget
-                       (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
+                       (pointerDownEvent)="pointerDownEvent(school, i, a)"
                        (pointerClickEvent)="backgroundColors[a] = '#F4F4F4'"
                        (click)="chooseSchool(school, i)"
-                       (touchend)="chooseSchool(school, i)"
                        [style.background-color]="backgroundColors[a]"
                        [style.color]="textColor(cell)">
                     <div>
@@ -53,7 +52,6 @@
                 <div class="search-options">
                   <a
                     (click)="searchInfo[i]['blockSearch'] = true"
-                    (touchend)="searchInfo[i]['blockSearch'] = true"
                   >School not listed?</a>
                 </div>
               </div>
