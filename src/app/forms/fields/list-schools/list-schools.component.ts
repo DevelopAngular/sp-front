@@ -142,7 +142,7 @@ export class ListSchoolsComponent implements OnInit {
     let searchElement = this.locationInputs.toArray()[i].input
     let searchPosition = searchElement.nativeElement.getBoundingClientRect().y;
     if (this.mobile)
-      return searchPosition + 60;
+      return searchPosition + 160;
     else
       return searchPosition + 60;
   }
@@ -164,9 +164,9 @@ export class ListSchoolsComponent implements OnInit {
   }
 
   pointerDownEvent(school, i, a) {
-    this.backgroundColors[a] = '#F4F4F4';
-
-    if (this.mobile)
+    if (!this.mobile)
+      this.backgroundColors[a] = '#F4F4F4';
+    else
       this.chooseSchool(school, i);
   }
 
