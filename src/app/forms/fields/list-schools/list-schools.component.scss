@@ -88,6 +88,9 @@
   display: block;
   border-radius: 5px;
   transition: top 0.1s;
+  cursor: pointer;
+  -webkit-transform: translate3d(0, 0, 100px);
+  -webkit-backface-visibility: hidden;
 }
 
 .option-list {
@@ -102,7 +105,7 @@
     box-sizing: border-box;
     overflow: auto;
     max-height: 180px;
-    z-index: 10 !important;
+    z-index: 15 !important;
     background-color: white;
   }
 
@@ -143,6 +146,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  -webkit-transform: translate3d(0, 0, 100px);
+  -webkit-backface-visibility: hidden;
 
   a {
     @include textSize(14px, normal, $blue-gray);

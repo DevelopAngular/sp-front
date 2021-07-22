@@ -34,8 +34,9 @@
                        (mouseenter)="backgroundColors[a] = '#F4F4F4'"
                        (mouseleave)="backgroundColors[a] = '#FFFFFF'"
                        appCrossPointerEventTarget
-                       (pointerDownEvent)="pointerDownEvent(school, i, a)"
-                       (pointerClickEvent)="backgroundColors[a] = '#F4F4F4'"
+                       (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
+                       (pointerCancelEvent)="backgroundColors[a] = '#FFFFFF'"
+                       (pointerClickEvent)="mobileChooseSchool(a, school, i)"
                        (click)="chooseSchool(school, i)"
                        [style.background-color]="backgroundColors[a]"
                        [style.color]="textColor(cell)">
