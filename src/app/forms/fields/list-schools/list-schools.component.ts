@@ -124,6 +124,11 @@ export class ListSchoolsComponent implements OnInit {
     this.schools.at(i).get('school_digger_id').setValue(school.school_digger_id);
   }
 
+  mobileChooseSchool(a, school, i) {
+    this.backgroundColors[a] = '#FFFFFF';
+    this.chooseSchool(school, i);
+  }
+
   blur(i) {
     if (!this.searchInfo[i]['showOptions']) {
       return;
@@ -141,10 +146,7 @@ export class ListSchoolsComponent implements OnInit {
     }
     let searchElement = this.locationInputs.toArray()[i].input
     let searchPosition = searchElement.nativeElement.getBoundingClientRect().y;
-    if (this.mobile)
-      return searchPosition + 160;
-    else
-      return searchPosition + 60;
+    return searchPosition + 60;
   }
 
   getSchoolInputWidth() {
@@ -161,13 +163,6 @@ export class ListSchoolsComponent implements OnInit {
     } else {
       return this.showRemove() ? '195px' : '245px';
     }
-  }
-
-  pointerDownEvent(school, i, a) {
-    if (!this.mobile)
-      this.backgroundColors[a] = '#F4F4F4';
-    else
-      this.chooseSchool(school, i);
   }
 
   @HostListener('window:resize', ['$event'])
