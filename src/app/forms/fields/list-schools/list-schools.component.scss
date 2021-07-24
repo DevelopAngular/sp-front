@@ -73,10 +73,6 @@
   }
 }
 
-.search-autocomplete-wrapper {
-  position: relative;
-}
-
 .search-autocomplete {
   position: fixed;
   z-index: 100 !important;
@@ -89,8 +85,7 @@
   border-radius: 5px;
   transition: top 0.1s;
   cursor: pointer;
-  -webkit-transform: translate3d(0, 0, 100px);
-  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(100px);
 }
 
 .option-list {
@@ -146,8 +141,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  -webkit-transform: translate3d(0, 0, 100px);
-  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(100px);
 
   a {
     @include textSize(14px, normal, $blue-gray);

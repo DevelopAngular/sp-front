@@ -49,6 +49,6 @@ export class FormsService {
 
 
   addSchool(data) {
-    return this.http.post('https://smartpass.app/api/staging/v1/acquisition/addSchool', data);
+    return this.http.post(this.getUrl('v1/acquisition/addSchool'), data);
   }
 }

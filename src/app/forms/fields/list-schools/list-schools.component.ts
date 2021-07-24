@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, QueryList, Renderer2, ViewChildren} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -13,6 +13,8 @@ declare const window;
   styleUrls: ['./list-schools.component.scss']
 })
 export class ListSchoolsComponent implements OnInit {
+
+  @ViewChildren('searchAutocomplete') searchAutocompletes: QueryList<any>;
 
   @Input() form: FormGroup;
   @Input() startTabIndex: number = -1;
@@ -33,10 +35,12 @@ export class ListSchoolsComponent implements OnInit {
   ignoreNextUpdate: boolean = false;
   searchInfo: any[] = [];
 
-  constructor(private fb: FormBuilder,
-              private matIconRegistry: MatIconRegistry,
-              private domSanitizer: DomSanitizer,
-              private formService: FormsService
+  constructor(
+    private fb: FormBuilder,
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+    private formService: FormsService,
+    private renderer2: Renderer2
   ) {
     this.matIconRegistry.addSvgIcon(
       'minus',
@@ -48,6 +52,14 @@ export class ListSchoolsComponent implements OnInit {
     this.addSchool();
     this.innerWidth = window.innerWidth;
     this.mobile = this.innerWidth < 560;
+  }
+
+  ngAfterViewInit() {
+    if (this.mobile) {
+      this.renderer2.setStyle(document.body, 'background', '#f5f8ff');
+      this.renderer2.setStyle(document.body, '-webkit-overflow-scrolling', 'auto');
+      this.renderer2.setStyle(document.documentElement, '-webkit-overflow-scrolling', 'auto');
+    }
   }
 
   get schools(): FormArray {
@@ -144,7 +156,7 @@ export class ListSchoolsComponent implements OnInit {
     if (this.locationInputs === undefined) {
       return 0;
     }
-    let searchElement = this.locationInputs.toArray()[i].input
+    let searchElement = this.locationInputs.toArray()[i].input;
     let searchPosition = searchElement.nativeElement.getBoundingClientRect().y;
     return searchPosition + 60;
   }
