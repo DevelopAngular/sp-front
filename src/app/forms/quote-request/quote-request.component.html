@@ -62,7 +62,8 @@
           size="custom"
           [width]="getButtonWidth()"
           minHeight="70px"
-          (click)="confirm()"><span id="confirm-text">Request Quote</span>
+          (buttonClick)="confirm()"
+          ><span id="confirm-text">Request Quote</span>
         </app-gradient-button>
       </div>
     </form>
