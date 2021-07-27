@@ -2,8 +2,14 @@ import {createAction, props} from '@ngrx/store';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {ProfileMap} from '../../../models/ProfileMap';
 import {User} from '../../../models/User';
+import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadGroup';
+import {ProfilePicturesError} from '../../../models/ProfilePicturesError';
 
 const PPICRURES = 'Profile Pictures';
+
+export const createUploadGroup = createAction(`[${PPICRURES}] Create Upload Group`);
+export const createUploadGroupSuccess = createAction(`[${PPICRURES}] Create Upload Group Success`, props<{group: ProfilePicturesUploadGroup}>());
+export const createUploadGroupFailure = createAction(`[${PPICRURES}] Create Upload Group Failure`, props<{errorMessage: string}>());
 
 export const postProfilePictures = createAction(`[${PPICRURES}] Post Profile Pictures`, props<{pictures: File[], userIds: string[] | number[]}>());
 export const postProfilePicturesSuccess = createAction(`[${PPICRURES}] Post Profile Pictures Success`, props<{images: ProfilePicture[]}>());
@@ -19,6 +25,14 @@ export const mappingUserCollectionFailure = createAction(`[${PPICRURES}] Get Use
 export const uploadProfilePictures = createAction(`[${PPICRURES}] Upload Profile Pictures`, props<{students: User[], picturesData: {userId: number | string, pictureId: number | string}[]}>());
 export const uploadProfilePicturesSuccess = createAction(`[${PPICRURES}] Upload Profile Pictures Success`, props<{profiles: ProfileMap[], users: User[]}>());
 export const uploadProfilePicturesFailure = createAction(`[${PPICRURES}] Upload Profile Pictures Failure`, props<{errorMessage: string}>());
+
+export const putUploadErrors = createAction(`[${PPICRURES}] Put Upload Errors`, props<{errors: any}>());
+export const putUploadErrorsSuccess = createAction(`[${PPICRURES}] Put Upload Errors Success`, props<{errors: ProfilePicturesError[]}>());
+export const putUploadErrorsFailure = createAction(`[${PPICRURES}] Put Upload Errors Failure`, props<{errorMessage: string}>());
+
+export const getProfilePicturesUploadedGroups = createAction(`[${PPICRURES}] Get Uploaded Groups`);
+export const getProfilePicturesUploadedGroupsSuccess = createAction(`[${PPICRURES}] Get Uploaded Groups Success`, props<{groups: ProfilePicturesUploadGroup[]}>());
+export const getProfilePicturesUploadedGroupsFailure = createAction(`[${PPICRURES}] Get Uploaded Groups Failure`, props<{errorMessage: string}>());
 
 export const showErrorToast = createAction(`[${PPICRURES}] Show Error Toast`);
 

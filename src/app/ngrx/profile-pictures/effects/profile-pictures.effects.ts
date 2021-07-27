@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../services/user.service';
 import * as profilePicturesActions from '../actions';
-import {catchError, exhaustMap, map, switchMap, tap} from 'rxjs/operators';
+import {catchError, exhaustMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {ProfileMap} from '../../../models/ProfileMap';
@@ -10,9 +10,27 @@ import {User} from '../../../models/User';
 import {ToastService} from '../../../services/toast.service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../../app-state/app-state';
+import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadGroup';
+import {ProfilePicturesError} from '../../../models/ProfilePicturesError';
 
 @Injectable()
 export class ProfilePicturesEffects {
+
+  createUploadGroup$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.createUploadGroup),
+        switchMap(() => {
+          return this.userService.createUploadGroup()
+            .pipe(
+              map((group: ProfilePicturesUploadGroup) => {
+                return profilePicturesActions.createUploadGroupSuccess({group});
+              }),
+              catchError(error => of(profilePicturesActions.createUploadGroupFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
 
   postProfilePictures$ = createEffect(() => {
     return this.actions$
@@ -28,6 +46,7 @@ export class ProfilePicturesEffects {
                   return {...acc, [action.userIds[index]]: pic.id };
                 }, {});
                 return [
+                  profilePicturesActions.createUploadGroup(),
                   profilePicturesActions.changeProfilePictureLoader({percent: 5}),
                   profilePicturesActions.setProfilePictureToGoogle({
                     urls,
@@ -149,6 +168,49 @@ export class ProfilePicturesEffects {
         map((action: any) => {
           this.toastService.openToast({title: 'Error', subtitle: action.errorMessage, type: 'error'});
           return profilePicturesActions.showErrorToast();
+        })
+      );
+  });
+
+  putUploadErrors$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.putUploadErrors),
+        switchMap((action: any) => {
+          return this.userService.currentUploadedGroup$
+            .pipe(
+              take(1),
+              switchMap((uploadedGroup: ProfilePicturesUploadGroup) => {
+                const levels = action.errors.map((e) => 'error');
+                const messages = action.errors.map((e) => {
+                  return `${Object.keys(e)[0]}: ${e[Object.keys(e)[0]]}` + ' => ' + e.error;
+                });
+                return this.userService.putProfilePicturesErrors(uploadedGroup.id, levels, messages)
+                  .pipe(
+                    map((errors: ProfilePicturesError[]) => {
+                      return profilePicturesActions.putUploadErrorsSuccess({errors});
+                    }),
+                    catchError(error => of(profilePicturesActions.putUploadErrorsFailure({errorMessage: error.message})))
+                  );
+              })
+            );
+        })
+      );
+  });
+
+  getUploadedGroups$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.getProfilePicturesUploadedGroups),
+        switchMap((action) => {
+          return this.userService.getUploadedGroups()
+            .pipe(
+              map((groups: ProfilePicturesUploadGroup[]) => {
+                debugger;
+                return profilePicturesActions.getProfilePicturesUploadedGroupsSuccess({groups});
+              }),
+              catchError(error => of(profilePicturesActions.getProfilePicturesUploadedGroupsFailure({errorMessage: error.message})))
+            );
         })
       );
   });

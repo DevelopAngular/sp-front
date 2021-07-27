@@ -11,13 +11,16 @@ export const profilePicturesInitialState: IProfilePicturesState = adapter.getIni
   loaded: false,
   profilesMap: [],
   updatedProfiles: [],
-  loaderPercent: 0
+  loaderPercent: 0,
+  uploadGroups: [],
+  currentUploadGroup: null,
+  uploadErrors: []
 });
 
 const reducer = createReducer(
   profilePicturesInitialState,
   on(
-    profilePicturesActions.uploadProfilePictures, (state) => ({...state, loading: true, loaded: false})),
+    profilePicturesActions.postProfilePictures, (state) => ({...state, loading: true, loaded: false})),
   on(profilePicturesActions.postProfilePicturesSuccess, (state, {images}) => {
     return adapter.addAll(images, {...state});
   }),
@@ -26,6 +29,16 @@ const reducer = createReducer(
   }),
   on(profilePicturesActions.changeProfilePictureLoader, (state, {percent}) => {
     return { ...state, loaderPercent: percent };
+  }),
+  // on(profilePicturesActions.createUploadGroup, (state) => ({...state, currentUploadGroup: null})),
+  on(profilePicturesActions.createUploadGroupSuccess, (state, {group}) => {
+    return { ...state, uploadGroups: [...state.uploadGroups, group], currentUploadGroup: group };
+  }),
+  on(profilePicturesActions.putUploadErrorsSuccess, (state, {errors}) => {
+    return { ...state, uploadErrors: errors };
+  }),
+  on(profilePicturesActions.getProfilePicturesUploadedGroupsSuccess, (state, {groups}) => {
+    return { ...state, uploadGroups: groups };
   })
 );
 

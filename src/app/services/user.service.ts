@@ -92,14 +92,17 @@ import {getIntrosData} from '../ngrx/intros/state';
 import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
-import {postProfilePictures} from '../ngrx/profile-pictures/actions';
+import {getProfilePicturesUploadedGroups, postProfilePictures, putUploadErrors} from '../ngrx/profile-pictures/actions';
 import {
+  getCurrentUploadedGroup,
   getProfilePicturesLoaded,
   getProfilePicturesLoaderPercent,
   getProfilePicturesLoading,
-  getProfiles
+  getProfiles,
+  getUploadedGroups
 } from '../ngrx/profile-pictures/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
+import {ProfilePicturesUploadGroup} from '../models/ProfilePicturesUploadGroup';
 
 @Injectable({
   providedIn: 'root'
@@ -115,7 +118,7 @@ export class UserService implements OnDestroy {
   public representedUsers: Observable<RepresentedUser[]> = this.store.select(getRepresentedUsersCollections);
 
   /**
-   * Users from store
+   * Accounts from store
    */
   accounts = {
     allAccounts: this.store.select(getAllAccountsCollection),
@@ -187,21 +190,32 @@ export class UserService implements OnDestroy {
     _profile_assistant: this.store.select(getAddedAssistant)
   };
 
+  /**
+   * Current User
+   */
   user$: Observable<User> = this.store.select(getUserData);
   userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
   loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
 
+  /**
+  * Student Groups
+   */
   studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
   isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
   blockUserPage$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+  /**
+  * Profile Pictures
+   */
   profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
   profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
   profiles$: Observable<User[]> = this.store.select(getProfiles);
   profilePictureLoaderPercent$: Observable<number> = this.store.select(getProfilePicturesLoaderPercent);
   profilePicturesErrors$: Subject<{[id: string]: string, error: string}> = new Subject();
+  uploadedGroups$: Observable<ProfilePicturesUploadGroup[]> = this.store.select(getUploadedGroups);
+  currentUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getCurrentUploadedGroup);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
@@ -655,8 +669,13 @@ export class UserService implements OnDestroy {
     this.store.dispatch(clearRUsers());
   }
 
+  createUploadGroup() {
+    return this.http.post(`v1/file_upload_groups`);
+  }
+
   postProfilePicturesRequest(userIds: string[] | number[], pictures: File[]) {
     this.store.dispatch(postProfilePictures({pictures, userIds}));
+    return this.profiles$;
   }
 
   uploadProfilePictures(image_files, user_ids) {
@@ -684,5 +703,25 @@ export class UserService implements OnDestroy {
 
   updateTeacherLocations(teacher, locations, newLocations) {
     this.store.dispatch(updateTeacherLocations({teacher, locations, newLocations}));
+  }
+
+  putProfilePicturesErrorsRequest(errors) {
+    this.store.dispatch(putUploadErrors({errors}));
+  }
+
+  putProfilePicturesErrors(uploadedGroupId, levels: string[], messages: string[]) {
+    return this.http.put(`v1/file_upload_groups/${uploadedGroupId}/events`, {levels, messages});
+  }
+
+  getMissingProfilePictures() {
+    return this.http.get(`v1/users?has_picture=false`);
+  }
+
+  getUploadedGroupsRequest() {
+    this.store.dispatch(getProfilePicturesUploadedGroups());
+  }
+
+  getUploadedGroups() {
+    return this.http.get(`v1/file_upload_groups`);
   }
 }

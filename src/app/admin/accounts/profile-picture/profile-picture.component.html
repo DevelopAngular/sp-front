@@ -205,7 +205,7 @@
             <img [src]="'./assets/Warning (Orange).svg'" alt="">
             <div class="info-title">Missing Pictures</div>
           </div>
-          <div class="info">16 students don’t have profile pictures.</div>
+          <div class="info">{{ accountWithoutPicture.length }} students don’t have profile pictures.</div>
           <img class="info-icon" [src]="'./assets/Circle Download (Blue-Gray).svg'" alt="">
         </div>
       </div>
@@ -221,33 +221,6 @@
         </div>
       </div>
     </div>
-
-<!--    <div class="page" *ngIf="page === 3">-->
-<!--      <div class="ds-dialog-heading">Review Issues ({{ issues.length }})</div>-->
-<!--      <div class="view-issuer" *ngFor="let issuer of issues">-->
-<!--        <div class="error" *ngIf="issuer.fileNotListed">-->
-<!--          <span>{{ 'User ID: ' + issuer.fileNotListed.user_id }}</span><br>-->
-<!--          <span>- Image filename not listed</span>-->
-<!--        </div>-->
-<!--        <div class="error" *ngIf="issuer.noUserIdListed">-->
-<!--          <span>{{ 'Image filename: ' + issuer.noUserIdListed.file_name }}</span><br>-->
-<!--          <span>- User ID not listed</span>-->
-<!--        </div>-->
-<!--        <div class="error" *ngIf="issuer.noImgFound">-->
-<!--          <span>{{ 'User ID: ' + issuer.noImgFound.user_id + ', Image filename: ' + issuer.noImgFound.file_name }}</span><br>-->
-<!--          <span>- No image found</span>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <div class="page">-->
-<!--      <div class="imports-success" *ngIf="page === 4">-->
-<!--        <div class="success-content">-->
-<!--          <img class="slide-center" [src]="'./assets/emptyStates/Upload Success.svg'" alt="upload-file">-->
-<!--          <div class="count-accounts">{{ filesToDB.length }} Profile Pictures Added</div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
 
     <div class="footer" *ngIf="page !== 4">
       <mat-divider></mat-divider>

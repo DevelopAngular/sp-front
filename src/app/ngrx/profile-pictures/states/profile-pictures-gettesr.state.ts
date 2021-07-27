@@ -41,3 +41,13 @@ export const getProfilePicturesLoaderPercent = createSelector(
   getProfilePicturesState,
   (state: IProfilePicturesState) => state.loaderPercent
 );
+
+export const getCurrentUploadedGroup = createSelector(
+  getProfilePicturesState,
+  (state: IProfilePicturesState) => state.currentUploadGroup
+);
+
+export const getUploadedGroups = createSelector(
+  getProfilePicturesState,
+  (state: IProfilePicturesState) => state.uploadGroups
+);

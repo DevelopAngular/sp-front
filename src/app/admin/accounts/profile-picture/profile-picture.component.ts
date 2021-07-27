@@ -11,6 +11,7 @@ import {UserService} from '../../../services/user.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 import {ToastService} from '../../../services/toast.service';
+import {User} from '../../../models/User';
 
 @Component({
   selector: 'app-profile-picture',
@@ -127,6 +128,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     csv: { inProcess: false, complete: false, error: null }
   };
   picturesLoaderPercent$: Observable<number>;
+  accountWithoutPicture: User[] = [];
 
   issues = [];
   errorUpload: boolean;
@@ -206,6 +208,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
   nextPage() {
     this.page += 1;
+    debugger;
     if (this.page === 3) {
       this.errors = this.findIssues();
       const userIds = this.filesToDB.map(f => f.user_id);
@@ -214,14 +217,22 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         this.userService.postProfilePicturesRequest(
           userIds,
           files
-        );
+        ).pipe(
+          filter(profiles => !!profiles.length)
+        ).subscribe(r => {
+          this.userService.putProfilePicturesErrorsRequest(this.errors);
+        });
       } else {
         this.toastService.openToast({title: 'Error', subtitle: 'Please check if the data is correct', type: 'error'});
         this.page -= 1;
         this.clearData();
       }
-    } else if (this.page === 4) {
-
+    } else if (this.page === 5) {
+      this.userService.getMissingProfilePictures()
+        .subscribe((users: User[]) => {
+          this.accountWithoutPicture = users;
+      });
+      this.userService.getUploadedGroupsRequest();
     }
   }
 
