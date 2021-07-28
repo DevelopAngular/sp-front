@@ -14,4 +14,5 @@ export interface IProfilePicturesState extends EntityState<ProfilePicture> {
   uploadGroups: ProfilePicturesUploadGroup[];
   currentUploadGroup: ProfilePicturesUploadGroup;
   uploadErrors: ProfilePicturesError[];
+  missingProfilesPictures: User[];
 }

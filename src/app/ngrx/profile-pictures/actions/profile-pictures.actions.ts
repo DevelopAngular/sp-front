@@ -34,6 +34,10 @@ export const getProfilePicturesUploadedGroups = createAction(`[${PPICRURES}] Get
 export const getProfilePicturesUploadedGroupsSuccess = createAction(`[${PPICRURES}] Get Uploaded Groups Success`, props<{groups: ProfilePicturesUploadGroup[]}>());
 export const getProfilePicturesUploadedGroupsFailure = createAction(`[${PPICRURES}] Get Uploaded Groups Failure`, props<{errorMessage: string}>());
 
+export const getMissingProfilePictures = createAction(`[${PPICRURES}] Missing Profile Pictures`);
+export const getMissingProfilePicturesSuccess = createAction(`[${PPICRURES}] Missing Profile Pictures Success`, props<{profiles: User[]}>());
+export const getMissingProfilePicturesFailure = createAction(`[${PPICRURES}] Missing Profile Pictures Failure`, props<{errorMessage: string}>());
+
 export const showErrorToast = createAction(`[${PPICRURES}] Show Error Toast`);
 
 export const changeProfilePictureLoader = createAction(`[${PPICRURES}] Change Loader`, props<{percent: number}>());

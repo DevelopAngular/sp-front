@@ -200,24 +200,28 @@
             (buttonClick)="clearData(); page = 2"
           >New Upload</app-gradient-button>
         </div>
-        <div class="upload-info">
+        <div class="upload-info" *ngIf="accountsWithoutPictures$ | async as accountsWithoutPictures">
           <div style="display: flex; align-items: center">
             <img [src]="'./assets/Warning (Orange).svg'" alt="">
             <div class="info-title">Missing Pictures</div>
           </div>
-          <div class="info">{{ accountWithoutPicture.length }} students don’t have profile pictures.</div>
-          <img class="info-icon" [src]="'./assets/Circle Download (Blue-Gray).svg'" alt="">
+          <div class="info">
+            {{ accountsWithoutPictures.length }} accounts don’t have profile pictures.
+          </div>
+<!--          <img class="info-icon" [src]="'./assets/Circle Download (Blue-Gray).svg'" alt="">-->
+          <div class="info-icon">
+            <app-icon-button (clickEvent)="generateStudentsCsv(accountsWithoutPictures)" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
+          </div>
         </div>
       </div>
       <mat-divider></mat-divider>
       <div class="block">
         <div class="ds-dialog-title" style="margin-bottom: 18px">Upload History</div>
-        <div class="upload-info">
-          <div class="upload-title">Dec. 16, 2020 at 2:34 PM</div>
-          <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ allProfiles.length }} students</span></div>
-          <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ allProfiles.length }} students</span></div>
-          <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors</span></div>
-          <img class="info-icon" [src]="'./assets/Circle Download (Blue-Gray).svg'" alt="">
+        <div class="upload-info" *ngIf="lastUploadedGroup$ | async as lastUploadedGroup">
+          <div class="upload-title">{{ getUploadedGroupTime(lastUploadedGroup.created) }}</div>
+          <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ lastUploadedGroup.num_assigned_new }} students</span></div>
+          <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ lastUploadedGroup.num_assigned_update }} students</span></div>
+          <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ lastUploadedGroup.error_count }} errors</span></div>
         </div>
       </div>
     </div>

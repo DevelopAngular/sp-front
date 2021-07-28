@@ -92,17 +92,26 @@ import {getIntrosData} from '../ngrx/intros/state';
 import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
-import {getProfilePicturesUploadedGroups, postProfilePictures, putUploadErrors} from '../ngrx/profile-pictures/actions';
+import {
+  getMissingProfilePictures,
+  getProfilePicturesUploadedGroups,
+  postProfilePictures,
+  putUploadErrors
+} from '../ngrx/profile-pictures/actions';
 import {
   getCurrentUploadedGroup,
+  getLastUploadedGroup,
+  getMissingProfiles,
   getProfilePicturesLoaded,
   getProfilePicturesLoaderPercent,
   getProfilePicturesLoading,
   getProfiles,
-  getUploadedGroups
+  getUploadedGroups,
+  getUploadErrors
 } from '../ngrx/profile-pictures/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 import {ProfilePicturesUploadGroup} from '../models/ProfilePicturesUploadGroup';
+import {ProfilePicturesError} from '../models/ProfilePicturesError';
 
 @Injectable({
   providedIn: 'root'
@@ -216,6 +225,9 @@ export class UserService implements OnDestroy {
   profilePicturesErrors$: Subject<{[id: string]: string, error: string}> = new Subject();
   uploadedGroups$: Observable<ProfilePicturesUploadGroup[]> = this.store.select(getUploadedGroups);
   currentUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getCurrentUploadedGroup);
+  lastUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getLastUploadedGroup);
+  missingProfilePictures$: Observable<User[]> = this.store.select(getMissingProfiles);
+  profilePicturesUploadErrors$: Observable<ProfilePicturesError[]> = this.store.select(getUploadErrors);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
@@ -678,8 +690,8 @@ export class UserService implements OnDestroy {
     return this.profiles$;
   }
 
-  uploadProfilePictures(image_files, user_ids) {
-    return this.http.post(`v1/schools/${this.http.getSchool().id}/attach_profile_pictures`, {image_files, user_ids, commit: true});
+  uploadProfilePictures(image_files, user_ids, group_id) {
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/attach_profile_pictures`, {image_files, user_ids, group_id, commit: true});
   }
 
   bulkAddProfilePictures(files: File[]) {
@@ -713,15 +725,19 @@ export class UserService implements OnDestroy {
     return this.http.put(`v1/file_upload_groups/${uploadedGroupId}/events`, {levels, messages});
   }
 
-  getMissingProfilePictures() {
-    return this.http.get(`v1/users?has_picture=false`);
-  }
-
   getUploadedGroupsRequest() {
     this.store.dispatch(getProfilePicturesUploadedGroups());
   }
 
   getUploadedGroups() {
     return this.http.get(`v1/file_upload_groups`);
+  }
+
+  getMissingProfilePicturesRequest() {
+    this.store.dispatch(getMissingProfilePictures());
+  }
+
+  getMissingProfilePictures() {
+    return this.http.get(`v1/users?has_picture=false`);
   }
 }

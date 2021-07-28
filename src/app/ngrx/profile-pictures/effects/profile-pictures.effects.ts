@@ -144,16 +144,21 @@ export class ProfilePicturesEffects {
         ofType(profilePicturesActions.uploadProfilePictures),
         exhaustMap((action: any) => {
           if (action.picturesData.length) {
-            return this.userService.uploadProfilePictures(action.picturesData.map(d => d.pictureId), action.picturesData.map(d => d.userId))
-              .pipe(
-                switchMap(({attached_photos}: {attached_photos: ProfileMap[]}) => {
-                  return [
-                    profilePicturesActions.changeProfilePictureLoader({percent: 100}),
-                    profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos, users: action.students})
-                  ];
-                }),
-                catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
-              );
+            return this.userService.currentUploadedGroup$.pipe(
+              take(1),
+              switchMap((uploadedGroup: ProfilePicturesUploadGroup) => {
+                return this.userService.uploadProfilePictures(action.picturesData.map(d => d.pictureId), action.picturesData.map(d => d.userId), uploadedGroup.id)
+                  .pipe(
+                    switchMap(({attached_photos}: {attached_photos: ProfileMap[]}) => {
+                      return [
+                        profilePicturesActions.changeProfilePictureLoader({percent: 100}),
+                        profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos, users: action.students})
+                      ];
+                    }),
+                    catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
+                  );
+              })
+            );
           } else {
             return [profilePicturesActions.uploadProfilePicturesFailure({errorMessage: 'Please check if the data is correct'})];
           }
@@ -206,10 +211,25 @@ export class ProfilePicturesEffects {
           return this.userService.getUploadedGroups()
             .pipe(
               map((groups: ProfilePicturesUploadGroup[]) => {
-                debugger;
                 return profilePicturesActions.getProfilePicturesUploadedGroupsSuccess({groups});
               }),
               catchError(error => of(profilePicturesActions.getProfilePicturesUploadedGroupsFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  getMissingProfilePictures$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.getMissingProfilePictures),
+        switchMap((actions) => {
+          return this.userService.getMissingProfilePictures()
+            .pipe(
+              map((profiles: User[]) => {
+                return profilePicturesActions.getMissingProfilePicturesSuccess({profiles});
+              }),
+              catchError(error => of(profilePicturesActions.getMissingProfilePicturesFailure({errorMessage: error.message})))
             );
         })
       );

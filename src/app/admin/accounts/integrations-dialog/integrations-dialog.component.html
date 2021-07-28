@@ -82,12 +82,11 @@
         [icon]="'./assets/Folder.svg'"
         [title]="'Profile Pictures'"
         [style.padding]="'10px'"
-        [status]="'disconnect'"
-        [subtitle]="'Bulk upload profile pictures for your users. '"
+        [status]="isUploadedProfilePictures ? 'done' : 'disconnect'"
+        [subtitle]="isUploadedProfilePictures ? 'Bulk upload/overwrite account pictures.' : 'Bulk upload profile pictures for your users. '"
         [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
         (setUp)="openSettings($event,'profile_pictures')"
       ></app-integration-card>
-
     </div>
 
   </div>
@@ -99,5 +98,5 @@
   <app-g-suite-settings (backEvent)="back()"></app-g-suite-settings>
 </div>
 <div *ngIf="page === 2 && settingsData.action === 'profile_pictures'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-  <app-profile-picture (backEmit)="back()"></app-profile-picture>
+  <app-profile-picture [page]="isUploadedProfilePictures ? 5 : 2" (backEmit)="back()"></app-profile-picture>
 </div>

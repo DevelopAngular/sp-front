@@ -51,3 +51,18 @@ export const getUploadedGroups = createSelector(
   getProfilePicturesState,
   (state: IProfilePicturesState) => state.uploadGroups
 );
+
+export const getLastUploadedGroup = createSelector(
+  getUploadedGroups,
+  (state) => state[state.length - 1]
+);
+
+export const getMissingProfiles = createSelector(
+  getProfilePicturesState,
+  (state: IProfilePicturesState) => state.missingProfilesPictures
+);
+
+export const getUploadErrors = createSelector(
+  getProfilePicturesState,
+  (state: IProfilePicturesState) => state.uploadErrors
+);

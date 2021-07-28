@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
 import {forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
@@ -12,6 +12,9 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 import {ToastService} from '../../../services/toast.service';
 import {User} from '../../../models/User';
+import {ProfilePicturesError} from '../../../models/ProfilePicturesError';
+import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadGroup';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-profile-picture',
@@ -19,6 +22,8 @@ import {User} from '../../../models/User';
   styleUrls: ['./profile-picture.component.scss']
 })
 export class ProfilePictureComponent implements OnInit, OnDestroy {
+
+  @Input() page: number = 2;
 
   @Output() backEmit: EventEmitter<any> = new EventEmitter();
 
@@ -116,7 +121,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
   @ViewChild('fgf1') stop: ElementRef;
 
-  page: number = 2;
   form: FormGroup;
   selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
   selectedImgFiles: {file: File, file_name: string}[];
@@ -128,7 +132,9 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     csv: { inProcess: false, complete: false, error: null }
   };
   picturesLoaderPercent$: Observable<number>;
-  accountWithoutPicture: User[] = [];
+  accountsWithoutPictures$: Observable<User[]>;
+  uploadErrors$: Observable<ProfilePicturesError[]>;
+  lastUploadedGroup$: Observable<ProfilePicturesUploadGroup>;
 
   issues = [];
   errorUpload: boolean;
@@ -155,8 +161,14 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
       csvFile: new FormControl()
     });
     this.picturesLoaderPercent$ = this.userService.profilePictureLoaderPercent$;
+    this.accountsWithoutPictures$ = this.userService.missingProfilePictures$;
+    this.uploadErrors$ = this.userService.profilePicturesUploadErrors$;
+    this.lastUploadedGroup$ = this.userService.lastUploadedGroup$;
 
-    this.picturesLoaderPercent$.pipe(filter((v) => !!v && !!this.stop)).subscribe(res => {
+    this.picturesLoaderPercent$.pipe(
+      filter((v) => !!v && !!this.stop),
+      takeUntil(this.destroy$),
+    ).subscribe(res => {
       this.renderer.setAttribute(this.stop.nativeElement, 'offset', `${res}%`);
     });
 
@@ -193,6 +205,10 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.userService.profilePicturesErrors$.pipe(takeUntil(this.destroy$)).subscribe(er => {
       this.errors.push(er);
     });
+
+    if (this.page === 5) {
+      this.userService.getMissingProfilePicturesRequest();
+    }
   }
 
   ngOnDestroy() {
@@ -206,9 +222,12 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     }, {});
   }
 
+  getUploadedGroupTime(date: Date): string {
+    return moment(date).format('MMM. DD, YYYY') + ' at ' + moment(date).format('hh:mm A');
+  }
+
   nextPage() {
     this.page += 1;
-    debugger;
     if (this.page === 3) {
       this.errors = this.findIssues();
       const userIds = this.filesToDB.map(f => f.user_id);
@@ -228,10 +247,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         this.clearData();
       }
     } else if (this.page === 5) {
-      this.userService.getMissingProfilePictures()
-        .subscribe((users: User[]) => {
-          this.accountWithoutPicture = users;
-      });
+      this.userService.getMissingProfilePicturesRequest();
       this.userService.getUploadedGroupsRequest();
     }
   }
@@ -250,6 +266,13 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
   generateErrorsCsv() {
     this.xlsxService.generate(this.errors, 'Errors');
+  }
+
+  generateStudentsCsv(accounts: User[]) {
+    const normalizeAccounts = accounts.map(account => {
+      return { 'Name': account.display_name, 'Email': account.primary_email  };
+    });
+    this.xlsxService.generate(normalizeAccounts, 'Missing Pictures');
   }
 
   back() {

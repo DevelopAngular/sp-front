@@ -14,7 +14,8 @@ export const profilePicturesInitialState: IProfilePicturesState = adapter.getIni
   loaderPercent: 0,
   uploadGroups: [],
   currentUploadGroup: null,
-  uploadErrors: []
+  uploadErrors: [],
+  missingProfilesPictures: []
 });
 
 const reducer = createReducer(
@@ -39,6 +40,9 @@ const reducer = createReducer(
   }),
   on(profilePicturesActions.getProfilePicturesUploadedGroupsSuccess, (state, {groups}) => {
     return { ...state, uploadGroups: groups };
+  }),
+  on(profilePicturesActions.getMissingProfilePicturesSuccess, (state, {profiles}) => {
+    return { ...state, missingProfilesPictures: profiles };
   })
 );
 
