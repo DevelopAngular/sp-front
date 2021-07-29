@@ -208,6 +208,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
     if (this.page === 5) {
       this.userService.getMissingProfilePicturesRequest();
+      this.userService.getUploadedErrorsRequest();
     }
   }
 
@@ -275,23 +276,32 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.xlsxService.generate(normalizeAccounts, 'Missing Pictures');
   }
 
+  prepareErrorsToCsv(errors: ProfilePicturesError[]) {
+    const parseErrors = errors.map(error => {
+      const errorMessage = error.message.split('=>')[1].trim();
+      const userId = error.message.split(':')[1].split('=>')[0].trim();
+      return { 'User ID': userId, 'error': errorMessage };
+    });
+    this.xlsxService.generate(parseErrors, 'Errors');
+  }
+
   back() {
     this.backEmit.emit();
   }
 
   findIssues() {
     const errors = [];
-    this.selectedMapFiles.forEach(file => {
-      if (!file.file_name) {
-        errors.push({'User ID': file.user_id, 'error': 'Image filename not listed'});
-      } else if (!file.user_id) {
-        errors.push({'Image filename': file.file_name, 'error': 'User ID not listed'});
-      } else if (file.file_name && !this.selectedImgFiles[file.file_name]) {
-        errors.push({'User ID': file.user_id, 'error': 'No image found'});
+    for (let i = 0; i < this.selectedMapFiles.length; i++) {
+      if (!this.selectedMapFiles[i].file_name) {
+        errors.push({'User ID': this.selectedMapFiles[i].user_id, 'error': 'Image filename not listed'});
+      } else if (!this.selectedMapFiles[i].user_id) {
+        errors.push({'Image filename': this.selectedMapFiles[i].file_name, 'error': 'User ID not listed'});
+      } else if (this.selectedMapFiles[i].file_name && !this.selectedImgFiles[this.selectedMapFiles[i].file_name]) {
+        errors.push({'User ID': this.selectedMapFiles[i].user_id, 'error': 'No image found'});
       } else {
-        this.filesToDB.push({user_id: file.user_id, file: this.selectedImgFiles[file.file_name].file});
+        this.filesToDB.push({user_id: this.selectedMapFiles[i].user_id, file: this.selectedImgFiles[this.selectedMapFiles[i].file_name].file});
       }
-    });
+    }
     return errors;
   }
 

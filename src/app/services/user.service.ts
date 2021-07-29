@@ -94,7 +94,7 @@ import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-u
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {
   getMissingProfilePictures,
-  getProfilePicturesUploadedGroups,
+  getProfilePicturesUploadedGroups, getUploadedErrors,
   postProfilePictures,
   putUploadErrors
 } from '../ngrx/profile-pictures/actions';
@@ -710,7 +710,7 @@ export class UserService implements OnDestroy {
   }
 
   addProfilePicture(userId, file: File) {
-    return this.http.patch(`v1//users/${userId}/profile-picture`, {profile_picture: file});
+    return this.http.patch(`v1/users/${userId}/profile-picture`, {profile_picture: file});
   }
 
   updateTeacherLocations(teacher, locations, newLocations) {
@@ -739,5 +739,13 @@ export class UserService implements OnDestroy {
 
   getMissingProfilePictures() {
     return this.http.get(`v1/users?has_picture=false`);
+  }
+
+  getUploadedErrorsRequest() {
+    this.store.dispatch(getUploadedErrors());
+  }
+
+  getUploadedErrors(group_id) {
+    return this.http.get(`v1/file_upload_groups/${group_id}/events`);
   }
 }

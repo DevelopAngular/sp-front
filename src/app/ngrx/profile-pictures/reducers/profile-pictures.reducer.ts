@@ -36,13 +36,16 @@ const reducer = createReducer(
     return { ...state, uploadGroups: [...state.uploadGroups, group], currentUploadGroup: group };
   }),
   on(profilePicturesActions.putUploadErrorsSuccess, (state, {errors}) => {
-    return { ...state, uploadErrors: errors };
+    return { ...state, uploadErrors: [...state.uploadErrors, ...errors] };
   }),
   on(profilePicturesActions.getProfilePicturesUploadedGroupsSuccess, (state, {groups}) => {
     return { ...state, uploadGroups: groups };
   }),
   on(profilePicturesActions.getMissingProfilePicturesSuccess, (state, {profiles}) => {
     return { ...state, missingProfilesPictures: profiles };
+  }),
+  on(profilePicturesActions.getUploadedErrorsSuccess, (state, {errors}) => {
+    return { ...state, uploadErrors: errors };
   })
 );
 

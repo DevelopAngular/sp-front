@@ -404,8 +404,8 @@ export class ViewProfileComponent implements OnInit {
 
     ED.afterClosed().subscribe(({action, file}) => {
       if (action === 'add') {
+        debugger;
         this.userService.addProfilePicture(this.user.id, file).subscribe(r => {
-          debugger;
         });
       } else if (action === 'edit') {
         this.userService.addProfilePicture(this.user.id, file).subscribe(r => {

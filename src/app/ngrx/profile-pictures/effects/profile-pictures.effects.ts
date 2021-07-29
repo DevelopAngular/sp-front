@@ -235,6 +235,26 @@ export class ProfilePicturesEffects {
       );
   });
 
+  getUploadedErrors$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.getUploadedErrors),
+        exhaustMap((action) => {
+          return this.userService.lastUploadedGroup$.pipe(
+            exhaustMap((group) => {
+              return this.userService.getUploadedErrors(group.id)
+                .pipe(
+                  map((errors: ProfilePicturesError[]) => {
+                    return profilePicturesActions.getUploadedErrorsSuccess({errors});
+                  }),
+                  catchError(error => of(profilePicturesActions.getUploadedErrorsFailure({errorMessage: error.message})))
+                );
+            })
+          );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService,
