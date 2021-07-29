@@ -3,7 +3,7 @@ import {UserService} from '../../../services/user.service';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as userActions from '../actions';
 import * as accountsActions from '../../accounts/actions/accounts.actions';
-import {catchError, concatMap, exhaustMap, map} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, switchMap} from 'rxjs/operators';
 import {User} from '../../../models/User';
 import {of} from 'rxjs';
 
@@ -81,7 +81,21 @@ export class UserEffects {
       );
   });
 
-  // updateProfilePicture$ = createEffect(() => )
+  updateProfilePicture$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(userActions.updateUserPicture),
+        exhaustMap((action) => {
+          return this.userService.addProfilePicture(action.user.id, action.file)
+            .pipe(
+              map((user: User) => {
+                return userActions.updateUserPictureSuccess({user});
+              }),
+              catchError(error => of(userActions.updateUserPictureFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
 
   constructor(
     private actions$: Actions,

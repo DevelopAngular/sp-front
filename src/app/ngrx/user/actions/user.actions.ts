@@ -16,7 +16,7 @@ export const updateUserFailure = createAction(`[User] Update User Failure`, prop
 export const updateUserPin = createAction(`[User] Update User Pin`, props<{pin: string}>());
 export const updateUserPinSuccess = createAction(`[User] Update User Pin Success`, props<{pin: string}>());
 
-export const updateUserPicture = createAction(`[User] Update User Picture`, props<{file: File}>());
+export const updateUserPicture = createAction(`[User] Update User Picture`, props<{user: User, file: File}>());
 export const updateUserPictureSuccess = createAction(`[User] Update User Picture Success`, props<{user: User}>());
 export const updateUserPictureFailure = createAction(`[User] Update User Picture Failure`, props<{errorMessage: string}>());
 
