@@ -20,7 +20,7 @@ import {
   removeAccount,
   sortAccounts,
   updateAccountActivity,
-  updateAccountPermissions
+  updateAccountPermissions, updateAccountPicture
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection,
@@ -707,6 +707,10 @@ export class UserService implements OnDestroy {
         })
       };
     return this.httpClient.put(url, file, httpOptions);
+  }
+
+  addProfilePictureRequest(profile: User, role: string, file: File) {
+    this.store.dispatch(updateAccountPicture({profile, role, file}));
   }
 
   addProfilePicture(userId, file: File) {

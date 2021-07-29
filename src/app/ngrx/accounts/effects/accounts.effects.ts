@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
 import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {PostRoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
@@ -303,6 +303,30 @@ export class AccountsEffects {
            } else if (role === '_profile_assistant') {
              return nestedStates.sortAssistantAccounts({assistants: users, next: nextUrl, sortValue});
            }
+         })
+       );
+   });
+
+   updateAccountPicture$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.updateAccountPicture),
+         exhaustMap(({profile, role, file}) => {
+            return this.userService.addProfilePicture(profile.id, file)
+              .pipe(
+                map((user: User) => {
+                  if (role === '_profile_admin') {
+                    return nestedStates.updateAdminAccount({profile: user});
+                  } else if (role === '_profile_teacher') {
+                    return nestedStates.updateTeacherAccount({profile: user});
+                  } else if (role === '_profile_student') {
+                    return nestedStates.updateStudentAccount({profile: user});
+                  } else if (role === '_profile_assistant') {
+                    return nestedStates.updateAssistantAccount({profile: user});
+                  }
+                }),
+                catchError(error => of(accountsActions.updateAccountPictureFailure({errorMessage: error.message})))
+              );
          })
        );
    });

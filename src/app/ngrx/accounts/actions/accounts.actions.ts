@@ -31,3 +31,6 @@ export const sortAccounts = createAction('[Accounts] Sort Accounts', props<{role
 export const sortAccountsSuccess = createAction('[Accounts] Sort Accounts Success', props<{users: User[], role: string, next: string, sortValue: string}>());
 export const sortAccountsFailure = createAction('[Accounts] Sort Accounts Failure', props<{errorMessage: string}>());
 
+export const updateAccountPicture = createAction(`[Accounts] Update Account Picture`, props<{profile, role: string, file: File}>());
+export const updateAccountPictureFailure = createAction(`[Account] Update Account Picture Failure`, props<{errorMessage: string}>());
+

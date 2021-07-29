@@ -241,6 +241,7 @@ export class ProfilePicturesEffects {
         ofType(profilePicturesActions.getUploadedErrors),
         exhaustMap((action) => {
           return this.userService.lastUploadedGroup$.pipe(
+            take(1),
             exhaustMap((group) => {
               return this.userService.getUploadedErrors(group.id)
                 .pipe(
