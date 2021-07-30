@@ -13,7 +13,7 @@ import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
   addUserToProfile,
-  bulkAddAccounts,
+  bulkAddAccounts, clearCurrentUpdatedAccount,
   getAccounts,
   getMoreAccounts,
   postAccounts,
@@ -36,7 +36,7 @@ import {
   getAdminsAccountsEntities,
   getAdminsCollections,
   getAdminSort,
-  getCountAdmins,
+  getCountAdmins, getCurrentUpdatedAdmin,
   getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
   getLoadingAdminsAccounts,
@@ -44,7 +44,7 @@ import {
 } from '../ngrx/accounts/nested-states/admins/states/admins.getters.state';
 import {
   getAddedTeacher,
-  getCountTeachers,
+  getCountTeachers, getCurrentUpdatedTeacher,
   getLastAddedTeachers,
   getLoadedTeachers,
   getLoadingTeachers,
@@ -58,7 +58,7 @@ import {
   getAssistantsAccountsCollection,
   getAssistantsAccountsEntities,
   getAssistantSort,
-  getCountAssistants,
+  getCountAssistants, getCurrentUpdatedAssistant,
   getLastAddedAssistants,
   getLoadedAssistants,
   getLoadingAssistants,
@@ -66,7 +66,7 @@ import {
 } from '../ngrx/accounts/nested-states/assistants/states';
 import {
   getAddedStudent,
-  getCountStudents,
+  getCountStudents, getCurrentUpdatedStudent,
   getLastAddedStudents,
   getLoadedStudents,
   getLoadingStudents,
@@ -197,6 +197,13 @@ export class UserService implements OnDestroy {
     _profile_teacher: this.store.select(getAddedTeacher),
     _profile_student: this.store.select(getAddedStudent),
     _profile_assistant: this.store.select(getAddedAssistant)
+  };
+
+  currentUpdatedAccount$ = {
+    _profile_admin: this.store.select(getCurrentUpdatedAdmin),
+    _profile_teacher: this.store.select(getCurrentUpdatedTeacher),
+    _profile_student: this.store.select(getCurrentUpdatedStudent),
+    _profile_assistant: this.store.select(getCurrentUpdatedAssistant)
   };
 
   /**
@@ -690,8 +697,9 @@ export class UserService implements OnDestroy {
     return this.profiles$;
   }
 
-  uploadProfilePictures(image_files, user_ids, group_id) {
-    return this.http.post(`v1/schools/${this.http.getSchool().id}/attach_profile_pictures`, {image_files, user_ids, group_id, commit: true});
+  uploadProfilePictures(image_files, user_ids, group_id?) {
+    const data = group_id ? {image_files, user_ids, group_id, commit: true} : {image_files, user_ids, commit: true};
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/attach_profile_pictures`, data);
   }
 
   bulkAddProfilePictures(files: File[]) {
@@ -751,5 +759,9 @@ export class UserService implements OnDestroy {
 
   getUploadedErrors(group_id) {
     return this.http.get(`v1/file_upload_groups/${group_id}/events`);
+  }
+
+  clearCurrentUpdatedAccounts() {
+    this.store.dispatch(clearCurrentUpdatedAccount());
   }
 }

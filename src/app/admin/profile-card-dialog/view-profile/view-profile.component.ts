@@ -11,7 +11,7 @@ import {UserService} from '../../../services/user.service';
 import {LocationsService} from '../../../services/locations.service';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
 import {cloneDeep, differenceBy, isEqual} from 'lodash';
-import {filter, mapTo} from 'rxjs/operators';
+import {filter, mapTo, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {ProfileCardDialogComponent} from '../profile-card-dialog.component';
 import {StatusPopupComponent} from '../status-popup/status-popup.component';
 import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
@@ -242,6 +242,14 @@ export class ViewProfileComponent implements OnInit {
     this.dialogRef.backdropClick().subscribe((evt) => {
       this.back();
     });
+
+    // this.userService.currentUpdatedAccount$[this.data.role]
+    //   .pipe(
+    //     take(1),
+    //     filter(r => !!r))
+    //   .subscribe(user => {
+    //   this.user = User.fromJSON(user);
+    // });
   }
 
   getUserRole(role: string) {
@@ -402,13 +410,25 @@ export class ViewProfileComponent implements OnInit {
       data: { 'trigger': event.currentTarget, user: this.user }
     });
 
-    ED.afterClosed().subscribe(({action, file}) => {
-      if (action === 'add') {
-        this.userService.addProfilePictureRequest(this.user, this.data.role,  file);
-      } else if (action === 'edit') {
-        this.userService.addProfilePictureRequest(this.user, this.data.role, file);
-      }
-    });
+    ED.afterClosed()
+      .pipe(
+        filter(r => !!r),
+        tap(({action, file}) => {
+          if (action === 'add') {
+            this.userService.addProfilePictureRequest(this.user, this.data.role,  file);
+          } else if (action === 'edit') {
+            this.userService.addProfilePictureRequest(this.user, this.data.role, file);
+          }
+        }),
+        switchMap(() => {
+          return this.userService.currentUpdatedAccount$[this.data.role]
+            .pipe(filter(res => !!res));
+        }),
+        tap((user => {
+          this.user = User.fromJSON(user);
+          this.userService.clearCurrentUpdatedAccounts();
+        }))
+      ).subscribe();
   }
 
   save() {

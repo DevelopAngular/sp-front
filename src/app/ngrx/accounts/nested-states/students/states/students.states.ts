@@ -8,4 +8,5 @@ export interface StudentsStates extends EntityState<User> {
   nextRequest: string;
   sortValue: string;
   addedUser: User;
+  currentUpdatedAccount: User;
 }

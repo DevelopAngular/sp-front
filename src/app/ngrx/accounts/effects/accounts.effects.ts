@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
 import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, mapTo, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {PostRoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
@@ -11,6 +11,8 @@ import {User} from '../../../models/User';
 import {forkJoin, of} from 'rxjs';
 import {openToastAction} from '../../toast/actions';
 import {Toast} from '../../../models/Toast';
+import {ProfilePicture} from '../../../models/ProfilePicture';
+import {ProfileMap} from '../../../models/ProfileMap';
 
 @Injectable()
 export class AccountsEffects {
@@ -312,8 +314,18 @@ export class AccountsEffects {
        .pipe(
          ofType(accountsActions.updateAccountPicture),
          exhaustMap(({profile, role, file}) => {
-            return this.userService.addProfilePicture(profile.id, file)
+            return this.userService.bulkAddProfilePictures([file])
               .pipe(
+                switchMap((images: ProfilePicture[]) => {
+                  return this.userService.setProfilePictureToGoogle(images[0].upload_url, file, images[0].content_type)
+                    .pipe(mapTo(images[0]));
+                }),
+                switchMap((image) => {
+                  return this.userService.uploadProfilePictures([+image.id], [profile.id]);
+                }),
+                map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
+                  return { ...profile, profile_picture: attached_photos[0].photo_url};
+                }),
                 map((user: User) => {
                   if (role === '_profile_admin') {
                     return nestedStates.updateAdminAccount({profile: user});
@@ -327,6 +339,21 @@ export class AccountsEffects {
                 }),
                 catchError(error => of(accountsActions.updateAccountPictureFailure({errorMessage: error.message})))
               );
+         })
+       );
+   });
+
+   clearCurrentUpdated$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.clearCurrentUpdatedAccount),
+         switchMap(() => {
+           return [
+             nestedStates.clearCurrentUpdatedStudent(),
+             nestedStates.clearCurrentUpdatedTeacher(),
+             nestedStates.clearCurrentUpdatedAdmin(),
+             nestedStates.clearCurrentUpdatedAssistant()
+           ];
          })
        );
    });

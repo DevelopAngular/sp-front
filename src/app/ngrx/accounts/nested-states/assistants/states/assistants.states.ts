@@ -8,5 +8,6 @@ export interface AssistantsStates extends EntityState<User> {
   lastAddedAssistants: User[];
   sortValue: string;
   addedUser: User;
+  currentUpdatedAccount: User;
 }
 

@@ -54,5 +54,7 @@ export const bulkAddAssistantAccounts = createAction(`[${ASSISTANTS}] Bulk Add A
 export const sortAssistantAccounts = createAction(`[${ASSISTANTS}] Sort Assistant Accounts`, props<{assistants: User[], next: string, sortValue: string}>());
 export const sortAssistantAccountsSuccess = createAction(`[${ASSISTANTS}] Sort Assistant Accounts Success`, props<{assistants: User[], next: string, sortValue: string}>());
 
+export const clearCurrentUpdatedAssistant = createAction(`[${ASSISTANTS}] Clear Current Updated Assistant`);
+
 
 

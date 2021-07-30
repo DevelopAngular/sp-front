@@ -8,5 +8,6 @@ export interface TeachersStates extends EntityState<User> {
   lastAddedTeachers: User[];
   sortValue: string;
   addedUser: User;
+  currentUpdatedAccount: User;
 }
 
