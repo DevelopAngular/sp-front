@@ -45,6 +45,7 @@ export class PredemoComponent implements OnInit {
         this.completedHdyhau = res['hdyhau'];
         if (this.completedSchools) {
           this.predemoForm.removeControl('schools');
+          this.submitted = true;
         }
         if (this.completedHdyhau) {
           this.predemoForm.removeControl('hdyhau');
