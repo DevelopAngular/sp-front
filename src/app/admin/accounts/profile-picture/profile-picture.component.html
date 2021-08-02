@@ -50,32 +50,7 @@
     <div class="page" [style.padding]="'30px 25px 0 20px'" *ngIf="page === 2">
       <div class="step-wrapper">
         <div class="step-container">
-          <div class="step-number" [ngClass]="{selected: uploadingProgress.images.complete}">1</div>
-          <div class="step">
-            <div class="ds-dialog-heading">Add profile picture files</div>
-            <div class="description">
-              Supported image types: JPEG, PNG <br/>
-              You can also upload a zip file that contains the images.
-            </div>
-          </div>
-        </div>
-        <div class="button">
-          <app-gradient-button
-            [gradient]="!uploadingProgress.images.inProcess && !uploadingProgress.images.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'"
-            [hoverColor]="'#7F879D'"
-            [leftIcon]="'./assets/Zip (White).svg'"
-            (buttonClick)="zip.click()"
-          >
-            <mat-spinner *ngIf="uploadingProgress.images.inProcess; else complete" [color]="'warn'" [diameter]="30"></mat-spinner>
-            <ng-template #complete>{{ uploadingProgress.images.inProcess || uploadingProgress.images.complete ? uploadingProgress.images.inProcess ? 'Uploading' : imagesLength + ' images selected' : 'Choose files' }}</ng-template>
-          </app-gradient-button>
-          <input type="file" multiple [formControl]="form.get('images')"  #zip style="display: none"/>
-        </div>
-      </div>
-
-      <div class="step-wrapper">
-        <div class="step-container">
-          <div class="step-number" [ngClass]="{selected: uploadingProgress.csv.complete}">2</div>
+          <div class="step-number" [ngClass]="{selected: uploadingProgress.csv.complete}">1</div>
           <div class="step">
             <div class="ds-dialog-heading">Add map file</div>
             <div class="description">
@@ -111,6 +86,31 @@
         </div>
       </div>
 
+      <div class="step-wrapper">
+        <div class="step-container">
+          <div class="step-number" [ngClass]="{selected: uploadingProgress.images.complete}">2</div>
+          <div class="step">
+            <div class="ds-dialog-heading">Add profile picture files</div>
+            <div class="description">
+              Supported image types: JPEG, PNG <br/>
+              You can also upload a zip file that contains the images.
+            </div>
+          </div>
+        </div>
+        <div class="button">
+          <app-gradient-button
+            [gradient]="!uploadingProgress.images.inProcess && !uploadingProgress.images.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'"
+            [hoverColor]="'#7F879D'"
+            [leftIcon]="'./assets/Zip (White).svg'"
+            (buttonClick)="zip.click()"
+          >
+            <mat-spinner *ngIf="uploadingProgress.images.inProcess; else complete" [color]="'warn'" [diameter]="30"></mat-spinner>
+            <ng-template #complete>{{ uploadingProgress.images.inProcess || uploadingProgress.images.complete ? uploadingProgress.images.inProcess ? 'Uploading' : imagesLength + ' images selected' : 'Choose files' }}</ng-template>
+          </app-gradient-button>
+          <input type="file" multiple [formControl]="form.get('images')"  #zip style="display: none"/>
+        </div>
+      </div>
+
     </div>
 
     <div class="page" *ngIf="page === 3">
@@ -134,8 +134,8 @@
     <div class="page" *ngIf="page === 4">
       <div class="upload-info">
         <div class="upload-title">Upload complete</div>
-        <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ allProfiles.length }} students</span></div>
-        <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ allProfiles.length }} students</span></div>
+        <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ allProfiles.length }} accounts</span></div>
+        <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ allProfiles.length }} accounts</span></div>
         <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <span *ngIf="errors.length" (click)="generateErrorsCsv()" style="color: #E32C66; cursor: pointer;">[Download]</span></span></div>
       </div>
 
@@ -204,8 +204,8 @@
         <div class="ds-dialog-title" style="margin-bottom: 18px">Upload History</div>
         <div class="upload-info" *ngIf="lastUploadedGroup$ | async as lastUploadedGroup">
           <div class="upload-title">{{ getUploadedGroupTime(lastUploadedGroup.created) }}</div>
-          <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ lastUploadedGroup.num_assigned_new }} students</span></div>
-          <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ lastUploadedGroup.num_assigned_update }} students</span></div>
+          <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ lastUploadedGroup.num_assigned_new }} accounts</span></div>
+          <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ lastUploadedGroup.num_assigned_update }} accounts</span></div>
           <div class="info"><span style="font-weight: bold">Errors: </span><span *ngIf="uploadErrors$ | async as uploadErrors">{{ lastUploadedGroup.error_count }} errors <span (click)="prepareErrorsToCsv(uploadErrors)" style="color: #E32C66; cursor: pointer;">[Download]</span></span></div>
         </div>
       </div>

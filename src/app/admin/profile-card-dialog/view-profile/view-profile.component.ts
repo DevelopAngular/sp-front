@@ -102,6 +102,8 @@ export class ViewProfileComponent implements OnInit {
   teacherRooms: Location[];
   teacherRoomsInitialState: Location[];
 
+  loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
     private matDialog: MatDialog,
@@ -117,8 +119,7 @@ export class ViewProfileComponent implements OnInit {
     if (
       this.userRoles.find(role => role.role === 'Admin') &&
       this.userRoles.find(role => role.role === 'Teacher') ||
-      this.userRoles.find(role => role.role === 'Student'))
-    {
+      this.userRoles.find(role => role.role === 'Student')) {
       return false;
     }
     return true;
@@ -242,14 +243,6 @@ export class ViewProfileComponent implements OnInit {
     this.dialogRef.backdropClick().subscribe((evt) => {
       this.back();
     });
-
-    // this.userService.currentUpdatedAccount$[this.data.role]
-    //   .pipe(
-    //     take(1),
-    //     filter(r => !!r))
-    //   .subscribe(user => {
-    //   this.user = User.fromJSON(user);
-    // });
   }
 
   getUserRole(role: string) {
@@ -414,6 +407,7 @@ export class ViewProfileComponent implements OnInit {
       .pipe(
         filter(r => !!r),
         tap(({action, file}) => {
+          this.loadingProfilePicture.next(true);
           if (action === 'add') {
             this.userService.addProfilePictureRequest(this.user, this.data.role,  file);
           } else if (action === 'edit') {
@@ -427,6 +421,7 @@ export class ViewProfileComponent implements OnInit {
         tap((user => {
           this.user = User.fromJSON(user);
           this.userService.clearCurrentUpdatedAccounts();
+          this.loadingProfilePicture.next(false);
         }))
       ).subscribe();
   }
@@ -440,6 +435,10 @@ export class ViewProfileComponent implements OnInit {
       });
       this.close.emit(true);
     });
+  }
+
+  deleteAvatar() {
+
   }
 
 }
