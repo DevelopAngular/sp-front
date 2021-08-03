@@ -22,6 +22,7 @@ export class QuoteRequestComponent implements OnInit {
   topShadow: boolean = false;
   bottomShadow: boolean = false;
   mobile: boolean;
+  otherUpdateSpeedBump = 0;
 
   schoolCount: number = 1;
 
@@ -78,11 +79,13 @@ export class QuoteRequestComponent implements OnInit {
       let recordId = res['recordId'];
       this.hdyhau.valueChanges.subscribe(data => {
         data = data.filter(element => element && element.length > 0);
-        if (data.length != 0)
+        if (data.length != 0 && this.otherUpdateSpeedBump + 200 < new Date().getTime()) {
           this.formService.saveHdyhau(recordId, data)
             .subscribe(res => {
               console.log(res);
             });
+          this.otherUpdateSpeedBump = new Date().getTime();
+        }
       });
       this.googleAnalytics.emitEvent('quote_request_submit', {});
     });
