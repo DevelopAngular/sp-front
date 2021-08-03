@@ -142,6 +142,16 @@
         @include textSize(24px, bold);
         text-align: center;
       }
+
+    }
+
+    span {
+      @include textSize(12px, normal, $blue-gray);
+
+      display: block;
+      padding-bottom: 20px;
+      width: 100%;
+      text-align: center;
     }
 
     #button-div {
