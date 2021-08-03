@@ -1,8 +1,8 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
-import {catchError, filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {combineLatest, forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
+import {catchError, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
 import {XlsxService} from '../../../services/xlsx.service';
@@ -135,6 +135,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   accountsWithoutPictures$: Observable<User[]>;
   uploadErrors$: Observable<ProfilePicturesError[]>;
   lastUploadedGroup$: Observable<ProfilePicturesUploadGroup>;
+  uploadedGroups$: Observable<ProfilePicturesUploadGroup[]>;
 
   issues = [];
   errorUpload: boolean;
@@ -164,6 +165,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.accountsWithoutPictures$ = this.userService.missingProfilePictures$;
     this.uploadErrors$ = this.userService.profilePicturesUploadErrors$;
     this.lastUploadedGroup$ = this.userService.lastUploadedGroup$;
+    this.uploadedGroups$ = this.userService.uploadedGroups$;
 
     this.picturesLoaderPercent$.pipe(
       filter((v) => !!v && !!this.stop),
@@ -171,6 +173,19 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     ).subscribe(res => {
       this.renderer.setAttribute(this.stop.nativeElement, 'offset', `${res}%`);
     });
+
+    // this.uploadHistory$ = combineLatest(
+    //   this.uploadErrors$.pipe(filter(res => !!res.length)),
+    //   this.uploadedGroups$.pipe(filter(res => !!res.length))
+    // ).pipe(
+    //   map(([errors, groups]) => {
+    //     const history_date = this.getUploadedGroupTime(groups[groups.length - 1].created);
+    //     const groups_info = groups.reduce((acc, group) => {
+    //       return { new: acc.new + group.num_assigned_new, updated: acc.updated + group.num_assigned_update };
+    //     }, {new: 0, updated: 0});
+    //     return { history_date, groups_info };
+    //   })
+    // );
 
     this.userService.profilePicturesLoaded$
       .pipe(
@@ -208,7 +223,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
     if (this.page === 5) {
       this.userService.getMissingProfilePicturesRequest();
-      this.userService.getUploadedErrorsRequest();
     }
   }
 
@@ -276,13 +290,20 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.xlsxService.generate(normalizeAccounts, 'Missing Pictures');
   }
 
-  prepareErrorsToCsv(errors: ProfilePicturesError[]) {
-    const parseErrors = errors.map(error => {
-      const errorMessage = error.message.split('=>')[1].trim();
-      const userId = error.message.split(':')[1].split('=>')[0].trim();
-      return { 'User ID': userId, 'error': errorMessage };
-    });
-    this.xlsxService.generate(parseErrors, 'Errors');
+  prepareErrorsToCsv(group) {
+    this.userService.getUploadedErrorsRequest(group.id).pipe(
+      filter(res => !!res.length),
+      take(1),
+      tap(errors => {
+        const parseErrors = errors.map(error => {
+          const errorMessage = error.message.split('=>')[1].trim();
+          const userId = error.message.split(':')[1].split('=>')[0].trim();
+          return { 'User ID': userId, 'error': errorMessage };
+        });
+        this.xlsxService.generate(parseErrors, 'Errors');
+        this.userService.clearProfilePicturesErrors();
+      })
+    ).subscribe();
   }
 
   back() {

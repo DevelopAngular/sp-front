@@ -240,18 +240,13 @@ export class ProfilePicturesEffects {
       .pipe(
         ofType(profilePicturesActions.getUploadedErrors),
         exhaustMap((action) => {
-          return this.userService.lastUploadedGroup$.pipe(
-            take(1),
-            exhaustMap((group) => {
-              return this.userService.getUploadedErrors(group.id)
-                .pipe(
-                  map((errors: ProfilePicturesError[]) => {
-                    return profilePicturesActions.getUploadedErrorsSuccess({errors});
-                  }),
-                  catchError(error => of(profilePicturesActions.getUploadedErrorsFailure({errorMessage: error.message})))
-                );
-            })
-          );
+          return this.userService.getUploadedErrors(action.group_id)
+            .pipe(
+              map((errors: ProfilePicturesError[]) => {
+                return profilePicturesActions.getUploadedErrorsSuccess({errors});
+              }),
+              catchError(error => of(profilePicturesActions.getUploadedErrorsFailure({errorMessage: error.message})))
+            );
         })
       );
   });

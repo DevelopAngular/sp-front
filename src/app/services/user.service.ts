@@ -93,6 +93,7 @@ import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {
+  clearProfilePicturesUploadErrors,
   getMissingProfilePictures,
   getProfilePicturesUploadedGroups, getUploadedErrors,
   postProfilePictures,
@@ -753,12 +754,17 @@ export class UserService implements OnDestroy {
     return this.http.get(`v1/users?has_picture=false`);
   }
 
-  getUploadedErrorsRequest() {
-    this.store.dispatch(getUploadedErrors());
+  getUploadedErrorsRequest(group_id) {
+    this.store.dispatch(getUploadedErrors({group_id}));
+    return this.profilePicturesUploadErrors$
   }
 
   getUploadedErrors(group_id) {
     return this.http.get(`v1/file_upload_groups/${group_id}/events`);
+  }
+
+  clearProfilePicturesErrors() {
+    this.store.dispatch(clearProfilePicturesUploadErrors());
   }
 
   clearCurrentUpdatedAccounts() {

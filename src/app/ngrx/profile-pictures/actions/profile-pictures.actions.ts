@@ -26,13 +26,15 @@ export const uploadProfilePictures = createAction(`[${PPICRURES}] Upload Profile
 export const uploadProfilePicturesSuccess = createAction(`[${PPICRURES}] Upload Profile Pictures Success`, props<{profiles: ProfileMap[], users: User[]}>());
 export const uploadProfilePicturesFailure = createAction(`[${PPICRURES}] Upload Profile Pictures Failure`, props<{errorMessage: string}>());
 
-export const getUploadedErrors = createAction(`[${PPICRURES}] Get Uploaded Errors`);
+export const getUploadedErrors = createAction(`[${PPICRURES}] Get Uploaded Errors`, props<{group_id: number | string}>());
 export const getUploadedErrorsSuccess = createAction(`[${PPICRURES}] Get Uploaded Errors Success`, props<{errors: ProfilePicturesError[]}>());
 export const getUploadedErrorsFailure = createAction(`[${PPICRURES}] Get Uploaded Errors Failure`, props<{errorMessage: string}>());
 
 export const putUploadErrors = createAction(`[${PPICRURES}] Put Upload Errors`, props<{errors: any}>());
 export const putUploadErrorsSuccess = createAction(`[${PPICRURES}] Put Upload Errors Success`, props<{errors: ProfilePicturesError[]}>());
 export const putUploadErrorsFailure = createAction(`[${PPICRURES}] Put Upload Errors Failure`, props<{errorMessage: string}>());
+
+export const clearProfilePicturesUploadErrors = createAction(`[${PPICRURES}] Clear Upload Errors`);
 
 export const getProfilePicturesUploadedGroups = createAction(`[${PPICRURES}] Get Uploaded Groups`);
 export const getProfilePicturesUploadedGroupsSuccess = createAction(`[${PPICRURES}] Get Uploaded Groups Success`, props<{groups: ProfilePicturesUploadGroup[]}>());

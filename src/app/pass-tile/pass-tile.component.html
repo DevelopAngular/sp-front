@@ -13,17 +13,19 @@
   >
 
   <div class="tile-title-container">
-    <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
-      <div class="tile-content"  #title [style.height]="forStaff ? '30px' : '20px'">
-        <div *ngIf="pass.destination.title.length >= 10; else shortTitle" class="tile-title tile-title-truncated" [style.margin-top]="forStaff ? '8px' : '0px'"  (mouseover)="onHover($event, title);"
-             (mouseleave)="onLeave($event)">{{ pass.destination.title }}
+    <div [ngClass]="{miniCard: !profileImage}">
+      <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
+        <div class="tile-content"  #title [style.height]="forStaff ? '30px' : '20px'">
+          <div *ngIf="pass.destination.title.length >= 10; else shortTitle" class="tile-title tile-title-truncated" [style.margin-top]="forStaff ? '8px' : '0px'"  (mouseover)="onHover($event, title);"
+               (mouseleave)="onLeave($event)">{{ pass.destination.title }}
+          </div>
+          <ng-template #shortTitle>
+            <div class="tile-title" [style.margin-top]="forStaff ? '8px' : '0px'">{{ pass.destination.title }}</div>
+          </ng-template>
         </div>
-        <ng-template #shortTitle>
-          <div class="tile-title" [style.margin-top]="forStaff ? '8px' : '0px'">{{ pass.destination.title }}</div>
-        </ng-template>
       </div>
+      <div class="tile-subtitle">{{ tileContent }}</div>
     </div>
-    <div class="tile-subtitle">{{ tileContent }}</div>
     <div *ngIf="isBadgeVisible" class="badge">1</div>
   </div>
 

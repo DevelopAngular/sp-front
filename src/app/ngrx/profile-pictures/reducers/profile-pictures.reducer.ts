@@ -46,7 +46,8 @@ const reducer = createReducer(
   }),
   on(profilePicturesActions.getUploadedErrorsSuccess, (state, {errors}) => {
     return { ...state, uploadErrors: errors };
-  })
+  }),
+  on(profilePicturesActions.clearProfilePicturesUploadErrors, (state) => ({...state, uploadErrors: []}))
 );
 
 export function profilePicturesReducer(state: any | undefined, action: Action) {
