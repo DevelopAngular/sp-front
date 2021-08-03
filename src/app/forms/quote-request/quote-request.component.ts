@@ -77,10 +77,12 @@ export class QuoteRequestComponent implements OnInit {
       formData['schools']).subscribe(res => {
       let recordId = res['recordId'];
       this.hdyhau.valueChanges.subscribe(data => {
-        this.formService.saveHdyhau(recordId, data)
-          .subscribe(res => {
-            console.log(res);
-          });
+        data = data.filter(element => element && element.length > 0);
+        if (data.length != 0)
+          this.formService.saveHdyhau(recordId, data)
+            .subscribe(res => {
+              console.log(res);
+            });
       });
       this.googleAnalytics.emitEvent('quote_request_submit', {});
     });
