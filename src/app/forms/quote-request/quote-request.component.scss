@@ -3,19 +3,18 @@
 @media only screen and (min-width: 560px) {
   #quote-request-wrapper {
     display: flex;
+    height: calc(100vh - 30px);
+
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: column;
-    display: flex;
-    align-items: center;
-    min-height: calc(100vh - 30px);
-    background-color: white;
     padding-top: 30px;
+
+    background-color: #F5F8FF;
 
     .row {
       display: flex;
       justify-content: space-between;
-      padding-right: 40px;
       padding-bottom: 10px;
     }
 
@@ -23,10 +22,37 @@
       display: flex;
       align-content: flex-start;
       flex-direction: column;
+      background-color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 20px 0px;
+    }
+
+    #top-overlay {
+      height: 50px;
+      margin-bottom: -50px;
+      z-index: 3;
+      pointer-events:none;
+      transition: box-shadow 0.5s;
+    }
+
+    #bottom-overlay {
+      height: 50px;
+      margin-top: -50px;
+      z-index: 3;
+      pointer-events:none;
+      transition: box-shadow 0.5s;
+    }
+
+    #main-form {
+      height: initial;
+      overflow: scroll;
+      padding: 0 10px;
     }
 
     #confirm-wrapper {
-      padding-right: 40px
+      padding-right: 10px;
+      padding-top: 20px;
     }
 
     #confirm {
@@ -38,18 +64,55 @@
 
 @media only screen and (max-width: 559px) {
   #quote-request-wrapper {
-    min-height: calc(100vh - 30px);
-    background-color: white;
+    display: flex;
+    height: calc(100vh - 30px);
+
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
     padding-top: 30px;
-    padding-left: 30px;
-    padding-right: 30px;
+
+    background-color: #F5F8FF;
+
+    form {
+      display: flex;
+      align-content: flex-start;
+      flex-direction: column;
+      background-color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 20px 0px;
+    }
+
+    #top-overlay {
+      height: 50px;
+      margin-bottom: -50px;
+      z-index: 3;
+      pointer-events:none;
+      transition: box-shadow 0.5s;
+    }
+
+    #bottom-overlay {
+      height: 50px;
+      margin-top: -50px;
+      z-index: 3;
+      pointer-events:none;
+      transition: box-shadow 0.5s;
+    }
+
+    #main-form {
+      height: initial;
+      overflow: scroll;
+      padding: 0 10px;
+    }
 
     #confirm-wrapper {
-      padding-right: 40px
+      padding-top: 20px;
     }
 
     #confirm {
       width: 100%;
+      height: 75px;
     }
   }
 }
@@ -61,40 +124,44 @@
 #post-qr-wrapper {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  height: 100%;
-  min-height: 100%;
-  background-color: white;
+  align-items: center;
+  background-color: #F5F8FF;
+  min-height: calc(100vh - 30px);
+  padding-top: 30px;
 
-  #post-qr-title-wrapper {
-    width: 100%;
+  #post-qr-sub-wrapper {
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 20px 0px;
 
-    h1 {
-      @include textSize(24px, bold);
+    #post-qr-title-wrapper {
+      width: auto;
+
+      h1 {
+        @include textSize(24px, bold);
+        text-align: center;
+      }
+
+    }
+
+    span {
+      @include textSize(12px, normal, $blue-gray);
+
+      display: block;
+      padding-bottom: 20px;
+      width: 100%;
       text-align: center;
     }
-  }
 
-  #post-qr-form {
-    span {
-      @include textSize(14px, normal, $search-gray);
-      margin-bottom: 10px;
+    #button-div {
+      width: 100%;
+      display: flex;
+      justify-content: center;
     }
 
-    hr {
-      color: #7F879D;
-      width: 150px;
-      margin-bottom: 30px;
+    #get-demo {
+      width: 200px;
     }
-  }
-
-  #button-div {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  #get-demo {
-    width: 200px;
   }
 }

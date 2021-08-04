@@ -1,6 +1,7 @@
 @import "../../../../design-system";
 
 #form {
+  width: 100%;
   margin-bottom: 20px;
 }
 
@@ -32,13 +33,29 @@
       justify-content: flex-start;
     }
 
-    .remove-wrapper {
-      padding-top: 22px;
+    .approx-students-wrapper {
+      display: inline-block;
+      width: min-content;
+      overflow: clip;
     }
 
-    .input-wrapper {
-      margin-bottom: 20px;
+    .remove-wrapper {
+      width: 40px;
+      height: 60px;
+      display: inline-flex;
+      padding: 0 8px;
+      float: right;
+      padding-bottom: 4px;
+      align-items: flex-end;
     }
+
+    .remove {
+      width: auto;
+    }
+  }
+
+  .search-autocomplete {
+    width: 250px;
   }
 }
 
@@ -51,21 +68,24 @@
     font-size: 12px;
 
     margin-top: 12px;
-    margin-right: 36px;
     padding-left: 8px;
     padding-right: 8px;
   }
 }
 
 .search-autocomplete {
-  position: absolute;
-  z-index: 9 !important;
+  position: fixed;
+  z-index: 100 !important;
+  background-color: blue;
   background-color: white;
-  box-shadow: 0 0px 7px 0 rgba(0, 0, 0, 0.1);
-  height: 180px;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.17);
+  max-height: 180px;
   padding-top: 5px;
   display: block;
   border-radius: 5px;
+  transition: top 0.1s;
+  cursor: pointer;
+  -webkit-transform: translateZ(100px);
 }
 
 .option-list {
@@ -80,7 +100,7 @@
     box-sizing: border-box;
     overflow: auto;
     max-height: 180px;
-    z-index: 10 !important;
+    z-index: 15 !important;
     background-color: white;
   }
 
@@ -107,12 +127,6 @@
   }
 }
 
-.options-wrapper {
-  height: 0;
-  position: absolute;
-  left: 0px;
-}
-
 .search-wrapper {
   position: relative;
 }
@@ -127,9 +141,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  -webkit-transform: translateZ(100px);
 
   a {
-    @include textSize(14px, normal, $blue-gray)
+    @include textSize(14px, normal, $blue-gray);
+
+    display: block;
+    width: calc(100% - 20px);
     margin-left: 20px;
   }
 }

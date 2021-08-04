@@ -1,13 +1,15 @@
 <div id="form" [formGroup]="form">
-  <div class="schools"
+  <div #schoolContainer
+       class="schools"
        formArrayName="schools"
        *ngFor="let school of schools.controls; let i = index">
     <ng-container [formGroupName]="i" class="row">
       <div class="mini-row">
         <div class="search-wrapper">
           <div class="input-wrapper">
-            <app-input [input_label]="(i == 0 || innerWidth < 560) ? 'School name' : ''"
-                       [width]="innerWidth < 560 ? '225px' : '300px'"
+            <app-input #locationInput
+                       [input_label]="(i == 0 || mobile) ? 'School name' : ''"
+                       [width]="getSchoolInputWidth()"
                        [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
                        [isFocus]="i == 0 && autoFocus"
                        tabAttentive="true"
@@ -18,12 +20,14 @@
                        (blurEvent)="blur(i)"
                        (onUpdate)="onSearch($event, i)"></app-input>
           </div>
-          <div *ngIf="showSearch(i)"
+          <div #searchAutocomplete
+               *ngIf="showSearch(i)"
                class="search-autocomplete"
                [ngClass]="{'options-wrapper': searchInfo[i]['showOptions']}"
-               [style.top]="i == 0 ? '70px' : '50px'"
+               [style.top.px]="getSearchPosition(i)"
                (mouseenter)="searchInfo[i]['mouseIn'] = true"
                (mouseleave)="searchInfo[i]['mouseIn'] = false">
+            <div>
               <div class="option-list_scrollable">
                 <div #cell *ngFor="let school of searchInfo[i]['searchSchools']; let a = index"
                      class="option-list_item"
@@ -31,7 +35,8 @@
                      (mouseleave)="backgroundColors[a] = '#FFFFFF'"
                      appCrossPointerEventTarget
                      (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
-                     (pointerClickEvent)="backgroundColors[a] = '#F4F4F4'"
+                     (pointerCancelEvent)="backgroundColors[a] = '#FFFFFF'"
+                     (pointerClickEvent)="mobileChooseSchool(a, school, i)"
                      (click)="chooseSchool(school, i)"
                      [style.background-color]="backgroundColors[a]"
                      [style.color]="textColor(cell)">
@@ -45,21 +50,18 @@
                   </div>
                 </div>
               </div>
-            <div class="search-options">
-              <a (click)="searchInfo[i]['blockSearch'] = true">School not listed?</a>
+              <div class="search-options">
+                <a
+                  (click)="searchInfo[i]['blockSearch'] = true"
+                >School not listed?</a>
+              </div>
             </div>
           </div>
         </div>
-        <div class="remove-wrapper" *ngIf="innerWidth < 560">
-          <button class="remove" [style.visibility]="showRemove() ? 'visible' : 'hidden'" mat-icon-button
-                  (click)="removeSchool(i)">
-            <mat-icon svgIcon="minus"></mat-icon>
-          </button>
-        </div>
       </div>
-      <div class="input-wrapper">
-        <app-input [input_label]="(i == 0 || innerWidth < 560) ? 'Approx. # of students' : ''"
-                   [width]="innerWidth < 560 ? '100px' : '150px'"
+      <div class="input-wrapper approx-students-wrapper">
+        <app-input [input_label]="(i == 0 || mobile) ? 'Approx. # of students' : ''"
+                   [width]="getApproxInputWidth()"
                    [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
                    tabAttentive="true"
                    placeholder="1656"
@@ -68,8 +70,8 @@
                    [controlName]="school.controls.population"></app-input>
       </div>
     </ng-container>
-    <div class="remove-wrapper" *ngIf="innerWidth >= 560" [style.padding-top]="i == 0 ? '20px' : '2px'">
-      <button class="remove" [style.visibility]="showRemove() ? 'visible' : 'hidden'" mat-icon-button
+    <div class="remove-wrapper" *ngIf="showRemove()" [style.padding-top]="mobile ? '0' : (i == 0 ? '20px' : '2px')">
+      <button class="remove" mat-icon-button
               (click)="removeSchool(i)">
         <mat-icon svgIcon="minus"></mat-icon>
       </button>
@@ -89,7 +91,7 @@
       leftImageWidth="12px"
       [leftIcon]="'./assets/Plus (Blue-Gray).svg' | resolveAsset"
       (buttonClick)="addSchool()"
-    >Add a school
+    >Add another school
     </app-gradient-button>
   </div>
 </div>
