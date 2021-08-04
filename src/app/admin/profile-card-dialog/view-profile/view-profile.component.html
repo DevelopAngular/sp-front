@@ -53,7 +53,7 @@
             </div>
             <img style="width: 88px; height: 88px" [src]="(user.profile_picture ? user.profile_picture : './assets/Avatar Default.svg') | resolveAsset" alt="avatar">
             <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
-            <div class="buttons">
+            <div class="buttons" *ngIf="!(loadingProfilePicture | async)">
               <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!user.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
               <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && user.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
             </div>

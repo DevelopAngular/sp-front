@@ -44,6 +44,10 @@ export const getMissingProfilePictures = createAction(`[${PPICRURES}] Missing Pr
 export const getMissingProfilePicturesSuccess = createAction(`[${PPICRURES}] Missing Profile Pictures Success`, props<{profiles: User[]}>());
 export const getMissingProfilePicturesFailure = createAction(`[${PPICRURES}] Missing Profile Pictures Failure`, props<{errorMessage: string}>());
 
+export const deleteProfilePicture = createAction(`[${PPICRURES}] Delete Profile Picture`, props<{user: User, role: string}>());
+export const deleteProfilePictureSuccess = createAction(`[${PPICRURES}] Delete Profile Picture Success`);
+export const deleteProfilePictureFailure = createAction(`[${PPICRURES}] Delete Profile Picture Failure`, props<{errorMessage: string}>());
+
 export const showErrorToast = createAction(`[${PPICRURES}] Show Error Toast`);
 
 export const changeProfilePictureLoader = createAction(`[${PPICRURES}] Change Loader`, props<{percent: number}>());

@@ -34,5 +34,7 @@ export const sortAccountsFailure = createAction('[Accounts] Sort Accounts Failur
 export const updateAccountPicture = createAction(`[Accounts] Update Account Picture`, props<{profile, role: string, file: File}>());
 export const updateAccountPictureFailure = createAction(`[Account] Update Account Picture Failure`, props<{errorMessage: string}>());
 
+export const deleteAccountPicture = createAction(`[Accounts] Delete Account Picture`, props<{user: User, role: string}>());
+
 export const clearCurrentUpdatedAccount = createAction(`[Account] Clear Current Updated`);
 

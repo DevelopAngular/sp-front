@@ -343,6 +343,24 @@ export class AccountsEffects {
        );
    });
 
+   deleteAccountPicture$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.deleteAccountPicture),
+         map(({user, role}) => {
+           if (role === '_profile_admin') {
+             return nestedStates.updateAdminAccount({profile: user});
+           } else if (role === '_profile_teacher') {
+             return nestedStates.updateTeacherAccount({profile: user});
+           } else if (role === '_profile_student') {
+             return nestedStates.updateStudentAccount({profile: user});
+           } else if (role === '_profile_assistant') {
+             return nestedStates.updateAssistantAccount({profile: user});
+           }
+         })
+       );
+   });
+
    clearCurrentUpdated$ = createEffect(() => {
      return this.actions$
        .pipe(

@@ -438,7 +438,17 @@ export class ViewProfileComponent implements OnInit {
   }
 
   deleteAvatar() {
-
+    this.loadingProfilePicture.next(true);
+    this.userService.deleteProfilePicture(this.user, this.data.role)
+      .pipe(
+        filter(res => !!res),
+        take(1)
+      )
+      .subscribe(res => {
+        this.user = User.fromJSON({...this.user, profile_picture: null});
+        this.userService.clearCurrentUpdatedAccounts();
+        this.loadingProfilePicture.next(false);
+      });
   }
 
 }

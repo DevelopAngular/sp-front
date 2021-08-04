@@ -93,7 +93,7 @@ import {getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {
-  clearProfilePicturesUploadErrors,
+  clearProfilePicturesUploadErrors, deleteProfilePicture,
   getMissingProfilePictures,
   getProfilePicturesUploadedGroups, getUploadedErrors,
   postProfilePictures,
@@ -756,7 +756,7 @@ export class UserService implements OnDestroy {
 
   getUploadedErrorsRequest(group_id) {
     this.store.dispatch(getUploadedErrors({group_id}));
-    return this.profilePicturesUploadErrors$
+    return this.profilePicturesUploadErrors$;
   }
 
   getUploadedErrors(group_id) {
@@ -769,5 +769,10 @@ export class UserService implements OnDestroy {
 
   clearCurrentUpdatedAccounts() {
     this.store.dispatch(clearCurrentUpdatedAccount());
+  }
+
+  deleteProfilePicture(user: User, role: string) {
+    this.store.dispatch(deleteProfilePicture({user, role}));
+    return this.currentUpdatedAccount$[role];
   }
 }
