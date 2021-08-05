@@ -1,0 +1,78 @@
+<div *ngIf="!submitted; else postWrapper" id="quote-request-wrapper">
+  <div id="quote-request">
+    <form [formGroup]="schoolForm">
+      <div class="row">
+        <app-school-autocomplete
+          inputLabel="School name"
+          [tabIndex]="2"
+          [formGroup]="schoolForm"
+          [formControl]="schoolForm.controls.name"
+          [forceError]="showErrors && !schoolForm.controls.name.valid"
+          (name)="setName($event)"
+          (schoolDiggerId)="setSchoolDiggerId($event)"
+          (address)="setAddress($event)">
+        </app-school-autocomplete>
+      </div>
+      <div class="row">
+        <app-input input_label="Address"
+                   width="200px"
+                   [tabAttentive]="true"
+                   [tabIndex]="1"
+                   isFocus="true"
+                   tabAttentive="true"
+                   placeholder="324 Ridge Drive"
+                   [formGroup]="schoolForm.controls.address"
+                   [forceError]="showErrors && !schoolForm.controls.address.controls.road.valid"
+                   [controlName]="schoolForm.controls.address.controls.road"></app-input>
+        <app-input input_label="State"
+                   width="90px"
+                   [tabAttentive]="true"
+                   [tabIndex]="1"
+                   isFocus="true"
+                   tabAttentive="true"
+                   placeholder="PA"
+                   [formGroup]="schoolForm.controls.address"
+                   [forceError]="showErrors && !schoolForm.controls.address.controls.state.valid"
+                   [controlName]="schoolForm.controls.address.controls.state"></app-input>
+      </div>
+      <div class="row">
+        <app-input input_label="City"
+                   width="200px"
+                   [tabAttentive]="true"
+                   [tabIndex]="1"
+                   isFocus="true"
+                   tabAttentive="true"
+                   placeholder="Cityville"
+                   [formGroup]="schoolForm.controls.address"
+                   [forceError]="showErrors && !schoolForm.controls.address.controls.city.valid"
+                   [controlName]="schoolForm.controls.address.controls.city"></app-input>
+
+        <app-input input_label="ZIP"
+                   width="90px"
+                   [tabAttentive]="true"
+                   [tabIndex]="1"
+                   isFocus="true"
+                   tabAttentive="true"
+                   placeholder="89475"
+                   [formGroup]="schoolForm.controls.address"
+                   [forceError]="showErrors && !schoolForm.controls.address.controls.zip.valid"
+                   [controlName]="schoolForm.controls.address.controls.zip"></app-input>
+      </div>
+      <div id="confirm-wrapper">
+        <app-gradient-button
+          id="confirm"
+          size="custom"
+          minHeight="50px"
+          (buttonClick)="submit()"><span id="confirm-text">Submit school</span>
+        </app-gradient-button>
+      </div>
+    </form>
+  </div>
+</div>
+<ng-template #postWrapper>
+  <div id="post-qr-wrapper">
+    <div id="post-qr-title-wrapper"><h1 id="title">School submitted</h1>
+    </div>
+  </div>
+</ng-template>
+

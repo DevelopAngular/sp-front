@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, QueryList, Renderer2, ViewChildren} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -14,14 +14,19 @@ declare const window;
 })
 export class ListSchoolsComponent implements OnInit {
 
+  @ViewChildren('searchAutocomplete') searchAutocompletes: QueryList<any>;
+
   @Input() form: FormGroup;
   @Input() startTabIndex: number = -1;
   @Input() autoFocus: boolean = false;
   @Input() showErrors: boolean = false;
   @ViewChildren('locationInput') locationInputs: QueryList<any>;
 
+  @Output() schoolCount = new EventEmitter<number>();
+
   inputCount: number = 1;
   innerWidth: number;
+  mobile: boolean;
 
   // Search Variables
   private placePredictionService;
@@ -30,10 +35,12 @@ export class ListSchoolsComponent implements OnInit {
   ignoreNextUpdate: boolean = false;
   searchInfo: any[] = [];
 
-  constructor(private fb: FormBuilder,
-              private matIconRegistry: MatIconRegistry,
-              private domSanitizer: DomSanitizer,
-              private formService: FormsService
+  constructor(
+    private fb: FormBuilder,
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+    private formService: FormsService,
+    private renderer2: Renderer2
   ) {
     this.matIconRegistry.addSvgIcon(
       'minus',
@@ -44,6 +51,15 @@ export class ListSchoolsComponent implements OnInit {
   ngOnInit(): void {
     this.addSchool();
     this.innerWidth = window.innerWidth;
+    this.mobile = this.innerWidth < 560;
+  }
+
+  ngAfterViewInit() {
+    if (this.mobile) {
+      this.renderer2.setStyle(document.body, 'background', '#f5f8ff');
+      this.renderer2.setStyle(document.body, '-webkit-overflow-scrolling', 'auto');
+      this.renderer2.setStyle(document.documentElement, '-webkit-overflow-scrolling', 'auto');
+    }
   }
 
   get schools(): FormArray {
@@ -64,6 +80,7 @@ export class ListSchoolsComponent implements OnInit {
       blockSearch: false,
       searchSchools: new BehaviorSubject(null)
     });
+    this.schoolCount.emit(this.searchInfo.length);
   }
 
   showRemove(): boolean {
@@ -76,6 +93,7 @@ export class ListSchoolsComponent implements OnInit {
   removeSchool(index): void {
     let data = this.schools.removeAt(index);
     this.searchInfo.splice(index, 1);
+    this.schoolCount.emit(this.searchInfo.length);
   }
 
   textColor(item) {
@@ -94,9 +112,9 @@ export class ListSchoolsComponent implements OnInit {
         } else {
           this.searchInfo[i]['searchSchools'] = res.map(school => {
             return {
-              "name": school['schoolName'],
-              "address": school['city'] + ', ' + school['state'],
-              "school_digger_id": school['schoolid']
+              'name': school['schoolName'],
+              'address': school['city'] + ', ' + school['state'],
+              'school_digger_id': school['schoolid']
             };
           });
           this.searchInfo[i]['showOptions'] = true;
@@ -118,6 +136,11 @@ export class ListSchoolsComponent implements OnInit {
     this.schools.at(i).get('school_digger_id').setValue(school.school_digger_id);
   }
 
+  mobileChooseSchool(a, school, i) {
+    this.backgroundColors[a] = '#FFFFFF';
+    this.chooseSchool(school, i);
+  }
+
   blur(i) {
     if (!this.searchInfo[i]['showOptions']) {
       return;
@@ -127,6 +150,31 @@ export class ListSchoolsComponent implements OnInit {
 
   showSearch(i) {
     return this.searchInfo[i]['showOptions'] && !this.searchInfo[i]['blockSearch'];
+  }
+
+  getSearchPosition(i) {
+    if (this.locationInputs === undefined) {
+      return 0;
+    }
+    let searchElement = this.locationInputs.toArray()[i].input;
+    let searchPosition = searchElement.nativeElement.getBoundingClientRect().y;
+    return searchPosition + 60;
+  }
+
+  getSchoolInputWidth() {
+    if (!this.mobile) {
+      return '300px';
+    } else {
+      return '245px';
+    }
+  }
+
+  getApproxInputWidth() {
+    if (!this.mobile) {
+      return this.showRemove() ? '150px' : '190px';
+    } else {
+      return this.showRemove() ? '195px' : '245px';
+    }
   }
 
   @HostListener('window:resize', ['$event'])

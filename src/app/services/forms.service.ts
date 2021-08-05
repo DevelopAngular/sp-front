@@ -45,4 +45,9 @@ export class FormsService {
     let url = this.getUrl('v1/acquisition/schoolSearch');
     return this.http.get(url + '?query=' + query)
   }
+
+
+  addSchool(data) {
+    return this.http.post(this.getUrl('v1/acquisition/addSchool'), data);
+  }
 }
