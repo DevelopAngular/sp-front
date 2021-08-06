@@ -89,10 +89,13 @@ import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/acc
 import {HttpHeaders} from '@angular/common/http';
 import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
-import {getSchoolsFailure} from '../ngrx/schools/actions';
+import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
+import {LoginDataService} from './login-data.service';
+import {GoogleLoginService} from './google-login.service';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -200,6 +203,9 @@ export class UserService implements OnDestroy{
     private _logging: Logger,
     private errorHandler: ErrorHandler,
     private store: Store<AppState>,
+    private loginService: GoogleLoginService,
+    private loginDataService: LoginDataService,
+    private router: Router
   ) {
 
     this.http.globalReload$
@@ -210,9 +216,27 @@ export class UserService implements OnDestroy{
             this.getUserRequest();
           }),
           exhaustMap(() => {
-            return this.user$.pipe(filter(res => !!res), take(1));
+            return combineLatest(this.user$
+              .pipe(
+                filter(res => !!res), take(1),
+                map(raw => User.fromJSON(raw))
+              ), this.loginDataService.loginDataQueryParams.pipe(filter(r => !!r), take(1)));
           }),
-          map(raw => User.fromJSON(raw)),
+          map(([user, queryParams]) => {
+            if (queryParams.email) {
+              const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+              const isValidEmail = regexpEmail.test(queryParams.email) ? user.primary_email === queryParams.email : user.primary_email === queryParams.email + '@spnx.local';
+              if (!isValidEmail) {
+                this.http.clearInternal();
+                this.http.setSchool(null);
+                this.loginService.clearInternal();
+                this.clearUser();
+                this.store.dispatch(clearSchools());
+                this.router.navigate(['', queryParams]);
+              }
+            }
+            return user;
+          }),
           tap(user => {
             if (user.isAssistant()) {
               this.getUserRepresentedRequest();

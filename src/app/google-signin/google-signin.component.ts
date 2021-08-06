@@ -14,6 +14,7 @@ import {QueryParams} from '../live-data/helpers';
 import {StorageService} from '../services/storage.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {ToastService} from '../services/toast.service';
+import {LoginDataService} from '../services/login-data.service';
 
 declare const window;
 
@@ -73,7 +74,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private domSanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
-    private toast: ToastService
+    private toast: ToastService,
+    private loginDataService: LoginDataService
   ) {
     this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
@@ -158,10 +160,15 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
     this.storage.showError$.pipe(takeUntil(this.destroy$)).subscribe(res => {
       this.toast.openToast({title: 'Cookies are blocked', subtitle: 'Please un-block your cookies so you can sign into SmartPass.', type: 'error'});
-      // this.httpService.errorToast$.next({
-      //   header: 'Cookies are blocked',
-      //   message: this.domSanitizer.bypassSecurityTrustHtml('<div>Please un-block your cookies so you can sign into SmartPass. <a style="color: #E32C66" href="https://www.smartpass.app/cookies-error" target="_blank">Need help?</a></div>')
-      // });
+    });
+
+    this.loginDataService.loginDataQueryParams.pipe(
+      filter((data) => !!data),
+      takeUntil(this.destroy$)
+    ).subscribe(res => {
+      if (res.email) {
+        this.loginForm.get('username').setValue(res.email);
+      }
     });
   }
 

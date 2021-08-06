@@ -2,13 +2,13 @@ import {HttpClient} from '@angular/common/http';
 import {Inject, Injectable, NgZone, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {BehaviorSubject, iif, Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
+import {BehaviorSubject, combineLatest, iif, Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
 import {catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getSchools} from '../ngrx/schools/actions';
+import {clearSchools, getSchools} from '../ngrx/schools/actions';
 import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
 import {GoogleLoginService, isCleverLogin, isDemoLogin, isGg4lLogin} from './google-login.service';
 import {StorageService} from './storage.service';
@@ -19,6 +19,8 @@ import {Router} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import * as moment from 'moment';
+import {LoginDataService} from './login-data.service';
+import {clearUser} from '../ngrx/user/actions';
 
 declare const window;
 
@@ -216,7 +218,8 @@ export class HttpService implements OnDestroy {
       private store: Store<AppState>,
       private _zone: NgZone,
       private matDialog: MatDialog,
-      private router: Router
+      private router: Router,
+      private loginDataService: LoginDataService
   ) {
 
     if (baseHref === '/app') {
@@ -227,13 +230,31 @@ export class HttpService implements OnDestroy {
     // First, if there is a current school loaded, try to use that one.
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
-    this.schools$
+    combineLatest(
+      this.schools$,
+      this.loginDataService.loginDataQueryParams.pipe(filter(res => !!res))
+    )
         .pipe(
             takeUntil(this.destroyed$),
             filter(schools => !!schools.length),
         )
-        .subscribe(schools => {
-          // console.log('this.schools$ updated');
+        .subscribe(([schools, queryParams]) => {
+          if (queryParams && queryParams.school_id) {
+            const selectedSchool = schools.find(school => +school.id === +queryParams.school_id);
+            if (selectedSchool) {
+              this.currentSchoolSubject.next(selectedSchool);
+              this.storage.setItem('last_school_id', selectedSchool.id);
+              return;
+            } else {
+              this.setSchool(null);
+              this.clearInternal();
+              this.loginService.clearInternal();
+              this.store.dispatch(clearUser());
+              this.store.dispatch(clearSchools());
+              this.router.navigate(['', queryParams]);
+              return;
+            }
+          }
           const lastSchool = this.currentSchoolSubject.getValue();
           if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
             this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
