@@ -6,7 +6,7 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {exhaustMap, filter, map, take, takeUntil, tap} from 'rxjs/operators';
+import {exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -95,7 +95,6 @@ import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represen
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 import {LoginDataService} from './login-data.service';
 import {GoogleLoginService} from './google-login.service';
-import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -204,8 +203,7 @@ export class UserService implements OnDestroy{
     private errorHandler: ErrorHandler,
     private store: Store<AppState>,
     private loginService: GoogleLoginService,
-    private loginDataService: LoginDataService,
-    private router: Router
+    private loginDataService: LoginDataService
   ) {
 
     this.http.globalReload$
@@ -216,9 +214,7 @@ export class UserService implements OnDestroy{
             this.getUserRequest();
           }),
           exhaustMap(() => {
-            return combineLatest(this.user$
-              .pipe(
-                filter(res => !!res), take(1),
+            return combineLatest(this.user$.pipe(filter(res => !!res), take(1),
                 map(raw => User.fromJSON(raw))
               ), this.loginDataService.loginDataQueryParams.pipe(filter(r => !!r), take(1)));
           }),
@@ -229,10 +225,10 @@ export class UserService implements OnDestroy{
               if (!isValidEmail) {
                 this.http.clearInternal();
                 this.http.setSchool(null);
-                this.loginService.clearInternal();
+                this.loginService.clearInternal(true);
+                this.userData.next(null);
                 this.clearUser();
                 this.store.dispatch(clearSchools());
-                this.router.navigate(['', queryParams]);
               }
             }
             return user;
@@ -242,7 +238,7 @@ export class UserService implements OnDestroy{
               this.getUserRepresentedRequest();
             }
           }),
-          exhaustMap((user: User) => {
+          switchMap((user: User) => {
             this.blockUserPage$.next(false);
             if (user.isAssistant()) {
               return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$)

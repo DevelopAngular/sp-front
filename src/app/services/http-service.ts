@@ -181,7 +181,6 @@ export class HttpService implements OnDestroy {
   public schoolToggle$: Subject<School> = new Subject<School>();
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
       filter(v => v),
-      take(1),
       exhaustMap((v) => {
         return this.getSchoolsRequest();
       }),
@@ -251,7 +250,6 @@ export class HttpService implements OnDestroy {
               this.loginService.clearInternal();
               this.store.dispatch(clearUser());
               this.store.dispatch(clearSchools());
-              this.router.navigate(['', queryParams]);
               return;
             }
           }
