@@ -632,7 +632,7 @@ export class HttpService implements OnDestroy {
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
     if (!this.getAuthContext()) {
-      throw new Error('No authContext');
+      return throwError(new LoginServerError('No authContext'));
     }
 
     return predicate(this.getAuthContext());
