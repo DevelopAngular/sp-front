@@ -64,7 +64,7 @@
             </span>
 
             <img
-              *ngIf="cell.hovered || cell.isOpenTooltip"
+              *ngIf="!isKioskMode && (cell.hovered || cell.isOpenTooltip)"
               width="15"
               [src]="'./assets/Info (Blue-Gray).svg'"
               alt="Info"

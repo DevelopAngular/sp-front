@@ -28,8 +28,8 @@
   <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">
   <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">
   <div *ngIf="isBadgeVisible" class="badge">1</div>
-<div class="overlay-shadow" *ngIf="showBackgroundOverlay" (mouseenter)="disableClose$.next()"></div>
-<div *ngIf="forStaff" class="names-overlay"></div>
+<div class="overlay-shadow" *ngIf="showBackgroundOverlay && !isKioskMode" (mouseenter)="disableClose$.next()"></div>
+<div *ngIf="forStaff && !isKioskMode" class="names-overlay"></div>
   <div
     class="overlay"
     (mouseover)="showBackgroundOverlay = true; studentNameOver()"
@@ -50,7 +50,7 @@
       [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
     >
       <div class="student-passes"
-           *ngIf="allowPopup"
+           *ngIf="allowPopup && !isKioskMode"
            #studentPasses
            (mouseleave)="showBackgroundOverlay = false; setAnimationTrigger('fadeOut'); studentNameLeave()"
            (mouseover)="destroyAnimation$.next(); showBackgroundOverlay = true; disableClose$.next()"

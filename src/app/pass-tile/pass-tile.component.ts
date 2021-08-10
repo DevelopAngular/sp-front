@@ -10,6 +10,7 @@ import {Invitation} from '../models/Invitation';
 import {filter, take, takeUntil} from 'rxjs/operators';
 import {ConnectedPosition, Overlay} from '@angular/cdk/overlay';
 import {DomCheckerService} from '../services/dom-checker.service';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 @Component({
   selector: 'app-pass-tile',
@@ -132,12 +133,17 @@ export class PassTileComponent implements OnInit, OnDestroy {
     }
   }
 
+  get isKioskMode() {
+    return !!this.kioskMode.currentRoom$.getValue();
+  }
+
   constructor(
     private sanitizer: DomSanitizer,
     private timeService: TimeService,
     public overlay: Overlay,
     private renderer: Renderer2,
     private domCheckerService: DomCheckerService,
+    private kioskMode: KioskModeService
   ) {
   }
 
@@ -219,7 +225,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   studentNameOver() {
-    if (this.allowPopup) {
+    if (this.allowPopup && !this.isKioskMode) {
       this.disableClose$.next();
       this.setAnimationTrigger('fadeIn');
       interval(500).pipe(take(1), takeUntil(this.destroyOpen$)).subscribe(() => {
@@ -229,7 +235,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   studentNameLeave() {
-    if (this.allowPopup) {
+    if (this.allowPopup && !this.isKioskMode) {
       this.destroyOpen$.next();
       interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
         this.isOpenTooltip.next(false);

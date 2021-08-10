@@ -103,9 +103,9 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         tap(([user, filters]: [user: User, filters: any]) => {
+          this.liveDataService.getActivePassesRequest(of({sort: '-created', search_query: ''}), user);
           this.liveDataService.getPassLikeCollectionRequest(user);
           this.liveDataService.getExpiredPassesRequest(user, filters['past-passes'].default);
-          this.liveDataService.getActivePassesRequest(of({sort: '-created', search_query: ''}), user);
           this.liveDataService.getHallMonitorPassesRequest(of({sort: '-created', search_query: ''}));
           this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
           if (user.roles.includes('hallpass_student')) {

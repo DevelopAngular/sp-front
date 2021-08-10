@@ -145,8 +145,10 @@ export class FormFactorContainerComponent implements OnInit {
   }
 
   openBigPass(value) {
-    this.storage.setItem('pass_full_screen', true);
-    this.isOpenBigCard = value;
+    this.storage.setItem('pass_full_screen', value);
+    setTimeout(() => {
+      this.isOpenBigCard = value;
+    }, 10);
   }
 
 }
