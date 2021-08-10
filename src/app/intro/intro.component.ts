@@ -10,7 +10,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {NotificationService} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {switchMap, take} from 'rxjs/operators';
 
@@ -352,7 +352,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
     let notificationDialog;
 
     if (this.isSafari) {
-      // this.introDialogRef.close();
       notificationDialog = this.dialog.open(NotificationFormComponent, {
         panelClass: 'form-dialog-container',
         backdropClass: 'custom-backdrop',
@@ -362,7 +361,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
     Notification.requestPermission().then( (result) => {
       if (result === 'denied') {
-          // this.introDialogRef.close();
             notificationDialog = this.dialog.open(NotificationFormComponent, {
             panelClass: 'form-dialog-container',
             backdropClass: 'custom-backdrop',
