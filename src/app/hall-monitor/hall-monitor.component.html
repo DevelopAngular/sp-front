@@ -28,40 +28,7 @@
         <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>
       </div>
     </div>
-<!--    <div *ngIf="!isDeviceLargeExtra" class="hall-monitor-top" [style.background-color]="darkTheme.getBackground('low', false)">-->
-<!--      <ng-container>-->
-<!--      <app-round-input-->
-<!--        [type]="inputRestrictionXl.type"-->
-<!--        [minWidth]="inputRestrictionXl.minWidth"-->
-<!--        [width]="inputRestrictionXl.width"-->
-<!--        [placeholder]="inputRestrictionXl.placeholder"-->
-<!--        [fieldIconPosition]="inputRestrictionXl.fieldIconPosition"-->
-<!--        [closeIcon]="inputRestrictionXl.closeIcon"-->
-<!--        [style.margin-right]="'40px'"-->
-<!--        [pending$]="searchPending$"-->
-<!--        [isSearch]="true"-->
-<!--        (ontextupdate)="onSearch($event)"-->
-<!--      ></app-round-input>-->
-<!--      <app-gradient-button-->
-<!--        [gradient]="reportBtn.gradient"-->
-<!--        [cursor]="reportBtn.cursor"-->
-<!--        [hoverColor]="reportBtn.hoverColor"-->
-<!--        [minWidth]="reportBtn.minWidth"-->
-<!--        [minHeight]="reportBtn.minHeight"-->
-<!--        [fontSize]="reportBtn.fontSize"-->
-<!--        [leftIcon]="reportBtn.leftIcon"-->
-<!--        [padding]="reportBtn.padding"-->
-<!--        (buttonClick)="openReportForm()"-->
-<!--      >Report Student(s)</app-gradient-button>-->
-<!--      </ng-container>-->
 
-<!--&lt;!&ndash;      <ng-template #hallMontiorTopMobile>&ndash;&gt;-->
-<!--&lt;!&ndash;        <ng-container>&ndash;&gt;-->
-<!--&lt;!&ndash;         &ndash;&gt;-->
-<!--&lt;!&ndash;        </ng-container>&ndash;&gt;-->
-<!--&lt;!&ndash;      </ng-template>&ndash;&gt;-->
-<!--      <p *ngIf="screenService.isDeviceMid && !isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})" class="hall-monitor-title">Hall Monitor</p>-->
-<!--    </div>-->
     <div class="hall-monitor-bottom">
       <app-pass-collection
         [hasSort]="hallMonitorCollection.hasSort"
@@ -80,6 +47,9 @@
         [searchPanel]="true"
         (searchValue)="onSearch($event)"
       ></app-pass-collection>
+      <div class="report-desktop">
+        <app-icon-button [srcString]="'Report'" [size]="20" (clickEvent)="openReportForm()"></app-icon-button>
+      </div>
       <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue">
           <img width="74px" height="74px" class="empty-svg" [src]="'./assets/Pass Search (Gray).svg' | resolveAsset" alt="empty-svg">
