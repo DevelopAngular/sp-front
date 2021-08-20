@@ -680,9 +680,9 @@ export class OverlayContainerComponent implements OnInit {
             data = location;
             data.category = this.folderData.folderName + salt;
             // debugger;
-            // if (!data.max_passes_to_active && data.enable_queue) {
+            if (!data.max_passes_to_active && data.enable_queue) {
               data.max_passes_to_active = true;
-            // }
+            }
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
