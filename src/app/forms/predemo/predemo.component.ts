@@ -11,9 +11,6 @@ import {FormsService} from '../../services/forms.service';
 export class PredemoComponent implements OnInit {
 
   meetingId: string;
-  assignedTo: string;
-  startTime: Date;
-  timeZone: string;
   submitted: boolean = false;
   showErrors: boolean = false;
 
@@ -35,10 +32,6 @@ export class PredemoComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.meetingId = params['meetingid'];
-      this.assignedTo = params['assigned_to'];
-      this.startTime = new Date(params['event_start_time']);
-      this.timeZone = params['time_zone'];
 
       this.formService.getPredemoComplete(this.meetingId).subscribe(res => {
         this.completedSchools = res['schools'];
