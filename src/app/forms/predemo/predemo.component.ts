@@ -32,7 +32,7 @@ export class PredemoComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-
+      this.meetingId = params.meetingid;
       this.formService.getPredemoComplete(this.meetingId).subscribe(res => {
         this.completedSchools = res['schools'];
         this.completedHdyhau = res['hdyhau'];
