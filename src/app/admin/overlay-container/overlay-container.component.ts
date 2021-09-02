@@ -890,14 +890,17 @@ export class OverlayContainerComponent implements OnInit {
       room.restricted = !!roomData.restricted;
       room.scheduling_restricted = !!roomData.scheduling_restricted;
       if (roomData.travelType.length) {
-        room.travelType = roomData.travelType;
+        room.travelTypes = roomData.travelType;
       }
       if (roomData.timeLimit) {
-        room.timeLimit = roomData.timeLimit;
+        room.max_allowed_time = roomData.timeLimit;
       }
       room.roomName = room.title;
       room.roomNumber = room.room;
       room.selectedTeachers = room.teachers;
+      room.max_passes_to_active = roomData.advOptState.toEnabled;
+      room.max_passes_to = roomData.advOptState.to;
+
       return {
         ...this.normalizeRoomData(room),
         ...this.normalizeAdvOptData(roomData),
@@ -914,12 +917,12 @@ export class OverlayContainerComponent implements OnInit {
       restricted: !!room.restricted,
       scheduling_restricted: !!room.scheduling_restricted,
       teachers: room.selectedTeachers,
-      travel_types: room.travelType,
-      max_allowed_time: +room.timeLimit,
+      travel_types: room.travel_types,
+      max_allowed_time: +room.max_allowed_time,
       max_passes_from: +this.passLimitForm.get('from').value,
       max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
-      max_passes_to: this.passLimitForm.valid ? +this.passLimitForm.get('to').value : 0,
-      max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
+      max_passes_to: room.max_passes_to,
+      max_passes_to_active: room.max_passes_to_active
     };
   }
 
