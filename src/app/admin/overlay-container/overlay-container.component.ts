@@ -174,16 +174,21 @@ export class OverlayContainerComponent implements OnInit {
   get isFormIncomplete() {
     if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
         this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder ||
-        this.currentPage === Pages.BulkEditRoomsInFolder)
+        this.currentPage === Pages.BulkEditRoomsInFolder) {
       if (this.isDirtyColor || this.isDirtyIcon) return false;
       if (!this.selectedIcon || !this.color_profile) return true;
+    }
 
     if ((this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
-        this.currentPage === Pages.BulkEditRooms) && this.roomData !== undefined)
+        this.currentPage === Pages.BulkEditRooms) && this.roomData !== undefined) {
+
       if ((this.roomData.advOptState.now.state === 'Certain \n teachers' &&
-          this.roomData.advOptState.now.data.selectedTeachers.length === 0) ||
-          (this.roomData.advOptState.future.state === 'Certain \n teachers' &&
-          this.roomData.advOptState.future.data.selectedTeachers.length === 0)) return true;
+        this.roomData.advOptState.now.data.selectedTeachers.length === 0) ||
+        (this.roomData.advOptState.future.state === 'Certain \n teachers' &&
+          this.roomData.advOptState.future.data.selectedTeachers.length === 0)) {
+        return true;
+      }
+    }
 
     return !this.roomValidButtons.getValue().publish;
   }
@@ -871,6 +876,7 @@ export class OverlayContainerComponent implements OnInit {
 
   bulkEditResult({roomData, rooms, buttonState}) {
     const editingRooms = this.editRooms(roomData, rooms);
+    debugger;
     // editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.bulkEditData = {roomData, rooms: editingRooms};
     this.roomValidButtons.next(buttonState);
