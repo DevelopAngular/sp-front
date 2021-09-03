@@ -83,7 +83,7 @@ export class BulkEditRoomsComponent implements OnInit {
         !isNull(this.roomData.restricted) ||
         !isNull(this.roomData.scheduling_restricted) ||
         this.roomData.timeLimit ||
-        this.roomData.selectedTeachers.length) && this.advOptionsButtons
+        this.roomData.selectedTeachers.length) || this.advOptionsButtons
     ) {
       if (this.advOptionsButtons.incomplete) {
         this.roomsValidButtons = {publish: false, incomplete: true, cancel: true};

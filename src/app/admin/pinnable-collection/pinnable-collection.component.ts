@@ -1,17 +1,18 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Pinnable} from '../../models/Pinnable';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DragulaService} from 'ng2-dragula';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pinnable-collection',
   templateUrl: './pinnable-collection.component.html',
   styleUrls: ['./pinnable-collection.component.scss']
 })
-export class PinnableCollectionComponent implements OnInit {
+export class PinnableCollectionComponent implements OnInit, OnDestroy {
 
   @Input()
   pinnables: Pinnable[];
@@ -40,6 +41,8 @@ export class PinnableCollectionComponent implements OnInit {
 
   pinnableIdArranged = [];
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     public dialog: MatDialog,
     public darkTheme: DarkThemeSwitch,
@@ -48,25 +51,29 @@ export class PinnableCollectionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.dragula.drop('pinnables').subscribe(res => {
+    this.dragula.drop('pinnables').pipe(takeUntil(this.destroy$)).subscribe(res => {
       if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
         this.disabledClick$.next(true);
       }
     });
     setTimeout(() => {
       this.pinnableIdArranged = this.pinnables.map(pin => pin.id);
-      // console.log(this.pinnableIdArranged);
         if (!this.pinnableIdArranged.length) {
           this.isEmptyState = true;
         }
     }, 1000);
     if (this.resetBulkSelect$) {
-        this.resetBulkSelect$.subscribe((val: boolean) => {
+        this.resetBulkSelect$.pipe(takeUntil(this.destroy$)).subscribe((val: boolean) => {
             if (val) {
                 this.bulkSelect = false;
             }
         });
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onPinablesOrderChanged(newOrder) {

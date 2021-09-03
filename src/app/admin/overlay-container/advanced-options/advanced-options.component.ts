@@ -117,10 +117,18 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
           this.optionState = cloneDeep(data);
         });
         this.buildData();
+
         this.passLimitForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
           this.checkValidOptions();
-          this.resultOptions.emit({options: this.optionState, validButtons: this.isShowButtons});
+          this.resultOptions.emit({
+            options: {
+              ...this.optionState,
+              ...res
+            },
+            validButtons: this.isShowButtons
+          });
         });
+
         this.restrictionForm = new FormGroup({
           forNow: new FormControl(this.roomData.restricted),
           forFuture: new FormControl(this.roomData.scheduling_restricted)

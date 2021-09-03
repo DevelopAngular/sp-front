@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap,} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, exhaustMap, filter, map, switchMap, take, takeUntil, tap,} from 'rxjs/operators';
 
 import {NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -131,7 +131,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           this.titleColor = '#1F195E';
           this.folderRoomsLoaded = true;
           break;
-      case 'editRoom':
+        case 'editRoom':
             this.overlayService.changePage(Pages.EditRoom, 0, {
                 pinnable: this.pinnable,
                 advancedOptions: this.generateAdvOptionsModel(this.pinnable.location)
@@ -696,6 +696,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             id = location.id;
             data = location;
             data.category = this.folderData.folderName + salt;
+            // debugger;
+            if (!data.max_passes_to_active && data.enable_queue) {
+              data.max_passes_to_active = true;
+            }
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
@@ -709,33 +713,34 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
       zip(...locationsToDb$).pipe(
         switchMap(locations => {
-        const newFolder = {
-          title: this.folderData.folderName,
-          color_profile: this.color_profile.id,
-          icon: this.selectedIcon.inactive_icon,
-          category: this.folderData.folderName + salt
-        };
-        return this.currentPage === Pages.EditFolder
-          ?
-          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
-          :
-          zip(
-            this.hallPassService.pinnables$,
-            this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
-          ).pipe(
-            switchMap((result: any[]) => {
-              const arrengedSequence = result[0].map(item => item.id);
-              arrengedSequence.push(result[1].id);
-              return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
-            })
-          );
+          const newFolder = {
+            title: this.folderData.folderName,
+            color_profile: this.color_profile.id,
+            icon: this.selectedIcon.inactive_icon,
+            category: this.folderData.folderName + salt
+          };
+          if (this.currentPage === Pages.EditFolder) {
+            this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder);
+            return of(null);
+          } else {
+            return zip(
+              this.hallPassService.pinnables$.pipe(take(1)),
+              this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
+            ).pipe(
+              switchMap((result: any[]) => {
+                const arrengedSequence = result[0].map(item => item.id);
+                arrengedSequence.push(result[1].id);
+                return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
+              })
+            );
+          }
       }),
         switchMap((res) => {
           if (this.pinnableToDeleteIds.length) {
             const deleteRequests = this.pinnableToDeleteIds.map(id => {
               return this.hallPassService.deletePinnableRequest(id);
             });
-            return forkJoin(deleteRequests);
+            return zip(...deleteRequests);
           } else {
             return of(null);
           }
@@ -904,11 +909,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       room.restricted = !!roomData.restricted;
       room.scheduling_restricted = !!roomData.scheduling_restricted;
       if (roomData.travelType.length) {
-        room.travelType = roomData.travelType;
+        room.travelTypes = roomData.travelType;
       }
 
       if (roomData.timeLimit) {
-        room.timeLimit = roomData.timeLimit;
+        room.max_allowed_time = roomData.timeLimit;
       } else {
         room.timeLimit = room.max_allowed_time;
       }
@@ -920,7 +925,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       }
       room.roomName = room.title;
       room.roomNumber = room.room;
-      room.travel_types = room.travelType;
+      room.selectedTeachers = room.teachers;
+      room.max_passes_to_active = roomData.advOptState.toEnabled;
+      room.max_passes_to = roomData.advOptState.to;
       return {
         ...this.normalizeRoomData(room),
         ...this.normalizeAdvOptData(roomData),
@@ -937,12 +944,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       restricted: !!room.restricted,
       scheduling_restricted: !!room.scheduling_restricted,
       teachers: room.selectedTeachers,
-      travel_types: room.travelType,
-      max_allowed_time: +room.timeLimit,
+      travel_types: room.travel_types,
+      max_allowed_time: +room.max_allowed_time,
       max_passes_from: +this.passLimitForm.get('from').value,
-      max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
-      max_passes_to: this.passLimitForm.valid ? +this.passLimitForm.get('to').value : 0,
-      max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
+      max_passes_from_active: false,
+      max_passes_to: room.max_passes_to,
+      max_passes_to_active: room.max_passes_to_active
     };
   }
 
