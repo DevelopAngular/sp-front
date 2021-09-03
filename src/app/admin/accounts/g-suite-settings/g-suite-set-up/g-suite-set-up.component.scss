@@ -37,6 +37,43 @@
   }
 
   .content {
+    padding: 23px;
+    height: 384px;
+
+    .info-block {
+      padding: 15px 20px;
+      background-color: #F4F4F4;
+      border-radius: 9px;
+
+      .info {
+        display: flex;
+        font-size: 14px;
+        color: $blue-gray
+      }
+
+      .button {
+        margin-top: 15px;
+        margin-left: 23px;
+      }
+    }
+
+    .authorize {
+      margin-top: 30px;
+
+      .title {
+        color: $navy;
+        font-size: 15px;
+        font-weight: bold;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: $blue-gray;
+        margin-top: 7px;
+        width: 365px;
+      }
+    }
+
     .active-top {
       display: flex;
       justify-content: space-between;

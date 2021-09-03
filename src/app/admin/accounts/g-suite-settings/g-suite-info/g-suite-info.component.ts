@@ -10,6 +10,7 @@ import {CreateFormService} from '../../../../create-hallpass-forms/create-form.s
 export class GSuiteInfoComponent implements OnInit {
 
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
+  @Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
 
   frameMotion$: BehaviorSubject<any>;
 
