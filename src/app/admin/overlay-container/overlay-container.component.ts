@@ -876,7 +876,6 @@ export class OverlayContainerComponent implements OnInit {
 
   bulkEditResult({roomData, rooms, buttonState}) {
     const editingRooms = this.editRooms(roomData, rooms);
-    debugger;
     // editingRooms = this.checkAllowedAdvOpt(editingRooms);
     this.bulkEditData = {roomData, rooms: editingRooms};
     this.roomValidButtons.next(buttonState);
