@@ -926,7 +926,7 @@ export class OverlayContainerComponent implements OnInit {
       travel_types: room.travel_types,
       max_allowed_time: +room.max_allowed_time,
       max_passes_from: +this.passLimitForm.get('from').value,
-      max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
+      max_passes_from_active: false,
       max_passes_to: room.max_passes_to,
       max_passes_to_active: room.max_passes_to_active
     };
