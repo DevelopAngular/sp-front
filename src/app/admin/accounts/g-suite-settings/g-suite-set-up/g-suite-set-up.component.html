@@ -10,68 +10,44 @@
   </div>
 
   <div class="content" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-
-    <div class="info-block">
-      <div class="info">
-        <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" width="16" height="16" alt="">
-        <div class="text" style="margin-left: 9px">
-          Please read the set-up instructions on how to set-up G Suite. We highly recommend creating a G Suite admin dedicated to SmartPass sync.
-        </div>
+    <div class="active-top">
+      <div class="left">
+        <div class="sync-title">Last Sync</div>
+        <div class="sync-subtitle">{{ formatDate(gSuiteInfo.last_successful_sync) }}</div>
+        <div style="color: #00B476">Successful</div>
       </div>
-      <div class="button">
+      <div class="right">
+        <div class="sync-title">Accounts synced</div>
+        <div class="sync-subtitle">{{ gSuiteInfo.num_accounts }} accounts</div>
+      </div>
+    </div>
+    <div class="active-top" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <div class="left">
+        <div class="sync-title">Next scheduled sync</div>
+        <div class="sync-subtitle">{{ formatDate(gSuiteInfo.next_sync) }}</div>
+      </div>
+      <div class="right">
         <app-gradient-button
-          [gradient]="'#7F879D, #7F879D'"
-          [rightIcon]="'./assets/External Link (White).svg'"
-          [textColor]="'#FFFFFF'"
-        >Open onboarding guide</app-gradient-button>
+          [gradient]="'#F4F4F4, #F4F4F4'"
+          (buttonClick)="syncing()"
+          [textColor]="'#1F195E'"
+        >Sync now</app-gradient-button>
       </div>
     </div>
 
-    <div class="authorize">
-      <div class="title">
-        Authorize SmartPass
-      </div>
-      <div class="subtitle">
-        Give SmartPass the appropriate access to your G Suite and select org units for syncing.
-      </div>
+    <mat-divider></mat-divider>
 
-      <div class="button" style="margin-top: 15px">
+    <div class="center" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <div class="prov-title">Organizational units and groups</div>
+      <div class="prov-subtitle">Map G Suite organizational units and groups to SmartPass account roles.</div>
+      <div class="button">
         <app-gradient-button
           [gradient]="'#1976D2, #1976D2'"
-          [rightIcon]="'./assets/Chevron Right (White).svg'"
-        >Authorize SmartPass
+          (buttonClick)="openEditMode.emit()"
+        >Edit accounts syncing
         </app-gradient-button>
       </div>
     </div>
-<!--    <div class="active-top">-->
-<!--      <div class="left">-->
-<!--        <div class="sync-title">Last Sync</div>-->
-<!--        <div class="sync-subtitle">{{ formatDate(gSuiteInfo.last_successful_sync) }}</div>-->
-<!--        <div style="color: #00B476">Successful</div>-->
-<!--      </div>-->
-<!--      <div class="right">-->
-<!--        <div class="sync-title">Accounts synced</div>-->
-<!--        <div class="sync-subtitle">{{ gSuiteInfo.num_accounts }} accounts</div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="active-top" [attr.data-motion-translate]="(frameMotion$ | async).direction">-->
-<!--      <div class="left">-->
-<!--        <div class="sync-title">Next Sync</div>-->
-<!--        <div class="sync-subtitle">{{ formatDate(gSuiteInfo.next_sync) }}</div>-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <mat-divider [style.margin-top]="'34px'"></mat-divider>-->
-
-<!--    <div class="center" [attr.data-motion-translate]="(frameMotion$ | async).direction">-->
-<!--      <div class="prov-title">G Suite Account Link</div>-->
-<!--      <div class="prov-subtitle">Which G Suite organization units and groups get linked to SmartPass user roles.</div>-->
-<!--      <div class="button">-->
-<!--        <app-gradient-button [gradient]="'#1976D2, #1976D2'" (buttonClick)="openEditMode.emit()">-->
-<!--          Open Editor-->
-<!--        </app-gradient-button>-->
-<!--      </div>-->
-<!--    </div>-->
   </div>
   <div class="footer">
     <mat-divider></mat-divider>

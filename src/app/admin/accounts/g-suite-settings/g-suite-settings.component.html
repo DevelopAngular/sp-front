@@ -3,9 +3,12 @@
     <app-g-suite-info (back)="dialog.getDialogById('g_suiteSettings') ? dialogRef.close() : backEvent.emit()" (nextPage)="nextPage()"></app-g-suite-info>
   </div>
   <div *ngIf="currentPage === 2" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <app-g-suite-set-up (back)="dialog.getDialogById('g_suiteSettings') ? dialogRef.close() : backEvent.emit()" (openEditMode)="nextPage()" [gSuiteInfo]="gSuiteInfo$ | async"></app-g-suite-set-up>
+    <app-g-suite-connect (back)="backEvent.emit()"></app-g-suite-connect>
   </div>
   <div *ngIf="currentPage === 3" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <app-g-suite-set-up (back)="dialog.getDialogById('g_suiteSettings') ? dialogRef.close() : backEvent.emit()" (openEditMode)="nextPage()" [gSuiteInfo]="gSuiteInfo$ | async"></app-g-suite-set-up>
+  </div>
+  <div *ngIf="currentPage === 4" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
     <app-g-suite-account-link [gSuiteInfo]="gSuiteInfo$ | async" (back)="back()"></app-g-suite-account-link>
   </div>
 </div>

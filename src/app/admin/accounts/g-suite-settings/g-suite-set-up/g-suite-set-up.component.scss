@@ -40,44 +40,10 @@
     padding: 23px;
     height: 384px;
 
-    .info-block {
-      padding: 15px 20px;
-      background-color: #F4F4F4;
-      border-radius: 9px;
-
-      .info {
-        display: flex;
-        font-size: 14px;
-        color: $blue-gray
-      }
-
-      .button {
-        margin-top: 15px;
-        margin-left: 23px;
-      }
-    }
-
-    .authorize {
-      margin-top: 30px;
-
-      .title {
-        color: $navy;
-        font-size: 15px;
-        font-weight: bold;
-      }
-
-      .subtitle {
-        font-size: 14px;
-        color: $blue-gray;
-        margin-top: 7px;
-        width: 365px;
-      }
-    }
-
     .active-top {
       display: flex;
       justify-content: space-between;
-      padding: 32px 95px 0px 32px;
+      padding: 0 45px 27px 0;
       .sync-title {
         color: $navy;
         font-size: 15px;
@@ -95,7 +61,7 @@
     }
 
     .center {
-      padding: 20px 28px 0 32px;
+      padding: 20px 28px 0 0px;
 
       .prov-title {
         color: $navy;

@@ -174,6 +174,11 @@ export class AdminService {
     return this.http.patch(`v1/schools/${school.id}/syncing`, body);
   }
 
+  getGSuiteAuthorizeLink() {
+    const school = this.http.getSchool();
+    return this.http.get(`v1/schools/${school.id}/syncing/gsuite/authorization_link`);
+  }
+
   updateOnboardProgressRequest(data) {
     this.store.dispatch(updateOnboardProcess({data}));
     return this.onboardProcessData$;

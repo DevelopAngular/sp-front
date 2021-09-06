@@ -9,8 +9,9 @@ import {takeUntil} from 'rxjs/operators';
 
 enum Pages {
   Info = 1,
-  SetUp = 2,
-  AccountLink = 3
+  Connect= 2,
+  SetUp = 3,
+  AccountLink = 4
 }
 
 @Component({
@@ -43,7 +44,7 @@ export class GSuiteSettingsComponent implements OnInit {
 
     this.gSuiteInfo$.pipe(takeUntil(this.destroy$)).subscribe(info => {
       if (info.is_enabled) {
-        this.currentPage = 2;
+        this.currentPage = 3;
       } else {
         this.currentPage = 1;
       }
