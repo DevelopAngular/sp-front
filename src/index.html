@@ -3,13 +3,13 @@
 <head>
   <!-- Google Tag Manager -->
   <script>
+    window.dataLayer = window.dataLayer || [];
     var whitelistedURLs = [
       'forms/predemo',
       'forms/quoterequest',
-    ]
-    var useGTAG = whitelistedURLs.some(function(item) {
-      return window.location.pathname.search(new RegExp(item, 'i')) !== -1;
-    })
+    ];
+
+    var useGTAG = window.location.pathname.search(/forms\/predemo|forms\/quoterequest/);
 
     if (useGTAG) {
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
