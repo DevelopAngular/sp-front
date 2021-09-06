@@ -101,6 +101,8 @@ function makeUrl(server: LoginServer, endpoint: string) {
     if (/(proxy)/.test(environment.buildType)) {
       const proxyPath = new URL(server.api_root).pathname;
       url = proxyPath + endpoint;
+    } else if (/(local)/.test(environment.buildType)) {
+      url = environment.preferEnvironment.api_root + endpoint;
     } else {
       // url = 'https://smartpass.app/api/prod-us-central' + endpoint;
       url = server.api_root + endpoint;
