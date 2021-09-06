@@ -5,7 +5,7 @@ web:
   repository: # gitlab.example.com/group/project
   tag: stable
   pullPolicy: Always
-  replicaCount: 1
+  replicaCount: 3
 application:
   track: stable
   tier: web
@@ -20,10 +20,10 @@ service:
 resources:
   limits:
     cpu: 100m
-    memory: 50Mi
+    memory: 150Mi
   requests:
     cpu: 100m
-    memory: 25Mi
+    memory: 100Mi
 
 postgresql:
   resources:
