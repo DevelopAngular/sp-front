@@ -78,6 +78,35 @@
         margin-top: 10px;
       }
     }
+
+    .syncing-container {
+      height: 314px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .syncing-spin-wrapper {
+        width: 205px;
+        height: 130px;
+        background-color: #F4F4F4;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        .syncing-title {
+          color: $navy;
+          font-size: 17px;
+          font-weight: 700;
+          margin-top: 12px;
+        }
+
+        .spinner {
+          animation: rotate 1.5s linear infinite;
+        }
+      }
+    }
   }
 
   .footer {
@@ -96,5 +125,11 @@
       justify-content: space-evenly;
 
     }
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
   }
 }

@@ -10,44 +10,57 @@
   </div>
 
   <div class="content" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-    <div class="active-top">
-      <div class="left">
-        <div class="sync-title">Last Sync</div>
-        <div class="sync-subtitle">{{ formatDate(gSuiteInfo.last_successful_sync) }}</div>
-        <div style="color: #00B476">Successful</div>
+    <div class="active" *ngIf="!(syncLoading$ | async); else loading">
+      <div class="active-top">
+        <div class="left">
+          <div class="sync-title">Last Sync</div>
+          <div class="sync-subtitle">{{ formatDate(gSuiteInfo.last_successful_sync) }}</div>
+          <div style="color: #00B476">Successful</div>
+        </div>
+        <div class="right">
+          <div class="sync-title">Accounts synced</div>
+          <div class="sync-subtitle">{{ gSuiteInfo.num_accounts }} accounts</div>
+        </div>
       </div>
-      <div class="right">
-        <div class="sync-title">Accounts synced</div>
-        <div class="sync-subtitle">{{ gSuiteInfo.num_accounts }} accounts</div>
+      <div class="active-top" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+        <div class="left">
+          <div class="sync-title">Next scheduled sync</div>
+          <div class="sync-subtitle">{{ formatDate(gSuiteInfo.next_sync) }}</div>
+        </div>
+        <div class="right">
+          <app-gradient-button
+            [gradient]="'#F4F4F4, #F4F4F4'"
+            (buttonClick)="syncing()"
+            [textColor]="'#1F195E'"
+          >Sync now</app-gradient-button>
+        </div>
       </div>
-    </div>
-    <div class="active-top" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <div class="left">
-        <div class="sync-title">Next scheduled sync</div>
-        <div class="sync-subtitle">{{ formatDate(gSuiteInfo.next_sync) }}</div>
-      </div>
-      <div class="right">
-        <app-gradient-button
-          [gradient]="'#F4F4F4, #F4F4F4'"
-          (buttonClick)="syncing()"
-          [textColor]="'#1F195E'"
-        >Sync now</app-gradient-button>
+
+      <mat-divider></mat-divider>
+
+      <div class="center" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+        <div class="prov-title">Organizational units and groups</div>
+        <div class="prov-subtitle">Map G Suite organizational units and groups to SmartPass account roles.</div>
+        <div class="button">
+          <app-gradient-button
+            [gradient]="'#1976D2, #1976D2'"
+            (buttonClick)="openEditMode.emit()"
+          >Edit accounts syncing
+          </app-gradient-button>
+        </div>
       </div>
     </div>
 
-    <mat-divider></mat-divider>
-
-    <div class="center" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <div class="prov-title">Organizational units and groups</div>
-      <div class="prov-subtitle">Map G Suite organizational units and groups to SmartPass account roles.</div>
-      <div class="button">
-        <app-gradient-button
-          [gradient]="'#1976D2, #1976D2'"
-          (buttonClick)="openEditMode.emit()"
-        >Edit accounts syncing
-        </app-gradient-button>
+    <ng-template #loading>
+      <div class="syncing-container">
+        <div class="syncing-spin-wrapper">
+          <img class="spinner" width="43px" height="43px" [src]="'./assets/Sync Loading (Blue).svg' | resolveAsset" alt="Sync">
+<!--          <mat-spinner [style.color]="'#4274F6'" [diameter]="50"></mat-spinner>-->
+          <div class="syncing-title">Sync in Progress...</div>
+        </div>
       </div>
-    </div>
+    </ng-template>
+
   </div>
   <div class="footer">
     <mat-divider></mat-divider>

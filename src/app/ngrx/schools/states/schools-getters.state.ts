@@ -44,7 +44,7 @@ export const getSchoolCleverInfo = createSelector(
   (state: SchoolsState) => state.cleverInfo
 );
 
-export const getCleverSyncLoading = createSelector(
+export const getSyncLoading = createSelector(
   getSchoolsState,
   (state: SchoolsState) => state.syncLoading
 );
