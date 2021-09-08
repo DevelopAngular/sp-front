@@ -26,7 +26,7 @@ export class GSuiteConnectComponent implements OnInit {
 
   getAuthorizeLink() {
     this.adminService.getGSuiteAuthorizeLink().subscribe(({authorization_link}) => {
-      window.open(authorization_link, '_blank');
+      window.open(authorization_link, '_self');
     });
   }
 

@@ -78,6 +78,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.route.queryParams.subscribe(res => {
+      if (res.target === 'gsuite') {
+        this.openSettingsDialog('g_suite', '')
+      }
+    });
 
     this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
     this.gg4lSettingsData$ = this.adminService.gg4lInfo$;
@@ -183,6 +188,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
+        data: {status}
       });
     }
   }

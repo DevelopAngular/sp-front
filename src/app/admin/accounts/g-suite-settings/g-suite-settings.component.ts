@@ -5,7 +5,8 @@ import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
 import {NextStep} from '../../../animations';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {takeUntil} from 'rxjs/operators';
+import {filter, takeUntil} from 'rxjs/operators';
+import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 
 enum Pages {
   Info = 1,
@@ -25,6 +26,7 @@ export class GSuiteSettingsComponent implements OnInit {
   @Output() backEvent: EventEmitter<any> = new EventEmitter<any>();
 
   gSuiteInfo$: Observable<GSuiteOrgs>;
+  schoolSyncInfo$: Observable<SchoolSyncInfo>;
   currentPage: Pages;
 
   frameMotion$: BehaviorSubject<any>;
@@ -41,9 +43,10 @@ export class GSuiteSettingsComponent implements OnInit {
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.gSuiteInfo$ = this.adminService.gSuiteInfoData$;
+    this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
 
-    this.gSuiteInfo$.pipe(takeUntil(this.destroy$)).subscribe(info => {
-      if (info.is_enabled) {
+    this.schoolSyncInfo$.pipe(takeUntil(this.destroy$), filter(res => !!res)).subscribe(info => {
+      if (info.is_gsuite_enabled) {
         this.currentPage = 3;
       } else {
         this.currentPage = 1;
