@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, exhaustMap, filter, map, switchMap, take, tap,} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap,} from 'rxjs/operators';
 
 import {NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -174,16 +174,21 @@ export class OverlayContainerComponent implements OnInit {
   get isFormIncomplete() {
     if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
         this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder ||
-        this.currentPage === Pages.BulkEditRoomsInFolder)
+        this.currentPage === Pages.BulkEditRoomsInFolder) {
       if (this.isDirtyColor || this.isDirtyIcon) return false;
       if (!this.selectedIcon || !this.color_profile) return true;
+    }
 
     if ((this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
-        this.currentPage === Pages.BulkEditRooms) && this.roomData !== undefined)
+        this.currentPage === Pages.BulkEditRooms) && this.roomData !== undefined) {
+
       if ((this.roomData.advOptState.now.state === 'Certain \n teachers' &&
-          this.roomData.advOptState.now.data.selectedTeachers.length === 0) ||
-          (this.roomData.advOptState.future.state === 'Certain \n teachers' &&
-          this.roomData.advOptState.future.data.selectedTeachers.length === 0)) return true;
+        this.roomData.advOptState.now.data.selectedTeachers.length === 0) ||
+        (this.roomData.advOptState.future.state === 'Certain \n teachers' &&
+          this.roomData.advOptState.future.data.selectedTeachers.length === 0)) {
+        return true;
+      }
+    }
 
     return !this.roomValidButtons.getValue().publish;
   }
@@ -890,15 +895,16 @@ export class OverlayContainerComponent implements OnInit {
       room.restricted = !!roomData.restricted;
       room.scheduling_restricted = !!roomData.scheduling_restricted;
       if (roomData.travelType.length) {
-        room.travelType = roomData.travelType;
+        room.travelTypes = roomData.travelType;
       }
       if (roomData.timeLimit) {
-        room.timeLimit = roomData.timeLimit;
+        room.max_allowed_time = roomData.timeLimit;
       }
       room.roomName = room.title;
       room.roomNumber = room.room;
       room.selectedTeachers = room.teachers;
-      room.travel_types = room.travelType;
+      room.max_passes_to_active = roomData.advOptState.toEnabled;
+      room.max_passes_to = roomData.advOptState.to;
 
       return {
         ...this.normalizeRoomData(room),
@@ -916,12 +922,12 @@ export class OverlayContainerComponent implements OnInit {
       restricted: !!room.restricted,
       scheduling_restricted: !!room.scheduling_restricted,
       teachers: room.selectedTeachers,
-      travel_types: room.travelType,
-      max_allowed_time: +room.timeLimit,
+      travel_types: room.travel_types,
+      max_allowed_time: +room.max_allowed_time,
       max_passes_from: +this.passLimitForm.get('from').value,
-      max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
-      max_passes_to: this.passLimitForm.valid ? +this.passLimitForm.get('to').value : 0,
-      max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
+      max_passes_from_active: false,
+      max_passes_to: room.max_passes_to,
+      max_passes_to_active: room.max_passes_to_active
     };
   }
 
