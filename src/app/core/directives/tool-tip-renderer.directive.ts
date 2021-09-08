@@ -1,4 +1,4 @@
-import {ComponentRef, Directive, ElementRef, HostListener, Input, TemplateRef} from '@angular/core';
+import {ComponentRef, Directive, ElementRef, HostListener, Input, OnInit, TemplateRef} from '@angular/core';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {CustomToolTipComponent} from '../../shared/shared-components/custom-tool-tip/custom-tool-tip.component';
@@ -6,7 +6,7 @@ import {CustomToolTipComponent} from '../../shared/shared-components/custom-tool
 @Directive({
   selector: '[customToolTip]'
 })
-export class ToolTipRendererDirective {
+export class ToolTipRendererDirective implements OnInit {
 
   /**
    * This will be used to show tooltip or not
