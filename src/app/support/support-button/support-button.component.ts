@@ -44,7 +44,9 @@ export class SupportButtonComponent implements OnInit {
     } else {
       this.isOpenOptions = false;
       window.HubSpotConversations.widget.close();
-      (chat as HTMLElement).setAttribute('style', 'opacity: 0 !important');
+      if (chat) {
+        (chat as HTMLElement).setAttribute('style', 'opacity: 0 !important');
+      }
       if (this.dialog.getDialogById('support')) {
         this.dialog.getDialogById('support').close();
       }

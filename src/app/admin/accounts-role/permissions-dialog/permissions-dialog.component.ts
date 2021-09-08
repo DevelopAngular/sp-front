@@ -1,18 +1,18 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {User} from '../../../models/User';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup} from '@angular/forms';
 import {cloneDeep, isEqual} from 'lodash';
 import {UserService} from '../../../services/user.service';
-import {switchMap} from 'rxjs/operators';
-import {zip} from 'rxjs';
+import {switchMap, takeUntil} from 'rxjs/operators';
+import {Subject, zip} from 'rxjs';
 
 @Component({
   selector: 'app-permissions-dialog',
   templateUrl: './permissions-dialog.component.html',
   styleUrls: ['./permissions-dialog.component.scss']
 })
-export class PermissionsDialogComponent implements OnInit {
+export class PermissionsDialogComponent implements OnInit, OnDestroy {
 
   selectedUsers: User[];
   profilePermissions = {
@@ -25,6 +25,8 @@ export class PermissionsDialogComponent implements OnInit {
   permissionsInitialState;
   isDirtyForm: boolean;
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     public dialogRef: MatDialogRef<PermissionsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -35,9 +37,14 @@ export class PermissionsDialogComponent implements OnInit {
     this.selectedUsers = this.data['users'].map(user => User.fromJSON(user));
     this.buildPermissions();
 
-    this.permissionsForm.valueChanges.subscribe(value => {
+    this.permissionsForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
       this.isDirtyForm = !isEqual(this.permissionsInitialState, value);
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   buildPermissions() {
@@ -81,7 +88,7 @@ export class PermissionsDialogComponent implements OnInit {
   }
 
   getIsPermissionOn(permission) {
-    return this.permissionsForm.get(permission).value;
+    return this.permissionsForm ? this.permissionsForm.get(permission).value : false;
   }
 
   save() {

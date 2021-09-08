@@ -32,7 +32,7 @@ export class AddAccountPopupComponent implements OnInit {
       // this.options.push({ title: 'Add account', icon: './assets/GG4L Icon.svg', action: 'gg4l' });
     // }
     if (this.syncData.is_gsuite_enabled) {
-      this.options.push({title: 'Add Account', icon: './assets/Google (Blue-Gray).svg', action: 'g_suite'});
+      this.options.push({title: 'Add Google Account', icon: './assets/Google (Blue-Gray).svg', action: 'g_suite'});
     }
     this.updateSettingsPosition();
   }

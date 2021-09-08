@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, tap,} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, exhaustMap, filter, map, switchMap, take, tap,} from 'rxjs/operators';
 
 import {NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -656,9 +656,6 @@ export class OverlayContainerComponent implements OnInit {
           this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
             .subscribe(res => this.dialogRef.close(true));
         }
-        // else {
-        //   this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)).subscribe(res => this.dialogRef.close(true));
-        // }
       }
       if (this.folderData.roomsToDelete.length) {
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
@@ -682,6 +679,10 @@ export class OverlayContainerComponent implements OnInit {
             id = location.id;
             data = location;
             data.category = this.folderData.folderName + salt;
+            // debugger;
+            if (!data.max_passes_to_active && data.enable_queue) {
+              data.max_passes_to_active = true;
+            }
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
@@ -695,33 +696,34 @@ export class OverlayContainerComponent implements OnInit {
 
       zip(...locationsToDb$).pipe(
         switchMap(locations => {
-        const newFolder = {
-          title: this.folderData.folderName,
-          color_profile: this.color_profile.id,
-          icon: this.selectedIcon.inactive_icon,
-          category: this.folderData.folderName + salt
-        };
-        return this.currentPage === Pages.EditFolder
-          ?
-          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
-          :
-          zip(
-            this.hallPassService.pinnables$,
-            this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
-          ).pipe(
-            switchMap((result: any[]) => {
-              const arrengedSequence = result[0].map(item => item.id);
-              arrengedSequence.push(result[1].id);
-              return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
-            })
-          );
+          const newFolder = {
+            title: this.folderData.folderName,
+            color_profile: this.color_profile.id,
+            icon: this.selectedIcon.inactive_icon,
+            category: this.folderData.folderName + salt
+          };
+          if (this.currentPage === Pages.EditFolder) {
+            this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder);
+            return of(null);
+          } else {
+            return zip(
+              this.hallPassService.pinnables$.pipe(take(1)),
+              this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
+            ).pipe(
+              switchMap((result: any[]) => {
+                const arrengedSequence = result[0].map(item => item.id);
+                arrengedSequence.push(result[1].id);
+                return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
+              })
+            );
+          }
       }),
         switchMap((res) => {
           if (this.pinnableToDeleteIds.length) {
             const deleteRequests = this.pinnableToDeleteIds.map(id => {
               return this.hallPassService.deletePinnableRequest(id);
             });
-            return forkJoin(deleteRequests);
+            return zip(...deleteRequests);
           } else {
             return of(null);
           }
