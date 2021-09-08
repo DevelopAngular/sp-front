@@ -46,6 +46,10 @@ export const getCleverInfoFailure = createAction(`[${COMPONENT}] Get Clever Info
 
 export const syncClever = createAction(`[${COMPONENT}] Sync Clever`);
 
+export const syncGsuite = createAction(`[${COMPONENT}] Sync Gsuite`);
+export const syncGsuiteSuccess = createAction(`[${COMPONENT}] Sync Gsuite Success`, props<{data: any}>());
+export const syncGsuiteFailure = createAction(`[${COMPONENT}] Sync Gsuite Failure`, props<{errorMessage: string}>());
+
 export const updateCleverInfo = createAction(`[${COMPONENT}] Update Clever Info`, props<{cleverInfo: CleverInfo}>());
 
 export const clearSchools = createAction(`[${COMPONENT}] Clear Schools`);

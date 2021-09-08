@@ -198,6 +198,22 @@ export class SchoolsEffects {
       );
   });
 
+  syncGsuite$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.syncGsuite),
+        exhaustMap(action => {
+          return this.adminService.gsuiteSyncNow()
+            .pipe(
+              map((data) => {
+                return schoolsActions.syncGsuiteSuccess({data});
+              }),
+              catchError(error => of(schoolsActions.syncGsuiteFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private http: HttpService,

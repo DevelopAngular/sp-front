@@ -36,7 +36,7 @@ export class GSuiteSetUpComponent implements OnInit {
   }
 
   syncing() {
-    this.adminService.getSpSyncingRequest();
+    this.adminService.gsuiteSyncNowRequest();
   }
 
 }

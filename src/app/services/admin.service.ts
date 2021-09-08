@@ -32,6 +32,7 @@ import {
   getSchoolsGG4LInfo,
   getSchoolSyncInfo,
   syncClever,
+  syncGsuite,
   updateCleverInfo,
   updateSchool,
   updateSchoolSyncInfo
@@ -239,8 +240,16 @@ export class AdminService {
     return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/clever/status`);
   }
 
-  syncNow() {
+  cleverSyncNow() {
     return this.http.post(`v1/schools/${this.http.getSchool().id}/syncing/clever/manual_sync`);
+  }
+
+  gsuiteSyncNowRequest() {
+    this.store.dispatch(syncGsuite());
+  }
+
+  gsuiteSyncNow() {
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/syncing/gsuite/manual_sync`);
   }
 
   syncLoading() {

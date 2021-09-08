@@ -116,7 +116,7 @@ export class Gg4lSetUpComponent implements OnInit {
   }
 
   syncing() {
-    this.adminService.syncNow().subscribe(res => {
+    this.adminService.cleverSyncNow().subscribe(res => {
     });
   }
 
