@@ -10,6 +10,9 @@ export class TooltipDataService {
   constructor(private http: HttpService) { }
 
   reachedPassLimit(currentPage: 'from' | 'to', passLimit: PassLimit, isStaff?: boolean): boolean {
+    if (!passLimit) {
+      return false;
+    }
     // TODO uncomment when branch SP-1050 is available
     // if (currentPage === 'from' && passLimit.max_passes_from_active && ((passLimit.from_count && passLimit.from_count >= passLimit.max_passes_from) || (!passLimit.from_count && !passLimit.max_passes_from))) {
     //   return false;
@@ -25,6 +28,9 @@ export class TooltipDataService {
   }
 
   tooltipDescription(currentPage: 'from' | 'to', passLimit: PassLimit): string {
+    if (!passLimit) {
+      return '';
+    }
     // TODO uncomment when branch SP-1050 is available
     // if (currentPage === 'from') {
     //   if (this.http.getSchool().show_active_passes_number) {
