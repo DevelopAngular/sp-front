@@ -275,8 +275,6 @@ export class FolderComponent implements OnInit, OnDestroy {
               }
           } else if (event.checked) {
               this.selectedRooms.push(room);
-              console.log(this.roomsImFolder.length && this.roomsImFolder.length > this.selectedRooms.length);
-              // debugger;
           } else {
               this.selectedRooms = this.selectedRooms.filter(readyRoom => readyRoom.id !== room.id);
           }
