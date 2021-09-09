@@ -47,7 +47,6 @@ import {KeyboardShortcutsModule} from 'ng-keyboard-shortcuts';
 import {CoreModule} from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 import {OAuthModule} from 'angular-oauth2-oidc';
-import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support/support-button/support-button.component';
 import {PassLimitEffects} from './ngrx/pass-limits/effects';
@@ -85,12 +84,6 @@ const appRoutes: Routes = [
     canActivate: [AuthenticatedGuard],
     loadChildren: () => import('app/intro-route/intro-route.module').then(m => m.IntroRouteModule),
     data: { hideSchoolToggleBar: true}
-  },
-  {
-    path: 'school_signup',
-    canActivate: [SchoolSignUpGuard],
-    loadChildren: () => import('app/school-sign-up/school-sign-up.module').then(m => m.SchoolSignUpModule),
-    data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: false, authFree: true},
   },
   {
     path: '',

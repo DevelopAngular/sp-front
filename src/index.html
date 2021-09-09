@@ -9,7 +9,7 @@
       'forms/quoterequest',
     ];
 
-    var useGTAG = window.location.pathname.search(/forms\/predemo|forms\/quoterequest/);
+    var useGTAG = window.location.pathname.search(/forms\/predemo|forms\/quoterequest/) !== -1;
 
     if (useGTAG) {
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
