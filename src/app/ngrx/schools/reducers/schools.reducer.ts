@@ -72,8 +72,11 @@ const reducer = createReducer(
   on(schoolsActions.updateCleverInfo, (state, {cleverInfo}) => {
     return { ...state, syncLoaded: true, syncLoading: false, cleverInfo };
   }),
-  on(schoolsActions.syncGsuiteSuccess, (state, {data}) => {
-    return { ...state, syncLoaded: true, syncLoading: false };
+  // on(schoolsActions.syncGsuiteSuccess, (state, {data}) => {
+  //   return { ...state, syncLoaded: true, syncLoading: false };
+  // }),
+  on(schoolsActions.updateGSuiteInfo, (state, {gsuiteInfo}) => {
+    return { ...state, gSuiteInfo: gsuiteInfo, syncLoaded: true, syncLoading: false };
   }),
   on(schoolsActions.clearSchools, (state) => (schoolsInitialState))
 );

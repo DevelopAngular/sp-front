@@ -14,8 +14,8 @@
       <div class="active-top">
         <div class="left">
           <div class="sync-title">Last Sync</div>
-          <div class="sync-subtitle">{{ formatDate(gSuiteInfo.last_successful_sync) }}</div>
-          <div style="color: #00B476">Successful</div>
+          <div class="sync-subtitle">{{ gSuiteInfo.last_successful_sync ? formatDate(gSuiteInfo.last_successful_sync) : 'Never synced before' }}</div>
+          <div style="color: #00B476" *ngIf="!!gSuiteInfo.last_successful_sync">Successful</div>
         </div>
         <div class="right">
           <div class="sync-title">Accounts synced</div>

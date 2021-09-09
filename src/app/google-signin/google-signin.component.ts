@@ -238,36 +238,32 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.loginData.authType = auth_types[auth_types.length - 1];
         this.auth_providers = auth_providers[0];
         const auth = auth_types[auth_types.length - 1];
+        if (auth.indexOf('google') !== -1) {
+          this.loginData.demoLoginEnabled = false;
+          this.isStandardLogin = false;
+          this.isGG4L = false;
+          this.isGoogleLogin = true;
+          this.isClever = false;
+        } else if (auth.indexOf('clever') !== -1) {
+          this.loginData.demoLoginEnabled = false;
+          this.isStandardLogin = false;
+          this.isGG4L = false;
+          this.isGoogleLogin = false;
+          this.isClever = true;
+        } else if (auth.indexOf('gg4l') !== -1) {
+          this.loginData.demoLoginEnabled = false;
+          this.isStandardLogin = false;
+          this.isGoogleLogin = false;
+          this.isClever = false;
+          this.isGG4L = true;
+        } else if (auth.indexOf('password') !== -1) {
           this.isGoogleLogin = false;
           this.isStandardLogin = true;
           this.isClever = false;
           this.isGG4L = false;
-        // if (auth.indexOf('google') !== -1) {
-        //   this.loginData.demoLoginEnabled = false;
-        //   this.isStandardLogin = false;
-        //   this.isGG4L = false;
-        //   this.isGoogleLogin = true;
-        //   this.isClever = false;
-        // } else if (auth.indexOf('clever') !== -1) {
-        //   this.loginData.demoLoginEnabled = false;
-        //   this.isStandardLogin = false;
-        //   this.isGG4L = false;
-        //   this.isGoogleLogin = false;
-        //   this.isClever = true;
-        // } else if (auth.indexOf('gg4l') !== -1) {
-        //   this.loginData.demoLoginEnabled = false;
-        //   this.isStandardLogin = false;
-        //   this.isGoogleLogin = false;
-        //   this.isClever = false;
-        //   this.isGG4L = true;
-        // } else if (auth.indexOf('password') !== -1) {
-        //   this.isGoogleLogin = false;
-        //   this.isStandardLogin = true;
-        //   this.isClever = false;
-        //   this.isGG4L = false;
-        // } else {
-        //   this.loginData.demoLoginEnabled = false;
-        // }
+        } else {
+          this.loginData.demoLoginEnabled = false;
+        }
         this.disabledButton = false;
         this.signIn();
         this.cdr.detectChanges();

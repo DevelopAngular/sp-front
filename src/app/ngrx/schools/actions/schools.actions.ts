@@ -51,6 +51,7 @@ export const syncGsuiteSuccess = createAction(`[${COMPONENT}] Sync Gsuite Succes
 export const syncGsuiteFailure = createAction(`[${COMPONENT}] Sync Gsuite Failure`, props<{errorMessage: string}>());
 
 export const updateCleverInfo = createAction(`[${COMPONENT}] Update Clever Info`, props<{cleverInfo: CleverInfo}>());
+export const updateGSuiteInfo = createAction(`[${COMPONENT}] Update GsuiteInfo`, props<{gsuiteInfo: GSuiteOrgs}>());
 
 export const clearSchools = createAction(`[${COMPONENT}] Clear Schools`);
 

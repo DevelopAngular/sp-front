@@ -113,7 +113,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.polingService.listen('admin.user_sync.sync_end')
       .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
-      this.adminService.updateCleverInfo(res.data);
+        if (res.data.sync_type === 'clever') {
+          this.adminService.updateCleverInfo(res.data);
+        } else if (res.data.sync_type === 'gsuite') {
+          this.adminService.updateGsuiteInfo(res.data);
+        }
     });
 
     this.toastService.toastButtonClick$

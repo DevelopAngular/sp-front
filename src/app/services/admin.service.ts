@@ -34,6 +34,7 @@ import {
   syncClever,
   syncGsuite,
   updateCleverInfo,
+  updateGSuiteInfo,
   updateSchool,
   updateSchoolSyncInfo
 } from '../ngrx/schools/actions';
@@ -258,6 +259,10 @@ export class AdminService {
 
   updateCleverInfo(cleverInfo) {
     this.store.dispatch(updateCleverInfo({cleverInfo}));
+  }
+
+  updateGsuiteInfo(gsuiteInfo) {
+    this.store.dispatch(updateGSuiteInfo({gsuiteInfo}));
   }
 
   exportCsvPasses(queryParams: object) {
