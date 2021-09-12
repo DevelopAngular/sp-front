@@ -381,13 +381,13 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
                 .map(chunk => chunk.slice(0, 1).toUpperCase()).join('')
             };
           });
+        }),
+        switchMap((active_hp) => {
+          if (active_hp.length) {
+            return this.pdf.generateReport(active_hp, 'p', 'dashboard');
+          }
         })
-      )
-      .subscribe((active_hp) => {
-        if (active_hp.length) {
-          this.pdf.generateReport(active_hp, 'p', 'dashboard');
-        }
-      });
+      ).subscribe();
   }
 
 

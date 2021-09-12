@@ -17,22 +17,7 @@
     <div class="header-content">
       <div [ngSwitch]="currentTab">
         <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
-<!--          <span *ngSwitchCase="''">Accounts</span>-->
-<!--          <span *ngSwitchCase="'_profile_admin'">Admins</span>-->
-<!--          <span *ngSwitchCase="'_profile_teacher'">Teachers</span>-->
-<!--          <span *ngSwitchCase="'_profile_student'">Students</span>-->
-<!--          <span *ngSwitchCase="'_profile_assistant'">Assistants</span>-->
           <span>Accounts</span>
-<!--          <div class="count" *ngIf="accounts$ | async as accounts">-->
-<!--            <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">-->
-<!--              <span *ngSwitchCase="''">{{ accounts.total_count }}</span>-->
-<!--              <span *ngSwitchCase="'_profile_admin'">{{ accounts.admin_count }}</span>-->
-<!--              <span *ngSwitchCase="'_profile_teacher'">{{ accounts.teacher_count }}</span>-->
-<!--              <span *ngSwitchCase="'_profile_student'">{{ accounts.student_count }}</span>-->
-<!--              <span *ngSwitchCase="'_profile_assistant'">{{ accounts.assistant_count }}</span>-->
-<!--              accounts-->
-<!--            </div>-->
-<!--          </div>-->
         </div>
       </div>
 
@@ -53,6 +38,7 @@
         </div>
 
         <app-gradient-button
+          *ngIf="showIntegrations$ | async"
           [style.margin-left]="'15px'"
           [gradient]="'#F4F4F4, #F4F4F4'"
           [leftIcon]="'./assets/Integrations (Navy).svg'"

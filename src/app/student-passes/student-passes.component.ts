@@ -4,7 +4,6 @@ import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
-import * as moment from 'moment';
 import {
   ResizeProfileImage,
   resizeStudentPasses,
@@ -20,6 +19,8 @@ import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
 import {map} from 'rxjs/operators';
+import {DeviceDetection} from '../device-detection.helper';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-student-passes',
@@ -109,6 +110,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   get isClose() {
     return !this.isOpenEvent$.getValue() && this.isResize;
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   openProfile() {

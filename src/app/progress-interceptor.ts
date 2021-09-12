@@ -4,6 +4,7 @@ import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {HttpService} from './services/http-service';
+import {ToastService} from './services/toast.service';
 
 @Injectable()
 export class ProgressInterceptor implements HttpInterceptor {
@@ -11,6 +12,7 @@ export class ProgressInterceptor implements HttpInterceptor {
   constructor(
     private router: Router,
     private inj: Injector,
+    private toast: ToastService
   ) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -30,11 +32,11 @@ export class ProgressInterceptor implements HttpInterceptor {
                         ].every(_url => error.url.search(_url) < 0);
 
                         if ( (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
-                          // console.log(error);
-                          http.errorToast$.next({
-                            header: 'Something went wrong.',
-                            message: `Please try refreshing the page. If the issue keeps occurring, contact us below. Error status code:${error.status}`
-                          });
+                          this.toast.openToast({title: 'Oh no! Something went wrong', subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpss.app. (${error.status})`, type: 'error'});
+                          // http.errorToast$.next({
+                          //   header: 'Something went wrong.',
+                          //   message: `Please try refreshing the page. If the issue keeps occurring, contact us below. Error status code:${error.status}`
+                          // });
                         }
                         return throwError(error);
                       })

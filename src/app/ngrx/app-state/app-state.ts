@@ -20,6 +20,7 @@ import {PassFiltersReducer} from '../pass-filters/reducers';
 import {passLikeCollectionReducer} from '../pass-like-collection/reducers';
 import {representedUsersReducer} from '../represented-users/reducers';
 import {quickPreviewPassesReducer} from '../quick-preview-passes/reducers';
+import {loginDataReducer} from '../login-data/reducers';
 
 
 export interface AppState {
@@ -45,6 +46,7 @@ export interface AppState {
   readonly passLikeCollection;
   readonly representedUsers;
   readonly quickPreviewPasses;
+  readonly loginData;
 }
 
 export const reducers = {
@@ -69,5 +71,6 @@ export const reducers = {
   pass_filters: PassFiltersReducer,
   passLikeCollection: passLikeCollectionReducer,
   representedUsers: representedUsersReducer,
-  quickPreviewPasses: quickPreviewPassesReducer
+  quickPreviewPasses: quickPreviewPassesReducer,
+  loginData: loginDataReducer
 };

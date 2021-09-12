@@ -86,15 +86,14 @@
   overflow: hidden;
 }
 .option{
-    width: inherit;
-    padding: 2px 0;
+    padding: 0 10px;
     display: flex;
     flex-direction: column;
     cursor: pointer;
     text-align: left;
 
   &.sort{
-    padding: 0;
+    //padding: 0;
   }
 }
 
@@ -103,7 +102,8 @@
   height: 40px;
   color: #134482;
   font-size: 14px;
-  padding: 0 26px;
+  padding: 0 20px;
+  border-radius: 7px;
   display: flex;
   cursor: pointer;
   justify-content: space-between;

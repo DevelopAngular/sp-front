@@ -20,7 +20,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {filter, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, take, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
@@ -78,15 +78,19 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() filterDate: moment.Moment;
   @Input() user;
   @Input() selectedSort = null;
+  @Input() searchPanel: boolean;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
   @Output() currentPassesEmit = new EventEmitter();
   @Output() filterPasses = new EventEmitter();
   @Output() passClick = new EventEmitter<boolean>();
+  @Output() searchValue = new EventEmitter<string>();
 
   currentPasses$: Observable<any>;
   activePassTime$;
+  randomObject$: Observable<string>;
+  search: string;
   timers: number[] = [];
   timerEvent: Subject<void> = new BehaviorSubject(null);
   sort$ = this.dataService.sort$;
@@ -166,6 +170,16 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     if (this.passProvider) {
       this.currentPasses$ = this.passProvider.pipe(
         tap(passes => this.currentPassesEmit.emit(passes))
+      );
+      this.randomObject$ = this.currentPasses$.pipe(
+        map(passes => {
+          const pass = passes[Math.floor(Math.random() * passes.length)];
+          const destinationName = pass.destination.title;
+          const studentName = pass.student.display_name;
+          const random = [destinationName, studentName];
+          return random[Math.floor(Math.random() * random.length)];
+        }),
+        take(1)
       );
     }
 
@@ -344,5 +358,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         this.selectedSort = sortMode;
         this.onSortSelected(this.selectedSort);
       });
+  }
+
+  getSearchInputPlaceholder(passes: HallPass[]) {
+    return `Search ${passes[Math.floor(Math.random() * passes.length)].destination.title}`;
   }
 }

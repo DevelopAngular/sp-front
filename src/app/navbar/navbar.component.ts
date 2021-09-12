@@ -19,7 +19,7 @@ import {Location} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
-import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
+import {Observable, ReplaySubject, Subject} from 'rxjs';
 import {exhaustMap, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 
 import {DataService} from '../services/data-service';
@@ -98,8 +98,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   hideButtons: boolean;
 
-  navbarEnabled = false;
-
   islargeDeviceWidth: boolean;
 
   isHallMonitorRoute: boolean;
@@ -169,19 +167,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private rendered: Renderer2,
       private navbarElementsService: NavbarElementsRefsService,
       private shortcutsService: KeyboardShortcutsService
-  ) {
-
-    const navbarEnabled$ = combineLatest(
-      this.loadingService.isLoading$,
-      this.loginService.isAuthenticated$,
-      (a, b) => a && b);
-
-    navbarEnabled$.subscribe(s => {
-      this._zone.run(() => {
-        this.navbarEnabled = s;
-      });
-    });
-  }
+  ) {}
 
   get optionsOpen() {
     return this.tab === 'settings';
@@ -230,6 +216,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.underlinePosition();
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         pluck('key'),
         takeUntil(this.destroyer$)
       )
@@ -287,6 +274,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           this.isStaff = this.user.isTeacher();
           this.isAssistant = this.user.isAssistant();
           this.showSwitchButton = [this.user.isAdmin(), this.user.isTeacher(), this.user.isStudent()].filter(val => !!val).length > 1;
+          if (!this.isAssistant) {
+            this.buttons.forEach((button) => {
+              if (
+                ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
+                &&
+                !this.hasRoles(button.requiredRoles)
+              ) {
+                this.fakeMenu.next(true);
+              }
+            });
+          }
       });
 
     this.http.globalReload$
@@ -321,26 +319,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       });
 
-   this.userService.representedUsers.subscribe(res => {
-     this.representedUsers = res;
+   this.userService.representedUsers.pipe(takeUntil(this.destroyer$))
+     .subscribe(res => {
+      this.representedUsers = res;
    });
-
-    this.userService.userData
-      .pipe(
-        takeUntil(this.destroyer$),
-        filter(user => !user.isAssistant())
-      )
-      .subscribe(user => {
-      this.buttons.forEach((button) => {
-        if (
-          ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
-          &&
-          !this.hasRoles(button.requiredRoles)
-        ) {
-            this.fakeMenu.next(true);
-          }
-      });
-    });
 
 
     this.sideNavService.sideNavAction
@@ -520,10 +502,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
               backdropClass: 'custom-backdrop',
           });
 
-          favRef.afterClosed().pipe(switchMap(data => {
-              const body = {'locations': data };
-              return this.locationService.updateFavoriteLocations(body);
-          })).subscribe();
+          favRef.afterClosed().subscribe((data) => {
+            this.locationService.updateFavoriteLocationsRequest(data);
+          });
 
       } else if (action === 'notifications') {
 

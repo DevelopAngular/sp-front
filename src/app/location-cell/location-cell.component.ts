@@ -49,6 +49,10 @@ export class LocationCellComponent implements OnInit, OnDestroy {
 
   @Input() passLimit: PassLimit;
 
+  @Input() isSameRoom: boolean;
+
+  @Input() isFavorite: boolean;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
@@ -139,6 +143,10 @@ export class LocationCellComponent implements OnInit, OnDestroy {
     } else {
        return this.sanitizer.bypassSecurityTrustStyle('#CDCDCE');
     }
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   ngOnInit() {

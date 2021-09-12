@@ -6,6 +6,17 @@
         {{title}}
       </div>
     </div>
+    <ng-container *ngIf="currentPasses$ | async as passes">
+      <div class="search" *ngIf="searchPanel && (passes.length || !!search)">
+        <app-round-input
+          [isSearch]="true"
+          [placeholder]="'Search ' + (randomObject$ | async)"
+          [focused]="true"
+          (ontextupdate)="search = $event; searchValue.emit($event)"
+        ></app-round-input>
+      </div>
+    </ng-container>
+
       <div class="filter-button"
          *ngIf="hasFilterPasses"
          appCrossPointerEventTarget
@@ -23,7 +34,7 @@
 
       </div>
       <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
-        <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
+        <app-icon-button [srcString]="'Hall Monitor Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
       </div>
   </div>
   <div *ngIf="(currentPasses$ | async) as currentPasses">

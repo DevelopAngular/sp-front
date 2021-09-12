@@ -3,7 +3,7 @@
     <div class="sceleton-container">
       <div class="sceleton-item" *ngFor="let item of generateFakeItems(); first as isFirst; last as isLast">
         <div class="sceleton-item-container" [style.height]="itemSize + 'px'">
-          <div class="sceleton-item-checkbox">
+          <div class="sceleton-item-checkbox" *ngIf="isCheckbox | async">
             <mat-checkbox [style.color]="'#7f879d'"></mat-checkbox>
           </div>
           <div class="sceleton-item-content" [style.height]="itemSize + 'px'">
@@ -57,6 +57,7 @@
               [style.border-right]="'0.5pt solid #B0B4C0'"
               style="cursor: pointer"
               [style.background-color]="sort && sort === 'asc' && sortColumn === column || sort && sort === 'desc' && sortColumn === column ? '#e5e6eb' : '#D3D6DE'"
+              [ngClass]="{'noCheckbox': !(isCheckbox | async)}"
               mat-header-cell
               *matHeaderCellDef
               (click)="sortHeader(column)"
@@ -86,7 +87,8 @@
 
             <td
               mat-cell
-              [ngClass]="{'fake-container': !element[column]}"
+              [ngClass]="{'fake-container': !element[column], noCheckbox: !(isCheckbox | async)}"
+              [style.height]="!element[column] ? itemSize + 'px' : 'auto'"
               [style.opacity]="!element[column] && !isLast ? 0 : 1"
               [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
@@ -94,13 +96,13 @@
               [innerHTML]="element[column] ? element[column] : fakeTemplate">
             </td>
 
-
         </ng-container>
 
         <tr class="header" mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
 
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
             #rowCont
+            [style.height]="itemSize + 'px'"
             (mouseenter)="rowCont.hover = true"
             (mouseleave)="rowCont.hover = false"
             [style.background-color]="isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick && !row.isFake ? '#F1F2F4' : '#FFFFFF'"

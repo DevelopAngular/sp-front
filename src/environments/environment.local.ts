@@ -1,10 +1,11 @@
 export const environment = {
   production: true,
   buildType: 'local',
+  schoolOnboardApiRoot: 'https://smartpass.app/api/prod-us-central',
   preferEnvironment: {
-    api_root: 'http://127.0.0.1:8000/',
-    client_id: 'xDvFSNqxfNwf52eYz8I7SnMJKw9nghifZttfl1ec',
-    client_secret: 'feENKl4wWJzDkGu9gQNbevDGBi8ntYoiOrI1Fu1mzOZlZPHBaX7VC2Bz9zwuFHh0tdNz64Dr2iUbMztOao16R2swamHv7w6pppH6uwRZDK4OKa5B80fxaoskMnfHneYh',
+    api_root: 'http://localhost:8000/api/staging/',
+    client_id: 'Wmr9cRCU97i8Clp2oaN7Pek8I3C7U7uXLGsJTqPN',
+    client_secret: 'kbbJmqWnUxbX3NkBlucHIhHd5Wt9XpcDFuUi9fLVN7ggLjGHknZLz8jVqfwfY3Zxe0o5gNGXRqPPCGBMrjZCn8aQFabNid2MxYYmANxXV2KKg09EvgoNuJA5kDiF2i36',
     domain: 'example.com',
     icon_url: '',
     name: 'Local',
@@ -20,4 +21,8 @@ export const environment = {
     messagingSenderId: '625620388494'
   },
   funData: false,
+  gg4l: {
+    clientId: 'PTRDNUBGDX',
+    secretKey: 'zSEk2Qi4UdKWdbRj8ZYUkgJ+bslK9J5DDPxvmMbJd+g='
+  }
 };

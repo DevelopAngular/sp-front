@@ -1,8 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {GSuiteOrgs} from '../../../../models/GSuiteOrgs';
 import {Util} from '../../../../../Util';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
+import {AdminService} from '../../../../services/admin.service';
 
 @Component({
   selector: 'app-g-suite-set-up',
@@ -16,10 +17,13 @@ export class GSuiteSetUpComponent implements OnInit {
   @Output() openEditMode: EventEmitter<any> = new EventEmitter<any>();
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
 
+  syncLoading$: Observable<boolean>;
+
   frameMotion$: BehaviorSubject<any>;
 
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private adminService: AdminService
   ) { }
 
   formatDate(date) {
@@ -27,7 +31,12 @@ export class GSuiteSetUpComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.syncLoading$ = this.adminService.syncLoading$;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+  }
+
+  syncing() {
+    this.adminService.gsuiteSyncNowRequest();
   }
 
 }

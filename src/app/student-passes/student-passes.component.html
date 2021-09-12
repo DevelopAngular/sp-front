@@ -70,12 +70,12 @@
         </div>
 
         <ng-template #passes>
-          <div class="pass-collection">
+          <div class="pass-collection" [style.width]="isMobile ? '325px' : '300px'">
             <div class="title">
               <img width="20" [src]="'./assets/Expired (Navy).svg' | resolveAsset" alt="Expired">
               <div style="margin-left: 8px">Latest Passes</div>
             </div>
-            <div class="passes" *ngIf="!(loading$ | async); else fakePasses">
+            <div class="passes" *ngIf="!(loading$ | async); else fakePasses" [style.grid-template-columns]="isMobile ? 'repeat(auto-fill, 157px)' : 'repeat(auto-fill, 144px)'">
               <div class="pass" *ngFor="let pass of lastStudentPasses | async">
                 <app-pass-tile
                   [forFuture]="false"

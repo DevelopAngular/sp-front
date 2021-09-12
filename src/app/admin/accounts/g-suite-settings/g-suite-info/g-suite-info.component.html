@@ -1,20 +1,40 @@
 <div class="wrapper">
-  <div class="back-button" appCrossPointerEventTarget (pointerClickEvent)="back.emit()">
-    <img width="28" [src]="'./assets/Back Button (White).svg'" alt="Back">
+<div class="background" [style.background]="gradient" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+<img appCrossPointerEventTarget (pointerClickEvent)="back.emit()" class="back-button" width="28" [src]="'./assets/Back Button (White).svg'" alt="Back">
+
+<div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+  <div class="integrations" style="z-index: 10">
+    <img width="30" height="30" [src]="'./assets/google/google_logo.svg'" alt="">
   </div>
-
-  <div class="content">
-    <div class="header">Sync your accounts from your G Suite</div>
-    <div class="title">
-      Automatically syncs new and updated accounts every 4 hours.
-    </div>
-
-    <div class="manual-set-up">
-      <div class="manual-title">
-        <img width="19" style="margin-right: 9px" [src]="'./assets/Latter (Navy).svg'" alt="latter">
-        Manual set-up
+  <div class="header">Sync your accounts from G Suite</div>
+  <div class="info-list">
+    <div class="info">
+      <img width="24" height="24" [src]="'./assets/Check (White).svg' | resolveAsset">
+      <div class="title">
+        Sign in directly with existing Google account
       </div>
-      <div class="subtitle">Send an email to <a style="color: #7f879d; outline: none" href="http://support@smartpass.app" target="_blank">support@smartpass.app</a> to set up G Suite sync.</div>
+    </div>
+    <div class="info" style="margin-top: 13px">
+      <img width="24" height="24" [src]="'./assets/Check (White).svg' | resolveAsset">
+      <div class="title">
+        Easiest to set-up for schools that already use Google apps
+      </div>
+    </div>
+    <div class="info" style="margin-top: 13px">
+      <img width="24" height="24" [src]="'./assets/Check (White).svg' | resolveAsset">
+      <div class="title">Recommended if schools have a simple sync or use Google</div>
     </div>
   </div>
+</div>
+<!--  <mat-divider class="divider" [style.border-top-color]="'#D8D8D8'"></mat-divider>-->
+
+<div class="footer" [style.margin-top]="'25px'">
+  <app-gradient-button
+    [gradient]="'#FFFFFF, #FFFFFF'"
+    [size]="'medium'"
+    [textColor]="'#484CE6'"
+    (buttonClick)="nextPage.emit()"
+  >Continue
+  </app-gradient-button>
+</div>
 </div>

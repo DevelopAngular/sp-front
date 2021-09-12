@@ -69,6 +69,7 @@ import {HallMonitorPassesEffects} from './ngrx/pass-like-collection/nested-state
 import {MyRoomPassesEffects} from './ngrx/pass-like-collection/nested-states/my-room-passes/effects';
 import {RepresentedUsersEffects} from './ngrx/represented-users/effects';
 import {QuickPreviewPassesEffects} from './ngrx/quick-preview-passes/effects';
+import {LoginDataEffects} from './ngrx/login-data/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -115,10 +116,6 @@ const appRoutes: Routes = [
   {
     path: 'sign-out',
     loadChildren: () => import('app/sign-out/sign-out.module').then(m => m.SignOutModule)
-  },
-  {
-    path: 'error',
-    loadChildren: () => import('app/error/error.module').then(m => m.ErrorModule)
   },
   {
     path: 'forms',
@@ -197,7 +194,8 @@ const appRoutes: Routes = [
       MyRoomPassesEffects,
       FiltersEffects,
       RepresentedUsersEffects,
-      QuickPreviewPassesEffects
+      QuickPreviewPassesEffects,
+      LoginDataEffects
     ]),
     StoreDevtoolsModule.instrument({}),
     HammerModule,
