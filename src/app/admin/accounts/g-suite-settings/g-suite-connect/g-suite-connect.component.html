@@ -15,7 +15,7 @@
       <div class="info">
         <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" width="16" height="16" alt="">
         <div class="text" style="margin-left: 9px">
-          Please read the set-up instructions on how to set-up G Suite. We highly recommend creating a G Suite admin dedicated to SmartPass sync.
+          First, please reference our onboarding guide to setup a G Suite admin account dedicated to the SmartPass sync.
         </div>
       </div>
       <div class="button">
@@ -23,6 +23,7 @@
           [gradient]="'#7F879D, #7F879D'"
           [rightIcon]="'./assets/External Link (White).svg'"
           [textColor]="'#FFFFFF'"
+          (buttonClick)="openOnboardingGuide()"
         >Open onboarding guide</app-gradient-button>
       </div>
     </div>
@@ -32,7 +33,7 @@
         Authorize SmartPass
       </div>
       <div class="subtitle">
-        Give SmartPass the appropriate access to your G Suite and select org units for syncing.
+        Sign in with the newly created G Suite admin account to give SmartPass access to your G Suite.
       </div>
 
       <div class="button" style="margin-top: 15px">

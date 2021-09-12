@@ -30,4 +30,8 @@ export class GSuiteConnectComponent implements OnInit {
     });
   }
 
+  openOnboardingGuide() {
+    window.open('https://www.smartpass.app/support/onboarding-guide', '_blank').focus();
+  }
+
 }
