@@ -71,18 +71,21 @@
     </div>
   </div>
   <div class="footer">
-    <div class="sign-out"
-         #signOut
-         [style.background-color]="hoveredSignout ? (signOut.pressed ? 'rgba(127, 135, 157, .15)' : 'rgba(127, 135, 157, .1)') : 'transparent'"
-         [style.color]="getColor('#FFFFFF', '#7f879d')"
-         (mouseenter)="hoveredSignout = true"
-         (mouseleave)="hoveredSignout = false"
+    <div style="padding: 0 10px">
+      <div class="sign-out"
+           #signOut
+           [style.background-color]="hoveredSignout ? (signOut.pressed ? 'rgba(127, 135, 157, .15)' : 'rgba(127, 135, 157, .1)') : 'transparent'"
+           [style.color]="getColor('#FFFFFF', '#7f879d')"
+           (mouseenter)="hoveredSignout = true"
+           (mouseleave)="hoveredSignout = false"
 
-         appCrossPointerEventTarget
-         (pointerClickEvent)="hoveredSignout = false; signOutAction()"
-         (pointerDownEvent)="signOut.pressed = true; hoveredSignout = true"
-         (pointerCancelEvent)="signOut.pressed = false; hoveredSignout = false;"
-    >Sign out</div>
+           appCrossPointerEventTarget
+           (pointerClickEvent)="hoveredSignout = false; signOutAction()"
+           (pointerDownEvent)="signOut.pressed = true; hoveredSignout = true"
+           (pointerCancelEvent)="signOut.pressed = false; hoveredSignout = false;"
+      >Sign out</div>
+    </div>
+
     <div class="options" [style.color]="getColor(null, null)">
       <span class="option"
             appCrossPointerEventTarget

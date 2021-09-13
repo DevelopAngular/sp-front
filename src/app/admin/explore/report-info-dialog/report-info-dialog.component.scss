@@ -1,0 +1,75 @@
+@import "../../../../sp-colors";
+
+.wrapper {
+  width: 425px;
+  height: 500px;
+  background-color: #FFFFFF;
+  .header {
+    height: 70px;
+    width: 100%;
+    background-color: #E32C66;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .back-button {
+      width: 28px;
+      cursor: pointer;
+      position: absolute;
+      font-size: 15px;
+      font-weight: 500;
+      color: #1F195E;
+      left: 15px;
+    }
+
+    .title {
+      font-size: 17px;
+      color: #FFFFFF;
+      font-weight: bold;
+    }
+
+    .print {
+      position: absolute;
+      right: 20px;
+    }
+  }
+
+  .content {
+    width: 100%;
+    height: 430px;
+    overflow: auto;
+    position: relative;
+
+    .block {
+      padding: 20px;
+      .title {
+        color: $navy;
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: $blue-gray;
+        margin-top: 6px;
+        word-break: break-word;
+      }
+    }
+
+    .container {
+      display: flex;
+      //justify-content: space-evenly;
+    }
+
+    .shadow {
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      bottom: -16px;
+      box-shadow: -12px -15px 20px 22px #FFFFFF !important;
+      z-index: 1;
+    }
+  }
+}

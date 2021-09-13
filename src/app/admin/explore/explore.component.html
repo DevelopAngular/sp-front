@@ -11,30 +11,42 @@
         <img width="9" height="7" [src]="'./assets/Rect (White).svg' | resolveAsset" alt="Rect">
       </div>
     </div>
-    <div class="filters">
+    <div class="filters" [ngSwitch]="views[currentView].id">
       <div class="filter">
-        <app-filter-button *ngIf="views[currentView].id === 1; else trace"
+        <app-filter-button *ngSwitchCase="1"
           (buttonClick)="openFilter($event, 'students')"
           [title]="(!passSearchData.selectedStudents || passSearchData.selectedStudents.length > 1 ? 'Students' + (passSearchData.selectedStudents && passSearchData.selectedStudents.length ? ' (' + passSearchData.selectedStudents.length + ')' : '') : passSearchData.selectedStudents[0].display_name)"
           [filter]="passSearchData.selectedStudents && !!passSearchData.selectedStudents.length"
           (clearData)="passSearchData.selectedStudents = null; autoSearch()"
-          [openedFilter]="!!dialog.getDialogById('students_filter')"
-        >
+          [openedFilter]="!!dialog.getDialogById('students_filter')">
         </app-filter-button>
-        <ng-template #trace>
-          <app-filter-button
-            (buttonClick)="openFilter($event, 'students')"
-            [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'"
-            [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
-            [forceButtonClick$]="buttonForceTrigger$"
-            (forceButtonClickEvent)="$event.action === 'students' ? openFilter($event.event, $event.action) : null"
-            [showClearIcon]="false"
-            [openedFilter]="!!dialog.getDialogById('students_filter')"
-          >
-          </app-filter-button>
-        </ng-template>
+        <app-filter-button *ngSwitchCase="2"
+         (buttonClick)="openFilter($event, 'students')"
+         [title]="(!reportSearchData.selectedStudents || reportSearchData.selectedStudents.length > 1 ? 'Students' + (reportSearchData.selectedStudents && reportSearchData.selectedStudents.length ? ' (' + reportSearchData.selectedStudents.length + ')' : '') : reportSearchData.selectedStudents[0].display_name)"
+         [filter]="reportSearchData.selectedStudents && !!reportSearchData.selectedStudents.length"
+         (clearData)="reportSearchData.selectedStudents = null; autoSearch()"
+         [openedFilter]="!!dialog.getDialogById('students_filter')">
+        </app-filter-button>
+        <app-filter-button *ngSwitchCase="3"
+          (buttonClick)="openFilter($event, 'students')"
+          [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'"
+          [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
+          [forceButtonClick$]="buttonForceTrigger$"
+          (forceButtonClickEvent)="$event.action === 'students' ? openFilter($event.event, $event.action) : null"
+          [showClearIcon]="false"
+          [openedFilter]="!!dialog.getDialogById('students_filter')">
+        </app-filter-button>
       </div>
-      <div class="filter" *ngIf="views[currentView].id === 1">
+      <div class="filter" *ngSwitchCase="2">
+        <app-filter-button
+         (buttonClick)="openFilter($event, 'teachers')"
+         [title]="(!reportSearchData.selectedTeachers || reportSearchData.selectedTeachers.length > 1 ? 'Submitted by' + (reportSearchData.selectedTeachers && reportSearchData.selectedTeachers.length ? ' (' + reportSearchData.selectedTeachers.length + ')' : '') : reportSearchData.selectedTeachers[0].display_name)"
+         [filter]="reportSearchData.selectedTeachers && !!reportSearchData.selectedTeachers.length"
+         (clearData)="reportSearchData.selectedTeachers = null; autoSearch()"
+         [openedFilter]="!!dialog.getDialogById('teachers_filter')">
+        </app-filter-button>
+      </div>
+      <div class="filter" *ngSwitchCase="1">
         <app-filter-button
           (buttonClick)="openFilter($event, 'origin')"
           [title]="'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' (' + passSearchData.selectedOriginRooms.length + ')' : '')"
@@ -43,7 +55,7 @@
           [openedFilter]="!!dialog.getDialogById('origin_filter')"
         ></app-filter-button>
       </div>
-      <div class="filter" *ngIf="views[currentView].id === 1">
+      <div class="filter" *ngSwitchCase="1">
         <app-filter-button
           (buttonClick)="openFilter($event, 'destination')"
           [title]="'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' (' + passSearchData.selectedDestinationRooms.length + ')' : '')"
@@ -53,27 +65,31 @@
         ></app-filter-button>
       </div>
       <div class="filter">
-        <app-filter-button *ngIf="views[currentView].id === 1; else traceDate"
+        <app-filter-button *ngSwitchCase="1"
           [title]="passSearchData.selectedDate ? dateText(passSearchData.selectedDate) : 'Pass start time'"
           (buttonClick)="openFilter($event, 'calendar')"
           [filter]="!!passSearchData.selectedDate"
           (clearData)="passSearchData.selectedDate = null; adminCalendarOptions = null; autoSearch()"
-          [openedFilter]="!!dialog.getDialogById('calendar_filter')"
-        >
+          [openedFilter]="!!dialog.getDialogById('calendar_filter')">
         </app-filter-button>
-        <ng-template #traceDate>
-          <app-filter-button
-            [title]="contactTraceData.selectedDate ? dateText(contactTraceData.selectedDate) : 'Time range'"
-            (buttonClick)="openFilter($event, 'calendar')"
-            [filter]="!!contactTraceData.selectedDate"
-            (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;"
-            [showClearIcon]="false"
-            [forceButtonClick$]="buttonForceTrigger$"
-            (forceButtonClickEvent)="$event.action === 'calendar' ? openFilter($event.event, $event.action) : null"
-            [openedFilter]="!!dialog.getDialogById('calendar_filter')"
-          >
-          </app-filter-button>
-        </ng-template>
+        <app-filter-button *ngSwitchCase="2"
+         [title]="reportSearchData.selectedDate ? dateText(reportSearchData.selectedDate) : 'Date submitted'"
+         (buttonClick)="openFilter($event, 'calendar')"
+         [filter]="!!reportSearchData.selectedDate"
+         (clearData)="reportSearchData.selectedDate = null; adminCalendarOptions = null; autoSearch()"
+         [showClearIcon]="true"
+         [openedFilter]="!!dialog.getDialogById('calendar_filter')">
+        </app-filter-button>
+        <app-filter-button *ngSwitchCase="3"
+          [title]="contactTraceData.selectedDate ? dateText(contactTraceData.selectedDate) : 'Time range'"
+          (buttonClick)="openFilter($event, 'calendar')"
+          [filter]="!!contactTraceData.selectedDate"
+          (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;"
+          [showClearIcon]="false"
+          [forceButtonClick$]="buttonForceTrigger$"
+          (forceButtonClickEvent)="$event.action === 'calendar' ? openFilter($event.event, $event.action) : null"
+          [openedFilter]="!!dialog.getDialogById('calendar_filter')">
+        </app-filter-button>
       </div>
     </div>
 
@@ -84,8 +100,8 @@
         [isDownloadButton]="true"
         [matTooltip]="'Click to export passes'"
         matTooltipClass="tooltip"
-        (buttonClick)="downloadPasses(countPasses)"
-      ></app-filter-button>
+        (buttonClick)="downloadPasses(countPasses)">
+      </app-filter-button>
       <ng-template #selected>
         <app-filter-button
           [filter]="true"
@@ -93,8 +109,8 @@
           [isDownloadButton]="true"
           [matTooltip]="'Click to export passes'"
           matTooltipClass="tooltip"
-          (buttonClick)="downloadPasses(countPasses)"
-        ></app-filter-button>
+          (buttonClick)="downloadPasses(countPasses)">
+        </app-filter-button>
       </ng-template>
     </div>
 
@@ -155,9 +171,9 @@
         [sort]="passSearchState.sortPasses$ | async"
         [sortColumn]="sortColumn"
         [sortLoading$]="passSearchState.sortPassesLoading$"
-        [countAllData]="passSearchState.countPasses$ | async"
         [showPrintButtons]="false"
         (exportPasses)="exportPasses()"
+        [disabledInfinityScroll]="!(passSearchState.nextUrl$ | async)"
       ></app-sp-data-table>
     </div>
     <div class="contact-trace" *ngIf="views[currentView].id === 3" [style.height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'">
@@ -171,7 +187,7 @@
         [emptyIcon]="'./assets/Contact Trace (Blue-Gray).svg'"
         [emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have an overlapping pass with another student'"
         [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
-        [isLoadMore]="false"
+        [disabledInfinityScroll]="true"
         [showPrintButtons]="false"
       ></app-sp-data-table>
       <ng-template #empty>
@@ -182,6 +198,27 @@
           </div>
         </div>
       </ng-template>
+    </div>
+
+    <div class="report-search" *ngIf="views[currentView].id === 2">
+      <app-sp-data-table
+        [isCheckbox]="isCheckbox$"
+        [data$]="reportsSearchData$"
+        [loading$]="reportSearchState.loading$"
+        [currentPage]="currentView$.value"
+        [showEmptyState]="reportSearchState.isEmpty && reportSearchState.loaded$ | async"
+        [emptyIcon]="'./assets/Report Search (Blue-Gray).svg'"
+        [emptyText]="'No reports found with the selected filters.'"
+        [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+        [itemSize]="66"
+        [isRowClick]="true"
+        [showPrintButtons]="false"
+        (loadMoreData)="loadMoreReports()"
+        (rowClickEvent)="openReportDialog($event)"
+        [sort]="'desc'"
+        [sortColumn]="'Date submitted'"
+        [disabledInfinityScroll]="!(reportSearchState.nextUrl$ | async)"
+      ></app-sp-data-table>
     </div>
 
   </div>

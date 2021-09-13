@@ -1,6 +1,5 @@
 import {Component, ElementRef, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
-import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 
 @Component({
@@ -20,8 +19,7 @@ export class AddAccountPopupComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<AddAccountPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private darkTheme: DarkThemeSwitch
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit() {

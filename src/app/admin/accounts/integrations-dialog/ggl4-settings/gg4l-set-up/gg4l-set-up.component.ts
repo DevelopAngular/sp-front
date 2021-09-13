@@ -58,7 +58,7 @@ export class Gg4lSetUpComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    this.syncLoading$ = this.adminService.cleverSyncLoading$;
+    this.syncLoading$ = this.adminService.syncLoading$;
   }
 
   formatDate(date) {
@@ -116,7 +116,7 @@ export class Gg4lSetUpComponent implements OnInit {
   }
 
   syncing() {
-    this.adminService.syncNow().subscribe(res => {
+    this.adminService.cleverSyncNow().subscribe(res => {
     });
   }
 

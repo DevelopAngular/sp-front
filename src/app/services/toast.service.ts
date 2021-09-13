@@ -1,8 +1,11 @@
 import {Injectable} from '@angular/core';
+
 import {Store} from '@ngrx/store';
+import {Observable, Subject} from 'rxjs';
+
+import {Toast} from '../models/Toast';
 import {AppState} from '../ngrx/app-state/app-state';
 import {getDataToast, getIsOpenToast} from '../ngrx/toast/states';
-import {Observable, Subject} from 'rxjs';
 import {closeToastAction, openToastAction} from '../ngrx/toast/actions';
 
 @Injectable({
@@ -17,7 +20,7 @@ export class ToastService {
 
   constructor(private store: Store<AppState>) { }
 
-  openToast(data) {
+  openToast(data: Toast) {
     this.store.dispatch(openToastAction({data}));
   }
 

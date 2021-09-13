@@ -4,7 +4,6 @@ import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {SwiperConfigInterface} from 'ngx-swiper-wrapper';
 import {ScreenService} from '../services/screen.service';
-import {MobileDeviceService} from '../services/mobile-device.service';
 import {DeviceDetection} from '../device-detection.helper';
 
 export enum KEY_CODE {
@@ -49,11 +48,8 @@ export class PagerComponent implements OnInit, AfterViewInit {
   constructor(
     private formService: CreateFormService,
     private cdr: ChangeDetectorRef,
-    public screenService: ScreenService,
-    public mobileDevice: MobileDeviceService,
-  ) {
-    // console.log(this.page);
-  }
+    public screenService: ScreenService
+  ) {}
 
   get isMobile() {
     return DeviceDetection.isMobile();
@@ -88,8 +84,6 @@ export class PagerComponent implements OnInit, AfterViewInit {
 
     this.formService.setFrameMotionDirection('back');
 
-    // setTimeout(() => {
-
       this.hideRightButton.next(true);
       if (this.page === 2) {
         this.hideLeftButton.next(false);
@@ -97,14 +91,10 @@ export class PagerComponent implements OnInit, AfterViewInit {
       if (this.page >= 1) {
         this.page -= 1;
       }
-
-    // }, 100);
   }
 
   RightPaginator() {
     this.formService.setFrameMotionDirection('forward');
-
-    // setTimeout(() => {
 
       this.hideLeftButton.next(true);
       if (this.page === 1 && this.pages === 2
@@ -113,9 +103,6 @@ export class PagerComponent implements OnInit, AfterViewInit {
         this.hideRightButton.next(false);
       }
       this.page += 1;
-    //
-    // }, 100);
-
 
   }
   DotPagination(dot) {

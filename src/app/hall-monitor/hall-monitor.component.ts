@@ -18,7 +18,6 @@ import {ButtonRestriction} from '../models/button-restrictions/ButtonRestriction
 import {ReportButtonRestriction} from '../models/button-restrictions/ReportButtonRestriction';
 import {SortBtnRestriction} from '../models/button-restrictions/SortBtnRestriction';
 import {InputRestriction} from '../models/input-restrictions/InputRestriction';
-import {InputResctrictionXl} from '../models/input-restrictions/InputResctrictionXl';
 import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontSm';
 import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
@@ -90,35 +89,26 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   passesLoaded: Observable<boolean> = of(false);
 
   hasPasses: Observable<boolean> = of(false);
-
   searchPending$: Subject<boolean> = new Subject<boolean>();
 
   isReportFormOpened: boolean;
-
   reportFormInstance: ReportFormComponent;
-
-  isDeviceLargeExtra: boolean;
-
   isSearchClicked: boolean;
-
   resetvalue = new Subject();
 
   isIpadWidth: boolean;
-
   isIpadSearchBar: boolean;
+  isDeviceLargeExtra: boolean;
 
   reportBtn: ButtonRestriction = new ReportButtonRestriction();
-
   sortBtn: ButtonRestriction = new SortBtnRestriction();
-
-  inputRestrictionXl: InputRestriction = new InputResctrictionXl();
-
   inputRestrictionSm: InputRestriction = new InputRestriciontSm();
-
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
   selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
   sortMode: string = '';
+
+  destroy$: Subject<any> = new Subject();
 
   constructor(
     private userService: UserService,
@@ -131,7 +121,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     public screenService: ScreenService,
     private scrollPosition: ScrollPositionService
   ) {
-    // this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
     this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }
 
@@ -145,20 +134,15 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
         return {cu, eu};
       }
     )
-    .pipe(this.loadingService.watchFirst)
+    .pipe(
+      this.loadingService.watchFirst,
+      takeUntil(this.destroy$)
+    )
     .subscribe((v) => {
-      this._zone.run(() => {
-
         this.user = v.cu;
         this.effectiveUser = v.eu;
         this.isStaff = v.cu.roles.includes('_profile_teacher');
-
-        // if (this.effectiveUser) {
-        //   this.canView = this.effectiveUser.roles.includes('access_hall_monitor') && this.effectiveUser.roles.includes('view_traveling_users');
-        // } else {
-          this.canView = this.user.roles.includes('access_hall_monitor');
-        // }
-      });
+        this.canView = this.user.roles.includes('access_hall_monitor');
     });
 
 
@@ -184,6 +168,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     if (this.scrollableArea && this.scrollableAreaName) {
       this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   openReportForm() {
@@ -208,8 +194,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   openSortMenu() {
-
-      const dialogRef = this.dialog.open(SortMenuComponent, {
+      const SM = this.dialog.open(SortMenuComponent, {
         position: { bottom: '1px' },
         panelClass: 'sort-dialog',
         data: {
@@ -223,7 +208,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
         }
       });
 
-      dialogRef.componentInstance.onListItemClick.subscribe((item) =>  {
+      SM.componentInstance.onListItemClick.subscribe((item) =>  {
           this.dataService.sort$.next(item.action);
           this.selectedSortOption = item;
       });

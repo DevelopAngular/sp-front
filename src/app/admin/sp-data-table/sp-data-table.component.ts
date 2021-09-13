@@ -22,8 +22,6 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {TableService} from './table.service';
 import {cloneDeep, isEmpty} from 'lodash';
 import {filter, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
-import {HallPassesService} from '../../services/hall-passes.service';
-import {ToastService} from '../../services/toast.service';
 import {DomSanitizer} from '@angular/platform-browser';
 
 const PAGESIZE = 50;
@@ -36,7 +34,6 @@ export class GridTableDataSource extends DataSource<any> {
 
   sort: MatSort | null;
   offset = 0;
-  offsetChange = new BehaviorSubject(0);
 
   destroy$ = new Subject();
 
@@ -68,10 +65,10 @@ export class GridTableDataSource extends DataSource<any> {
       });
 
     this.viewport.elementScrolled().subscribe((ev: any) => {
-      const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
+      const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / itemSize);
       const prevExtraData = start > 0 && start <= 12 ? 1 : start > 12 ? 12 : 0;
       const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
-      this.offset = ROW_HEIGHT * (start - prevExtraData);
+      this.offset = itemSize * (start - prevExtraData);
       // this.viewport.setRenderedContentOffset(this.offset);
       // this.offsetChange.next(this.offset);
       // this.visibleData.next(slicedData);
@@ -124,8 +121,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   @Input() sort: string = '';
   @Input() sortColumn: string;
   @Input() sortLoading$: Observable<boolean>;
-  @Input() countAllData: number;
-  @Input() isLoadMore: boolean = true;
+  @Input() itemSize = 33;
+  @Input() disabledInfinityScroll: boolean;
 
   @ViewChild(CdkVirtualScrollViewport, {static: true}) viewport: CdkVirtualScrollViewport;
 
@@ -139,7 +136,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   tableInitialColumns: string[];
   dataSource: GridTableDataSource;
   selection = new SelectionModel<any>(true, []);
-  itemSize = 33;
+
   tableOptionButtons = [
     {icon: 'Columns', action: 'column'},
     // { icon: 'Print', action: 'print' },
@@ -169,14 +166,12 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private dialog: MatDialog,
     private tableService: TableService,
-    private hallpassService: HallPassesService,
-    private toastService: ToastService,
     private domSanitizer: DomSanitizer
   ) {
   }
 
   get viewportDataItems(): number {
-    return Math.floor(this.viewport.getViewportSize() / ROW_HEIGHT);
+    return Math.floor(this.viewport.getViewportSize() / this.itemSize);
   }
 
   ngOnInit() {
@@ -191,11 +186,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.viewport.scrolledIndexChange
       .pipe(
         withLatestFrom(this.loading$),
-        filter(() => this.isLoadMore),
+        filter(() => !this.disabledInfinityScroll),
         takeUntil(this.destroy$),
       )
       .subscribe(([res, loading]) => {
-        if (res && !loading && res >= (this.dataSource.allData.length - this.viewportDataItems) && this.dataSource.allData.length < this.countAllData) {
+        if (res && !loading && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
           this.loadMoreData.emit();
           this.dataSource.setFakeData([...this.dataSource.allData, ...this.fakedata]);
           console.log('loading data ==>>>>');
@@ -224,32 +219,18 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.columnsToDisplay.unshift('select');
       } else if (!v && (this.columnsToDisplay[0] === 'select')) {
         this.columnsToDisplay.shift();
-        // this.selection.clear();
       }
+
       this.tableInitialColumns = cloneDeep(this.columnsToDisplay);
     });
-
-    // this.toastService.toastButtonClick$
-    //   .pipe(
-    //     takeUntil(this.destroy$),
-    //     filter(action => action === 'bulk_add_link')
-    //   )
-    //   .subscribe((action) => {
-    //     // if (this.selection.selected.length > 5000 || !this.selection.selected.length) {
-    //     //   window.open('https://www.smartpass.app/bulk-export');
-    //     // } else {
-    //       this.generateCSV();
-    //     // }
-    //   });
 
     if (!this.selectedHasValue()) {
       this.selectedObjects = {};
     }
 
-    this.tableService.updateTableColumns$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((columns: string[]) => {
-        this.columnsToDisplay = ['select', this.displayedColumns[0], ...columns];
+    this.tableService.updateTableColumns$.pipe(withLatestFrom(this.isCheckbox), takeUntil(this.destroy$))
+      .subscribe(([columns, isCheckbox]) => {
+        this.columnsToDisplay = isCheckbox ? ['select', this.displayedColumns[0], ...columns] : [this.displayedColumns[0], ...columns];
         this.cdr.detectChanges();
       });
 
@@ -341,38 +322,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         UNANIMATED_CONTAINER.next(false);
         this.cdr.detectChanges();
       });
-    } else if (action === 'csv') {
-      // if (this.currentPage === 'pass_search' && (Object.values(this.selectedObjects).length > 300 || ((!this.selectedHasValue() && this.countAllData > 300) || (this.tableService.isAllSelected$.getValue() && this.countAllData > 300)))) {
-      //   this.exportPasses.emit(Object.values(this.selectedObjects));
-      // } else {
-      //   this.toastService.openToast(
-      //     {title: 'CSV Generated', subtitle: 'Download it to your computer now.', action: 'bulk_add_link'}
-      //   );
-      // }
     }
   }
-
-  // generateCSV() {
-  //   // If we are generating CSV locally, use all data from datasource if no selection.
-  //   let rows: any[];
-  //   if (this.selectedHasValue()) {
-  //     rows = Object.values(this.selectedObjects);
-  //   } else {
-  //     rows = this.dataSource.allData;
-  //   }
-  //
-  //   const exceptPass = rows.map(row => {
-  //     if (row['Contact connection']) {
-  //       const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
-  //       row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
-  //     }
-  //     return omit(row, ['Pass', 'Passes']);
-  //   });
-  //   const fileName = this.currentPage === 'pass_search' ?
-  //     'SmartPass-PassSearch' : this.currentPage === 'contact_trace' ?
-  //       'SmartPass-ContactTracing' : 'TestCSV';
-  //   this.xlsx.generate(exceptPass, fileName);
-  // }
 
   sortHeader(column) {
     this.sortClickEvent.emit(column);

@@ -3,62 +3,100 @@
 .wrapper {
   width: 425px;
   height: 500px;
-  border-radius: 14px;
-  background: #1976D2;
   position: relative;
+
+  .background {
+    border-radius: 14px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: radial-gradient(circle at 73% 71%, #5C4AE3, #336DE4);
+  }
 
   .back-button {
     position: absolute;
-    left: 20px;
+    left: 15px;
     top: 20px;
+    z-index: 20;
     cursor: pointer;
   }
 
+
   .content {
-    padding: 64px;
+    padding: 43px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
+
+    .integrations {
+      display: flex;
+      margin-top: 12px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: #FFFFFF;
+      justify-content: center;
+      align-items: center;
+
+      .integration {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #FFFFFF;
+      }
+    }
 
     .header {
-      margin-top: 30px;
       color: #FFFFFF;
-      font-size: 24px;
       font-weight: bold;
-    }
-    .title {
-      color: #FFFFFF;
-      font-size: 14px;
-      margin-top: 18px;
-      width: 219px;
+      font-size: 24px;
+      line-height: 29px;
+      text-align: center;
+      margin-top: 15px;
+      z-index: 10;
+      width: 290px;
     }
 
-    .manual-set-up {
-      background: #FFFFFF;
-      box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.06);
-      backdrop-filter: blur(14.271px);
-      border-radius: 9px;
-      margin-top: 51px;
-      padding: 34px 30px;
+    .info-list {
+      margin-top: 29px;
       display: flex;
-      align-items: center;
-      justify-content: center;
       flex-direction: column;
-
-      .manual-title {
+      align-items: center;
+      z-index: 10;
+      .info {
         display: flex;
-        color: $navy;
-        font-size: 15px;
-        margin-bottom: 12px;
-        font-weight: bold;
-      }
+        width: 281px;
 
-      .subtitle {
-        color: $blue-gray;
-        font-size: 14px;
-        width: 184px;
+        .title {
+          color: white;
+          font-size: 14px;
+          margin-left: 8px;
+        }
+
       }
+    }
+  }
+
+  .divider {
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .link {
+      margin-top: 22px;
+      font-size: 14px;
+      z-index: 10;
     }
   }
 }

@@ -1,14 +1,15 @@
 <section class="sort-menu" [style.background-color]="darkTheme.getBackground('low')">
   <header class="sort-menu-header">
-    <p class="sort-menu-header-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">{{data.title}}</p>
+    <p class="sort-menu-header-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})">{{data.title}}</p>
   </header>
   <ul class="sort-menu-options">
     <li *ngIf="showAllRooms"
         [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
-        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})"
+        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"
+        [style.background-color]="_all.pressed ? '#ECF1FF' : darkTheme.getBackground('low')"
         appCrossPointerEventTarget
-        (pointerClickEvent)="changeColor(false, $event); selectSortOption(null)"
-        (pointerDownEvent)="changeColor(true, $event)"
+        (pointerClickEvent)="_all.pressed = false; selectSortOption(null)"
+        (pointerDownEvent)="_all.pressed = true"
         #_all
     >
     All Rooms
@@ -16,10 +17,11 @@
     </li>
     <li *ngFor="let item of items; let i = index"
         [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
-        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})"
+        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"
+        [style.background-color]="_item.pressed ? '#ECF1FF' : darkTheme.getBackground('low')"
         appCrossPointerEventTarget
-        (pointerClickEvent)="changeColor(false, $event); selectSortOption(item)"
-        (pointerDownEvent)="changeColor(true, $event)"
+        (pointerClickEvent)="_item.pressed = false; selectSortOption(item)"
+        (pointerDownEvent)="_item.pressed = true"
         #_item
     >
       {{ item.title }}

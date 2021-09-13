@@ -218,7 +218,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   setAnimationTrigger(value) {
     if (!this.showBackgroundOverlay) {
-      interval(50).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
+      interval(200).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
         this.domCheckerService.fadeInOutTrigger$.next(value);
       });
     }
@@ -237,7 +237,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   studentNameLeave() {
     if (this.allowPopup && !this.isKioskMode) {
       this.destroyOpen$.next();
-      interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+      interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
         this.isOpenTooltip.next(false);
       });
     }

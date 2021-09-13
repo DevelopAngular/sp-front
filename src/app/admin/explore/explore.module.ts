@@ -11,6 +11,7 @@ import {SharedModule} from '../../shared/shared.module';
 import {SearchCalendarComponent} from './search-calendar/search-calendar.component';
 import {AdminModule} from '../admin.module';
 import {AdminSharedModule} from '../shared/admin-shared.module';
+import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {AdminSharedModule} from '../shared/admin-shared.module';
     PagesDialogComponent,
     FilterButtonComponent,
     StudentFilterComponent,
-    SearchCalendarComponent
+    SearchCalendarComponent,
+    ReportInfoDialogComponent
   ],
   imports: [
     CommonModule,

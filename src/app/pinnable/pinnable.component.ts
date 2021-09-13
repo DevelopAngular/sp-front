@@ -57,6 +57,8 @@ export class PinnableComponent implements OnInit, OnChanges {
 
   @Input() passLimit: PassLimit;
 
+  @Input() isSameRoom: boolean;
+
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 

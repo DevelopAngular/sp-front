@@ -14,12 +14,14 @@
   .settings-content {
 
     .profile-switch {
+      padding: 0 10px;
       .option {
         display: flex;
         align-items: center;
-        padding: 12px 0 12px 30px;
+        padding: 12px 0 12px 20px;
         cursor: pointer;
         position: relative;
+        border-radius: 7px;
 
         .option-title {
           margin: 0 10px 0 10px;
@@ -89,10 +91,11 @@
     height: 80px;
 
     .sign-out {
-      padding: 12px 0 12px 30px;
+      padding: 12px 0 12px 20px;
       //color: #7F879D;
       font-size: 15px;
       cursor: pointer;
+      border-radius: 7px;
 
       &:hover {
         //background-color: rgb(228, 235, 255);

@@ -3,13 +3,14 @@ import {HallPass} from '../models/HallPass';
 import {HttpService} from '../services/http-service';
 import {DataService} from '../services/data-service';
 import {interval, merge, of} from 'rxjs';
-import {map, pluck} from 'rxjs/operators';
+import {filter, map, pluck} from 'rxjs/operators';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TimeService} from '../services/time.service';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ScreenService} from '../services/screen.service';
 import {StorageService} from '../services/storage.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -55,6 +56,10 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
       return 'radial-gradient(circle at 73% 71%, ' + this.pass.color_profile.gradient_color + ')';
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   ngOnInit() {
     if (JSON.parse(this.storage.getItem('pass_full_screen')) && !this.fullScreen) {
       setTimeout(() => {
@@ -81,7 +86,10 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
     });
 
     this.shortcutsService.onPressKeyEvent$
-      .pipe(pluck('key'))
+      .pipe(
+        filter(() => !this.isMobile),
+        pluck('key')
+      )
       .subscribe(key => {
         if (key[0] === 'e') {
           this.endPass();

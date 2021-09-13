@@ -67,4 +67,8 @@ export class Util{
 
       return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
     }
+
+  static numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
 }
