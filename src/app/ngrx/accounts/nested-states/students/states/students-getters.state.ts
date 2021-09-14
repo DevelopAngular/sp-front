@@ -41,6 +41,11 @@ export const getAddedStudent = createSelector(
   (state: StudentsStates) => state.addedUser
 );
 
+export const getCurrentUpdatedStudent = createSelector(
+  getStudentsAccountsProfiles,
+  (state: StudentsStates) => state.currentUpdatedAccount
+);
+
 export const getCountStudents = adapter.getSelectors(getStudentsAccountsProfiles).selectTotal;
 export const getStudentsAccountsEntities = adapter.getSelectors(getStudentsAccountsProfiles).selectEntities;
 

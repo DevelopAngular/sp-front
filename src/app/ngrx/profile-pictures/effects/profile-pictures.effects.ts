@@ -12,6 +12,7 @@ import {Store} from '@ngrx/store';
 import {AppState} from '../../app-state/app-state';
 import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadGroup';
 import {ProfilePicturesError} from '../../../models/ProfilePicturesError';
+import {deleteAccountPicture} from '../../accounts/actions/accounts.actions';
 
 @Injectable()
 export class ProfilePicturesEffects {
@@ -230,6 +231,42 @@ export class ProfilePicturesEffects {
                 return profilePicturesActions.getMissingProfilePicturesSuccess({profiles});
               }),
               catchError(error => of(profilePicturesActions.getMissingProfilePicturesFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  getUploadedErrors$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.getUploadedErrors),
+        exhaustMap((action) => {
+          return this.userService.getUploadedErrors(action.group_id)
+            .pipe(
+              map((errors: ProfilePicturesError[]) => {
+                return profilePicturesActions.getUploadedErrorsSuccess({errors});
+              }),
+              catchError(error => of(profilePicturesActions.getUploadedErrorsFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  deleteProfilePicture$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.deleteProfilePicture),
+        exhaustMap((action: any) => {
+          return this.userService.uploadProfilePictures(-1, action.user.id)
+            .pipe(
+              switchMap(() => {
+                const updatedUser = { ...action.user, profile_picture: null };
+                return [
+                  deleteAccountPicture({user: updatedUser, role: action.role}),
+                  profilePicturesActions.deleteProfilePictureSuccess()
+                ];
+              }),
+              catchError(error => of(profilePicturesActions.deleteProfilePictureFailure({errorMessage: error.message})))
             );
         })
       );

@@ -26,6 +26,8 @@
     }
     .appearance-content {
       padding: 30px;
+      height: 430px;
+      overflow: auto;
       box-sizing: border-box;
       .theme {
         display: flex;

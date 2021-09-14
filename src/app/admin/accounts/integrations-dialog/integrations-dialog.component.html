@@ -8,7 +8,7 @@
     </div>
   </div>
   <div class="content" *ngIf="schoolSyncInfo$ | async as schoolSyncInfo" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-    <div class="using" *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled">
+    <div class="using" *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled || isUploadedProfilePictures">
       <div class="title">Integrations You’re Using</div>
       <app-integration-card
         *ngIf="schoolSyncInfo.is_gg4l_enabled"
@@ -40,6 +40,16 @@
         [subtitle]="schoolSyncInfo.is_clever_enabled ? ((cleverSyncLoading$ | async) ? 'Sync in Progress...' : 'Last Sync: ' + getLastSync(cleverSyncInfo$ | async)) : 'Sync accounts automatically from any SIS with Clever.'"
         [learnMoreLink]="'https://www.smartpass.app/clever'"
         (setUp)="openSettings($event,'clever')"
+      ></app-integration-card>
+      <app-integration-card
+        *ngIf="isUploadedProfilePictures"
+        [icon]="'./assets/Folder.svg'"
+        [title]="'Profile Pictures'"
+        [style.padding]="'10px'"
+        [status]="'done'"
+        [subtitle]="'Bulk upload/overwrite account pictures.'"
+        [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
+        (setUp)="openSettings($event,'profile_pictures')"
       ></app-integration-card>
     </div>
 
@@ -79,11 +89,12 @@
       >
       </app-integration-card>
       <app-integration-card
+        *ngIf="!isUploadedProfilePictures"
         [icon]="'./assets/Folder.svg'"
         [title]="'Profile Pictures'"
         [style.padding]="'10px'"
-        [status]="isUploadedProfilePictures ? 'done' : 'disconnect'"
-        [subtitle]="isUploadedProfilePictures ? 'Bulk upload/overwrite account pictures.' : 'Bulk upload profile pictures for your users. '"
+        [status]="'disconnect'"
+        [subtitle]="'Bulk upload profile pictures for your users. '"
         [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
         (setUp)="openSettings($event,'profile_pictures')"
       ></app-integration-card>

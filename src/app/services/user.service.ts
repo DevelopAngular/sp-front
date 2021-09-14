@@ -14,13 +14,15 @@ import {AppState} from '../ngrx/app-state/app-state';
 import {
   addUserToProfile,
   bulkAddAccounts,
+  clearCurrentUpdatedAccount,
   getAccounts,
   getMoreAccounts,
   postAccounts,
   removeAccount,
   sortAccounts,
   updateAccountActivity,
-  updateAccountPermissions
+  updateAccountPermissions,
+  updateAccountPicture
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection,
@@ -37,6 +39,7 @@ import {
   getAdminsCollections,
   getAdminSort,
   getCountAdmins,
+  getCurrentUpdatedAdmin,
   getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
   getLoadingAdminsAccounts,
@@ -45,6 +48,7 @@ import {
 import {
   getAddedTeacher,
   getCountTeachers,
+  getCurrentUpdatedTeacher,
   getLastAddedTeachers,
   getLoadedTeachers,
   getLoadingTeachers,
@@ -59,6 +63,7 @@ import {
   getAssistantsAccountsEntities,
   getAssistantSort,
   getCountAssistants,
+  getCurrentUpdatedAssistant,
   getLastAddedAssistants,
   getLoadedAssistants,
   getLoadingAssistants,
@@ -67,6 +72,7 @@ import {
 import {
   getAddedStudent,
   getCountStudents,
+  getCurrentUpdatedStudent,
   getLastAddedStudents,
   getLoadedStudents,
   getLoadingStudents,
@@ -93,8 +99,11 @@ import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {
+  clearProfilePicturesUploadErrors,
+  deleteProfilePicture,
   getMissingProfilePictures,
   getProfilePicturesUploadedGroups,
+  getUploadedErrors,
   postProfilePictures,
   putUploadErrors
 } from '../ngrx/profile-pictures/actions';
@@ -199,6 +208,13 @@ export class UserService implements OnDestroy {
     _profile_teacher: this.store.select(getAddedTeacher),
     _profile_student: this.store.select(getAddedStudent),
     _profile_assistant: this.store.select(getAddedAssistant)
+  };
+
+  currentUpdatedAccount$ = {
+    _profile_admin: this.store.select(getCurrentUpdatedAdmin),
+    _profile_teacher: this.store.select(getCurrentUpdatedTeacher),
+    _profile_student: this.store.select(getCurrentUpdatedStudent),
+    _profile_assistant: this.store.select(getCurrentUpdatedAssistant)
   };
 
   /**
@@ -710,8 +726,9 @@ export class UserService implements OnDestroy {
     return this.profiles$;
   }
 
-  uploadProfilePictures(image_files, user_ids, group_id) {
-    return this.http.post(`v1/schools/${this.http.getSchool().id}/attach_profile_pictures`, {image_files, user_ids, group_id, commit: true});
+  uploadProfilePictures(image_files, user_ids, group_id?) {
+    const data = group_id ? {image_files, user_ids, group_id, commit: true} : {image_files, user_ids, commit: true};
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/attach_profile_pictures`, data);
   }
 
   bulkAddProfilePictures(files: File[]) {
@@ -729,8 +746,12 @@ export class UserService implements OnDestroy {
     return this.httpClient.put(url, file, httpOptions);
   }
 
+  addProfilePictureRequest(profile: User, role: string, file: File) {
+    this.store.dispatch(updateAccountPicture({profile, role, file}));
+  }
+
   addProfilePicture(userId, file: File) {
-    return this.http.patch(`v1//users/${userId}/profile-picture`, {profile_picture: file});
+    return this.http.patch(`v1/users/${userId}/profile-picture`, {profile_picture: file});
   }
 
   updateTeacherLocations(teacher, locations, newLocations) {
@@ -759,5 +780,27 @@ export class UserService implements OnDestroy {
 
   getMissingProfilePictures() {
     return this.http.get(`v1/users?has_picture=false`);
+  }
+
+  getUploadedErrorsRequest(group_id) {
+    this.store.dispatch(getUploadedErrors({group_id}));
+    return this.profilePicturesUploadErrors$;
+  }
+
+  getUploadedErrors(group_id) {
+    return this.http.get(`v1/file_upload_groups/${group_id}/events`);
+  }
+
+  clearProfilePicturesErrors() {
+    this.store.dispatch(clearProfilePicturesUploadErrors());
+  }
+
+  clearCurrentUpdatedAccounts() {
+    this.store.dispatch(clearCurrentUpdatedAccount());
+  }
+
+  deleteProfilePicture(user: User, role: string) {
+    this.store.dispatch(deleteProfilePicture({user, role}));
+    return this.currentUpdatedAccount$[role];
   }
 }

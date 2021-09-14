@@ -11,7 +11,7 @@ import {UserService} from '../../../services/user.service';
 import {LocationsService} from '../../../services/locations.service';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
 import {cloneDeep, differenceBy, isEqual} from 'lodash';
-import {filter, mapTo} from 'rxjs/operators';
+import {filter, mapTo, switchMap, take, tap} from 'rxjs/operators';
 import {ProfileCardDialogComponent} from '../profile-card-dialog.component';
 import {StatusPopupComponent} from '../status-popup/status-popup.component';
 import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
@@ -102,6 +102,8 @@ export class ViewProfileComponent implements OnInit {
   teacherRooms: Location[];
   teacherRoomsInitialState: Location[];
 
+  loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
     private matDialog: MatDialog,
@@ -117,8 +119,7 @@ export class ViewProfileComponent implements OnInit {
     if (
       this.userRoles.find(role => role.role === 'Admin') &&
       this.userRoles.find(role => role.role === 'Teacher') ||
-      this.userRoles.find(role => role.role === 'Student'))
-    {
+      this.userRoles.find(role => role.role === 'Student')) {
       return false;
     }
     return true;
@@ -403,17 +404,27 @@ export class ViewProfileComponent implements OnInit {
       data: { 'trigger': event.currentTarget, user: this.user }
     });
 
-    ED.afterClosed().subscribe(({action, file}) => {
-      if (action === 'add') {
-        this.userService.addProfilePicture(this.user.id, file).subscribe(r => {
-          debugger;
-        });
-      } else if (action === 'edit') {
-        this.userService.addProfilePicture(this.user.id, file).subscribe(r => {
-          debugger;
-        });
-      }
-    });
+    ED.afterClosed()
+      .pipe(
+        filter(r => !!r),
+        tap(({action, file}) => {
+          this.loadingProfilePicture.next(true);
+          if (action === 'add') {
+            this.userService.addProfilePictureRequest(this.user, this.data.role,  file);
+          } else if (action === 'edit') {
+            this.userService.addProfilePictureRequest(this.user, this.data.role, file);
+          }
+        }),
+        switchMap(() => {
+          return this.userService.currentUpdatedAccount$[this.data.role]
+            .pipe(filter(res => !!res));
+        }),
+        tap((user => {
+          this.user = User.fromJSON(user);
+          this.userService.clearCurrentUpdatedAccounts();
+          this.loadingProfilePicture.next(false);
+        }))
+      ).subscribe();
   }
 
   save() {
@@ -425,6 +436,20 @@ export class ViewProfileComponent implements OnInit {
       });
       this.close.emit(true);
     });
+  }
+
+  deleteAvatar() {
+    this.loadingProfilePicture.next(true);
+    this.userService.deleteProfilePicture(this.user, this.data.role)
+      .pipe(
+        filter(res => !!res),
+        take(1)
+      )
+      .subscribe(res => {
+        this.user = User.fromJSON({...this.user, profile_picture: null});
+        this.userService.clearCurrentUpdatedAccounts();
+        this.loadingProfilePicture.next(false);
+      });
   }
 
 }

@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
 import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, mapTo, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {PostRoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
@@ -11,6 +11,8 @@ import {User} from '../../../models/User';
 import {forkJoin, of} from 'rxjs';
 import {openToastAction} from '../../toast/actions';
 import {Toast} from '../../../models/Toast';
+import {ProfilePicture} from '../../../models/ProfilePicture';
+import {ProfileMap} from '../../../models/ProfileMap';
 
 @Injectable()
 export class AccountsEffects {
@@ -303,6 +305,73 @@ export class AccountsEffects {
            } else if (role === '_profile_assistant') {
              return nestedStates.sortAssistantAccounts({assistants: users, next: nextUrl, sortValue});
            }
+         })
+       );
+   });
+
+   updateAccountPicture$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.updateAccountPicture),
+         exhaustMap(({profile, role, file}) => {
+            return this.userService.bulkAddProfilePictures([file])
+              .pipe(
+                switchMap((images: ProfilePicture[]) => {
+                  return this.userService.setProfilePictureToGoogle(images[0].upload_url, file, images[0].content_type)
+                    .pipe(mapTo(images[0]));
+                }),
+                switchMap((image) => {
+                  return this.userService.uploadProfilePictures([+image.id], [profile.id]);
+                }),
+                map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
+                  return { ...profile, profile_picture: attached_photos[0].photo_url};
+                }),
+                map((user: User) => {
+                  if (role === '_profile_admin') {
+                    return nestedStates.updateAdminAccount({profile: user});
+                  } else if (role === '_profile_teacher') {
+                    return nestedStates.updateTeacherAccount({profile: user});
+                  } else if (role === '_profile_student') {
+                    return nestedStates.updateStudentAccount({profile: user});
+                  } else if (role === '_profile_assistant') {
+                    return nestedStates.updateAssistantAccount({profile: user});
+                  }
+                }),
+                catchError(error => of(accountsActions.updateAccountPictureFailure({errorMessage: error.message})))
+              );
+         })
+       );
+   });
+
+   deleteAccountPicture$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.deleteAccountPicture),
+         map(({user, role}) => {
+           if (role === '_profile_admin') {
+             return nestedStates.updateAdminAccount({profile: user});
+           } else if (role === '_profile_teacher') {
+             return nestedStates.updateTeacherAccount({profile: user});
+           } else if (role === '_profile_student') {
+             return nestedStates.updateStudentAccount({profile: user});
+           } else if (role === '_profile_assistant') {
+             return nestedStates.updateAssistantAccount({profile: user});
+           }
+         })
+       );
+   });
+
+   clearCurrentUpdated$ = createEffect(() => {
+     return this.actions$
+       .pipe(
+         ofType(accountsActions.clearCurrentUpdatedAccount),
+         switchMap(() => {
+           return [
+             nestedStates.clearCurrentUpdatedStudent(),
+             nestedStates.clearCurrentUpdatedTeacher(),
+             nestedStates.clearCurrentUpdatedAdmin(),
+             nestedStates.clearCurrentUpdatedAssistant()
+           ];
          })
        );
    });

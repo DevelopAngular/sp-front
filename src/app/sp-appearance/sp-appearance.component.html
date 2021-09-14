@@ -67,8 +67,8 @@
     </div>
     <div class="page-layout" *ngIf="isStaff">
       <div class="header">
-        <div class="header-title">Show Student Profile Pictures</div>
-        <div class="header-info">Show student profile pictures on pass <br/>tiles
+        <div class="header-title">Show Profile Pictures</div>
+        <div class="header-info">Show profile pictures on pass <br/>tiles
           <span *ngIf="form.get('show_student_profile_picture').value">: </span>
           <span appCrossPointerEventTarget (pointerClickEvent)="showLocationPiker = !showLocationPiker" class="profile-location" *ngIf="form.get('show_student_profile_picture').value"> {{ showStudentProfileLocation }}
             <img width="8" height="6" [src]="'./assets/Rect (Blue-Gray).svg'" alt="">
@@ -87,7 +87,7 @@
     <div class="res-picker" *ngIf="showLocationPiker && form.get('show_student_profile_picture').value">
       <app-restriction-picker
         [width]="186"
-        [choices]="['Everywhere', 'Hall Monitor']"
+        [choices]="['Hall Monitor', 'Everywhere']"
         [selectedChoice]="showStudentProfileLocation"
         (result)="showStudentProfileLocation = $event"
       ></app-restriction-picker>

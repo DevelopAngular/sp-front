@@ -42,3 +42,5 @@ export const updateTeacherLocations = createAction(`[${TEACHER}] Update Teacher 
 export const updateTeacherLocationsSuccess = createAction(`[${TEACHER}] Update Teacher Locations Success`, props<{profile: User}>());
 export const updateTeacherLocationsFailure = createAction(`[${TEACHER}] Update Teacher Locations Failure`, props<{errorMessage: string}>());
 
+export const clearCurrentUpdatedTeacher = createAction(`[${TEACHER}] Clear Current Updated Teacher`);
+
