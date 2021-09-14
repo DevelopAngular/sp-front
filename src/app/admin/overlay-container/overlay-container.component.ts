@@ -131,7 +131,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           this.titleColor = '#1F195E';
           this.folderRoomsLoaded = true;
           break;
-      case 'editRoom':
+        case 'editRoom':
             this.overlayService.changePage(Pages.EditRoom, 0, {
                 pinnable: this.pinnable,
                 advancedOptions: this.generateAdvOptionsModel(this.pinnable.location)
@@ -198,6 +198,14 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     }
 
     return !this.roomValidButtons.getValue().publish;
+  }
+
+  get isAllowedSave() {
+    return this.currentPage === Pages.NewRoom ||
+      this.currentPage === Pages.EditRoom ||
+      this.currentPage === Pages.NewFolder ||
+      this.currentPage === Pages.EditFolder ||
+      this.currentPage === Pages.BulkEditRooms
   }
 
   get saveButtonToolTip() {
@@ -270,6 +278,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   get showIncompleteButton() {
+    // if (this.currentPage === Pages.BulkEditRooms) {
+    //   return this.roomValidButtons.getValue().incomplete;
+    // } else {
+    //   return (this.roomValidButtons.getValue().incomplete ||
+    //     !this.selectedIcon || !this.color_profile) && this.showCancelButton;
+    // }
     return false;
   }
 
@@ -696,6 +710,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             id = location.id;
             data = location;
             data.category = this.folderData.folderName + salt;
+            // debugger;
+            if (!data.max_passes_to_active && data.enable_queue) {
+              data.max_passes_to_active = true;
+            }
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
@@ -709,33 +727,34 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
       zip(...locationsToDb$).pipe(
         switchMap(locations => {
-        const newFolder = {
-          title: this.folderData.folderName,
-          color_profile: this.color_profile.id,
-          icon: this.selectedIcon.inactive_icon,
-          category: this.folderData.folderName + salt
-        };
-        return this.currentPage === Pages.EditFolder
-          ?
-          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder)
-          :
-          zip(
-            this.hallPassService.pinnables$,
-            this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
-          ).pipe(
-            switchMap((result: any[]) => {
-              const arrengedSequence = result[0].map(item => item.id);
-              arrengedSequence.push(result[1].id);
-              return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
-            })
-          );
+          const newFolder = {
+            title: this.folderData.folderName,
+            color_profile: this.color_profile.id,
+            icon: this.selectedIcon.inactive_icon,
+            category: this.folderData.folderName + salt
+          };
+          if (this.currentPage === Pages.EditFolder) {
+            this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder);
+            return of(null);
+          } else {
+            return zip(
+              this.hallPassService.pinnables$.pipe(take(1)),
+              this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
+            ).pipe(
+              switchMap((result: any[]) => {
+                const arrengedSequence = result[0].map(item => item.id);
+                arrengedSequence.push(result[1].id);
+                return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
+              })
+            );
+          }
       }),
         switchMap((res) => {
           if (this.pinnableToDeleteIds.length) {
             const deleteRequests = this.pinnableToDeleteIds.map(id => {
               return this.hallPassService.deletePinnableRequest(id);
             });
-            return forkJoin(deleteRequests);
+            return zip(...deleteRequests);
           } else {
             return of(null);
           }
@@ -913,14 +932,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         room.timeLimit = room.max_allowed_time;
       }
 
-      if (roomData.selectedTeachers.length) {
-        room.selectedTeachers = roomData.selectedTeachers;
-      } else {
-        room.selectedTeachers = room.teachers;
-      }
       room.roomName = room.title;
       room.roomNumber = room.room;
-      room.travel_types = room.travelType;
+      room.selectedTeachers = room.teachers;
+      room.max_passes_to_active = roomData.advOptState.toEnabled;
+      room.max_passes_to = roomData.advOptState.to;
+
       return {
         ...this.normalizeRoomData(room),
         ...this.normalizeAdvOptData(roomData),
@@ -940,9 +957,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       travel_types: room.travelType,
       max_allowed_time: +room.timeLimit,
       max_passes_from: +this.passLimitForm.get('from').value,
-      max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
-      max_passes_to: this.passLimitForm.valid ? +this.passLimitForm.get('to').value : 0,
-      max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
+      max_passes_from_active: false,
+      max_passes_to: +this.passLimitForm.get('to').value,
+      max_passes_to_active: !!this.passLimitForm.get('toEnabled').value
     };
   }
 

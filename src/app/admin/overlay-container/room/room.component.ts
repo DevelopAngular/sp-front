@@ -199,10 +199,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.passLimitForm.reset();
   }
 
   checkValidRoomOptions() {
-      if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
+    if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
           if (this.validForm) {
               this.roomValidButtons = {
                   publish: false,
@@ -253,6 +254,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               buttonsResult.incomplete = true;
           }
       }
+
       this.roomDataResult.emit({data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons});
   }
 

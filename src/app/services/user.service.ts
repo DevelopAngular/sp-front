@@ -6,7 +6,7 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {exhaustMap, filter, map, take, takeUntil, tap} from 'rxjs/operators';
+import {exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -89,7 +89,7 @@ import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/acc
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
-import {getSchoolsFailure} from '../ngrx/schools/actions';
+import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {
@@ -112,6 +112,8 @@ import {
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
 import {ProfilePicturesUploadGroup} from '../models/ProfilePicturesUploadGroup';
 import {ProfilePicturesError} from '../models/ProfilePicturesError';
+import {LoginDataService} from './login-data.service';
+import {GoogleLoginService} from './google-login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -239,7 +241,9 @@ export class UserService implements OnDestroy {
     private pollingService: PollingService,
     private _logging: Logger,
     private errorHandler: ErrorHandler,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private loginService: GoogleLoginService,
+    private loginDataService: LoginDataService
   ) {
 
     this.http.globalReload$
@@ -250,15 +254,31 @@ export class UserService implements OnDestroy {
             this.getUserRequest();
           }),
           exhaustMap(() => {
-            return this.user$.pipe(filter(res => !!res), take(1));
+            return combineLatest(this.user$.pipe(filter(res => !!res), take(1),
+                map(raw => User.fromJSON(raw))
+              ), this.loginDataService.loginDataQueryParams.pipe(filter(r => !!r), take(1)));
           }),
-          map(raw => User.fromJSON(raw)),
+          map(([user, queryParams]) => {
+            if (queryParams.email) {
+              const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+              const isValidEmail = regexpEmail.test(queryParams.email) ? user.primary_email === queryParams.email : user.primary_email === queryParams.email + '@spnx.local';
+              if (!isValidEmail) {
+                this.http.clearInternal();
+                this.http.setSchool(null);
+                this.loginService.clearInternal(true);
+                this.userData.next(null);
+                this.clearUser();
+                this.store.dispatch(clearSchools());
+              }
+            }
+            return user;
+          }),
           tap(user => {
             if (user.isAssistant()) {
               this.getUserRepresentedRequest();
             }
           }),
-          exhaustMap((user: User) => {
+          switchMap((user: User) => {
             this.blockUserPage$.next(false);
             if (user.isAssistant()) {
               return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$)

@@ -24,6 +24,7 @@ import {BulkAddComponent} from './bulk-add/bulk-add.component';
 import {AddRolePopupComponent} from './select-role/add-role-popup/add-role-popup.component';
 import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
 import {ProfilePictureComponent} from './profile-picture/profile-picture.component';
+import {GSuiteConnectComponent} from './g-suite-settings/g-suite-connect/g-suite-connect.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import {ProfilePictureComponent} from './profile-picture/profile-picture.compone
     AddRolePopupComponent,
     PermissionsDialogComponent,
     ProfilePictureComponent,
+    GSuiteConnectComponent
   ],
   imports: [
     CommonModule,

@@ -352,7 +352,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
     let notificationDialog;
 
     if (this.isSafari) {
-      // this.introDialogRef.close();
       notificationDialog = this.dialog.open(NotificationFormComponent, {
         panelClass: 'form-dialog-container',
         backdropClass: 'custom-backdrop',
@@ -362,7 +361,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
     Notification.requestPermission().then( (result) => {
       if (result === 'denied') {
-          // this.introDialogRef.close();
             notificationDialog = this.dialog.open(NotificationFormComponent, {
             panelClass: 'form-dialog-container',
             backdropClass: 'custom-backdrop',

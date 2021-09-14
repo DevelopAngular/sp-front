@@ -32,17 +32,13 @@ import {
   getSchoolsGG4LInfo,
   getSchoolSyncInfo,
   syncClever,
+  syncGsuite,
   updateCleverInfo,
+  updateGSuiteInfo,
   updateSchool,
   updateSchoolSyncInfo
 } from '../ngrx/schools/actions';
-import {
-  getCleverSyncLoading,
-  getGG4LInfoData,
-  getGSuiteSyncInfoData,
-  getSchoolCleverInfo,
-  getSchoolSyncInfoData
-} from '../ngrx/schools/states';
+import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolCleverInfo, getSchoolSyncInfoData, getSyncLoading} from '../ngrx/schools/states';
 import {GG4LSync} from '../models/GG4LSync';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
@@ -80,7 +76,7 @@ export class AdminService {
   schoolSyncInfo$: Observable<SchoolSyncInfo> = this.store.select(getSchoolSyncInfoData);
   gSuiteInfoData$: Observable<GSuiteOrgs> = this.store.select(getGSuiteSyncInfoData);
   cleverInfoData$: Observable<CleverInfo> = this.store.select(getSchoolCleverInfo);
-  cleverSyncLoading$: Observable<boolean> = this.store.select(getCleverSyncLoading);
+  syncLoading$: Observable<boolean> = this.store.select(getSyncLoading);
 
   constructor(private http: HttpService,  private store: Store<AppState>) {}
 
@@ -174,6 +170,11 @@ export class AdminService {
     return this.http.patch(`v1/schools/${school.id}/syncing`, body);
   }
 
+  getGSuiteAuthorizeLink() {
+    const school = this.http.getSchool();
+    return this.http.get(`v1/schools/${school.id}/syncing/gsuite/authorization_link`);
+  }
+
   updateOnboardProgressRequest(data) {
     this.store.dispatch(updateOnboardProcess({data}));
     return this.onboardProcessData$;
@@ -240,8 +241,16 @@ export class AdminService {
     return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/clever/status`);
   }
 
-  syncNow() {
+  cleverSyncNow() {
     return this.http.post(`v1/schools/${this.http.getSchool().id}/syncing/clever/manual_sync`);
+  }
+
+  gsuiteSyncNowRequest() {
+    this.store.dispatch(syncGsuite());
+  }
+
+  gsuiteSyncNow() {
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/syncing/gsuite/manual_sync`);
   }
 
   syncLoading() {
@@ -250,6 +259,10 @@ export class AdminService {
 
   updateCleverInfo(cleverInfo) {
     this.store.dispatch(updateCleverInfo({cleverInfo}));
+  }
+
+  updateGsuiteInfo(gsuiteInfo) {
+    this.store.dispatch(updateGSuiteInfo({gsuiteInfo}));
   }
 
   exportCsvPasses(queryParams: object) {

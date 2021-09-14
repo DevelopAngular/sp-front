@@ -49,7 +49,7 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     this.gg4lSyncInfo$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
     this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
-    this.cleverSyncLoading$ = this.adminService.cleverSyncLoading$;
+    this.cleverSyncLoading$ = this.adminService.syncLoading$;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.userService.getUploadedGroupsRequest();
 

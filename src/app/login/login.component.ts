@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeviceDetection} from '../device-detection.helper';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -14,6 +14,7 @@ import {INITIAL_LOCATION_PATHNAME} from '../app.component';
 import {NotificationService} from '../services/notification-service';
 import {environment} from '../../environments/environment.prod';
 import {ScreenService} from '../services/screen.service';
+import {LoginDataService} from '../services/login-data.service';
 
 declare const window;
 
@@ -22,7 +23,7 @@ declare const window;
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
 
   @ViewChild('place') place: ElementRef;
 
@@ -51,7 +52,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private titleService: Title,
     private metaService: Meta,
     private notifService: NotificationService,
-    public screen: ScreenService
+    public screen: ScreenService,
+    private loginDataService: LoginDataService
   ) {
     this.jwt = new JwtHelperService();
     this.pending$ = this.pendingSubject.asObservable();
@@ -104,9 +106,17 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       this.appLink = 'https://play.google.com/store/apps/details?id=app.smartpass.smartpass';
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
-  }
 
-  ngAfterViewInit() {
+    this.route.queryParams.pipe(
+      filter((queryParams) => {
+        return queryParams.email || queryParams.school_id;
+      }),
+      takeUntil(this.destroyer$),
+    ).subscribe((qp) => {
+      this.loginDataService.setLoginDataQueryParams(
+        { email: qp.email, school_id: qp.school_id }
+      );
+    });
   }
 
   ngOnDestroy() {

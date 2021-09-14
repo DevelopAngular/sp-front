@@ -58,6 +58,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   currentTab: string;
   forceFocus$: Subject<boolean> = new Subject<boolean>();
 
+  user$: Observable<User>;
+
   selectedUsers: User[] = [];
 
   destroy$ = new Subject();
@@ -82,8 +84,13 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     private toast: ToastService
   ) { }
 
+  get showIntegrations$() {
+    return this.user$.pipe(map(user => user.roles.includes('admin_manage_integration')));
+  }
+
   ngOnInit() {
     this.getCurrentTab();
+    this.user$ = this.userService.user$;
     if (this.showTabs && this.currentTab === '') {
       this.router.navigate(['admin/accounts', '_profile_student']);
     }

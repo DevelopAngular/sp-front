@@ -18,7 +18,6 @@ import {ButtonRestriction} from '../models/button-restrictions/ButtonRestriction
 import {ReportButtonRestriction} from '../models/button-restrictions/ReportButtonRestriction';
 import {SortBtnRestriction} from '../models/button-restrictions/SortBtnRestriction';
 import {InputRestriction} from '../models/input-restrictions/InputRestriction';
-import {InputResctrictionXl} from '../models/input-restrictions/InputResctrictionXl';
 import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontSm';
 import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
@@ -103,12 +102,13 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
   reportBtn: ButtonRestriction = new ReportButtonRestriction();
   sortBtn: ButtonRestriction = new SortBtnRestriction();
-  inputRestrictionXl: InputRestriction = new InputResctrictionXl();
   inputRestrictionSm: InputRestriction = new InputRestriciontSm();
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
   selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
   sortMode: string = '';
+
+  destroy$: Subject<any> = new Subject();
 
   constructor(
     private userService: UserService,
@@ -134,7 +134,10 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
         return {cu, eu};
       }
     )
-    .pipe(this.loadingService.watchFirst)
+    .pipe(
+      this.loadingService.watchFirst,
+      takeUntil(this.destroy$)
+    )
     .subscribe((v) => {
         this.user = v.cu;
         this.effectiveUser = v.eu;
@@ -165,6 +168,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     if (this.scrollableArea && this.scrollableAreaName) {
       this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   openReportForm() {

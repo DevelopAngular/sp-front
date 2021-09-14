@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="header">
-    <img class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <img (click)="close()" class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
     <div class="title">Report</div>
     <app-icon-button class="print" [onDarkShade]="true" [size]="17" [srcString]="'Print'" (clickEvent)="openPdfLink()"></app-icon-button>
   </div>

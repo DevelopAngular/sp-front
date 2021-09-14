@@ -8,5 +8,5 @@ export interface GSuiteOrgs {
     is_enabled?: boolean;
     is_authorized?: boolean;
     wants_authorization?: boolean;
-
+    sync_type?: string;
 }

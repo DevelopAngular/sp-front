@@ -60,7 +60,7 @@ export class GSuiteAccountLinkComponent implements OnInit {
       syncBody[`selector_${item}`] = this.users[item].map((s: GSuiteSelector) => s.as);
     }
     this.adminService.updateSpSyncingRequest(syncBody).subscribe(res => {
-      this.dialogRef.close();
+      this.back.emit();
     });
   }
 

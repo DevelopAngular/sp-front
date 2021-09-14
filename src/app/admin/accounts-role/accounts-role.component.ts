@@ -187,6 +187,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         controlName: 'access_user_config',
         controlLabel: 'Accounts tab Access',
       };
+      this.profilePermissions['admin_manage_integration'] = {
+        controlName: 'admin_manage_integration',
+        controlLabel: 'Integrations'
+      };
     }
     if (this.role === '_profile_teacher' || this.role === '_profile_assistant') {
       this.profilePermissions['access_passes'] = {
