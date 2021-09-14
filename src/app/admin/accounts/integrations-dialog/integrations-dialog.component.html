@@ -16,7 +16,7 @@
         [title]="'GG4L'"
         [style.padding]="'10px'"
         [status]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'approved' : 'done') : 'disconnect'"
-        [subtitle]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate((gg4lSyncInfo$ | async).last_successful_sync)) : 'Sync accounts automatically from any SIS through GG4L.'"
+        [subtitle]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'Almost done! Adjust settings for account sync.' : !(gg4lSyncInfo$ | async).last_successful_sync ? 'Never synced before' : 'Last Sync: ' + formatDate((gg4lSyncInfo$ | async).last_successful_sync)) : 'Sync accounts automatically from any SIS through GG4L.'"
         [learnMoreLink]="'https://www.smartpass.app/gg4l'"
         (setUp)="openSettings($event,'gg4l')"
       >
@@ -26,7 +26,7 @@
         [title]="'G Suite'"
         [style.padding]="'10px'"
         [status]="schoolSyncInfo.is_gsuite_enabled ? 'done' : 'disconnect'"
-        [subtitle]="schoolSyncInfo.is_gsuite_enabled ? 'Last Sync: ' + formatDate((gSuiteOrgs$ | async).last_successful_sync) : 'Sync accounts from your org units.'"
+        [subtitle]="schoolSyncInfo.is_gsuite_enabled ? !(gSuiteOrgs$ | async).last_successful_sync ? 'Never synced before' : 'Last Sync: ' + formatDate((gSuiteOrgs$ | async).last_successful_sync) : 'Sync accounts from your org units.'"
         [learnMoreLink]="'https://www.smartpass.app/gsuite'"
         (setUp)="openSettings($event,'g_suite')"
       >

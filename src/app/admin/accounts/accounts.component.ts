@@ -78,6 +78,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.route.queryParams.subscribe(res => {
+      if (res.target === 'gsuite') {
+        this.openSettingsDialog('g_suite', '')
+      }
+    });
 
     this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
     this.gg4lSettingsData$ = this.adminService.gg4lInfo$;
@@ -108,7 +113,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.polingService.listen('admin.user_sync.sync_end')
       .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
-      this.adminService.updateCleverInfo(res.data);
+        if (res.data.sync_type === 'clever') {
+          this.adminService.updateCleverInfo(res.data);
+        } else if (res.data.sync_type === 'gsuite') {
+          this.adminService.updateGsuiteInfo(res.data);
+        }
     });
 
     this.toastService.toastButtonClick$
@@ -183,6 +192,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
+        data: {status}
       });
     }
   }

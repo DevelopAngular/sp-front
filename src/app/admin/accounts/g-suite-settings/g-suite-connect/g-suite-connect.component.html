@@ -1,0 +1,57 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="background-header"></div>
+    <img class="back-button" appCrossPointerEventTarget (pointerClickEvent)="back.emit()" [src]="'./assets/Back Button (White).svg' | resolveAsset">
+    <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+      <img width="21" height="21" [src]="'./assets/Google (White).svg' | resolveAsset" alt="Options">
+      <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Settings</div>
+    </div>
+
+  </div>
+
+  <div class="content" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+
+    <div class="info-block">
+      <div class="info">
+        <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" width="16" height="16" alt="">
+        <div class="text" style="margin-left: 9px">
+          First, please reference our onboarding guide to setup a G Suite admin account dedicated to the SmartPass sync.
+        </div>
+      </div>
+      <div class="button">
+        <app-gradient-button
+          [gradient]="'#7F879D, #7F879D'"
+          [rightIcon]="'./assets/External Link (White).svg'"
+          [textColor]="'#FFFFFF'"
+          (buttonClick)="openOnboardingGuide()"
+        >Open onboarding guide</app-gradient-button>
+      </div>
+    </div>
+
+    <div class="authorize">
+      <div class="title">
+        Authorize SmartPass
+      </div>
+      <div class="subtitle">
+        Sign in with the newly created G Suite admin account to give SmartPass access to your G Suite.
+      </div>
+
+      <div class="button" style="margin-top: 15px">
+        <app-gradient-button
+          [gradient]="'#1976D2, #1976D2'"
+          [rightIcon]="'./assets/Chevron Right (White).svg'"
+          (buttonClick)="getAuthorizeLink()"
+        >Authorize SmartPass
+        </app-gradient-button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <mat-divider></mat-divider>
+
+    <div class="footer-content">
+      <div style="color: #7f879d; white-space: nowrap">Need more help?</div>
+      <div style="color: #7f879d;">Email <a style="color: #7f879d; outline: none" href="https://www.smartpass.app/support" target="_blank">support@smartpass.app</a></div>
+    </div>
+  </div>
+</div>

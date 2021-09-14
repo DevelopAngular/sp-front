@@ -1,9 +1,10 @@
+@import "../../../../../sp-colors";
+
 .wrapper {
   background-color: #FFFFFF;
   width: 425px;
-  height: 500px;
+  height: 100%;
   position: relative;
-  border-radius: 15px;
   .header {
     height: 70px;
     display: flex;
@@ -33,27 +34,46 @@
       left: 15px;
 
     }
-
-    .save-button {
-      width: 85px;
-      position: absolute;
-      right: 27px;
-    }
   }
 
   .content {
-    padding: 30px 20px 0 20px;
-    height: 331px;
-    overflow: auto;
+    padding: 23px;
+    height: 384px;
 
-    .block {
-      margin-bottom: 10px;
-      .label {
-        font-size: 15px;
-        font-weight: bold;
-        margin-bottom: 9px;
+    .info-block {
+      padding: 15px 20px;
+      background-color: #F4F4F4;
+      border-radius: 9px;
+
+      .info {
+        display: flex;
+        font-size: 14px;
+        color: $blue-gray
+      }
+
+      .button {
+        margin-top: 15px;
+        margin-left: 23px;
       }
     }
+
+    .authorize {
+      margin-top: 30px;
+
+      .title {
+        color: $navy;
+        font-size: 15px;
+        font-weight: bold;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: $blue-gray;
+        margin-top: 7px;
+        width: 365px;
+      }
+    }
+
   }
 
   .footer {

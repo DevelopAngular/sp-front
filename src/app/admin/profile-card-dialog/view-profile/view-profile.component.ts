@@ -337,7 +337,8 @@ export class ViewProfileComponent implements OnInit {
         {label: 'Hall Monitor', permission: 'admin_hall_monitor', icon: 'Walking'},
         {label: 'Explore', permission: 'access_admin_search', icon: 'Search Eye'},
         {label: 'Rooms', permission: 'access_pass_config', icon: 'Room'},
-        {label: 'Accounts', permission: 'access_user_config', icon: 'Users'}
+        {label: 'Accounts', permission: 'access_user_config', icon: 'Users'},
+        {label: 'Integrations', permission: 'admin_manage_integration', icon: 'Integrations'}
       );
     }
     if (this.user.isAssistant()) {
