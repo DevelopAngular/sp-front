@@ -76,7 +76,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
         map(schools => _filter(schools, (school => school.my_roles.length > 0)))
       )
       .subscribe((schools) => {
-        this.topPadding = schools.length > 1 ? '50px' : '0px';
+        this.topPadding = schools.length > 1 && !this.http.checkIfTokenIsKiosk() ? '50px' : '0px';
       });
     this.restriction$ = this.userService.blockUserPage$;
 
