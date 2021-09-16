@@ -84,7 +84,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   ) { }
 
   get showIntegrations$() {
-    return this.user$.pipe(map(user => user.roles.includes('admin_manage_integration')));
+    return this.user$.pipe(filter(u => !!u), take(1), map(user => user.roles.includes('admin_manage_integration')));
   }
 
   ngOnInit() {
