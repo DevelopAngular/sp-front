@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import * as adminsActions from '../actions';
 import {catchError, concatMap, exhaustMap, map, mapTo, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../../../services/user.service';
 import {of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
+import * as adminsActions from '../actions';
+import * as userActions from '../../../../user/actions';
 
 @Injectable()
 export class AdminsEffects {
@@ -122,10 +123,17 @@ export class AdminsEffects {
         concatMap((action: any) => {
           return this.userService.createUserRoles(action.profile.id, action.permissions)
             .pipe(
-              map((roles: any) => {
+              switchMap(roles => {
+                return zip(this.userService.user$.pipe(take(1)), of(roles));
+              }),
+              switchMap(([user, roles]: [User, any[]]) => {
                 const profile = action.profile;
                 profile.roles = roles.map(role => role.codename);
-                return adminsActions.updateAdminPermissionsSuccess({profile});
+                if (user.id === profile.id) {
+                  return [adminsActions.updateAdminPermissionsSuccess({profile}), userActions.updateUserSuccess({user: profile})];
+                } else {
+                  return [adminsActions.updateAdminPermissionsSuccess({profile})];
+                }
               }),
               catchError(error => of(adminsActions.updateAdminPermissionsFailure({errorMessage: error.message})))
             );

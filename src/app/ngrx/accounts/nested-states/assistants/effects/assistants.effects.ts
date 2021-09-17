@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
 import * as assistantsActions from '../actions';
 import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
-import {forkJoin, of, zip} from 'rxjs';
+import {defer, forkJoin, of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
@@ -106,20 +106,22 @@ export class AssistantsEffects {
           return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
             .pipe(
               switchMap((user: User) => {
-                return forkJoin({
-                  user: of(user),
-                  representedUsers: zip(...action.behalf.map((teacher: User) => {
-                      return this.userService.addRepresentedUser(+user.id, teacher);
-                    }))
-                }
-                );
+                return defer(() => {
+                  return action.behalf && action.behalf.length ? forkJoin({
+                      user: of(user),
+                      representedUsers: zip(...action.behalf.map((teacher: User) => {
+                        return this.userService.addRepresentedUser(+user.id, teacher);
+                      }))
+                    }
+                  ) : forkJoin({user: of(user), representedUsers: of([])});
+                });
               }),
               map(({user, representedUsers}) => {
                 const assistant = {
                   ...user,
-                  canActingOnBehalfOf: representedUsers.map((u: any) => {
+                  canActingOnBehalfOf: representedUsers.length ? representedUsers.map((u: any) => {
                     return { user: u.represented_user, roles: u.roles };
-                  })
+                  }) : []
                 };
                 return assistantsActions.postAssistantSuccess({assistant});
               })
