@@ -550,4 +550,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   updateOverlayPosition(event) {
     this.renderer.addClass(this.studentPasses.nativeElement, event.connectionPair.panelClass);
   }
+
+  hasStudentRole(user) {
+    return user.roles && User.fromJSON(user).isStudent();
+  }
 }
