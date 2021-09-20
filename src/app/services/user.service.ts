@@ -100,6 +100,7 @@ import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-u
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {
   clearProfilePicturesUploadErrors,
+  clearUploadedData,
   deleteProfilePicture,
   getMissingProfilePictures,
   getProfilePicturesUploadedGroups,
@@ -802,5 +803,9 @@ export class UserService implements OnDestroy {
   deleteProfilePicture(user: User, role: string) {
     this.store.dispatch(deleteProfilePicture({user, role}));
     return this.currentUpdatedAccount$[role];
+  }
+
+  clearUploadedData() {
+    this.store.dispatch(clearUploadedData());
   }
 }

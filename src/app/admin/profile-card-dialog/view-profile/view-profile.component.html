@@ -49,7 +49,7 @@
              (mouseleave)="avatarContainer.hover = false"
           >
             <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
-              <mat-spinner [color]="'warn'" [diameter]="30"></mat-spinner>
+              <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
             </div>
             <img style="width: 88px; height: 88px" [src]="(user.profile_picture ? user.profile_picture : './assets/Avatar Default.svg') | resolveAsset" alt="avatar">
             <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>

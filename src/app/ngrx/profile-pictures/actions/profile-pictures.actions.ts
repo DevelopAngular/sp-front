@@ -50,6 +50,8 @@ export const deleteProfilePictureFailure = createAction(`[${PPICRURES}] Delete P
 
 export const showErrorToast = createAction(`[${PPICRURES}] Show Error Toast`);
 
+export const clearUploadedData = createAction(`[${PPICRURES}] Clear Uploaded Data`);
+
 export const changeProfilePictureLoader = createAction(`[${PPICRURES}] Change Loader`, props<{percent: number}>());
 
 

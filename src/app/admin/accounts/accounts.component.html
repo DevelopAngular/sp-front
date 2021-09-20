@@ -39,24 +39,6 @@
             <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Integrations</div>
             <div class="groups-buttons" *ngIf="schoolSyncInfoData$ | async as schoolSyncInfoData">
               <app-integration-card
-                [icon]="'./assets/GG4L (Blue).svg'"
-                [title]="'GG4L'"
-                [status]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'approved' : 'done') : 'disconnect'"
-                [subtitle]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate((gg4lSettingsData$ | async)?.last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
-                [learnMoreLink]="'https://www.smartpass.app/gg4l'"
-                (setUp)="openSettingsDialog('gg4l', $event)"
-              >
-              </app-integration-card>
-              <app-integration-card
-                [icon]="'./assets/Google (Color).svg'"
-                [title]="'G Suite'"
-                [status]="schoolSyncInfoData.is_gsuite_enabled ? 'done' : 'disconnect'"
-                [subtitle]="schoolSyncInfoData.is_gsuite_enabled ? 'Last Sync: ' + formatDate((gSuiteOrgs$ | async)?.last_successful_sync) : 'Sync accounts from your org units.'"
-                [learnMoreLink]="'https://www.smartpass.app/gsuite'"
-                (setUp)="openSettingsDialog('g_suite', $event)"
-              >
-              </app-integration-card>
-              <app-integration-card
                 [style.margin-top]="'20px'"
                 [icon]="'./assets/Clever (Blue).svg'"
                 [title]="'Clever'"
@@ -66,6 +48,14 @@
                 (setUp)="openSettingsDialog('clever', $event)"
               ></app-integration-card>
               <app-integration-card
+                [icon]="'./assets/Google (Color).svg'"
+                [title]="'G Suite'"
+                [status]="schoolSyncInfoData.is_gsuite_enabled ? 'done' : 'disconnect'"
+                [subtitle]="schoolSyncInfoData.is_gsuite_enabled ? 'Last Sync: ' + formatDate((gSuiteOrgs$ | async)?.last_successful_sync) : 'Sync accounts from your org units.'"
+                [learnMoreLink]="'https://www.smartpass.app/gsuite'"
+                (setUp)="openSettingsDialog('g_suite', $event)"
+              ></app-integration-card>
+              <app-integration-card
                 [icon]="'./assets/Folder.svg'"
                 [title]="'Profile Pictures'"
                 [style.padding]="'10px'"
@@ -73,6 +63,14 @@
                 [subtitle]="'Bulk upload profile pictures for your users. '"
                 [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
                 (setUp)="openProfilePictures()"
+              ></app-integration-card>
+              <app-integration-card
+                [icon]="'./assets/GG4L (Blue).svg'"
+                [title]="'GG4L'"
+                [status]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'approved' : 'done') : 'disconnect'"
+                [subtitle]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate((gg4lSettingsData$ | async)?.last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
+                [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+                (setUp)="openSettingsDialog('gg4l', $event)"
               ></app-integration-card>
 <!--              <app-admin-card-button-->
 <!--                [title]="'Profile pictures'"-->
@@ -89,42 +87,29 @@
             <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Integrations</div>
             <div class="groups-buttons" *ngIf="schoolSyncInfoData$ | async as schoolSyncInfoData">
               <app-integration-card
-                [icon]="'./assets/GG4L (Blue).svg'"
-                [title]="'GG4L'"
-                [status]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'approved' : 'done') : 'disconnect'"
-                [subtitle]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate((gg4lSettingsData$ | async)?.last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
-                [learnMoreLink]="'https://www.smartpass.app/gg4l'"
-                (setUp)="openSettingsDialog('gg4l', $event)"
-              >
-              </app-integration-card>
-              <app-integration-card
                 [icon]="'./assets/Google (Color).svg'"
                 [title]="'G Suite'"
                 [status]="schoolSyncInfoData.is_gsuite_enabled ? 'done' : 'disconnect'"
                 [subtitle]="schoolSyncInfoData.is_gsuite_enabled ? 'Last Sync: ' + formatDate((gSuiteOrgs$ | async)?.last_successful_sync) : 'Sync accounts from your org units.'"
                 [learnMoreLink]="'https://www.smartpass.app/gsuite'"
                 (setUp)="openSettingsDialog('g_suite', $event)"
-              >
-              </app-integration-card>
+              ></app-integration-card>
               <app-admin-card-button
                 [title]="'Profile pictures'"
                 [subtitle]="'Bulk-upload profile pictures'"
                 [leftIcon]="'./assets/Folder.svg'"
                 (onClick)="openProfilePictures()"
               ></app-admin-card-button>
+              <app-integration-card
+                [icon]="'./assets/GG4L (Blue).svg'"
+                [title]="'GG4L'"
+                [status]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'approved' : 'done') : 'disconnect'"
+                [subtitle]="schoolSyncInfoData.is_gg4l_enabled ? (!schoolSyncInfoData.login_provider ? 'Almost done! Adjust settings for account sync.' : 'Last Sync: ' + formatDate((gg4lSettingsData$ | async)?.last_successful_sync)) : 'Sync accounts automatically from any SIS.'"
+                [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+                (setUp)="openSettingsDialog('gg4l', $event)"
+              ></app-integration-card>
             </div>
           </div>
-<!--          <app-admin-card-button-->
-<!--            [title]="'GG4L'"-->
-<!--            [leftIcon]="'./assets/GG4L Icon.svg'"-->
-<!--            [subtitle]="'Easy and secure account sync'"-->
-<!--            (onClick)="openSyncSettings()"-->
-<!--          ></app-admin-card-button>-->
-<!--          <app-admin-card-button-->
-<!--            [title]="'Profile pictures'"-->
-<!--            [subtitle]="'Bulk-upload profile pictures'"-->
-<!--            [leftIcon]="'./assets/Folder.svg'"-->
-<!--          ></app-admin-card-button>-->
         </div>
       </div>
       <ng-template #role>

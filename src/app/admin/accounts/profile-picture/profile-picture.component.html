@@ -9,7 +9,7 @@
       <span>Profile Pictures</span>
     </div>
     <div class="save-button"
-         [matTooltip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile files and the map file before uploading!' : null"
+         [matTooltip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile picture files and the map file before uploading!' : null"
          matTooltipClass="tooltip">
       <app-gradient-button
         *ngIf="page !== 3 && page !== 5"
@@ -176,7 +176,7 @@
 
     <div class="update-page" *ngIf="page === 5">
       <div class="block">
-        <div class="update-button" style="margin-bottom: 20px">
+        <div class="update-button" style="margin: 20px 0">
           <div class="ds-dialog-title">Add/Update Pictures</div>
           <app-gradient-button
             [style.margin-top]="'11px'"
@@ -201,12 +201,12 @@
       </div>
       <mat-divider></mat-divider>
       <div class="upload-history">
-        <div class="ds-dialog-title" style="padding: 20px 0 0 20px">Upload History</div>
+        <div class="ds-dialog-title" style="padding: 20px">Upload History</div>
         <div class="block" *ngFor="let group of uploadedGroups$ | async">
           <div class="upload-info">
             <div class="upload-title">{{ getUploadedGroupTime(group.created) }}</div>
             <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ group.num_assigned_new }} accounts</span></div>
-            <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ group.num_assigned_update }} accounts</span></div>
+            <div class="info"><span style="font-weight: bold">Updated pictures: </span><span>{{ group.num_assigned_update }} accounts</span></div>
             <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ group.error_count }} errors <span *ngIf="group.error_count" (click)="prepareErrorsToCsv(group)" style="color: #E32C66; cursor: pointer;">[Download]</span></span></div>
           </div>
         </div>

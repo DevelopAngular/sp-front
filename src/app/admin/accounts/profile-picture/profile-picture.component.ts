@@ -43,14 +43,18 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             return this.xlsxService.parseXlSXFile(res);
           }),
           switchMap(rows => {
+            const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
             const validate$ = rows.map(row => {
+              if (!regexpEmail.test(row[0]) && typeof row[0] !== 'number') {
+                row[0] = `${row[0]}@spnx.local`;
+              }
                 return of({ user_id: row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
             });
             return forkJoin(validate$);
           }),
           catchError(error => {
             this.errorUpload = true;
-            this.toastService.openToast({title: 'Type error', subtitle: error.message, type: 'error'});
+            this.toastService.openToast({title: 'Type error', subtitle: 'Sorry, please upload a file ending in .csv', type: 'error'});
             return of(null);
           })
         )
@@ -58,9 +62,12 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           if (!this.errorUpload) {
             this.selectedMapFile = fileRef.nativeElement.files[0];
             this.selectedMapFiles = items;
+            this.uploadingProgress.csv.inProcess = false;
+            this.uploadingProgress.csv.complete = true;
+          } else {
+            this.uploadingProgress.csv.inProcess = false;
+            this.uploadingProgress.csv.complete = false;
           }
-          this.uploadingProgress.csv.inProcess = false;
-          this.uploadingProgress.csv.complete = true;
         });
     }
   }
@@ -165,7 +172,9 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.accountsWithoutPictures$ = this.userService.missingProfilePictures$;
     this.uploadErrors$ = this.userService.profilePicturesUploadErrors$;
     this.lastUploadedGroup$ = this.userService.lastUploadedGroup$;
-    this.uploadedGroups$ = this.userService.uploadedGroups$;
+    this.uploadedGroups$ = this.userService.uploadedGroups$.pipe(map(groups => {
+      return groups.reverse();
+    }));
 
     this.picturesLoaderPercent$.pipe(
       filter((v) => !!v && !!this.stop),
@@ -173,19 +182,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     ).subscribe(res => {
       this.renderer.setAttribute(this.stop.nativeElement, 'offset', `${res}%`);
     });
-
-    // this.uploadHistory$ = combineLatest(
-    //   this.uploadErrors$.pipe(filter(res => !!res.length)),
-    //   this.uploadedGroups$.pipe(filter(res => !!res.length))
-    // ).pipe(
-    //   map(([errors, groups]) => {
-    //     const history_date = this.getUploadedGroupTime(groups[groups.length - 1].created);
-    //     const groups_info = groups.reduce((acc, group) => {
-    //       return { new: acc.new + group.num_assigned_new, updated: acc.updated + group.num_assigned_update };
-    //     }, {new: 0, updated: 0});
-    //     return { history_date, groups_info };
-    //   })
-    // );
 
     this.userService.profilePicturesLoaded$
       .pipe(
@@ -196,7 +192,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             return { ...acc, [curr.user_id]: curr };
           }, {});
           return zip(
-            this.userService.profiles$,
+            this.userService.profiles$.pipe(take(1)),
             of(files)
           );
         }),
@@ -262,6 +258,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         this.clearData();
       }
     } else if (this.page === 5) {
+      this.userService.clearUploadedData();
       this.userService.getMissingProfilePicturesRequest();
       this.userService.getUploadedGroupsRequest();
     }
@@ -272,6 +269,9 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.selectedImgFiles = [];
     this.errors = [];
     this.selectedMapFile = null;
+    this.uploadedProfiles = [];
+    this.allProfiles = [];
+    this.filesToDB = [];
     this.uploadingProgress = {
       images: { inProcess: false, complete: false, error: null },
       csv: { inProcess: false, complete: false, error: null }
