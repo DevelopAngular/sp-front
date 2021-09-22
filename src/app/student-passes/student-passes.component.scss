@@ -47,6 +47,7 @@
         .profile-image {
           margin-right: 12px;
           overflow: hidden;
+          border-radius: 50%;
 
           img {
             border-radius: 50%;
@@ -160,6 +161,21 @@
         }
       }
     }
+  }
+}
+
+.avatar-animate {
+  animation : avatar-shimmer 3s infinite linear;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 88px 100%;
+}
+
+@keyframes avatar-shimmer {
+  0% {
+    background-position: -88px 0;
+  }
+  100% {
+    background-position: 88px 0;
   }
 }
 

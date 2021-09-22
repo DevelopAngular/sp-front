@@ -37,6 +37,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
 
   @ViewChild('studentPasses') studentPasses: ElementRef;
+  @ViewChild('avatar') avatar: ElementRef;
 
   buttonDown = false;
   timeLeft = '--:--';
@@ -49,6 +50,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   destroyAnimation$: Subject<any> = new Subject<any>();
   destroyOpen$ = new Subject();
   disableClose$ = new Subject();
+  loadingAvatar: boolean;
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 

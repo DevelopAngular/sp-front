@@ -29,8 +29,8 @@
     <div *ngIf="isBadgeVisible" class="badge">1</div>
   </div>
 
-  <div class="profile-image" *ngIf="profileImage" [style.top]="isMiniCard ? '47px' : '54px'">
-    <img width="88" height="88" [src]="(pass.student?.profile_picture ? pass.student?.profile_picture : './assets/Avatar Default.svg') | resolveAsset" alt="Avatar">
+  <div class="profile-image animate" *ngIf="profileImage" [style.top]="isMiniCard ? '47px' : '54px'">
+    <img #avatar width="88" height="88" [src]="(pass.student?.profile_picture ? pass.student?.profile_picture : './assets/Avatar Default.svg') | resolveAsset" alt="Avatar">
   </div>
 
 <!--  <div class="tile-container-footer">-->

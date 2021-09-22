@@ -17,7 +17,7 @@
     >
       <div class="header" [style.padding]="isClose ? 0 : '15px 0'" [style.height]="">
         <div class="profile-info" [style.padding]="isScrollable ? '0 0 0 17px' : (hasProfilePicture ? '0 17px' : '10px 17px')">
-          <div class="profile-image" *ngIf="hasProfilePicture">
+          <div class="profile-image avatar-animate" *ngIf="hasProfilePicture">
             <img [@openCloseProfile]="animationTrigger" [width]="75" [height]="75" [src]="profile.profile_picture || './assets/Default Avatar.png' | resolveAsset" alt="Avatar">
           </div>
           <div class="title">
