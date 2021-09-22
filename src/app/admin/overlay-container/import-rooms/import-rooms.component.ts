@@ -60,10 +60,10 @@ export class ImportRoomsComponent implements OnInit {
           }),
           map((rows: RoomInfo[]) => {
             rows = rows.map((r: RoomInfo) => {
-              if (r.title.length > 16) {
+              if (r.title.length > 15) {
                 r.title = r.title.slice(0, 15);
               }
-              if (r.room.length > 6) {
+              if (r.room.length > 5) {
                 r.room = r.room.slice(0, 5);
               }
               return r;
