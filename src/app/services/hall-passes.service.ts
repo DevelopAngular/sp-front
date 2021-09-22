@@ -54,10 +54,10 @@ import {Dictionary} from '@ngrx/entity';
 })
 export class HallPassesService {
 
-  pinnables$: Observable<Pinnable[]>;
-  loadedPinnables$: Observable<boolean>;
-  isLoadingPinnables$: Observable<boolean>;
-  pinnablesCollectionIds$: Observable<number[] | string[]>;
+  pinnables$: Observable<Pinnable[]> = this.store.select(getPinnableCollection);
+  loadedPinnables$: Observable<boolean> = this.store.select(getIsLoadedPinnables);
+  isLoadingPinnables$: Observable<boolean> = this.store.select(getIsLoadingPinnables);
+  pinnablesCollectionIds$: Observable<number[] | string[]> = this.store.select(getPinnablesIds);
   pinnablesEntities$: Observable<Dictionary<Pinnable>> = this.store.select(getPinnableEntities);
   isLoadingArranged$: Observable<boolean> = this.store.select(getArrangedLoading);
 
@@ -86,8 +86,8 @@ export class HallPassesService {
   quickPreviewPassesLoading$: Observable<boolean> = this.store.select(getQuickPreviewPassesLoading);
   quickPreviewPassesLoaded$: Observable<boolean> = this.store.select(getQuickPreviewPassesLoaded);
 
-  currentPinnable$: Observable<Pinnable>;
-  passStats$;
+  currentPinnable$: Observable<Pinnable> = this.store.select(getCurrentPinnable);
+  passStats$ = this.store.select(getPassStatsResult);
 
   isOpenPassModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
@@ -95,14 +95,7 @@ export class HallPassesService {
     private http: HttpService,
     private store: Store<AppState>,
     private pollingService: PollingService
-  ) {
-    this.pinnables$ = this.store.select(getPinnableCollection);
-    this.loadedPinnables$ = this.store.select(getIsLoadedPinnables);
-    this.isLoadingPinnables$ = this.store.select(getIsLoadingPinnables);
-    this.currentPinnable$ = this.store.select(getCurrentPinnable);
-    this.passStats$ = this.store.select(getPassStatsResult);
-    this.pinnablesCollectionIds$ = this.store.select(getPinnablesIds);
-  }
+  ) {}
 
     getActivePasses() {
         return this.http.get('v1/hall_passes?active=true');

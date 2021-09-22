@@ -101,7 +101,9 @@ export class LocationsEffects {
         exhaustMap((action: any) => {
           return this.passesService.pinnables$.pipe(
             take(1),
-            map((pinnables) => pinnables.find(p => p.location.id === action.location.id)),
+            map((pinnables) => {
+              return pinnables.filter(p => p.location).find(p => p.location.id === action.location.id);
+            }),
             filter((pinnable) => !!pinnable),
             map((pinnable: Pinnable) => {
               const updatedPinnable = {
