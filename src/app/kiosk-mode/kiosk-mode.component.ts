@@ -8,7 +8,7 @@ import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {filter, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {LocationsService} from '../services/locations.service';
@@ -62,8 +62,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.locationService.getPassLimitRequest();
       combineLatest(
-        this.userService.user$.pipe(take(1), filter(u => !!u)),
-        this.userService.effectiveUser.pipe(take(1), filter(u => !!u))
+        this.userService.user$,
+        this.userService.effectiveUser
       ).pipe(
           switchMap(([user, effectiveUser]) => {
             if (effectiveUser) {
@@ -84,9 +84,10 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
             {type: 'location', value: [kioskLocation]},
             this.timeService.nowDate()
           );
-          this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
           this.kioskMode.currentRoom$.next(kioskLocation);
       });
+
+    this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
   }
 
   ngAfterViewInit() {

@@ -32,7 +32,7 @@
         <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>
       </div>
 
-      <div *ngIf="user && user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra && !isStaff" class="teacherNav">
+      <div *ngIf="user && user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra" class="teacherNav">
         <div *ngFor="let button of buttons" class="teacherNav_tab">
           <ng-container *ngIf="buttonVisibility(button)">
             <div
@@ -41,9 +41,7 @@
               appCrossPointerEventTarget
               (pointerClickEvent)="tabRef.style.transform = 'unset'"
               (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
-              (pointerCancelEvent)="tabRef.style.transform = 'unset'"
-
-            >
+              (pointerCancelEvent)="tabRef.style.transform = 'unset'">
               <div>
               </div>
               <app-nav-button
