@@ -205,7 +205,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       this.currentPage === Pages.EditRoom ||
       this.currentPage === Pages.NewFolder ||
       this.currentPage === Pages.EditFolder ||
-      this.currentPage === Pages.BulkEditRooms
+      this.currentPage === Pages.BulkEditRooms;
   }
 
   get saveButtonToolTip() {
