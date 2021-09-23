@@ -224,16 +224,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private locationsService: LocationsService
   ) {
 
-    this.futurePasses = this.liveDataService.futurePasses$;
-    this.activePasses = this.getActivePasses();
-    this.pastPasses = this.liveDataService.expiredPasses$;
-    this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
-      filter(res => !!res),
-      map(filters => {
-        this.isEmptyPassFilter = !filters['past-passes'].default;
-        return filters['past-passes'].default;
-      }));
-
     this.userService.user$
       .pipe(
         take(1),
@@ -324,6 +314,15 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.futurePasses = this.liveDataService.futurePasses$;
+    this.activePasses = this.getActivePasses();
+    this.pastPasses = this.liveDataService.expiredPasses$;
+    this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
+      filter(res => !!res),
+      map(filters => {
+        this.isEmptyPassFilter = !filters['past-passes'].default;
+        return filters['past-passes'].default;
+      }));
     this.schoolsLength$ = this.httpService.schoolsLength$;
     this.user$ = this.userService.user$;
     const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));

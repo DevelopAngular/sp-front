@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import {BehaviorSubject, defer, interval, Observable, Subject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, defer, interval, Observable} from 'rxjs';
 import {distinctUntilChanged, map, publishReplay, refCount, repeat, scan, switchMap, take} from 'rxjs/operators';
-import { PollingEvent, PollingService } from './polling-service';
+import {PollingEvent, PollingService} from './polling-service';
 
 interface RTTimeReport {
   requestTime: number;
@@ -58,7 +58,7 @@ export class TimeService {
   private timeResponse$: Observable<PollingEvent>;
 
 
-  now$ = interval(500).pipe(
+  now$ = interval().pipe(
     map(() => this.nowDate()))
     .pipe(
       publishReplay(1),
@@ -106,9 +106,9 @@ export class TimeService {
           // .subscribe(driftEstimate => TimeService.latestDriftEstimate$.next(driftEstimate));
       // });
 
-      TimeService.latestDriftEstimate$.subscribe(drift => {
+      // TimeService.latestDriftEstimate$.subscribe(drift => {
         // console.log(`This computer has an estimated drift of ${-drift}ms from server time`);
-      });
+      // });
 
   }
 
