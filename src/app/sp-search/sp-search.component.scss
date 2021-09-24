@@ -169,6 +169,7 @@ mat-input-container.md-input-focused label {
     color: #555558;
     font-size: 14px;
     cursor: pointer;
+    position: relative;
     img {
       cursor: pointer;
     }
@@ -177,6 +178,24 @@ mat-input-container.md-input-focused label {
       outline: none;
       //background-color: #ECF1FF !important;
       //color: #1F195E !important;
+    }
+
+    &.disabled {
+      cursor: default;
+      span {
+        opacity: 0.5;
+      }
+    }
+
+    .exist {
+      position: absolute;
+      right: 0;
+      display: flex;
+      align-items: center;
+      padding: 5px;
+      justify-content: center;
+      background-color: #F4F4F4;
+      border-radius: 6px;
     }
   }
 }

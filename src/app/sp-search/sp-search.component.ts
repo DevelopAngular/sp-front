@@ -454,6 +454,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   addStudent(student: User) {
+    if (this.isDisabled(student)) {
+      return;
+    }
     if (this.chipsMode) {
       this.inputField = false;
     }
@@ -501,6 +504,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
 
     }
+  }
+
+  isDisabled(item: any) {
+    return this.type === 'G Suite' && item && !item.role_compatible;
   }
   cancel(studentInput) {
     studentInput.input.nativeElement.value = '';

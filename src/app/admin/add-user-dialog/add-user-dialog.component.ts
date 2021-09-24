@@ -231,7 +231,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   showSaveButton() {
     if (this.typeChosen === this.accountTypes[0]) {
       if (this.data.role === '_profile_assistant' && this.state) {
-          return this.assistantLike.user && this.assistantLike.behalfOf.length;
+          return this.assistantLike.user;
       } else if (this.data.role === '_all' && this.state) {
         if (this.userRoles.length && this.isAssistant) {
           return this.assistantLike.behalfOf.length;
@@ -246,7 +246,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           return this.newAlternativeAccount.valid;
       } else {
         if (this.data.role !== '_all') {
-            return this.newAlternativeAccount.valid && this.assistantLike.behalfOf.length;
+            return this.newAlternativeAccount.valid;
         } else {
           if (this.userRoles.length && this.isAssistant) {
             return this.assistantLike.behalfOf.length;

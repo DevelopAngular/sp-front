@@ -39,11 +39,11 @@
       </app-round-input>
     </div>
 
-    <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'" (scroll)="scroll($event)">
+    <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'" (scroll)="scroll()">
       <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
-          <div #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
+          <div [ngClass]="{'disabled': isDisabled(student)}" #cell *ngFor="let student of students | async" tabindex="0" class="option-list_item"
                (mouseenter)="cell.hovered = true; showBackgroundOverlay = true"
                (mouseleave)="cell.hovered = false; cell.pressed = false"
                appCrossPointerEventTarget
@@ -63,8 +63,10 @@
               }}
             </span>
 
+            <div class="exist" *ngIf="isDisabled(student)">Already account</div>
+
             <img
-              *ngIf="!isKioskMode && (cell.hovered || cell.isOpenTooltip)"
+              *ngIf="!isKioskMode && (cell.hovered || cell.isOpenTooltip) && type !== 'G Suite'"
               width="15"
               [src]="'./assets/Info (Blue-Gray).svg'"
               alt="Info"
