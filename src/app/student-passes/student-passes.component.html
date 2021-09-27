@@ -18,7 +18,10 @@
       <div class="header" [style.padding]="isClose ? 0 : '15px 0'" [style.height]="">
         <div class="profile-info" [style.padding]="isScrollable ? '0 0 0 17px' : (hasProfilePicture ? '0 17px' : '10px 17px')">
           <div class="profile-image avatar-animate" *ngIf="hasProfilePicture">
-            <img [@openCloseProfile]="animationTrigger" [width]="75" [height]="75" [src]="profile.profile_picture || './assets/Default Avatar.png' | resolveAsset" alt="Avatar">
+            <div [@openCloseProfile]="animationTrigger" *ngIf="profile.profile_picture; else d" [ngStyle]="{'background-image': 'url(' + profile.profile_picture + ')', width: '88px', height: '88px', 'background-size': 'cover'}"></div>
+            <ng-template #d>
+              <img [@openCloseProfile]="animationTrigger" width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+            </ng-template>
           </div>
           <div class="title">
             <div class="full-name" [@topBottomName]="animationTrigger">{{ profile.first_name }} {{ profile.last_name }}</div>
