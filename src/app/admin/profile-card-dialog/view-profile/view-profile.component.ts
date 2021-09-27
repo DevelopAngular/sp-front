@@ -153,9 +153,16 @@ export class ViewProfileComponent implements OnInit {
       this.user = User.fromJSON(this.profile._originalUserProfile);
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
-      if (this.user.isTeacher()) {
+      if (this.user.isTeacher() && !this.user.isAdmin()) {
         this.teacherRooms = cloneDeep(this.profile._originalUserProfile.assignedTo);
         this.teacherRoomsInitialState = cloneDeep(this.teacherRooms);
+      }
+      if (this.user.isAdmin() && this.user.isTeacher()) {
+        this.locationService.getLocationsWithTeacherRequest(this.user).pipe(filter(r => !!r.length))
+          .subscribe(locs => {
+            this.teacherRooms = cloneDeep(locs);
+            this.teacherRoomsInitialState = cloneDeep(this.teacherRooms);
+          });
       }
       if (this.user.isStudent()) {
         this.userRoles.push(this.roles[0]);
@@ -273,6 +280,7 @@ export class ViewProfileComponent implements OnInit {
     this.disabledState = true;
 
     if (!isEqual(this.teacherRoomsInitialState, this.teacherRooms)) {
+      debugger;
       const locsToRemove = differenceBy(this.teacherRoomsInitialState, this.teacherRooms, 'id').map(l => {
         l.teachers = l.teachers.filter(t => +t.id !== +this.user.id);
         return l;
