@@ -280,7 +280,6 @@ export class ViewProfileComponent implements OnInit {
     this.disabledState = true;
 
     if (!isEqual(this.teacherRoomsInitialState, this.teacherRooms)) {
-      debugger;
       const locsToRemove = differenceBy(this.teacherRoomsInitialState, this.teacherRooms, 'id').map(l => {
         l.teachers = l.teachers.filter(t => +t.id !== +this.user.id);
         return l;
@@ -390,7 +389,13 @@ export class ViewProfileComponent implements OnInit {
 
    SPC.afterClosed().pipe(filter(res => !!res)).subscribe((status) => {
      if (status === 'delete') {
-       this.userService.deleteUserRequest(this.profile.id, this.data.role);
+       if (this.user.userRoles().length > 1) {
+         this.user.userRoles().forEach(role => {
+           return this.userService.deleteUserRequest(this.profile.id, role);
+         });
+       } else {
+         this.userService.deleteUserRequest(this.profile.id, this.data.role);
+       }
        this.toast.openToast({title: 'Account deleted', type: 'error'});
        this.back();
      } else {

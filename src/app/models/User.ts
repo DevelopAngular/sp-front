@@ -92,13 +92,10 @@ export class User extends BaseModel {
     return this.roles.includes('_profile_assistant') && this.roles.includes('represent_users');
   }
 
-  // primaryRole() {
-  //   let role;
-  //   if (this.isAdmin()) {
-  //
-  //   }
-  // }
-  //
+  userRoles() {
+    return this.roles.filter(role => role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student' || role === '_profile_assistant');
+  }
+
   toString() {
     return this.last_name;
   }
