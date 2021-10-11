@@ -26,11 +26,12 @@
     <div class="header">
       <div class="background-header" [style.background]="'#4274F6'" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
       <img class="back-button" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="close()">
+<!--      <img width="21" height="21" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction" [src]="'./assets/Clever (Blue).svg' | resolveAsset" alt="Options">-->
       <div class="ds-dialog-title-white"
            [style.margin-left]="'12px'"
            [style.z-index]="10"
            [attr.data-motion-translate]="(frameMotion$ | async).direction"
-      >Clever Set-up</div>
+      >Clever Settings</div>
       <div class="right-button" *ngIf="schoolSyncInfo.is_clever_enabled">
         <app-icon-button [srcString]="'Dots'" [onDarkShade]="true" [size]="17" (clickEvent)="openConsentMenu($event)"></app-icon-button>
       </div>
@@ -102,9 +103,9 @@
             <div class="left">
               <div class="sync-title">Next sync</div>
               <div class="sync-subtitle">{{ formatDate(cleverSyncInfo.next_sync) }}</div>
-              <div style="margin-top: 15px">
-                <app-gradient-button [gradient]="'#4274F6, #4274F6'" (buttonClick)="syncing()">Sync now</app-gradient-button>
-              </div>
+            </div>
+            <div class="right">
+              <app-gradient-button [gradient]="'#4274F6, #4274F6'" (buttonClick)="syncing()">Sync now</app-gradient-button>
             </div>
           </div>
         </ng-container>
