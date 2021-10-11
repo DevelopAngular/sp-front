@@ -27,8 +27,18 @@ export class TeachersEffects {
                 });
               })),
               map(({userList, userLocations}: {userList: any, userLocations: any[]}) => {
+                const mapVar = {};
+                userLocations.forEach(loc => {
+                  loc.teachers.forEach(teach => {
+                    if (mapVar[teach.id]) {
+                      mapVar[teach.id].push(loc);
+                    } else {
+                      mapVar[teach.id] = [loc];
+                    }
+                  });
+                });
                 const users = userList.results.map(user => {
-                  const assignedTo = userLocations.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
+                  const assignedTo = mapVar[user.id];
                   return {...user, assignedTo};
                 });
                 const nextUrl = userList.next ? userList.next.substring(userList.next.search('v1')) : null;
@@ -60,8 +70,18 @@ export class TeachersEffects {
               });
             }),
             map(({users, userLocations}: {users: any, userLocations: any[]}) => {
+              const mapVar = {};
+              userLocations.forEach(loc => {
+                loc.teachers.forEach(teach => {
+                  if (mapVar[teach.id]) {
+                    mapVar[teach.id].push(loc);
+                  } else {
+                    mapVar[teach.id] = [loc];
+                  }
+                });
+              });
               const moreTeachers = users.results.map(user => {
-                const assignedTo = userLocations.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
+                const assignedTo = mapVar[user.id];
                 return {...user, assignedTo};
               });
               const nextUrl = users.next ? users.next.substring(users.next.search('v1')) : null;
