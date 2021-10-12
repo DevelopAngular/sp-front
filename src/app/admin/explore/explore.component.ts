@@ -591,6 +591,22 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.adminService.getMoreReports();
   }
 
+  checkQueryParams() {
+    if (!this.passSearchData.selectedStudents) {
+     delete this.queryParams['student'];
+    }
+    if (!this.passSearchData.selectedDestinationRooms) {
+      delete this.queryParams['destination'];
+    }
+    if (!this.passSearchData.selectedOriginRooms) {
+      delete this.queryParams['origin'];
+    }
+    if (this.passSearchData.selectedDate) {
+      delete this.queryParams['created_after'];
+      delete this.queryParams['end_time_before'];
+    }
+  }
+
   autoSearch() {
     if (this.currentView$.getValue() === 'pass_search') {
       if (!this.passSearchData.selectedDestinationRooms && !this.passSearchData.selectedOriginRooms && !this.passSearchData.selectedDate && !this.passSearchData.selectedStudents) {
@@ -637,9 +653,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
     queryParams['limit'] = limit;
     queryParams['total_count'] = 'true';
-    this.queryParams = queryParams;
+    this.queryParams = {...this.queryParams, ...queryParams};
 
-    const url = constructUrl('v1/hall_passes', queryParams);
+    const url = constructUrl('v1/hall_passes', this.queryParams);
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
   }
@@ -716,8 +732,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
           }
         }
         queryParams.limit = 300;
-        this.queryParams = queryParams;
-        this.hallPassService.sortHallPassesRequest(queryParams);
+        this.queryParams = {...this.queryParams, ...queryParams};
+        this.hallPassService.sortHallPassesRequest(this.queryParams);
       });
   }
 
