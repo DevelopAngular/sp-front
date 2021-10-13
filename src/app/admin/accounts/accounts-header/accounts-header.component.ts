@@ -236,7 +236,13 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         switchMap(res => {
           if (res === 'delete') {
             return zip(...this.selectedUsers.map(user => {
-              return this.userService.deleteUserRequest(user.id, this.currentTab);
+              if (User.fromJSON(user).userRoles().length > 1) {
+                return zip(...User.fromJSON(user).userRoles().map(role => {
+                  return this.userService.deleteUserRequest(user.id, role);
+                }));
+              } else {
+                return this.userService.deleteUserRequest(user.id, this.currentTab);
+              }
             })).pipe(mapTo(res));
           } else {
             return zip(...this.selectedUsers.map(user => {

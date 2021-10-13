@@ -17,7 +17,7 @@
           (buttonClick)="openFilter($event, 'students')"
           [title]="(!passSearchData.selectedStudents || passSearchData.selectedStudents.length > 1 ? 'Students' + (passSearchData.selectedStudents && passSearchData.selectedStudents.length ? ' (' + passSearchData.selectedStudents.length + ')' : '') : passSearchData.selectedStudents[0].display_name)"
           [filter]="passSearchData.selectedStudents && !!passSearchData.selectedStudents.length"
-          (clearData)="passSearchData.selectedStudents = null; autoSearch()"
+          (clearData)="passSearchData.selectedStudents = null; checkQueryParams(); autoSearch()"
           [openedFilter]="!!dialog.getDialogById('students_filter')">
         </app-filter-button>
         <app-filter-button *ngSwitchCase="2"
@@ -51,7 +51,7 @@
           (buttonClick)="openFilter($event, 'origin')"
           [title]="'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' (' + passSearchData.selectedOriginRooms.length + ')' : '')"
           [filter]="passSearchData.selectedOriginRooms && !!passSearchData.selectedOriginRooms.length"
-          (clearData)="passSearchData.selectedOriginRooms = null; autoSearch()"
+          (clearData)="passSearchData.selectedOriginRooms = null; checkQueryParams(); autoSearch()"
           [openedFilter]="!!dialog.getDialogById('origin_filter')"
         ></app-filter-button>
       </div>
@@ -60,7 +60,7 @@
           (buttonClick)="openFilter($event, 'destination')"
           [title]="'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' (' + passSearchData.selectedDestinationRooms.length + ')' : '')"
           [filter]="passSearchData.selectedDestinationRooms && !!passSearchData.selectedDestinationRooms.length"
-          (clearData)="passSearchData.selectedDestinationRooms = null; autoSearch()"
+          (clearData)="passSearchData.selectedDestinationRooms = null; checkQueryParams(); autoSearch()"
           [openedFilter]="!!dialog.getDialogById('destination_filter')"
         ></app-filter-button>
       </div>
@@ -69,7 +69,7 @@
           [title]="passSearchData.selectedDate ? dateText(passSearchData.selectedDate) : 'Pass start time'"
           (buttonClick)="openFilter($event, 'calendar')"
           [filter]="!!passSearchData.selectedDate"
-          (clearData)="passSearchData.selectedDate = null; adminCalendarOptions = null; autoSearch()"
+          (clearData)="passSearchData.selectedDate = null; checkQueryParams(); adminCalendarOptions = null; autoSearch()"
           [openedFilter]="!!dialog.getDialogById('calendar_filter')">
         </app-filter-button>
         <app-filter-button *ngSwitchCase="2"
