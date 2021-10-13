@@ -246,7 +246,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           return this.newAlternativeAccount.valid;
       } else {
         if (this.data.role !== '_all') {
-            return this.newAlternativeAccount.valid && this.assistantLike.behalfOf.length;
+            return this.newAlternativeAccount.valid;
         } else {
           if (this.userRoles.length && this.isAssistant) {
             return this.assistantLike.behalfOf.length;

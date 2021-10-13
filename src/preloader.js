@@ -3,16 +3,14 @@ window.waitForAppLoaded = function(force = false) {
 
   var urlBLackList = [
     'school_signup',
-    'forms/predemo',
-    'forms/quoterequest',
-    'forms/addschool'
+    'forms'
   ];
 
   var allowPreloader = urlBLackList.every(function(item) {
     return window.location.pathname.search(new RegExp(item, 'i')) === -1;
   })
 
-  if (!force && (!allowPreloader || window.location.pathname === '/')) {
+  if ((!allowPreloader || window.location.pathname === '/')) {
     return false;
   }
 

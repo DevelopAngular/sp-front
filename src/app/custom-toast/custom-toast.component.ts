@@ -1,9 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable, of, Subject, timer} from 'rxjs';
+import {interval, merge, Observable, of, Subject, timer} from 'rxjs';
 import {delay, filter, takeUntil, tap} from 'rxjs/operators';
 import {ToastService} from '../services/toast.service';
 import {Toast} from '../models/Toast';
 import {toastSlideInOut} from '../animations';
+
+const TOASTDELAY = (6 * 1000) - 200;
 
 @Component({
   selector: 'app-custom-toast',
@@ -17,6 +19,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   data$: Observable<Toast>;
   cancelable: boolean = true;
   data: Toast;
+  timerValue: number;
 
   destroy$: Subject<any> = new Subject<any>();
   destroyClose$: Subject<any> = new Subject<any>();
@@ -31,7 +34,10 @@ export class CustomToastComponent implements OnInit, OnDestroy {
       this.data = data;
     });
 
-    timer(2300)
+    merge(of(1), interval(1000)).pipe(takeUntil(this.destroyClose$))
+      .subscribe(seconds => this.timerValue = seconds > 1 ? seconds + 1 : 1);
+
+    timer(TOASTDELAY)
       .pipe(
         filter(() => !this.data.showButton),
         tap(() => this.toggleToast = false),
@@ -79,7 +85,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   leave() {
     if (!this.data.showButton) {
       of(null).pipe(
-        delay(2300),
+        delay(TOASTDELAY - (this.timerValue * 1000)),
         tap(() => this.toggleToast = false),
         delay(200),
       ).subscribe(() => {

@@ -154,9 +154,16 @@ export class ViewProfileComponent implements OnInit {
       this.user = User.fromJSON(this.profile._originalUserProfile);
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
-      if (this.user.isTeacher()) {
+      if (this.user.isTeacher() && !this.user.isAdmin()) {
         this.teacherRooms = cloneDeep(this.profile._originalUserProfile.assignedTo);
         this.teacherRoomsInitialState = cloneDeep(this.teacherRooms);
+      }
+      if (this.user.isAdmin() && this.user.isTeacher()) {
+        this.locationService.getLocationsWithTeacherRequest(this.user).pipe(filter(r => !!r.length))
+          .subscribe(locs => {
+            this.teacherRooms = cloneDeep(locs);
+            this.teacherRoomsInitialState = cloneDeep(this.teacherRooms);
+          });
       }
       if (this.user.isStudent()) {
         this.userRoles.push(this.roles[0]);
@@ -383,7 +390,13 @@ export class ViewProfileComponent implements OnInit {
 
    SPC.afterClosed().pipe(filter(res => !!res)).subscribe((status) => {
      if (status === 'delete') {
-       this.userService.deleteUserRequest(this.profile.id, this.data.role);
+       if (this.user.userRoles().length > 1) {
+         this.user.userRoles().forEach(role => {
+           return this.userService.deleteUserRequest(this.profile.id, role);
+         });
+       } else {
+         this.userService.deleteUserRequest(this.profile.id, this.data.role);
+       }
        this.toast.openToast({title: 'Account deleted', type: 'error'});
        this.back();
      } else {
