@@ -507,7 +507,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   isDisabled(item: any) {
-    return this.type === 'G Suite' && item && !item.role_compatible;
+    return this.type === 'G Suite' && item && item.role_compatible;
   }
   cancel(studentInput) {
     studentInput.input.nativeElement.value = '';
