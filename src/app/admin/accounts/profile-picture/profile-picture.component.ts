@@ -15,6 +15,8 @@ import {User} from '../../../models/User';
 import {ProfilePicturesError} from '../../../models/ProfilePicturesError';
 import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadGroup';
 import * as moment from 'moment';
+import {SettingsDescriptionPopupComponent} from '../../../settings-description-popup/settings-description-popup.component';
+import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 
 @Component({
   selector: 'app-profile-picture',
@@ -26,6 +28,8 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   @Input() page: number = 2;
 
   @Output() backEmit: EventEmitter<any> = new EventEmitter();
+
+  @ViewChild('dots') dots: ElementRef;
 
   @ViewChild('csvFile') set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
@@ -360,6 +364,32 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   searchUsers(search) {
     this.uploadedProfiles = this.allProfiles.filter(profile => {
       return profile.display_name.toLowerCase().includes(search.toLowerCase());
+    });
+  }
+
+  openSettings() {
+    const settings = [
+      {
+        label: 'Disable profile pictures',
+        icon: './assets/Stop (Blue-Gray).svg',
+        description: 'Disabling profile pictures prevents admins and teachers from seeing profile pictures on pass tiles.',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'disable'
+      }
+    ];
+    UNANIMATED_CONTAINER.next(true);
+    const st = this.dialog.open(SettingsDescriptionPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {trigger: this.dots.nativeElement, settings }
+    });
+
+    st.afterClosed().pipe(
+      tap(() => UNANIMATED_CONTAINER.next(false)),
+      filter(r => !!r)
+    ).subscribe(action => {
+
     });
   }
 }

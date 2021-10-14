@@ -27,6 +27,9 @@
           </span>
         </div>
       </app-gradient-button>
+      <div class="dots" *ngIf="page === 5" #dots>
+        <app-icon-button [size]="17" [srcString]="'Dots'" (clickEvent)="openSettings()"></app-icon-button>
+      </div>
       <div class="incomplete" *ngIf="false">Incomplete</div>
     </div>
   </div>
@@ -185,7 +188,7 @@
             (buttonClick)="clearData(); page = 2"
           >New Upload</app-gradient-button>
         </div>
-        <div class="upload-info" *ngIf="accountsWithoutPictures$ | async as accountsWithoutPictures">
+        <div class="upload-info" *ngIf="(accountsWithoutPictures$ | async) && (accountsWithoutPictures$ | async).length && (accountsWithoutPictures$ | async) as accountsWithoutPictures">
           <div style="display: flex; align-items: center">
             <img [src]="'./assets/Warning (Orange).svg'" alt="">
             <div class="info-title">Missing Pictures</div>
