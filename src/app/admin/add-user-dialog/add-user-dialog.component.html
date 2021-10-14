@@ -55,6 +55,7 @@
               [dummyRoleText]="'users'"
               [type]="typeChosen"
               [role]="data.role"
+              [gSuiteRoles]="getUserRoles"
               (onUpdate)="setSelectedUsers($event)"
             ></app-sp-search>
           </div>

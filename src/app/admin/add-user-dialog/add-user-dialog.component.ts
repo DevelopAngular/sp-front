@@ -110,6 +110,10 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     return this.userRoles.find(acc => acc.role === 'Assistant');
   }
 
+  get getUserRoles(): string[] {
+    return this.userRoles.map(r => r.role.toLowerCase());
+  }
+
   get showNextButton() {
     if (this.typeChosen === this.accountTypes[0]) {
         return (this.isAssistant && ((this.assistantLike.user || this.newAlternativeAccount.valid)));

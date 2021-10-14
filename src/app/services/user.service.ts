@@ -417,16 +417,15 @@ export class UserService implements OnDestroy{
     return this.http.get(constructUrl('v1/users', {search: id}));
   }
 
-  searchProfileAll(search, type: string = 'alternative', excludeProfile?: string) {
-
+  searchProfileAll(search, type: string = 'alternative', excludeProfile?: string, gSuiteRoles?: string[]) {
       switch (type) {
         case 'alternative':
           return this.http.get(constructUrl(`v1/users`, {search: search}), );
         case 'G Suite':
-          if (excludeProfile) {
+          if (gSuiteRoles) {
             return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
               search: search,
-              profile: excludeProfile
+              profile: gSuiteRoles
             }));
           } else {
             return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
