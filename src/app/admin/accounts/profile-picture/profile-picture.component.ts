@@ -147,6 +147,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   uploadErrors$: Observable<ProfilePicturesError[]>;
   lastUploadedGroup$: Observable<ProfilePicturesUploadGroup>;
   uploadedGroups$: Observable<ProfilePicturesUploadGroup[]>;
+  user$: Observable<User>;
 
   issues = [];
   errorUpload: boolean;
@@ -179,6 +180,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.uploadedGroups$ = this.userService.uploadedGroups$.pipe(map(groups => {
       return groups.reverse();
     }));
+    this.user$ = this.userService.user$;
 
     this.picturesLoaderPercent$.pipe(
       filter((v) => !!v && !!this.stop),
@@ -391,5 +393,9 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     ).subscribe(action => {
 
     });
+  }
+
+  switchProfilePictures() {
+
   }
 }

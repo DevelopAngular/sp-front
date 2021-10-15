@@ -179,26 +179,46 @@
 
     <div class="update-page" *ngIf="page === 5">
       <div class="block">
-        <div class="update-button" style="margin: 20px 0">
-          <div class="ds-dialog-title">Add/Update Pictures</div>
-          <app-gradient-button
-            [style.margin-top]="'11px'"
-            [rightIcon]="'./assets/Chevron Right (White).svg'"
-            [gradient]="'#07ABC3, #07ABC3'"
-            (buttonClick)="clearData(); page = 2"
-          >New Upload</app-gradient-button>
+        <div class="upload-info" style="background-color: #e5f9f1; margin-top: 15px">
+          <div class="upload-content">
+            <div class="text">
+              <div class="title">Ready to enable profile pictures?</div>
+              <div class="subtitle">Enable profile pictures so teachers can see them on pass tiles.</div>
+            </div>
+            <div class="button">
+              <app-gradient-button
+                [gradient]="'#01b376, #01b376'"
+                (buttonClick)="switchProfilePictures()"
+              >Enable</app-gradient-button>
+            </div>
+          </div>
         </div>
-        <div class="upload-info" *ngIf="(accountsWithoutPictures$ | async) && (accountsWithoutPictures$ | async).length && (accountsWithoutPictures$ | async) as accountsWithoutPictures">
-          <div style="display: flex; align-items: center">
-            <img [src]="'./assets/Warning (Orange).svg'" alt="">
-            <div class="info-title">Missing Pictures</div>
+      </div>
+      <div class="block">
+        <div class="upload-info" *ngIf="(accountsWithoutPictures$ | async) as accountsWithoutPictures">
+          <div class="update-button">
+            <div>
+              <div class="title">Add or update Pictures</div>
+              <div class="subtitle">Bulk upload profile pictures</div>
+            </div>
+            <app-gradient-button
+              [rightIcon]="'./assets/Chevron Right (White).svg'"
+              [gradient]="'#07ABC3, #07ABC3'"
+              (buttonClick)="clearData(); page = 2"
+            >New Upload</app-gradient-button>
           </div>
-          <div class="info">
-            {{ accountsWithoutPictures.length }} accounts don’t have profile pictures.
-          </div>
-<!--          <img class="info-icon" [src]="'./assets/Circle Download (Blue-Gray).svg'" alt="">-->
-          <div class="info-icon">
-            <app-icon-button (clickEvent)="generateStudentsCsv(accountsWithoutPictures)" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
+          <mat-divider *ngIf="accountsWithoutPictures.length"></mat-divider>
+          <div class="missing" *ngIf="accountsWithoutPictures.length">
+            <div style="display: flex; align-items: center">
+              <img [src]="'./assets/Warning (Orange).svg'" alt="">
+              <div class="info-title">Missing Pictures</div>
+            </div>
+            <div class="info">
+              {{ accountsWithoutPictures.length }} accounts don’t have profile pictures.
+            </div>
+            <div class="info-icon">
+              <app-icon-button (clickEvent)="generateStudentsCsv(accountsWithoutPictures)" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
+            </div>
           </div>
         </div>
       </div>
