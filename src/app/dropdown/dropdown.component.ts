@@ -6,6 +6,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {DeviceDetection} from '../device-detection.helper';
+import {cloneDeep} from 'lodash';
 
 @Component({
   selector: 'app-dropdown',
@@ -29,6 +30,7 @@ export class DropdownComponent implements OnInit {
   locations: Location[];
   selectedLocation: Location;
   schools: School[];
+  initialSchools: School[];
   selectedSchool: School;
   teachers: RepresentedUser[];
   selectedTeacher: RepresentedUser;
@@ -40,6 +42,7 @@ export class DropdownComponent implements OnInit {
   selectedSort: any;
   optionsMaxHeight: string;
   mainHeader: string;
+  isSearchField: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -62,6 +65,9 @@ export class DropdownComponent implements OnInit {
     this.selectedSort = data['selectedSort'] || '';
     this.optionsMaxHeight = data['maxHeight'] || '282px';
     this.mainHeader = this.data['mainHeader'];
+    this.isSearchField = this.data['isSearchField'];
+
+    this.initialSchools = cloneDeep(this.schools);
   }
 
   get isMobile() {
@@ -114,6 +120,15 @@ export class DropdownComponent implements OnInit {
         this.renderer.setStyle(this.findElement.nativeElement, 'background-color', '#ECF1FF');
       }
     }
+  }
+
+  searchSchool(value) {
+    if (!!value) {
+      this.schools = this.initialSchools.filter(school => +school.id === +value || school.name.toLowerCase().includes(value.toLowerCase()));
+    } else {
+      this.schools = this.initialSchools;
+    }
+
   }
 
   closeDropdown(location) {

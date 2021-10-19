@@ -154,12 +154,12 @@ export class ViewProfileComponent implements OnInit {
       this.user = User.fromJSON(this.profile._originalUserProfile);
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
-      if (this.user.isTeacher() && !this.user.isAdmin()) {
+      if (this.user.isTeacher() && !(this.user.isAdmin() || this.user.isAssistant())) {
         this.teacherRooms = cloneDeep(this.profile._originalUserProfile.assignedTo);
         this.teacherRoomsInitialState = cloneDeep(this.teacherRooms);
       }
-      if (this.user.isAdmin() && this.user.isTeacher()) {
-        this.locationService.getLocationsWithTeacherRequest(this.user).pipe(filter(r => !!r.length))
+      if ((this.user.isAdmin() || this.user.isAssistant()) && this.user.isTeacher()) {
+        this.locationService.getLocationsWithTeacherRequest(this.user)
           .subscribe(locs => {
             this.teacherRooms = cloneDeep(locs);
             this.teacherRoomsInitialState = cloneDeep(this.teacherRooms);
@@ -187,7 +187,7 @@ export class ViewProfileComponent implements OnInit {
         initialValue: this.profile._originalUserProfile.active
       };
 
-      if (this.data.role === '_profile_assistant') {
+      if (this.user.isAssistant()) {
         if (this.data.allAccounts) {
           this.userService.getRepresentedUsers(this.profile._originalUserProfile.id)
             .subscribe((res: any[]) => {
@@ -195,8 +195,16 @@ export class ViewProfileComponent implements OnInit {
               this.assistantForInitialState = cloneDeep(this.assistantFor);
             });
         } else {
-          this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
-          this.assistantForInitialState = cloneDeep(this.assistantFor);
+          if (!this.profile._originalUserProfile.canActingOnBehalfOf) {
+            this.userService.getRepresentedUsers(this.profile._originalUserProfile.id)
+              .subscribe((res: any[]) => {
+                this.assistantFor = res.map(ru => ru.user);
+                this.assistantForInitialState = cloneDeep(this.assistantFor);
+              });
+          } else {
+            this.assistantFor = this.profile._originalUserProfile.canActingOnBehalfOf.map(ru => ru.user);
+            this.assistantForInitialState = cloneDeep(this.assistantFor);
+          }
         }
         this.assistantForUpdate$.subscribe((users: User[]) => {
           this.assistantToAdd = differenceBy(users, this.assistantForInitialState, 'id');

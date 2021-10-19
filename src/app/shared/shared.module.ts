@@ -62,6 +62,7 @@ import {StudentMetricsComponent} from '../big-student-pass-card/student-metrics/
 import {InlinePassCardComponent} from '../inline-pass-card/inline-pass-card.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InlineRequestCardComponent} from '../inline-request-card/inline-request-card.component';
+import {DropdownComponent} from '../dropdown/dropdown.component';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -135,7 +136,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlinePassCardComponent,
     RequestCardComponent,
     InlineRequestCardComponent,
-    SettingsDescriptionPopupComponent
+    DropdownComponent,
+    SettingsDescriptionPopupComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -190,7 +192,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StudentMetricsComponent,
     InlinePassCardComponent,
     RequestCardComponent,
-    InlineRequestCardComponent
+    InlineRequestCardComponent,
+    DropdownComponent,
   ],
   providers: [
     {

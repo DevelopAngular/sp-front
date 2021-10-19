@@ -14,6 +14,16 @@
   <mat-divider *ngIf="!!heading && (locations || schools || sortData || teachers)"></mat-divider>
 
   <div class="opt-container" *ngIf="locations || schools || sortData || teachers">
+
+    <div class="search" *ngIf="isSearchField">
+      <app-round-input
+        [placeholder]="'Search school'"
+        [minWidth]="'280px'"
+        [focused]="true"
+        (ontextupdate)="searchSchool($event)"
+      ></app-round-input>
+    </div>
+
     <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="locations" #optionsWrapper>
       <div class="option" #_option>
 
@@ -75,7 +85,7 @@
       </div>
     </div>
 
-    <div class="options-wrapper" [style.max-height]="optionsMaxHeight"  *ngIf="schools" #optionsWrapper>
+    <div class="options-wrapper" [style.padding]="isSearchField ? '10px 0 22px 0' : '22px 0'" [style.max-height]="optionsMaxHeight"  *ngIf="schools">
       <div class="option" *ngFor="let school of schools" #schoolList>
         <div #_option class="option-data"
              [ngClass]="{
