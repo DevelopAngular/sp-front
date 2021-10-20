@@ -14,7 +14,9 @@ export class School extends BaseModel {
         public address: any,
         public created: string,
         public display_username: boolean,
-        public show_active_passes_number: boolean
+        public show_active_passes_number: boolean,
+        public profile_pictures_completed: boolean,
+        public profile_pictures_enabled: boolean
     ) {
         super();
     }
@@ -37,7 +39,9 @@ export class School extends BaseModel {
             address: any = JSON['address'],
             created: string = JSON['created'],
             display_username: boolean = JSON['display_username'],
-            show_active_passes_number: boolean = JSON['show_active_passes_number'];
+            show_active_passes_number: boolean = JSON['show_active_passes_number'],
+            profile_pictures_completed: boolean = !!JSON['profile_pictures_completed'],
+            profile_pictures_enabled: boolean = !!JSON['profile_pictures_enabled'];
 
         return new School(
             display_card_room,
@@ -50,7 +54,9 @@ export class School extends BaseModel {
             address,
             created,
             display_username,
-            show_active_passes_number
+            show_active_passes_number,
+            profile_pictures_completed,
+            profile_pictures_enabled
         );
     }
 }

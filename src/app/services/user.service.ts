@@ -124,6 +124,7 @@ import {ProfilePicturesUploadGroup} from '../models/ProfilePicturesUploadGroup';
 import {ProfilePicturesError} from '../models/ProfilePicturesError';
 import {LoginDataService} from './login-data.service';
 import {GoogleLoginService} from './google-login.service';
+import {School} from '../models/School';
 
 @Injectable({
   providedIn: 'root'
@@ -384,6 +385,14 @@ export class UserService implements OnDestroy {
   getUserRequest() {
     this.store.dispatch(getUser());
     return this.user$;
+  }
+
+  getUserSchool(): School {
+    return this.http.getSchool();
+  }
+
+  getCurrentUpdatedSchool$(): Observable<School> {
+    return this.http.currentUpdateSchool$;
   }
 
   clearUser() {

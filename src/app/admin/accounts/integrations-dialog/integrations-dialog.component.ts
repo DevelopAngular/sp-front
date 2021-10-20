@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../../../services/admin.service';
 import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, merge, Observable, of, Subject} from 'rxjs';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {Util} from '../../../../Util';
 import {CleverInfo} from '../../../models/CleverInfo';
@@ -53,14 +53,11 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.userService.getUploadedGroupsRequest();
 
-    this.userService.uploadedGroups$.pipe(
-      filter((value) => !!value.length),
-      takeUntil(this.destroy$)
-    ).subscribe(groups => {
-      this.isUploadedProfilePictures = !!groups.reduce((acc, group) => {
-        return group.num_assigned_new + group.num_assigned_update + acc;
-      }, 0);
-    });
+    merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(school => {
+          this.isUploadedProfilePictures = school.profile_pictures_completed;
+        });
   }
 
   ngOnDestroy() {

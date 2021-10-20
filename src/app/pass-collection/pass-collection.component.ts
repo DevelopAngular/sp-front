@@ -79,6 +79,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() user;
   @Input() selectedSort = null;
   @Input() searchPanel: boolean;
+  @Input() showProfilePictures: boolean = true;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();

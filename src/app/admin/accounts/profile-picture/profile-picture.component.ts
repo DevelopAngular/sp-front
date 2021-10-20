@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
+import {forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {catchError, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
@@ -17,6 +17,8 @@ import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadG
 import * as moment from 'moment';
 import {SettingsDescriptionPopupComponent} from '../../../settings-description-popup/settings-description-popup.component';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
+import {School} from '../../../models/School';
+import {AdminService} from '../../../services/admin.service';
 
 @Component({
   selector: 'app-profile-picture',
@@ -149,6 +151,8 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   uploadedGroups$: Observable<ProfilePicturesUploadGroup[]>;
   user$: Observable<User>;
 
+  school: School;
+
   issues = [];
   errorUpload: boolean;
   errors = [];
@@ -165,7 +169,8 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private userService: UserService,
     private toastService: ToastService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private adminService: AdminService,
   ) { }
 
   ngOnInit() {
@@ -222,6 +227,15 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.userService.profilePicturesErrors$.pipe(takeUntil(this.destroy$)).subscribe(er => {
       this.errors.push(er);
     });
+
+    merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
+      .pipe(
+        filter(r => !!r),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(school => {
+        this.school = school;
+      });
 
     if (this.page === 5) {
       this.userService.getMissingProfilePicturesRequest();
@@ -372,12 +386,14 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   openSettings() {
     const settings = [
       {
-        label: 'Disable profile pictures',
-        icon: './assets/Stop (Blue-Gray).svg',
-        description: 'Disabling profile pictures prevents admins and teachers from seeing profile pictures on pass tiles.',
-        textColor: '#7f879d',
-        backgroundColor: '#F4F4F4',
-        action: 'disable'
+        label: this.school.profile_pictures_enabled ? 'Disable profile pictures' : 'Enable profile pictures',
+        icon: this.school.profile_pictures_enabled ? './assets/Stop (Blue-Gray).svg' : './assets/Check (Jade).svg',
+        description: this.school.profile_pictures_enabled ?
+          'Disabling profile pictures prevents admins and teachers from seeing profile pictures on pass tiles.' :
+          'Enabling profile pictures lets admins and teachers see profile pictures on pass tiles.',
+        textColor: this.school.profile_pictures_enabled ? '#7f879d' : '#38c492',
+        backgroundColor: this.school.profile_pictures_enabled ? '#F4F4F4' : '#d2f1e6',
+        action: this.school.profile_pictures_enabled ? 'disable' : 'enable'
       }
     ];
     UNANIMATED_CONTAINER.next(true);
@@ -391,11 +407,15 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
       tap(() => UNANIMATED_CONTAINER.next(false)),
       filter(r => !!r)
     ).subscribe(action => {
-
+        if (action === 'disable') {
+          this.switchProfilePictures(false);
+        } else {
+          this.switchProfilePictures(true);
+        }
     });
   }
 
-  switchProfilePictures() {
-
+  switchProfilePictures(value) {
+    this.adminService.updateSchoolSettingsRequest(this.school, {profile_pictures_enabled: value});
   }
 }

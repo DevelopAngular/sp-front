@@ -7,8 +7,9 @@ import {User} from '../models/User';
 import {UserService} from '../services/user.service';
 import {Router} from '@angular/router';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {merge, of, Subject} from 'rxjs';
+import {filter, takeUntil} from 'rxjs/operators';
+import {School} from '../models/School';
 
 @Component({
   selector: 'app-sp-appearance',
@@ -26,6 +27,8 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
   showStudentProfileLocation: string;
   showLocationPiker: boolean;
   showWrapper: boolean;
+
+  school: School;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -53,6 +56,11 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
         this.showWrapper = false;
       }, 2000);
     }
+    merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(school => {
+        this.school = school;
+      });
     this.selectedTheme = this.darkTheme.currentTheme();
     this.isList = JSON.parse(this.storage.getItem('isGrid'));
     this.hideLayoutSettings = this.router.url.includes('/admin');
@@ -82,22 +90,19 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateProfilePictures(isShow, value?) {
+  updateProfilePictures(isShow) {
     if (isShow) {
-      const show_profile_pictures = this.showStudentProfileLocation === 'Hall Monitor' ? 'hall_monitor' : 'Everywhere';
-      debugger;
+      const show_profile_pictures = this.showStudentProfileLocation === 'Hall Monitor' ? 'hall_monitor' : 'everywhere';
       this.updateUser({show_profile_pictures});
     } else {
-      debugger;
       this.updateUser({show_profile_pictures: null});
     }
   }
 
   switchProfileLocation(value) {
     if (value !== this.showStudentProfileLocation) {
-      debugger;
       this.showStudentProfileLocation = value;
-
+      this.updateProfilePictures(true);
     }
   }
 

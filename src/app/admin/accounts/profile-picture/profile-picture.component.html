@@ -135,7 +135,7 @@
     </div>
 
     <div class="page" *ngIf="page === 4">
-      <div class="upload-info">
+      <div class="upload-info" style="padding: 20px">
         <div class="upload-title">Upload complete</div>
         <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ allProfiles.length }} accounts</span></div>
         <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ allProfiles.length }} accounts</span></div>
@@ -178,7 +178,7 @@
 
 
     <div class="update-page" *ngIf="page === 5">
-      <div class="block">
+      <div class="block" *ngIf="!school.profile_pictures_enabled">
         <div class="upload-info" style="background-color: #e5f9f1; margin-top: 15px">
           <div class="upload-content">
             <div class="text">
@@ -188,13 +188,13 @@
             <div class="button">
               <app-gradient-button
                 [gradient]="'#01b376, #01b376'"
-                (buttonClick)="switchProfilePictures()"
+                (buttonClick)="switchProfilePictures(true)"
               >Enable</app-gradient-button>
             </div>
           </div>
         </div>
       </div>
-      <div class="block">
+      <div class="block" [style.margin-top]="school.profile_pictures_enabled ? '15px' : 0">
         <div class="upload-info" *ngIf="(accountsWithoutPictures$ | async) as accountsWithoutPictures">
           <div class="update-button">
             <div>
@@ -226,7 +226,7 @@
       <div class="upload-history">
         <div class="ds-dialog-title" style="padding: 20px">Upload History</div>
         <div class="block" *ngFor="let group of uploadedGroups$ | async">
-          <div class="upload-info">
+          <div class="upload-info" style="padding: 20px">
             <div class="upload-title">{{ getUploadedGroupTime(group.created) }}</div>
             <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ group.num_assigned_new }} accounts</span></div>
             <div class="info"><span style="font-weight: bold">Updated pictures: </span><span>{{ group.num_assigned_update }} accounts</span></div>
