@@ -17,7 +17,7 @@ export class User extends BaseModel {
               public badge: string,
               public sync_types: string[],
               public show_expired_passes: boolean,
-              public show_profile_pictures: boolean,
+              public show_profile_pictures: string,
               public profile_picture: string,
               public extras: any
               ) {
@@ -46,7 +46,7 @@ export class User extends BaseModel {
       badge: string = JSON['badge'],
       sync_types: string[] = [],
       show_expired_passes: boolean = !!JSON['show_expired_passes'],
-      show_profile_pictures: boolean = !!JSON['show_profile_pictures'],
+      show_profile_pictures: string = JSON['show_profile_pictures'],
       profile_picture: string = JSON['profile_picture'],
       extras: any = JSON['extras'];
 

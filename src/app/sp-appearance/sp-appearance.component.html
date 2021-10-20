@@ -59,7 +59,7 @@
             [controlSize]="'small'"
             [form]="form"
             [controlName]="'show_expired_passes'"
-            (pushOutValue)="updateUser($event)"
+            (pushOutValue)="updateUser({show_expired_passes: $event})"
           ></app-toggle-input>
         </div>
       </div>
@@ -81,6 +81,7 @@
           [controlSize]="'small'"
           [form]="form"
           [controlName]="'show_student_profile_picture'"
+          (pushOutValue)="updateProfilePictures($event)"
         ></app-toggle-input>
       </div>
     </div>
@@ -89,7 +90,7 @@
         [width]="186"
         [choices]="['Hall Monitor', 'Everywhere']"
         [selectedChoice]="showStudentProfileLocation"
-        (result)="showStudentProfileLocation = $event"
+        (result)="switchProfileLocation($event)"
       ></app-restriction-picker>
     </div>
 

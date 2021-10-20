@@ -23,7 +23,7 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
   form: FormGroup;
   user: User;
   isStaff: boolean;
-  showStudentProfileLocation: string = 'Everywhere';
+  showStudentProfileLocation: string;
   showLocationPiker: boolean;
   showWrapper: boolean;
 
@@ -59,9 +59,12 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
     this.userService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.user = user;
       this.isStaff = User.fromJSON(user).isTeacher() || User.fromJSON(user).isAssistant();
+      if (!!user.show_profile_pictures) {
+        this.showStudentProfileLocation = this.showProfilePicturesNormalize(user.show_profile_pictures);
+      }
       this.form = new FormGroup({
         show_expired_passes: new FormControl(user.show_expired_passes),
-        show_student_profile_picture: new FormControl()
+        show_student_profile_picture: new FormControl(!!user.show_profile_pictures)
       });
     });
   }
@@ -69,6 +72,33 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  showProfilePicturesNormalize(value) {
+    if (value === 'hall_monitor') {
+      return  'Hall Monitor';
+    } else if (value === 'everywhere') {
+      return  'Everywhere';
+    }
+  }
+
+  updateProfilePictures(isShow, value?) {
+    if (isShow) {
+      const show_profile_pictures = this.showStudentProfileLocation === 'Hall Monitor' ? 'hall_monitor' : 'Everywhere';
+      debugger;
+      this.updateUser({show_profile_pictures});
+    } else {
+      debugger;
+      this.updateUser({show_profile_pictures: null});
+    }
+  }
+
+  switchProfileLocation(value) {
+    if (value !== this.showStudentProfileLocation) {
+      debugger;
+      this.showStudentProfileLocation = value;
+
+    }
   }
 
   setSelectedTheme(evt: SPTheme) {
@@ -80,7 +110,7 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
     this.storage.setItem('isGrid', evt === 'List');
   }
 
-  updateUser(show_expired_passes) {
-    this.userService.updateUserRequest(this.user, {show_expired_passes});
+  updateUser(value) {
+    this.userService.updateUserRequest(this.user, value);
   }
 }
