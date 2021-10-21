@@ -186,8 +186,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get showProfilePictures$(): Observable<boolean> {
     return combineLatest(
-      of(this.userService.getUserSchool().profile_pictures_enabled),
-      this.user$.pipe(filter(r => !!r), map(u => u.show_profile_pictures === 'everywhere')),
+      this.userService.isEnableProfilePictures$,
+      this.user$.pipe(filter(r => !!r), map(u => !User.fromJSON(u).isStudent() && u.show_profile_pictures === 'everywhere')),
       (c1, c2) => c1 && c2
     );
   }

@@ -1,5 +1,5 @@
 import {ErrorHandler, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, combineLatest, interval, Observable, of, race, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, merge, Observable, of, race, ReplaySubject, Subject} from 'rxjs';
 import {SentryErrorHandler} from '../error-handler';
 import {HttpService} from './http-service';
 import {constructUrl} from '../live-data/helpers';
@@ -251,6 +251,8 @@ export class UserService implements OnDestroy {
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
+  isEnableProfilePictures$: Observable<boolean>;
+
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -329,6 +331,9 @@ export class UserService implements OnDestroy {
         .subscribe(user => {
           this.userData.next(user);
         });
+
+    this.isEnableProfilePictures$ = merge(this.http.currentSchool$, this.getCurrentUpdatedSchool$()
+      .pipe(filter(s => !!s))).pipe(filter(s => !!s), map(school => school.profile_pictures_enabled));
 
     if (errorHandler instanceof SentryErrorHandler) {
       this.userData.pipe(takeUntil(this.destroy$)).subscribe(user => {

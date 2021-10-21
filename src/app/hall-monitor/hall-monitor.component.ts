@@ -105,6 +105,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   inputRestrictionSm: InputRestriction = new InputRestriciontSm();
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
+  isEnableProfilePictures$: Observable<boolean>;
+
   selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
   sortMode: string = '';
 
@@ -128,7 +130,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.detectDevice();
 
     combineLatest(
-      this.dataService.currentUser,
+      this.userService.user$.pipe(filter(u => !!u)),
       this.userService.effectiveUser,
       (cu: User, eu: RepresentedUser) => {
         return {cu, eu};
@@ -145,6 +147,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
         this.canView = this.user.roles.includes('access_hall_monitor');
     });
 
+    this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
 
     this.hasPasses = combineLatest(
         this.liveDataService.hallMonitorPassesTotalNumber$,

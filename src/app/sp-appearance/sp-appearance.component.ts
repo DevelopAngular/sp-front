@@ -24,7 +24,7 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
   form: FormGroup;
   user: User;
   isStaff: boolean;
-  showStudentProfileLocation: string;
+  showStudentProfileLocation: string = 'Hall Monitor';
   showLocationPiker: boolean;
   showWrapper: boolean;
 

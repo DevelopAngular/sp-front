@@ -13,8 +13,8 @@
   >
 
   <div class="tile-title-container">
-    <div [ngClass]="{miniCard: !profileImage}">
-      <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
+    <div [ngClass]="{miniCard: isMiniCard}">
+      <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5" [style.margin-top]="!forStaff ? '10px' : '5px'">
         <div class="tile-content"  #title [style.height]="forStaff ? '30px' : '20px'">
           <div *ngIf="pass.destination.title.length >= 10; else shortTitle" class="tile-title tile-title-truncated" [style.margin-top]="forStaff ? '8px' : '0px'"  (mouseover)="onHover($event, title);"
                (mouseleave)="onLeave($event)">{{ pass.destination.title }}
@@ -36,11 +36,11 @@
     </ng-template>
   </div>
 
-<!--  <div class="tile-container-footer">-->
-<!--    <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">-->
-<!--    <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">-->
+  <div class="tile-container-footer" *ngIf="!forStaff">
+    <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way'" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">
+    <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip'" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">
 <!--    <div *ngIf="forStaff && !profileImage" class="names-overlay"></div>-->
-<!--  </div>-->
+  </div>
 <!--  <div *ngIf="forStaff" class="names">{{ tileName }}</div>-->
   <div class="overlay-shadow" *ngIf="showBackgroundOverlay && !isKioskMode" (mouseenter)="disableClose$.next()"></div>
   <div *ngIf="forStaff && !isKioskMode" class="names-overlay"></div>
@@ -75,6 +75,7 @@
           [height]="300"
           [isResize]="false"
           (close)="isOpenTooltip.next(false)"
+          [hasProfilePicture]="profileImage"
         ></app-student-passes>
       </div>
     </ng-template>

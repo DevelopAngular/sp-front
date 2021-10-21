@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {Util} from '../../Util';
@@ -8,7 +8,7 @@ import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
@@ -24,6 +24,8 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {StorageService} from '../services/storage.service';
 import {NavbarDataService} from '../main/navbar-data.service';
 import {DomCheckerService} from '../services/dom-checker.service';
+import {UserService} from '../services/user.service';
+import {School} from '../models/School';
 
 @Component({
   selector: 'app-request-card',
@@ -57,7 +59,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   cancelOpen: boolean = false;
   pinnableOpen: boolean = false;
   user: User;
-  isSeen: boolean;
 
   isModal: boolean;
 
@@ -78,6 +79,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   removeShadow: boolean;
   leftTextShadow: boolean;
 
+  school: School;
+  isEnableProfilePictures$: Observable<boolean>;
+
   scaleCardTrigger$: Observable<string>;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -89,14 +93,14 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       private requestService: RequestsService,
       public dialog: MatDialog,
       public dataService: DataService,
-      private _zone: NgZone,
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
       private navbarData: NavbarDataService,
       private storage: StorageService,
-      private domCheckerService: DomCheckerService
+      private domCheckerService: DomCheckerService,
+      private userService: UserService
   ) {}
 
   get invalidDate() {
@@ -159,17 +163,16 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.dataService.currentUser
+    this.userService.user$
     .pipe(
-      this.loadingService.watchFirst,
-      takeUntil(this.destroy$)
-    )
+      map(user => User.fromJSON(user)),
+      takeUntil(this.destroy$))
     .subscribe(user => {
-      this._zone.run(() => {
         this.user = user;
-      });
     });
-    this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
+
+    this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+
     if (this.isModal) {
       this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
       this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);

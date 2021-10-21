@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {MapsAPILoader} from '@agm/core';
 import {User} from '../models/User';
-import {BehaviorSubject, interval, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
@@ -171,6 +171,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   disableClose$ = new Subject();
   overlayScrollStrategy;
 
+  user$: Observable<User>;
+  isEnableProfilePictures$: Observable<boolean>;
+
   destroy$: Subject<any> = new Subject<any>();
 
   @HostListener('document.scroll', ['$event'])
@@ -300,6 +303,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           (element as HTMLElement).click();
         }
       });
+
+    this.user$ = this.userService.user$;
+    this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
   }
 
 

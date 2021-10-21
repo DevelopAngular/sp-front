@@ -1,10 +1,9 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {HallPass} from '../models/HallPass';
 import {Util} from '../../Util';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
@@ -20,6 +19,7 @@ import {School} from '../models/School';
 import {DeviceDetection} from '../device-detection.helper';
 import {scalePassCards} from '../animations';
 import {DomCheckerService} from '../services/dom-checker.service';
+import {UserService} from '../services/user.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -88,6 +88,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
 
+  isEnableProfilePictures$: Observable<boolean>;
+
   scaleCardTrigger$: Observable<string>;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -98,15 +100,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
       @Inject(MAT_DIALOG_DATA) public data: any,
       private hallPassService: HallPassesService,
       public dialog: MatDialog,
-      public dataService: DataService,
-      private _zone: NgZone,
       private loadingService: LoadingService,
       private formService: CreateFormService,
       private timeService: TimeService,
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
       private http: HttpService,
-      private domCheckerService: DomCheckerService
+      private domCheckerService: DomCheckerService,
+      private userService: UserService
   ) {}
 
   getUserName(user: any) {
@@ -158,6 +159,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.currentSchool = this.http.getSchool();
+    this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
 
     if (this.data['pass']) {
       this.isModal = true;
@@ -179,17 +181,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.selectedStudents = this.students;
     }
 
-      this.dataService.currentUser
-        .pipe(
-          this.loadingService.watchFirst,
-          takeUntil(this.destroy$)
-        )
-        .subscribe(user => {
-          this._zone.run(() => {
-            this.user = user;
-            this.buildPages();
-          });
-        });
+    this.userService.user$
+      .pipe(map(user => User.fromJSON(user)), takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.user = user;
+        this.buildPages();
+      });
 
     if (!!this.pass && this.isActive) {
       merge(of(0), interval(1000)).pipe(
