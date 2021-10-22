@@ -65,7 +65,7 @@
       </div>
       <div class="layout-wrapper" *ngIf="showWrapper"></div>
     </div>
-    <div class="page-layout" *ngIf="isStaff && school.profile_pictures_enabled">
+    <div class="page-layout" *ngIf="isStaff && (isEnableProfilePictures$ | async)">
       <div class="header">
         <div class="header-title">Show Profile Pictures</div>
         <div class="header-info">Show profile pictures on pass <br/>tiles

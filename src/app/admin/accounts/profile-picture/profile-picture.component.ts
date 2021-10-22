@@ -416,6 +416,15 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   }
 
   switchProfilePictures(value) {
-    this.adminService.updateSchoolSettingsRequest(this.school, {profile_pictures_enabled: value});
+    this.adminService.updateSchoolSettingsRequest(this.school, {profile_pictures_enabled: value})
+      .pipe(filter(r => !!r), takeUntil(this.destroy$))
+      .subscribe(r => {
+        this.toastService.openToast(
+          {
+            title: value ? 'Profile pictures enabled' : 'Profile pictures disabled',
+            type: value ? 'success' : 'info'
+          }
+        );
+      });
   }
 }

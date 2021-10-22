@@ -7,9 +7,8 @@ import {User} from '../models/User';
 import {UserService} from '../services/user.service';
 import {Router} from '@angular/router';
 import {FormControl, FormGroup} from '@angular/forms';
-import {merge, of, Subject} from 'rxjs';
-import {filter, takeUntil} from 'rxjs/operators';
-import {School} from '../models/School';
+import {Observable, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-sp-appearance',
@@ -28,7 +27,7 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
   showLocationPiker: boolean;
   showWrapper: boolean;
 
-  school: School;
+  isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -56,11 +55,8 @@ export class SpAppearanceComponent implements OnInit, OnDestroy {
         this.showWrapper = false;
       }, 2000);
     }
-    merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(school => {
-        this.school = school;
-      });
+    this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+
     this.selectedTheme = this.darkTheme.currentTheme();
     this.isList = JSON.parse(this.storage.getItem('isGrid'));
     this.hideLayoutSettings = this.router.url.includes('/admin');

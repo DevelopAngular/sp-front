@@ -28,7 +28,7 @@
         </div>
       </app-gradient-button>
       <div class="dots" *ngIf="page === 5" #dots>
-        <app-icon-button [size]="17" [srcString]="'Dots'" (clickEvent)="openSettings()"></app-icon-button>
+        <app-icon-button [size]="17" [srcString]="'Dots'" [onDarkShade]="true" (clickEvent)="openSettings()"></app-icon-button>
       </div>
       <div class="incomplete" *ngIf="false">Incomplete</div>
     </div>
