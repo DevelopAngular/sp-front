@@ -70,6 +70,7 @@ import {MyRoomPassesEffects} from './ngrx/pass-like-collection/nested-states/my-
 import {RepresentedUsersEffects} from './ngrx/represented-users/effects';
 import {QuickPreviewPassesEffects} from './ngrx/quick-preview-passes/effects';
 import {LoginDataEffects} from './ngrx/login-data/effects';
+import {ExclusionGroupsEffects} from './ngrx/encounters-prevention/excusion-groups/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -195,7 +196,8 @@ const appRoutes: Routes = [
       FiltersEffects,
       RepresentedUsersEffects,
       QuickPreviewPassesEffects,
-      LoginDataEffects
+      LoginDataEffects,
+      ExclusionGroupsEffects
     ]),
     StoreDevtoolsModule.instrument({}),
     HammerModule,

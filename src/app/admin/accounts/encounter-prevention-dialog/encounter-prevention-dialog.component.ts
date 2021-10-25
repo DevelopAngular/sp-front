@@ -6,6 +6,9 @@ import {tap} from 'rxjs/operators';
 import {User} from '../../../models/User';
 import {EncounterOptionsComponent} from './encounter-options/encounter-options.component';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
+import {Observable} from 'rxjs';
+import {ExclusionGroup} from '../../../models/ExclusionGroup';
+import {EncounterPreventionService} from '../../../services/encounter-prevention.service';
 
 enum Pages {
   'startPage' = 0,
@@ -33,7 +36,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   state: EncountersState = {
     prevent_page: 0,
-    current_page: 3,
+    current_page: 0,
     data: {
       students: [],
       teachers: [],
@@ -41,6 +44,8 @@ export class EncounterPreventionDialogComponent implements OnInit {
       notes: ''
     }
   };
+
+  exclusionGroups$: Observable<ExclusionGroup[]>;
 
   options: {label: string, textColor: string, hoverColor: string, icon: string, action: string, description: string}[] = [
     {label: 'Download report', textColor: '#7F879D', hoverColor: '#FFFFFF', icon: './assets/Download circle (Blue-Gray).svg', action: 'down_report',  description: ''},
@@ -51,10 +56,16 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>
+    private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>,
+    private encounterPreventionService: EncounterPreventionService
   ) { }
 
   ngOnInit(): void {
+    this.encounterPreventionService.getExclusionGroupsRequest();
+    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
+    this.exclusionGroups$.subscribe(res => {
+      debugger;
+    });
   }
 
   setState(prevent_page, current_page) {

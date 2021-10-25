@@ -7,7 +7,7 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class OctagonComponent implements OnInit {
 
-  @Input() size: number = 68;
+  @Input() size: number = 70;
 
   constructor() { }
 
