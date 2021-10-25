@@ -118,7 +118,7 @@
 
     <div class="page" *ngIf="page === 3">
 
-      <div class="image-container">
+      <div class="image-container" *ngIf="(picturesLoaderPercent$ | async) < 95; else complete">
 
         <svg width="124px" height="96px">
             <linearGradient id="lg" x1="0.5" y1="1" x2="0.5" y2="0">
@@ -131,6 +131,15 @@
         <div class="ds-dialog-title" style="margin-top: 15px">{{ picturesLoaderPercent$ | async }}% Uploading pictures...</div>
 
       </div>
+
+      <ng-template #complete>
+        <div class="image-container">
+          <div class="syncing-spin-wrapper">
+            <img class="spinner" width="43px" height="43px" [src]="'./assets/Sync Loading (Blue).svg' | resolveAsset" alt="Sync">
+            <div class="syncing-title">Pictures are being processed. This may take a while…</div>
+          </div>
+        </div>
+      </ng-template>
 
     </div>
 

@@ -5,7 +5,6 @@ import * as profilePicturesActions from '../actions';
 import {catchError, exhaustMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
-import {ProfileMap} from '../../../models/ProfileMap';
 import {User} from '../../../models/User';
 import {ToastService} from '../../../services/toast.service';
 import {Store} from '@ngrx/store';
@@ -13,6 +12,7 @@ import {AppState} from '../../app-state/app-state';
 import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadGroup';
 import {ProfilePicturesError} from '../../../models/ProfilePicturesError';
 import {deleteAccountPicture} from '../../accounts/actions/accounts.actions';
+import {PollingService} from '../../../services/polling-service';
 
 @Injectable()
 export class ProfilePicturesEffects {
@@ -150,10 +150,10 @@ export class ProfilePicturesEffects {
               switchMap((uploadedGroup: ProfilePicturesUploadGroup) => {
                 return this.userService.uploadProfilePictures(action.picturesData.map(d => d.pictureId), action.picturesData.map(d => d.userId), uploadedGroup.id)
                   .pipe(
-                    switchMap(({attached_photos}: {attached_photos: ProfileMap[]}) => {
+                    switchMap((data) => {
                       return [
-                        profilePicturesActions.changeProfilePictureLoader({percent: 100}),
-                        profilePicturesActions.uploadProfilePicturesSuccess({profiles: attached_photos, users: action.students})
+                        profilePicturesActions.changeProfilePictureLoader({percent: 95}),
+                        profilePicturesActions.uploadProfilePicturesSuccess({users: action.students})
                       ];
                     }),
                     catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
@@ -163,6 +163,25 @@ export class ProfilePicturesEffects {
           } else {
             return [profilePicturesActions.uploadProfilePicturesFailure({errorMessage: 'Please check if the data is correct'})];
           }
+        })
+      );
+  });
+
+  uploadProfilePicturesSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(profilePicturesActions.uploadProfilePicturesSuccess),
+        exhaustMap((action: any) => {
+          return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end')
+            .pipe(
+              switchMap(({data}) => {
+                return [
+                  profilePicturesActions.changeProfilePictureLoader({percent: 100}),
+                  profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: action.users})
+                ];
+              }),
+              catchError(error => of(profilePicturesActions.uploadPicturesError({errorMessage: error.message})))
+            );
         })
       );
   });
@@ -276,7 +295,8 @@ export class ProfilePicturesEffects {
     private actions$: Actions,
     private userService: UserService,
     private toastService: ToastService,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private pollingService: PollingService
   ) {
   }
 }

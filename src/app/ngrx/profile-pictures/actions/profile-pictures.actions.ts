@@ -23,8 +23,11 @@ export const mappingUserCollection = createAction(`[${PPICRURES}] Get User Colle
 export const mappingUserCollectionFailure = createAction(`[${PPICRURES}] Get User Collection Failure`, props<{errorMessage: string}>());
 
 export const uploadProfilePictures = createAction(`[${PPICRURES}] Upload Profile Pictures`, props<{students: User[], picturesData: {userId: number | string, pictureId: number | string}[]}>());
-export const uploadProfilePicturesSuccess = createAction(`[${PPICRURES}] Upload Profile Pictures Success`, props<{profiles: ProfileMap[], users: User[]}>());
+export const uploadProfilePicturesSuccess = createAction(`[${PPICRURES}] Upload Profile Pictures Success`, props<{users: User[]}>());
 export const uploadProfilePicturesFailure = createAction(`[${PPICRURES}] Upload Profile Pictures Failure`, props<{errorMessage: string}>());
+
+export const uploadPicturesComplete = createAction(`[${PPICRURES}] Upload Pictures Complete`, props<{profiles: ProfileMap[], users: User[]}>());
+export const uploadPicturesError = createAction(`[${PPICRURES}] Upload Pictures Error`, props<{errorMessage: string}>());
 
 export const getUploadedErrors = createAction(`[${PPICRURES}] Get Uploaded Errors`, props<{group_id: number | string}>());
 export const getUploadedErrorsSuccess = createAction(`[${PPICRURES}] Get Uploaded Errors Success`, props<{errors: ProfilePicturesError[]}>());

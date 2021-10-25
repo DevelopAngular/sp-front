@@ -25,7 +25,7 @@ const reducer = createReducer(
   on(profilePicturesActions.postProfilePicturesSuccess, (state, {images}) => {
     return adapter.addAll(images, {...state});
   }),
-  on(profilePicturesActions.uploadProfilePicturesSuccess, (state, {profiles, users}) => {
+  on(profilePicturesActions.uploadPicturesComplete, (state, {profiles, users}) => {
     return {...state, loading: false, loaded: true, profilesMap: profiles, updatedProfiles: users};
   }),
   on(profilePicturesActions.changeProfilePictureLoader, (state, {percent}) => {
