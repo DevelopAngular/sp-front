@@ -5,7 +5,6 @@ import {MaterialModule} from '../shared/material/material.module';
 import {ErrorToastComponent} from '../error-toast/error-toast.component';
 import {SchoolToggleBarComponent} from '../school-toggle-bar/school-toggle-bar.component';
 import {ToastConnectionComponent} from '../toast-connection/toast-connection.component';
-import {DropdownComponent} from '../dropdown/dropdown.component';
 import {CrossPointerEventTargetDirective} from '../cross-pointer-event-target.directive';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {GradientButtonComponent} from '../gradient-button/gradient-button.component';
@@ -21,7 +20,6 @@ import {SwipeEventDirective} from './directives/swipe-event.directive';
     ErrorToastComponent,
     SchoolToggleBarComponent,
     ToastConnectionComponent,
-    DropdownComponent,
     SignedOutToastComponent,
     GradientButtonComponent,
     CrossPointerEventTargetDirective,
@@ -41,7 +39,6 @@ import {SwipeEventDirective} from './directives/swipe-event.directive';
         ErrorToastComponent,
         SchoolToggleBarComponent,
         ToastConnectionComponent,
-        DropdownComponent,
         CrossPointerEventTargetDirective,
         SignedOutToastComponent,
         GradientButtonComponent,
