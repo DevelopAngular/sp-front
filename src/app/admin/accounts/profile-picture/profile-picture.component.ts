@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, R
 import {FormControl, FormGroup} from '@angular/forms';
 
 import {forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {catchError, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
 import {XlsxService} from '../../../services/xlsx.service';
@@ -39,16 +39,27 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         .pipe(
           filter(() => fileRef.nativeElement.files.length),
           switchMap((evt: Event) => {
-            this.selectedMapFile = fileRef.nativeElement.files[0];
-            this.uploadingProgress.csv.inProcess = true;
-            const FR = new FileReader();
-            FR.readAsBinaryString(fileRef.nativeElement.files[0]);
-            return fromEvent(FR, 'load');
+            const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1];
+            if (extension === 'csv' || extension === 'xlsx') {
+              this.selectedMapFile = fileRef.nativeElement.files[0];
+              this.uploadingProgress.csv.inProcess = true;
+              const FR = new FileReader();
+              FR.readAsBinaryString(fileRef.nativeElement.files[0]);
+              return fromEvent(FR, 'load');
+            } else {
+              return of(null);
+            }
           }),
           map(( res: any) => {
+            if (!res) {
+              return null;
+            }
             return this.xlsxService.parseXlSXFile(res);
           }),
           switchMap(rows => {
+            if (!rows) {
+              return of(null);
+            }
             const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
             const validate$ = rows.map(row => {
               if (!regexpEmail.test(row[0]) && typeof row[0] !== 'number') {
@@ -57,22 +68,19 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
                 return of({ user_id: row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
             });
             return forkJoin(validate$);
-          }),
-          catchError(error => {
-            this.errorUpload = true;
-            this.toastService.openToast({title: 'Type error', subtitle: 'Sorry, please upload a file ending in .csv', type: 'error'});
-            return of(null);
           })
         )
         .subscribe((items) => {
-          if (!this.errorUpload) {
+          if (!items) {
+            this.toastService.openToast({title: 'Type error', subtitle: 'Sorry, please upload a file ending in .csv', type: 'error'});
+            this.uploadingProgress.csv.inProcess = false;
+            this.uploadingProgress.csv.complete = false;
+            return;
+          } else {
             this.selectedMapFile = fileRef.nativeElement.files[0];
             this.selectedMapFiles = items;
             this.uploadingProgress.csv.inProcess = false;
             this.uploadingProgress.csv.complete = true;
-          } else {
-            this.uploadingProgress.csv.inProcess = false;
-            this.uploadingProgress.csv.complete = false;
           }
         });
     }
