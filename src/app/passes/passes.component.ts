@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
-import {filter, map, mapTo, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {filter, map, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {LiveDataService} from '../live-data/live-data.service';
@@ -31,15 +31,15 @@ import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {UserService} from '../services/user.service';
 import {DeviceDetection} from '../device-detection.helper';
-import * as moment from 'moment';
 import {NotificationButtonService} from '../services/notification-button.service';
-
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {SideNavService} from '../services/side-nav.service';
 import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 import {LocationsService} from '../services/locations.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-passes',
@@ -224,17 +224,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private locationsService: LocationsService
   ) {
 
-    this.futurePasses = this.liveDataService.futurePasses$;
-    this.activePasses = this.getActivePasses();
-    this.pastPasses = this.liveDataService.expiredPasses$;
-    this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
-      filter(res => !!res),
-      map(filters => {
-        this.isEmptyPassFilter = !filters['past-passes'].default;
-        return filters['past-passes'].default;
-      }));
-
-    this.dataService.currentUser
+    this.userService.user$
       .pipe(
         take(1),
         map(user => {
@@ -274,9 +264,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser.pipe(
       takeUntil(this.destroy$),
-      switchMap((user: User) =>
-        user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
-    )
+      switchMap((user: User) => {
+        return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+      }
+    ))
       .subscribe(passLike => {
         this._zone.run(() => {
           if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
@@ -305,7 +296,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
                 subtitle: 'When you come back to the room, remember to end your pass!'
               }
             });
-            return SPNC.afterClosed().pipe(mapTo(true));
+            SPNC.afterClosed().subscribe(() => this.screenService.customBackdropEvent$.next(false));
           } else if (action === 'hall_pass.end') {
             if (this.dialog.getDialogById('startNotification')) {
               this.dialog.getDialogById('startNotification').close();
@@ -323,6 +314,15 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.futurePasses = this.liveDataService.futurePasses$;
+    this.activePasses = this.getActivePasses();
+    this.pastPasses = this.liveDataService.expiredPasses$;
+    this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
+      filter(res => !!res),
+      map(filters => {
+        this.isEmptyPassFilter = !filters['past-passes'].default;
+        return filters['past-passes'].default;
+      }));
     this.schoolsLength$ = this.httpService.schoolsLength$;
     this.user$ = this.userService.user$;
     const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));

@@ -1,0 +1,65 @@
+@import "../../../design-system";
+
+#predemo {
+  min-height: calc(100vh - 30px);
+  background-color: white;
+  padding-bottom: 30px;
+}
+
+#masthead {
+  font-family: $primaryFont;
+  margin: 0 40px 40px 40px;
+  padding-bottom: 30px;
+  background-color: #f4f6ff;
+  border-radius: 0 0 32px 32px;
+
+  #logo-wrapper {
+    padding-left: 30px;
+    padding-top: 30px;
+  }
+
+  #text-wrapper {
+    text-align: center;
+
+    h1 {
+      @include textSize(30px, bold);
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    span {
+      font-size: 14px;
+      color: #7F879D;
+    }
+  }
+}
+
+#form-wrapper {
+  @extend .ds-flex-center-center, .ds-flex-column;
+}
+
+#confirm {
+  border-radius: 8px;
+}
+
+#submitted-wrapper {
+  @extend .ds-flex-center-center, .ds-flex-column;
+
+  #text-wrapper {
+    width: 350px;
+
+    h1 {
+      @include textSize(29px, bold, #7F879D);
+      text-align: center;
+    }
+
+    p {
+      @include textSize(14px, normal, #7F879D);
+      text-align: center;
+
+      a {
+        @include textSize(14px, normal, $jade);
+      }
+    }
+  }
+}

@@ -19,7 +19,7 @@
       <span>{{ title }}</span>
     </div>
     <div class="save-button">
-      <app-gradient-button
+      <app-gradient-button *ngIf="showSaveButton()"
         [size]="'small'"
         [gradient]="'#FFFFFF, #FFFFFF'"
         [hoverColor]="'#FCFDFF'"

@@ -1,28 +1,35 @@
 <div class="toast-container"
-     [ngStyle]="{'opacity': toggleToast ? '1' : '0'}"
 >
-  <div class="content"
-       [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}"
+  <div class="backdrop" *ngIf="data.hasBackdrop"></div>
+  <div class="content-wrapper"
+       [@toastSlideInOut]="toggleToast ? 'open' : 'close'"
        (mouseover)="over()"
        (mouseleave)="leave()"
   >
-    <div class="text">
-      <div class="text_header">{{ data.title }}</div>
-      <div class="text_message" [style.width]="!data.noButton ? '170px' : '300px'">
-        {{ data.subtitle }}
+    <div class="content">
+      <div class="type-line" [style.background-color]="lineColor(data.type)"></div>
+      <div class="info">
+        <div class="text">
+          <div class="text_header">{{ data.title }}</div>
+          <div class="text_message">{{ data.subtitle }}</div>
+        </div>
+        <div class="button">
+          <app-gradient-button
+            *ngIf="data.showButton"
+            [gradient]="'#F4F4F4, #F4F4F4'"
+            [leftIcon]="data.icon ? data.icon  : null"
+            [textColor]="'#1F195E'"
+            (buttonClick)="download(data.action)">
+            {{ data.buttonText ? data.buttonText : 'Download' }}
+          </app-gradient-button>
+        </div>
+      </div>
+
+      <div class="close-btn" (click)="close($event)">
+        <img [src]="'./assets/Close.svg' | resolveAsset" alt="Cancel (Blue-Gray).svg">
       </div>
     </div>
-    <div class="button">
-      <app-gradient-button *ngIf="!data.noButton"
-        [gradient]="'#F4F4F4, #F4F4F4'"
-        [leftIcon]="data.icon ? data.icon  : './assets/Download (Navy).svg'"
-        [textColor]="'#1F195E'"
-        (buttonClick)="download(data.action)"
-      >{{ data.buttonText ? data.buttonText : 'Download' }}</app-gradient-button>
-    </div>
 
-    <div class="close-btn" *ngIf="!data.noButton" (click)="close($event)">
-      <img [src]="'./assets/Close.svg' | resolveAsset" alt="Cancel (Blue-Gray).svg">
-    </div>
   </div>
+
 </div>

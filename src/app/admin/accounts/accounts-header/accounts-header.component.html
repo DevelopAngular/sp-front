@@ -48,6 +48,7 @@
         </app-gradient-button>
 
         <app-gradient-button
+          *ngIf="showIntegrations$ | async"
           [style.margin-left]="'15px'"
           [gradient]="'#F4F4F4, #F4F4F4'"
           [leftIcon]="'./assets/Integrations (Navy).svg'"

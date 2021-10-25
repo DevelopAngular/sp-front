@@ -1,0 +1,97 @@
+<div id="form" [formGroup]="form">
+  <div #schoolContainer
+       class="schools"
+       formArrayName="schools"
+       *ngFor="let school of schools.controls; let i = index">
+    <ng-container [formGroupName]="i" class="row">
+      <div class="mini-row">
+        <div class="search-wrapper">
+          <div class="input-wrapper">
+            <app-input #locationInput
+                       [input_label]="(i == 0 || mobile) ? 'School name' : ''"
+                       [width]="getSchoolInputWidth()"
+                       [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
+                       [isFocus]="i == 0 && autoFocus"
+                       tabAttentive="true"
+                       placeholder="Springfield High School"
+                       [formGroup]="school"
+                       [controlName]="school.controls.name"
+                       [forceError]="showErrors && !school.controls.name.valid"
+                       (blurEvent)="blur(i)"
+                       (onUpdate)="onSearch($event, i)"></app-input>
+          </div>
+          <div #searchAutocomplete
+               *ngIf="showSearch(i)"
+               class="search-autocomplete"
+               [ngClass]="{'options-wrapper': searchInfo[i]['showOptions']}"
+               [style.top.px]="getSearchPosition(i)"
+               (mouseenter)="searchInfo[i]['mouseIn'] = true"
+               (mouseleave)="searchInfo[i]['mouseIn'] = false">
+            <div>
+              <div class="option-list_scrollable">
+                <div #cell *ngFor="let school of searchInfo[i]['searchSchools']; let a = index"
+                     class="option-list_item"
+                     (mouseenter)="backgroundColors[a] = '#F4F4F4'"
+                     (mouseleave)="backgroundColors[a] = '#FFFFFF'"
+                     appCrossPointerEventTarget
+                     (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
+                     (pointerCancelEvent)="backgroundColors[a] = '#FFFFFF'"
+                     (pointerClickEvent)="mobileChooseSchool(a, school, i)"
+                     (click)="chooseSchool(school, i)"
+                     [style.background-color]="backgroundColors[a]"
+                     [style.color]="textColor(cell)">
+                  <div>
+                    <div style="text-transform: capitalize; color: #00B476">
+                      {{school.name}}
+                    </div>
+                    <div style="color: #1F194E">
+                      {{school.address}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="search-options">
+                <a
+                  (click)="searchInfo[i]['blockSearch'] = true"
+                >School not listed?</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="input-wrapper approx-students-wrapper">
+        <app-input [input_label]="(i == 0 || mobile) ? 'Approx. # of students' : ''"
+                   [width]="getApproxInputWidth()"
+                   [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
+                   tabAttentive="true"
+                   placeholder="1656"
+                   [formGroup]="school"
+                   [forceError]="showErrors && !school.controls.population.valid"
+                   [controlName]="school.controls.population"></app-input>
+      </div>
+    </ng-container>
+    <div class="remove-wrapper" *ngIf="showRemove()" [style.padding-top]="mobile ? '0' : (i == 0 ? '20px' : '2px')">
+      <button class="remove" mat-icon-button
+              (click)="removeSchool(i)">
+        <mat-icon svgIcon="minus"></mat-icon>
+      </button>
+    </div>
+  </div>
+  <div id="add-school-wrapper">
+
+    <app-gradient-button
+      id="add-school"
+      textColor="#7f879d"
+      fontSize="14px"
+      size="editable"
+      customBackground="#f1f1f1"
+      minWidth="100px"
+      padding="4px 12px"
+      [withShadow]="false"
+      leftImageWidth="12px"
+      [leftIcon]="'./assets/Plus (Blue-Gray).svg' | resolveAsset"
+      (buttonClick)="addSchool()"
+    >Add another school
+    </app-gradient-button>
+  </div>
+</div>

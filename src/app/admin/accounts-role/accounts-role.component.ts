@@ -3,7 +3,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -18,6 +18,7 @@ import {School} from '../../models/School';
 import {TableService} from '../sp-data-table/table.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {StorageService} from '../../services/storage.service';
+import {ToastService} from '../../services/toast.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -46,6 +47,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public currentColumns: any = {};
 
   accountRoleData$: Observable<any[]>;
+  accountRoleNextUrl$: Observable<string>;
 
   isLoading$: Observable<boolean> = of(false);
   isLoaded$: Observable<boolean>;
@@ -68,7 +70,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     private tableService: TableService,
     private sanitizer: DomSanitizer,
-    private storage: StorageService
+    private storage: StorageService,
+    private toast: ToastService
   ) {
 
   }
@@ -86,6 +89,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
           this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
           this.sort$ = this.userService.accountSort$[this.role];
+          this.accountRoleNextUrl$ = this.userService.nextRequests$[this.role];
         }),
         switchMap(() => {
           return this.userService.getAccountsRole(this.role);
@@ -141,6 +145,23 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.searchValue = value;
     });
 
+    this.toast.toastButtonClick$
+      .pipe(
+        filter((action) => action === 'open_profile'),
+        switchMap(action => {
+          return this.userService.addedAccount$[this.role].pipe(take(1));
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(addedUser => {
+        this.toast.closeToast();
+        this.showProfileCard({
+          _originalUserProfile: addedUser,
+          'Last sign-in': 'Never signed in',
+          'Type': 'Standard'
+        });
+      });
+
   }
 
   buildPermissions() {
@@ -165,6 +186,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.profilePermissions['access_user_config'] = {
         controlName: 'access_user_config',
         controlLabel: 'Accounts tab Access',
+      };
+      this.profilePermissions['admin_manage_integration'] = {
+        controlName: 'admin_manage_integration',
+        controlLabel: 'Integrations'
       };
     }
     if (this.role === '_profile_teacher' || this.role === '_profile_assistant') {
@@ -291,26 +316,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  // findProfileByRole(evt) {
-  //   this.tabVisibility = false;
-  //
-  //   setTimeout(() => {
-  //     if (evt instanceof Location) {
-  //       this.router.navigate(['admin/passconfig'], {
-  //         queryParams: {
-  //           locationId: evt.id,
-  //         }
-  //       });
-  //     } else {
-  //       this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
-  //     }
-  //   }, 250);
-  // }
-
   showProfileCard(evt) {
-    // if (this.role === '_profile_admin') {
-    //   this.profilePermissions['access_user_config'].disabled = evt.id === +this.user.id;
-    // }
     const profileTitle =
       this.role === '_profile_admin' ? 'administrator' :
         this.role === '_profile_teacher' ? 'teacher' :

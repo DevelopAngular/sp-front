@@ -36,6 +36,7 @@ export class LinkGeneratedDialogComponent implements OnInit {
       ) {
     this.name = data.name;
     this.pdflink = this.sanitizer.bypassSecurityTrustUrl(data.pdfLink);
+    console.log('Link ===>>>>', this.pdflink);
   }
 
   ngOnInit() {

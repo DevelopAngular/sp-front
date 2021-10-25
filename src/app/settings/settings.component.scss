@@ -66,13 +66,15 @@
       margin: 7px 0 7px 0;
     }
     .profile-switch {
+      padding: 0 10px;
       .option {
         display: flex;
         align-items: center;
         height: 40px;
-        padding-left: 25px;
+        padding-left: 20px;
         cursor: pointer;
         position: relative;
+        border-radius: 7px;
 
         .option-title {
           margin: 0 12px 0 12px;
@@ -95,10 +97,12 @@
       }
     }
     .setting {
+      padding: 0 10px;
       .content {
         display: flex;
         align-items: center;
         //padding-left: 25px;
+        border-radius: 7px;
         height: 40px;
         cursor: pointer;
 
@@ -131,7 +135,7 @@
       .setting-icon {
         width: 20px;
         height: 20px;
-        margin-left: 25px;
+        margin-left: 20px;
       }
       .setting-title {
         font-size: 15px;
@@ -150,10 +154,11 @@
       height: 40px;
       display: flex;
       align-items: center;
-      padding-left: 25px;
+      padding-left: 20px;
       color: #7F879D;
       font-size: 15px;
       cursor: pointer;
+      border-radius: 7px;
       //&:hover {
       //  background-color: rgb(228, 235, 255);
       //  color: #1F195E;

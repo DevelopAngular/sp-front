@@ -23,6 +23,7 @@ import {AddAccountPopupComponent} from './add-account-popup/add-account-popup.co
 import {BulkAddComponent} from './bulk-add/bulk-add.component';
 import {AddRolePopupComponent} from './select-role/add-role-popup/add-role-popup.component';
 import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
+import {GSuiteConnectComponent} from './g-suite-settings/g-suite-connect/g-suite-connect.component';
 import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {OctagonComponent} from './encounter-prevention-dialog/octagon/octagon.component';
 import {CreateGroupComponent} from './encounter-prevention-dialog/create-group/create-group.component';
@@ -53,12 +54,13 @@ import {EncounterOptionsComponent} from './encounter-prevention-dialog/encounter
     BulkAddComponent,
     AddRolePopupComponent,
     PermissionsDialogComponent,
+    GSuiteConnectComponent,
     EncounterPreventionDialogComponent,
     OctagonComponent,
     CreateGroupComponent,
     EncounterGroupComponent,
     ReportDescriptionComponent,
-    EncounterOptionsComponent
+    EncounterOptionsComponent,
   ],
   imports: [
     CommonModule,

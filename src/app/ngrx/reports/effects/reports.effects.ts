@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 
 import * as reportsActions from '../actions';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, take} from 'rxjs/operators';
 import {AdminService} from '../../../services/admin.service';
 import {Report} from '../../../models/Report';
 
@@ -14,9 +14,12 @@ export class ReportsEffects {
       .pipe(
         ofType(reportsActions.getReports),
         concatMap((action: any) => {
-          return this.adminService.getReportsRequest(action.limit)
+          return this.adminService.getReportsRequest(action.queryParams)
             .pipe(
-              map((reports: any) => reportsActions.getReportsSuccess({reports: reports.results})),
+              map(({next, results}) => {
+                const nextUrl = next ? next.substring(next.search('v1')) : null;
+                return reportsActions.getReportsSuccess({reports: results, next: nextUrl});
+              }),
               catchError(error => of(reportsActions.getReportsFailure({ errorMessage: error.message })))
             );
         }));
@@ -50,6 +53,29 @@ export class ReportsEffects {
               }),
               catchError(error => of(reportsActions.postReportFailure({errorMessage: error.message})))
             );
+        })
+      );
+  });
+
+  getMoreReports$ =  createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(reportsActions.getMoreReports),
+        exhaustMap(() => this.adminService.reports.nextUrl$.pipe(take(1))),
+        exhaustMap((url: string) => {
+          if (!url) {
+            return throwError('No more reports');
+          }
+          return this.adminService.getReportsByUrl(url)
+            .pipe(
+              map(({results, next}) => {
+                const nextUrl = next ? next.substring(next.search('v1')) : null;
+                return reportsActions.getMoreReportsSuccess({reports: results, next: nextUrl});
+              }),
+            );
+        }),
+        catchError(error => {
+          return of(reportsActions.getMoreReportsFailure({errorMessage: error.message}));
         })
       );
   });

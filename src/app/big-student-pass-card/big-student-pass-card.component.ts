@@ -1,4 +1,16 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output,
+  ViewChild
+} from '@angular/core';
 
 import {Subject} from 'rxjs';
 
@@ -12,7 +24,8 @@ export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 @Component({
   selector: 'app-big-student-pass-card',
   templateUrl: './big-student-pass-card.component.html',
-  styleUrls: ['./big-student-pass-card.component.scss']
+  styleUrls: ['./big-student-pass-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BigStudentPassCardComponent implements OnInit, OnDestroy {
 
@@ -60,8 +73,8 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
   scalePage(element: HTMLElement) {
     const pageWidth = document.documentElement.clientWidth;
     const pageHeight = document.documentElement.clientHeight / 100 * 90;
-    const popupWidth = element.clientWidth;
-    const popupHeight = element.clientHeight;
+    const popupWidth = 335;
+    const popupHeight = 527;
     return Math.min(pageWidth / popupWidth, pageHeight / popupHeight, 1.6);
   }
 

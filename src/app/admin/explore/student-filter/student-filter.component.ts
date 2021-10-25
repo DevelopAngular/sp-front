@@ -21,7 +21,7 @@ export class StudentFilterComponent implements OnInit {
   isMultiSelect: boolean;
   update: boolean;
 
-  type: 'selectedStudents' | 'rooms';
+  type: 'selectedStudents' | 'selectedTeachers' | 'rooms';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],

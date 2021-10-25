@@ -19,9 +19,9 @@
           <div class="toggle-text">
             <div class="toggle-title">Declinable</div>
             <div class="info-text-1">
-              <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.' + (!form.get('declinable').value ? ' You' : '')}}</span><br/>
-              <span *ngIf="!form.get('declinable').value">won't select where the student is coming from.</span>
-              <span *ngIf="form.get('declinable').value">You'll select where the student is coming from.</span>
+              <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.' + (!form.get('declinable').value ? ' You\'ll' : '')}}</span><br/>
+              <span *ngIf="form.get('declinable').value">You won't select where the student is coming from.</span>
+              <span *ngIf="!form.get('declinable').value">select where the student is coming from.</span>
             </div>
           </div>
           <div class="toggle">

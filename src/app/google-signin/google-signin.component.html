@@ -10,6 +10,7 @@
         [autocomplete]="'username'"
         [controlName]="loginForm.get('username')"
         [input_label]="'Username or email'"
+        [input_value]="loginForm.get('username').value"
         [isFocus]="true"
         (focusEvent)="focusEvent.emit($event)"
         (blurEvent)="blurEvent.emit($event)"

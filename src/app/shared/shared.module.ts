@@ -30,7 +30,6 @@ import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-togg
 import {SpChipsComponent} from '../sp-chips/sp-chips.component';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
 import {IconButtonComponent} from '../icon-button/icon-button.component';
-import {XsButtonComponent} from '../xs-button/xs-button.component';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
@@ -63,6 +62,7 @@ import {StudentMetricsComponent} from '../big-student-pass-card/student-metrics/
 import {InlinePassCardComponent} from '../inline-pass-card/inline-pass-card.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InlineRequestCardComponent} from '../inline-request-card/inline-request-card.component';
+import {DropdownComponent} from '../dropdown/dropdown.component';
 import {AppTextareaComponent} from '../app-textarea/app-textarea.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -109,7 +109,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ToggleOptionsComponent,
     SpChipsComponent,
     IconButtonComponent,
-    XsButtonComponent,
     CreatePassButtonComponent,
     IosCalendarWheelComponent,
     IosCalendarComponent,
@@ -137,7 +136,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlinePassCardComponent,
     RequestCardComponent,
     InlineRequestCardComponent,
-    AppTextareaComponent
+    DropdownComponent,
+    AppTextareaComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -169,7 +169,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ToggleOptionsComponent,
     SpChipsComponent,
     IconButtonComponent,
-    XsButtonComponent,
     CreatePassButtonComponent,
     IosCalendarWheelComponent,
     IosCalendarComponent,
@@ -194,7 +193,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlinePassCardComponent,
     RequestCardComponent,
     InlineRequestCardComponent,
-    AppTextareaComponent
+    DropdownComponent,
+    AppTextareaComponent,
   ],
   providers: [
     {

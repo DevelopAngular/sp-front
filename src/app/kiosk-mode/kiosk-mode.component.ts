@@ -8,11 +8,13 @@ import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {filter, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
+
+declare const window;
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -43,9 +45,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:keyup', ['$event'])
     setFocus() {
-      setTimeout(() => {
-          this.input.nativeElement.focus();
-      }, 50);
+      this.inputFocus();
   }
 
   constructor(
@@ -61,7 +61,10 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.locationService.getPassLimitRequest();
-      combineLatest(this.userService.user$.pipe(take(1)), this.userService.effectiveUser.pipe(take(1))).pipe(
+      combineLatest(
+        this.userService.user$,
+        this.userService.effectiveUser
+      ).pipe(
           switchMap(([user, effectiveUser]) => {
             if (effectiveUser) {
               return this.locationService.getLocationsWithTeacherRequest(effectiveUser.user);
@@ -81,21 +84,28 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
             {type: 'location', value: [kioskLocation]},
             this.timeService.nowDate()
           );
-          this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
           this.kioskMode.currentRoom$.next(kioskLocation);
       });
 
+    this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.input.nativeElement.focus();
-    }, 50);
+    this.inputFocus();
+    if (window && window.appLoaded) {
+      window.appLoaded(1000);
+    }
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  inputFocus() {
+    setTimeout(() => {
+      this.input.nativeElement.focus();
+    }, 50);
   }
 
   cardReader(event: KeyboardEvent) {
@@ -122,13 +132,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onCardReaderBlur() {
-    setTimeout(() => {
-      this.input.nativeElement.focus();
-    }, 1);
+    this.inputFocus();
   }
 
   showMainForm(forLater: boolean, student?): void {
-    this.hideInput = true
+    this.hideInput = true;
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',
           maxWidth: '100vw',
@@ -145,9 +153,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
       mainFormRef.afterClosed().subscribe(() => {
           this.hideInput = false;
-          setTimeout(() => {
-              this.input.nativeElement.focus();
-          }, 50);
+          this.inputFocus();
       });
   }
 

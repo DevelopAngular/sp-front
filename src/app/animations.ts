@@ -300,6 +300,18 @@ export const studentPassFadeInOut = trigger('studentPassFadeInOut', [
   ])))
 ]);
 
+export const toastSlideInOut = trigger('toastSlideInOut', [
+  state('open', style({
+    opacity: 1,
+    right: '30px'
+  })),
+  state('close', style({
+    opacity: 0,
+    right: '-250px'
+  })),
+  transition('open <=> close', animate('.3s ease')),
+]);
+
 export const resizeReportDescription = trigger('grow', [
   transition('void <=> *', []),
   transition('* <=> open', [

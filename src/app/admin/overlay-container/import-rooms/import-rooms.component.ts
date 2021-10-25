@@ -60,11 +60,11 @@ export class ImportRoomsComponent implements OnInit {
           }),
           map((rows: RoomInfo[]) => {
             rows = rows.map((r: RoomInfo) => {
-              if (r.title.length > 16) {
+              if (r.title.length > 15) {
                 r.title = r.title.slice(0, 15);
               }
-              if (r.room.length > 8) {
-                r.room = r.room.slice(0, 7);
+              if (r.room.length > 5) {
+                r.room = r.room.slice(0, 5);
               }
               return r;
             });
@@ -183,7 +183,6 @@ export class ImportRoomsComponent implements OnInit {
           });
           const groupedRooms = groupBy(rows, (r: any) => r.title);
           let normalizedRooms = [];
-          console.log(groupedRooms);
 
           for (const key in groupedRooms) {
             if (groupedRooms[key].length > 1) {
@@ -197,7 +196,7 @@ export class ImportRoomsComponent implements OnInit {
               normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
             }
           }
-          console.log(normalizedRooms);
+
           return normalizedRooms;
         }),
         switchMap((_rooms: any[]): Observable<any[]> => {
@@ -228,8 +227,6 @@ export class ImportRoomsComponent implements OnInit {
         }),
       )
       .subscribe((rooms) => {
-        // console.log(rooms);
-        // console.log(this.unknownEmails);
         setTimeout(() => {
           this.uploadingProgress.inProgress = false;
           this.uploadingProgress.completed = true;

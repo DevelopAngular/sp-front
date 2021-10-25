@@ -47,7 +47,6 @@ import {KeyboardShortcutsModule} from 'ng-keyboard-shortcuts';
 import {CoreModule} from './core/core.module';
 import {ScrollHolderDirective} from './scroll-holder.directive';
 import {OAuthModule} from 'angular-oauth2-oidc';
-import {SchoolSignUpGuard} from './guards/school-sign-up.guard';
 import {NextReleaseModule} from './next-release/next-release.module';
 import {SupportButtonComponent} from './support/support-button/support-button.component';
 import {PassLimitEffects} from './ngrx/pass-limits/effects';
@@ -70,6 +69,7 @@ import {HallMonitorPassesEffects} from './ngrx/pass-like-collection/nested-state
 import {MyRoomPassesEffects} from './ngrx/pass-like-collection/nested-states/my-room-passes/effects';
 import {RepresentedUsersEffects} from './ngrx/represented-users/effects';
 import {QuickPreviewPassesEffects} from './ngrx/quick-preview-passes/effects';
+import {LoginDataEffects} from './ngrx/login-data/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -84,12 +84,6 @@ const appRoutes: Routes = [
     canActivate: [AuthenticatedGuard],
     loadChildren: () => import('app/intro-route/intro-route.module').then(m => m.IntroRouteModule),
     data: { hideSchoolToggleBar: true}
-  },
-  {
-    path: 'school_signup',
-    canActivate: [SchoolSignUpGuard],
-    loadChildren: () => import('app/school-sign-up/school-sign-up.module').then(m => m.SchoolSignUpModule),
-    data: {hideSchoolToggleBar: true, hideScroll: true, hubspot: false, authFree: true},
   },
   {
     path: '',
@@ -115,7 +109,6 @@ const appRoutes: Routes = [
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
     loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule),
     data: {
-      hideScroll: true,
       hubspot: true,
       authFree: false
     }
@@ -125,8 +118,9 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/sign-out/sign-out.module').then(m => m.SignOutModule)
   },
   {
-    path: 'error',
-    loadChildren: () => import('app/error/error.module').then(m => m.ErrorModule)
+    path: 'forms',
+    loadChildren: () => import('app/forms/forms.module').then(m => m.FormsModule),
+    data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
 
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -200,7 +194,8 @@ const appRoutes: Routes = [
       MyRoomPassesEffects,
       FiltersEffects,
       RepresentedUsersEffects,
-      QuickPreviewPassesEffects
+      QuickPreviewPassesEffects,
+      LoginDataEffects
     ]),
     StoreDevtoolsModule.instrument({}),
     HammerModule,

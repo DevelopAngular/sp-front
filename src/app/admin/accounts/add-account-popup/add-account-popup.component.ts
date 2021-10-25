@@ -1,6 +1,5 @@
 import {Component, ElementRef, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
-import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 
 @Component({
@@ -20,8 +19,7 @@ export class AddAccountPopupComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<AddAccountPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private darkTheme: DarkThemeSwitch
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit() {
@@ -32,7 +30,7 @@ export class AddAccountPopupComponent implements OnInit {
       // this.options.push({ title: 'Add account', icon: './assets/GG4L Icon.svg', action: 'gg4l' });
     // }
     if (this.syncData.is_gsuite_enabled) {
-      this.options.push({title: 'Add Account', icon: './assets/Google (Blue-Gray).svg', action: 'g_suite'});
+      this.options.push({title: 'Add Google Account', icon: './assets/Google (Blue-Gray).svg', action: 'g_suite'});
     }
     this.updateSettingsPosition();
   }

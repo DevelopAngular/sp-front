@@ -36,7 +36,7 @@ export class StatusPopupComponent implements OnInit {
         hoverColor: this.profileStatus === 'active' ? '#f1f2f4' : '#D1E8E0',
         icon: this.profileStatus === 'active' ? './assets/Stop (Blue-Gray).svg' : './assets/Check (Jade).svg',
         description: this.profileStatus === 'active' ? 'Disabling an account prevents them from signing in. They’ll still show up in SmartPass search, can make passes, etc.' :
-          'Contact us at support@smartpass.app to activate your students and start your subscription.',
+          'Activating an account lets a user sign-in, show up in SmartPass search, make passes, and more…',
         status: this.profileStatus === 'active' ? 'disabled' : 'active'
       },
       {

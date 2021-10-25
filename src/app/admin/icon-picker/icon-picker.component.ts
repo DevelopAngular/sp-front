@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {map} from 'rxjs/operators';
+import {map, takeUntil} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {Observable, Subject} from 'rxjs';
 import {HttpService} from '../../services/http-service';
@@ -40,6 +40,8 @@ export class IconPickerComponent implements OnInit {
   public showSearchInput: boolean;
   public iconCollectionTitle: string = 'Search icons';
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     private adminService: AdminService,
     private http: HttpService,
@@ -55,16 +57,17 @@ export class IconPickerComponent implements OnInit {
         map((icons: any) => {
          return this.normalizeIcons(icons, false);
         }),
+        takeUntil(this.destroy$)
       )
       .subscribe(res => {
-        // console.log(res, this.selectedIconLocalUrl);
         this.icons = res;
           if (!res.length || !this.selectedIconLocalUrl) {
-            this.selectedIconLocalUrl = this.selectedIconPicker ? this.selectedIconPicker.replace('FFFFFF', '1F195E') : '';
+            this.selectedIconLocalUrl = this.selectedIconPicker && this.selectedIconPicker.inactive_icon ? this.selectedIconPicker.inactive_icon.replace('FFFFFF', '1F195E') : '';
           }
       });
 
     this.changeTextResult.asObservable()
+      .pipe(takeUntil(this.destroy$))
       .subscribe(text => {
         this.iconCollectionTitle = text;
         this.isSearching = true;
@@ -102,14 +105,6 @@ export class IconPickerComponent implements OnInit {
   iconTooltipText(icon: Icon) {
     const name = icon.id;
     return name.replace(/-/g, ' ');
-    // return icon.id.split('_').map((i: string) => {
-    //   if (i) {
-    //     i = i[0].toUpperCase() + i.slice(1);
-    //   } else {
-    //     i = '';
-    //   }
-    //   return i;
-    // }).join(' ');
   }
 
   changeIcon(icon) {
@@ -148,7 +143,10 @@ export class IconPickerComponent implements OnInit {
       }
 
       this.http.searchIcons(search).pipe(
-          map(icons => this.normalizeIcons(icons, isSearch))).subscribe((res: any[]) => {
+        map(icons => this.normalizeIcons(icons, isSearch)),
+        takeUntil(this.destroy$)
+      )
+        .subscribe((res: any[]) => {
               if (!res.length) {
                   this.iconCollectionTitle = 'No results';
               }

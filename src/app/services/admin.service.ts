@@ -11,9 +11,12 @@ import {
   getFoundReports,
   getIsLoadedReports,
   getIsLoadingReports,
-  getReportsCollection
+  getReportsCollection,
+  getReportsEntities,
+  getReportsLength,
+  getReportsNextUrl
 } from '../ngrx/reports/states/reports-getters.state';
-import {getReports, postReport, searchReports} from '../ngrx/reports/actions';
+import {getMoreReports, getReports, postReport, searchReports} from '../ngrx/reports/actions';
 import {getCountAccountsResult} from '../ngrx/accounts/nested-states/count-accounts/state/count-accouns-getters.state';
 import {getCountAccounts} from '../ngrx/accounts/nested-states/count-accounts/actions';
 import {getDashboardData} from '../ngrx/dashboard/actions';
@@ -29,17 +32,13 @@ import {
   getSchoolsGG4LInfo,
   getSchoolSyncInfo,
   syncClever,
+  syncGsuite,
   updateCleverInfo,
+  updateGSuiteInfo,
   updateSchool,
   updateSchoolSyncInfo
 } from '../ngrx/schools/actions';
-import {
-  getCleverSyncLoading,
-  getGG4LInfoData,
-  getGSuiteSyncInfoData,
-  getSchoolCleverInfo,
-  getSchoolSyncInfoData
-} from '../ngrx/schools/states';
+import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolCleverInfo, getSchoolSyncInfoData, getSyncLoading} from '../ngrx/schools/states';
 import {GG4LSync} from '../models/GG4LSync';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
@@ -56,8 +55,11 @@ export class AdminService {
     reports$: this.store.select(getReportsCollection),
     loaded$: this.store.select(getIsLoadedReports),
     loading$: this.store.select(getIsLoadingReports),
+    length: this.store.select(getReportsLength),
     foundReports: this.store.select(getFoundReports),
-    addedReports: this.store.select(getAddedReports)
+    addedReports: this.store.select(getAddedReports),
+    nextUrl$: this.store.select(getReportsNextUrl),
+    entities$: this.store.select(getReportsEntities)
   };
 
   colorProfiles$: Observable<ColorProfile[]> = this.store.select(getColorProfilesCollection);
@@ -74,20 +76,29 @@ export class AdminService {
   schoolSyncInfo$: Observable<SchoolSyncInfo> = this.store.select(getSchoolSyncInfoData);
   gSuiteInfoData$: Observable<GSuiteOrgs> = this.store.select(getGSuiteSyncInfoData);
   cleverInfoData$: Observable<CleverInfo> = this.store.select(getSchoolCleverInfo);
-  cleverSyncLoading$: Observable<boolean> = this.store.select(getCleverSyncLoading);
+  syncLoading$: Observable<boolean> = this.store.select(getSyncLoading);
 
   constructor(private http: HttpService,  private store: Store<AppState>) {}
 
   /// Reports
 
-  getReportsRequest(limit) {
-    return this.http.get(`v1/event_reports?limit=${limit}`);
+  getReportsRequest(queryParams) {
+    return this.http.get(constructUrl(`v1/event_reports`, queryParams));
   }
 
-  getReportsData(limit = 10) {
-    this.store.dispatch(getReports({ limit }));
+  getReportsData(queryParams) {
+    this.store.dispatch(getReports({ queryParams }));
     return this.reports.reports$;
   }
+
+  getReportsByUrl(url) {
+    return this.http.get(url);
+  }
+
+  getMoreReports() {
+    this.store.dispatch(getMoreReports());
+  }
+
   sendReportRequest(data) {
     this.store.dispatch(postReport({data}));
     return this.reports.addedReports;
@@ -159,6 +170,11 @@ export class AdminService {
     return this.http.patch(`v1/schools/${school.id}/syncing`, body);
   }
 
+  getGSuiteAuthorizeLink() {
+    const school = this.http.getSchool();
+    return this.http.get(`v1/schools/${school.id}/syncing/gsuite/authorization_link`);
+  }
+
   updateOnboardProgressRequest(data) {
     this.store.dispatch(updateOnboardProcess({data}));
     return this.onboardProcessData$;
@@ -225,8 +241,16 @@ export class AdminService {
     return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/clever/status`);
   }
 
-  syncNow() {
+  cleverSyncNow() {
     return this.http.post(`v1/schools/${this.http.getSchool().id}/syncing/clever/manual_sync`);
+  }
+
+  gsuiteSyncNowRequest() {
+    this.store.dispatch(syncGsuite());
+  }
+
+  gsuiteSyncNow() {
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/syncing/gsuite/manual_sync`);
   }
 
   syncLoading() {
@@ -235,6 +259,10 @@ export class AdminService {
 
   updateCleverInfo(cleverInfo) {
     this.store.dispatch(updateCleverInfo({cleverInfo}));
+  }
+
+  updateGsuiteInfo(gsuiteInfo) {
+    this.store.dispatch(updateGSuiteInfo({gsuiteInfo}));
   }
 
   exportCsvPasses(queryParams: object) {

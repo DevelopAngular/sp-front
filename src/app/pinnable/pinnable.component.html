@@ -7,15 +7,14 @@
      appCrossPointerEventTarget
      (pointerClickEvent)="onPress(false); onSelect()"
      (pointerDownEvent)="onPress(true);"
-     (pointerCancelEvent)="onPress(false);"
 
      (mouseenter)="hovered = true; tooltipDelay(true, 1000)"
      (mouseleave)="onPress(false); hovered = false; tooltipDelay(false)"
-     customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip"
+     customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip || isSameRoom"
 >
 
   <ng-template #tooltip>
-    <app-pass-limit-tooltip *ngIf="showTooltipWithDelay" [description]="tooltipDescription"></app-pass-limit-tooltip>
+    <app-pass-limit-tooltip *ngIf="showTooltipWithDelay" [description]="!isSameRoom ? tooltipDescription : 'You selected ' + pinnable.title + ' as the origin (where you are now)!'"></app-pass-limit-tooltip>
   </ng-template>
 
      <div *ngIf="selected" class="selected-overlay"></div>

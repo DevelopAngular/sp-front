@@ -2,13 +2,13 @@ import {HttpClient} from '@angular/common/http';
 import {Inject, Injectable, NgZone, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {LocalStorage} from '@ngx-pwa/local-storage';
-import {BehaviorSubject, iif, Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
+import {BehaviorSubject, combineLatest, iif, Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
 import {catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getSchools} from '../ngrx/schools/actions';
+import {clearSchools, getSchools} from '../ngrx/schools/actions';
 import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
 import {GoogleLoginService, isCleverLogin, isDemoLogin, isGg4lLogin} from './google-login.service';
 import {StorageService} from './storage.service';
@@ -19,6 +19,8 @@ import {Router} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import * as moment from 'moment';
+import {LoginDataService} from './login-data.service';
+import {clearUser} from '../ngrx/user/actions';
 
 declare const window;
 
@@ -99,6 +101,8 @@ function makeUrl(server: LoginServer, endpoint: string) {
     if (/(proxy)/.test(environment.buildType)) {
       const proxyPath = new URL(server.api_root).pathname;
       url = proxyPath + endpoint;
+    } else if (/(local)/.test(environment.buildType)) {
+      url = environment.preferEnvironment.api_root + endpoint;
     } else {
       // url = 'https://smartpass.app/api/prod-us-central' + endpoint;
       url = server.api_root + endpoint;
@@ -179,7 +183,6 @@ export class HttpService implements OnDestroy {
   public schoolToggle$: Subject<School> = new Subject<School>();
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
       filter(v => v),
-      take(1),
       exhaustMap((v) => {
         return this.getSchoolsRequest();
       }),
@@ -202,6 +205,10 @@ export class HttpService implements OnDestroy {
 
   private hasRequestedToken = false;
 
+  private cannotRefreshGoogle = new Error('cannot refresh google');
+  private cannotRefreshGG4L = new Error('cannot refresh gg4l');
+  private cannotRefreshClever = new Error('cannot refresh clever');
+
   constructor(
       @Inject(APP_BASE_HREF)
       private baseHref: string,
@@ -212,7 +219,8 @@ export class HttpService implements OnDestroy {
       private store: Store<AppState>,
       private _zone: NgZone,
       private matDialog: MatDialog,
-      private router: Router
+      private router: Router,
+      private loginDataService: LoginDataService
   ) {
 
     if (baseHref === '/app') {
@@ -223,13 +231,30 @@ export class HttpService implements OnDestroy {
     // First, if there is a current school loaded, try to use that one.
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
-    this.schools$
+    combineLatest(
+      this.schools$,
+      this.loginDataService.loginDataQueryParams.pipe(filter(res => !!res))
+    )
         .pipe(
             takeUntil(this.destroyed$),
             filter(schools => !!schools.length),
         )
-        .subscribe(schools => {
-          // console.log('this.schools$ updated');
+        .subscribe(([schools, queryParams]) => {
+          if (queryParams && queryParams.school_id) {
+            const selectedSchool = schools.find(school => +school.id === +queryParams.school_id);
+            if (selectedSchool) {
+              this.currentSchoolSubject.next(selectedSchool);
+              this.storage.setItem('last_school_id', selectedSchool.id);
+              return;
+            } else {
+              this.setSchool(null);
+              this.clearInternal();
+              this.loginService.clearInternal();
+              this.store.dispatch(clearUser());
+              this.store.dispatch(clearSchools());
+              return;
+            }
+          }
           const lastSchool = this.currentSchoolSubject.getValue();
           if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
             this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
@@ -316,7 +341,7 @@ export class HttpService implements OnDestroy {
   getUserAuth(authObj) {
     const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
     if (auth) {
-      console.error('Token will expire ==>>', moment(auth.auth.expires).format('DD HH:mm'));
+      console.log('Token will expire ==>>', moment(auth.auth.expires).format('DD HH:mm'));
     }
     return iif(
       () => (auth && moment().isSameOrBefore(moment(auth.auth.expires))),
@@ -628,24 +653,30 @@ export class HttpService implements OnDestroy {
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
     if (!this.getAuthContext()) {
-      throw new Error('No authContext');
+      return throwError(new LoginServerError('No authContext'));
     }
 
     return predicate(this.getAuthContext());
-    // return this.authContext.pipe(
-    //     // Switching this from switchMap to concatMap, allows refreshAuthContext to complete successfully.
-    //     // refreshAuthContext gets cancelled when authContextSubject.next is called, so it never completes!
-    //     concatMap(ctx => {
-    //       return predicate(ctx);
-    //     }),
-    //     first());
   }
 
   // Used in AccessTokenInterceptor to trigger refresh
   refreshAuthContext(): Observable<any> {
     const signOutCatch = catchError(err => {
       this.showSignBackIn().subscribe( _ => {
-        this.router.navigate(['sign-out']);
+        if (err === this.cannotRefreshGoogle) {
+          const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+          this.loginService.clearInternal(true);
+          window.location.href = url;
+        } else if (err === this.cannotRefreshGG4L) {
+          this.loginService.clearInternal(true);
+          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
+        } else if (err === this.cannotRefreshClever) {
+          this.loginService.clearInternal(true);
+          const redirect = this.getEncodedRedirectUrl();
+          window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
+        } else {
+          this.router.navigate(['sign-out']);
+        }
       });
       this.loginService.isAuthenticated$.next(false);
       throw err;
@@ -723,7 +754,7 @@ export class HttpService implements OnDestroy {
               this.loginService.clearInternal(true);
               window.location.href = url;
             });
-        return throwError(new Error('Redirecting to google'));
+        return throwError(this.cannotRefreshGoogle);
       case 'gg4l':
         this.showSignBackIn()
             .pipe(takeUntil(this.destroyed$))
@@ -731,16 +762,9 @@ export class HttpService implements OnDestroy {
               this.loginService.clearInternal(true);
               window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
             });
-        return throwError(new Error('Redirecting to gg4l'));
+        return throwError(this.cannotRefreshGG4L);
       case 'clever':
-        this.showSignBackIn()
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(_ => {
-              this.loginService.clearInternal(true);
-              const redirect = this.getEncodedRedirectUrl();
-              window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
-            });
-        return throwError(new Error('Redirecting to clever'));
+        return throwError(this.cannotRefreshClever);
       default:
         return throwError(new Error('Unknown authType'));
     }

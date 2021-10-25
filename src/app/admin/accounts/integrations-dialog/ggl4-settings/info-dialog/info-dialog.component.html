@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="background" [style.background]="gradient" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-  <img appCrossPointerEventTarget (pointerClickEvent)="back.emit()" class="back-button" width="28" [src]="'./assets/Back Button (White).svg'" alt="Back">
+  <img appCrossPointerEventTarget (pointerClickEvent)="back()" class="back-button" width="28" [src]="'./assets/Back Button (White).svg'" alt="Back">
 
   <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="integrations" style="z-index: 10">

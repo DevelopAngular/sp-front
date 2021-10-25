@@ -8,13 +8,14 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {filter as _filter} from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {SchoolSyncInfo} from '../../models/SchoolSyncInfo';
 import {AdminService} from '../../services/admin.service';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -84,8 +85,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private adminService: AdminService,
     private router: Router,
-    private shortcuts: KeyboardShortcutsService
-
+    private shortcuts: KeyboardShortcutsService,
+    private toast: ToastService
   ) {
     this.syncInfo = this.data['syncInfo'];
     this.title = this.data['title'];
@@ -114,11 +115,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         return (this.isAssistant && ((this.assistantLike.user || this.newAlternativeAccount.valid)));
     } else if (this.isAssistant && this.typeChosen === this.accountTypes[1]) {
       return this.newAlternativeAccount.valid;
-    }
-    // else if (this.data.role === '_all' && !this.state) {
-    //   return this.newAlternativeAccount.valid;
-    // }
-    else {
+    } else {
       return false;
     }
   }
@@ -158,18 +155,10 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       }
       this.permissionsForm = new FormGroup(group);
       this.permissionsForm.valueChanges.subscribe((formValue) => {
-        // console.log(formValue);
         this.permissionsFormEditState = true;
 
       });
     }
-    this.http.errorToast$.asObservable()
-      .pipe(
-        filter(v => !!v)
-      )
-      .subscribe(() => {
-        this.pendingSubject.next(false);
-      });
 
     this.shortcuts.onPressKeyEvent$
       .pipe(
@@ -216,7 +205,10 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         debounceTime(500),
         take(1),
-        switchMap(value => {
+        switchMap((value: string) => {
+          if (!value.includes('@')) {
+            value = value + '@spnx.local';
+          }
           return this.userService.checkUserEmail(value)
             .pipe(
               take(1),
@@ -254,7 +246,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           return this.newAlternativeAccount.valid;
       } else {
         if (this.data.role !== '_all') {
-            return this.newAlternativeAccount.valid && this.assistantLike.behalfOf.length;
+            return this.newAlternativeAccount.valid;
         } else {
           if (this.userRoles.length && this.isAssistant) {
             return this.assistantLike.behalfOf.length;
@@ -352,34 +344,34 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
                     .addAccountRequest(this.school.id, data, 'email', rolesToDb, this.data.role);
                 }
               } else {
-                throw new Error('Format Error');
+                return throwError(new Error('Format Error'));
               }
             }
           }),
           catchError((err) => {
             if (err instanceof HttpErrorResponse) {
-              this.http.errorToast$.next({
-                header: 'Format Error',
-                message: err.error.errors[0]
-              });
+              this.toast.openToast({title: 'Format Error', subtitle: err.error.errors[0], type: 'error'});
             } else if (err.message === 'Format Error') {
-              this.http.errorToast$.next({
-                header: 'Format Error',
-                message: 'User name should be at least 6 symbols length.'
-              });
+              this.toast.openToast({title: 'Format Error', subtitle: 'User name should be at least 6 symbols length.', type: 'error'});
             }
             return throwError(err);
           })
         )
         .subscribe((res) => {
+          this.toast.openToast({
+            title: 'New account added',
+            type: 'success',
+            showButton: true,
+            buttonText: 'Open profile',
+            action: 'open_profile'
+          });
           this.pendingSubject.next(false);
           this.dialogRef.close(res);
-          // if (this.selectedRoles.length) {
-          //   this.router.navigate(['admin', 'accounts', this.selectedRoles[0].role]);
-          // }
+
         });
-    } else
+    } else {
       this.formSetErrors();
+    }
 
   }
 
@@ -402,7 +394,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           this.selectedUserErrors = false;
         }
     }
-    // console.log(evt);
+
   }
   setSecretary(evtUser, evtBehalfOf) {
     if (evtUser) {
@@ -411,7 +403,6 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     if (evtBehalfOf) {
       this.assistantLike.behalfOf = evtBehalfOf;
     }
-    // console.log(this.assistantLike);
   }
 
   selectRole(roles) {
@@ -421,14 +412,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  showInstructions(role) {
-    this.pdfService.generateProfileInstruction(this.data.role);
-  }
   back() {
     this.dialogRef.close();
   }
 }
-
-// myFiel.valueChanges.pipe(map(value) => {myField: value})
-//
-// {keyFiled: valu}

@@ -30,7 +30,8 @@ export class SchoolsEffects {
               return schoolsActions.getSchoolsSuccess({schools});
             }),
             catchError(error => {
-              return of(schoolsActions.getSchoolsFailure({errorMessage: error.error.detail}));
+              const errorMessage = error && error.error && error.error.detail ? error.error.detail : 'School loading error';
+              return of(schoolsActions.getSchoolsFailure({errorMessage}));
             })
           );
       })
@@ -192,6 +193,22 @@ export class SchoolsEffects {
                 return schoolsActions.getCleverInfoSuccess({cleverInfo});
               }),
               catchError(error => of(schoolsActions.getCleverInfoFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  syncGsuite$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.syncGsuite),
+        exhaustMap(action => {
+          return this.adminService.gsuiteSyncNow()
+            .pipe(
+              map((data) => {
+                return schoolsActions.syncGsuiteSuccess({data});
+              }),
+              catchError(error => of(schoolsActions.syncGsuiteFailure({errorMessage: error.message})))
             );
         })
       );

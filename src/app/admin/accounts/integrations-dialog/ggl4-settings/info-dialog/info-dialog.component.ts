@@ -12,7 +12,7 @@ export class InfoDialogComponent implements OnInit {
   @Input() integrationName: string;
 
   @Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
+  @Output() backEvent: EventEmitter<any> = new EventEmitter<any>();
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -38,6 +38,10 @@ export class InfoDialogComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+  }
+
+  back() {
+    this.backEvent.emit();
   }
 
 }

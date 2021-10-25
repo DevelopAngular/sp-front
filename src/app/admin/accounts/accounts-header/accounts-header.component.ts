@@ -19,7 +19,7 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
-import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
@@ -31,6 +31,7 @@ import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {TableService} from '../../sp-data-table/table.service';
 import {PermissionsDialogComponent} from '../../accounts-role/permissions-dialog/permissions-dialog.component';
 import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/status-popup.component';
+import {ToastService} from '../../../services/toast.service';
 import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 
 @Component({
@@ -57,6 +58,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   currentTab: string;
   forceFocus$: Subject<boolean> = new Subject<boolean>();
 
+  user$: Observable<User>;
+
   selectedUsers: User[] = [];
 
   destroy$ = new Subject();
@@ -77,11 +80,17 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     private matDialog: MatDialog,
     private userService: UserService,
     private router: Router,
-    private tableService: TableService
+    private tableService: TableService,
+    private toast: ToastService
   ) { }
+
+  get showIntegrations$() {
+    return this.user$.pipe(filter(u => !!u), map(user => user.roles.includes('admin_manage_integration')));
+  }
 
   ngOnInit() {
     this.getCurrentTab();
+    this.user$ = this.userService.user$;
     if (this.showTabs && this.currentTab === '') {
       this.router.navigate(['admin/accounts', '_profile_student']);
     }
@@ -190,12 +199,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   updateTab(route) {
-    // if (route) {
       this.router.navigate(['/admin/accounts/', route]);
       this.forceFocus$.next(true);
-    // } else {
-    //   this.router.navigate(['/admin/accounts']);
-    // }
   }
 
   selectTab(event: HTMLElement, container: HTMLElement) {
@@ -232,15 +237,26 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         switchMap(res => {
           if (res === 'delete') {
             return zip(...this.selectedUsers.map(user => {
-              return this.userService.deleteUserRequest(user.id, this.currentTab);
-            }));
+              if (User.fromJSON(user).userRoles().length > 1) {
+                return zip(...User.fromJSON(user).userRoles().map(role => {
+                  return this.userService.deleteUserRequest(user.id, role);
+                }));
+              } else {
+                return this.userService.deleteUserRequest(user.id, this.currentTab);
+              }
+            })).pipe(mapTo(res));
           } else {
             return zip(...this.selectedUsers.map(user => {
               return this.userService.updateUserRequest(user, {status: res});
-            }));
+            })).pipe(mapTo(res));
           }
         })
       ).subscribe(res => {
+        if (res === 'delete') {
+          this.toast.openToast({title: `${this.selectedUsers.length} account${this.selectedUsers.length > 1 ? 's' : ''} deleted`, type: 'error'});
+        } else {
+          this.toast.openToast({title: `${this.selectedUsers.length} account statuses updated`, type: 'success'});
+        }
       this.selectedUsers = [];
       this.tableService.clearSelectedUsers.next();
         setTimeout(() => {

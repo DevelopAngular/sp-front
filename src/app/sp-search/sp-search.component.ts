@@ -6,7 +6,7 @@ import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {filter as _filter} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
@@ -15,6 +15,7 @@ import {Location} from '../models/Location';
 import {DeviceDetection} from '../device-detection.helper';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {Overlay} from '@angular/cdk/overlay';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 declare const window;
 
@@ -189,10 +190,15 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private locationService: LocationsService,
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
+    private kioskMode: KioskModeService
   ) {}
 
   get isMobile() {
     return DeviceDetection.isMobile();
+  }
+
+  get isKioskMode() {
+    return this.kioskMode.currentRoom$.getValue();
   }
 
   private getEmitedValue() {
@@ -281,6 +287,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         takeUntil(this.destroy$),
         pluck('key')
       )
@@ -519,7 +526,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   setAnimationTrigger(value) {
     if (!this.showBackgroundOverlay) {
-      interval(50).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
+      interval(200).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
         this.domCheckerService.fadeInOutTrigger$.next(value);
       });
     }
@@ -535,12 +542,16 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   studentNameLeave(cell) {
     this.destroyOpen$.next();
     this.showBackgroundOverlay = false;
-    interval(200).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
+    interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
       cell.isOpenTooltip = false;
     });
   }
 
   updateOverlayPosition(event) {
     this.renderer.addClass(this.studentPasses.nativeElement, event.connectionPair.panelClass);
+  }
+
+  hasStudentRole(user) {
+    return user.roles && User.fromJSON(user).isStudent();
   }
 }

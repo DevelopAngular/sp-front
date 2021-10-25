@@ -5,8 +5,9 @@ import {User} from '../../models/User';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
-import {catchError, takeUntil, tap} from 'rxjs/operators';
+import {catchError, map, takeUntil, tap} from 'rxjs/operators';
 import {HttpService} from '../../services/http-service';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-change-password',
@@ -32,12 +33,9 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     private formService: CreateFormService,
     private router: Router,
     private userService: UserService,
-    private http: HttpService
+    private http: HttpService,
+    private toast: ToastService
     ) { }
-
-  // get isAdmin() {
-  //   return this.user && this.user.roles.includes('_profile_admin') && this.router.url.includes('/admin');
-  // }
 
   get isSelf() {
     return this.me.id === this.user.id;
@@ -87,10 +85,17 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
       tap(() => {
         this.cancel.emit();
       }),
+      map(() => {
+        this.toast.openToast({
+          title: 'Success',
+          subtitle: 'Account password changed',
+          type: 'success'
+        });
+      }),
       catchError(error => {
         if (error.error.errors.indexOf('password is incorrect') !== -1 || error.error.errors.indexOf('key `current_password` is required') !== -1) {
           this.errorMessage$.next('Current password is incorrect.');
-          this.http.errorToast$.next(null);
+          // this.http.errorToast$.next(null);
         }
         return of(null);
       })

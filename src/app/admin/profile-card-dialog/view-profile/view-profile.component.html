@@ -21,7 +21,8 @@
     <div class="card-header" #header>
       <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
       <div class="back-button ds-flex-center-center" (click)="back()">
-        <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
+        <img *ngIf="!isEdit" [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
+        <div class="cancel" *ngIf="isEdit">Cancel</div>
       </div>
       <div class="ds-flex-center-center ds-dialog-title" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
 <!--        <img class="role-icon" [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">-->
@@ -29,7 +30,8 @@
 
       </div>
       <div class="status-button" #status>
-        <app-icon-button [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button>
+        <app-icon-button *ngIf="!isEdit" [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button>
+        <app-gradient-button *ngIf="isEdit" (buttonClick)="save()">Save</app-gradient-button>
       </div>
     </div>
 

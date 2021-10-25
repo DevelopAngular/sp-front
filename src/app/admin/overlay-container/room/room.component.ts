@@ -17,6 +17,7 @@ import {cloneDeep, isEqual, isNull, omit} from 'lodash';
 import {KeyboardShortcutsService} from '../../../services/keyboard-shortcuts.service';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
+import {ToastService} from '../../../services/toast.service';
 
 @Component({
   selector: 'app-room',
@@ -74,7 +75,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       public overlayService: OverlayDataService,
       private hallPassService: HallPassesService,
       private locationService: LocationsService,
-      private shortcuts: KeyboardShortcutsService
+      private shortcuts: KeyboardShortcutsService,
+      private toast: ToastService
   ) {
   }
 
@@ -197,10 +199,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.passLimitForm.reset();
   }
 
   checkValidRoomOptions() {
-      if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
+    if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
           if (this.validForm) {
               this.roomValidButtons = {
                   publish: false,
@@ -251,6 +254,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               buttonsResult.incomplete = true;
           }
       }
+
       this.roomDataResult.emit({data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons});
   }
 
@@ -309,6 +313,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       const pinnable = this.overlayService.pageState.getValue().data.pinnable;
       if (this.currentPage === Pages.EditRoom) {
         this.hallPassService.deletePinnableRequest(pinnable.id).subscribe(res => {
+          this.toast.openToast({title: 'Room deleted', type: 'error'});
           this.dialogRef.close();
         });
       } else if (this.currentPage === Pages.EditRoomInFolder) {

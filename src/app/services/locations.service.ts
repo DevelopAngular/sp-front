@@ -32,7 +32,7 @@ import {
   getLoadedFavoriteLocations,
   getLoadingFavoriteLocations
 } from '../ngrx/favorite-locations/states/favorite-locations-getters.state';
-import {getFavoriteLocations} from '../ngrx/favorite-locations/actions';
+import {getFavoriteLocations, updateFavoriteLocations} from '../ngrx/favorite-locations/actions';
 import {PassLimit} from '../models/PassLimit';
 import {getPassLimitCollection, getPassLimitEntities} from '../ngrx/pass-limits/states';
 import {getPassLimits, updatePassLimit} from '../ngrx/pass-limits/actions';
@@ -193,6 +193,10 @@ export class LocationsService {
 
     getFavoriteLocations() {
         return this.http.get('v1/users/@me/starred');
+    }
+
+    updateFavoriteLocationsRequest(locations: Location[]) {
+      this.store.dispatch(updateFavoriteLocations({locations}));
     }
 
     updateFavoriteLocations(body) {

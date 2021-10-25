@@ -4,6 +4,7 @@ import {
   ElementRef,
   EventEmitter,
   NgZone,
+  OnDestroy,
   OnInit,
   Output,
   QueryList,
@@ -12,7 +13,6 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {LoadingService} from '../../services/loading.service';
 import {DataService} from '../../services/data-service';
 import {User} from '../../models/User';
 import {UserService} from '../../services/user.service';
@@ -26,6 +26,7 @@ import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component
 import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
 
 import * as moment from 'moment';
+import {DeviceDetection} from '../../device-detection.helper';
 
 declare const window;
 
@@ -34,7 +35,7 @@ declare const window;
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements OnInit, AfterViewInit {
+export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('settingsButton', { static: true }) settingsButton: ElementRef;
   @ViewChild('navButtonsContainter', { static: true }) navButtonsContainterRef: ElementRef;
@@ -74,7 +75,6 @@ export class NavComponent implements OnInit, AfterViewInit {
         private activeRoute: ActivatedRoute,
         private dataService: DataService,
         private userService: UserService,
-        public loadingService: LoadingService,
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
@@ -83,6 +83,10 @@ export class NavComponent implements OnInit, AfterViewInit {
 
   get pointerTopSpace() {
     return this.pts;
+  }
+
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
 
   get showNotificationBadge() {
@@ -136,6 +140,7 @@ export class NavComponent implements OnInit, AfterViewInit {
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
+        filter(() => !this.isMobile),
         takeUntil(this.destroy$),
         pluck('key')
       ).subscribe(key => {
@@ -149,7 +154,7 @@ export class NavComponent implements OnInit, AfterViewInit {
           const route = {
             '1': 'dashboard',
             '2': 'hallmonitor',
-            '3': 'search',
+            '3': 'explore',
             '4': 'passconfig',
             '5': 'accounts',
             '6': 'myschool'
@@ -157,7 +162,7 @@ export class NavComponent implements OnInit, AfterViewInit {
           const currentButton = this.buttons.find(button => button.route === route[key[0]]);
           this.route(currentButton);
           if (!this.router.url.includes(currentButton.route)) {
-            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef.nativeElement);
+            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef);
           }
         }
     });
@@ -166,6 +171,11 @@ export class NavComponent implements OnInit, AfterViewInit {
       .subscribe(data => {
         this.introsData = data;
       });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   route( button: any) {

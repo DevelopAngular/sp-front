@@ -1,0 +1,34 @@
+<div class="wrapper">
+  <div class="header">
+    <img (click)="close()" class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <div class="title">Report</div>
+    <app-icon-button class="print" [onDarkShade]="true" [size]="17" [srcString]="'Print'" (clickEvent)="openPdfLink()"></app-icon-button>
+  </div>
+  <div class="content" (scroll)="scroll($event)">
+    <div class="block">
+      <div class="title">Student</div>
+      <div class="subtitle">{{ report.student.display_name }}</div>
+      <div class="subtitle">{{ report.student.primary_email }}</div>
+    </div>
+
+    <div class="block">
+      <div class="title">Message</div>
+      <div class="subtitle">{{ report.message || 'No report message' }}</div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="container">
+      <div class="block">
+        <div class="title">Submitted by</div>
+        <div class="subtitle">{{ report.issuer.display_name }}</div>
+      </div>
+      <div class="block">
+        <div class="title">Date Submitted</div>
+        <div class="subtitle">{{ dateFormat }}</div>
+      </div>
+    </div>
+
+    <div class="shadow" *ngIf="showBottomShadow"></div>
+  </div>
+</div>

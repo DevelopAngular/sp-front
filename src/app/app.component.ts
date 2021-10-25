@@ -54,7 +54,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public isAuthenticated = null;
-  public hideScroll: boolean = false;
+  public hideScroll: boolean = true;
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
@@ -133,7 +133,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         filter((release: Array<Update>) => !!release.length),
         switchMap((release) => {
-          // release = [release[0]];
           let config;
           if (DeviceDetection.isMobile()) {
             config = {

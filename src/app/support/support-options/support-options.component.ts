@@ -75,8 +75,9 @@ export class SupportOptionsComponent implements OnInit {
   openHubspot() {
     this.dialogRef.close(true);
     const chat = document.querySelector('#hubspot-messages-iframe-container');
-    (chat as HTMLElement).setAttribute('style', 'opacity: 1 !important');
-    // window.hubspot.messages.EXPERIMENTAL_API.requestWidgetOpen();
+    if (chat) {
+      (chat as HTMLElement).setAttribute('style', 'opacity: 1 !important');
+    }
     window.HubSpotConversations.widget.open();
   }
 

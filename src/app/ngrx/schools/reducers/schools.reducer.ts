@@ -65,9 +65,18 @@ const reducer = createReducer(
   on(schoolsActions.getCleverInfoSuccess, (state, {cleverInfo}) => {
     return {...state, loaded: true, loading: false, cleverInfo};
   }),
-  on(schoolsActions.syncClever, (state) => ({...state, syncLoading: true, syncLoaded: false})),
+  on(
+    schoolsActions.syncClever,
+    schoolsActions.syncGsuite,
+    (state) => ({...state, syncLoading: true, syncLoaded: false})),
   on(schoolsActions.updateCleverInfo, (state, {cleverInfo}) => {
     return { ...state, syncLoaded: true, syncLoading: false, cleverInfo };
+  }),
+  // on(schoolsActions.syncGsuiteSuccess, (state, {data}) => {
+  //   return { ...state, syncLoaded: true, syncLoading: false };
+  // }),
+  on(schoolsActions.updateGSuiteInfo, (state, {gsuiteInfo}) => {
+    return { ...state, gSuiteInfo: gsuiteInfo, syncLoaded: true, syncLoading: false };
   }),
   on(schoolsActions.clearSchools, (state) => (schoolsInitialState))
 );

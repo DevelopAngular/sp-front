@@ -1,3 +1,5 @@
+@import '../../sp-colors';
+
 .ios {
   &-options-wrapper {
     display: flex;
@@ -214,8 +216,14 @@
   align-content: center;
   justify-content: center;
   position: relative;
-  max-width: 532px;
-  margin: 100px auto auto auto;
+  max-width: 700px;
+  margin: 55px auto auto auto;
+
+  .report-desktop {
+    position: absolute;
+    right: -33px;
+    top: 0;
+  }
 }
 
 .footer-message {
@@ -262,6 +270,13 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .empty-text {
+    font-size: 17px;
+    color: $blue-gray;
+    width: 200px;
+    text-align: center;
+  }
 }
 
 .empty-svg {

@@ -3,7 +3,7 @@ import {User} from '../../../../models/User';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
-import {fromEvent, Observable, throwError} from 'rxjs';
+import {fromEvent, Observable, of} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 import {uniqBy} from 'lodash';
@@ -37,29 +37,23 @@ export class GroupsStep2Component implements OnInit {
     fromEvent(this.studentEmailsFile.nativeElement , 'change')
       .pipe(
         switchMap((evt: Event) => {
-          this.loadingIndicator = true;
           const FR = new FileReader();
           FR.readAsBinaryString(this.studentEmailsFile.nativeElement.files[0]);
           return fromEvent(FR, 'load');
         }),
         map(( res: any) => {
-          // console.log('Result', res);
+          this.loadingIndicator = true;
           const raw = XLSX.read(res.target.result, {type: 'binary'});
           const sn = raw.SheetNames[0];
           const stringCollection = raw.Sheets[sn];
           const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-          const headers = data[0];
-          console.log(data);
+
           return data.slice(1).map(item => item[0]);
         }),
         switchMap((_emails: string[]): Observable<any> => {
-
-          // console.log(_emails);
-
-          return this.userService.getAccountsRoles('_profile_student')
+          return this.userService.getAccountsRoles('_profile_student', '', 10000)
             .pipe(
               map((students: User[]) => {
-                // console.log(students);
                 const result = {
                   existingStudents: [],
                   unknown: []
@@ -73,7 +67,7 @@ export class GroupsStep2Component implements OnInit {
                     result.existingStudents.push(student);
                     _emails.splice(founded, 1);
                   }
-                })
+                });
                 result.unknown = _emails;
 
                 return result;
@@ -81,9 +75,8 @@ export class GroupsStep2Component implements OnInit {
         }),
         catchError((err) => {
           this.loadingIndicator = false;
-          console.log(err.message);
           this.uploadingError = err.message;
-          return throwError(err);
+          return of(null);
         })
       )
       .subscribe((students) => {
