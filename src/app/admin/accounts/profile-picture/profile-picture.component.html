@@ -166,7 +166,10 @@
         <div class="user-list" *ngIf="uploadedProfiles.length; else empty">
           <div class="user" *ngFor="let user of uploadedProfiles">
             <div class="user-container">
-              <div><img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar"></div>
+              <div>
+                <div class="picture" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
+<!--                <img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar">-->
+              </div>
               <div class="profile-info">
                 <div class="name">{{ user.display_name }}</div>
                 <div class="info" *ngIf="user.student_number"><span style="font-weight: bold">Student Number: </span><span>{{ user.student_number }}</span></div>
