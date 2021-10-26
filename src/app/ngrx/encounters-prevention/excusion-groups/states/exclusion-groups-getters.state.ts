@@ -6,6 +6,7 @@ import {IExclusionGroupsState} from './exclusion-groups.state';
 export const getExclusionGroupState = (state: AppState) => state.exclusionGroups;
 
 export const getExclusionGroupsCollection = adapter.getSelectors(getExclusionGroupState).selectAll;
+export const getExclusionGroupsEntities = adapter.getSelectors(getExclusionGroupState).selectEntities;
 
 export const getExclusionGroupsLoading = createSelector(
   getExclusionGroupState,
@@ -15,4 +16,15 @@ export const getExclusionGroupsLoading = createSelector(
 export const getExclusionGroupsLoaded = createSelector(
   getExclusionGroupState,
   (state: IExclusionGroupsState) => state.loaded
+);
+
+export const getCurrentExclusionGroupId = createSelector(
+  getExclusionGroupState,
+  (state: IExclusionGroupsState) => state.currentExclusionGroupId
+);
+
+export const getCurrentExclusionGroup = createSelector(
+  getExclusionGroupsEntities,
+  getCurrentExclusionGroupId,
+  (entities, id) => entities[id]
 );

@@ -26,7 +26,6 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: #6651F1;
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     }
 
@@ -50,7 +49,7 @@
       align-items: center;
     }
     .title {
-      color: #FFFFFF;
+      color: $navy;
       margin-left: 12px;
     }
   }
@@ -101,9 +100,11 @@
           color: $blue-gray;
         }
       }
-
       .groups {
-        padding: 18px;
+        margin-top: 10px;
+        .group {
+          padding: 0 18px 10px 18px;
+        }
       }
     }
     .page-3 {

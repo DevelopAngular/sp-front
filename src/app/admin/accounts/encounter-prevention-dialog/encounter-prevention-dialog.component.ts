@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {tap} from 'rxjs/operators';
@@ -13,7 +13,8 @@ import {EncounterPreventionService} from '../../../services/encounter-prevention
 enum Pages {
   'startPage' = 0,
   'newGroup'= 1,
-  'editGroup' = 2
+  'editGroup' = 2,
+  'groups' = 3
 }
 
 export interface EncountersState {
@@ -30,13 +31,14 @@ export interface EncountersState {
 @Component({
   selector: 'app-encounter-prevention-dialog',
   templateUrl: './encounter-prevention-dialog.component.html',
-  styleUrls: ['./encounter-prevention-dialog.component.scss']
+  styleUrls: ['./encounter-prevention-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EncounterPreventionDialogComponent implements OnInit {
 
   state: EncountersState = {
     prevent_page: 0,
-    current_page: 0,
+    current_page: 1,
     data: {
       students: [],
       teachers: [],
@@ -63,9 +65,6 @@ export class EncounterPreventionDialogComponent implements OnInit {
   ngOnInit(): void {
     this.encounterPreventionService.getExclusionGroupsRequest();
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
-    this.exclusionGroups$.subscribe(res => {
-      debugger;
-    });
   }
 
   setState(prevent_page, current_page) {
@@ -94,7 +93,11 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   save() {
     if (this.state.current_page === Pages.newGroup) {
-      this.nextPage();
+      this.encounterPreventionService.createExclusionGroupRequest({
+        name: null,
+        notes: this.state.data.notes,
+        students: this.state.data.students.map(s => s.id)
+      });
     }
   }
 

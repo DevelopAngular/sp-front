@@ -8,7 +8,8 @@ export const adapter = createEntityAdapter<ExclusionGroup>();
 
 const exclusionGroupsInitialState: IExclusionGroupsState = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  currentExclusionGroupId: null
 });
 
 const reducer = createReducer(
@@ -16,6 +17,9 @@ const reducer = createReducer(
   on(exclusionGroupsActions.getExclusionGroups, state => ({ ...state, loading: true, loaded: false })),
   on(exclusionGroupsActions.getExclusionGroupsSuccess, (state, {groups}) => {
     return adapter.addAll(groups, { ...state, loading: false, loaded: true });
+  }),
+  on(exclusionGroupsActions.createExclusionGroupSuccess, (state, {group}) => {
+    return adapter.addOne(group, { ...state, loading: false, loaded: true, currentExclusionGroupId: group.id });
   })
 );
 

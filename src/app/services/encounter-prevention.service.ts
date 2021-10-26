@@ -4,7 +4,7 @@ import {ExclusionGroup} from '../models/ExclusionGroup';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {getExclusionGroups} from '../ngrx/encounters-prevention/excusion-groups/actions';
+import {createExclusionGroup, getExclusionGroups} from '../ngrx/encounters-prevention/excusion-groups/actions';
 import {getExclusionGroupsCollection} from '../ngrx/encounters-prevention/excusion-groups/states/exclusion-groups-getters.state';
 
 @Injectable({
@@ -22,5 +22,13 @@ export class EncounterPreventionService {
 
   getExclusionGroups(): Observable<ExclusionGroup[]> {
     return this.http.get('v1/exclusion_groups');
+  }
+
+  createExclusionGroupRequest(group) {
+    this.store.dispatch(createExclusionGroup({groupData: group}));
+  }
+
+  createExclusionGroup(group): Observable<ExclusionGroup> {
+    return this.http.post(`v1/exclusion_groups`, group);
   }
 }

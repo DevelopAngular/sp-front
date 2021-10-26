@@ -2,12 +2,16 @@
 
 .wrapper {
   border-radius: 8px;
-  border: 2px solid $blue-gray;
+  border: 2px solid #7F879D;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   min-height: 50px;
   display: flex;
   position: relative;
   align-items: center;
+
+  &:hover {
+    background-color: $blue-gray;
+  }
 
   .students {
     display: flex;

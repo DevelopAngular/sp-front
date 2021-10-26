@@ -1,13 +1,19 @@
-<div class="wrapper">
+<div class="wrapper"
+     #wrapper
+     (mouseenter)="wrapper.hovered = true"
+     (mouseleave)="wrapper.hovered = false"
+>
   <div class="students">
     <div class="student"
        #chip
-       *ngFor="let student of state.data.students"
+       *ngFor="let student of group.users"
        (mouseenter)="chip.hovered = true"
-       (mouseleave)="chip.hovered = false"
-    >
+       (mouseleave)="chip.hovered = false">
       <div class="student-picture">
-        <img width="23" height="23" [src]="student.profile_picture || './assets/Default Avatar.svg' | resolveAsset" alt="">
+        <div *ngIf="student.profile_picture; else d" [ngStyle]="{'background': 'url(' + student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
+        <ng-template #d>
+          <img width="23" height="23" [src]="'./assets/Default Avatar.svg' | resolveAsset" alt="">
+        </ng-template>
       </div>
       <div class="name">{{ student.display_name }}</div>
 <!--      <div *ngIf="chip.hovered" class="delete">-->
@@ -16,8 +22,11 @@
     </div>
   </div>
   <div class="octagon">
-    <app-octagon [size]="28">
-      <div class="value">4</div>
+    <app-octagon [size]="28" *ngIf="!wrapper.hovered; else go">
+      <div class="value">{{ group.prevented_encounters }}</div>
     </app-octagon>
+    <ng-template #go>
+      <app-icon-button [srcString]="'Chevron Right'" [size]="20"></app-icon-button>
+    </ng-template>
   </div>
 </div>

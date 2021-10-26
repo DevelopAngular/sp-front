@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-octagon',
   templateUrl: './octagon.component.html',
-  styleUrls: ['./octagon.component.scss']
+  styleUrls: ['./octagon.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OctagonComponent implements OnInit {
 
