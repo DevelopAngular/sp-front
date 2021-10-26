@@ -51,7 +51,7 @@
             <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
               <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
             </div>
-            <div *ngIf="user.profile_picture; else d" [ngStyle]="{'background-image': 'url(' + user.profile_picture + ')', width: '88px', height: '88px', 'background-size': 'cover'}"></div>
+            <div *ngIf="user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
             <ng-template #d>
               <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
             </ng-template>

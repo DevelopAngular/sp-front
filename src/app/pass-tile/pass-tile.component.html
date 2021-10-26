@@ -30,7 +30,7 @@
   </div>
 
   <div class="profile-image animate" *ngIf="profileImage" [style.top]="isMiniCard ? '47px' : '54px'">
-    <div *ngIf="pass.student?.profile_picture; else d" #avatar [ngStyle]="{'background-image': 'url(' + pass.student?.profile_picture + ')', width: '88px', height: '88px', 'background-size': 'cover'}"></div>
+    <div *ngIf="pass.student?.profile_picture; else d" #avatar [ngStyle]="{'background': 'url(' + pass.student?.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
     <ng-template #d>
       <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
     </ng-template>

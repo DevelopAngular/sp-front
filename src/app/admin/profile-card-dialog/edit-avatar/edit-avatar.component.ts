@@ -21,7 +21,7 @@ export class EditAvatarComponent implements OnInit, OnDestroy {
             this.uploadingProgress.inProgress = true;
             this.selectedFile = fileRef.nativeElement.files[0];
             const FR = new FileReader();
-            FR.readAsDataURL(fileRef.nativeElement.files[0]);
+            FR.readAsDataURL(this.selectedFile);
             return fromEvent(FR, 'load');
           })
         )

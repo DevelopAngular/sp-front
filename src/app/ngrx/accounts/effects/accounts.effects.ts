@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
 import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {catchError, concatMap, exhaustMap, map, mapTo, switchMap, take} from 'rxjs/operators';
+import {catchError, concatMap, map, mapTo, switchMap, take} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {PostRoleProps} from '../states';
 import {getCountAccounts} from '../nested-states/count-accounts/actions';
@@ -12,7 +12,7 @@ import {forkJoin, of} from 'rxjs';
 import {openToastAction} from '../../toast/actions';
 import {Toast} from '../../../models/Toast';
 import {ProfilePicture} from '../../../models/ProfilePicture';
-import {ProfileMap} from '../../../models/ProfileMap';
+import {PollingService} from '../../../services/polling-service';
 
 @Injectable()
 export class AccountsEffects {
@@ -313,7 +313,7 @@ export class AccountsEffects {
      return this.actions$
        .pipe(
          ofType(accountsActions.updateAccountPicture),
-         exhaustMap(({profile, role, file}) => {
+         switchMap(({profile, role, file}) => {
             return this.userService.bulkAddProfilePictures([file])
               .pipe(
                 switchMap((images: ProfilePicture[]) => {
@@ -323,8 +323,11 @@ export class AccountsEffects {
                 switchMap((image) => {
                   return this.userService.uploadProfilePictures([+image.id], [profile.id]);
                 }),
-                map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
-                  return { ...profile, profile_picture: attached_photos[0].photo_url};
+                switchMap(jobId => {
+                  return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end');
+                }),
+                map(({data}) => {
+                  return { ...profile, profile_picture: data.attached_pictures[0].photo_url};
                 }),
                 map((user: User) => {
                   if (role === '_profile_admin') {
@@ -378,6 +381,7 @@ export class AccountsEffects {
 
   constructor(
     private actions$: Actions,
-    private userService: UserService
+    private userService: UserService,
+    private pollingService: PollingService
   ) {}
 }

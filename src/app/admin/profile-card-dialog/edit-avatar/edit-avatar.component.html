@@ -14,7 +14,7 @@
     </div>
     <ng-template #img>
       <div class="set-content">
-        <img class="set-img" [src]="imageUrl" alt="">
+        <div *ngIf="imageUrl" class="set-img" [ngStyle]="{'background': 'url(' + imageUrl + ') no-repeat left center/cover'}"></div>
         <div class="buttons">
           <div class="cancel" (click)="back()">Cancel</div>
           <app-gradient-button appCrossPointerEventTarget (pointerClickEvent)="setPicture()">Set picture</app-gradient-button>
