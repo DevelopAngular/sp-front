@@ -19,7 +19,8 @@
       <span>{{ title }}</span>
     </div>
     <div class="save-button">
-      <app-gradient-button *ngIf="showSaveButton()"
+      <app-gradient-button
+        *ngIf="showSaveButton()"
         [size]="'small'"
         [gradient]="'#FFFFFF, #FFFFFF'"
         [hoverColor]="'#FCFDFF'"
@@ -48,11 +49,13 @@
           <div class="profile-search">
             <div class="label" [style.color]="selectedUserErrors ? '#E32C66' : (selectedUsers.length ? '#1F195E' : '#7f879d')">G Suite Accounts</div>
             <app-sp-search
+              [width]="'100%'"
               [selectedOptions]="selectedUsers"
               [placeholder]="'Search syncing accounts'"
               [dummyRoleText]="'users'"
               [type]="typeChosen"
               [role]="data.role"
+              [gSuiteRoles]="getUserRoles"
               (onUpdate)="setSelectedUsers($event)"
             ></app-sp-search>
           </div>
