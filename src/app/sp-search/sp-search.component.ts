@@ -121,6 +121,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() cancelButton: boolean = false;
   @Input() rollUpAfterSelection: boolean = true;
   @Input() role: string = '_profile_student';
+  @Input() gSuiteRoles: string[];
   @Input() dummyRoleText: string = 'students';
   @Input() placeholder: string = 'Search students';
   @Input() type: string = 'alternative'; // Can be alternative or G_Suite or GG4L, endpoint will depend on that.
@@ -325,7 +326,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
             } else if (this.type === 'G Suite' || this.type === 'GG4L') {
               let request$;
               if (this.role !== '_all') {
-                request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);
+                if (this.type === 'G Suite') {
+                  request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1], this.gSuiteRoles);
+                } else {
+                  request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);
+                }
               } else {
                   request$ = this.userService.searchProfileAll(search, this.type);
               }
@@ -454,6 +459,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   addStudent(student: User) {
+    if (this.isDisabled(student)) {
+      return;
+    }
     if (this.chipsMode) {
       this.inputField = false;
     }
@@ -501,6 +509,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
 
     }
+  }
+
+  isDisabled(item: any) {
+    return this.type === 'G Suite' && item && !item.role_compatible;
   }
   cancel(studentInput) {
     studentInput.input.nativeElement.value = '';
