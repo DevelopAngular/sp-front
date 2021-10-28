@@ -219,7 +219,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           return students.map(student => {
             const user = {
               ...student,
-              file_name: student.extras.clever_student_number ? files[student.extras.clever_student_number].file.name : files[student.primary_email].file.name,
+              file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
               student_number: student.extras.clever_student_number
             };
             return user;

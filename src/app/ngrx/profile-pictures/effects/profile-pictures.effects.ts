@@ -107,7 +107,7 @@ export class ProfilePicturesEffects {
             map((students: User[]) => {
               return students.reduce((acc, user) => {
                 if (user.extras.clever_student_number) {
-                  return { ...acc, [user.extras.clever_student_number]: user };
+                  return { ...acc, [user.extras.clever_student_number]: user, [user.primary_email]: user };
                 }
                 return { ...acc, [user.primary_email]: user };
               }, {});
@@ -123,9 +123,7 @@ export class ProfilePicturesEffects {
             }),
             switchMap((students) => {
               const picturesData: {userId: string | number, pictureId: number | string}[] = students.filter(s => !!s).map((s: User) => {
-                const pictureId = s.extras.clever_student_number ?
-                  action.images_data[s.extras.clever_student_number] :
-                  action.images_data[s.primary_email];
+                const pictureId = action.images_data[s.extras.clever_student_number] || action.images_data[s.primary_email];
                 return { userId: s.id, pictureId};
               });
               return [
