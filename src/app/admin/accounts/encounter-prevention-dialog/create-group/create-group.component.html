@@ -5,8 +5,8 @@
       [chipsMode]="true"
       [placeholder]="'Select students'"
       [inputField]="true"
-      [selectedOptions]="state.data.students"
-      (onUpdate)="state.data.students = $event; onUpdate()"
+      [selectedOptions]="state.createGroup.students"
+      (onUpdate)="state.createGroup.students = $event; onUpdate()"
     ></app-sp-search>
   </div>
 
@@ -17,7 +17,7 @@
       [height]="'40px'"
       [formGroup]="form"
       [input_label]="'Group name (optional)'"
-      [input_value]="state.data.group_name"
+      [input_value]="state.createGroup.group_name"
       [controlName]="form.get('group_name')">
     </app-input>
   </div>
@@ -43,8 +43,8 @@
       [placeholder]="'Search staff'"
       [role]="'_profile_teacher'"
       [inputField]="true"
-      [selectedOptions]="state.data.teachers"
-      (onUpdate)="state.data.teachers = $event; onUpdate()"
+      [selectedOptions]="state.createGroup.teachers"
+      (onUpdate)="state.createGroup.teachers = $event; onUpdate()"
     ></app-sp-search>
 
     <div class="info">
