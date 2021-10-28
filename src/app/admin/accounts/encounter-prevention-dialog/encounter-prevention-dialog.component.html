@@ -3,19 +3,20 @@
     <div class="background-header"></div>
     <div class="header">
       <div class="back-button" (click)="back()">
-        <img width="28" [src]="'./assets/Back Button (White).svg' | resolveAsset" alt="">
+        <img width="28" [src]="'./assets/Back Button (Blue-Gray).svg' | resolveAsset" alt="">
       </div>
       <div class="header-info" [ngSwitch]="state.current_page">
 <!--        <img width="24" [src]="'./assets/Encounter Group (White).svg'" alt="Encounter">-->
         <div *ngSwitchCase="1" class="title">Encounter Prevention</div>
         <app-octagon *ngSwitchCase="3" [size]="34">
-          <img height="22" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+          <img class="value" height="22" [src]="'./assets/Walking One (White).svg' | resolveAsset">
         </app-octagon>
       </div>
       <div class="save-button">
         <app-gradient-button *ngIf="state.current_page === 1" (buttonClick)="save()">Save</app-gradient-button>
         <app-octagon *ngIf="state.current_page === 2" [size]="35"><div class="value">22</div></app-octagon>
-        <app-icon-button *ngIf="state.current_page === 3" [srcString]="'Dots'" [size]="17" (clickEvent)="openPopup($event)"></app-icon-button>
+        <app-icon-button *ngIf="false" [srcString]="'Dots'" [size]="17" (clickEvent)="openPopup($event)"></app-icon-button>
+        <app-gradient-button *ngIf="state.current_page === 3" [leftIcon]="'./assets/Plus (White).svg'">New group</app-gradient-button>
       </div>
     </div>
   </div>
@@ -23,9 +24,7 @@
   <div class="content">
     <div class="page-0" *ngIf="state.current_page === 0">
       <app-octagon>
-        <div class="value">
-          <img [src]="'./assets/Walking One (White).svg' | resolveAsset">
-        </div>
+          <img class="value" [src]="'./assets/Walking One (White).svg' | resolveAsset">
       </app-octagon>
       <div class="info">
         <div class="title">Prevent students from having passes at the same time</div>
@@ -44,14 +43,16 @@
     </div>
 
     <div class="page-2" *ngIf="state.current_page === 3">
-      <div class="new-group-header">
-        <div class="info">
-          <img width="16" [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset" alt="">
-          <div style="margin-left: 3px">Prevent students from having passes at the same time</div>
+      <div class="prevent-group-header">
+        <div class="prevent-group-info">
+          <div class="title">
+            <span>Prevented Encounters</span>
+            <img style="margin-left: 21px" width="16" [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset" alt="">
+          </div>
+          <div class="subtitle">101 encounters have been prevented this year for all students</div>
         </div>
-        <app-gradient-button [leftIcon]="'./assets/Plus (White).svg'">New group</app-gradient-button>
+        <app-octagon [size]="38"><div class="value">{{ '101' }}</div></app-octagon>
       </div>
-      <mat-divider></mat-divider>
       <div class="groups">
         <div class="group" *ngFor="let exclusionGroup of exclusionGroups$ | async">
           <app-encounter-group [state]="state" [group]="exclusionGroup"></app-encounter-group>

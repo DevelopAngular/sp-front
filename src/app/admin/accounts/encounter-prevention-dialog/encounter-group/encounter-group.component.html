@@ -3,12 +3,8 @@
      (mouseenter)="wrapper.hovered = true"
      (mouseleave)="wrapper.hovered = false"
 >
-  <div class="students">
-    <div class="student"
-       #chip
-       *ngFor="let student of group.users"
-       (mouseenter)="chip.hovered = true"
-       (mouseleave)="chip.hovered = false">
+  <div class="students" *ngIf="!group.name; else name">
+    <div class="student" *ngFor="let student of group.users">
       <div class="student-picture">
         <div *ngIf="student.profile_picture; else d" [ngStyle]="{'background': 'url(' + student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
         <ng-template #d>
@@ -21,9 +17,21 @@
 <!--      </div>-->
     </div>
   </div>
+  <ng-template #name>
+    <div class="group-name">
+      {{ group.name }}
+    </div>
+  </ng-template>
+
   <div class="octagon">
-    <app-octagon [size]="28" *ngIf="!wrapper.hovered; else go">
-      <div class="value">{{ group.prevented_encounters }}</div>
+    <app-octagon
+      *ngIf="!wrapper.hovered; else go"
+      [size]="28"
+      [backgroundColor]="'transparent'"
+      [borderColor]="'#E32C66'"
+      [borderWidth]="5"
+    >
+      <div class="value" style="color: #E32C66">{{ group.prevented_encounters }}</div>
     </app-octagon>
     <ng-template #go>
       <app-icon-button [srcString]="'Chevron Right'" [size]="20"></app-icon-button>

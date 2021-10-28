@@ -56,6 +56,11 @@
   .octagon {
     position: absolute;
     right: 15px;
+
+    .value {
+      position: absolute;
+      z-index: 10;
+    }
     //transform: scale(0.28);
     //bottom: -26px;
   }

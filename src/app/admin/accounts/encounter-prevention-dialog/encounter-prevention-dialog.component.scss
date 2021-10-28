@@ -47,6 +47,11 @@
     .header-info {
       display: flex;
       align-items: center;
+
+      .value {
+        position: absolute;
+        z-index: 10;
+      }
     }
     .title {
       color: $navy;
@@ -81,6 +86,11 @@
           margin-top: 6px;
         }
       }
+
+      .value {
+        position: absolute;
+        z-index: 10;
+      }
     }
 
     .page-1 {
@@ -88,22 +98,39 @@
     }
 
     .page-2 {
-      .new-group-header {
-        height: 79px;
+      padding: 15px;
+      .prevent-group-header {
         display: flex;
-        align-items: center;
-        padding: 0 22px;
+        justify-content: space-between;
+        padding: 14px;
+        border-radius: 6px;
+        background-color: #F7F7F7;
 
-        .info {
-          display: flex;
-          align-items: flex-start;
-          color: $blue-gray;
+        .prevent-group-info {
+          .title {
+            color: $navy;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+          }
+          .subtitle {
+            color: $blue-gray;
+            font-size: 14px;
+            margin-top: 8px;
+            width: 320px;
+          }
+        }
+
+        .value {
+          position: absolute;
+          z-index: 10;
+          color: white;
         }
       }
       .groups {
         margin-top: 10px;
         .group {
-          padding: 0 18px 10px 18px;
+          padding: 0 0 10px 0;
         }
       }
     }

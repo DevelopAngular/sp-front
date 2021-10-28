@@ -9,6 +9,9 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 export class OctagonComponent implements OnInit {
 
   @Input() size: number = 70;
+  @Input() backgroundColor: string = '#E32C66';
+  @Input() borderColor: string = '#EF8BAB';
+  @Input() borderWidth: number = 2.5;
 
   constructor() { }
 
