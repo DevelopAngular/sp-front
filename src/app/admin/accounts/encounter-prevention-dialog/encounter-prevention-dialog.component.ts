@@ -9,22 +9,27 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 import {Observable} from 'rxjs';
 import {ExclusionGroup} from '../../../models/ExclusionGroup';
 import {EncounterPreventionService} from '../../../services/encounter-prevention.service';
+import {cloneDeep} from 'lodash';
 
 enum Pages {
-  'startPage' = 0,
-  'newGroup'= 1,
-  'editGroup' = 2,
-  'groups' = 3
+  StartPage = 0,
+  NewGroup= 1,
+  EditGroup = 2,
+  Groups = 3,
+  GroupDescription = 4
 }
 
 export interface EncountersState {
   prevent_page: number;
   current_page: number;
-  data: {
+  createGroup: {
     students: User[],
     teachers: User[],
     group_name: string,
     notes: string
+  };
+  data: {
+    currentGroup?: ExclusionGroup;
   };
 }
 
@@ -38,12 +43,15 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   state: EncountersState = {
     prevent_page: 0,
-    current_page: 1,
-    data: {
+    current_page: Pages.Groups,
+    createGroup: {
       students: [],
       teachers: [],
       group_name: '',
       notes: ''
+    },
+    data: {
+      currentGroup: null
     }
   };
 
@@ -67,12 +75,16 @@ export class EncounterPreventionDialogComponent implements OnInit {
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
   }
 
-  setState(prevent_page, current_page) {
-    this.state = {
+  setState(from, to, data?) {
+    this.state = cloneDeep({
       ...this.state,
-      prevent_page,
-      current_page
-    };
+      prevent_page: from,
+      current_page: to,
+      data: {
+        ...this.state.data,
+        ...data
+      }
+    });
   }
 
   nextPage() {
@@ -82,21 +94,21 @@ export class EncounterPreventionDialogComponent implements OnInit {
   }
 
   back() {
-    if (this.state.current_page === Pages.startPage) {
+    if (this.state.current_page === Pages.StartPage) {
       this.dialogRef.close();
     } else {
       setTimeout(() => {
-        this.setState(this.state.current_page - 1, this.state.prevent_page);
+        this.setState(this.state.current_page, this.state.current_page - 1);
       }, 100);
     }
   }
 
   save() {
-    if (this.state.current_page === Pages.newGroup) {
+    if (this.state.current_page === Pages.NewGroup) {
       this.encounterPreventionService.createExclusionGroupRequest({
         name: null,
-        notes: this.state.data.notes,
-        students: this.state.data.students.map(s => s.id)
+        notes: this.state.createGroup.notes,
+        students: this.state.createGroup.students.map(s => s.id)
       });
     }
   }
@@ -110,5 +122,13 @@ export class EncounterPreventionDialogComponent implements OnInit {
     });
 
     ED.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false))).subscribe();
+  }
+
+  goDescription(currentGroup: ExclusionGroup) {
+    this.setState(this.state.current_page, Pages.GroupDescription, {currentGroup});
+  }
+
+  goNewGroup() {
+    this.setState(this.state.current_page, Pages.NewGroup);
   }
 }

@@ -52,6 +52,27 @@
         position: absolute;
         z-index: 10;
       }
+
+      .group-info {
+        .user-photos {
+          display: flex;
+          align-items: center;
+          position: relative;
+          width: 55px;
+          height: 37px;
+          .photo {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            position: absolute;
+          }
+        }
+
+        .group-name {
+          color: $navy;
+          font-size: 13px;
+        }
+      }
     }
     .title {
       color: $navy;

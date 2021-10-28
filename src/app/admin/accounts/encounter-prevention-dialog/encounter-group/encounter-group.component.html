@@ -2,6 +2,7 @@
      #wrapper
      (mouseenter)="wrapper.hovered = true"
      (mouseleave)="wrapper.hovered = false"
+     (click)="clickEvent.emit($event)"
 >
   <div class="students" *ngIf="!group.name; else name">
     <div class="student" *ngFor="let student of group.users">
@@ -34,7 +35,7 @@
       <div class="value" style="color: #E32C66">{{ group.prevented_encounters }}</div>
     </app-octagon>
     <ng-template #go>
-      <app-icon-button [srcString]="'Chevron Right'" [size]="20"></app-icon-button>
+      <app-icon-button [srcString]="'Chevron Right'" [size]="15"></app-icon-button>
     </ng-template>
   </div>
 </div>

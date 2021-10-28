@@ -8,9 +8,10 @@
   display: flex;
   position: relative;
   align-items: center;
+  cursor: pointer;
 
   &:hover {
-    background-color: $blue-gray;
+    background-color: #DEE0E6;
   }
 
   .students {
@@ -32,6 +33,11 @@
       white-space: nowrap;
       position: relative;
 
+      .name {
+        color: $navy;
+        font-size: 14px;
+      }
+
       .delete {
         width: 16px;
         height: 16px;
@@ -51,6 +57,13 @@
       }
     }
 
+  }
+
+  .group-name {
+    margin-left: 15px;
+    font-size: 15px;
+    color: $navy;
+    font-weight: 700;
   }
 
   .octagon {

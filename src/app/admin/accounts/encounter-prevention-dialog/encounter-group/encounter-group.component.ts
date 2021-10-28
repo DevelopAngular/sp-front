@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EncountersState} from '../encounter-prevention-dialog.component';
 import {ExclusionGroup} from '../../../../models/ExclusionGroup';
 
@@ -12,6 +12,8 @@ export class EncounterGroupComponent implements OnInit {
 
   @Input() state: EncountersState;
   @Input() group: ExclusionGroup;
+
+  @Output() clickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }
 

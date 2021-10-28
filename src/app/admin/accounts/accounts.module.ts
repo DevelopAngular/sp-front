@@ -30,6 +30,7 @@ import {CreateGroupComponent} from './encounter-prevention-dialog/create-group/c
 import {EncounterGroupComponent} from './encounter-prevention-dialog/encounter-group/encounter-group.component';
 import {ReportDescriptionComponent} from './encounter-prevention-dialog/report-description/report-description.component';
 import {EncounterOptionsComponent} from './encounter-prevention-dialog/encounter-options/encounter-options.component';
+import {EncounterGroupDescriptionComponent} from './encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import {EncounterOptionsComponent} from './encounter-prevention-dialog/encounter
     EncounterGroupComponent,
     ReportDescriptionComponent,
     EncounterOptionsComponent,
+    EncounterGroupDescriptionComponent,
   ],
   imports: [
     CommonModule,

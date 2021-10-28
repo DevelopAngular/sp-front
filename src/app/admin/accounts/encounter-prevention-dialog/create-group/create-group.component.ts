@@ -18,8 +18,8 @@ export class CreateGroupComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      group_name: new FormControl(this.state.data.group_name),
-      notes: new FormControl(this.state.data.notes)
+      group_name: new FormControl(this.state.createGroup.group_name),
+      notes: new FormControl(this.state.createGroup.notes)
     });
     this.form.valueChanges.subscribe(() => {
       this.onUpdate();
