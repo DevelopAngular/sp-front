@@ -793,7 +793,7 @@ export class UserService implements OnDestroy {
   }
 
   getMissingProfilePictures() {
-    return this.http.get(`v1/users?profile=student&has_picture=false`);
+    return this.http.get(`v1/users?role=_profile_student&has_picture=false`);
   }
 
   getUploadedErrorsRequest(group_id) {
