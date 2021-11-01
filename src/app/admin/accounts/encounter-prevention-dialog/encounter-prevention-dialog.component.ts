@@ -1,12 +1,12 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {tap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 import {User} from '../../../models/User';
 import {EncounterOptionsComponent} from './encounter-options/encounter-options.component';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
-import {Observable} from 'rxjs';
 import {ExclusionGroup} from '../../../models/ExclusionGroup';
 import {EncounterPreventionService} from '../../../services/encounter-prevention.service';
 import {cloneDeep} from 'lodash';
@@ -67,7 +67,8 @@ export class EncounterPreventionDialogComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>,
-    private encounterPreventionService: EncounterPreventionService
+    private encounterPreventionService: EncounterPreventionService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -85,6 +86,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
         ...data
       }
     });
+    this.cdr.detectChanges();
   }
 
   nextPage() {

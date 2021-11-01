@@ -132,7 +132,7 @@ const appRoutes: Routes = [
     AppComponent,
     ScrollHolderDirective,
     SupportButtonComponent,
-    CustomToastComponent
+    CustomToastComponent,
   ],
   imports: [
     BrowserModule,

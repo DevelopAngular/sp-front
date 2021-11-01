@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper" #wrapper>
   <div class="accounts-header" [style.background-color]="darkTheme.getBackground('high', true)">
     <div class="selected" *ngIf="selectedUsers.length">
       <div class="selected-content">
@@ -37,37 +37,69 @@
           </app-round-input>
         </div>
 
-        <app-gradient-button
-          [gradient]="'#6651F1, #6651F1'"
-          [leftIcon]="'./assets/Encounter Group (White).svg'"
-          [size]="'medium'"
-          [cursor]="'pointer'"
-          (buttonClick)="openEncounterPrevention()"
-        >
-         <span>Encounter</span> <br/> <span>Prevention</span>
-        </app-gradient-button>
+        <div class="buttons" *ngIf="!isMiniButtons; else squareButtons">
+          <app-gradient-button
+            *ngIf="showIntegrations$ | async"
+            [gradient]="'#F4F4F4, #F4F4F4'"
+            [leftIcon]="'./assets/Integrations (Navy).svg'"
+            [size]="'medium'"
+            [cursor]="'pointer'"
+            [textColor]="'#1F194E'"
+            (buttonClick)="openIntegrations()"
+          >Integrations</app-gradient-button>
 
-        <app-gradient-button
-          *ngIf="showIntegrations$ | async"
-          [style.margin-left]="'15px'"
-          [gradient]="'#F4F4F4, #F4F4F4'"
-          [leftIcon]="'./assets/Integrations (Navy).svg'"
-          [size]="'medium'"
-          [cursor]="'pointer'"
-          [textColor]="'#1F194E'"
-          (buttonClick)="openIntegrations()"
-        >Integrations</app-gradient-button>
+          <app-gradient-button
+            [style.margin-left]="'15px'"
+            [gradient]="'#EF8BAB, #EF8BAB'"
+            [size]="'medium'"
+            [cursor]="'pointer'"
+            (buttonClick)="openEncounterPrevention()">
+            <div class="button-content">
+              <app-octagon [size]="28">
+                <img class="value" height="17" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+              </app-octagon>
+              <span class="text">
+             <span>Encounter <br/>Prevention</span>
+           </span>
+            </div>
+          </app-gradient-button>
 
-        <app-gradient-button
-          [style.margin-left]="'15px'"
-          [size]="'medium'"
-          [hoverColor]="'#00B476'"
-          [cursor]="'pointer'"
-          [leftIcon]="'./assets/Plus (White).svg'"
-          (buttonClick)="addUser($event)"
-        >
-          Add
-        </app-gradient-button>
+          <app-gradient-button
+            [style.margin-left]="'15px'"
+            [size]="'medium'"
+            [hoverColor]="'#00B476'"
+            [cursor]="'pointer'"
+            [leftIcon]="'./assets/Plus (White).svg'"
+            (buttonClick)="addUser($event)">
+            Add
+          </app-gradient-button>
+        </div>
+
+        <ng-template #squareButtons>
+          <div class="buttons">
+            <app-square-button (buttonClick)="openIntegrations()" [backgroundColor]="'#F4F4F4'">
+              <img width="28" [src]="'./assets/Integrations (Navy).svg' | resolveAsset">
+            </app-square-button>
+
+            <app-square-button
+              style="margin-left: 10px"
+              [backgroundColor]="'#EF8BAB'"
+              (buttonClick)="openEncounterPrevention()">
+              <div class="button-content">
+                <app-octagon [size]="28">
+                  <img class="value" height="17" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+                </app-octagon>
+              </div>
+            </app-square-button>
+
+            <app-square-button
+              style="margin-left: 10px"
+              (buttonClick)="addUser($event)">
+              <img width="28" height="28" [src]="'./assets/Plus (White).svg' | resolveAsset">
+            </app-square-button>
+          </div>
+
+        </ng-template>
 
       </div>
     </div>

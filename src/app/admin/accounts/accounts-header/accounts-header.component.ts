@@ -1,8 +1,11 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -37,7 +40,8 @@ import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog
 @Component({
   selector: 'app-accounts-header',
   templateUrl: './accounts-header.component.html',
-  styleUrls: ['./accounts-header.component.scss']
+  styleUrls: ['./accounts-header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -52,6 +56,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   @ViewChild('tabPointer') tabPointer: ElementRef;
   @ViewChild('navButtonsContainer') navButtonsContainerRef: ElementRef;
+  @ViewChild('wrapper') wrapper: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   pts: string;
@@ -59,6 +64,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   forceFocus$: Subject<boolean> = new Subject<boolean>();
 
   user$: Observable<User>;
+  isMiniButtons: boolean;
 
   selectedUsers: User[] = [];
 
@@ -74,6 +80,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     { title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count' }
   ];
 
+  @HostListener('window:resize', ['$event.target'])
+  onResize(event) {
+    this.isMiniButtons = this.wrapper.nativeElement.clientWidth <= 850;
+  }
+
   constructor(
     private adminService: AdminService,
     public darkTheme: DarkThemeSwitch,
@@ -81,7 +92,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     private userService: UserService,
     private router: Router,
     private tableService: TableService,
-    private toast: ToastService
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   get showIntegrations$() {
@@ -97,6 +109,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     this.router.events.pipe(takeUntil(this.destroy$)).subscribe(value => {
       this.selectedUsers = [];
       this.getCurrentTab();
+      this.cdr.detectChanges();
     });
 
     this.tableService.selectRow.asObservable()
@@ -114,12 +127,14 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       )
       .subscribe(res => {
         this.selectedUsers = res;
+        this.cdr.detectChanges();
       });
 
   }
 
   ngAfterViewInit(): void {
     this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);
+    this.isMiniButtons = this.wrapper.nativeElement.clientWidth <= 850;
   }
 
   ngOnDestroy() {
@@ -217,6 +232,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         if (tabRefsArray[selectedTabRef]) {
           this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
         }
+        this.cdr.detectChanges();
       }, timeout);
   }
 
@@ -308,6 +324,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   clearData() {
     this.selectedUsers = [];
     this.tableService.clearSelectedUsers.next();
+    this.cdr.detectChanges();
   }
 
   openEncounterPrevention() {

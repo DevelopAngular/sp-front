@@ -64,6 +64,7 @@ import {RequestCardComponent} from '../request-card/request-card.component';
 import {InlineRequestCardComponent} from '../inline-request-card/inline-request-card.component';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {AppTextareaComponent} from '../app-textarea/app-textarea.component';
+import {SquareButtonComponent} from '../square-button/square-button.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -138,6 +139,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlineRequestCardComponent,
     DropdownComponent,
     AppTextareaComponent,
+    SquareButtonComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -195,6 +197,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlineRequestCardComponent,
     DropdownComponent,
     AppTextareaComponent,
+    SquareButtonComponent
   ],
   providers: [
     {
