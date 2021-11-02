@@ -36,6 +36,7 @@
     <div class="button" *ngIf="showConfirmButton">
       <app-gradient-button
         [gradient]="'#E32C66, #E32C66'"
+        (buttonClick)="dialogRef.close('delete')"
       >Confirm delete
       </app-gradient-button>
     </div>

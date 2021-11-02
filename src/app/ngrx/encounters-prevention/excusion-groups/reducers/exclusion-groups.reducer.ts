@@ -20,6 +20,9 @@ const reducer = createReducer(
   }),
   on(exclusionGroupsActions.createExclusionGroupSuccess, (state, {group}) => {
     return adapter.addOne(group, { ...state, loading: false, loaded: true, currentExclusionGroupId: group.id });
+  }),
+  on(exclusionGroupsActions.updateExclusionGroupSuccess, (state, {group}) => {
+    return adapter.upsertOne(group, {...state, loading: false, loaded: true, currentExclusionGroupId: group.id});
   })
 );
 

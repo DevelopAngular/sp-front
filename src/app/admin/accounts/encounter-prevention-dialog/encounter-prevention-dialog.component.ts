@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {tap} from 'rxjs/operators';
+import {filter, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
 import {User} from '../../../models/User';
@@ -20,7 +20,7 @@ enum Pages {
 }
 
 export interface EncountersState {
-  prevent_page: number;
+  pages_history: number[];
   current_page: number;
   createGroup: {
     students: User[],
@@ -42,7 +42,7 @@ export interface EncountersState {
 export class EncounterPreventionDialogComponent implements OnInit {
 
   state: EncountersState = {
-    prevent_page: 0,
+    pages_history: [Pages.Groups],
     current_page: Pages.Groups,
     createGroup: {
       students: [],
@@ -74,24 +74,31 @@ export class EncounterPreventionDialogComponent implements OnInit {
   ngOnInit(): void {
     this.encounterPreventionService.getExclusionGroupsRequest();
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
+
+    this.encounterPreventionService.updatedExclusionGroup$
+      .pipe(filter(r => !!r))
+      .subscribe(group => {
+        this.state.data.currentGroup = group;
+      });
   }
 
-  setState(from, to, data?) {
+  setState(isNext, to, data?) {
     this.state = cloneDeep({
       ...this.state,
-      prevent_page: from,
+      pages_history: isNext ? [...this.state.pages_history, to] : this.state.pages_history.splice(0, 1),
       current_page: to,
       data: {
         ...this.state.data,
         ...data
       }
     });
+    debugger;
     this.cdr.detectChanges();
   }
 
   nextPage() {
     setTimeout(() => {
-      this.setState(this.state.current_page, this.state.current_page + 1);
+      this.setState(true, this.state.current_page + 1);
     }, 100);
   }
 
@@ -100,7 +107,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
       this.dialogRef.close();
     } else {
       setTimeout(() => {
-        this.setState(this.state.current_page, this.state.current_page - 1);
+        this.setState(false, this.state.pages_history[this.state.pages_history.length - 2]);
       }, 100);
     }
   }
@@ -120,17 +127,23 @@ export class EncounterPreventionDialogComponent implements OnInit {
     const ED = this.dialog.open(EncounterOptionsComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: {trigger: event.currentTarget, options: this.options}
+      data: {trigger: event.currentTarget, group: this.state.data.currentGroup, options: this.options}
     });
 
-    ED.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false))).subscribe();
+    ED.afterClosed()
+      .pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+      .subscribe((action) => {
+        if (action === 'edit') {
+          this.setState(true, Pages.EditGroup);
+        }
+      });
   }
 
   goDescription(currentGroup: ExclusionGroup) {
-    this.setState(this.state.current_page, Pages.GroupDescription, {currentGroup});
+    this.setState(true, Pages.GroupDescription, {currentGroup});
   }
 
   goNewGroup() {
-    this.setState(this.state.current_page, Pages.NewGroup);
+    this.setState(true, Pages.NewGroup);
   }
 }

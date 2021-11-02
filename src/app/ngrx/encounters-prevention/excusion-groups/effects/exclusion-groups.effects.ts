@@ -41,6 +41,22 @@ export class ExclusionGroupsEffects {
       );
   });
 
+  updateExclusionGroup$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(exclusionGroupsActions.updateExclusionGroup),
+        switchMap((action: any) => {
+          return this.encounterPreventionService.updateExclusionGroup(action.group, action.updateFields)
+            .pipe(
+              map((group: ExclusionGroup) => {
+                return exclusionGroupsActions.updateExclusionGroupSuccess({group});
+              }),
+              catchError(error => of(exclusionGroupsActions.updateExclusionGroupFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private encounterPreventionService: EncounterPreventionService

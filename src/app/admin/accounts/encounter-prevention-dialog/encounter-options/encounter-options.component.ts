@@ -1,6 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
+import {ExclusionGroup} from '../../../../models/ExclusionGroup';
+import {EncounterPreventionService} from '../../../../services/encounter-prevention.service';
 
 @Component({
   selector: 'app-encounter-options',
@@ -14,17 +16,24 @@ export class EncounterOptionsComponent implements OnInit {
   showConfirmButton: boolean;
   options: {label: string, textColor: string, hoverColor: string, icon: string, action: string, description?: string}[];
   preventionStatusForm: FormGroup;
+  group: ExclusionGroup;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
-    public dialogRef: MatDialogRef<EncounterOptionsComponent>
+    public dialogRef: MatDialogRef<EncounterOptionsComponent>,
+    private encounterService: EncounterPreventionService
   ) { }
 
   ngOnInit(): void {
     this.triggerElementRef = this.data['trigger'];
     this.options = this.data['options'];
+    this.group = this.data['group'];
     this.preventionStatusForm = new FormGroup({
-      status: new FormControl(true)
+      status: new FormControl(this.group.enabled)
+    });
+
+    this.preventionStatusForm.get('status').valueChanges.subscribe(res => {
+      this.encounterService.updateExclusionGroupRequest(this.group, {enabled: res});
     });
     this.updatePosition();
   }
