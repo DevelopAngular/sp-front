@@ -76,7 +76,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() hasFilterPasses: boolean;
   @Input() filterModel: string;
   @Input() filterDate: moment.Moment;
-  @Input() user;
+  @Input() user: User;
   @Input() selectedSort = null;
   @Input() searchPanel: boolean;
   @Input() showProfilePictures: boolean = true;
@@ -95,6 +95,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   timers: number[] = [];
   timerEvent: Subject<void> = new BehaviorSubject(null);
   sort$ = this.dataService.sort$;
+
+  isEnabledProfilePictures$: Observable<boolean>;
 
   destroy$ = new Subject();
 
@@ -196,6 +198,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       .subscribe(user => {
         this.user = user;
     });
+
+    this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
   }
 
   ngOnDestroy() {
