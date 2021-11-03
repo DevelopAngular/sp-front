@@ -804,6 +804,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
       } else {
         row['Email'] = row.email;
+        row['Duration'] = row['Duration'].replace(' min', '');
       }
       return omit(row, ['Pass', 'Passes']);
     });
