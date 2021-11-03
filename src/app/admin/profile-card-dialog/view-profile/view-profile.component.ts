@@ -428,8 +428,7 @@ export class ViewProfileComponent implements OnInit {
   save() {
     this.updateProfile().subscribe((action) => {
       this.toast.openToast({
-        title: 'Success',
-        subtitle: 'Account updated',
+        title: 'Account updated',
         type: 'success'
       });
       this.close.emit(true);
