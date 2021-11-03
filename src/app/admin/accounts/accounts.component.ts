@@ -80,7 +80,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.queryParams.subscribe(res => {
       if (res.target === 'gsuite') {
-        this.openSettingsDialog('g_suite', '')
+        this.openSettingsDialog('g_suite', '');
       }
     });
 

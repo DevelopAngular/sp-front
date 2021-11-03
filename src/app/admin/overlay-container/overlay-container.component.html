@@ -22,7 +22,7 @@
     </div>
 
     <div class="right-button">
-      <app-gradient-button *ngIf="isAllowedSave"
+      <app-gradient-button *ngIf="isAllowedSave && (showCancelButton || currentPage === 1 || currentPage === 3)"
        [disabled]="isFormIncomplete"
        [minHeight]="'40px'"
        [style.width]="'120px'"
