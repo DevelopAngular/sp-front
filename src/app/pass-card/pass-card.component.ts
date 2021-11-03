@@ -7,7 +7,7 @@ import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
+import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, interval, merge, Observable, of, Subject} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -20,6 +20,7 @@ import {School} from '../models/School';
 import {DeviceDetection} from '../device-detection.helper';
 import {scalePassCards} from '../animations';
 import {DomCheckerService} from '../services/dom-checker.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-pass-card',
@@ -162,6 +163,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.data['pass']) {
       this.isModal = true;
       this.pass = this.data['pass'];
+      console.log(moment(this.pass.start_time).format('DD MMMM YYYY hh:mm'));
+      console.log(moment(this.pass.end_time).format('DD MMMM YYYY hh:mm'));
+      console.log(moment(this.pass.expiration_time).format('DD MMMM YYYY hh:mm'));
       this.forInput = this.data['forInput'];
       this.isActive = this.data['isActive'];
       this.forFuture = this.data['forFuture'];
@@ -193,7 +197,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
     if (!!this.pass && this.isActive) {
       merge(of(0), interval(1000)).pipe(
-        map(x => {
+        tap(x => {
         const end: Date = this.pass.expiration_time;
         const now: Date = this.timeService.nowDate();
         const diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -205,7 +209,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
         const start: Date = this.pass.start_time;
         const dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
         this.overlayWidth = (this.buttonWidth * (diff / dur));
-        return x;
       }), takeUntil(this.destroy$)).subscribe();
     }
     this.shortcutsService.onPressKeyEvent$

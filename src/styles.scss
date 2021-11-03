@@ -176,7 +176,7 @@ div {
 }
 
 .accounts-profiles-dialog{
-  margin-left: 219px !important;
+  //margin-left: 219px !important;
 }
 .accounts-profiles-dialog .mat-dialog-container{
   border-radius: 10px;
@@ -186,12 +186,12 @@ div {
 }
 
 .overlay-dialog {
-  margin-left: 219px !important;
+  //margin-left: 219px !important;
 }
 
 @media all and (max-width: 1110px) {
   .overlay-dialog {
-    margin-left: 0 !important;
+    //margin-left: 0 !important;
   }
 }
 
@@ -304,7 +304,8 @@ textarea:focus {
 }
 
 .custom-bd {
-  background-image: linear-gradient(to right, transparent 219px,rgba(0, 0, 0, 0.3) 0);
+  //background-image: linear-gradient(to right, transparent 219px,rgba(0, 0, 0, 0.3) 0);
+  @extend .custom-backdrop;
 }
 html, body {
   max-width: 100%;
