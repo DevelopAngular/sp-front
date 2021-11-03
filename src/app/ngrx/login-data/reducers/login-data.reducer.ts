@@ -1,5 +1,5 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import { ILoginDataState } from '../states';
+import {ILoginDataState} from '../states';
 import * as loginDataActions from '../actions';
 
 const loginDataInitialState: ILoginDataState = {

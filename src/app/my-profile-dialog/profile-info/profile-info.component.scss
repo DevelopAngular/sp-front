@@ -48,6 +48,21 @@
     overflow: auto;
     padding-bottom: 15px;
 
+    .page-1 {
+      position: relative;
+
+      .profile-image {
+        position: absolute;
+        width: 88px;
+        height: 88px;
+        //background-color: powderblue;
+        right: 40px;
+        top: 26px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+    }
+
     .block-item {
       padding: 26px 26px 0 26px;
       font-size: 15px;
@@ -80,5 +95,20 @@
         padding-top: 20px;
       }
     }
+  }
+}
+
+.avatar-animate {
+  animation : avatar-shimmer 3s infinite linear;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 88px 100%;
+}
+
+@keyframes avatar-shimmer {
+  0% {
+    background-position: -88px 0;
+  }
+  100% {
+    background-position: 88px 0;
   }
 }

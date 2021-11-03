@@ -8,5 +8,6 @@ export interface AdminsState extends EntityState<User> {
   lastAddedAdmins: User[];
   sortValue: string;
   addedUser: User;
+  currentUpdatedAccount: User;
 }
 

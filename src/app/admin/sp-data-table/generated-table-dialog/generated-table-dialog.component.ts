@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
-import {XlsxGeneratorService} from '../../xlsx-generator.service';
 import {omit} from 'lodash';
+import {XlsxService} from '../../../services/xlsx.service';
 
 @Component({
   selector: 'app-generated-table-dialog',
@@ -19,7 +19,7 @@ export class GeneratedTableDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
     public dialogRef: MatDialogRef<GeneratedTableDialogComponent>,
-    public xlsx: XlsxGeneratorService
+    public xlsx: XlsxService
   ) { }
 
   ngOnInit() {

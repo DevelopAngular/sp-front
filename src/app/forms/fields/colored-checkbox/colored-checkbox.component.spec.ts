@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ColoredCheckboxComponent } from './colored-checkbox.component';
+import {ColoredCheckboxComponent} from './colored-checkbox.component';
 
 describe('CheckboxComponent', () => {
   let component: ColoredCheckboxComponent;

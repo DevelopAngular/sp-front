@@ -10,7 +10,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {NotificationService} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {switchMap, take} from 'rxjs/operators';
 

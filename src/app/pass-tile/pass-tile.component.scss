@@ -1,29 +1,9 @@
-@media all and (max-width: 940px) {
-  div.tile-wrapper {
-    cursor: default;
-    width: 100%;
-  }
-
-  div.names-overlay {
-    width: 100%;
-  }
-}
-
-@media all and (max-width: 425px) and (min-width: 360px) {
-  div.tile-wrapper {
-    cursor: default;
-  }
-
-  div.tile-wrapper {
-    width: 157px;
-    height: 95px;
-  }
-}
+@import '../../sp-colors';
 
 .tile-wrapper{
     width: 143px;
-    height: 86.5px;
-    border-radius: 12.75px;
+    //height: 173px;
+    border-radius: 13px;
     display: flex;
     flex-direction: column;
     color: white;
@@ -37,6 +17,19 @@
     cursor: pointer;
     position: relative;
 
+  .profile-image {
+    position: absolute;
+    background-size: cover;
+    //bottom: 29px;
+    top: 54px;
+    //background: powderblue;
+    border-radius: 50px;
+    width: 88px;
+    height: 88px;
+    overflow: hidden;
+    z-index: 10;
+  }
+
   .overlay {
     display: flex;
     justify-content: center;
@@ -45,6 +38,29 @@
 
 .tile-title-container {
   min-width: 143px;
+  height: 87px;
+  border-radius: 13px 13px 0 0;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+
+  .miniCard {
+    margin-top: 15px;
+  }
+}
+
+.tile-container-footer {
+  position: absolute;
+  bottom: 0;
+  min-width: 143px;
+  height: 57px;
+  border-radius: 0 0 13px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  //background: rgba(200, 200, 200, .7);
+  //mix-blend-mode: soft-light;
+  z-index: 1;
 }
 
 .tile-title {
@@ -121,10 +137,9 @@
 }
 
 .names{
-    color: #fff;
-    font-family: 'Helvetica Neue',sans-serif;
+    color: #FFFFFF;
     font-size: 13.5px;
-    font-weight: 600;
+    font-weight: 500;
     position: absolute;
     bottom: 7px;
     width: 143px;
@@ -132,6 +147,29 @@
     justify-content: center;
     cursor: pointer;
     user-select: none;
+    z-index: 10;
+}
+
+@media all and (max-width: 940px) {
+  div.tile-wrapper {
+    cursor: default;
+    width: 100%;
+  }
+
+  div.names-overlay {
+    width: 100%;
+  }
+}
+
+@media all and (max-width: 425px) and (min-width: 360px) {
+  div.tile-wrapper {
+    cursor: default;
+  }
+
+  div.tile-wrapper {
+    width: 157px;
+    height: 95px;
+  }
 }
 
 .student-passes {
@@ -178,6 +216,21 @@
       height: 33px;
       width: 143px;
     }
+  }
+}
+
+.animate {
+  animation : shimmer 3s infinite linear;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 88px 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -88px 0;
+  }
+  100% {
+    background-position: 88px 0;
   }
 }
 

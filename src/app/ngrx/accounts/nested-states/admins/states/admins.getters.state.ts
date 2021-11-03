@@ -28,6 +28,11 @@ export const getLastAddedAdminsAccounts = createSelector(
   (state: AdminsState) => state.lastAddedAdmins
 );
 
+export const getCurrentUpdatedAdmin = createSelector(
+  getAdminsAccountsProfiles,
+  (state: AdminsState) => state.currentUpdatedAccount
+);
+
 export const getAdminSort = createSelector(
   getAdminsAccountsProfiles,
   (state: AdminsState) => state.sortValue

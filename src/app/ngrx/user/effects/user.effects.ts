@@ -3,9 +3,11 @@ import {UserService} from '../../../services/user.service';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as userActions from '../actions';
 import * as accountsActions from '../../accounts/actions/accounts.actions';
-import {catchError, concatMap, exhaustMap, map} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, mapTo, switchMap} from 'rxjs/operators';
 import {User} from '../../../models/User';
 import {of} from 'rxjs';
+import {ProfilePicture} from '../../../models/ProfilePicture';
+import {ProfileMap} from '../../../models/ProfileMap';
 
 @Injectable()
 export class UserEffects {
@@ -77,6 +79,30 @@ export class UserEffects {
         ofType(userActions.updateUserPin),
         map((action) => {
           return userActions.updateUserPinSuccess({pin: action.pin});
+        })
+      );
+  });
+
+  updateProfilePicture$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(userActions.updateUserPicture),
+        exhaustMap((action) => {
+          return this.userService.bulkAddProfilePictures([action.file])
+            .pipe(
+              switchMap((images: ProfilePicture[]) => {
+                return this.userService.setProfilePictureToGoogle(images[0].upload_url, action.file, images[0].content_type)
+                  .pipe(mapTo(images[0]));
+              }),
+              switchMap((image) => {
+                return this.userService.uploadProfilePictures([+image.id], [action.user.id]);
+              }),
+              map(({attached_photos}: {attached_photos: ProfileMap[]}) => {
+                return { ...action.user, profile_picture: attached_photos[0].photo_url};
+              }),
+              map((user: User) => userActions.updateUserPictureSuccess({user})),
+              catchError(error => of(userActions.updateUserPictureFailure({errorMessage: error.message})))
+            );
         })
       );
   });

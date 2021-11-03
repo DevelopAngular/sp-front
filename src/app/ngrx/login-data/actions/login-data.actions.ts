@@ -1,5 +1,5 @@
-import { createAction, props } from '@ngrx/store';
-import { LoginDataQueryParams } from '../../../models/LoginDataQueryParams';
+import {createAction, props} from '@ngrx/store';
+import {LoginDataQueryParams} from '../../../models/LoginDataQueryParams';
 
 const LOGIN = 'LOGIN';
 

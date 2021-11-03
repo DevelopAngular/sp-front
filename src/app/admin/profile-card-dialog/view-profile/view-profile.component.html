@@ -47,12 +47,20 @@
              #avatarContainer
              (mouseenter)="avatarContainer.hover = true"
              (mouseleave)="avatarContainer.hover = false"
-               [matTooltip]="'Profile pictures are coming soon!'"
-               matTooltipClass="tooltip"
           >
-            <img width="88" height="88" [src]="'./assets/Default Avatar.svg' | resolveAsset" alt="avatar">
-<!--            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>-->
-<!--            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [src]="'./assets/Add Avatar (White).svg' | resolveAsset" alt="add">-->
+            <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
+              <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
+            </div>
+            <div *ngIf="user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
+            <ng-template #d>
+              <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+            </ng-template>
+            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
+            <div class="buttons" *ngIf="!(loadingProfilePicture | async)">
+              <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!user.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+              <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && user.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
+            </div>
+
           </div>
           <div class="status"
                [matTooltip]="statusDescriptions[profileStatusActive] || null"

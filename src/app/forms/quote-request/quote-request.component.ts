@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnInit, ViewChild, Renderer2} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormsService} from '../../services/forms.service';
 import {GoogleAnalyticsService} from '../../services/google-analytics.service';

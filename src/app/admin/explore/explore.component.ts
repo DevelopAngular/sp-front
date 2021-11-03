@@ -20,7 +20,6 @@ import {cloneDeep, isEqual, omit} from 'lodash';
 import {TableService} from '../sp-data-table/table.service';
 import {ToastService} from '../../services/toast.service';
 import {AdminService} from '../../services/admin.service';
-import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
@@ -28,6 +27,7 @@ import {Report} from '../../models/Report';
 import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
+import {XlsxService} from '../../services/xlsx.service';
 
 declare const window;
 
@@ -154,7 +154,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private tableService: TableService,
     private toastService: ToastService,
     private adminService: AdminService,
-    public xlsx: XlsxGeneratorService,
+    public xlsx: XlsxService,
     private userService: UserService
     ) {
     window.passClick = (id) => {

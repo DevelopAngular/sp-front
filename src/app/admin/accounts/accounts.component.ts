@@ -21,10 +21,11 @@ import {Ggl4SettingsComponent} from './integrations-dialog/ggl4-settings/ggl4-se
 import {GSuiteSettingsComponent} from './g-suite-settings/g-suite-settings.component';
 import {ToastService} from '../../services/toast.service';
 import {Onboard} from '../../models/Onboard';
-import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {TableService} from '../sp-data-table/table.service';
 import {CleverInfo} from '../../models/CleverInfo';
 import {PollingService} from '../../services/polling-service';
+import {ProfilePictureComponent} from './profile-picture/profile-picture.component';
+import {XlsxService} from '../../services/xlsx.service';
 
 declare const window;
 
@@ -68,7 +69,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private domSanitizer: DomSanitizer,
     private locationService: LocationsService,
     private toastService: ToastService,
-    private xlsxGeneratorService: XlsxGeneratorService,
+    private xlsxService: XlsxService,
     private tableService: TableService,
     private polingService: PollingService
   ) {}
@@ -143,7 +144,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(res => {
-        this.xlsxGeneratorService.generate(res);
+        this.xlsxService.generate(res);
         // this.tableService.loadingCSV$.next(false);
     });
 
@@ -216,5 +217,14 @@ export class AccountsComponent implements OnInit, OnDestroy {
             buttonText: 'Download passwords'
           });
       });
+  }
+
+  openProfilePictures() {
+    const PPD = this.matDialog.open(ProfilePictureComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px'
+    });
   }
 }

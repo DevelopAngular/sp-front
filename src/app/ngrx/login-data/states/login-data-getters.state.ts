@@ -1,6 +1,6 @@
-import { AppState } from '../../app-state/app-state';
-import { createSelector } from '@ngrx/store';
-import { ILoginDataState } from './login-data.state';
+import {AppState} from '../../app-state/app-state';
+import {createSelector} from '@ngrx/store';
+import {ILoginDataState} from './login-data.state';
 
 export const getLoginDataState = (state: AppState) => state.loginData;
 

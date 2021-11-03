@@ -38,6 +38,11 @@ export const getAddedTeacher = createSelector(
   (state: TeachersStates) => state.addedUser
 );
 
+export const getCurrentUpdatedTeacher = createSelector(
+  getTeachersAccountsProfiles,
+  (state: TeachersStates) => state.currentUpdatedAccount
+);
+
 export const getCountTeachers = adapter.getSelectors(getTeachersAccountsProfiles).selectTotal;
 export const getTeachersAccountsEntities = adapter.getSelectors(getTeachersAccountsProfiles).selectEntities;
 

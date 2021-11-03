@@ -10,6 +10,12 @@
 
   <div class="profile-content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="page-1">
+      <div class="profile-image avatar-animate">
+        <div *ngIf="user?.profile_picture; else d" [ngStyle]="{'background': 'url(' + user?.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
+        <ng-template #d>
+          <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+        </ng-template>
+      </div>
       <div class="block-item">
         <div class="label">Name</div>
         <div class="item-content">{{ user.display_name }}</div>

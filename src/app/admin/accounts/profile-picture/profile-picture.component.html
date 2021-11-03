@@ -1,0 +1,260 @@
+<div class="wrapper">
+  <div class="heading" #header>
+    <div class="back-button">
+      <img (click)="back()" *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+      <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3">Cancel</div>
+    </div>
+    <div class="ds-dialog-title-white ds-flex-center-center">
+      <img [src]="'./assets/Pictures (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+      <span>Profile Pictures</span>
+    </div>
+    <div class="save-button"
+         [matTooltip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile picture files and the map file before uploading!' : null"
+         matTooltipClass="tooltip">
+      <app-gradient-button
+        *ngIf="page !== 3 && page !== 5"
+        [disabled]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2"
+        [size]="'small'"
+        [gradient]="'#FFFFFF, #FFFFFF'"
+        [hoverColor]="'#FCFDFF'"
+        [textColor]="'#07ABC3'"
+        [cursor]="'pointer'"
+        (buttonClick)="nextPage()"
+      >
+        <div class="ds-flex-center-start">
+          <span>
+           {{ page === 4 ? 'Done' : 'Upload' }}
+          </span>
+        </div>
+      </app-gradient-button>
+      <div class="dots" *ngIf="page === 5" #dots>
+        <app-icon-button [size]="17" [srcString]="'Dots'" [onDarkShade]="true" (clickEvent)="openSettings()"></app-icon-button>
+      </div>
+      <div class="incomplete" *ngIf="false">Incomplete</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page" *ngIf="page === 1">
+      <div class="center-content">
+        <img style="margin-right: 15px" [src]="'./assets/emptyStates/upload-file.svg' | resolveAsset">
+        <div style="margin-top: 35px"  class="ds-dialog-heading">Add Profile Pictures</div>
+        <div class="subtitle">Quickly add profile pictures for all your users with an image map from your SIS.</div>
+        <app-gradient-button
+          [gradient]="'#07ABC3, #07ABC3'"
+          [hoverColor]="'#07ABC3'"
+          [rightIcon]="'./assets/Chevron Right (White).svg'"
+          (buttonClick)="nextPage()"
+        >Continue
+        </app-gradient-button>
+      </div>
+    </div>
+
+    <div class="page" [style.padding]="'30px 25px 0 20px'" *ngIf="page === 2">
+      <div class="step-wrapper">
+        <div class="step-container">
+          <div class="step-number" [ngClass]="{selected: uploadingProgress.csv.complete}">1</div>
+          <div class="step">
+            <div class="ds-dialog-heading">Add map file</div>
+            <div class="description">
+              Upload a CSV containing the email or Clever ID, and the corresponding image filename.
+            </div>
+          </div>
+        </div>
+        <div class="buttons">
+          <app-gradient-button
+            [gradient]="!uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'"
+            [hoverColor]="'#7F879D'"
+            [leftIcon]="'./assets/Simple CSV (White).svg'"
+            (buttonClick)="csvFile.click()"
+            [size]="'small'"
+          >{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose CSV' : 'File selected' }}
+          </app-gradient-button>
+          <app-gradient-button
+            [style.margin-left]="'7px'"
+            [size]="'small'"
+            [gradient]="'#F4F4F4, #F4F4F4'"
+            [buttonLink]="'./assets/xlsx/SmartPass Picture Map.xlsx'"
+            [linkType]="'_self'"
+            [download]="true"
+            [hoverColor]="'#F4F4F4'"
+            [textColor]="'#1E194F'"
+            [leftIcon]="'./assets/Download (Navy).svg'"
+            [text]="'Download Template'"
+            [cursor]="'pointer'"
+          >
+          </app-gradient-button>
+
+          <input type="file" [formControl]="form.get('csvFile')"  #csvFile style="display: none"/>
+        </div>
+      </div>
+
+      <div class="step-wrapper">
+        <div class="step-container">
+          <div class="step-number" [ngClass]="{selected: uploadingProgress.images.complete}">2</div>
+          <div class="step">
+            <div class="ds-dialog-heading">Add profile picture files</div>
+            <div class="description">
+              Supported image types: JPEG, PNG <br/>
+              You can also upload a zip file that contains the images.
+            </div>
+          </div>
+        </div>
+        <div class="button">
+          <app-gradient-button
+            [gradient]="!uploadingProgress.images.inProcess && !uploadingProgress.images.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'"
+            [hoverColor]="'#7F879D'"
+            [leftIcon]="'./assets/Zip (White).svg'"
+            (buttonClick)="zip.click()"
+          >
+            <mat-spinner *ngIf="uploadingProgress.images.inProcess; else complete" [color]="'warn'" [diameter]="30"></mat-spinner>
+            <ng-template #complete>{{ uploadingProgress.images.inProcess || uploadingProgress.images.complete ? uploadingProgress.images.inProcess ? 'Uploading' : imagesLength + ' images selected' : 'Choose files' }}</ng-template>
+          </app-gradient-button>
+          <input type="file" multiple [formControl]="form.get('images')"  #zip style="display: none"/>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="page" *ngIf="page === 3">
+
+      <div class="image-container" *ngIf="(picturesLoaderPercent$ | async) < 95; else complete">
+
+        <svg width="124px" height="96px">
+            <linearGradient id="lg" x1="0.5" y1="1" x2="0.5" y2="0">
+              <stop offset="0%" stop-opacity="1" stop-color="#07ABC3" #fgf1></stop>
+              <stop offset="0%" stop-opacity="1" stop-color="#7f879d"></stop>
+            </linearGradient>
+          <path fill="url(#lg)" d="M9.53846154,0 C4.26846154,0 0,4.296 0,9.6 L0,86.4 C0,91.704 4.26846154,96 9.53846154,96 L114.461538,96 C119.731538,96 124,91.704 124,86.4 L124,9.6 C124,4.296 119.731538,0 114.461538,0 L9.53846154,0 Z M100.153846,14.4 C105.423846,14.4 109.692308,18.696 109.692308,24 C109.692308,29.304 105.423846,33.6 100.153846,33.6 C94.8838462,33.6 90.6153846,29.304 90.6153846,24 C90.6153846,18.696 94.8838462,14.4 100.153846,14.4 Z M33.3846154,33.6093744 C36.3379615,33.6093744 39.2910072,34.7444976 41.5444735,37.0125024 L57.1003594,52.6687488 L62,57.6 L67.5144231,63.15 C69.5270385,65.1756 72.7767494,65.1568512 74.7893648,63.1312512 C76.8067494,61.1056512 76.8067494,57.8116512 74.7893648,55.7812512 L69.2935703,50.2593744 L72.9170649,46.6125024 C77.4239928,42.0764976 84.7298534,42.0764976 89.2367812,46.6125024 L109.692308,67.2 L109.692308,81.6 L14.3076923,81.6 L14.3076923,48 L25.2247596,37.0125024 C27.4782212,34.7444976 30.4312692,33.6093744 33.3846154,33.6093744 Z"></path>
+        </svg>
+
+        <div class="ds-dialog-title" style="margin-top: 15px">{{ picturesLoaderPercent$ | async }}% Uploading pictures...</div>
+
+      </div>
+
+      <ng-template #complete>
+        <div class="image-container">
+          <div class="syncing-spin-wrapper">
+            <img class="spinner" width="43px" height="43px" [src]="'./assets/Sync Loading (Turquoise).svg' | resolveAsset" alt="Sync">
+            <div class="syncing-title">Pictures are being processed. This may take a while…</div>
+          </div>
+        </div>
+      </ng-template>
+
+    </div>
+
+    <div class="page" *ngIf="page === 4">
+      <div class="upload-info" style="padding: 20px">
+        <div class="upload-title">Upload complete</div>
+        <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ allProfiles.length }} accounts</span></div>
+        <div class="info"><span style="font-weight: bold">Uploaded pictures: </span><span>{{ allProfiles.length }} accounts</span></div>
+        <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <span *ngIf="errors.length" (click)="generateErrorsCsv()" style="color: #E32C66; cursor: pointer;">[Download]</span></span></div>
+      </div>
+
+      <div class="uploaded-users">
+        <div class="search-input">
+          <app-round-input
+            [isSearch]="true"
+            [placeholder]="'Search accounts'"
+            [focused]="true"
+            [width]="'242px'"
+            [minWidth]="'242px'"
+            (ontextupdate)="searchUsers($event)"
+          ></app-round-input>
+        </div>
+
+        <div class="user-list" *ngIf="uploadedProfiles.length; else empty">
+          <div class="user" *ngFor="let user of uploadedProfiles">
+            <div class="user-container">
+              <div>
+                <div class="picture" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
+<!--                <img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar">-->
+              </div>
+              <div class="profile-info">
+                <div class="name">{{ user.display_name }}</div>
+                <div class="info" *ngIf="user.student_number"><span style="font-weight: bold">Student Number: </span><span>{{ user.student_number }}</span></div>
+                <div class="info"><span style="font-weight: bold">Image Filename: </span><span>{{ user.file_name }}</span></div>
+              </div>
+            </div>
+            <mat-divider *ngIf="uploadedProfiles.length > 1"></mat-divider>
+          </div>
+
+        </div>
+        <ng-template #empty>
+          <div>
+            No students found
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+
+    <div class="update-page" *ngIf="page === 5">
+      <div class="block" *ngIf="!school.profile_pictures_enabled">
+        <div class="upload-info" style="background-color: #e5f9f1; margin-top: 15px">
+          <div class="upload-content">
+            <div class="text">
+              <div class="title">Ready to enable profile pictures?</div>
+              <div class="subtitle">Enable profile pictures so teachers can see them on pass tiles.</div>
+            </div>
+            <div class="button">
+              <app-gradient-button
+                [gradient]="'#01b376, #01b376'"
+                (buttonClick)="switchProfilePictures(true)"
+              >Enable</app-gradient-button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="block" [style.margin-top]="school.profile_pictures_enabled ? '15px' : 0">
+        <div class="upload-info" *ngIf="(accountsWithoutPictures$ | async) as accountsWithoutPictures">
+          <div class="update-button">
+            <div>
+              <div class="title">Add or update Pictures</div>
+              <div class="subtitle">Bulk upload profile pictures</div>
+            </div>
+            <app-gradient-button
+              [rightIcon]="'./assets/Chevron Right (White).svg'"
+              [gradient]="'#07ABC3, #07ABC3'"
+              (buttonClick)="clearData(); page = 2"
+            >New Upload</app-gradient-button>
+          </div>
+          <mat-divider *ngIf="accountsWithoutPictures.length"></mat-divider>
+          <div class="missing" *ngIf="accountsWithoutPictures.length">
+            <div style="display: flex; align-items: center">
+              <img [src]="'./assets/Warning (Orange).svg'" alt="">
+              <div class="info-title">Missing Pictures</div>
+            </div>
+            <div class="info">
+              {{ accountsWithoutPictures.length }} students don’t have profile pictures.
+            </div>
+            <div class="info-icon">
+              <app-icon-button (clickEvent)="generateStudentsCsv(accountsWithoutPictures)" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="upload-history">
+        <div class="ds-dialog-title" style="padding: 20px">Upload History</div>
+        <div class="block" *ngFor="let group of uploadedGroups$ | async">
+          <div class="upload-info" style="padding: 20px">
+            <div class="upload-title">{{ getUploadedGroupTime(group.created) }}</div>
+            <div class="info"><span style="font-weight: bold">New pictures: </span><span>{{ group.num_assigned_new }} accounts</span></div>
+            <div class="info"><span style="font-weight: bold">Updated pictures: </span><span>{{ group.num_assigned_update }} accounts</span></div>
+            <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ group.error_count }} errors <span *ngIf="group.error_count" (click)="prepareErrorsToCsv(group)" style="color: #E32C66; cursor: pointer;">[Download]</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer" *ngIf="page !== 4">
+      <mat-divider></mat-divider>
+      <div class="footer-content">
+        <div class="link" style="color: #7f879d">Need some help?</div>
+        <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/profile-pictures" target="_blank">Watch tutorial</a></div>
+        <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/schedule-a-support-meeting" target="_blank">Schedule a call</a></div>
+      </div>
+    </div>
+  </div>
+</div>

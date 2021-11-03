@@ -16,7 +16,10 @@ export class User extends BaseModel {
               public status: string,
               public badge: string,
               public sync_types: string[],
-              public show_expired_passes: boolean
+              public show_expired_passes: boolean,
+              public show_profile_pictures: string,
+              public profile_picture: string,
+              public extras: any
               ) {
     super();
   }
@@ -42,7 +45,10 @@ export class User extends BaseModel {
       status: string = JSON['status'],
       badge: string = JSON['badge'],
       sync_types: string[] = [],
-      show_expired_passes: boolean = !!JSON['show_expired_passes'];
+      show_expired_passes: boolean = !!JSON['show_expired_passes'],
+      show_profile_pictures: string = JSON['show_profile_pictures'],
+      profile_picture: string = JSON['profile_picture'],
+      extras: any = JSON['extras'];
 
     const rolesJSON = JSON['roles'];
     const sync_types_json = JSON['sync_types'];
@@ -69,7 +75,10 @@ export class User extends BaseModel {
       status,
       badge,
       sync_types,
-      show_expired_passes
+      show_expired_passes,
+      show_profile_pictures,
+      profile_picture,
+      extras
     );
   }
 

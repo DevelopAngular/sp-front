@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/
 import {fromEvent, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup} from '@angular/forms';
+import {User} from '../../../models/User';
 
 @Component({
   selector: 'app-edit-avatar',
@@ -14,13 +15,13 @@ export class EditAvatarComponent implements OnInit, OnDestroy {
   @ViewChild('dropArea') dropArea: ElementRef;
   @ViewChild('file', { static: true }) set fileRef(fileRef: ElementRef) {
     if (fileRef && fileRef.nativeElement) {
-      this.selectedFile = fileRef;
-      fromEvent(this.selectedFile.nativeElement , 'change')
+      fromEvent(fileRef.nativeElement , 'change')
         .pipe(
           switchMap((evt: Event) => {
             this.uploadingProgress.inProgress = true;
+            this.selectedFile = fileRef.nativeElement.files[0];
             const FR = new FileReader();
-            FR.readAsDataURL(this.selectedFile.nativeElement.files[0]);
+            FR.readAsDataURL(this.selectedFile);
             return fromEvent(FR, 'load');
           })
         )
@@ -45,6 +46,7 @@ export class EditAvatarComponent implements OnInit, OnDestroy {
     percent: 0
   };
   form: FormGroup;
+  user: User;
 
   dragEvent$: Subject<any> = new Subject<any>();
   dropEvent$: Subject<any> = new Subject<any>();
@@ -58,6 +60,7 @@ export class EditAvatarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
+    this.user = this.data['user'];
     this.updatePosition();
 
     this.form = new FormGroup({
@@ -70,7 +73,8 @@ export class EditAvatarComponent implements OnInit, OnDestroy {
         switchMap((dragEvt: DragEvent) => {
           this.uploadingProgress.inProgress = true;
           const FR = new FileReader();
-          FR.readAsDataURL(dragEvt.dataTransfer.files[0]);
+          this.selectedFile = dragEvt.dataTransfer.files[0];
+          FR.readAsDataURL(this.selectedFile);
           return fromEvent(FR, 'load');
         })
       )
@@ -126,6 +130,10 @@ export class EditAvatarComponent implements OnInit, OnDestroy {
     matDialogConfig.position = { left: `${rect.left - 200}px`, top: `${rect.bottom}px` };
 
     this.dialogRef.updatePosition(matDialogConfig.position);
+  }
+
+  setPicture() {
+    this.dialogRef.close({action: this.user.profile_picture ? 'edit' : 'add', file: this.selectedFile});
   }
 
 }

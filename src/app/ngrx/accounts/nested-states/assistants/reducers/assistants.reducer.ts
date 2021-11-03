@@ -12,7 +12,8 @@ export const assistantsInitialState: AssistantsStates = adapter.getInitialState(
   nextRequest: null,
   lastAddedAssistants: [],
   sortValue: '',
-  addedUser: null
+  addedUser: null,
+  currentUpdatedAccount: null
 });
 
 const reducer = createReducer(
@@ -31,7 +32,7 @@ const reducer = createReducer(
     assistantsActions.updateAssistantActivitySuccess,
     assistantsActions.updateAssistantAccount,
     (state, {profile}) => {
-    return adapter.upsertOne(profile, {...state, loading: false, loaded: true});
+    return adapter.upsertOne(profile, {...state, loading: false, loaded: true, currentUpdatedAccount: profile});
   }),
   on(
     assistantsActions.removeRepresentedUserSuccess,
@@ -52,7 +53,8 @@ const reducer = createReducer(
   }),
   on(assistantsActions.sortAssistantAccountsSuccess, (state, {assistants, next, sortValue}) => {
     return adapter.addAll(assistants, {...state, loading: false, loaded: true, nextRequest: next, sortValue});
-  })
+  }),
+  on(assistantsActions.clearCurrentUpdatedAssistant, (state) => ({...state, currentUpdatedAccount: null}))
 );
 
 export function assistantsReducer(state: any | undefined, action: Action) {

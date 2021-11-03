@@ -32,6 +32,7 @@ import {TableService} from '../../sp-data-table/table.service';
 import {PermissionsDialogComponent} from '../../accounts-role/permissions-dialog/permissions-dialog.component';
 import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/status-popup.component';
 import {ToastService} from '../../../services/toast.service';
+import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -299,6 +300,13 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
+      });
+    } else if (action === 'profile_pictures') {
+      const PPD = this.matDialog.open(ProfilePictureComponent, {
+        panelClass: 'accounts-profiles-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px'
       });
     }
   }

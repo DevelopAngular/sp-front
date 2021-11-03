@@ -46,6 +46,7 @@
         [selectedSort]="'expiration_time'"
         [searchPanel]="true"
         (searchValue)="onSearch($event)"
+        [showProfilePictures]="(isEnableProfilePictures$ | async) && !!user.show_profile_pictures"
       ></app-pass-collection>
       <div class="report-desktop">
         <app-icon-button [srcString]="'Report'" [size]="20" (clickEvent)="openReportForm()"></app-icon-button>

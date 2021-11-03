@@ -63,6 +63,7 @@ import {InlinePassCardComponent} from '../inline-pass-card/inline-pass-card.comp
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InlineRequestCardComponent} from '../inline-request-card/inline-request-card.component';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -136,6 +137,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RequestCardComponent,
     InlineRequestCardComponent,
     DropdownComponent,
+    SettingsDescriptionPopupComponent,
   ],
   exports: [
     ReactiveFormsModule,

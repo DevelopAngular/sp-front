@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { QuoteRequestComponent } from './quote-request.component';
+import {QuoteRequestComponent} from './quote-request.component';
 
 describe('QuoteRequestComponent', () => {
   let component: QuoteRequestComponent;

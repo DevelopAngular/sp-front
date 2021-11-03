@@ -1,7 +1,5 @@
-import {Component, Input, Output, OnInit, EventEmitter} from '@angular/core';
-import {FormGroup, FormControl} from '@angular/forms';
-import {BehaviorSubject} from 'rxjs';
-import {DomSanitizer} from '@angular/platform-browser';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormControl, FormGroup} from '@angular/forms';
 import {FormsService} from '../../../services/forms.service';
 
 @Component({
