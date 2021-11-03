@@ -40,7 +40,7 @@
       <div class="block">
         <div class="email-info">
           <div class="title">Email/username</div>
-          <div class="subtitle" style="white-space: normal; word-break: break-word; width: 280px">{{ user.primary_email }}</div>
+          <div class="subtitle" style="white-space: normal; word-break: break-word; width: 280px">{{ user.primary_email.replace('@spnx.local', '') }}</div>
         </div>
         <div class="avatar-info">
           <div class="avatar"
