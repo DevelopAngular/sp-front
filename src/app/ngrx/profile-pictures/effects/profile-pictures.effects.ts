@@ -109,14 +109,11 @@ export class ProfilePicturesEffects {
                 if (user.extras.clever_student_number) {
                   return { ...acc, [user.extras.clever_student_number]: user, [user.primary_email.toLowerCase()]: user };
                 }
-                return { ...acc, [user.primary_email]: user };
+                return { ...acc, [user.primary_email.toLowerCase()]: user };
               }, {});
             }),
             map((students) => {
               return action.userIds.map((id, index) => {
-                if ( typeof id === 'string') {
-                  id = id.toLowerCase();
-                }
                 if (students[id]) {
                   return students[id];
                 } else {

@@ -65,7 +65,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
               if (!regexpEmail.test(row[0]) && typeof row[0] !== 'number') {
                 row[0] = `${row[0]}@spnx.local`;
               }
-                return of({ user_id: row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
+                return of({ user_id: typeof row[0] === 'string' ? row[0].toLowerCase() : row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
             });
             return forkJoin(validate$);
           })
