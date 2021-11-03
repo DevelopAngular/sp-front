@@ -58,10 +58,10 @@ export class EncounterPreventionDialogComponent implements OnInit {
   exclusionGroups$: Observable<ExclusionGroup[]>;
 
   options: {label: string, textColor: string, hoverColor: string, icon: string, action: string, description: string}[] = [
-    {label: 'Download report', textColor: '#7F879D', hoverColor: '#FFFFFF', icon: './assets/Download circle (Blue-Gray).svg', action: 'down_report',  description: ''},
-    {label: 'Copy private link', textColor: '#7F879D', hoverColor: '#FFFFFF', icon: './assets/Private Link (Blue-Gray).svg', action: 'copy_link', description: ''},
-    {label: 'Edit group', textColor: '#7F879D', hoverColor: '#FFFFFF', icon: './assets/Edit (Blue-Gray).svg', action: 'edit', description: ''},
-    {label: 'Delete group', textColor: '#E32C66', hoverColor: '#FFFFFF', icon: './assets/Delete (Red).svg', action: 'delete', description: 'Deleting a group will permanently delete all encounter prevention information. This action cannot be undone.'}
+    {label: 'Download report', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Download circle (Blue-Gray).svg', action: 'down_report',  description: ''},
+    {label: 'Copy private link', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Private Link (Blue-Gray).svg', action: 'copy_link', description: ''},
+    {label: 'Edit group', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Edit (Blue-Gray).svg', action: 'edit', description: ''},
+    {label: 'Delete group', textColor: '#E32C66', hoverColor: '#F4F4F4', icon: './assets/Delete (Red).svg', action: 'delete', description: 'Deleting a group will permanently delete all encounter prevention information. This action cannot be undone.'}
   ];
 
   constructor(
@@ -85,14 +85,13 @@ export class EncounterPreventionDialogComponent implements OnInit {
   setState(isNext, to, data?) {
     this.state = cloneDeep({
       ...this.state,
-      pages_history: isNext ? [...this.state.pages_history, to] : this.state.pages_history.splice(0, 1),
+      pages_history: isNext ? [...this.state.pages_history, to] : this.state.pages_history.filter((i, index) => index !== this.state.pages_history.length - 1),
       current_page: to,
       data: {
         ...this.state.data,
         ...data
       }
     });
-    debugger;
     this.cdr.detectChanges();
   }
 

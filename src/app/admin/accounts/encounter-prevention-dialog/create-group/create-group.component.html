@@ -17,7 +17,7 @@
       [height]="'40px'"
       [formGroup]="form"
       [input_label]="'Group name (optional)'"
-      [input_value]="state.createGroup.group_name"
+      [input_value]="state.createGroup.group_name || state.data.currentGroup.name"
       [controlName]="form.get('group_name')">
     </app-input>
   </div>
@@ -36,21 +36,21 @@
     </div>
   </div>
 
-  <div class="group">
-    <div class="label">Weekly report emails</div>
-    <app-sp-search
-      [chipsMode]="true"
-      [placeholder]="'Search staff'"
-      [role]="'_profile_teacher'"
-      [inputField]="true"
-      [selectedOptions]="state.createGroup.teachers"
-      (onUpdate)="state.createGroup.teachers = $event; onUpdate()"
-    ></app-sp-search>
+<!--  <div class="group">-->
+<!--    <div class="label">Weekly report emails</div>-->
+<!--    <app-sp-search-->
+<!--      [chipsMode]="true"-->
+<!--      [placeholder]="'Search staff'"-->
+<!--      [role]="'_profile_teacher'"-->
+<!--      [inputField]="true"-->
+<!--      [selectedOptions]="state.createGroup.teachers"-->
+<!--      (onUpdate)="state.createGroup.teachers = $event; onUpdate()"-->
+<!--    ></app-sp-search>-->
 
-    <div class="info">
-      Teachers and admins will get weekly summary reports of any prevented activity.
-    </div>
-  </div>
+<!--    <div class="info">-->
+<!--      Teachers and admins will get weekly summary reports of any prevented activity.-->
+<!--    </div>-->
+<!--  </div>-->
 
 
 
