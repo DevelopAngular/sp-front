@@ -33,7 +33,7 @@
        (buttonClick)="onPublish()"
        (disabledButtonClick)="showFormErrors()"
        [matTooltip]="saveButtonToolTip"
-        matTooltipClass="tooltip"
+        matTooltipClass="ds-tooltip"
         >
         <span *ngIf="!showPublishSpinner">Save</span>
         <div class="loading-theme_blue-gray" [style.color]="'red'" *ngIf="showPublishSpinner" >

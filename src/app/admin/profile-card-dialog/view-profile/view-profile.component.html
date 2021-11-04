@@ -64,7 +64,7 @@
           </div>
           <div class="status"
                [matTooltip]="statusDescriptions[profileStatusActive] || null"
-               matTooltipClass="tooltip"
+               matTooltipClass="ds-tooltip"
                (click)="openStatusPopup()"
                [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'"
           >
