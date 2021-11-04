@@ -246,22 +246,24 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
               }
             })).pipe(mapTo(res));
           } else {
+            let count = 0;
             return zip(...this.selectedUsers.map(user => {
+              count += 1;
               return this.userService.updateUserRequest(user, {status: res});
-            })).pipe(mapTo(res));
+            })).pipe(mapTo({action: res, count}));
           }
         })
-      ).subscribe(res => {
-        if (res === 'delete') {
-          this.toast.openToast({title: `${this.selectedUsers.length} account${this.selectedUsers.length > 1 ? 's' : ''} deleted`, type: 'error'});
+      ).subscribe(({action, count}) => {
+        if (action === 'delete') {
+          this.toast.openToast({title: `${count} account${count > 1 ? 's' : ''} deleted`, type: 'error'});
         } else {
-          this.toast.openToast({title: `${this.selectedUsers.length} account statuses updated`, type: 'success'});
+          this.toast.openToast({title: `${count} account statuses updated`, type: 'success'});
         }
-      this.selectedUsers = [];
-      this.tableService.clearSelectedUsers.next();
-        setTimeout(() => {
-          this.adminService.getCountAccountsRequest();
-        }, 500);
+        this.tableService.clearSelectedUsers.next();
+          setTimeout(() => {
+            this.adminService.getCountAccountsRequest();
+          }, 500);
+      this.clearData();
     });
   }
 

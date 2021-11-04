@@ -48,7 +48,7 @@ export class UserEffects {
     return this.actions$
       .pipe(
         ofType(userActions.updateUserAction),
-        exhaustMap((action: any) => {
+        concatMap((action: any) => {
           return this.userService.updateUser(action.user.id, action.data)
             .pipe(
               map((user: User) => {
