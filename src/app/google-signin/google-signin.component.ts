@@ -10,7 +10,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {HttpClient} from '@angular/common/http';
 import {FormControl, FormGroup} from '@angular/forms';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
-import {QueryParams} from '../live-data/helpers';
 import {StorageService} from '../services/storage.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {ToastService} from '../services/toast.service';
@@ -32,7 +31,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   @Output() focusEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  public isLoaded = false;
   public showSpinner = false;
   public loggedWith: number;
   public loginData = {
@@ -57,7 +55,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public schoolAlreadyText$: Observable<string>;
   public passwordError: boolean;
 
-  private changeUserName$: Subject<string> = new Subject<string>();
   private destroy$ = new Subject();
 
   constructor(
@@ -113,7 +110,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.route.queryParams
       .pipe(
         takeUntil(this.destroy$),
-        filter((qp: QueryParams) => !!qp.code),
+        // filter((qp: QueryParams) => !!qp.code),
         tap(() => {
           this.disabledButton = false;
           this.showSpinner = true;
@@ -125,8 +122,24 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
           return this.loginGoogle(qp.code as string);
         } else if (!!qp.scope) {
           return this.loginClever(qp.code as string);
-        } else {
+        } else if (!!qp.code) {
           return this.loginSSO(qp.code as string);
+        } else if (qp.instant_login) {
+          switch ((qp.instant_login as string).toLowerCase()) {
+            case 'google':
+              this.isGoogleLogin = true;
+              break;
+            // case 'password':
+            //   this.isStandardLogin = true;
+            //   break;
+            // case 'clever':
+            //   this.isClever = true;
+            //   break;
+            // case 'gg4l':
+            //   this.isGG4L = true;
+            //   break;
+          }
+          this.signIn();
         }
     });
 
@@ -280,7 +293,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.storage.setItem('authType', this.loginData.authType);
       this.initLogin();
     } else if (this.isClever) {
-      this.showSpinner = true
+      this.showSpinner = true;
       this.storage.setItem('authType', this.loginData.authType);
       const district = this.auth_providers && this.auth_providers.provider === 'clever' ? this.auth_providers.sourceId : null;
       const redirect = this.httpService.getEncodedRedirectUrl();
