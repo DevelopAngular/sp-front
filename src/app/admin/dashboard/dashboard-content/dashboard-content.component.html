@@ -38,8 +38,8 @@
       </div>
       <div class="">
         <div class="card card__role ds-flex-center-between ds-mr-10 ds-mt-15">
-          <a routerLink="/admin/hallmonitor" class="label-icon">
-            <img draggable="false" [src]="getCardIcon('./assets/Walking (Navy).svg') | resolveAsset" alt="./assets/Walking (Navy).svg" width="25">
+          <a routerLink="/admin/explore" [state]="{target: 'report_search'}" class="label-icon">
+            <img draggable="false" [src]="getCardIcon('./assets/Report Search (Navy).svg') | resolveAsset" alt="./assets/Walking (Navy).svg" width="25">
           </a>
           <div>
             <div class="card_header">
@@ -49,7 +49,7 @@
             </div>
             <div [style.min-height]="'55px'">
               <div *ngIf="!reports" class="loading-theme spinner ds-flex-center-left ds-pt-10">
-                <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
+                <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
               </div>
               <div *ngIf="reports"
                    [style.padding-top]="'32px'"

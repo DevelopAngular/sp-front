@@ -185,6 +185,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.user$ = this.userService.user$;
+
     this.passSearchState = {
       loading$: this.hallPassService.passesLoading$,
       loaded$: this.hallPassService.passesLoaded$,
