@@ -15,7 +15,6 @@ import {StorageService} from '../services/storage.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {ToastService} from '../services/toast.service';
 import {LoginDataService} from '../services/login-data.service';
-import {QueryParams} from '../live-data/helpers';
 
 declare const window;
 
