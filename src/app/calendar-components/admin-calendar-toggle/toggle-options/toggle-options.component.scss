@@ -1,13 +1,24 @@
 .option {
   -moz-user-select: none;
   user-select: none;
+  padding: 0 10px;
+
+  &:nth-child(1) {
+    margin-top: 5px;
+  }
 
   .option-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px;
+    border-radius: 7px;
+    padding: 0 20px;
+    height: 40px;
     cursor: pointer;
+
+    .title {
+      font-size: 14px;
+    }
 
     .icon {
       img {

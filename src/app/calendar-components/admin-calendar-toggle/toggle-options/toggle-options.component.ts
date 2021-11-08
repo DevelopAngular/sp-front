@@ -16,23 +16,27 @@ export class ToggleOptionsComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) { }
 
   textColor(item) {
-      if (item.hovered) {
+      if (this.selectedId === item.id) {
           return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
       } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#555558');
+          return this.sanitizer.bypassSecurityTrustStyle('#7F879D');
       }
   }
 
-  getBackground(item) {
-      if (item.hovered) {
-          if (item.pressed) {
-              return '#E2E7F4';
-          } else {
-              return '#ECF1FF';
-          }
+  getBackground(item, option) {
+    if (item.hovered) {
+      if (!item.pressed) {
+        return this.sanitizer.bypassSecurityTrustStyle('rgba(127, 135, 157, .1)');
       } else {
-          return '#FFFFFF';
+        return this.sanitizer.bypassSecurityTrustStyle('rgba(127, 135, 157, .15)');
       }
+    } else {
+      if (this.selectedId === option.id) {
+        return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
+      } else {
+        return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+      }
+    }
   }
 
   ngOnInit() {
