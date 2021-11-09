@@ -10,8 +10,10 @@ import {SchoolSettingsComponent} from './school-settings/school-settings.compone
 
 import {bumpIn} from '../../animations';
 import * as moment from 'moment';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {SupportService} from '../../services/support.service';
+import {StudentInfoCardComponent} from '../../student-info-card/student-info-card.component';
+import {UserService} from '../../services/user.service';
+import {User} from '../../models/User';
 
 declare const window;
 
@@ -42,6 +44,8 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   countLaunchDay: number;
   loaded: boolean;
 
+  user: User;
+
   chatBackdrop: boolean;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -50,9 +54,9 @@ export class MySchoolComponent implements OnInit, OnDestroy {
       private http: HttpService,
       private adminService: AdminService,
       public darkTheme: DarkThemeSwitch,
-      private gsProgress: GettingStartedProgressService,
       private dialog: MatDialog,
-      private supportService: SupportService
+      private supportService: SupportService,
+      private userService: UserService
   ) {
   }
 
@@ -61,6 +65,9 @@ export class MySchoolComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userService.user$.subscribe(r => {
+      this.user = r;
+    });
     this.http.globalReload$.pipe(
       takeUntil(this.destroy$),
       switchMap(() => {
@@ -96,6 +103,13 @@ export class MySchoolComponent implements OnInit, OnDestroy {
 
   closeChat(event) {
     this.supportService.closeChat(event);
+  }
+
+  opentest() {
+    this.dialog.open(StudentInfoCardComponent, {
+      panelClass: 'student-pass-info-dialog',
+      data: {profile: this.user}
+    });
   }
 
 }

@@ -1,4 +1,4 @@
-<div class="wrapper" [ngClass]="{animate: loading}">
+<div class="wrapper" [ngClass]="{animate: loading}" [style.background-color]="backgroundColor">
   <div class="number" *ngIf="!loading">{{ number }}</div>
   <div class="title" *ngIf="!loading">{{ title }}</div>
 </div>

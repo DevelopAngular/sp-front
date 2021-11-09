@@ -10,6 +10,7 @@ export class StudentPassesInfoCardComponent implements OnInit {
   @Input() number: string | number;
   @Input() title: string;
   @Input() loading: boolean;
+  @Input() backgroundColor: string = 'transparent';
 
   constructor() { }
 
