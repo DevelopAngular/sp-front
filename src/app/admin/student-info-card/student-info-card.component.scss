@@ -1,4 +1,4 @@
-@import '../../sp-colors';
+@import '../../../sp-colors';
 
 .wrapper {
   height: 564px;
@@ -6,7 +6,7 @@
   .left {
     width: 417px;
     padding: 25px;
-    height: inherit;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -79,11 +79,10 @@
         .form {
           background-color: #F4F4F4;
           border-radius: 10px;
-          padding: 0 18px;
+          padding: 17px;
           display: flex;
           align-items: center;
           margin-top: 15px;
-          height: 60px;
 
           .icon {
             width: 26px;
@@ -96,6 +95,29 @@
             color: $navy;
             margin-left: 8px;
           }
+
+          .form-content-container {
+            display: flex;
+            width: 80%;
+            justify-content: space-between;
+          }
+
+          .form-content {
+            .title {
+              @extend .title;
+              margin-left: 0;
+            }
+            .status-value {
+              color: $jade;
+              font-size: 15px;
+              margin-top: 4px;
+            }
+
+            .value {
+              @extend .status-value;
+              color: $blue-gray;
+            }
+          }
         }
       }
     }
@@ -105,5 +127,43 @@
     background-color: #F0F2F5;
     width: 590px;
     height: inherit;
+
+    .header {
+      padding: 19px 40px;
+
+      .buttons {
+        display: flex;
+      }
+    }
+
+    .content {
+      padding: 19px 40px;
+
+      .info-cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        grid-gap: 15px;
+        .info-card {
+          width: 214px;
+          padding: 17px 0 17px 17px;
+          border-radius: 12px;
+          background-color: #FFFFFF;
+          display: flex;
+          flex-direction: column;
+
+          .title {
+            font-size: 14px;
+            color: $blue-gray;
+          }
+
+          .value {
+            font-size: 24px;
+            color: $navy;
+            margin-top: 9px;
+          }
+        }
+      }
+    }
   }
 }

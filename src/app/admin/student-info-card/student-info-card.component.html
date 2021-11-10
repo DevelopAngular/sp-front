@@ -1,0 +1,127 @@
+<div class="wrapper">
+  <div class="left">
+    <div class="back">
+      <app-round-button [icon]="'Chevron Left'"></app-round-button>
+    </div>
+    <div class="avatar-content">
+      <div class="avatar">
+        <div *ngIf="profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '92px', height: '92px'}"></div>
+        <ng-template #d>
+          <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+        </ng-template>
+      </div>
+      <div class="student-name">{{ profile.display_name }}</div>
+    </div>
+
+    <div class="top-buttons">
+      <app-round-button [icon]="'Notifications'"></app-round-button>
+      <app-round-button style="margin-left: 13px" [icon]="'Dots'"></app-round-button>
+    </div>
+
+    <div class="content">
+      <div class="student-passes-info" *ngIf="passesStats$ | async as stats">
+        <div class="card-info">
+            <div class="title">{{ stats.past_passes_today }}</div>
+            <div class="subtitle">today</div>
+        </div>
+        <div class="card-info" style="margin: 0 8px">
+          <div class="title">{{ stats.past_passes_week }}</div>
+          <div class="subtitle">this week</div>
+        </div>
+        <div class="card-info">
+          <div class="title">{{ stats.past_passes_month }}</div>
+          <div class="subtitle">this month</div>
+        </div>
+      </div>
+
+      <div class="forms">
+        <div class="form">
+          <div class="icon" style="background-color: #E32C66"></div>
+          <div class="title">Encounter prevention</div>
+        </div>
+        <div class="form">
+          <div class="icon" style="background-color: #E48C15"></div>
+          <div class="title">Restrict all rooms</div>
+        </div>
+        <div class="form">
+          <div class="icon" style="background-color: #6651F1"></div>
+          <div class="title">Pass quota</div>
+        </div>
+
+        <div class="form">
+          <div class="form-content-container">
+            <div class="form-content">
+              <div class="title">Status</div>
+              <div class="status-value">{{ profile.status }}</div>
+            </div>
+            <div class="form-content">
+              <div class="title">Last active</div>
+              <div class="value">Today at 10:34 AM</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form" style="flex-direction: column; align-items: flex-start">
+          <div class="form-content">
+            <div class="title">Email</div>
+            <div class="value">{{ profile.primary_email }}</div>
+          </div>
+          <div class="form-content" [style.margin]="'20px 0'">
+              <app-select-role
+                [selectedRoles]="[{id: 1, role: 'Student', icon: './assets/Student (Navy).svg'}]"
+                [isAccessAdd]="false"
+                [cardsBackground]="'#FFFFFF'"
+              ></app-select-role>
+          </div>
+
+          <div class="form-content">
+            <div class="title">School</div>
+            <div class="value">{{ school.name }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="header">
+      <div class="buttons">
+        <app-gradient-button
+          [gradient]="'#FFFFFF, #FFFFFF'"
+          [leftIcon]="'./assets/Calendar (Navy).svg'"
+          [rightIcon]="'./assets/Rect (Navy).svg'"
+          [textColor]="'#1F195E'"
+        >This school year</app-gradient-button>
+
+        <app-gradient-button
+          [rightIcon]="'./assets/Plus (White).svg'"
+        >Create pass</app-gradient-button>
+      </div>
+    </div>
+
+    <div class="content">
+      <app-overview-container
+        [title]="'Overview'"
+        [icon]="'./assets/Overview (Navy).svg'">
+
+        <div class="info-cards">
+          <div class="info-card">
+            <div class="title">PASSES CREATED</div>
+            <div class="value">{{ 53 + ' Passes' }}</div>
+          </div>
+          <div class="info-card">
+            <div class="title">TIME SPENT OUT OF CLASS</div>
+            <div class="value">{{ '1hr 13 min' }}</div>
+          </div>
+          <div class="info-card">
+            <div class="title">PASSES CREATED</div>
+            <div class="value">{{ 53 + ' Passes' }}</div>
+          </div>
+          <div class="info-card">
+            <div class="title">PASSES CREATED</div>
+            <div class="value">{{ 1 + ' Pass' }}</div>
+          </div>
+        </div>
+      </app-overview-container>
+    </div>
+  </div>
+</div>

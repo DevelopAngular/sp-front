@@ -5,5 +5,5 @@
     'background-color': backgroundColor
    }"
 >
-<img [width]="iconWidth" [src]="'./assets/' + icon + ' (Blue-Gray).svg'" [alt]="icon"/>
+<img [width]="iconWidth" [src]="'./assets/' + icon + ' (Blue-Gray).svg' | resolveAsset" [alt]="icon"/>
 </div>

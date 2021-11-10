@@ -3,6 +3,7 @@
   <div class="content">
     <div class="active-roles" *ngIf="selectedRoles.length">
       <div class="role"
+           [style.background-color]="cardsBackground"
            *ngFor="let role of selectedRoles"
            #r
            (mouseenter)="r.hover = true"

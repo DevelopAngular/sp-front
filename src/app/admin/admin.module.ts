@@ -31,6 +31,8 @@ import {ProfileCardDialogComponent} from './profile-card-dialog/profile-card-dia
 import {AddUserDialogComponent} from './add-user-dialog/add-user-dialog.component';
 import {SelectRoleComponent} from './accounts/select-role/select-role.component';
 import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-profile.component';
+import {StudentInfoCardComponent} from './student-info-card/student-info-card.component';
+import {OverviewContainerComponent} from './student-info-card/student-passes-overwiew/overview-container.component';
 
 @NgModule({
     imports: [
@@ -66,7 +68,8 @@ import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-prof
         AddUserDialogComponent,
         SelectRoleComponent,
         ViewProfileComponent,
-
+        StudentInfoCardComponent,
+        OverviewContainerComponent
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

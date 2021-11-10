@@ -11,7 +11,7 @@ import {SchoolSettingsComponent} from './school-settings/school-settings.compone
 import {bumpIn} from '../../animations';
 import * as moment from 'moment';
 import {SupportService} from '../../services/support.service';
-import {StudentInfoCardComponent} from '../../student-info-card/student-info-card.component';
+import {StudentInfoCardComponent} from '../student-info-card/student-info-card.component';
 import {UserService} from '../../services/user.service';
 import {User} from '../../models/User';
 
