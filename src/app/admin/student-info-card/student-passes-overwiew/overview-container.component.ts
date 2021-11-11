@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-overview-container',
   templateUrl: './overview-container.component.html',
-  styleUrls: ['./overview-container.component.scss']
+  styleUrls: ['./overview-container.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OverviewContainerComponent implements OnInit {
 

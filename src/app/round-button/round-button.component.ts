@@ -1,9 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {bumpIn} from '../animations';
 
 @Component({
   selector: 'app-round-button',
   templateUrl: './round-button.component.html',
-  styleUrls: ['./round-button.component.scss']
+  styleUrls: ['./round-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    bumpIn,
+  ]
 })
 export class RoundButtonComponent implements OnInit {
 
@@ -11,6 +16,11 @@ export class RoundButtonComponent implements OnInit {
   @Input() size: number = 44;
   @Input() backgroundColor: string = '#FFFFFF';
   @Input() iconWidth: number = 20;
+
+  @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
+
+  pressed: boolean;
+  hovered: boolean;
 
   constructor() { }
 

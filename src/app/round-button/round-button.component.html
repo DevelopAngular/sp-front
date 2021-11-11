@@ -1,4 +1,11 @@
 <div class="wrapper"
+   [@pressState]="pressed ? 'down' : 'up'"
+   appCrossPointerEventTarget
+   (pointerDownEvent)="pressed = true"
+   (pointerClickEvent)="pressed = false; buttonClick.emit($event)"
+   (mouseenter)="hovered = true"
+   (mouseleave)="hovered = false; pressed = false"
+   [style.background-color]=""
    [ngStyle]="{
     width: size + 'px',
     height: size + 'px',

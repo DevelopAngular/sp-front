@@ -99,29 +99,61 @@
     </div>
 
     <div class="content">
-      <app-overview-container
-        [title]="'Overview'"
-        [icon]="'./assets/Overview (Navy).svg'">
+      <div class="block">
+        <app-overview-container
+          [title]="'Overview'"
+          [icon]="'./assets/Overview (Navy).svg'">
+          <div class="info-cards">
+            <div class="info-card">
+              <div class="title">PASSES CREATED</div>
+              <div class="value">{{ 53 + ' Passes' }}</div>
+            </div>
+            <div class="info-card">
+              <div class="title">TIME SPENT OUT OF CLASS</div>
+              <div class="value">{{ '1hr 13 min' }}</div>
+            </div>
+            <div class="info-card">
+              <div class="title">PASSES CREATED</div>
+              <div class="value">{{ 53 + ' Passes' }}</div>
+            </div>
+            <div class="info-card">
+              <div class="title">PASSES CREATED</div>
+              <div class="value">{{ 1 + ' Pass' }}</div>
+            </div>
+          </div>
+        </app-overview-container>
+      </div>
+      <div class="block">
+        <app-overview-container
+          [title]="'Passes'"
+          [icon]="'./assets/Passes (Navy).svg'">
+          <div class="info-cards">
+            <div class="pass" *ngFor="let pass of lastStudentPasses$ | async">
+              <app-pass-tile
+                [forFuture]="false"
+                [fromPast]="true"
+                [forStaff]="false"
+                [pass]="pass"
+                [profileImage]="false"
+                [isMiniCard]="true"
+              ></app-pass-tile>
+            </div>
+          </div>
+        </app-overview-container>
+      </div>
+      <div class="block">
+        <app-overview-container
+          [title]="'Reports'"
+          [icon]="'./assets/Report (Navy).svg'">
 
-        <div class="info-cards">
-          <div class="info-card">
-            <div class="title">PASSES CREATED</div>
-            <div class="value">{{ 53 + ' Passes' }}</div>
+          <div class="info-cards">
+            <div class="report" *ngFor="let report of [1, 2, 3, 4]">
+              <div class="date">May 27, 2021 at 8:53 AM</div>
+              <div class="description">No pass, wandering around the hallway and some more text dsfvgfb dfgbrgbr fgbrbetd vgb tedb dbtybn </div>
+            </div>
           </div>
-          <div class="info-card">
-            <div class="title">TIME SPENT OUT OF CLASS</div>
-            <div class="value">{{ '1hr 13 min' }}</div>
-          </div>
-          <div class="info-card">
-            <div class="title">PASSES CREATED</div>
-            <div class="value">{{ 53 + ' Passes' }}</div>
-          </div>
-          <div class="info-card">
-            <div class="title">PASSES CREATED</div>
-            <div class="value">{{ 1 + ' Pass' }}</div>
-          </div>
-        </div>
-      </app-overview-container>
+        </app-overview-container>
+      </div>
     </div>
   </div>
 </div>
