@@ -18,7 +18,6 @@ export class CreateGroupComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.state.data.currentGroup) {
-      debugger;
       this.form = new FormGroup({
         group_name: new FormControl(this.state.data.currentGroup.name),
         notes: new FormControl(this.state.data.currentGroup.notes)
