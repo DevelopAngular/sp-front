@@ -17,6 +17,7 @@ export class EncounterGroupDescriptionComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log(this.group);
   }
 
   getDate(date) {

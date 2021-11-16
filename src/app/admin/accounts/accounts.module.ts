@@ -25,13 +25,6 @@ import {AddRolePopupComponent} from './select-role/add-role-popup/add-role-popup
 import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
 import {ProfilePictureComponent} from './profile-picture/profile-picture.component';
 import {GSuiteConnectComponent} from './g-suite-settings/g-suite-connect/g-suite-connect.component';
-import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
-import {OctagonComponent} from './encounter-prevention-dialog/octagon/octagon.component';
-import {CreateGroupComponent} from './encounter-prevention-dialog/create-group/create-group.component';
-import {EncounterGroupComponent} from './encounter-prevention-dialog/encounter-group/encounter-group.component';
-import {ReportDescriptionComponent} from './encounter-prevention-dialog/report-description/report-description.component';
-import {EncounterOptionsComponent} from './encounter-prevention-dialog/encounter-options/encounter-options.component';
-import {EncounterGroupDescriptionComponent} from './encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
 
 @NgModule({
   declarations: [
@@ -58,13 +51,6 @@ import {EncounterGroupDescriptionComponent} from './encounter-prevention-dialog/
     PermissionsDialogComponent,
     ProfilePictureComponent,
     GSuiteConnectComponent,
-    EncounterPreventionDialogComponent,
-    OctagonComponent,
-    CreateGroupComponent,
-    EncounterGroupComponent,
-    ReportDescriptionComponent,
-    EncounterOptionsComponent,
-    EncounterGroupDescriptionComponent,
   ],
   imports: [
     CommonModule,

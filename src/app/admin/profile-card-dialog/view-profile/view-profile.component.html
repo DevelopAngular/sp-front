@@ -132,6 +132,23 @@
       </div>
       <mat-divider></mat-divider>
       <div class="block">
+        <div class="title" style="display: flex">
+          <app-octagon [size]="21">
+            <img style="position: absolute; z-index: 10; height: 14px" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+          </app-octagon>
+          <div style="margin-left: 8px">Encounter Prevention</div>
+        </div>
+        <div class="subtitle" style="width: 360px; white-space: normal;">
+          Prevent students from having passes at the same time with Encounter Prevention.
+        </div>
+        <app-gradient-button
+          style="margin-top: 7px"
+          [leftIcon]="'./assets/Plus (White).svg'"
+          (buttonClick)="openExclusionGroups()"
+        >New Group</app-gradient-button>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="block">
         <div class="descriptions">
           <div class="info">
             <div class="title">Last sign-in</div>
@@ -143,7 +160,7 @@
           </div>
           <div class="info" *ngIf="profile['Type'] === 'Standard'">
             <div class="title">Password</div>
-            <div class="subtitle"><span style="text-decoration: underline; cursor: pointer" (click)="nextStep.emit()">Change</span></div>
+            <div class="subtitle"><span style="text-decoration: underline; cursor: pointer" (click)="nextStep.emit('password')">Change</span></div>
           </div>
         </div>
 

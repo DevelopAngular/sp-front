@@ -38,10 +38,14 @@ export class ProfileCardDialogComponent implements OnInit {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
   }
 
-  goToChangePassword() {
+  goToChangePassword(action) {
     this.formService.setFrameMotionDirection();
     setTimeout(() => {
-      this.page = 2;
+      if (action === 'password') {
+        this.page = 2;
+      } else if (action === 'exclusionGroup') {
+        this.page = 3;
+      }
     }, 100);
   }
 

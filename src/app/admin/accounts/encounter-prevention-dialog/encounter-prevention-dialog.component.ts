@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Optional, Output} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {filter, tap} from 'rxjs/operators';
@@ -36,6 +36,9 @@ export interface EncountersState {
 })
 export class EncounterPreventionDialogComponent implements OnInit {
 
+  @Input() newGroup: boolean;
+  @Output() backEmit: EventEmitter<any> = new EventEmitter<any>();
+
   state: EncountersState = {
     pages_history: [Pages.Groups],
     current_page: Pages.Groups,
@@ -62,12 +65,15 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>,
+    @Optional() private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>,
     private encounterPreventionService: EncounterPreventionService,
     public cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
+    if (this.newGroup) {
+      this.setState(true, Pages.NewGroup);
+    }
     this.encounterPreventionService.getExclusionGroupsRequest();
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
     this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
@@ -100,8 +106,11 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   back() {
     if (this.state.current_page === Pages.StartPage || this.state.current_page === Pages.Groups) {
-      this.dialogRef.close();
+        this.dialogRef.close();
     } else {
+      if (this.newGroup) {
+        this.backEmit.emit();
+      }
       setTimeout(() => {
         this.setState(false, this.state.pages_history[this.state.pages_history.length - 2]);
       }, 100);
@@ -115,6 +124,9 @@ export class EncounterPreventionDialogComponent implements OnInit {
         notes: this.state.createGroup.notes,
         students: this.state.createGroup.users.map(s => s.id)
       });
+      if (this.newGroup) {
+        this.backEmit.emit();
+      }
     }
     if (this.state.current_page === Pages.EditGroup) {
       this.encounterPreventionService.updateExclusionGroupRequest(this.state.data.currentGroup, {

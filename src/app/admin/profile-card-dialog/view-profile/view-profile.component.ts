@@ -472,4 +472,8 @@ export class ViewProfileComponent implements OnInit {
       });
   }
 
+  openExclusionGroups() {
+    this.nextStep.emit('exclusionGroup');
+  }
+
 }
