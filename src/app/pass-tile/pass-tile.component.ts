@@ -1,4 +1,16 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {bumpIn, studentPassFadeInOut} from '../animations';
 import {PassLike} from '../models';
@@ -21,7 +33,7 @@ import {KioskModeService} from '../services/kiosk-mode.service';
     studentPassFadeInOut
   ]
 })
-export class PassTileComponent implements OnInit, OnDestroy {
+export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() mock = null;
   @Input() pass: PassLike;
@@ -31,10 +43,14 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
   @Input() allowPopup: boolean;
+  @Input() profileImage: boolean;
+  @Input() isEnableProfilePictures: boolean;
+  @Input() isMiniCard: boolean;
 
   @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
 
   @ViewChild('studentPasses') studentPasses: ElementRef;
+  @ViewChild('avatar') avatar: ElementRef;
 
   buttonDown = false;
   timeLeft = '--:--';
@@ -47,47 +63,11 @@ export class PassTileComponent implements OnInit, OnDestroy {
   destroyAnimation$: Subject<any> = new Subject<any>();
   destroyOpen$ = new Subject();
   disableClose$ = new Subject();
+  loadingAvatar: boolean;
 
   activePassTime$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-  overlayPositions: ConnectedPosition[] = [
-    {
-      panelClass: 'student-panel1',
-      originX: 'start',
-      originY: 'bottom',
-      overlayX: 'start',
-      overlayY: 'top',
-      offsetX: -71,
-      offsetY: 35
-    },
-    {
-      panelClass: 'student-panel2',
-      originX: 'start',
-      originY: 'bottom',
-      overlayX: 'end',
-      overlayY: 'top',
-      offsetX: 72,
-      offsetY: 35
-    },
-    {
-      panelClass: 'student-panel3',
-      originX: 'start',
-      originY: 'bottom',
-      overlayX: 'end',
-      overlayY: 'bottom',
-      offsetX: 72,
-      offsetY: 3
-    },
-    {
-      panelClass: 'student-panel4',
-      originX: 'start',
-      originY: 'bottom',
-      overlayX: 'start',
-      overlayY: 'bottom',
-      offsetX: -71,
-      offsetY: 3
-    }
-  ];
+  overlayPositions: ConnectedPosition[];
   scrollStrategy;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -164,6 +144,50 @@ export class PassTileComponent implements OnInit, OnDestroy {
         this.activePassTime$.next(mins + ':' + (secs < 10 ? '0' + secs : secs));
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
       });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.profileImage) {
+      const bigCard = changes.profileImage.currentValue;
+      this.overlayPositions = [
+        {
+          panelClass: 'student-panel1',
+          originX: 'start',
+          originY: 'bottom',
+          overlayX: 'start',
+          overlayY: 'top',
+          offsetX: -71,
+          offsetY: bigCard ? 175 : 88
+        },
+        {
+          panelClass: 'student-panel2',
+          originX: 'start',
+          originY: 'bottom',
+          overlayX: 'end',
+          overlayY: 'top',
+          offsetX: 72,
+          offsetY: bigCard ? 175 : 88
+        },
+        {
+          panelClass: 'student-panel3',
+          originX: 'start',
+          originY: 'bottom',
+          overlayX: 'end',
+          overlayY: 'bottom',
+          offsetX: 72,
+          offsetY: bigCard ? 142 : 55
+        },
+        {
+          panelClass: 'student-panel4',
+          originX: 'start',
+          originY: 'bottom',
+          overlayX: 'start',
+          overlayY: 'bottom',
+          offsetX: -71,
+          offsetY: bigCard ? 142 : 55
+        }
+      ];
     }
   }
 

@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Invitation} from '../models/Invitation';
 import {User} from '../models/User';
 import {Location} from '../models/Location';
@@ -9,11 +9,11 @@ import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {RequestsService} from '../services/requests.service';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {School} from '../models/School';
@@ -22,6 +22,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {NavbarDataService} from '../main/navbar-data.service';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {scalePassCards} from '../animations';
+import {UserService} from '../services/user.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -29,7 +30,7 @@ import {scalePassCards} from '../animations';
   styleUrls: ['./invitation-card.component.scss'],
   animations: [scalePassCards]
 })
-export class InvitationCardComponent implements OnInit {
+export class InvitationCardComponent implements OnInit, OnDestroy {
 
   @Input() invitation: Invitation;
   @Input() forFuture: boolean = false;
@@ -57,6 +58,8 @@ export class InvitationCardComponent implements OnInit {
   frameMotion$: BehaviorSubject<any>;
   scaleCardTrigger$: Observable<string>;
 
+  isEnableProfilePictures$: Observable<boolean>;
+
   isModal: boolean;
   isSeen: boolean;
   cancelEditClick: boolean;
@@ -64,19 +67,21 @@ export class InvitationCardComponent implements OnInit {
   options: any = [];
   currentSchool: School;
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
       public dialogRef: MatDialogRef<InvitationCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
       public dialog: MatDialog,
       private requestService: RequestsService,
       public dataService: DataService,
-      private _zone: NgZone,
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
       private screenService: ScreenService,
       private http: HttpService,
       private navbarData: NavbarDataService,
-      private domCheckerService: DomCheckerService
+      private domCheckerService: DomCheckerService,
+      private userService: UserService
   ) {}
 
   get isMobile() {
@@ -142,13 +147,18 @@ export class InvitationCardComponent implements OnInit {
   if (this.invitation) {
     this.selectedOrigin = this.invitation.default_origin;
   }
-    this.dataService.currentUser
-    .pipe(this.loadingService.watchFirst)
+    this.userService.user$
+    .pipe(map(user => User.fromJSON(user)), takeUntil(this.destroy$))
     .subscribe(user => {
-      this._zone.run(() => {
-        this.user = user;
-      });
+      this.user = user;
     });
+
+  this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   formatDateTime(date: Date) {

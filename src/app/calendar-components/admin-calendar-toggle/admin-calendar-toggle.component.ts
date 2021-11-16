@@ -1,14 +1,14 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import * as moment from 'moment';
-import {fromEvent} from 'rxjs';
-import {filter} from 'rxjs/operators';
+import {fromEvent, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-calendar-toggle',
   templateUrl: './admin-calendar-toggle.component.html',
   styleUrls: ['./admin-calendar-toggle.component.scss']
 })
-export class AdminCalendarToggleComponent implements OnInit {
+export class AdminCalendarToggleComponent implements OnInit, OnDestroy {
   @ViewChild('elem') elem: ElementRef;
   @ViewChild('day') day: ElementRef;
   @ViewChild('dayButton') dayButton: ElementRef;
@@ -21,37 +21,9 @@ export class AdminCalendarToggleComponent implements OnInit {
         // this.containerInitialHeight = this.containerInitialHeight ? this.containerInitialHeight : rect.height;
         this.windowInnerHeight = window.innerHeight;
 
-          console.log(rect.bottom, window.innerHeight, this.containerInitialHeight);
         if ((window.innerHeight) < rect.top + rect.height) {
           this.container.style.height = window.innerHeight - rect.top - 5 + 'px';
         }
-        fromEvent(window, 'resize')
-          .pipe(
-            filter(() => true),
-            // delay(10)
-          )
-          .subscribe(() => {
-            const rect = this.container.getBoundingClientRect();
-            const direction = this.windowInnerHeight > window.innerHeight ? 'up' : 'down';
-            let h;
-
-            if (this.openCalendar &&  this.toggleResult === 'Range') {
-              h = 451;
-            } else if (this.toggleResult === 'Weeks') {
-              h = 370;
-            } else if (this.toggleResult === 'Days') {
-              h = 479;
-            } else {
-              h = this.containerInitialHeight;
-            }
-
-            console.log(rect.bottom, window.innerHeight, h);
-            if ((window.innerHeight) < rect.top + rect.height) {
-              this.container.style.height = window.innerHeight - rect.top - 5 + 'px';
-            } else if (window.innerHeight > (rect.top + rect.height) && (rect.height + 5) < h) {
-              this.container.style.height = ((window.innerHeight - rect.top - 5) < h ? (window.innerHeight - rect.top - 5) : h) + 'px';
-            }
-          });
       }, 300);
 
 
@@ -75,12 +47,13 @@ export class AdminCalendarToggleComponent implements OnInit {
       { id: 'range_1', title: 'Last 7 Days', selectedIcon: './assets/Check (Navy).svg'},
       { id: 'range_2', title: 'Last 30 Days', selectedIcon: './assets/Check (Navy).svg' },
       { id: 'range_3', title: 'Last 90 Days', selectedIcon: './assets/Check (Navy).svg' },
-      { id: 'range_4', title: 'Custom Date Range', selectedIcon: './assets/Check (Navy).svg', arrowIcon: './assets/Chevron Right (Navy).svg'}
+      { id: 'range_6', title: 'This school year', selectedIcon: './assets/Check (Navy).svg'},
+      { id: 'range_4', title: 'Custom Date Range', selectedIcon: './assets/Check (Navy).svg', arrowIcon: './assets/Chevron Down (Blue-Gray).svg'}
   ];
 
   public daysOptions = [
       {id: 'days_1', title: 'All Day', selectedIcon: './assets/Check (Navy).svg'},
-      {id: 'days_2', title: 'Custom Time Range', selectedIcon: './assets/Check (Navy).svg', arrowIcon: './assets/Chevron Right (Navy).svg'},
+      {id: 'days_2', title: 'Custom Time Range', selectedIcon: './assets/Check (Navy).svg', arrowIcon: './assets/Chevron Down (Blue-Gray).svg'},
   ];
   public openCalendar: boolean;
   public openTimeRange: boolean;
@@ -101,6 +74,8 @@ export class AdminCalendarToggleComponent implements OnInit {
   } = {start: null, end: null};
 
   public selectedDay: moment.Moment;
+
+  destroy$ = new Subject();
 
   constructor(private cdr: ChangeDetectorRef) { }
 
@@ -153,6 +128,35 @@ export class AdminCalendarToggleComponent implements OnInit {
           }
       }, 10);
     }
+
+    fromEvent(window, 'resize')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const rect = this.container.getBoundingClientRect();
+        const direction = this.windowInnerHeight > window.innerHeight ? 'up' : 'down';
+        let h;
+
+        if (this.openCalendar &&  this.toggleResult === 'Range') {
+          h = 451;
+        } else if (this.toggleResult === 'Weeks') {
+          h = 370;
+        } else if (this.toggleResult === 'Days') {
+          h = 479;
+        } else {
+          h = this.containerInitialHeight;
+        }
+
+        if ((window.innerHeight) < rect.top + rect.height) {
+          this.container.style.height = window.innerHeight - rect.top - 5 + 'px';
+        } else if (window.innerHeight > (rect.top + rect.height) && (rect.height + 5) < h) {
+          this.container.style.height = ((window.innerHeight - rect.top - 5) < h ? (window.innerHeight - rect.top - 5) : h) + 'px';
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   selectedRangeOption(id) {
@@ -180,6 +184,9 @@ export class AdminCalendarToggleComponent implements OnInit {
     } else if (id === 'range_5') {
       this.selectedDate.end = this.currentDate;
       this.selectedDate.start = moment().subtract(3, 'days').startOf('day');
+    } else if (id === 'range_6') {
+      this.selectedDate.start = moment('1/8/' + this.currentDate.year(), 'DD/MM/YYYY');
+      this.selectedDate.end = moment('31/7/' + moment(this.currentDate).add(1, 'year').year(), 'DD/MM/YYYY');
     }
     this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
     this.adminCalendarRes.emit(this.selectedDate);

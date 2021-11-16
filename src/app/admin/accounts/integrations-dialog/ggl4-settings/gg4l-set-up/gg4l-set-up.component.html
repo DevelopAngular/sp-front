@@ -124,7 +124,7 @@
         <div class="prov-title">Sign-in authentication (SSO)</div>
         <div class="prov-subtitle">How should users be authenticated when they sign in to SmartPass?</div>
         <div class="buttons" style="width: 228px" [matTooltip]="schoolSyncInfo.is_gg4l_enabled && !!schoolSyncInfo.login_provider ? 'Contact us to change your sign-in provider.' : null"
-             matTooltipClass="tooltip">
+             matTooltipClass="ds-tooltip">
           <app-restriction-picker
             [choices]="['Sign in with Google', 'GG4L \n Passport']"
             [selectedChoice]="normalizeProvider"

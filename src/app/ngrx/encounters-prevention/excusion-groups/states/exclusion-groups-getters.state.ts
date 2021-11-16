@@ -28,3 +28,10 @@ export const getCurrentExclusionGroup = createSelector(
   getCurrentExclusionGroupId,
   (entities, id) => entities[id]
 );
+
+export const getEncounterPreventionLength = createSelector(
+  getExclusionGroupsCollection,
+  (groups) => groups.reduce((acc, group) => {
+    return acc + group.prevented_encounters.length;
+  }, 0)
+);

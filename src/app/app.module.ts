@@ -69,6 +69,7 @@ import {HallMonitorPassesEffects} from './ngrx/pass-like-collection/nested-state
 import {MyRoomPassesEffects} from './ngrx/pass-like-collection/nested-states/my-room-passes/effects';
 import {RepresentedUsersEffects} from './ngrx/represented-users/effects';
 import {QuickPreviewPassesEffects} from './ngrx/quick-preview-passes/effects';
+import {ProfilePicturesEffects} from './ngrx/profile-pictures/effects';
 import {LoginDataEffects} from './ngrx/login-data/effects';
 import {ExclusionGroupsEffects} from './ngrx/encounters-prevention/excusion-groups/effects';
 
@@ -196,8 +197,9 @@ const appRoutes: Routes = [
       FiltersEffects,
       RepresentedUsersEffects,
       QuickPreviewPassesEffects,
+      ProfilePicturesEffects,
       LoginDataEffects,
-      ExclusionGroupsEffects
+      ExclusionGroupsEffects,
     ]),
     StoreDevtoolsModule.instrument({}),
     HammerModule,

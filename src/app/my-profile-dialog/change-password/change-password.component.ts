@@ -87,8 +87,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
       }),
       map(() => {
         this.toast.openToast({
-          title: 'Success',
-          subtitle: 'Account password changed',
+          title: 'Account password changed',
           type: 'success'
         });
       }),

@@ -59,11 +59,40 @@
             [controlSize]="'small'"
             [form]="form"
             [controlName]="'show_expired_passes'"
-            (pushOutValue)="updateUser($event)"
+            (pushOutValue)="updateUser({show_expired_passes: $event})"
           ></app-toggle-input>
         </div>
       </div>
       <div class="layout-wrapper" *ngIf="showWrapper"></div>
     </div>
+    <div class="page-layout" *ngIf="isStaff && (isEnableProfilePictures$ | async)">
+      <div class="header">
+        <div class="header-title">Show Profile Pictures</div>
+        <div class="header-info">Show profile pictures on pass <br/>tiles
+          <span *ngIf="form.get('show_student_profile_picture').value">: </span>
+          <span appCrossPointerEventTarget (pointerClickEvent)="showLocationPiker = !showLocationPiker" class="profile-location" *ngIf="form.get('show_student_profile_picture').value"> {{ showStudentProfileLocation }}
+            <img width="8" height="6" [src]="'./assets/Rect (Blue-Gray).svg'" alt="">
+          </span>
+        </div>
+      </div>
+      <div class="picker">
+        <app-toggle-input
+          [delimiter]="false"
+          [controlSize]="'small'"
+          [form]="form"
+          [controlName]="'show_student_profile_picture'"
+          (pushOutValue)="updateProfilePictures($event)"
+        ></app-toggle-input>
+      </div>
+    </div>
+    <div class="res-picker" *ngIf="showLocationPiker && form.get('show_student_profile_picture').value">
+      <app-restriction-picker
+        [width]="186"
+        [choices]="['Hall Monitor', 'Everywhere']"
+        [selectedChoice]="showStudentProfileLocation"
+        (result)="switchProfileLocation($event)"
+      ></app-restriction-picker>
+    </div>
+
   </div>
 </div>

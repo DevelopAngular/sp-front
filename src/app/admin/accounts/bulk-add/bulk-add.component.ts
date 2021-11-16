@@ -5,9 +5,10 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {map, switchMap, takeUntil} from 'rxjs/operators';
 import {forkJoin, fromEvent, MonoTypeOperatorFunction, of, Subject, zip} from 'rxjs';
 import {differenceBy} from 'lodash';
-import * as XLSX from 'xlsx';
 
 import {UserService} from '../../../services/user.service';
+import {HttpService} from '../../../services/http-service';
+import {XlsxService} from '../../../services/xlsx.service';
 import {AdminService} from '../../../services/admin.service';
 
 export interface ImportAccount {
@@ -113,6 +114,8 @@ export class BulkAddComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     public dialogRef: MatDialogRef<BulkAddComponent>,
+    private http: HttpService,
+    private xlsxService: XlsxService,
     private adminService: AdminService
   ) {}
 
@@ -174,11 +177,7 @@ export class BulkAddComponent implements OnInit, OnDestroy {
   }
 
   parseFile(res): ImportAccount[] {
-    const raw = XLSX.read(res.target.result, {type: 'binary'});
-    const sn = raw.SheetNames[0];
-    const stringCollection = raw.Sheets[sn];
-    const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-    const rows = data.slice(1);
+    const rows = this.xlsxService.parseXlSXFile(res);
     return rows.map((row, index) => {
       return {
         id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,

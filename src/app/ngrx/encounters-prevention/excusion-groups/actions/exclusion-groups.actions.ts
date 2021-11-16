@@ -15,4 +15,8 @@ export const updateExclusionGroup = createAction(`[${EG}] Update`, props<{group:
 export const updateExclusionGroupSuccess = createAction(`[${EG}] Update Success`, props<{group: ExclusionGroup}>());
 export const updateExclusionGroupFailure = createAction(`[${EG}] Update Failure`, props<{errorMessage: string}>());
 
+export const removeExclusionGroup = createAction(`[${EG}] Delete`, props<{group: ExclusionGroup}>());
+export const removeExclusionGroupSuccess = createAction(`[${EG}] Delete Success`, props<{group: ExclusionGroup}>());
+export const removeExclusionGroupFailure = createAction(`[${EG}] Delete Failure`, props<{errorMessage: string}>());
+
 

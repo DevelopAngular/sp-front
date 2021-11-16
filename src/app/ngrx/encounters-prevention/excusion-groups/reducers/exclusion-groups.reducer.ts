@@ -23,6 +23,9 @@ const reducer = createReducer(
   }),
   on(exclusionGroupsActions.updateExclusionGroupSuccess, (state, {group}) => {
     return adapter.upsertOne(group, {...state, loading: false, loaded: true, currentExclusionGroupId: group.id});
+  }),
+  on(exclusionGroupsActions.removeExclusionGroupSuccess, (state, {group}) => {
+    return adapter.removeOne(group.id, { ...state, loading: false, loaded: true});
   })
 );
 

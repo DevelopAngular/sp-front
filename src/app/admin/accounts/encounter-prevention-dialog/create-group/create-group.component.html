@@ -5,8 +5,8 @@
       [chipsMode]="true"
       [placeholder]="'Select students'"
       [inputField]="true"
-      [selectedOptions]="state.createGroup.students"
-      (onUpdate)="state.createGroup.students = $event; onUpdate()"
+      [selectedOptions]="group.users"
+      (onUpdate)="group.users = $event; onUpdate()"
     ></app-sp-search>
   </div>
 
@@ -17,8 +17,8 @@
       [height]="'40px'"
       [formGroup]="form"
       [input_label]="'Group name (optional)'"
-      [input_value]="state.createGroup.group_name"
-      [controlName]="form.get('group_name')">
+      [input_value]="group.name"
+      [controlName]="form.get('name')">
     </app-input>
   </div>
 

@@ -50,6 +50,8 @@
            [forStaff]="forStaff"
            [pass]="pass"
            [allowPopup]="true"
+           [profileImage]="showProfilePictures"
+           [isEnableProfilePictures]="(isEnabledProfilePictures$ | async) && !!user.show_profile_pictures"
           ></app-pass-tile>
         </div>
       </div>

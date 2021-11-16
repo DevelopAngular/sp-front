@@ -36,6 +36,7 @@ import {PermissionsDialogComponent} from '../../accounts-role/permissions-dialog
 import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/status-popup.component';
 import {ToastService} from '../../../services/toast.service';
 import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
+import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -262,22 +263,24 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
               }
             })).pipe(mapTo(res));
           } else {
+            let count = 0;
             return zip(...this.selectedUsers.map(user => {
+              count += 1;
               return this.userService.updateUserRequest(user, {status: res});
-            })).pipe(mapTo(res));
+            })).pipe(mapTo({action: res, count}));
           }
         })
-      ).subscribe(res => {
-        if (res === 'delete') {
-          this.toast.openToast({title: `${this.selectedUsers.length} account${this.selectedUsers.length > 1 ? 's' : ''} deleted`, type: 'error'});
+      ).subscribe(({action, count}) => {
+        if (action === 'delete') {
+          this.toast.openToast({title: `${count} account${count > 1 ? 's' : ''} deleted`, type: 'error'});
         } else {
-          this.toast.openToast({title: `${this.selectedUsers.length} account statuses updated`, type: 'success'});
+          this.toast.openToast({title: `${count} account statuses updated`, type: 'success'});
         }
-      this.selectedUsers = [];
-      this.tableService.clearSelectedUsers.next();
-        setTimeout(() => {
-          this.adminService.getCountAccountsRequest();
-        }, 500);
+        this.tableService.clearSelectedUsers.next();
+          setTimeout(() => {
+            this.adminService.getCountAccountsRequest();
+          }, 500);
+      this.clearData();
     });
   }
 
@@ -316,6 +319,13 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
+      });
+    } else if (action === 'profile_pictures') {
+      const PPD = this.matDialog.open(ProfilePictureComponent, {
+        panelClass: 'accounts-profiles-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px'
       });
     }
   }

@@ -109,12 +109,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.route.queryParams.pipe(
       filter((queryParams) => {
-        return queryParams.email || queryParams.school_id;
+        return queryParams.email || queryParams.school_id || queryParams.instant_login;
       }),
       takeUntil(this.destroyer$),
     ).subscribe((qp) => {
       this.loginDataService.setLoginDataQueryParams(
-        { email: qp.email, school_id: qp.school_id }
+        { email: qp.email, school_id: qp.school_id, instant_login: qp.instant_login }
       );
     });
   }

@@ -39,6 +39,11 @@ export const getAddedAssistant = createSelector(
   (state: AssistantsStates) => state.addedUser
 );
 
+export const getCurrentUpdatedAssistant = createSelector(
+  getAssistantsAccountsProfiles,
+  (state: AssistantsStates) => state.currentUpdatedAccount
+);
+
 export const getCountAssistants = adapter.getSelectors(getAssistantsAccountsProfiles).selectTotal;
 export const getAssistantsAccountsEntities = adapter.getSelectors(getAssistantsAccountsProfiles).selectEntities;
 

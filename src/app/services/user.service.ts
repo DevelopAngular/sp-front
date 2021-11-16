@@ -1,5 +1,5 @@
 import {ErrorHandler, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, combineLatest, interval, Observable, of, race, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, merge, Observable, of, race, ReplaySubject, Subject} from 'rxjs';
 import {SentryErrorHandler} from '../error-handler';
 import {HttpService} from './http-service';
 import {constructUrl} from '../live-data/helpers';
@@ -14,13 +14,15 @@ import {AppState} from '../ngrx/app-state/app-state';
 import {
   addUserToProfile,
   bulkAddAccounts,
+  clearCurrentUpdatedAccount,
   getAccounts,
   getMoreAccounts,
   postAccounts,
   removeAccount,
   sortAccounts,
   updateAccountActivity,
-  updateAccountPermissions
+  updateAccountPermissions,
+  updateAccountPicture
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
   getAllAccountsCollection,
@@ -37,6 +39,7 @@ import {
   getAdminsCollections,
   getAdminSort,
   getCountAdmins,
+  getCurrentUpdatedAdmin,
   getLastAddedAdminsAccounts,
   getLoadedAdminsAccounts,
   getLoadingAdminsAccounts,
@@ -45,6 +48,7 @@ import {
 import {
   getAddedTeacher,
   getCountTeachers,
+  getCurrentUpdatedTeacher,
   getLastAddedTeachers,
   getLoadedTeachers,
   getLoadingTeachers,
@@ -59,6 +63,7 @@ import {
   getAssistantsAccountsEntities,
   getAssistantSort,
   getCountAssistants,
+  getCurrentUpdatedAssistant,
   getLastAddedAssistants,
   getLoadedAssistants,
   getLoadingAssistants,
@@ -67,6 +72,7 @@ import {
 import {
   getAddedStudent,
   getCountStudents,
+  getCurrentUpdatedStudent,
   getLastAddedStudents,
   getLoadedStudents,
   getLoadingStudents,
@@ -86,20 +92,44 @@ import {
 import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
-import {HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
+import {
+  clearProfilePicturesUploadErrors,
+  clearUploadedData,
+  deleteProfilePicture,
+  getMissingProfilePictures,
+  getProfilePicturesUploadedGroups,
+  getUploadedErrors,
+  postProfilePictures,
+  putUploadErrors
+} from '../ngrx/profile-pictures/actions';
+import {
+  getCurrentUploadedGroup,
+  getLastUploadedGroup,
+  getMissingProfiles,
+  getProfilePicturesLoaded,
+  getProfilePicturesLoaderPercent,
+  getProfilePicturesLoading,
+  getProfiles,
+  getUploadedGroups,
+  getUploadErrors
+} from '../ngrx/profile-pictures/states';
 import {updateTeacherLocations} from '../ngrx/accounts/nested-states/teachers/actions';
+import {ProfilePicturesUploadGroup} from '../models/ProfilePicturesUploadGroup';
+import {ProfilePicturesError} from '../models/ProfilePicturesError';
 import {LoginDataService} from './login-data.service';
 import {GoogleLoginService} from './google-login.service';
+import {School} from '../models/School';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService implements OnDestroy{
+export class UserService implements OnDestroy {
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
@@ -110,7 +140,7 @@ export class UserService implements OnDestroy{
   public representedUsers: Observable<RepresentedUser[]> = this.store.select(getRepresentedUsersCollections);
 
   /**
-   * Users from store
+   * Accounts from store
    */
   accounts = {
     allAccounts: this.store.select(getAllAccountsCollection),
@@ -182,22 +212,52 @@ export class UserService implements OnDestroy{
     _profile_assistant: this.store.select(getAddedAssistant)
   };
 
+  currentUpdatedAccount$ = {
+    _profile_admin: this.store.select(getCurrentUpdatedAdmin),
+    _profile_teacher: this.store.select(getCurrentUpdatedTeacher),
+    _profile_student: this.store.select(getCurrentUpdatedStudent),
+    _profile_assistant: this.store.select(getCurrentUpdatedAssistant)
+  };
+
+  /**
+   * Current User
+   */
   user$: Observable<User> = this.store.select(getUserData);
   userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
   loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
 
+  /**
+  * Student Groups
+   */
   studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
   isLoadingStudentGroups$: Observable<boolean> = this.store.select(getLoadingGroups);
   isLoadedStudentGroups$: Observable<boolean> = this.store.select(getLoadedGroups);
   blockUserPage$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+  /**
+  * Profile Pictures
+   */
+  profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
+  profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
+  profiles$: Observable<User[]> = this.store.select(getProfiles);
+  profilePictureLoaderPercent$: Observable<number> = this.store.select(getProfilePicturesLoaderPercent);
+  profilePicturesErrors$: Subject<{[id: string]: string, error: string}> = new Subject();
+  uploadedGroups$: Observable<ProfilePicturesUploadGroup[]> = this.store.select(getUploadedGroups);
+  currentUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getCurrentUploadedGroup);
+  lastUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getLastUploadedGroup);
+  missingProfilePictures$: Observable<User[]> = this.store.select(getMissingProfiles);
+  profilePicturesUploadErrors$: Observable<ProfilePicturesError[]> = this.store.select(getUploadErrors);
+
   introsData$: Observable<any> = this.store.select(getIntrosData);
+
+  isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private http: HttpService,
+    private httpClient: HttpClient,
     private pollingService: PollingService,
     private _logging: Logger,
     private errorHandler: ErrorHandler,
@@ -272,6 +332,9 @@ export class UserService implements OnDestroy{
           this.userData.next(user);
         });
 
+    this.isEnableProfilePictures$ = merge(this.http.currentSchool$, this.getCurrentUpdatedSchool$()
+      .pipe(filter(s => !!s))).pipe(filter(s => !!s), map(school => school.profile_pictures_enabled));
+
     if (errorHandler instanceof SentryErrorHandler) {
       this.userData.pipe(takeUntil(this.destroy$)).subscribe(user => {
         errorHandler.setUserContext({
@@ -327,6 +390,14 @@ export class UserService implements OnDestroy{
   getUserRequest() {
     this.store.dispatch(getUser());
     return this.user$;
+  }
+
+  getUserSchool(): School {
+    return this.http.getSchool();
+  }
+
+  getCurrentUpdatedSchool$(): Observable<School> {
+    return this.http.currentUpdateSchool$;
   }
 
   clearUser() {
@@ -411,6 +482,10 @@ export class UserService implements OnDestroy{
 
   searchProfileById(id) {
       return this.http.get<User>(`v1/users/${id}`);
+  }
+
+  searchProfileWithFilter(id) {
+    return this.http.get(`v1/users?id=${id}`);
   }
 
   searchUserByCardId(id): Observable<User[]> {
@@ -590,7 +665,7 @@ export class UserService implements OnDestroy{
     return this.getAccountsRole(role);
   }
 
-  getUsersList(role: string = '', search: string = '', limit: number = 0) {
+  getUsersList(role: string = '', search: string = '', limit: number = 0, include_numbers?: boolean) {
     const params: any = {};
     if (role !== '' && role !== '_all') {
       params.role = role;
@@ -601,6 +676,9 @@ export class UserService implements OnDestroy{
     }
     if (limit) {
       params.limit = limit;
+    }
+    if (include_numbers) {
+      params.include_numbers = true;
     }
 
     return this.http.get<any>(constructUrl('v1/users', params));
@@ -653,7 +731,94 @@ export class UserService implements OnDestroy{
     this.store.dispatch(clearRUsers());
   }
 
+  createUploadGroup() {
+    return this.http.post(`v1/file_upload_groups`);
+  }
+
+  postProfilePicturesRequest(userIds: string[] | number[], pictures: File[]) {
+    this.store.dispatch(postProfilePictures({pictures, userIds}));
+    return this.profiles$;
+  }
+
+  uploadProfilePictures(image_files, user_ids, group_id?) {
+    const data = group_id ? {image_files, user_ids, group_id, commit: true} : {image_files, user_ids, commit: true};
+    return this.http.post(`v1/schools/${this.http.getSchool().id}/attach_profile_pictures`, data);
+  }
+
+  bulkAddProfilePictures(files: File[]) {
+    const file_names = files.map(file => file.name);
+    const content_types = files.map(file => file.type ? file.type : 'image/jpeg');
+    return this.http.post('v1/file_uploads/bulk_create_url', {file_names, content_types});
+  }
+
+  setProfilePictureToGoogle(url: string, file: File, content_type: string) {
+    const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': content_type
+        })
+      };
+    return this.httpClient.put(url, file, httpOptions);
+  }
+
+  addProfilePictureRequest(profile: User, role: string, file: File) {
+    this.store.dispatch(updateAccountPicture({profile, role, file}));
+  }
+
+  addProfilePicture(userId, file: File) {
+    return this.http.patch(`v1/users/${userId}/profile-picture`, {profile_picture: file});
+  }
+
   updateTeacherLocations(teacher, locations, newLocations) {
     this.store.dispatch(updateTeacherLocations({teacher, locations, newLocations}));
+  }
+
+  putProfilePicturesErrorsRequest(errors) {
+    this.store.dispatch(putUploadErrors({errors}));
+  }
+
+  putProfilePicturesErrors(uploadedGroupId, levels: string[], messages: string[]) {
+    return this.http.put(`v1/file_upload_groups/${uploadedGroupId}/events`, {levels, messages});
+  }
+
+  getUploadedGroupsRequest() {
+    this.store.dispatch(getProfilePicturesUploadedGroups());
+  }
+
+  getUploadedGroups() {
+    return this.http.get(`v1/file_upload_groups`);
+  }
+
+  getMissingProfilePicturesRequest() {
+    this.store.dispatch(getMissingProfilePictures());
+  }
+
+  getMissingProfilePictures() {
+    return this.http.get(`v1/users?role=_profile_student&has_picture=false`);
+  }
+
+  getUploadedErrorsRequest(group_id) {
+    this.store.dispatch(getUploadedErrors({group_id}));
+    return this.profilePicturesUploadErrors$;
+  }
+
+  getUploadedErrors(group_id) {
+    return this.http.get(`v1/file_upload_groups/${group_id}/events`);
+  }
+
+  clearProfilePicturesErrors() {
+    this.store.dispatch(clearProfilePicturesUploadErrors());
+  }
+
+  clearCurrentUpdatedAccounts() {
+    this.store.dispatch(clearCurrentUpdatedAccount());
+  }
+
+  deleteProfilePicture(user: User, role: string) {
+    this.store.dispatch(deleteProfilePicture({user, role}));
+    return this.currentUpdatedAccount$[role];
+  }
+
+  clearUploadedData() {
+    this.store.dispatch(clearUploadedData());
   }
 }

@@ -99,7 +99,7 @@
         [title]="(numberWithCommas(countPasses) + ' pass' + (countPasses > 1 ? 'es' : ''))"
         [isDownloadButton]="true"
         [matTooltip]="'Click to export passes'"
-        matTooltipClass="tooltip"
+        matTooltipClass="ds-tooltip"
         (buttonClick)="downloadPasses(countPasses)">
       </app-filter-button>
       <ng-template #selected>
@@ -108,7 +108,7 @@
           [title]="((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + ' selected'"
           [isDownloadButton]="true"
           [matTooltip]="'Click to export passes'"
-          matTooltipClass="tooltip"
+          matTooltipClass="ds-tooltip"
           (buttonClick)="downloadPasses(countPasses)">
         </app-filter-button>
       </ng-template>

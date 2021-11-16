@@ -38,7 +38,7 @@ export class TeachersEffects {
                   });
                 });
                 const users = userList.results.map(user => {
-                  const assignedTo = mapVar[user.id];
+                  const assignedTo = mapVar[user.id] || [];
                   return {...user, assignedTo};
                 });
                 const nextUrl = userList.next ? userList.next.substring(userList.next.search('v1')) : null;
@@ -81,7 +81,7 @@ export class TeachersEffects {
                 });
               });
               const moreTeachers = users.results.map(user => {
-                const assignedTo = mapVar[user.id];
+                const assignedTo = mapVar[user.id] || [];
                 return {...user, assignedTo};
               });
               const nextUrl = users.next ? users.next.substring(users.next.search('v1')) : null;

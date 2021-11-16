@@ -339,7 +339,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.forceSelectedLocation = null;
       const overlayDialog =  this.dialog.open(component, {
         panelClass: 'overlay-dialog',
-        backdropClass: 'custom-bd',
+        backdropClass: 'custom-backdrop',
         disableClose: true,
         minWidth: '800px',
         maxWidth: '100vw',

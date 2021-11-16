@@ -4,9 +4,15 @@ import {ExclusionGroup} from '../models/ExclusionGroup';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
-import {createExclusionGroup, getExclusionGroups, updateExclusionGroup} from '../ngrx/encounters-prevention/excusion-groups/actions';
+import {
+  createExclusionGroup,
+  getExclusionGroups,
+  removeExclusionGroup,
+  updateExclusionGroup
+} from '../ngrx/encounters-prevention/excusion-groups/actions';
 import {
   getCurrentExclusionGroup,
+  getEncounterPreventionLength,
   getExclusionGroupsCollection
 } from '../ngrx/encounters-prevention/excusion-groups/states/exclusion-groups-getters.state';
 
@@ -17,6 +23,7 @@ export class EncounterPreventionService {
 
   exclusionGroups$: Observable<ExclusionGroup[]> = this.store.select(getExclusionGroupsCollection);
   updatedExclusionGroup$: Observable<ExclusionGroup> = this.store.select(getCurrentExclusionGroup);
+  encounterPreventionLength$: Observable<number> = this.store.select(getEncounterPreventionLength);
 
   constructor(private http: HttpService, private store: Store<AppState>) { }
 
@@ -42,5 +49,13 @@ export class EncounterPreventionService {
 
   updateExclusionGroup(group: ExclusionGroup, updateFields) {
     return this.http.patch(`v1/exclusion_groups/${group.id}`, updateFields);
+  }
+
+  deleteExclusionGroupRequest(group: ExclusionGroup) {
+    this.store.dispatch(removeExclusionGroup({group}));
+  }
+
+  deleteExclusionGroup(groupId) {
+    return this.http.delete(`v1/exclusion_groups/${groupId}`);
   }
 }

@@ -16,18 +16,20 @@
         <div class="group-info" *ngSwitchCase="4">
           <div class="user-photos">
             <div class="photo" *ngIf="state.data.currentGroup.users[0].profile_picture; else avatar1" style="left: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[0].profile_picture + ')'}"></div>
-            <div class="photo" *ngIf="state.data.currentGroup.users[1].profile_picture; else avatar2" style="right: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[1].profile_picture + ')'}"></div>
+            <div class="photo" *ngIf="state.data.currentGroup.users[1] && state.data.currentGroup.users[1].profile_picture; else avatar2" style="right: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[1].profile_picture + ')'}"></div>
             <ng-template #avatar1>
-              <img [src]="'./assets/Avatar Default.svg'"/>
+              <img class="photo" style="left: 0" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>
             </ng-template>
-            <ng-template #avatar2></ng-template>
+            <ng-template #avatar2>
+              <img class="photo" style="right: 0" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>
+            </ng-template>
           </div>
           <div class="group-name" *ngIf="!!state.data.currentGroup.name">{{ state.data.currentGroup.name }}</div>
         </div>
       </div>
       <div class="save-button">
-        <app-gradient-button *ngIf="state.current_page === 1" (buttonClick)="save()">Save</app-gradient-button>
-        <app-gradient-button *ngIf="state.current_page === 3" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="goNewGroup()">New group</app-gradient-button>
+        <app-gradient-button *ngIf="(state.current_page === 1 || state.current_page === 2) && state.data.showSaveButton" (buttonClick)="save()">Save</app-gradient-button>
+        <app-gradient-button *ngIf="state.current_page === 3" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="state.data.currentGroup = null; goNewGroup()">New group</app-gradient-button>
         <app-icon-button *ngIf="state.current_page === 4" [srcString]="'Dots'" [size]="17" (clickEvent)="openPopup($event)"></app-icon-button>
       </div>
     </div>
@@ -45,13 +47,13 @@
       <app-gradient-button
         [style.margin-top]="'24px'"
         [leftIcon]="'./assets/Plus (White).svg'"
-        (buttonClick)="nextPage()"
+        (buttonClick)="state.data.currentGroup = null; nextPage()"
       >New group
       </app-gradient-button>
     </div>
 
     <div class="page-1" *ngIf="state.current_page === 1 || state.current_page === 2">
-      <app-create-group [state]="state" (update)="state = $event"></app-create-group>
+      <app-create-group [state]="state" (update)="state = $event;"></app-create-group>
     </div>
 
     <div class="page-2" *ngIf="state.current_page === 3">
@@ -63,7 +65,7 @@
           </div>
           <div class="subtitle">101 encounters have been prevented this year for all students</div>
         </div>
-        <app-octagon [size]="38"><div class="value">{{ '101' }}</div></app-octagon>
+        <app-octagon [size]="38"><div class="value">{{ encounterPreventionLength$ | async }}</div></app-octagon>
       </div>
       <div class="groups">
         <div class="group" *ngFor="let exclusionGroup of exclusionGroups$ | async">

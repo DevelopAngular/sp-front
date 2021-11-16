@@ -12,13 +12,13 @@ export interface PreventEncounters {
 }
 
 export interface ExclusionGroup {
-  id: number;
+  id?: number;
   name: string;
-  notes?: string;
-  prevented_encounters: PreventEncounters[];
-  school_id: number;
+  notes: string;
+  prevented_encounters?: PreventEncounters[];
+  school_id?: number;
   users: User[];
-  enabled: boolean;
-  created: Date;
-  last_updated: Date;
+  enabled?: boolean;
+  created?: Date;
+  last_updated?: Date;
 }

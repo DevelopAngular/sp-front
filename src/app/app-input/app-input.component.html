@@ -13,7 +13,7 @@
       <div class="tooltip-container">
         <img
            [matTooltip]="tooltipText"
-           matTooltipClass="tooltip"
+           matTooltipClass="ds-tooltip"
            (mouseover)="over.emit({event: $event, action: 'timeLimit'})"
            (mouseleave)="leave.emit('timeLimit')"
            class="support-icon"
@@ -89,7 +89,7 @@
             controlName.errors.email ? 'Must be Email' :
             controlName.errors.max || controlName.errors.min  ? 'Must be between 1 and 120 minutes' : null
           "
-          matTooltipClass="tooltip"
+          matTooltipClass="ds-tooltip"
           class="success-icon"
           [src]="'./assets/Report (Red).svg' | resolveAsset">
       </div>

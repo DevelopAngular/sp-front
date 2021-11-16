@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <div class="content" *ngIf="false">
+  <div class="content" *ngIf="!!group.prevented_encounters.length; else noPrevented">
     <div class="count">
       <div class="info">
         <app-octagon
@@ -7,7 +7,7 @@
           [backgroundColor]="'transparent'"
           [borderColor]="'#E32C66'"
           [borderWidth]="5">
-          <div class="value" style="color: #E32C66">{{ group.prevented_encounters }}</div>
+          <div class="value" style="color: #E32C66">{{ group.prevented_encounters.length }}</div>
         </app-octagon>
         <div class="ds-dialog-subtitle" style="margin-left: 7px">Prevented Encounters</div>
       </div>
@@ -15,20 +15,22 @@
     <mat-divider></mat-divider>
 
     <div class="encounters">
-      <div class="encounter" *ngFor="let g of [1, 1, 1, 1, 1]">
+      <div class="encounter" *ngFor="let group of group.prevented_encounters">
         <app-report-description
-          [date]="'Dec. 9, 2020'"
+          [date]="getDate(group.created)"
           [description]="'Jeremy Perez was going from Ladson to East Bathroom on Dec. 15, 2020 from 11:45 AM to 12:01 PM. At 11:48:04, Leah Olson attempted to make a pass from Clarkson to West Bathroom, but it was prevented.'"
         ></app-report-description>
       </div>
     </div>
   </div>
 
-  <div class="empty-state" *ngIf="true">
-    <div class="container">
-      <app-octagon [size]="64" [backgroundColor]="'#F4F4F4'" [borderColor]="'#7F879D'"><div class="value">0</div></app-octagon>
-      <div class="text">No prevented encounters yet.</div>
-      <div class="subtitle">When one student tries to make a pass when another student has a pass, it won’t let them and show an error. When this happens, it will show up here.</div>
+  <ng-template #noPrevented>
+    <div class="empty-state">
+      <div class="container">
+        <app-octagon [size]="64" [backgroundColor]="'#F4F4F4'" [borderColor]="'#7F879D'"><div class="value">0</div></app-octagon>
+        <div class="text">No prevented encounters yet.</div>
+        <div class="subtitle">When one student tries to make a pass when another student has a pass, it won’t let them and show an error. When this happens, it will show up here.</div>
+      </div>
     </div>
-  </div>
+  </ng-template>
 </div>

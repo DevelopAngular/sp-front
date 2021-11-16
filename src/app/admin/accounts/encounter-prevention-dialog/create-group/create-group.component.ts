@@ -1,11 +1,13 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
+import {cloneDeep, isEqual} from 'lodash';
 import {EncountersState} from '../encounter-prevention-dialog.component';
+import {ExclusionGroup} from '../../../../models/ExclusionGroup';
 
 @Component({
   selector: 'app-create-group',
   templateUrl: './create-group.component.html',
-  styleUrls: ['./create-group.component.scss']
+  styleUrls: ['./create-group.component.scss'],
 })
 export class CreateGroupComponent implements OnInit {
 
@@ -14,28 +16,36 @@ export class CreateGroupComponent implements OnInit {
 
   @Output() update: EventEmitter<any> = new EventEmitter<any>();
 
+  isEdit: boolean;
+  group: ExclusionGroup;
+  groupInitialState: any;
+  showSaveButton: boolean;
+
   constructor() { }
 
   ngOnInit(): void {
-    if (this.state.data.currentGroup) {
-      this.form = new FormGroup({
-        group_name: new FormControl(this.state.data.currentGroup.name),
-        notes: new FormControl(this.state.data.currentGroup.notes)
-      });
-    } else {
-      debugger;
-      this.form = new FormGroup({
-        group_name: new FormControl(this.state.createGroup.group_name),
-        notes: new FormControl(this.state.createGroup.notes)
-      });
-    }
-    this.form.valueChanges.subscribe(() => {
+    this.isEdit = !!this.state.data.currentGroup;
+    this.group = this.isEdit ? this.state.data.currentGroup : this.state.createGroup;
+    this.form = new FormGroup({
+      name: new FormControl(this.group.name),
+      notes: new FormControl(this.group.notes)
+    });
+
+    this.groupInitialState = cloneDeep(this.group);
+    this.form.valueChanges.subscribe((value) => {
+      this.group = {...this.group, ...value};
       this.onUpdate();
     });
   }
 
   onUpdate() {
-    this.update.emit({...this.state, data: {...this.state.data, ...this.form.value}});
+    this.showSaveButton = !isEqual(this.groupInitialState, this.group) && !!this.group.users.length;
+    if (this.isEdit) {
+      this.state.data.currentGroup = this.group;
+    } else {
+      this.state.createGroup = this.group;
+    }
+    this.update.emit({...this.state, data: {...this.state.data, ...this.form.value, showSaveButton: this.showSaveButton}});
   }
 
 }

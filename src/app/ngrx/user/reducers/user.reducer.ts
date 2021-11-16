@@ -12,7 +12,11 @@ const userInitialState: UserState = {
 const reducer = createReducer(
   userInitialState,
   on(userActions.getUser, state => ({...state, user: null, loading: true, loaded: false})),
-  on(userActions.getUserSuccess, userActions.updateUserSuccess, (state, {user}) => {
+  on(
+    userActions.getUserSuccess,
+    userActions.updateUserSuccess,
+    userActions.updateUserPictureSuccess,
+    (state, {user}) => {
     return {
       ...state,
       user,

@@ -1,11 +1,12 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {resizeReportDescription} from '../../../../animations';
 
 @Component({
   selector: 'app-report-description',
   templateUrl: './report-description.component.html',
   styleUrls: ['./report-description.component.scss'],
-  animations: [resizeReportDescription]
+  animations: [resizeReportDescription],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportDescriptionComponent implements OnInit {
 
@@ -17,7 +18,7 @@ export class ReportDescriptionComponent implements OnInit {
   animationTrigger: any;
   isOpen: boolean;
 
-  constructor() {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
   }
@@ -25,5 +26,6 @@ export class ReportDescriptionComponent implements OnInit {
   setStartHeight() {
     this.isOpen = !this.isOpen;
     this.animationTrigger = {value: this.isOpen ? 'open' : 'close', params: {startHeight: this.wrapper.nativeElement.clientHeight}};
+    this.cdr.detectChanges();
   }
 }
