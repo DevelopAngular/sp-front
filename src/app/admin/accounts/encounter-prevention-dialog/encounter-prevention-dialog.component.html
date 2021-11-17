@@ -15,7 +15,7 @@
 
         <div class="group-info" *ngSwitchCase="4">
           <div class="user-photos">
-            <div class="photo" *ngIf="state.data.currentGroup.users[0].profile_picture; else avatar1" style="left: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[0].profile_picture + ')'}"></div>
+            <div class="photo" *ngIf="state.data.currentGroup.users[0] && state.data.currentGroup.users[0].profile_picture; else avatar1" style="left: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[0].profile_picture + ')'}"></div>
             <div class="photo" *ngIf="state.data.currentGroup.users[1] && state.data.currentGroup.users[1].profile_picture; else avatar2" style="right: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[1].profile_picture + ')'}"></div>
             <ng-template #avatar1>
               <img class="photo" style="left: 0" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>

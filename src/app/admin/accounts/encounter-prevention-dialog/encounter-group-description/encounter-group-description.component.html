@@ -15,10 +15,10 @@
     <mat-divider></mat-divider>
 
     <div class="encounters">
-      <div class="encounter" *ngFor="let group of group.prevented_encounters">
+      <div class="encounter" *ngFor="let encounter of group.prevented_encounters">
         <app-report-description
-          [date]="getDate(group.created)"
-          [description]="'Jeremy Perez was going from Ladson to East Bathroom on Dec. 15, 2020 from 11:45 AM to 12:01 PM. At 11:48:04, Leah Olson attempted to make a pass from Clarkson to West Bathroom, but it was prevented.'"
+          [date]="getDate(encounter.created)"
+          [description]="description(encounter)"
         ></app-report-description>
       </div>
     </div>

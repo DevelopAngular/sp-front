@@ -35,7 +35,6 @@ import {EncounterGroupDescriptionComponent} from '../accounts/encounter-preventi
       DisabledChipComponent,
       SpDataTableComponent,
       ColumnOptionsComponent,
-      OctagonComponent,
       EncounterPreventionDialogComponent,
       CreateGroupComponent,
       EncounterGroupComponent,

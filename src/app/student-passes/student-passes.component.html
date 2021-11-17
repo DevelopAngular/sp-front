@@ -24,7 +24,21 @@
             </ng-template>
           </div>
           <div class="title">
-            <div class="full-name" [@topBottomName]="animationTrigger">{{ profile.first_name }} {{ profile.last_name }}</div>
+            <div class="full-name" [@topBottomName]="animationTrigger">
+              <span>{{ profile.first_name }} {{ profile.last_name }}</span>
+              <span style="margin-left: 7px">
+                <app-octagon
+                  [size]="22"
+                  customToolTip
+                  [contentTemplate]="tooltip"
+                >
+                  <img class="value" style="position: absolute; z-index: 10" height="18" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+                </app-octagon>
+                <ng-template #tooltip>
+                  <app-encounter-prevention-tooltip [profile]="profile"></app-encounter-prevention-tooltip>
+                </ng-template>
+              </span>
+            </div>
             <div class="email" [@showHideEmail]="animationTrigger">{{ profile.primary_email }}</div>
           </div>
 

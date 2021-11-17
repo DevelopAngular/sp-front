@@ -66,6 +66,8 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 import {AppTextareaComponent} from '../app-textarea/app-textarea.component';
 import {SquareButtonComponent} from '../square-button/square-button.component';
+import {OctagonComponent} from '../admin/accounts/encounter-prevention-dialog/octagon/octagon.component';
+import {EncounterPreventionTooltipComponent} from '../student-passes/encounter-prevention-tooltip/encounter-prevention-tooltip.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -81,7 +83,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DragulaModule.forRoot(),
     SwiperModule,
     ChartsModule,
-    CoreModule
+    CoreModule,
   ],
   declarations: [
     GoogleSigninComponent,
@@ -141,7 +143,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DropdownComponent,
     SettingsDescriptionPopupComponent,
     AppTextareaComponent,
-    SquareButtonComponent
+    SquareButtonComponent,
+    OctagonComponent,
+    EncounterPreventionTooltipComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -199,7 +203,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlineRequestCardComponent,
     DropdownComponent,
     AppTextareaComponent,
-    SquareButtonComponent
+    SquareButtonComponent,
+    OctagonComponent,
+    EncounterPreventionTooltipComponent,
   ],
   providers: [
     {
