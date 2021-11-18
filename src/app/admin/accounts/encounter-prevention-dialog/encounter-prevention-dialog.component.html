@@ -68,8 +68,8 @@
         <app-octagon [size]="38"><div class="value">{{ encounterPreventionLength$ | async }}</div></app-octagon>
       </div>
       <div class="groups">
-        <div class="group" *ngFor="let exclusionGroup of exclusionGroups$ | async">
-          <app-encounter-group [state]="state" [group]="exclusionGroup" (clickEvent)="goDescription(exclusionGroup)"></app-encounter-group>
+        <div class="group" *ngFor="let exclusionGroup of exclusionGroups">
+          <app-encounter-group [group]="exclusionGroup" (clickEvent)="goDescription(exclusionGroup)"></app-encounter-group>
         </div>
       </div>
     </div>

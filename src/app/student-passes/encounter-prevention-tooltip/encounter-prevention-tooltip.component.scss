@@ -31,14 +31,10 @@
       justify-content: space-between;
       //margin-right: 10px;
       //margin-bottom: 10px;
-      margin: 5px;
+      margin: 5px 0;
       color: #1F194E;
       white-space: nowrap;
       position: relative;
-
-      &:first-child {
-        margin-left: 0;
-      }
 
       .name {
         color: $navy;

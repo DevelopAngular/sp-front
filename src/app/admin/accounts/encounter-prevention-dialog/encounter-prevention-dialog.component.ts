@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Optional, Output} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {filter, tap} from 'rxjs/operators';
+import {filter, switchMap, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
 import {EncounterOptionsComponent} from './encounter-options/encounter-options.component';
@@ -9,6 +9,7 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 import {ExclusionGroup} from '../../../models/ExclusionGroup';
 import {EncounterPreventionService} from '../../../services/encounter-prevention.service';
 import {cloneDeep} from 'lodash';
+import {ToastService} from '../../../services/toast.service';
 
 enum Pages {
   StartPage = 0,
@@ -41,7 +42,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   state: EncountersState = {
     pages_history: [Pages.Groups],
-    current_page: Pages.Groups,
+    current_page: null,
     createGroup: {
       users: [],
       name: '',
@@ -54,7 +55,9 @@ export class EncounterPreventionDialogComponent implements OnInit {
   };
 
   exclusionGroups$: Observable<ExclusionGroup[]>;
+  exclusionGroups: ExclusionGroup[];
   encounterPreventionLength$: Observable<number>;
+  exclusionGroupsLoading$: Observable<boolean>;
 
   options: {label: string, textColor: string, hoverColor: string, icon: string, action: string, description: string}[] = [
     {label: 'Download report', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Download circle (Blue-Gray).svg', action: 'down_report',  description: ''},
@@ -67,16 +70,32 @@ export class EncounterPreventionDialogComponent implements OnInit {
     private dialog: MatDialog,
     @Optional() private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>,
     private encounterPreventionService: EncounterPreventionService,
-    public cdr: ChangeDetectorRef
+    public cdr: ChangeDetectorRef,
+    private toast: ToastService
   ) { }
 
   ngOnInit(): void {
     if (this.newGroup) {
       this.setState(true, Pages.NewGroup);
+    } else {
+      this.encounterPreventionService.getExclusionGroupsRequest();
+      this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
+      this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
+        filter(r => r),
+        switchMap(() => this.encounterPreventionService.exclusionGroups$),
+        tap(groups => {
+          if (!groups.length) {
+            this.setState(true, Pages.StartPage);
+          } else {
+            this.setState(true, Pages.Groups);
+          }
+        })
+      ).subscribe((groups) => {
+        this.exclusionGroups = groups;
+        this.cdr.detectChanges();
+      });
+      this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
     }
-    this.encounterPreventionService.getExclusionGroupsRequest();
-    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
-    this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
 
     this.encounterPreventionService.updatedExclusionGroup$
       .pipe(filter(r => !!r))
@@ -154,6 +173,14 @@ export class EncounterPreventionDialogComponent implements OnInit {
         } else if (action === 'delete') {
           this.encounterPreventionService.deleteExclusionGroupRequest(this.state.data.currentGroup);
           this.setState(true, Pages.Groups);
+        } else if (action === 'copy_link') {
+          navigator.clipboard.writeText('TEST TEST TESSSSSS').then(() => {
+            this.toast.openToast({
+              title: 'Link copied to clipboard!',
+              subtitle: 'Send this link to other admins if you want to share with them encounter prevention information.',
+              type: 'info'
+            });
+          });
         }
       });
   }

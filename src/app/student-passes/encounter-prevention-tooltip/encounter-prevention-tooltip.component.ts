@@ -8,14 +8,11 @@ import {User} from '../../models/User';
 })
 export class EncounterPreventionTooltipComponent implements OnInit {
 
-  @Input() profile: User;
-
-  students: User[];
+  @Input() students: User[];
 
   constructor() { }
 
   ngOnInit(): void {
-    this.students = [this.profile, this.profile, this.profile]
   }
 
 }

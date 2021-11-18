@@ -14,7 +14,7 @@ export class ExclusionGroupsEffects {
       .pipe(
         ofType(exclusionGroupsActions.getExclusionGroups),
         exhaustMap((action) => {
-          return this.encounterPreventionService.getExclusionGroups()
+          return this.encounterPreventionService.getExclusionGroups(action.queryParams)
             .pipe(
               map((groups: ExclusionGroup[]) => {
                 return exclusionGroupsActions.getExclusionGroupsSuccess({groups});

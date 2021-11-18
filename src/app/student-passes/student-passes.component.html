@@ -26,7 +26,7 @@
           <div class="title">
             <div class="full-name" [@topBottomName]="animationTrigger">
               <span>{{ profile.first_name }} {{ profile.last_name }}</span>
-              <span style="margin-left: 7px">
+              <span style="margin-left: 7px;" *ngIf="(exclusionStudents$ | async)?.length">
                 <app-octagon
                   [size]="22"
                   customToolTip
@@ -35,7 +35,7 @@
                   <img class="value" style="position: absolute; z-index: 10" height="18" [src]="'./assets/Walking One (White).svg' | resolveAsset">
                 </app-octagon>
                 <ng-template #tooltip>
-                  <app-encounter-prevention-tooltip [profile]="profile"></app-encounter-prevention-tooltip>
+                  <app-encounter-prevention-tooltip [students]="exclusionStudents$ | async"></app-encounter-prevention-tooltip>
                 </ng-template>
               </span>
             </div>

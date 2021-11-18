@@ -13,8 +13,11 @@ import {
 import {
   getCurrentExclusionGroup,
   getEncounterPreventionLength,
-  getExclusionGroupsCollection
+  getExclusionGroupsCollection,
+  getExclusionGroupsLoaded,
+  getExclusionGroupsLoading
 } from '../ngrx/encounters-prevention/excusion-groups/states/exclusion-groups-getters.state';
+import {constructUrl} from '../live-data/helpers';
 
 @Injectable({
   providedIn: 'root'
@@ -22,17 +25,19 @@ import {
 export class EncounterPreventionService {
 
   exclusionGroups$: Observable<ExclusionGroup[]> = this.store.select(getExclusionGroupsCollection);
+  exclusionGroupsLoading$: Observable<boolean> = this.store.select(getExclusionGroupsLoading);
+  exclusionGroupsLoaded$: Observable<boolean> = this.store.select(getExclusionGroupsLoaded);
   updatedExclusionGroup$: Observable<ExclusionGroup> = this.store.select(getCurrentExclusionGroup);
   encounterPreventionLength$: Observable<number> = this.store.select(getEncounterPreventionLength);
 
   constructor(private http: HttpService, private store: Store<AppState>) { }
 
-  getExclusionGroupsRequest() {
-    this.store.dispatch(getExclusionGroups());
+  getExclusionGroupsRequest(queryParams?) {
+    this.store.dispatch(getExclusionGroups({queryParams}));
   }
 
-  getExclusionGroups(): Observable<ExclusionGroup[]> {
-    return this.http.get('v1/exclusion_groups');
+  getExclusionGroups(queryParams): Observable<ExclusionGroup[]> {
+    return this.http.get(constructUrl('v1/exclusion_groups', queryParams));
   }
 
   createExclusionGroupRequest(group) {

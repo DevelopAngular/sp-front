@@ -6,7 +6,6 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {GSuiteSelector} from '../../../sp-search/sp-search.component';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Router} from '@angular/router';
-import {DataService} from '../../../services/data-service';
 import {UserService} from '../../../services/user.service';
 import {LocationsService} from '../../../services/locations.service';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
@@ -16,6 +15,7 @@ import {ProfileCardDialogComponent} from '../profile-card-dialog.component';
 import {StatusPopupComponent} from '../status-popup/status-popup.component';
 import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
 import {ToastService} from '../../../services/toast.service';
+import {ExclusionGroup} from '../../../models/ExclusionGroup';
 
 @Component({
   selector: 'app-view-profile',
@@ -25,6 +25,7 @@ import {ToastService} from '../../../services/toast.service';
 export class ViewProfileComponent implements OnInit {
 
   @Input() data: any;
+  @Input() exclusionGroups: ExclusionGroup[];
   @Output() nextStep: EventEmitter<any> = new EventEmitter<any>();
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
 
@@ -108,7 +109,6 @@ export class ViewProfileComponent implements OnInit {
     public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
     private matDialog: MatDialog,
     private router: Router,
-    private dataService: DataService,
     private userService: UserService,
     private locationService: LocationsService,
     private formService: CreateFormService,

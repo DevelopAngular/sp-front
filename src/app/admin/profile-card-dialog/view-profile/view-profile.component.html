@@ -138,11 +138,18 @@
           </app-octagon>
           <div style="margin-left: 8px">Encounter Prevention</div>
         </div>
-        <div class="subtitle" style="width: 360px; white-space: normal;">
+        <div class="subtitle" style="width: 360px; white-space: normal;" *ngIf="exclusionGroups && !exclusionGroups.length; else groups">
           Prevent students from having passes at the same time with Encounter Prevention.
         </div>
+        <ng-template #groups>
+          <div class="groups">
+            <div class="group" *ngFor="let group of exclusionGroups">
+              <app-encounter-group [group]="group"></app-encounter-group>
+            </div>
+          </div>
+        </ng-template>
         <app-gradient-button
-          style="margin-top: 7px"
+          style="margin-top: 9px"
           [leftIcon]="'./assets/Plus (White).svg'"
           (buttonClick)="openExclusionGroups()"
         >New Group</app-gradient-button>
