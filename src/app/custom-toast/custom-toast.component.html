@@ -8,7 +8,24 @@
   >
     <div class="content">
       <div class="type-line" [style.background-color]="lineColor(data.type)"></div>
-      <div class="info">
+      <div class="info" style="display: flex; align-items: center" *ngIf="data.encounterPrevention">
+        <div class="exclusion-pass" *ngIf="data.encounterPrevention">
+          <app-pass-tile
+            [forFuture]="false"
+            [fromPast]="true"
+            [forStaff]="false"
+            [pass]="data.exclusionPass"
+            [profileImage]="false"
+            [isMiniCard]="true"
+          ></app-pass-tile>
+        </div>
+        <div class="text" style="margin-left: 7px">
+          <div class="text_header">{{ data.title }}</div>
+          <div class="text_message">{{ data.subtitle }}</div>
+        </div>
+      </div>
+
+      <div class="info" *ngIf="!data.encounterPrevention">
         <div class="text">
           <div class="text_header">{{ data.title }}</div>
           <div class="text_message">{{ data.subtitle }}</div>

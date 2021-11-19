@@ -14,13 +14,13 @@ import {TimeService} from '../services/time.service';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
-import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
 import {DeviceDetection} from '../device-detection.helper';
 import {scalePassCards} from '../animations';
 import {DomCheckerService} from '../services/dom-checker.service';
 import * as moment from 'moment';
 import {UserService} from '../services/user.service';
+import {ToastService} from '../services/toast.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -106,9 +106,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private timeService: TimeService,
       public screenService: ScreenService,
       private shortcutsService: KeyboardShortcutsService,
-      private http: HttpService,
       private domCheckerService: DomCheckerService,
-      private userService: UserService
+      private userService: UserService,
+      private toastService: ToastService
   ) {}
 
   getUserName(user: any) {
@@ -159,7 +159,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
-    this.currentSchool = this.http.getSchool();
+    this.currentSchool = this.userService.getUserSchool();
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
 
     if (this.data['pass']) {
@@ -328,7 +328,16 @@ export class PassCardComponent implements OnInit, OnDestroy {
         .subscribe((data) => {
           this.performingAction = true;
           this.dialogRef.close();
-      });
+        }, error => {
+          this.toastService.openToast({
+            title: 'Sorry, you can’t start your pass right now.',
+            subtitle: 'Please try again later.',
+            type: 'error',
+            encounterPrevention: true,
+            exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
+          });
+          this.dialogRef.close();
+        });
   }
 
   cancelEdit(evt: MouseEvent) {

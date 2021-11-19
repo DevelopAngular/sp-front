@@ -13,6 +13,7 @@ import {CheckUserInputDirective} from './directives/check-user-input.directive';
 import {SupportOptionsComponent} from '../support/support-options/support-options.component';
 import {ToolTipRendererDirective} from './directives/tool-tip-renderer.directive';
 import {SwipeEventDirective} from './directives/swipe-event.directive';
+import {PassTileComponent} from '../pass-tile/pass-tile.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import {SwipeEventDirective} from './directives/swipe-event.directive';
     CheckUserInputDirective,
     SupportOptionsComponent,
     ToolTipRendererDirective,
-    SwipeEventDirective
+    SwipeEventDirective,
+    PassTileComponent,
   ],
   imports: [
     CommonModule,
@@ -45,7 +47,8 @@ import {SwipeEventDirective} from './directives/swipe-event.directive';
         MoovingTilesComponent,
         ToolTipRendererDirective,
         CheckUserInputDirective,
-        SwipeEventDirective
+        SwipeEventDirective,
+        PassTileComponent,
     ]
 })
 export class CoreModule { }

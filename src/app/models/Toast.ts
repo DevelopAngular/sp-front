@@ -7,4 +7,6 @@ export class Toast {
   showButton?: boolean;
   buttonText?: string;
   hasBackdrop?: boolean;
+  encounterPrevention?: boolean;
+  exclusionPass?: any;
 }

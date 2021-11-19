@@ -94,7 +94,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     private router: Router,
     private tableService: TableService,
     private toast: ToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) { }
 
   get showIntegrations$() {

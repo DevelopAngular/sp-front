@@ -35,69 +35,53 @@
     </div>
   </div>
 
-  <div class="content">
-    <div class="page-0" *ngIf="state.current_page === 0">
-      <app-octagon>
-          <img class="value" [src]="'./assets/Walking One (White).svg' | resolveAsset">
-      </app-octagon>
-      <div class="info">
-        <div class="title">Prevent students from having passes at the same time</div>
-        <div class="subtitle">Create your first group of students to get started. You’ll also be able to track how many encounters have been prevented.</div>
-      </div>
-      <app-gradient-button
-        [style.margin-top]="'24px'"
-        [leftIcon]="'./assets/Plus (White).svg'"
-        (buttonClick)="state.data.currentGroup = null; nextPage()"
-      >New group
-      </app-gradient-button>
-    </div>
-
-    <div class="page-1" *ngIf="state.current_page === 1 || state.current_page === 2">
-      <app-create-group [state]="state" (update)="state = $event;"></app-create-group>
-    </div>
-
-    <div class="page-2" *ngIf="state.current_page === 3">
-      <div class="prevent-group-header">
-        <div class="prevent-group-info">
-          <div class="title">
-            <span>Prevented Encounters</span>
-            <img style="margin-left: 21px" width="16" [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset" alt="">
-          </div>
-          <div class="subtitle">101 encounters have been prevented this year for all students</div>
-        </div>
-        <app-octagon [size]="38"><div class="value">{{ encounterPreventionLength$ | async }}</div></app-octagon>
-      </div>
-      <div class="groups">
-        <div class="group" *ngFor="let exclusionGroup of exclusionGroups">
-          <app-encounter-group [group]="exclusionGroup" (clickEvent)="goDescription(exclusionGroup)"></app-encounter-group>
-        </div>
-      </div>
-    </div>
-
-    <div class="page-4" *ngIf="state.current_page === 4">
-      <app-encounter-group-description [state]="state" [group]="state.data.currentGroup"></app-encounter-group-description>
-    </div>
-
-<!--    <div class="page-3" *ngIf="state.current_page === 3">-->
-<!--      <div class="encounter-header">-->
-<!--        <div class="count-preventions">-->
-<!--          <app-octagon [size]="28">-->
-<!--            <div class="value">4</div>-->
-<!--          </app-octagon>-->
-<!--          <div class="title">Prevented Encounters</div>-->
-<!--        </div>-->
-<!--        <div class="button">-->
-<!--          <app-gradient-button-->
-<!--            [gradient]="'#F4F4F4, #F4F4F4'"-->
-<!--            [leftIcon]="'./assets/Chevron Up-Down (Blue-Gray).svg'"-->
-<!--            [textColor]="'#7F879D'"-->
-<!--          >Expand all</app-gradient-button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <mat-divider></mat-divider>-->
-<!--      <div class="content">-->
-<!--        <app-report-description [date]="'Dec. 9, 2020'" [description]="'Jeremy Perez was going from Ladson to East Bathroom on Dec. 15, 2020 from 11:45 AM to 12:01 PM. At 11:48:04, Leah Olson attempted to make a pass from Clarkson to West Bathroom, but it was prevented.'"></app-report-description>-->
-<!--      </div>-->
-<!--    </div>-->
+  <div class="content loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center" *ngIf="exclusionGroupsLoading$ | async; else loaded">
+      <mat-spinner [diameter]="55" [color]="'accent'"></mat-spinner>
   </div>
+
+  <ng-template #loaded>
+    <div class="content">
+      <div class="page-0" *ngIf="state.current_page === 0">
+        <app-octagon>
+          <img class="value" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+        </app-octagon>
+        <div class="info">
+          <div class="title">Prevent students from having passes at the same time</div>
+          <div class="subtitle">Create your first group of students to get started. You’ll also be able to track how many encounters have been prevented.</div>
+        </div>
+        <app-gradient-button
+          [style.margin-top]="'24px'"
+          [leftIcon]="'./assets/Plus (White).svg'"
+          (buttonClick)="state.data.currentGroup = null; nextPage()"
+        >New group
+        </app-gradient-button>
+      </div>
+
+      <div class="page-1" *ngIf="state.current_page === 1 || state.current_page === 2">
+        <app-create-group [state]="state" (update)="state = $event;"></app-create-group>
+      </div>
+
+      <div class="page-2" *ngIf="state.current_page === 3">
+        <div class="prevent-group-header" *ngIf="encounterPreventionLength$ | async as count">
+          <div class="prevent-group-info">
+            <div class="title">
+              <span>Prevented Encounters</span>
+              <img style="margin-left: 21px" width="16" [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset" alt="">
+            </div>
+            <div class="subtitle">{{ count }} encounters have been prevented this year for all students</div>
+          </div>
+          <app-octagon [size]="38"><div class="value">{{ count }}</div></app-octagon>
+        </div>
+        <div class="groups" >
+          <div class="group" *ngFor="let exclusionGroup of exclusionGroups">
+            <app-encounter-group [group]="exclusionGroup" (clickEvent)="goDescription(exclusionGroup)"></app-encounter-group>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-4" *ngIf="state.current_page === 4">
+        <app-encounter-group-description [state]="state" [group]="state.data.currentGroup"></app-encounter-group-description>
+      </div>
+    </div>
+  </ng-template>
 </div>

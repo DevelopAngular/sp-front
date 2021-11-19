@@ -8,7 +8,6 @@ import {PinnableComponent} from '../pinnable/pinnable.component';
 import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.component';
 import {SPSearchComponent} from '../sp-search/sp-search.component';
 import {PassCollectionComponent} from '../pass-collection/pass-collection.component';
-import {PassTileComponent} from '../pass-tile/pass-tile.component';
 import {PassCellComponent} from '../pass-cell/pass-cell.component';
 import {RestrictionDummyComponent} from '../admin/restriction-dummy/restriction-dummy.component';
 import {BackButtonComponent} from '../admin/back-button/back-button.component';
@@ -93,7 +92,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     TraveltypePickerComponent,
     SPSearchComponent,
     PassCollectionComponent,
-    PassTileComponent,
     PassCellComponent,
     RestrictionDummyComponent,
     BackButtonComponent,
@@ -157,7 +155,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     TraveltypePickerComponent,
     SPSearchComponent,
     PassCollectionComponent,
-    PassTileComponent,
     PassCellComponent,
     RestrictionDummyComponent,
     BackButtonComponent,
