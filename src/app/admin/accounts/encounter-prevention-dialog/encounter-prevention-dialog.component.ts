@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Optional, Output} from '@angular/core';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {filter, switchMap, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
@@ -54,7 +54,6 @@ export class EncounterPreventionDialogComponent implements OnInit {
     }
   };
 
-  exclusionGroups$: Observable<ExclusionGroup[]>;
   exclusionGroups: ExclusionGroup[];
   encounterPreventionLength$: Observable<number>;
   exclusionGroupsLoading$: Observable<boolean>;
@@ -69,6 +68,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     @Optional() private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) private data: any,
     private encounterPreventionService: EncounterPreventionService,
     public cdr: ChangeDetectorRef,
     private toast: ToastService
@@ -84,6 +84,11 @@ export class EncounterPreventionDialogComponent implements OnInit {
         filter(r => r),
         switchMap(() => this.encounterPreventionService.exclusionGroups$),
         tap(groups => {
+          if (this.data && this.data['currentGroupId']) {
+            const currentGroup = groups.find(g => +g.id === +this.data['currentGroupId']);
+            this.goDescription(currentGroup);
+            return;
+          }
           if (!groups.length) {
             this.setState(true, Pages.StartPage);
           } else {
@@ -174,7 +179,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
           this.encounterPreventionService.deleteExclusionGroupRequest(this.state.data.currentGroup);
           this.setState(true, Pages.Groups);
         } else if (action === 'copy_link') {
-          navigator.clipboard.writeText('TEST TEST TESSSSSS').then(() => {
+          navigator.clipboard.writeText(`http://localhost:4200/admin/accounts/_profile_student?encounter_id=${this.state.data.currentGroup.id}`).then(() => {
             this.toast.openToast({
               title: 'Link copied to clipboard!',
               subtitle: 'Send this link to other admins if you want to share with them encounter prevention information.',
