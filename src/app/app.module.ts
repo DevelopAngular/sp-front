@@ -71,6 +71,7 @@ import {RepresentedUsersEffects} from './ngrx/represented-users/effects';
 import {QuickPreviewPassesEffects} from './ngrx/quick-preview-passes/effects';
 import {ProfilePicturesEffects} from './ngrx/profile-pictures/effects';
 import {LoginDataEffects} from './ngrx/login-data/effects';
+import {FeedbackWindowComponent} from './feedback-button/feedback-window/feedback-window.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -132,7 +133,8 @@ const appRoutes: Routes = [
     AppComponent,
     ScrollHolderDirective,
     SupportButtonComponent,
-    CustomToastComponent
+    CustomToastComponent,
+    FeedbackWindowComponent
   ],
   imports: [
     BrowserModule,

@@ -14,7 +14,7 @@
     </div>
   </div>
   <mat-divider *ngIf="hoverOption || showConfirmButton"></mat-divider>
-  <div class="description" *ngIf="hoverOption || showConfirmButton">
+  <div class="description" *ngIf="(hoverOption && hoverOption.description) || showConfirmButton">
     {{ hoverOption.description }}
     <div class="button" *ngIf="showConfirmButton">
       <app-gradient-button

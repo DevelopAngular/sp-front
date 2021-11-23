@@ -7,6 +7,7 @@ interface Option {
   description: string;
   textColor: string;
   backgroundColor: string;
+  confirmButton: boolean;
   action: string;
 }
 
@@ -43,7 +44,11 @@ export class SettingsDescriptionPopupComponent implements OnInit {
   }
 
   selectedOption(option: Option) {
-    this.dialogRef.close(option.action);
+    if (option.confirmButton) {
+      this.showConfirmButton = true;
+    } else {
+      this.dialogRef.close(option.action);
+    }
   }
 
 }

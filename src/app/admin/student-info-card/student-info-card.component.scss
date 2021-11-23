@@ -127,6 +127,7 @@
     background-color: #F0F2F5;
     width: 590px;
     overflow: auto;
+    position: relative;
 
     .header {
       padding: 19px 40px;
@@ -134,6 +135,13 @@
       .buttons {
         display: flex;
       }
+    }
+
+
+    .feedback-button {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
     }
 
     .content {

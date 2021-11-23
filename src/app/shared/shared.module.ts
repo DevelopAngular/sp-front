@@ -65,6 +65,7 @@ import {InlineRequestCardComponent} from '../inline-request-card/inline-request-
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 import {RoundButtonComponent} from '../round-button/round-button.component';
+import {FeedbackButtonComponent} from '../feedback-button/feedback-button.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -139,7 +140,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlineRequestCardComponent,
     DropdownComponent,
     SettingsDescriptionPopupComponent,
-    RoundButtonComponent
+    RoundButtonComponent,
+    FeedbackButtonComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -196,7 +198,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RequestCardComponent,
     InlineRequestCardComponent,
     DropdownComponent,
-    RoundButtonComponent
+    RoundButtonComponent,
+    FeedbackButtonComponent,
   ],
   providers: [
     {

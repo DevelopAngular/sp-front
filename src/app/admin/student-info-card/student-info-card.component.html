@@ -15,7 +15,7 @@
 
     <div class="top-buttons">
       <app-round-button [icon]="'Notifications'"></app-round-button>
-      <app-round-button style="margin-left: 13px" [icon]="'Dots'"></app-round-button>
+      <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
     </div>
 
     <div class="content">
@@ -94,6 +94,7 @@
 
         <app-gradient-button
           [rightIcon]="'./assets/Plus (White).svg'"
+          (buttonClick)="openCreatePassPopup($event)"
         >Create pass</app-gradient-button>
       </div>
     </div>
@@ -154,6 +155,9 @@
           </div>
         </app-overview-container>
       </div>
+    </div>
+    <div class="feedback-button">
+      <app-feedback-button></app-feedback-button>
     </div>
   </div>
 </div>
