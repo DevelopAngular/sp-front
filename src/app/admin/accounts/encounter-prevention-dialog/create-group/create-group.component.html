@@ -11,21 +11,20 @@
   </div>
 
   <div class="group">
-<!--    <div class="label">Group name <span style="font-weight: normal">(optional)</span></div>-->
+    <div class="label">Group name <span style="font-weight: normal">(optional)</span></div>
     <app-input
       [width]="'245px'"
       [height]="'40px'"
       [formGroup]="form"
-      [input_label]="'Group name (optional)'"
       [input_value]="group.name"
       [controlName]="form.get('name')">
     </app-input>
   </div>
 
   <div class="group">
+    <div class="label">Notes <span style="font-weight: normal">(optional)</span></div>
     <app-textarea
       [control]="form.get('notes')"
-      [label]="'Notes (optional)'"
       [placeholder]="'Ex. Parents requested'"
       [width]="'351px'"
       [height]="'75px'"

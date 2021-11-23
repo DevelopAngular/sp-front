@@ -7,6 +7,7 @@ export const getExclusionGroupState = (state: AppState) => state.exclusionGroups
 
 export const getExclusionGroupsCollection = adapter.getSelectors(getExclusionGroupState).selectAll;
 export const getExclusionGroupsEntities = adapter.getSelectors(getExclusionGroupState).selectEntities;
+export const getExclusionGroupsLength = adapter.getSelectors(getExclusionGroupState).selectTotal;
 
 export const getExclusionGroupsLoading = createSelector(
   getExclusionGroupState,

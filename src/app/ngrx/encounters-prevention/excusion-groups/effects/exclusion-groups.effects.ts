@@ -49,7 +49,6 @@ export class ExclusionGroupsEffects {
           return this.encounterPreventionService.updateExclusionGroup(action.group, action.updateFields)
             .pipe(
               map((group: ExclusionGroup) => {
-                debugger;
                 return exclusionGroupsActions.updateExclusionGroupSuccess({group});
               }),
               catchError(error => of(exclusionGroupsActions.updateExclusionGroupFailure({errorMessage: error.message})))

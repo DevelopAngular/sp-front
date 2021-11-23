@@ -28,6 +28,7 @@ export class ViewProfileComponent implements OnInit {
   @Input() exclusionGroups: ExclusionGroup[];
   @Output() nextStep: EventEmitter<any> = new EventEmitter<any>();
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
+  @Output() encounterGroupsEmit: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild('header') header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
@@ -472,8 +473,8 @@ export class ViewProfileComponent implements OnInit {
       });
   }
 
-  openExclusionGroups() {
-    this.nextStep.emit('exclusionGroup');
+  openExclusionGroups(action, group?) {
+    this.encounterGroupsEmit.emit({action, group});
   }
 
 }

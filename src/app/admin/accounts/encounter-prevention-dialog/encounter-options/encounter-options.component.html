@@ -1,37 +1,48 @@
 <div class="wrapper">
-  <div class="header" *ngIf="preventionStatusForm.get('status').value">
+  <div class="header" *ngIf="group.notes">
     <div class="title">Notes</div>
-    <div class="subtitle">Parent requested</div>
+    <div class="subtitle">{{ group.notes }}</div>
   </div>
   <mat-divider></mat-divider>
-  <div class="status">
-    <div class="input">
-      <app-toggle-input
-        [form]="preventionStatusForm"
-        [controlName]="'status'"
-        [controlSize]="'smallest'"
-        [delimiter]="false"
-      ></app-toggle-input>
+  <div class="status-container">
+    <div class="status"
+     #status
+     style="text-transform: none; border-radius: 7px"
+     (mouseenter)="status.hover = true"
+     (mouseleave)="status.hover = false"
+     [style.background-color]="status.hover ? 'rgba(127, 135, 157, .1)' : 'transparent'"
+    >
+      <div class="input">
+        <app-toggle-input
+          [form]="preventionStatusForm"
+          [controlName]="'status'"
+          [controlSize]="'smallest'"
+          [delimiter]="false"
+        ></app-toggle-input>
+      </div>
+      <div class="status-name" (click)="preventionStatusForm.get('status').setValue(!preventionStatusForm.get('status').value)">Prevention {{ preventionStatusForm.get('status').value ? 'enabled' : 'disabled' }}</div>
     </div>
-    <div class="status-name">Prevention {{ preventionStatusForm.get('status').value ? 'enabled' : 'disabled' }}</div>
   </div>
   <mat-divider></mat-divider>
   <div class="options-content">
-    <div class="option"
-         #opt
-         *ngFor="let option of options"
-         (mouseenter)="opt.hover = true; hoverOption = option; showConfirmButton = false"
-         (mouseleave)="opt.hover = false;"
-         [style.background-color]="opt.hover ? option.hoverColor : 'transparent'"
-         appCrossPointerEventTarget
-         (pointerClickEvent)="selectedOption(option)"
-    >
-      <img style="margin-left: 30px" width="18" [src]="option.icon | resolveAsset" alt="opt-icon">
-      <div class="label" [style.color]="option.textColor">{{ option.label }}</div>
+    <div class="option-container" *ngFor="let option of options">
+      <div class="option"
+           #opt
+           (mouseenter)="opt.hover = true; hoverOption = option; showConfirmButton = false"
+           (mouseleave)="opt.hover = false; opt.pressed = false;"
+           (pointerDownEvent)="opt.pressed = true;"
+           [style.background-color]="opt.hover ? option.hoverColor : 'transparent'"
+           [style.background]="opt.pressed ? option.pressedColor : (opt.hover ? option.hoverColor : 'transparent')"
+           appCrossPointerEventTarget
+           (pointerClickEvent)="opt.pressed = false; selectedOption(option)"
+      >
+        <img width="18" [src]="option.icon | resolveAsset" alt="opt-icon">
+        <div class="label" [style.color]="option.textColor">{{ option.label }}</div>
+      </div>
     </div>
   </div>
   <mat-divider *ngIf="hoverOption || showConfirmButton"></mat-divider>
-  <div class="description" *ngIf="(hoverOption || showConfirmButton) && hoverOption.description">
+  <div class="description" *ngIf="(showConfirmButton) && hoverOption.description">
     {{ hoverOption.description }}
     <div class="button" *ngIf="showConfirmButton">
       <app-gradient-button

@@ -37,7 +37,8 @@ export interface EncountersState {
 })
 export class EncounterPreventionDialogComponent implements OnInit {
 
-  @Input() newGroup: boolean;
+  @Input() forceNextPage: string;
+  @Input() forceGroup: ExclusionGroup;
   @Output() backEmit: EventEmitter<any> = new EventEmitter<any>();
 
   state: EncountersState = {
@@ -58,11 +59,11 @@ export class EncounterPreventionDialogComponent implements OnInit {
   encounterPreventionLength$: Observable<number>;
   exclusionGroupsLoading$: Observable<boolean>;
 
-  options: {label: string, textColor: string, hoverColor: string, icon: string, action: string, description: string}[] = [
+  options: {label: string, textColor: string, hoverColor: string, pressedColor: string, icon: string, action: string, description: string}[] = [
     // {label: 'Download report', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Download circle (Blue-Gray).svg', action: 'down_report',  description: ''},
-    {label: 'Copy private link', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Private Link (Blue-Gray).svg', action: 'copy_link', description: ''},
-    {label: 'Edit group', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Edit (Blue-Gray).svg', action: 'edit', description: ''},
-    {label: 'Delete group', textColor: '#E32C66', hoverColor: '#F4F4F4', icon: './assets/Delete (Red).svg', action: 'delete', description: 'Deleting a group will permanently delete all encounter prevention information. This action cannot be undone.'}
+    {label: 'Copy private link', textColor: '#7F879D', hoverColor: 'rgba(127, 135, 157, .1)', pressedColor: 'rgba(127, 135, 157, .15)',  icon: './assets/Private Link (Blue-Gray).svg', action: 'copy_link', description: ''},
+    {label: 'Edit group', textColor: '#7F879D', hoverColor: 'rgba(127, 135, 157, .1)', pressedColor: 'rgba(127, 135, 157, .15)', icon: './assets/Edit (Blue-Gray).svg', action: 'edit', description: ''},
+    {label: 'Delete group', textColor: '#E32C66', hoverColor: '#fce9ef', pressedColor: '#fce9ef', icon: './assets/Delete (Red).svg', action: 'delete', description: 'Deleting a group will permanently delete all encounter prevention information. This action cannot be undone.'}
   ];
 
   constructor(
@@ -75,8 +76,11 @@ export class EncounterPreventionDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.newGroup) {
+    if (this.forceNextPage === 'newGroup') {
       this.setState(true, Pages.NewGroup);
+    } else if (this.forceNextPage === 'groupDescription') {
+      this.state.data.currentGroup = this.forceGroup;
+      this.setState(true, Pages.GroupDescription);
     } else {
       this.encounterPreventionService.getExclusionGroupsRequest();
       this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
@@ -89,15 +93,21 @@ export class EncounterPreventionDialogComponent implements OnInit {
             this.goDescription(currentGroup);
             return;
           }
-          if (!groups.length) {
-            this.setState(true, Pages.StartPage);
-          } else {
-            this.setState(true, Pages.Groups);
-          }
         })
       ).subscribe((groups) => {
         this.exclusionGroups = groups;
         this.cdr.detectChanges();
+      });
+
+      this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
+        filter(r => r),
+        switchMap(() => this.encounterPreventionService.encounterPreventionLength$)
+      ).subscribe(res => {
+        if (!res) {
+          this.setState(true, Pages.StartPage);
+        } else {
+          this.setState(true, Pages.Groups);
+        }
       });
       this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
     }
@@ -132,8 +142,9 @@ export class EncounterPreventionDialogComponent implements OnInit {
     if (this.state.current_page === Pages.StartPage || this.state.current_page === Pages.Groups) {
         this.dialogRef.close();
     } else {
-      if (this.newGroup) {
+      if (!!this.forceNextPage) {
         this.backEmit.emit();
+        return;
       }
       setTimeout(() => {
         this.setState(false, this.state.pages_history[this.state.pages_history.length - 2]);
@@ -146,10 +157,12 @@ export class EncounterPreventionDialogComponent implements OnInit {
       this.encounterPreventionService.createExclusionGroupRequest({
         name: this.state.createGroup.name,
         notes: this.state.createGroup.notes,
-        students: this.state.createGroup.users.map(s => s.id)
+        students: this.state.createGroup.users.map(s => s.id),
+        enabled: true
       });
-      if (this.newGroup) {
+      if (this.forceNextPage) {
         this.backEmit.emit();
+        return;
       }
     }
     if (this.state.current_page === Pages.EditGroup) {
@@ -158,6 +171,10 @@ export class EncounterPreventionDialogComponent implements OnInit {
         notes: this.state.data.currentGroup.notes,
         students: this.state.data.currentGroup.users.map(s => s.id)
       });
+      if (this.forceNextPage) {
+        this.backEmit.emit();
+        return;
+      }
     }
     this.setState(true, Pages.Groups);
   }

@@ -14,7 +14,7 @@ export class EncounterOptionsComponent implements OnInit {
   triggerElementRef: HTMLElement;
   hoverOption;
   showConfirmButton: boolean;
-  options: {label: string, textColor: string, hoverColor: string, icon: string, action: string, description?: string}[];
+  options: {label: string, textColor: string, hoverColor: string, pressedColor: string, icon: string, action: string, description?: string}[];
   preventionStatusForm: FormGroup;
   group: ExclusionGroup;
 

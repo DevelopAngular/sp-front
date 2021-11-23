@@ -24,6 +24,8 @@ export class ProfileCardDialogComponent implements OnInit {
   frameMotion$: BehaviorSubject<any>;
   profile: User;
   exclusionGroups$: Observable<ExclusionGroup[]>;
+  encounterGroupPage: string;
+  currentExclusionGroup: ExclusionGroup;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -51,8 +53,19 @@ export class ProfileCardDialogComponent implements OnInit {
     setTimeout(() => {
       if (action === 'password') {
         this.page = 2;
-      } else if (action === 'exclusionGroup') {
+      }
+    }, 100);
+  }
+
+  goToEncounterGroups({action, group}) {
+    this.formService.setFrameMotionDirection();
+    setTimeout(() => {
+      this.encounterGroupPage = action;
+      if (action === 'newGroup') {
         this.page = 3;
+      } else if (action === 'groupDescription') {
+        this.page = 3;
+        this.currentExclusionGroup = group;
       }
     }, 100);
   }

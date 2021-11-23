@@ -144,14 +144,14 @@
         <ng-template #groups>
           <div class="groups">
             <div class="group" *ngFor="let group of exclusionGroups">
-              <app-encounter-group [group]="group"></app-encounter-group>
+              <app-encounter-group [group]="group" (clickEvent)="openExclusionGroups('groupDescription', group)"></app-encounter-group>
             </div>
           </div>
         </ng-template>
         <app-gradient-button
           style="margin-top: 9px"
           [leftIcon]="'./assets/Plus (White).svg'"
-          (buttonClick)="openExclusionGroups()"
+          (buttonClick)="openExclusionGroups('newGroup')"
         >New Group</app-gradient-button>
       </div>
       <mat-divider></mat-divider>

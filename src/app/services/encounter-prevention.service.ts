@@ -14,6 +14,7 @@ import {
   getCurrentExclusionGroup,
   getEncounterPreventionLength,
   getExclusionGroupsCollection,
+  getExclusionGroupsLength,
   getExclusionGroupsLoaded,
   getExclusionGroupsLoading
 } from '../ngrx/encounters-prevention/excusion-groups/states/exclusion-groups-getters.state';
@@ -28,6 +29,7 @@ export class EncounterPreventionService {
   exclusionGroupsLoading$: Observable<boolean> = this.store.select(getExclusionGroupsLoading);
   exclusionGroupsLoaded$: Observable<boolean> = this.store.select(getExclusionGroupsLoaded);
   updatedExclusionGroup$: Observable<ExclusionGroup> = this.store.select(getCurrentExclusionGroup);
+  exclusionGroupsLength$: Observable<number> = this.store.select(getExclusionGroupsLength);
   encounterPreventionLength$: Observable<number> = this.store.select(getEncounterPreventionLength);
 
   constructor(private http: HttpService, private store: Store<AppState>) { }
