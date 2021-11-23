@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {User} from '../../models/User';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {HallPassesService} from '../../services/hall-passes.service';
-import {Observable} from 'rxjs';
+import {fromEvent, Observable} from 'rxjs';
 import {QuickPreviewPasses} from '../../models/QuickPreviewPasses';
 import {UserService} from '../../services/user.service';
 import {School} from '../../models/School';
@@ -17,7 +17,9 @@ import {SettingsDescriptionPopupComponent} from '../../settings-description-popu
   styleUrls: ['./student-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StudentInfoCardComponent implements OnInit {
+export class StudentInfoCardComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('left') left: ElementRef;
 
   profile: User;
 
@@ -41,6 +43,12 @@ export class StudentInfoCardComponent implements OnInit {
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loadingPassesStats$ = this.passesService.quickPreviewPassesLoading$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
+  }
+
+  ngAfterViewInit() {
+    fromEvent(this.left.nativeElement, 'scroll').subscribe(res => {
+      console.log(res);
+    });
   }
 
   openStudentSettings(event) {
