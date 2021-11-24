@@ -16,14 +16,17 @@
 
         <div class="group-info" *ngSwitchCase="4">
           <div class="user-photos">
-            <div class="photo" *ngIf="state.data.currentGroup.users[0] && state.data.currentGroup.users[0].profile_picture; else avatar1" style="left: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[0].profile_picture + ') no-repeat left center/cover'}"></div>
-            <div class="photo" *ngIf="state.data.currentGroup.users[1] && state.data.currentGroup.users[1].profile_picture; else avatar2" style="right: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[1].profile_picture + ') no-repeat left center/cover'}"></div>
-            <ng-template #avatar1>
-              <img class="photo" style="left: 0" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>
-            </ng-template>
-            <ng-template #avatar2>
-              <img class="photo" style="right: 0" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>
-            </ng-template>
+            <div *ngFor="let user of state.data.currentGroup.users" [matTooltip]="user.display_name" [matTooltipClass]="'ds-tooltip'">
+              <div *ngIf="user.profile_picture; else avatar" class="photo" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
+              <ng-template #avatar>
+                <img class="photo" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>
+              </ng-template>
+            </div>
+<!--            <div class="photo" *ngIf="state.data.currentGroup.users[0] && state.data.currentGroup.users[0].profile_picture; else avatar1" style="left: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[0].profile_picture + ') no-repeat left center/cover'}"></div>-->
+<!--            <div class="photo" *ngIf="state.data.currentGroup.users[1] && state.data.currentGroup.users[1].profile_picture; else avatar2" style="right: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[1].profile_picture + ') no-repeat left center/cover'}"></div>-->
+<!--            <ng-template #avatar2>-->
+<!--              <img class="photo" style="right: 0" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>-->
+<!--            </ng-template>-->
           </div>
           <div class="group-name" *ngIf="!!state.data.currentGroup.name">{{ state.data.currentGroup.name }}</div>
         </div>
@@ -67,11 +70,17 @@
           <div class="prevent-group-info">
             <div class="title">
               <span>Prevented Encounters</span>
-              <img style="margin-left: 21px" width="16" [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset" alt="">
+              <img
+                style="margin-left: 8px; opacity: 0.5"
+                width="16"
+                [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset"
+                matTooltipClass="ds-tooltip"
+                [matTooltip]="'A prevented encounter is when a student tried to make a pass at the same time as another student, but was prevented.'"
+                alt="">
             </div>
             <div class="subtitle">{{ count }} encounters have been prevented this year for all students</div>
           </div>
-          <app-octagon [size]="38"><div class="value">{{ count }}</div></app-octagon>
+          <app-octagon [size]="38" style="height: 38px" [hasTooltip]="true" [tooltipText]="count + ' encounters have been prevented for all students'"><div class="value">{{ count }}</div></app-octagon>
         </div>
         <div class="groups" >
           <div class="group" *ngFor="let exclusionGroup of exclusionGroups">

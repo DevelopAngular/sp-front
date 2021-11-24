@@ -12,6 +12,8 @@ export class OctagonComponent implements OnInit {
   @Input() backgroundColor: string = '#E32C66';
   @Input() borderColor: string = '#EF8BAB';
   @Input() borderWidth: number = 2.5;
+  @Input() hasTooltip: boolean;
+  @Input() tooltipText: string;
 
   constructor() { }
 

@@ -16,7 +16,7 @@ export class ReportDescriptionComponent implements OnInit {
   @ViewChild('wrapper') wrapper: ElementRef;
 
   animationTrigger: any;
-  isOpen: boolean;
+  isOpen: boolean = true;
 
   constructor(private cdr: ChangeDetectorRef) {}
 

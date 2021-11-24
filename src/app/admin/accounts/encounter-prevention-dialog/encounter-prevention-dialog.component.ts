@@ -10,6 +10,7 @@ import {ExclusionGroup} from '../../../models/ExclusionGroup';
 import {EncounterPreventionService} from '../../../services/encounter-prevention.service';
 import {cloneDeep} from 'lodash';
 import {ToastService} from '../../../services/toast.service';
+import {Router} from '@angular/router';
 
 enum Pages {
   StartPage = 0,
@@ -72,7 +73,8 @@ export class EncounterPreventionDialogComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) private data: any,
     private encounterPreventionService: EncounterPreventionService,
     public cdr: ChangeDetectorRef,
-    private toast: ToastService
+    private toast: ToastService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -84,6 +86,18 @@ export class EncounterPreventionDialogComponent implements OnInit {
     } else {
       this.encounterPreventionService.getExclusionGroupsRequest();
       this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
+
+      this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
+        filter(r => r),
+        switchMap(() => this.encounterPreventionService.encounterPreventionLength$)
+      ).subscribe(res => {
+        if (!res) {
+          this.setState(true, Pages.StartPage);
+        } else {
+          this.setState(true, Pages.Groups);
+        }
+      });
+
       this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
         filter(r => r),
         switchMap(() => this.encounterPreventionService.exclusionGroups$),
@@ -99,16 +113,6 @@ export class EncounterPreventionDialogComponent implements OnInit {
         this.cdr.detectChanges();
       });
 
-      this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
-        filter(r => r),
-        switchMap(() => this.encounterPreventionService.encounterPreventionLength$)
-      ).subscribe(res => {
-        if (!res) {
-          this.setState(true, Pages.StartPage);
-        } else {
-          this.setState(true, Pages.Groups);
-        }
-      });
       this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
     }
 
@@ -196,7 +200,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
           this.encounterPreventionService.deleteExclusionGroupRequest(this.state.data.currentGroup);
           this.setState(true, Pages.Groups);
         } else if (action === 'copy_link') {
-          navigator.clipboard.writeText(`http://localhost:4200/admin/accounts/_profile_student?encounter_id=${this.state.data.currentGroup.id}`).then(() => {
+          navigator.clipboard.writeText(`${window.location.host + this.router.url}?encounter_id=${this.state.data.currentGroup.id}`).then(() => {
             this.toast.openToast({
               title: 'Link copied to clipboard!',
               subtitle: 'Send this link to other admins if you want to share with them encounter prevention information.',

@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {EncountersState} from '../encounter-prevention-dialog.component';
 import {ExclusionGroup, PreventEncounters} from '../../../../models/ExclusionGroup';
 import * as moment from 'moment';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-encounter-group-description',
@@ -14,7 +15,7 @@ export class EncounterGroupDescriptionComponent implements OnInit {
   @Input() state: EncountersState;
   @Input() group: ExclusionGroup;
 
-  constructor() { }
+  constructor(private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
   }
@@ -27,10 +28,10 @@ export class EncounterGroupDescriptionComponent implements OnInit {
     return moment(date).format('hh:mm A');
   }
 
-  description(encounter: PreventEncounters): string {
-    return `${encounter.first_name + encounter.last_name} was going from ${encounter.origin}
-    to ${encounter.destination} on ${this.getDate(encounter.created)}
-    from ${this.getTime(encounter.pass_time)} to ${this.getTime(encounter.pass_end)}.`;
+  description(encounter: PreventEncounters): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(`<span>${encounter.first_name + ' ' + encounter.last_name} was going from <span style="text-decoration: underline">${encounter.origin}</span>
+    to <span style="text-decoration: underline">${encounter.destination}</span> on ${this.getDate(encounter.created)}
+    from ${this.getTime(encounter.pass_time)} to ${this.getTime(encounter.pass_end)}.</span>`);
   }
 
 }
