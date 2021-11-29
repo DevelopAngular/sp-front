@@ -9,12 +9,16 @@ export const adapter = createEntityAdapter<ExclusionGroup>();
 const exclusionGroupsInitialState: IExclusionGroupsState = adapter.getInitialState({
   loading: false,
   loaded: false,
-  currentExclusionGroupId: null
+  currentExclusionGroupId: null,
+  groupsForStudent: {}
 });
 
 const reducer = createReducer(
   exclusionGroupsInitialState,
-  on(exclusionGroupsActions.getExclusionGroups, state => ({ ...state, loading: true, loaded: false })),
+  on(exclusionGroupsActions.getExclusionGroups,
+    exclusionGroupsActions.getExclusionGroupsForStudent,
+      state => ({ ...state, loading: true, loaded: false })
+  ),
   on(exclusionGroupsActions.getExclusionGroupsSuccess, (state, {groups}) => {
     return adapter.addAll(groups, { ...state, loading: false, loaded: true });
   }),
@@ -26,6 +30,9 @@ const reducer = createReducer(
   }),
   on(exclusionGroupsActions.removeExclusionGroupSuccess, (state, {group}) => {
     return adapter.removeOne(group.id, { ...state, loading: false, loaded: true});
+  }),
+  on(exclusionGroupsActions.getExclusionGroupsForStudentSuccess, (state, {groups, studentId}) => {
+    return {...state, loading: false, loaded: true, groupsForStudent: {...state.groupsForStudent, [studentId]: groups}};
   })
 );
 

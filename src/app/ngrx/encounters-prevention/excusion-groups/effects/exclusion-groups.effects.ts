@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as exclusionGroupsActions from '../actions';
-import {catchError, exhaustMap, map, switchMap} from 'rxjs/operators';
+import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
 import {EncounterPreventionService} from '../../../../services/encounter-prevention.service';
 import {ExclusionGroup} from '../../../../models/ExclusionGroup';
 import {of} from 'rxjs';
@@ -13,11 +13,27 @@ export class ExclusionGroupsEffects {
     return this.actions$
       .pipe(
         ofType(exclusionGroupsActions.getExclusionGroups),
-        exhaustMap((action) => {
+        mergeMap((action) => {
           return this.encounterPreventionService.getExclusionGroups(action.queryParams)
             .pipe(
               map((groups: ExclusionGroup[]) => {
                 return exclusionGroupsActions.getExclusionGroupsSuccess({groups});
+              }),
+              catchError(error => of(exclusionGroupsActions.getExclusionGroupsFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  getExclusionGroupsRorStudent$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(exclusionGroupsActions.getExclusionGroupsForStudent),
+        mergeMap((action: any) => {
+          return this.encounterPreventionService.getExclusionGroups({student: action.id})
+            .pipe(
+              map((groups: ExclusionGroup[]) => {
+                return exclusionGroupsActions.getExclusionGroupsForStudentSuccess({groups, studentId: action.id});
               }),
               catchError(error => of(exclusionGroupsActions.getExclusionGroupsFailure({errorMessage: error.message})))
             );

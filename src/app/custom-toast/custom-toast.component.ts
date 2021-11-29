@@ -1,5 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {interval, merge, Observable, of, Subject, timer} from 'rxjs';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {interval, merge, of, Subject, timer} from 'rxjs';
 import {delay, filter, takeUntil, tap} from 'rxjs/operators';
 import {ToastService} from '../services/toast.service';
 import {Toast} from '../models/Toast';
@@ -11,28 +11,33 @@ const TOASTDELAY = (6 * 1000) - 200;
   selector: 'app-custom-toast',
   templateUrl: './custom-toast.component.html',
   styleUrls: ['./custom-toast.component.scss'],
-  animations: [toastSlideInOut]
+  animations: [
+    toastSlideInOut,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomToastComponent implements OnInit, OnDestroy {
 
+  @Input() toast: any;
+  @Input() indexPosition: number;
+
   toggleToast: boolean;
-  data$: Observable<Toast>;
   cancelable: boolean = true;
   data: Toast;
   timerValue: number;
+  animationTrigger: string;
 
   destroy$: Subject<any> = new Subject<any>();
   destroyClose$: Subject<any> = new Subject<any>();
 
-  constructor(private toastService: ToastService) { }
+  constructor(private toastService: ToastService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.data$ = this.toastService.data$;
-    setTimeout(() => { this.toggleToast = true; }, 250);
-
-    this.data$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
-      this.data = data;
-    });
+    this.data = this.toast.data;
+    setTimeout(() => {
+      this.toggleToast = true;
+      this.cdr.detectChanges();
+    }, 250);
 
     merge(of(1), interval(1000)).pipe(takeUntil(this.destroyClose$))
       .subscribe(seconds => this.timerValue = seconds > 1 ? seconds + 1 : 1);
@@ -40,11 +45,14 @@ export class CustomToastComponent implements OnInit, OnDestroy {
     timer(TOASTDELAY)
       .pipe(
         filter(() => !this.data.showButton),
-        tap(() => this.toggleToast = false),
+        tap(() => {
+          this.toggleToast = false;
+          this.cdr.detectChanges();
+        }),
         delay(200),
         takeUntil(this.destroyClose$)
       ).subscribe(() => {
-        this.toastService.closeToast();
+        this.toastService.closeToast([this.toast.id]);
     });
   }
 
@@ -53,12 +61,18 @@ export class CustomToastComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  getTeacherEncounterString() {
+    return this.data.issuer.display_name + ' cannot have a pass at the same time as' +
+      this.data.exclusionGroupStudents[0].last_name +
+      (this.data.exclusionGroupStudents.length > 1 ? (' and ' + this.data.exclusionGroupStudents[1].last_name + '.') : '');
+  }
+
   close(evt?: Event) {
     if (evt) {
       this.toggleToast = false;
       evt.stopPropagation();
       setTimeout(() => {
-        this.toastService.closeToast();
+        this.toastService.closeToast([this.toast.id]);
       }, 200);
       return;
     }
@@ -85,12 +99,15 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   leave() {
     if (!this.data.showButton) {
       of(null).pipe(
+        // takeUntil(this.destroyClose$),
         delay(TOASTDELAY - (this.timerValue * 1000)),
-        tap(() => this.toggleToast = false),
+        tap(() => {
+          this.toggleToast = false;
+          this.cdr.detectChanges();
+        }),
         delay(200),
       ).subscribe(() => {
-        this.toggleToast = false;
-        this.toastService.closeToast();
+        this.toastService.closeToast([this.toast.id]);
       });
     }
   }

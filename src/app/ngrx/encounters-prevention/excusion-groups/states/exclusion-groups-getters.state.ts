@@ -24,6 +24,11 @@ export const getCurrentExclusionGroupId = createSelector(
   (state: IExclusionGroupsState) => state.currentExclusionGroupId
 );
 
+export const exclusionGroupsForStudent = createSelector(
+  getExclusionGroupState,
+  (state: IExclusionGroupsState) => state.groupsForStudent
+);
+
 export const getCurrentExclusionGroup = createSelector(
   getExclusionGroupsEntities,
   getCurrentExclusionGroupId,

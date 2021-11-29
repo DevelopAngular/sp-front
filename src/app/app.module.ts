@@ -72,6 +72,7 @@ import {QuickPreviewPassesEffects} from './ngrx/quick-preview-passes/effects';
 import {ProfilePicturesEffects} from './ngrx/profile-pictures/effects';
 import {LoginDataEffects} from './ngrx/login-data/effects';
 import {ExclusionGroupsEffects} from './ngrx/encounters-prevention/excusion-groups/effects';
+import {ToastEffects} from './ngrx/toast/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -200,6 +201,7 @@ const appRoutes: Routes = [
       ProfilePicturesEffects,
       LoginDataEffects,
       ExclusionGroupsEffects,
+      ToastEffects
     ]),
     StoreDevtoolsModule.instrument({}),
     HammerModule,

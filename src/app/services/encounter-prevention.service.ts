@@ -7,10 +7,12 @@ import {AppState} from '../ngrx/app-state/app-state';
 import {
   createExclusionGroup,
   getExclusionGroups,
+  getExclusionGroupsForStudent,
   removeExclusionGroup,
   updateExclusionGroup
 } from '../ngrx/encounters-prevention/excusion-groups/actions';
 import {
+  exclusionGroupsForStudent,
   getCurrentExclusionGroup,
   getEncounterPreventionLength,
   getExclusionGroupsCollection,
@@ -32,10 +34,17 @@ export class EncounterPreventionService {
   exclusionGroupsLength$: Observable<number> = this.store.select(getExclusionGroupsLength);
   encounterPreventionLength$: Observable<number> = this.store.select(getEncounterPreventionLength);
 
+  exclusionGroupsForStudents$: Observable<{ [studentId: string]: ExclusionGroup[] }> = this.store.select(exclusionGroupsForStudent);
+
   constructor(private http: HttpService, private store: Store<AppState>) { }
 
   getExclusionGroupsRequest(queryParams?) {
     this.store.dispatch(getExclusionGroups({queryParams}));
+  }
+
+  getExclusionGroupsForStudentRequest(id) {
+    this.store.dispatch(getExclusionGroupsForStudent({id}));
+    return this.exclusionGroupsForStudents$;
   }
 
   getExclusionGroups(queryParams): Observable<ExclusionGroup[]> {

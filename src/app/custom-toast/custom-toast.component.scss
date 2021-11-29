@@ -2,8 +2,10 @@
 
 :host {
   .toast-container{
-    height: 100vh;
-    width: 100vw;
+    //display: flex;
+    //justify-content: flex-end;
+    //height: 100vh;
+    //width: 100vw;
     position: relative;
     .backdrop {
       background-color: rgba(0, 0, 0, .3);
@@ -17,8 +19,7 @@
       .content-wrapper {
         position: absolute;
         z-index: 999999999;
-        height: auto;
-        top: 15px;
+        transition: top .4s ease;
         border-radius: 10px;
         box-shadow: 0 5px 20px rgba(0,0,0,.13);
         background-color: #FFFFFF;

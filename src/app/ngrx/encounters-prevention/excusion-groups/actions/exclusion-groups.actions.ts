@@ -19,4 +19,8 @@ export const removeExclusionGroup = createAction(`[${EG}] Delete`, props<{group:
 export const removeExclusionGroupSuccess = createAction(`[${EG}] Delete Success`, props<{group: ExclusionGroup}>());
 export const removeExclusionGroupFailure = createAction(`[${EG}] Delete Failure`, props<{errorMessage: string}>());
 
+export const getExclusionGroupsForStudent = createAction(`[${EG}] Get Groups For Student`, props<{id: number | string}>());
+export const getExclusionGroupsForStudentSuccess = createAction(`[${EG}] Get Groups For Student Success`, props<{groups: ExclusionGroup[], studentId: number | string}>());
+export const getExclusionGroupsForStudentFailure = createAction(`[${EG}] Get Groups For Student Failure`, props<{errorMessage: string}>());
+
 

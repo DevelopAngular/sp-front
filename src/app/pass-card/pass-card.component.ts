@@ -6,8 +6,8 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
-import {BehaviorSubject, interval, merge, Observable, of, Subject} from 'rxjs';
+import {catchError, filter, map, pluck, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TimeService} from '../services/time.service';
@@ -21,6 +21,8 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import * as moment from 'moment';
 import {UserService} from '../services/user.service';
 import {ToastService} from '../services/toast.service';
+import {EncounterPreventionService} from '../services/encounter-prevention.service';
+import {isEmpty} from 'lodash';
 
 @Component({
   selector: 'app-pass-card',
@@ -108,7 +110,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private shortcutsService: KeyboardShortcutsService,
       private domCheckerService: DomCheckerService,
       private userService: UserService,
-      private toastService: ToastService
+      private toastService: ToastService,
+      private encounterService: EncounterPreventionService
   ) {}
 
   getUserName(user: any) {
@@ -323,21 +326,56 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
      const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
       getRequest$.pipe(
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
+        catchError(err => {
+          if (!this.forStaff) {
+            this.toastService.openToast({
+              title: 'Sorry, you can’t start your pass right now.',
+              subtitle: 'Please try again later.',
+              type: 'error',
+              encounterPrevention: true,
+              exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
+            });
+            this.dialogRef.close();
+            return of(null);
+          } else {
+            const errorList = err.error.errors;
+            return zip(...errorList.map(id => {
+              // this.encounterService.getExclusionGroupsForStudentRequest(id);
+
+              return this.encounterService.getExclusionGroupsForStudentRequest(id)
+                .pipe(
+                  filter(r => !isEmpty(r) && !!r[+id]),
+                  take(1),
+                  tap((groups) => {
+                    let issuer;
+                    const students = groups[+id].reduce((acc, group) => {
+                      return [...acc, ...group.users];
+                    }, []).filter(u => {
+                      // const userId = errorList.find(userId => +u.id === +u);
+                      if (+u.id === +id) {
+                        issuer = u;
+                      }
+                      return +u.id !== +id;
+                    });
+                    this.toastService.openToast({
+                      title: 'Sorry, you can’t start your pass right now.',
+                      subtitle: 'sgbgfbhdndgbfv',
+                      type: 'error',
+                      encounterPrevention: true,
+                      exclusionPass: {...this.pass, travel_type: this.selectedTravelType},
+                      issuer,
+                      exclusionGroupStudents: students
+                    });
+                  }));
+            }));
+          }
+        })
       )
-        .subscribe((data) => {
-          this.performingAction = true;
-          this.dialogRef.close();
-        }, error => {
-          this.toastService.openToast({
-            title: 'Sorry, you can’t start your pass right now.',
-            subtitle: 'Please try again later.',
-            type: 'error',
-            encounterPrevention: true,
-            exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
-          });
-          this.dialogRef.close();
-        });
+      .subscribe((data) => {
+        this.performingAction = true;
+        // this.dialogRef.close();
+      });
   }
 
   cancelEdit(evt: MouseEvent) {

@@ -1,3 +1,5 @@
+import {User} from './User';
+
 export class Toast {
   title: string;
   subtitle?: string;
@@ -9,4 +11,6 @@ export class Toast {
   hasBackdrop?: boolean;
   encounterPrevention?: boolean;
   exclusionPass?: any;
+  issuer?: User;
+  exclusionGroupStudents?: User[];
 }
