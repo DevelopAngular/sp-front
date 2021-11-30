@@ -17,7 +17,7 @@ export interface ExclusionGroup {
   notes: string;
   prevented_encounters?: PreventEncounters[];
   school_id?: number;
-  users: User[];
+  users: User[] | any;
   enabled?: boolean;
   created?: Date;
   last_updated?: Date;

@@ -54,8 +54,6 @@ import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-in
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
 import {CustomToolTipComponent} from './shared-components/custom-tool-tip/custom-tool-tip.component';
 import {PassLimitTooltipComponent} from './shared-components/pass-limit-tooltip/pass-limit-tooltip.component';
-import {StudentPassesComponent} from '../student-passes/student-passes.component';
-import {StudentPassesInfoCardComponent} from '../student-passes/student-passes-info-card/student-passes-info-card.component';
 import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
 import {StudentMetricsComponent} from '../big-student-pass-card/student-metrics/student-metrics.component';
 import {InlinePassCardComponent} from '../inline-pass-card/inline-pass-card.component';
@@ -65,8 +63,6 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 import {AppTextareaComponent} from '../app-textarea/app-textarea.component';
 import {SquareButtonComponent} from '../square-button/square-button.component';
-import {OctagonComponent} from '../admin/accounts/encounter-prevention-dialog/octagon/octagon.component';
-import {EncounterPreventionTooltipComponent} from '../student-passes/encounter-prevention-tooltip/encounter-prevention-tooltip.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -131,8 +127,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ChangePasswordComponent,
     CustomToolTipComponent,
     PassLimitTooltipComponent,
-    StudentPassesComponent,
-    StudentPassesInfoCardComponent,
     BigStudentPassCardComponent,
     StudentMetricsComponent,
     InlinePassCardComponent,
@@ -142,8 +136,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SettingsDescriptionPopupComponent,
     AppTextareaComponent,
     SquareButtonComponent,
-    OctagonComponent,
-    EncounterPreventionTooltipComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -191,8 +183,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ChangePasswordComponent,
     TeacherPinStudentComponent,
     PassLimitTooltipComponent,
-    StudentPassesComponent,
-    StudentPassesInfoCardComponent,
     BigStudentPassCardComponent,
     StudentMetricsComponent,
     InlinePassCardComponent,
@@ -201,8 +191,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DropdownComponent,
     AppTextareaComponent,
     SquareButtonComponent,
-    OctagonComponent,
-    EncounterPreventionTooltipComponent,
   ],
   providers: [
     {

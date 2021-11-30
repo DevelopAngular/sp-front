@@ -11,6 +11,7 @@ import {EncounterPreventionService} from '../../../services/encounter-prevention
 import {cloneDeep} from 'lodash';
 import {ToastService} from '../../../services/toast.service';
 import {Router} from '@angular/router';
+import {User} from '../../../models/User';
 
 enum Pages {
   StartPage = 0,
@@ -40,6 +41,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   @Input() forceNextPage: string;
   @Input() forceGroup: ExclusionGroup;
+  @Input() currentUser: User;
   @Output() backEmit: EventEmitter<any> = new EventEmitter<any>();
 
   state: EncountersState = {
@@ -79,6 +81,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.forceNextPage === 'newGroup') {
+      this.state.createGroup.users.push({...this.currentUser, lockAccount: true});
       this.setState(true, Pages.NewGroup);
     } else if (this.forceNextPage === 'groupDescription') {
       this.state.data.currentGroup = this.forceGroup;

@@ -6,6 +6,6 @@
     <app-change-password (cancel)="dialogRef.close()" (back)="goBack()" [user]="profile"></app-change-password>
   </div>
   <div *ngIf="page === 3" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <app-encounter-prevention-dialog [forceNextPage]="encounterGroupPage" [forceGroup]="currentExclusionGroup" (backEmit)="goBack()"></app-encounter-prevention-dialog>
+    <app-encounter-prevention-dialog [forceNextPage]="encounterGroupPage" [currentUser]="profile" [forceGroup]="currentExclusionGroup" (backEmit)="goBack()"></app-encounter-prevention-dialog>
   </div>
 </div>

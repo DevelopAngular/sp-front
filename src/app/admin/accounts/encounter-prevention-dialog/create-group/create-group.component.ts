@@ -39,7 +39,7 @@ export class CreateGroupComponent implements OnInit {
   }
 
   onUpdate() {
-    this.showSaveButton = !isEqual(this.groupInitialState, this.group) && !!this.group.users.length;
+    this.showSaveButton = !isEqual(this.groupInitialState, this.group) || !this.isEdit;
     if (this.isEdit) {
       this.state.data.currentGroup = this.group;
     } else {
