@@ -1,0 +1,30 @@
+@import '../../../../../sp-colors';
+
+.wrapper {
+  padding: 10px 13px;
+  border-radius: 6px;
+  background: #F7F7F7;
+  word-break: break-all;
+  cursor: pointer;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .date {
+    font-size: 15px;
+    color: $blue-gray;
+    font-weight: bold;
+  }
+  .description {
+    font-weight: normal;
+    font-size: 14px;
+    color: $blue-gray;
+    margin-top: 6px;
+  }
+
+  .underline {
+    text-decoration: underline;
+  }
+}

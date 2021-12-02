@@ -1,6 +1,5 @@
-
 import {scan} from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
@@ -31,6 +30,9 @@ function encode(obj: Partial<QueryParams>): string {
 }
 
 export function constructUrl(base: string, obj: Partial<QueryParams>): string {
+  if (!obj) {
+    return base;
+  }
   const query = encode(obj);
   if (query) {
     return `${base}?${query}`;

@@ -50,7 +50,7 @@ import {GSuiteConnectComponent} from './g-suite-settings/g-suite-connect/g-suite
     AddRolePopupComponent,
     PermissionsDialogComponent,
     ProfilePictureComponent,
-    GSuiteConnectComponent
+    GSuiteConnectComponent,
   ],
   imports: [
     CommonModule,

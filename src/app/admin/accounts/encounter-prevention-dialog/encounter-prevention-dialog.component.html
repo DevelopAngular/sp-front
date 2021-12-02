@@ -1,0 +1,103 @@
+<div class="wrapper">
+  <div class="header">
+    <div class="background-header"></div>
+    <div class="header">
+      <div class="back-button" (click)="back()">
+        <img width="28" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" alt="">
+      </div>
+      <div class="header-info" [ngSwitch]="state.current_page">
+        <div class="title" *ngSwitchCase="0">Encounter Prevention</div>
+        <img *ngSwitchCase="2" width="24" [src]="'./assets/Encounter Group (Navy).svg'" alt="Encounter">
+        <div *ngSwitchCase="1" class="title">New Group</div>
+        <div *ngSwitchCase="2" class="title">Edit Group</div>
+        <app-octagon *ngSwitchCase="3" [size]="34">
+          <img class="value" height="22" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+        </app-octagon>
+
+        <div class="group-info" *ngSwitchCase="4">
+          <div class="user-photos">
+            <div *ngFor="let user of state.data.currentGroup.users" [matTooltip]="user.display_name" [matTooltipClass]="'ds-tooltip'">
+              <div *ngIf="user.profile_picture; else avatar" class="photo" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
+              <ng-template #avatar>
+                <img class="photo" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>
+              </ng-template>
+            </div>
+<!--            <div class="photo" *ngIf="state.data.currentGroup.users[0] && state.data.currentGroup.users[0].profile_picture; else avatar1" style="left: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[0].profile_picture + ') no-repeat left center/cover'}"></div>-->
+<!--            <div class="photo" *ngIf="state.data.currentGroup.users[1] && state.data.currentGroup.users[1].profile_picture; else avatar2" style="right: 0" [ngStyle]="{'background': 'url(' + state.data.currentGroup.users[1].profile_picture + ') no-repeat left center/cover'}"></div>-->
+<!--            <ng-template #avatar2>-->
+<!--              <img class="photo" style="right: 0" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>-->
+<!--            </ng-template>-->
+          </div>
+          <div class="group-name" *ngIf="!!state.data.currentGroup.name">{{ state.data.currentGroup.name }}</div>
+        </div>
+      </div>
+      <div class="save-button">
+        <app-gradient-button
+          *ngIf="(state.current_page === 1 || state.current_page === 2) && state.data.showSaveButton"
+          (buttonClick)="save()"
+          [disabled]="(state.current_page === 1 && state.createGroup.users.length < 2) || (state.current_page === 2 && state.data.currentGroup.users.length < 2)"
+          [matTooltip]="(state.current_page === 1 && state.createGroup.users.length < 2) || (state.current_page === 2 && state.data.currentGroup.users.length < 2) ? 'Encounter prevention groups must have at least 2 students.' : null"
+          matTooltipClass="ds-tooltip"
+        >Save</app-gradient-button>
+        <app-gradient-button *ngIf="state.current_page === 3" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="state.data.currentGroup = null; goNewGroup()">New group</app-gradient-button>
+        <app-icon-button *ngIf="state.current_page === 4" [srcString]="'Dots'" [size]="17" (clickEvent)="openPopup($event)"></app-icon-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center" *ngIf="exclusionGroupsLoading$ | async; else loaded">
+      <mat-spinner [diameter]="55" [color]="'accent'"></mat-spinner>
+  </div>
+
+  <ng-template #loaded>
+    <div class="content">
+      <div class="page-0" *ngIf="state.current_page === 0">
+        <app-octagon>
+          <img class="value" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+        </app-octagon>
+        <div class="info">
+          <div class="title">Prevent students from having passes at the same time</div>
+          <div class="subtitle">Create your first group of students to get started. You’ll also be able to track how many encounters have been prevented.</div>
+        </div>
+        <app-gradient-button
+          [style.margin-top]="'24px'"
+          [leftIcon]="'./assets/Plus (White).svg'"
+          (buttonClick)="state.data.currentGroup = null; nextPage()"
+        >New group
+        </app-gradient-button>
+      </div>
+
+      <div class="page-1" *ngIf="state.current_page === 1 || state.current_page === 2">
+        <app-create-group [state]="state" (update)="state = $event;"></app-create-group>
+      </div>
+
+      <div class="page-2" *ngIf="state.current_page === 3">
+        <div class="prevent-group-header" *ngIf="encounterPreventionLength$ | async as count">
+          <div class="prevent-group-info">
+            <div class="title">
+              <span>Prevented Encounters</span>
+              <img
+                style="margin-left: 8px; opacity: 0.5"
+                width="16"
+                [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset"
+                matTooltipClass="ds-tooltip"
+                [matTooltip]="'A prevented encounter is when a student tried to make a pass at the same time as another student, but was prevented.'"
+                alt="">
+            </div>
+            <div class="subtitle">{{ count }} encounters have been prevented this year for all students</div>
+          </div>
+          <app-octagon [size]="38" style="height: 38px" [hasTooltip]="true" [tooltipText]="count + ' encounters have been prevented for all students'"><div class="value">{{ count }}</div></app-octagon>
+        </div>
+        <div class="groups" >
+          <div class="group" *ngFor="let exclusionGroup of exclusionGroups">
+            <app-encounter-group [group]="exclusionGroup" (clickEvent)="goDescription(exclusionGroup)"></app-encounter-group>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-4" *ngIf="state.current_page === 4">
+        <app-encounter-group-description [state]="state" [group]="state.data.currentGroup"></app-encounter-group-description>
+      </div>
+    </div>
+  </ng-template>
+</div>

@@ -26,6 +26,7 @@ import {CleverInfo} from '../../models/CleverInfo';
 import {PollingService} from '../../services/polling-service';
 import {ProfilePictureComponent} from './profile-picture/profile-picture.component';
 import {XlsxService} from '../../services/xlsx.service';
+import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
 
 declare const window;
 
@@ -82,6 +83,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe(res => {
       if (res.target === 'gsuite') {
         this.openSettingsDialog('g_suite', '');
+      } else if (res.encounter_id) {
+        this.openEncounterPrevention(res.encounter_id);
       }
     });
 
@@ -225,6 +228,16 @@ export class AccountsComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px'
+    });
+  }
+
+  openEncounterPrevention(id) {
+    const encounterDialog = this.matDialog.open(EncounterPreventionDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: {currentGroupId: id}
     });
   }
 }

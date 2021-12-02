@@ -46,6 +46,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   @Input() profileImage: boolean;
   @Input() isEnableProfilePictures: boolean;
   @Input() isMiniCard: boolean;
+  @Input() encounterPreventionCard: boolean;
 
   @Output() tileSelected = new EventEmitter<{time$: Observable<any>, pass: any}>();
 
@@ -80,6 +81,9 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
     if (this.isActive) {
       return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
     } else {
+      if (this.encounterPreventionCard) {
+        return 'Now';
+      }
       return this.pass instanceof Request ?
           ((this.pass.request_time && this.forFuture) ?
             (!this.forStaff ? getInnerPassContent(this.pass) : getFormattedPassDate(this.pass)) : (this.forStaff ? 'Pass for Now' : '')) :

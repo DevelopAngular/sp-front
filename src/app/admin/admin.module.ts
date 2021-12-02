@@ -66,7 +66,6 @@ import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-prof
         AddUserDialogComponent,
         SelectRoleComponent,
         ViewProfileComponent,
-
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

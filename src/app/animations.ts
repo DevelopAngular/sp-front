@@ -311,3 +311,15 @@ export const toastSlideInOut = trigger('toastSlideInOut', [
   })),
   transition('open <=> close', animate('.3s ease')),
 ]);
+
+export const resizeReportDescription = trigger('grow', [
+  transition('void <=> *', []),
+  transition('* <=> open', [
+    style({height: '{{startHeight}}px'}),
+    animate('.3s ease-in'),
+  ], {params: {startHeight: 0}}),
+  transition('* <=> close', [
+    style({height: '{{startHeight}}px'}),
+    animate('.3s ease-out'),
+  ], {params: {startHeight: 0}})
+])

@@ -8,7 +8,6 @@ import {PinnableComponent} from '../pinnable/pinnable.component';
 import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.component';
 import {SPSearchComponent} from '../sp-search/sp-search.component';
 import {PassCollectionComponent} from '../pass-collection/pass-collection.component';
-import {PassTileComponent} from '../pass-tile/pass-tile.component';
 import {PassCellComponent} from '../pass-cell/pass-cell.component';
 import {RestrictionDummyComponent} from '../admin/restriction-dummy/restriction-dummy.component';
 import {BackButtonComponent} from '../admin/back-button/back-button.component';
@@ -55,8 +54,6 @@ import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-in
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
 import {CustomToolTipComponent} from './shared-components/custom-tool-tip/custom-tool-tip.component';
 import {PassLimitTooltipComponent} from './shared-components/pass-limit-tooltip/pass-limit-tooltip.component';
-import {StudentPassesComponent} from '../student-passes/student-passes.component';
-import {StudentPassesInfoCardComponent} from '../student-passes/student-passes-info-card/student-passes-info-card.component';
 import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
 import {StudentMetricsComponent} from '../big-student-pass-card/student-metrics/student-metrics.component';
 import {InlinePassCardComponent} from '../inline-pass-card/inline-pass-card.component';
@@ -64,6 +61,8 @@ import {RequestCardComponent} from '../request-card/request-card.component';
 import {InlineRequestCardComponent} from '../inline-request-card/inline-request-card.component';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
+import {AppTextareaComponent} from '../app-textarea/app-textarea.component';
+import {SquareButtonComponent} from '../square-button/square-button.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -79,7 +78,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DragulaModule.forRoot(),
     SwiperModule,
     ChartsModule,
-    CoreModule
+    CoreModule,
   ],
   declarations: [
     GoogleSigninComponent,
@@ -89,7 +88,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     TraveltypePickerComponent,
     SPSearchComponent,
     PassCollectionComponent,
-    PassTileComponent,
     PassCellComponent,
     RestrictionDummyComponent,
     BackButtonComponent,
@@ -129,8 +127,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ChangePasswordComponent,
     CustomToolTipComponent,
     PassLimitTooltipComponent,
-    StudentPassesComponent,
-    StudentPassesInfoCardComponent,
     BigStudentPassCardComponent,
     StudentMetricsComponent,
     InlinePassCardComponent,
@@ -138,6 +134,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlineRequestCardComponent,
     DropdownComponent,
     SettingsDescriptionPopupComponent,
+    AppTextareaComponent,
+    SquareButtonComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -149,7 +147,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     TraveltypePickerComponent,
     SPSearchComponent,
     PassCollectionComponent,
-    PassTileComponent,
     PassCellComponent,
     RestrictionDummyComponent,
     BackButtonComponent,
@@ -186,14 +183,14 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ChangePasswordComponent,
     TeacherPinStudentComponent,
     PassLimitTooltipComponent,
-    StudentPassesComponent,
-    StudentPassesInfoCardComponent,
     BigStudentPassCardComponent,
     StudentMetricsComponent,
     InlinePassCardComponent,
     RequestCardComponent,
     InlineRequestCardComponent,
     DropdownComponent,
+    AppTextareaComponent,
+    SquareButtonComponent,
   ],
   providers: [
     {

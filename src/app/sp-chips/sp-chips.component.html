@@ -9,7 +9,7 @@
     <span [style.cursor]="'default'" [style.user-select]="'none'">
       {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as}}
     </span>
-    <div *ngIf="chip.hovered" class="delete">
+    <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
 
       <img
         (click)="selectedProfiles.splice(i, 1); updateSelectedEvent.emit(this.selectedProfiles)"

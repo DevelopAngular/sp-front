@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {LiveDataService} from '../live-data/live-data.service';
 import {HallPass} from '../models/HallPass';
 
 import {
@@ -18,9 +17,11 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
-import {map} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
 import * as moment from 'moment';
+import {EncounterPreventionService} from '../services/encounter-prevention.service';
+import {uniqBy} from 'lodash';
 
 @Component({
   selector: 'app-student-passes',
@@ -58,6 +59,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   loading$: Observable<boolean>;
   loaded$: Observable<boolean>;
   passesStats$: Observable<QuickPreviewPasses>;
+  exclusionStudents$: Observable<User[]>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -73,10 +75,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   constructor(
-    private livaDataService: LiveDataService,
     private dialog: MatDialog,
     private domCheckerService: DomCheckerService,
-    private passesService: HallPassesService
+    private passesService: HallPassesService,
+    private encounterPreventionService: EncounterPreventionService
   ) { }
 
   ngAfterViewInit() {
@@ -88,11 +90,23 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   ngOnInit() {
     this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
     this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
+    this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.lastStudentPasses = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loading$ = this.passesService.quickPreviewPassesLoading$;
     this.loaded$ = this.passesService.quickPreviewPassesLoaded$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
+    this.exclusionStudents$ = this.encounterPreventionService.exclusionGroups$
+      .pipe(
+        filter(g => !!g.length),
+        map((groups ) => {
+          const students = [];
+          for (let i = 0; i < groups.length; i++) {
+            students.push(...groups[i].users);
+          }
+          return uniqBy(students, 'id').filter(s => +s.id !== +this.profile.id);
+        })
+      );
   }
 
   ngOnDestroy() {

@@ -3,6 +3,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 import {merge, of, Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
+import {FormControl, FormGroup} from '@angular/forms';
 
 
 @Component({
@@ -39,8 +40,8 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() tabAttentive: boolean = false;
   @Input() forceError: boolean = false;
 
-  @Input() formGroup;
-  @Input() controlName;
+  @Input() formGroup: FormGroup;
+  @Input() controlName: FormControl;
 
   @Output() onUpdate = new EventEmitter<string | number>();
   @Output() over = new EventEmitter();

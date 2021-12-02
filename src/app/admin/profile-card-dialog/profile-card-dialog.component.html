@@ -1,8 +1,11 @@
 <div class="card-container">
   <div *ngIf="page === 1" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <app-view-profile (close)="dialogRef.close($event)" [data]="data" (nextStep)="goToChangePassword()"></app-view-profile>
+    <app-view-profile [exclusionGroups]="exclusionGroups$ | async" (close)="dialogRef.close($event)" [data]="data" (encounterGroupsEmit)="goToEncounterGroups($event)"></app-view-profile>
   </div>
   <div *ngIf="page === 2" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
     <app-change-password (cancel)="dialogRef.close()" (back)="goBack()" [user]="profile"></app-change-password>
+  </div>
+  <div *ngIf="page === 3" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <app-encounter-prevention-dialog [forceNextPage]="encounterGroupPage" [currentUser]="profile" [forceGroup]="currentExclusionGroup" (backEmit)="goBack()"></app-encounter-prevention-dialog>
   </div>
 </div>
