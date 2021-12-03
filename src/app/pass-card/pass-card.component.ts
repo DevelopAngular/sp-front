@@ -374,7 +374,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       )
       .subscribe((data) => {
         this.performingAction = true;
-        // this.dialogRef.close();
+        this.dialogRef.close();
       });
   }
 
