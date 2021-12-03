@@ -9,6 +9,11 @@ export interface PreventEncounters {
   origin: string;
   pass_end: Date;
   pass_time: Date;
+  conflict_pass_destination: string;
+  conflict_pass_end: Date;
+  conflict_pass_origin: string;
+  conflict_pass_start_time: Date;
+  conflict_pass_student_name: string;
 }
 
 export interface ExclusionGroup {
