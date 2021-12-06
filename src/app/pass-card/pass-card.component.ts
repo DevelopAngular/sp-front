@@ -341,8 +341,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
           } else {
             const errorList = err.error.errors;
             return zip(...errorList.map(id => {
-              // this.encounterService.getExclusionGroupsForStudentRequest(id);
-
               return this.encounterService.getExclusionGroupsForStudentRequest(id)
                 .pipe(
                   filter(r => !isEmpty(r) && !!r[+id]),
@@ -352,7 +350,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
                     const students = groups[+id].reduce((acc, group) => {
                       return [...acc, ...group.users];
                     }, []).filter(u => {
-                      // const userId = errorList.find(userId => +u.id === +u);
                       if (+u.id === +id) {
                         issuer = u;
                       }

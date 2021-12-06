@@ -49,14 +49,13 @@ export class CustomToastComponent implements OnInit, OnDestroy {
     timer(TOASTDELAY)
       .pipe(
         takeUntil(this.destroyClose$),
-        filter(() => !this.data.showButton),
+        filter(() => !this.data.showButton && !this.data.encounterPrevention),
         tap(() => {
           this.toggleToast = false;
           this.cdr.detectChanges();
         }),
         delay(200),
       ).subscribe(() => {
-      console.log('Timer ====>>>', this.toast.id);
         this.toastService.closeToast([this.toast.id]);
     });
   }
@@ -77,7 +76,6 @@ export class CustomToastComponent implements OnInit, OnDestroy {
       this.toggleToast = false;
       evt.stopPropagation();
       setTimeout(() => {
-        console.log('Close ====>>>', this.toast.id);
         this.toastService.closeToast([this.toast.id]);
       }, 200);
       return;
@@ -104,7 +102,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   }
 
   leave() {
-    if (!this.data.showButton) {
+    if (!this.data.showButton && !this.data.encounterPrevention) {
       of(null).pipe(
         delay(TOASTDELAY - (this.timerValue * 1000)),
         takeUntil(this.destroyClose$),
@@ -114,7 +112,6 @@ export class CustomToastComponent implements OnInit, OnDestroy {
         }),
         delay(200),
       ).subscribe(() => {
-        console.log('Leave ====>>>', this.toast.id);
         this.toastService.closeToast([this.toast.id]);
       });
     }

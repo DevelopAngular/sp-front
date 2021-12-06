@@ -10,7 +10,6 @@ import {ExclusionGroup} from '../../../models/ExclusionGroup';
 import {EncounterPreventionService} from '../../../services/encounter-prevention.service';
 import {cloneDeep} from 'lodash';
 import {ToastService} from '../../../services/toast.service';
-import {Router} from '@angular/router';
 import {User} from '../../../models/User';
 
 enum Pages {
@@ -76,7 +75,6 @@ export class EncounterPreventionDialogComponent implements OnInit {
     private encounterPreventionService: EncounterPreventionService,
     public cdr: ChangeDetectorRef,
     private toast: ToastService,
-    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -203,7 +201,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
           this.encounterPreventionService.deleteExclusionGroupRequest(this.state.data.currentGroup);
           this.setState(true, Pages.Groups);
         } else if (action === 'copy_link') {
-          navigator.clipboard.writeText(`${window.location.host + this.router.url}?encounter_id=${this.state.data.currentGroup.id}`).then(() => {
+          navigator.clipboard.writeText(`${window.location.href}?encounter_id=${this.state.data.currentGroup.id}`).then(() => {
             this.toast.openToast({
               title: 'Link copied to clipboard!',
               subtitle: 'Send this link to other admins if you want to share with them encounter prevention information.',
