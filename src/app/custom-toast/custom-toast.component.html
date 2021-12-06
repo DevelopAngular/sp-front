@@ -10,7 +10,7 @@
     <div class="content">
       <div class="type-line" [style.background-color]="lineColor(data.type)"></div>
       <div class="info" style="display: flex; align-items: center" *ngIf="data.encounterPrevention">
-        <div class="exclusion-pass" *ngIf="data.encounterPrevention">
+        <div class="exclusion-pass">
           <app-pass-tile
             [forFuture]="false"
             [fromPast]="true"
@@ -25,7 +25,7 @@
           <div class="text_header">{{ data.title }}</div>
           <div class="text_message" *ngIf="!data.issuer; else info">{{ data.subtitle }}</div>
           <ng-template #info>
-            <div class="text_message" *ngIf="data.issuer; else info">{{ getTeacherEncounterString() }}</div>
+            <div class="text_message" *ngIf="data.issuer; else info">{{ getTeacherEncounterString() }} <br/><a style="color: #7f879d" href="https://www.smartpass.app/encounterprevention" target="_blank">Learn more</a></div>
           </ng-template>
         </div>
       </div>

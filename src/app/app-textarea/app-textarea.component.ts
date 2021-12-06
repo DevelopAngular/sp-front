@@ -14,6 +14,7 @@ export class AppTextareaComponent implements OnInit {
   @Input() focused: boolean;
   @Input() control: FormControl;
   @Input() label: string = '';
+  @Input() maxLength: number = 10000;
 
   @ViewChild('textArea') textArea: ElementRef;
 

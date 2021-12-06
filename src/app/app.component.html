@@ -7,7 +7,7 @@
       (closeEvent)="errorToastTrigger.next(null)"
     ></app-error-toast>
   </div>
-  <div class="toasts-wrapper" *ngIf="customToastOpen$ | async">
+  <div class="toasts-wrapper" *ngIf="(toasts$ | async).length">
     <div class="toasts">
       <div class="toast" *ngFor="let toast index as i of toasts$ | async">
         <app-custom-toast [toast]="toast" [indexPosition]="i"></app-custom-toast>

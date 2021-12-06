@@ -26,11 +26,15 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   data: Toast;
   timerValue: number;
   animationTrigger: string;
+  stopPosition: boolean;
 
   destroy$: Subject<any> = new Subject<any>();
   destroyClose$: Subject<any> = new Subject<any>();
 
-  constructor(private toastService: ToastService, private cdr: ChangeDetectorRef) { }
+  constructor(
+    private toastService: ToastService,
+    private cdr: ChangeDetectorRef,
+  ) { }
 
   ngOnInit() {
     this.data = this.toast.data;
@@ -44,13 +48,13 @@ export class CustomToastComponent implements OnInit, OnDestroy {
 
     timer(TOASTDELAY)
       .pipe(
-        filter(() => !this.data.showButton),
+        takeUntil(this.destroyClose$),
+        filter(() => !this.data.showButton && !this.data.encounterPrevention),
         tap(() => {
           this.toggleToast = false;
           this.cdr.detectChanges();
         }),
         delay(200),
-        takeUntil(this.destroyClose$)
       ).subscribe(() => {
         this.toastService.closeToast([this.toast.id]);
     });
@@ -63,8 +67,8 @@ export class CustomToastComponent implements OnInit, OnDestroy {
 
   getTeacherEncounterString() {
     return this.data.issuer.display_name + ' cannot have a pass at the same time as' +
-      this.data.exclusionGroupStudents[0].last_name +
-      (this.data.exclusionGroupStudents.length > 1 ? (' and ' + this.data.exclusionGroupStudents[1].last_name + '.') : '');
+      this.data.exclusionGroupStudents[0].display_name +
+      (this.data.exclusionGroupStudents.length > 1 ? (' and ' + this.data.exclusionGroupStudents[1].display_name + '.') : '');
   }
 
   close(evt?: Event) {
@@ -94,13 +98,14 @@ export class CustomToastComponent implements OnInit, OnDestroy {
 
   over() {
     this.destroyClose$.next();
+    this.stopPosition = true;
   }
 
   leave() {
-    if (!this.data.showButton) {
+    if (!this.data.showButton && !this.data.encounterPrevention) {
       of(null).pipe(
-        // takeUntil(this.destroyClose$),
         delay(TOASTDELAY - (this.timerValue * 1000)),
+        takeUntil(this.destroyClose$),
         tap(() => {
           this.toggleToast = false;
           this.cdr.detectChanges();

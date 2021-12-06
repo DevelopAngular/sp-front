@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {resizeReportDescription} from '../../../../animations';
+import {SafeHtml} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-report-description',
@@ -11,7 +12,7 @@ import {resizeReportDescription} from '../../../../animations';
 export class ReportDescriptionComponent implements OnInit {
 
   @Input() date: string;
-  @Input() description: string;
+  @Input() description: string | SafeHtml;
 
   @ViewChild('wrapper') wrapper: ElementRef;
 

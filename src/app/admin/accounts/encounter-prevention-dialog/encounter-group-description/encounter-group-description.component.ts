@@ -29,9 +29,10 @@ export class EncounterGroupDescriptionComponent implements OnInit {
   }
 
   description(encounter: PreventEncounters): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(`<span>${encounter.first_name + ' ' + encounter.last_name} was going from <span style="text-decoration: underline">${encounter.origin}</span>
-    to <span style="text-decoration: underline">${encounter.destination}</span> on ${this.getDate(encounter.created)}
-    from ${this.getTime(encounter.pass_time)} to ${this.getTime(encounter.pass_end)}.</span>`);
+    return this.sanitizer.bypassSecurityTrustHtml(`<span>${encounter.conflict_pass_student_name} was going from <span style="text-decoration: underline">${encounter.conflict_pass_origin}</span>
+    to <span style="text-decoration: underline">${encounter.conflict_pass_destination}</span> on ${this.getDate(encounter.conflict_pass_start_time)}
+    from ${this.getTime(encounter.conflict_pass_start_time)} to ${this.getTime(encounter.conflict_pass_end)}. At ${this.getTime(encounter.pass_time)}, ${encounter.first_name} ${encounter.last_name} attempted to make a pass from
+    <span style="text-decoration: underline">${encounter.origin}</span> to <span style="text-decoration: underline">${encounter.destination}</span>, but it was prevented. </span>`);
   }
 
 }

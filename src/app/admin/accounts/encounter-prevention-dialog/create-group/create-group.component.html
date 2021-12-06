@@ -15,6 +15,7 @@
     <app-input
       [width]="'245px'"
       [height]="'40px'"
+      [maxLength]="'25'"
       [formGroup]="form"
       [input_value]="group.name"
       [controlName]="form.get('name')">
@@ -28,6 +29,7 @@
       [placeholder]="'Ex. Parents requested'"
       [width]="'351px'"
       [height]="'75px'"
+      [maxLength]="150"
     ></app-textarea>
 
     <div class="info">
