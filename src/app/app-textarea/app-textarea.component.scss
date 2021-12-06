@@ -1,0 +1,26 @@
+@import '../../sp-colors';
+
+.wrapper {
+  textarea {
+    border: 2px solid transparent;
+    display: block;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #1D1A5E;
+    background-clip: padding-box;
+    border-radius: .5rem;
+    padding: 8px 8px 8px 16px;
+    margin-top: 6px;
+    transition: border-color .25s ease-in-out, box-shadow .25s ease-in-out, background-color .25s ease-in-out;
+  }
+}
+
+.wrapper textarea:focus {
+  border: 2px solid $navy;
+}
+.clserrorLabel {
+  color: #E32C66 !important;
+}
+.clserrorInput {
+  border: 2px solid #E32C66 !important
+}

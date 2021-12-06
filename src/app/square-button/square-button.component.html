@@ -1,0 +1,15 @@
+<div
+  class="wrapper"
+  [style.background-color]="backgroundColor"
+  [@pressState]="buttonState"
+  appCrossPointerEventTarget
+  (pointerDownEvent)="buttonDown = true"
+  (pointerCancelEvent)="buttonDown = false"
+  (pointerClickEvent)="buttonDown = false; hovered = false; onClick($event)"
+  [style.opacity]="hovered && !buttonDown && !disabled ? 0.85 : (buttonDown && !disabled ? 0.7 : (disabled ? 0.5 : 1))"
+  (mouseenter)="onHover(true)"
+  (mouseleave)="onHover(false)"
+  [style.box-shadow]="shadow"
+>
+  <ng-content></ng-content>
+</div>

@@ -17,12 +17,20 @@
   left: 0;
 }
 
-.toast {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
+.toasts-wrapper {
+  //position: absolute;
+  //top: 0;
+  //bottom: 0;
+  //right: 0;
+  //left: 0;
+  //z-index: 9999999999999;
+  .toasts {
+    position: relative;
+
+    .toast {
+      //position: absolute;
+    }
+  }
 }
 
 ::ng-deep #hubspot-messages-iframe-container {

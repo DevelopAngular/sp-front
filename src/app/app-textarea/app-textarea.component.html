@@ -1,0 +1,27 @@
+<div
+   class="wrapper"
+   (mouseenter)="hovered = true"
+   (mouseleave)="hovered = false"
+>
+  <label
+    [ngClass]="{
+        'ds-dialog-heading': control.valid || control.pending || focused,
+        'ds-dialog-heading-gray': control.invalid,
+        'clserrorLabel': !focused && (control.invalid && control.errors && control.dirty)
+        }"
+  >
+    {{ label }}
+  </label>
+  <textarea
+    #textArea
+    [style.width]="width"
+    [style.height]="height"
+    [formControl]="control"
+    [maxLength]="maxLength"
+    [style.background-color]="focused ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
+    [placeholder]="placeholder"
+    (focus)="focused = true"
+    (blur)="focused = false"
+    [ngClass]="{ clserrorInput: (control.invalid && control.errors && control.dirty) && !focused }"
+  ></textarea>
+</div>

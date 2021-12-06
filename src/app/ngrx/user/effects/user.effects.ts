@@ -107,6 +107,21 @@ export class UserEffects {
       );
   });
 
+  getUserStats$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(userActions.getUserStats),
+      switchMap((action) => {
+        return this.userService.getUserStats(action.userId, action.queryParams)
+          .pipe(
+            map(stats => {
+              return userActions.getUserStatsSuccess({stats});
+            }),
+            catchError(error => of(userActions.getUserStatsFailure({errorMessage: error.message})))
+          );
+      })
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService

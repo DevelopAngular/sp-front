@@ -64,6 +64,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public isKioskMode: boolean;
   public showSupportButton: boolean;
   public customToastOpen$: Observable<boolean>;
+  public toasts$: Observable<any>;
   public hasCustomBackdrop$: Observable<boolean>;
   public customBackdropStyle$: Observable<any>;
 
@@ -103,6 +104,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.customToastOpen$ = this.toastService.isOpen$;
+    this.toasts$ = this.toastService.toasts$;
     this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
     this.customBackdropStyle$ = this.screen.customBackdropStyle$;
     this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {

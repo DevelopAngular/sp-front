@@ -1,14 +1,36 @@
-<div class="toast-container"
->
+<div class="toast-container">
   <div class="backdrop" *ngIf="data.hasBackdrop"></div>
   <div class="content-wrapper"
+       #wrapper
        [@toastSlideInOut]="toggleToast ? 'open' : 'close'"
+       [style.top]="!indexPosition ? '15px' : ((wrapper.clientHeight * (indexPosition) + 15) + (indexPosition * 15)) + 'px'"
        (mouseover)="over()"
        (mouseleave)="leave()"
   >
     <div class="content">
       <div class="type-line" [style.background-color]="lineColor(data.type)"></div>
-      <div class="info">
+      <div class="info" style="display: flex; align-items: center" *ngIf="data.encounterPrevention">
+        <div class="exclusion-pass">
+          <app-pass-tile
+            [forFuture]="false"
+            [fromPast]="true"
+            [forStaff]="false"
+            [pass]="data.exclusionPass"
+            [profileImage]="false"
+            [isMiniCard]="true"
+            [encounterPreventionCard]="true"
+          ></app-pass-tile>
+        </div>
+        <div class="text" style="margin-left: 20px">
+          <div class="text_header">{{ data.title }}</div>
+          <div class="text_message" *ngIf="!data.issuer; else info">{{ data.subtitle }}</div>
+          <ng-template #info>
+            <div class="text_message" *ngIf="data.issuer; else info">{{ getTeacherEncounterString() }} <br/><a style="color: #7f879d" href="https://www.smartpass.app/encounterprevention" target="_blank">Learn more</a></div>
+          </ng-template>
+        </div>
+      </div>
+
+      <div class="info" *ngIf="!data.encounterPrevention">
         <div class="text">
           <div class="text_header">{{ data.title }}</div>
           <div class="text_message">{{ data.subtitle }}</div>

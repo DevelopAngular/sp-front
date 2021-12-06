@@ -821,4 +821,8 @@ export class UserService implements OnDestroy {
   clearUploadedData() {
     this.store.dispatch(clearUploadedData());
   }
+
+  getUserStats(userId: string | number, queryParams) {
+    return this.http.get(constructUrl(`v1/users/${userId}/stats`, queryParams));
+  }
 }

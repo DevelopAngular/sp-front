@@ -77,7 +77,7 @@ import {PinInputComponent} from '../teacher-pin/pin-input/pin-input.component';
         NavButtonComponent,
         TeacherPinComponent,
         AssistantRestrictionComponent,
-        PinInputComponent
+        PinInputComponent,
     ],
     providers: []
 })

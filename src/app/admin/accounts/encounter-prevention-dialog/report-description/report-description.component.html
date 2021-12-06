@@ -1,0 +1,7 @@
+<div class="wrapper" #wrapper (click)="setStartHeight()" [@grow]="animationTrigger">
+  <div class="header">
+    <div class="date">{{ date }}</div>
+    <img width="18" [src]="'./assets/Chevron ' + (isOpen ? 'Up' : 'Down') + ' (Blue-Gray).svg' | resolveAsset" alt="Chevron">
+  </div>
+  <div class="description" *ngIf="isOpen" [innerHTML]="description"></div>
+</div>

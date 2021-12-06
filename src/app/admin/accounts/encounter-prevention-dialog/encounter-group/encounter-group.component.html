@@ -1,0 +1,43 @@
+<div class="wrapper"
+     #wrapper
+     (mouseenter)="wrapper.hovered = true"
+     (mouseleave)="wrapper.hovered = false; wrapper.pressed = false"
+     (mousedown)="wrapper.pressed = true"
+     (click)="wrapper.pressed = false; clickEvent.emit($event)"
+     [@pressState]="wrapper.pressed ? 'down' : 'up'"
+>
+  <div class="students" *ngIf="!group.name; else name">
+    <div class="student" *ngFor="let student of group.users">
+      <div class="student-picture">
+        <div *ngIf="student.profile_picture; else d" [ngStyle]="{'background': 'url(' + student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
+        <ng-template #d>
+          <img width="23" height="23" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="">
+        </ng-template>
+      </div>
+      <div class="name">{{ student.display_name }}</div>
+<!--      <div *ngIf="chip.hovered" class="delete">-->
+<!--        <img [src]="'./assets/Cancel (Navy).svg'" width="16" alt="Check.svg">-->
+<!--      </div>-->
+    </div>
+  </div>
+  <ng-template #name>
+    <div class="group-name">
+      {{ group.name }}
+    </div>
+  </ng-template>
+
+  <div class="octagon">
+    <app-octagon
+      *ngIf="!wrapper.hovered; else go"
+      [size]="28"
+      [backgroundColor]="'transparent'"
+      [borderColor]="'#E32C66'"
+      [borderWidth]="5"
+    >
+      <div class="value" style="color: #E32C66">{{ group.prevented_encounters.length }}</div>
+    </app-octagon>
+    <ng-template #go>
+      <app-icon-button [srcString]="'Chevron Right'" [size]="15" (clickEvent)="clickEvent.emit($event)"></app-icon-button>
+    </ng-template>
+  </div>
+</div>
