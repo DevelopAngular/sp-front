@@ -36,15 +36,23 @@
 
       <div class="forms">
         <div class="form">
-          <div class="icon" style="background-color: #E32C66"></div>
+          <div class="icon" style="background-color: #E32C66">
+            <app-octagon [size]="20" [backgroundColor]="'#E32C66'">
+              <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Walking One (White).svg' | resolveAsset" alt="">
+            </app-octagon>
+          </div>
           <div class="title">Encounter prevention</div>
         </div>
         <div class="form">
-          <div class="icon" style="background-color: #E48C15"></div>
+          <div class="icon" style="background-color: #E48C15">
+            <img width="13px" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="">
+          </div>
           <div class="title">Restrict all rooms</div>
         </div>
         <div class="form">
-          <div class="icon" style="background-color: #6651F1"></div>
+          <div class="icon" style="background-color: #6651F1">
+            <img width="16px" [src]="'./assets/Pass Quota (White).svg' | resolveAsset" alt="">
+          </div>
           <div class="title">Pass quota</div>
         </div>
 
@@ -99,7 +107,7 @@
       </div>
     </div>
 
-    <div class="content">
+    <div class="content" *ngIf="studentStats$ | async as studentStats">
       <div class="block">
         <app-overview-container
           [title]="'Overview'"
@@ -107,7 +115,7 @@
           <div class="info-cards">
             <div class="info-card">
               <div class="title">PASSES CREATED</div>
-              <div class="value">{{ 53 + ' Passes' }}</div>
+              <div class="value">{{ studentStats.expired_passes.length + ' Passes' }}</div>
             </div>
             <div class="info-card">
               <div class="title">TIME SPENT OUT OF CLASS</div>
@@ -115,11 +123,11 @@
             </div>
             <div class="info-card">
               <div class="title">PASSES OVER TIME LIMIT</div>
-              <div class="value">{{ 53 + ' Passes' }}</div>
+              <div class="value">{{ studentStats.over_time_limit + ' Passes' }}</div>
             </div>
             <div class="info-card">
               <div class="title">PASSES AUTO-ENDED</div>
-              <div class="value">{{ 1 + ' Pass' }}</div>
+              <div class="value">{{ studentStats.auto_ended + ' Pass' }}</div>
             </div>
           </div>
         </app-overview-container>
@@ -129,7 +137,7 @@
           [title]="'Passes'"
           [icon]="'./assets/Passes (Navy).svg'">
           <div class="info-cards">
-            <div class="pass" *ngFor="let pass of lastStudentPasses$ | async">
+            <div class="pass" *ngFor="let pass of studentStats.expired_passes">
               <app-pass-tile
                 [forFuture]="false"
                 [fromPast]="true"

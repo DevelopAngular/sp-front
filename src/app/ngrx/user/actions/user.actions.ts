@@ -20,8 +20,4 @@ export const updateUserPicture = createAction(`[User] Update User Picture`, prop
 export const updateUserPictureSuccess = createAction(`[User] Update User Picture Success`, props<{user: User}>());
 export const updateUserPictureFailure = createAction(`[User] Update User Picture Failure`, props<{errorMessage: string}>());
 
-export const getUserStats = createAction(`[User] Get User Stats`, props<{userId: string | number, queryParams?: any}>());
-export const getUserStatsSuccess = createAction(`[User] Get User Stats Success`, props<{stats: any}>());
-export const getUserStatsFailure = createAction(`[User] Get User Stats Failure`, props<{errorMessage: string}>());
-
 export const clearUser = createAction(`[User] Clear User`);

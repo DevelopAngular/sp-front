@@ -11,7 +11,6 @@ import {SchoolSettingsComponent} from './school-settings/school-settings.compone
 import {bumpIn} from '../../animations';
 import * as moment from 'moment';
 import {SupportService} from '../../services/support.service';
-import {StudentInfoCardComponent} from '../student-info-card/student-info-card.component';
 import {UserService} from '../../services/user.service';
 import {User} from '../../models/User';
 
@@ -103,13 +102,6 @@ export class MySchoolComponent implements OnInit, OnDestroy {
 
   closeChat(event) {
     this.supportService.closeChat(event);
-  }
-
-  opentest() {
-    this.dialog.open(StudentInfoCardComponent, {
-      panelClass: 'student-pass-info-dialog',
-      data: {profile: this.user}
-    });
   }
 
 }

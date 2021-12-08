@@ -7,6 +7,8 @@ import {User} from '../../../../../models/User';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {getCountAccounts} from '../../count-accounts/actions';
+import {UserStats} from '../../../../../models/UserStats';
+import {HallPass} from '../../../../../models/HallPass';
 
 @Injectable()
 export class StudentsEffects {
@@ -126,6 +128,23 @@ export class StudentsEffects {
             );
         })
       );
+  });
+
+  getStudentStats$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(studentsActions.getStudentStats),
+      switchMap((action) => {
+        return this.userService.getUserStats(action.userId, action.queryParams)
+          .pipe(
+            map((stats: UserStats) => {
+              return studentsActions.getStudentStatsSuccess({userId: action.userId,
+                stats: {...stats, expired_passes: stats.expired_passes.map(pass => HallPass.fromJSON(pass))}
+              });
+            }),
+            catchError(error => of(studentsActions.getStudentStatsFailure({errorMessage: error.message})))
+          );
+      })
+    );
   });
 
   constructor(

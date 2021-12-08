@@ -79,7 +79,10 @@ import {
   getNextRequestStudents,
   getStudentsAccountsCollection,
   getStudentsAccountsEntities,
-  getStudentSort
+  getStudentSort,
+  getStudentsStats,
+  getStudentsStatsLoaded,
+  getStudentsStatsLoading
 } from '../ngrx/accounts/nested-states/students/states';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
@@ -125,6 +128,8 @@ import {ProfilePicturesError} from '../models/ProfilePicturesError';
 import {LoginDataService} from './login-data.service';
 import {GoogleLoginService} from './google-login.service';
 import {School} from '../models/School';
+import {UserStats} from '../models/UserStats';
+import {getStudentStats} from '../ngrx/accounts/nested-states/students/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -248,6 +253,13 @@ export class UserService implements OnDestroy {
   lastUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getLastUploadedGroup);
   missingProfilePictures$: Observable<User[]> = this.store.select(getMissingProfiles);
   profilePicturesUploadErrors$: Observable<ProfilePicturesError[]> = this.store.select(getUploadErrors);
+
+  /**
+   * Students Stats
+   */
+  studentsStats$: Observable<{[id: string]: UserStats}> = this.store.select(getStudentsStats);
+  studentsStatsLoading$: Observable<boolean> = this.store.select(getStudentsStatsLoading);
+  studentsStatsLoaded$: Observable<boolean> = this.store.select(getStudentsStatsLoaded);
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
@@ -820,6 +832,10 @@ export class UserService implements OnDestroy {
 
   clearUploadedData() {
     this.store.dispatch(clearUploadedData());
+  }
+
+  getUserStatsRequest(userId, queryParams?) {
+    return this.store.dispatch(getStudentStats({userId, queryParams}));
   }
 
   getUserStats(userId: string | number, queryParams) {

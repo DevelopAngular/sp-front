@@ -1,5 +1,6 @@
 import {EntityState} from '@ngrx/entity';
 import {User} from '../../../../../models/User';
+import {UserStats} from '../../../../../models/UserStats';
 
 export interface StudentsStates extends EntityState<User> {
   loading: boolean;
@@ -9,4 +10,7 @@ export interface StudentsStates extends EntityState<User> {
   sortValue: string;
   addedUser: User;
   currentUpdatedAccount: User;
+  studentsStats: {[id: string]: UserStats};
+  statsLoading: boolean;
+  statsLoaded: boolean;
 }

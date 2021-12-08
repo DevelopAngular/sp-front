@@ -1,6 +1,7 @@
 import {createAction, props} from '@ngrx/store';
 import {PostRoleProps, RoleProps} from '../../../states';
 import {User} from '../../../../../models/User';
+import {UserStats} from '../../../../../models/UserStats';
 
 const STUDENTS = 'Students Accounts';
 
@@ -34,3 +35,7 @@ export const bulkAddStudentAccounts = createAction(`[${STUDENTS}] Bulk Add Stude
 export const sortStudentAccounts = createAction(`[${STUDENTS}] Sort Student Accounts`, props<{students: User[], next: string, sortValue: string}>());
 
 export const clearCurrentUpdatedStudent = createAction(`[${STUDENTS}] Clear Current Updated Student`);
+
+export const getStudentStats = createAction(`[User] Get Student Stats`, props<{userId: string | number, queryParams?: any}>());
+export const getStudentStatsSuccess = createAction(`[User] Get Student Stats Success`, props<{userId: string | number, stats: UserStats}>());
+export const getStudentStatsFailure = createAction(`[User] Get Student Stats Failure`, props<{errorMessage: string}>());

@@ -10,6 +10,7 @@ import {HallPass} from '../../models/HallPass';
 import {map, tap} from 'rxjs/operators';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {SettingsDescriptionPopupComponent} from '../../settings-description-popup/settings-description-popup.component';
+import {UserStats} from '../../models/UserStats';
 
 @Component({
   selector: 'app-student-info-card',
@@ -25,6 +26,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
 
   loadingPassesStats$: Observable<boolean>;
   passesStats$: Observable<QuickPreviewPasses>;
+  studentStats$: Observable<UserStats>;
   lastStudentPasses$: Observable<HallPass[]>;
   school: School;
 
@@ -39,10 +41,12 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.profile = this.data['profile'];
     this.school = this.userService.getUserSchool();
+    this.userService.getUserStatsRequest(this.profile.id);
     this.passesService.getQuickPreviewPassesRequest(6, true);
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loadingPassesStats$ = this.passesService.quickPreviewPassesLoading$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
+    this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
   }
 
   ngAfterViewInit() {
