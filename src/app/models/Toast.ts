@@ -1,8 +1,10 @@
 import {User} from './User';
+import {SafeHtml} from '@angular/platform-browser';
+import {ExclusionGroup} from './ExclusionGroup';
 
 export class Toast {
   title: string;
-  subtitle?: string;
+  subtitle?: string | SafeHtml;
   type: 'success' | 'error' | 'info';
   icon?: string;
   action?: string;
@@ -12,5 +14,5 @@ export class Toast {
   encounterPrevention?: boolean;
   exclusionPass?: any;
   issuer?: User;
-  exclusionGroupStudents?: User[];
+  exclusionGroups?: ExclusionGroup[];
 }

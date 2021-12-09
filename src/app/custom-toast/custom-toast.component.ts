@@ -4,6 +4,7 @@ import {delay, filter, takeUntil, tap} from 'rxjs/operators';
 import {ToastService} from '../services/toast.service';
 import {Toast} from '../models/Toast';
 import {toastSlideInOut} from '../animations';
+import {User} from '../models/User';
 
 const TOASTDELAY = (6 * 1000) - 200;
 
@@ -20,6 +21,7 @@ export class CustomToastComponent implements OnInit, OnDestroy {
 
   @Input() toast: any;
   @Input() indexPosition: number;
+  @Input() user: User;
 
   toggleToast: boolean;
   cancelable: boolean = true;
@@ -65,11 +67,11 @@ export class CustomToastComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  getTeacherEncounterString() {
-    return this.data.issuer.display_name + ' cannot have a pass at the same time as' +
-      this.data.exclusionGroupStudents[0].display_name +
-      (this.data.exclusionGroupStudents.length > 1 ? (' and ' + this.data.exclusionGroupStudents[1].display_name + '.') : '');
-  }
+  // getTeacherEncounterString() {
+  //   return this.data.issuer.display_name + ' cannot have a pass at the same time as' +
+  //     this.data.exclusionGroupStudents[0].display_name +
+  //     (this.data.exclusionGroupStudents.length > 1 ? (' and ' + this.data.exclusionGroupStudents[1].display_name + '.') : '');
+  // }
 
   close(evt?: Event) {
     if (evt) {

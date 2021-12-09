@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {User} from '../../models/User';
+import {ExclusionGroup} from '../../models/ExclusionGroup';
 
 @Component({
   selector: 'app-encounter-prevention-tooltip',
@@ -8,7 +8,7 @@ import {User} from '../../models/User';
 })
 export class EncounterPreventionTooltipComponent implements OnInit {
 
-  @Input() students: User[];
+  @Input() groups: ExclusionGroup[];
 
   constructor() { }
 

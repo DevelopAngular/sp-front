@@ -67,6 +67,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public toasts$: Observable<any>;
   public hasCustomBackdrop$: Observable<boolean>;
   public customBackdropStyle$: Observable<any>;
+  public user$: Observable<User>;
 
   private subscriber$ = new Subject();
 
@@ -98,13 +99,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
     private toastService: ToastService
-  ) {
-    this.errorToastTrigger = this.http.errorToast$;
-  }
+  ) {}
 
   ngOnInit() {
     this.customToastOpen$ = this.toastService.isOpen$;
     this.toasts$ = this.toastService.toasts$;
+    this.user$ = this.userService.user$.pipe(map(user => User.fromJSON(user)));
     this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
     this.customBackdropStyle$ = this.screen.customBackdropStyle$;
     this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
@@ -125,7 +125,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               map((release: Array<Update>): Array<Update> => {
                 return release.filter((update) => {
                   const allowUpdate: boolean = !!update.groups.find((group) => {
-                    console.log(group, '-', user.roles.includes(`_profile_${group}`));
                     return user.roles.includes(`_profile_${group}`);
                   });
                   return allowUpdate;

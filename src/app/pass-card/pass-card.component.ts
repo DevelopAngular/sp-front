@@ -23,6 +23,7 @@ import {UserService} from '../services/user.service';
 import {ToastService} from '../services/toast.service';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
 import {isEmpty} from 'lodash';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pass-card',
@@ -111,7 +112,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private domCheckerService: DomCheckerService,
       private userService: UserService,
       private toastService: ToastService,
-      private encounterService: EncounterPreventionService
+      private encounterService: EncounterPreventionService,
+      private sanitizer: DomSanitizer
   ) {}
 
   getUserName(user: any) {
@@ -346,23 +348,16 @@ export class PassCardComponent implements OnInit, OnDestroy {
                   filter(r => !isEmpty(r) && !!r[+id]),
                   take(1),
                   tap((groups) => {
-                    let issuer;
-                    const students = groups[+id].reduce((acc, group) => {
-                      return [...acc, ...group.users];
-                    }, []).filter(u => {
-                      if (+u.id === +id) {
-                        issuer = u;
-                      }
-                      return +u.id !== +id;
-                    });
+                    const exclusionGroups = groups[+id].reduce((acc, group) => {
+                      return [...acc, {...group, users: group.users.filter(u => +u.id !== +id)}];
+                    }, []);
                     this.toastService.openToast({
-                      title: 'Sorry, you can’t start your pass right now.',
-                      subtitle: 'sgbgfbhdndgbfv',
+                      title: 'This pass can’t start now to prevent encounter.',
+                      subtitle: 'These students can’t have a pass at the same time.',
                       type: 'error',
                       encounterPrevention: true,
                       exclusionPass: {...this.pass, travel_type: this.selectedTravelType},
-                      issuer,
-                      exclusionGroupStudents: students
+                      exclusionGroups
                     });
                   }));
             }));

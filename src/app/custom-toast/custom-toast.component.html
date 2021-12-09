@@ -23,10 +23,22 @@
         </div>
         <div class="text" style="margin-left: 20px">
           <div class="text_header">{{ data.title }}</div>
-          <div class="text_message" *ngIf="!data.issuer; else info">{{ data.subtitle }}</div>
-          <ng-template #info>
-            <div class="text_message" *ngIf="data.issuer; else info">{{ getTeacherEncounterString() }} <br/><a style="color: #7f879d" href="https://www.smartpass.app/encounterprevention" target="_blank">Learn more</a></div>
-          </ng-template>
+          <div class="text_message">{{ data.subtitle }}
+            <br/>
+            <span
+              style="text-decoration: underline"
+              *ngIf="!user.isStudent()"
+              customToolTip
+              [contentTemplate]="tooltip"
+              [showToolTip]="true"
+            >See details</span>
+            <ng-template #tooltip>
+              <app-encounter-prevention-tooltip [groups]="data.exclusionGroups"></app-encounter-prevention-tooltip>
+            </ng-template>
+          </div>
+<!--          <ng-template #info>-->
+<!--            <div class="text_message" *ngIf="data.issuer; else info">{{ data.subtitle }}</div>-->
+<!--          </ng-template>-->
         </div>
       </div>
 
