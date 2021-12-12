@@ -11,7 +11,7 @@
                (blurEvent)="blur()"
                (onUpdate)="onSearch($event)"></app-input>
   </div>
-  <div *ngIf="showSearch(i)" #searchAutocomplete
+  <div *ngIf="showSearch()" #searchAutocomplete
        class="search-autocomplete-container">
     <div class="search-autocomplete-wrapper">
       <div class="search-autocomplete"
