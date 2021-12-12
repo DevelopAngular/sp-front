@@ -51,7 +51,6 @@ export class AddSchoolComponent implements OnInit {
 
   submit() {
     this.submitted = true;
-    console.log(this.schoolForm.getRawValue());
     this.formService.addSchool(this.schoolForm.getRawValue()).subscribe(res => {
       console.log(res);
     });

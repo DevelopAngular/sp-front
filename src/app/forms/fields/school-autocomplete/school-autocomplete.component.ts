@@ -1,5 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
+import {MatDialog} from '@angular/material/dialog';
+import {AddSchoolPopupComponent} from '../add-school-popup/add-school-popup.component';
 import {FormsService} from '../../../services/forms.service';
 
 @Component({
@@ -7,14 +9,17 @@ import {FormsService} from '../../../services/forms.service';
   templateUrl: './school-autocomplete.component.html',
   styleUrls: ['./school-autocomplete.component.scss']
 })
-export class SchoolAutocompleteComponent implements OnInit {
+export class SchoolAutocompleteComponent {
 
   @Input() inputLabel: string;
   @Input() width: string = '300px';
   @Input() tabIndex: number;
-  @Input() formGroup: FormGroup;
-  @Input() formControl: FormControl;
+  // renamed because it gives an error otherwise
+  @Input() fGroup: FormGroup;
+  @Input() fControl: FormControl;
+
   @Input() forceError: boolean;
+  @Input() useLargeFormWhenNotFound: boolean;
 
   @Output() name = new EventEmitter<string>();
   @Output() schoolDiggerId = new EventEmitter<string>();
@@ -25,37 +30,35 @@ export class SchoolAutocompleteComponent implements OnInit {
   blockSearch: boolean = false;
   searchSchools;
 
-  private placePredictionService;
-  private currentPosition;
+  @ViewChild('searchAutocomplete') searchAutocomplete;
+  currentPosition;
   backgroundColors: string[] = [];
   ignoreNextUpdate: boolean = false;
+  notFoundHover: boolean = false;
 
-  constructor(private formService: FormsService) { }
-
-  ngOnInit(): void {
+  constructor(
+    private formService: FormsService,
+    private matDialog: MatDialog
+  ) {
   }
 
   onSearch(search: string) {
     if (search != undefined && !this.ignoreNextUpdate && search.length >= 4) {
       this.formService.querySchools(search).subscribe((res: any[]) => {
-        if (res.length < 1) {
-          this.showOptions = false;
-        } else {
-          this.searchSchools = res.map(school => {
-            return {
-              "name": school['schoolName'],
-              "address": school["city"] + ", " + school["state"],
-              "addressFull": {
-                "road": school["schoolName"],
-                "city": school["city"],
-                "state": school["state"],
-                "zip": school["zip"],
-              },
-              "schoolDiggerId": school['schoolid']
-            };
-          });
-          this.showOptions = true;
-        }
+        this.searchSchools = res.map(school => {
+          return {
+            'name': school['schoolName'],
+            'address': school['city'] + ', ' + school['state'],
+            'addressFull': {
+              'road': school['schoolName'],
+              'city': school['city'],
+              'state': school['state'],
+              'zip': school['zip'],
+            },
+            'schoolDiggerId': school['schoolid']
+          };
+        });
+        this.showOptions = true;
       });
     } else {
       this.showOptions = false;
@@ -76,6 +79,11 @@ export class SchoolAutocompleteComponent implements OnInit {
     this.address.emit(school.addressFull);
   }
 
+  mobileChooseSchool(a, school) {
+    this.backgroundColors[a] = '#FFFFFF';
+    this.chooseSchool(school);
+  }
+
   blur() {
     if (!this.showOptions) {
       return;
@@ -87,12 +95,31 @@ export class SchoolAutocompleteComponent implements OnInit {
     return this.showOptions && !this.blockSearch;
   }
 
+  getSearchPosition(i) {
+    // [style.top.px]="getSearchPosition()"
+    if (this.searchAutocomplete) {
+      return this.searchAutocomplete.nativeElement.getBoudingClientRect().y + 40;
+    }
+    return 0;
+  }
+
   textColor(item) {
     if (item.hovered) {
       return '#1F195E';
     } else {
       return '#555558';
     }
+  }
+
+  popup(data) {
+    let addSchoolPopup = this.matDialog.open(AddSchoolPopupComponent, {
+      panelClass: 'add-school-popup-container',
+      //backdropClass: 'invis-backdrop',
+      disableClose: true,
+      data: {name: data},
+    });
+    addSchoolPopup.componentInstance.askForSchoolName = this.useLargeFormWhenNotFound;
+    this.showOptions = false;
   }
 
 }

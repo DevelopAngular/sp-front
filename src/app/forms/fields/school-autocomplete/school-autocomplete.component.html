@@ -5,41 +5,51 @@
                placeholder="Springfield High School"
                [input_label]="inputLabel"
                [tabIndex]="tabIndex"
-               [formGroup]="formGroup"
-               [controlName]="formControl"
+               [formGroup]="fGroup"
+               [controlName]="fControl"
                [forceError]="forceError"
                (blurEvent)="blur()"
                (onUpdate)="onSearch($event)"></app-input>
   </div>
-  <div *ngIf="showSearch()"
-       class="search-autocomplete"
-       [ngClass]="{'options-wrapper': showOptions}"
-       [style.top]="i == 0 ? '70px' : '50px'"
-       (mouseenter)="mouseIn = true"
-       (mouseleave)="mouseIn = false">
-    <div class="option-list_scrollable">
-      <div #cell *ngFor="let school of searchSchools; let a = index"
-           class="option-list_item"
-           (mouseenter)="backgroundColors[a] = '#F4F4F4'"
-           (mouseleave)="backgroundColors[a] = '#FFFFFF'"
-           appCrossPointerEventTarget
-           (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
-           (pointerClickEvent)="backgroundColors[a] = '#F4F4F4'"
-           (click)="chooseSchool(school)"
-           [style.background-color]="backgroundColors[a]"
-           [style.color]="textColor(cell)">
-        <div>
-          <div style="text-transform: capitalize; color: #00B476">
-            {{school.name}}
+  <div *ngIf="showSearch(i)" #searchAutocomplete
+       class="search-autocomplete-container">
+    <div class="search-autocomplete-wrapper">
+      <div class="search-autocomplete"
+           (mouseenter)="mouseIn = true"
+           (mouseleave)="mouseIn = false">
+        <div class="search-autocomplete-scrollable">
+          <div #cell *ngFor="let school of searchSchools; let a = index"
+               class="search-autocomplete-item"
+               (mouseenter)="backgroundColors[a] = '#F4F4F4'"
+               (mouseleave)="backgroundColors[a] = '#FFFFFF'"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
+               (pointerCancelEvent)="backgroundColors[a] = '#FFFFFF'"
+               (pointerClickEvent)="mobileChooseSchool(a, school, i)"
+               (click)="chooseSchool(school, i)"
+               [style.background-color]="backgroundColors[a]"
+               [style.color]="textColor(cell)">
+            <div class="search-autocomplete-item-name">
+              {{school.name}}
+            </div>
+            <div class="search-autocomplete-item-place">
+              {{school.address}}
+            </div>
           </div>
-          <div style="color: #1F194E">
-            {{school.address}}
+          <div *ngIf="searchSchools.length == 0"
+               class="search-autocomplete-item search-autocomplete-notfound"
+               (mouseenter)="notFoundHover = true"
+               (mouseleave)="notFoundHover = false"
+               appCrossPointerEventTarget
+               (pointerDownEvent)="notFoundHover = true"
+               (pointerCancelEvent)="notFoundHover = false"
+               [style.background-color]="notFoundHover ? '#F4F4F4' : '#FFFFFF'"
+               (click)="popup(fControl.value)">
+            <div>
+              {{fControl.value}}
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="search-options">
-      <a (click)="blockSearch = true">School not listed?</a>
-    </div>
   </div>
-</div>
