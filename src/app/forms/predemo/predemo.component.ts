@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Renderer2} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {FormsService} from '../../services/forms.service';
@@ -11,6 +11,7 @@ import {FormsService} from '../../services/forms.service';
 export class PredemoComponent implements OnInit {
 
   meetingId: string;
+  formTitle: string;
   submitted: boolean = false;
   showErrors: boolean = false;
 
@@ -22,7 +23,8 @@ export class PredemoComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private formService: FormsService
+    private formService: FormsService,
+    private renderer2: Renderer2
   ) {
     this.predemoForm = this.fb.group({
       schools: this.fb.array([]),
@@ -33,6 +35,7 @@ export class PredemoComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.meetingId = params.meetingid;
+      this.formTitle = params.formTitle;
       this.formService.getPredemoComplete(this.meetingId).subscribe(res => {
         this.completedSchools = res['schools'];
         this.completedHdyhau = res['hdyhau'];
@@ -46,6 +49,9 @@ export class PredemoComponent implements OnInit {
       });
     });
     this.submitted = this.getCookie('form-complete') == 'true';
+
+    let globalContainer = document.getElementsByClassName('global-container')[0];
+    this.renderer2.setStyle(globalContainer, 'height', 'unset');
   }
 
   confirmDemo(): void {

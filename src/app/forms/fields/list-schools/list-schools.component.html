@@ -5,59 +5,14 @@
        *ngFor="let school of schools.controls; let i = index">
     <ng-container [formGroupName]="i" class="row">
       <div class="mini-row">
-        <div class="search-wrapper">
-          <div class="input-wrapper">
-            <app-input #locationInput
-                       [input_label]="(i == 0 || mobile) ? 'School name' : ''"
-                       [width]="getSchoolInputWidth()"
-                       [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
-                       [isFocus]="i == 0 && autoFocus"
-                       tabAttentive="true"
-                       placeholder="Springfield High School"
-                       [formGroup]="school"
-                       [controlName]="school.controls.name"
-                       [forceError]="showErrors && !school.controls.name.valid"
-                       (blurEvent)="blur(i)"
-                       (onUpdate)="onSearch($event, i)"></app-input>
-          </div>
-          <div #searchAutocomplete
-               *ngIf="showSearch(i)"
-               class="search-autocomplete"
-               [ngClass]="{'options-wrapper': searchInfo[i]['showOptions']}"
-               [style.top.px]="getSearchPosition(i)"
-               (mouseenter)="searchInfo[i]['mouseIn'] = true"
-               (mouseleave)="searchInfo[i]['mouseIn'] = false">
-            <div>
-              <div class="option-list_scrollable">
-                <div #cell *ngFor="let school of searchInfo[i]['searchSchools']; let a = index"
-                     class="option-list_item"
-                     (mouseenter)="backgroundColors[a] = '#F4F4F4'"
-                     (mouseleave)="backgroundColors[a] = '#FFFFFF'"
-                     appCrossPointerEventTarget
-                     (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
-                     (pointerCancelEvent)="backgroundColors[a] = '#FFFFFF'"
-                     (pointerClickEvent)="mobileChooseSchool(a, school, i)"
-                     (click)="chooseSchool(school, i)"
-                     [style.background-color]="backgroundColors[a]"
-                     [style.color]="textColor(cell)">
-                  <div>
-                    <div style="text-transform: capitalize; color: #00B476">
-                      {{school.name}}
-                    </div>
-                    <div style="color: #1F194E">
-                      {{school.address}}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="search-options">
-                <a
-                  (click)="searchInfo[i]['blockSearch'] = true"
-                >School not listed?</a>
-              </div>
-            </div>
-          </div>
-        </div>
+        <app-school-autocomplete [inputLabel]="i == 0 ? 'School name' : null"
+                                 [width]="getSchoolInputWidth()"
+                                 [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
+                                 [fGroup]="school"
+                                 [fControl]="school.controls.name"
+                                 [forceError]="showErrors && !school.controls.name.valid"
+                                 [useLargeFormWhenNotFound]="useLargeFormWhenNotFound"
+        ></app-school-autocomplete>
       </div>
       <div class="input-wrapper approx-students-wrapper">
         <app-input [input_label]="(i == 0 || mobile) ? 'Approx. # of students' : ''"
@@ -78,7 +33,6 @@
     </div>
   </div>
   <div id="add-school-wrapper">
-
     <app-gradient-button
       id="add-school"
       textColor="#7f879d"

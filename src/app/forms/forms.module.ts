@@ -12,6 +12,7 @@ import {AddSchoolComponent} from './add-school/add-school.component';
 import {ColoredCheckboxComponent} from './fields/colored-checkbox/colored-checkbox.component';
 import {ListSchoolsComponent} from './fields/list-schools/list-schools.component';
 import {SchoolAutocompleteComponent} from './fields/school-autocomplete/school-autocomplete.component';
+import {AddSchoolPopupComponent} from './fields/add-school-popup/add-school-popup.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {SchoolAutocompleteComponent} from './fields/school-autocomplete/school-a
     AddSchoolComponent,
     ColoredCheckboxComponent,
     ListSchoolsComponent,
-    SchoolAutocompleteComponent
+    SchoolAutocompleteComponent,
+    AddSchoolPopupComponent
   ],
   imports: [
     CommonModule,

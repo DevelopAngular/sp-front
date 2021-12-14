@@ -1,0 +1,85 @@
+<div class="add-school-popup">
+  <div class="add-school-popup-title">
+    <p>Please enter some more <br> details about your school...</p>
+    <hr>
+  </div>
+
+  <form [formGroup]="schoolForm" [style.height]="askForSchoolName ? '400px' : '320px'">
+    <div *ngIf="askForSchoolName" class="row">
+      <app-input input_label="School name"
+                 width="360"
+                 [input_value]="data['name']"
+                 [tabAttentive]="true"
+                 [tabIndex]="1"
+                 [isFocus]="true"
+                 tabAttentive="true"
+                 placeholder="Springfield High School"
+                 [formGroup]="schoolForm"
+                 [forceError]="showErrors && !schoolForm.controls.name.valid"
+                 [controlName]="schoolForm.controls.name"></app-input>
+    </div>
+    <div class="row">
+      <app-input input_label="Street Address"
+                 width="360px"
+                 [tabAttentive]="true"
+                 [tabIndex]="askForSchoolName ? 2 : 1"
+                 [isFocus]="!askForSchoolName"
+                 tabAttentive="true"
+                 placeholder="324 Ridge Drive"
+                 [formGroup]="schoolForm"
+                 [forceError]="showErrors && !schoolForm.controls.road.valid"
+                 [controlName]="schoolForm.controls.road"></app-input>
+    </div>
+    <div class="row">
+      <app-input input_label="City"
+                 width="230px"
+                 [tabAttentive]="true"
+                 [tabIndex]="askForSchoolName ? 3 : 2"
+                 tabAttentive="true"
+                 placeholder="Cityville"
+                 [formGroup]="schoolForm"
+                 [forceError]="showErrors && !schoolForm.controls.city.valid"
+                 [controlName]="schoolForm.controls.city"></app-input>
+      <app-input input_label="State"
+                 width="110px"
+                 [tabAttentive]="true"
+                 [tabIndex]="askForSchoolName ? 4 : 3"
+                 tabAttentive="true"
+                 placeholder="PA"
+                 [formGroup]="schoolForm"
+                 [forceError]="showErrors && !schoolForm.controls.state.valid"
+                 [controlName]="schoolForm.controls.state"></app-input>
+    </div>
+    <div class="row">
+      <app-input input_label="ZIP code"
+                 width="170"
+                 [tabAttentive]="true"
+                 [tabIndex]="askForSchoolName ? 5 : 4"
+                 tabAttentive="true"
+                 placeholder="89475"
+                 [formGroup]="schoolForm"
+                 [forceError]="showErrors && !schoolForm.controls.zip.valid"
+                 [controlName]="schoolForm.controls.zip"></app-input>
+      <app-input input_label="Country"
+                 width="170px"
+                 [tabAttentive]="true"
+                 [tabIndex]="askForSchoolName ? 6 : 5"
+                 tabAttentive="true"
+                 placeholder="US"
+                 [formGroup]="schoolForm"
+                 [forceError]="showErrors && !schoolForm.controls.country.valid"
+                 [controlName]="schoolForm.controls.country"></app-input>
+    </div>
+    <div class="confirm-wrapper">
+      <app-gradient-button
+        id="confirm"
+        tabindex="-1"
+        [disabled]="!isValid()"
+        (buttonClick)="submit()"
+        (disabledButtonClick)="submit()">
+        <span id="confirm-text">Done</span>
+      </app-gradient-button>
+    </div>
+  </form>
+</div>
+

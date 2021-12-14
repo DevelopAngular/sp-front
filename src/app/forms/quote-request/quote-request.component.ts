@@ -110,5 +110,29 @@ export class QuoteRequestComponent implements OnInit {
     }
   }
 
+  isNormalEmailError() {
+    return this.showErrors && !this.quoteRequestForm.controls.email.valid;
+  }
+
+  isValidEmail() {
+    let email = this.quoteRequestForm.controls['email'].value;
+    if (email === undefined || email.length < 8)
+      return true;
+    email = email.toLowerCase();
+
+    let badEmails = [
+      'outlook.com',
+      'gmail.com',
+      'yahoo.com',
+      'hotmail.com',
+      'inbox.com',
+      'icloud.com',
+      'mail.com',
+      'yandex.com',
+    ];
+
+    return !badEmails.some(e => email.endsWith(e));
+  }
+
 }
 

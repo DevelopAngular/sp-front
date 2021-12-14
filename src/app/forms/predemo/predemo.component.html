@@ -6,14 +6,19 @@
       </a>
     </div>
     <div id="text-wrapper">
-      <h1>Required - Fill out before your demo</h1>
+      <h1>{{ formTitle }}</h1>
 <!--      <span>{{startTime | date:'MMM dd'}} at {{startTime | date:'h:mm a'}} ({{timeZone}}) {{ "\u2022" }}-->
 <!--        with {{assignedTo}}</span>-->
     </div>
   </div>
   <div id="form-wrapper">
     <form [formGroup]="predemoForm" *ngIf="!submitted; else postWrapper">
-      <app-list-schools *ngIf="!completedSchools" [form]="predemoForm" [showErrors]="showErrors"  autoFocus="true"></app-list-schools>
+      <app-list-schools *ngIf="!completedSchools"
+                        [form]="predemoForm"
+                        [showErrors]="showErrors"
+                        autoFocus="true"
+                        useLargeFormWhenNotFound="true"
+      ></app-list-schools>
       <app-colored-checkbox *ngIf="!completedHdyhau"
                             title="How did you hear about us?"
                             [options]="['Google search', 'Facebook', 'Referral / word of mouth',
