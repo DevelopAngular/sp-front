@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
-import { BehaviorSubject, Subject } from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 
-import { User } from '../../models/User';
-import { Pinnable } from '../../models/Pinnable';
-import { OptionState } from './advanced-options/advanced-options.component';
+import {User} from '../../models/User';
+import {Pinnable} from '../../models/Pinnable';
+import {OptionState} from './advanced-options/advanced-options.component';
 
 export interface PageState {
     currentPage: number;
@@ -71,7 +71,7 @@ export class OverlayDataService {
 
   public tooltipText = {
       teachers: 'Which teachers should see pass activity in this room?',
-      travel: 'Will the the room will be available to make only round-trip passes, only one-way passes, or both?',
+      travel: 'Will the room will be available to make only round-trip passes, only one-way passes, or both?',
       timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
       restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
       scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'

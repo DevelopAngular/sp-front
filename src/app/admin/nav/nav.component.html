@@ -41,8 +41,7 @@
   <div class="nav-footer">
     <div class="footer-text"
          [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})"
-         [matTooltip]="user && user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
-         matTooltipClass="ds-tooltip"
+         [customToolTip]="user && user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
     >
       {{(user?user.display_name : '')}}
       <img *ngIf="user && user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">

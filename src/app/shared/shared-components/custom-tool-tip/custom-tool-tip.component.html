@@ -1,7 +1,9 @@
-<div>
-  <div class="tooltip-container">
+<div class="wrapper">
+  <div class="tooltip-container" @tooltipAnimate>
     <ng-template #simpleText>
-      {{text}}
+      <div class="ds-tooltip" *ngIf="text">
+        {{ text }}
+      </div>
     </ng-template>
     <ng-container *ngTemplateOutlet="contentTemplate || simpleText">
     </ng-container>

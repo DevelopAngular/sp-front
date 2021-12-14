@@ -30,7 +30,6 @@
               *ngIf="!user.isStudent()"
               customToolTip
               [contentTemplate]="tooltip"
-              [showToolTip]="true"
             >See details</span>
             <ng-template #tooltip>
               <app-encounter-prevention-tooltip [groups]="data.exclusionGroups"></app-encounter-prevention-tooltip>

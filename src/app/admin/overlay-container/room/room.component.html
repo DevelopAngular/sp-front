@@ -36,8 +36,7 @@
             <span [ngStyle]="{'color': !data?.travelType.length ? (showErrors ? '#E32C66' : '#7F879D') : ' #1F195E'}">Travel Type</span>
             <div class="tooltip-container">
               <img
-                [matTooltip]="tooltipText.travel"
-                matTooltipClass="ds-tooltip"
+                [customToolTip]="tooltipText.travel"
                 class="support-icon"
                 [src]="'./assets/Support (Gray).svg' | resolveAsset">
               <div class="arrow-down-container">
@@ -82,8 +81,7 @@
           </span>
           <div class="tooltip-container">
             <img
-              [matTooltip]="tooltipText.teachers"
-              matTooltipClass="ds-tooltip"
+              [customToolTip]="tooltipText.teachers"
               class="support-icon"
               [src]="'./assets/Support (Gray).svg' | resolveAsset"
             >

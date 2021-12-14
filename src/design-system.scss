@@ -272,8 +272,9 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
   border-radius: 8px;
   background-color: #050411;
   color: #FFFFFF;
-  font-size: 13px;
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  max-width: 250px;
+  //box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
   text-align: center;
 }
 

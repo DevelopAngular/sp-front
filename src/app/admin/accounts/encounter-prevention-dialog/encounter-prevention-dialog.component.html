@@ -16,7 +16,7 @@
 
         <div class="group-info" *ngSwitchCase="4">
           <div class="user-photos">
-            <div *ngFor="let user of state.data.currentGroup.users" [matTooltip]="user.display_name" [matTooltipClass]="'ds-tooltip'">
+            <div *ngFor="let user of state.data.currentGroup.users" [customToolTip]="user.display_name">
               <div *ngIf="user.profile_picture; else avatar" class="photo" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
               <ng-template #avatar>
                 <img class="photo" [src]="'./assets/Avatar Default.svg' | resolveAsset"/>
@@ -36,8 +36,7 @@
           *ngIf="(state.current_page === 1 || state.current_page === 2) && state.data.showSaveButton"
           (buttonClick)="save()"
           [disabled]="(state.current_page === 1 && state.createGroup.users.length < 2) || (state.current_page === 2 && state.data.currentGroup.users.length < 2)"
-          [matTooltip]="(state.current_page === 1 && state.createGroup.users.length < 2) || (state.current_page === 2 && state.data.currentGroup.users.length < 2) ? 'Encounter prevention groups must have at least 2 students.' : null"
-          matTooltipClass="ds-tooltip"
+          [customToolTip]="(state.current_page === 1 && state.createGroup.users.length < 2) || (state.current_page === 2 && state.data.currentGroup.users.length < 2) ? 'Encounter prevention groups must have at least 2 students.' : null"
         >Save</app-gradient-button>
         <app-gradient-button *ngIf="state.current_page === 3" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="state.data.currentGroup = null; goNewGroup()">New group</app-gradient-button>
         <app-icon-button *ngIf="state.current_page === 4" [srcString]="'Dots'" [size]="17" (clickEvent)="openPopup($event)"></app-icon-button>
@@ -80,8 +79,7 @@
                 style="margin-left: 8px; opacity: 0.5"
                 width="16"
                 [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset"
-                matTooltipClass="ds-tooltip"
-                [matTooltip]="'A prevented encounter is when a student tried to make a pass at the same time as another student, but was prevented.'"
+                [customToolTip]="'A prevented encounter is when a student tried to make a pass at the same time as another student, but was prevented.'"
                 alt="">
             </div>
             <div class="subtitle">{{ count }} encounters have been prevented this year for all students</div>

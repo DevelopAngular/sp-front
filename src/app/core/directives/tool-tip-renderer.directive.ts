@@ -43,10 +43,15 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy {
         originY: 'bottom',
         overlayX: 'center',
         overlayY: 'top',
-        offsetY: 5,
+        offsetY: 15,
       }]);
 
-    this._overlayRef = this._overlay.create({ positionStrategy, panelClass: 'custom-tooltip'});
+    this._overlayRef = this._overlay.create(
+      {
+        positionStrategy,
+        panelClass: 'custom-tooltip'
+      }
+    );
 
   }
 
@@ -61,8 +66,8 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy {
     // attach the component if it has not already attached to the overlay
     if (this._overlayRef && !this._overlayRef.hasAttached()) {
       const tooltipRef: ComponentRef<CustomToolTipComponent> = this._overlayRef.attach(new ComponentPortal(CustomToolTipComponent));
-      tooltipRef.instance.text = this.text;
       tooltipRef.instance.contentTemplate = this.contentTemplate;
+      tooltipRef.instance.text = this.text;
     }
   }
 
@@ -73,7 +78,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy {
    */
   @HostListener('mouseleave')
   hide() {
-    this.closeToolTip();
+    // this.closeToolTip();
   }
 
   /**
