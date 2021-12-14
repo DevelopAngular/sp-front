@@ -330,38 +330,39 @@ export class PassCardComponent implements OnInit, OnDestroy {
       getRequest$.pipe(
         takeUntil(this.destroy$),
         catchError(err => {
-          if (!this.forStaff) {
-            this.toastService.openToast({
-              title: 'Sorry, you can’t start your pass right now.',
-              subtitle: 'Please try again later.',
-              type: 'error',
-              encounterPrevention: true,
-              exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
-            });
-            this.dialogRef.close();
-            return of(null);
-          } else {
-            const errorList = err.error.errors;
-            return zip(...errorList.map(id => {
-              return this.encounterService.getExclusionGroupsForStudentRequest(id)
-                .pipe(
-                  filter(r => !isEmpty(r) && !!r[+id]),
-                  take(1),
-                  tap((groups) => {
-                    const exclusionGroups = groups[+id].reduce((acc, group) => {
-                      return [...acc, {...group, users: group.users.filter(u => +u.id !== +id)}];
-                    }, []);
-                    this.toastService.openToast({
-                      title: 'This pass can’t start now to prevent encounter.',
-                      subtitle: 'These students can’t have a pass at the same time.',
-                      type: 'error',
-                      encounterPrevention: true,
-                      exclusionPass: {...this.pass, travel_type: this.selectedTravelType},
-                      exclusionGroups
-                    });
-                  }));
-            }));
+          if (err.status === 403) {
+            if (!this.forStaff) {
+              this.toastService.openToast({
+                title: 'Sorry, you can’t start your pass right now.',
+                subtitle: 'Please try again later.',
+                type: 'error',
+                encounterPrevention: true,
+                exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
+              });
+              this.dialogRef.close();
+              return of(null);
+            } else {
+              const errorList = err.error.errors;
+              return zip(...errorList.map(id => {
+                return this.encounterService.getExclusionGroupsForStudentRequest(id)
+                  .pipe(
+                    filter(r => !isEmpty(r) && !!r[+id]),
+                    take(1),
+                    tap((groups) => {
+                      const exclusionGroups = groups[+id];
+                      this.toastService.openToast({
+                        title: 'This pass can’t start now to prevent encounter.',
+                        subtitle: 'These students can’t have a pass at the same time.',
+                        type: 'error',
+                        encounterPrevention: true,
+                        exclusionPass: {...this.pass, travel_type: this.selectedTravelType},
+                        exclusionGroups
+                      });
+                    }));
+              }));
+            }
           }
+          return of(null);
         })
       )
       .subscribe((data) => {

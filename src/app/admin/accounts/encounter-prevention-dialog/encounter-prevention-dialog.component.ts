@@ -81,41 +81,44 @@ export class EncounterPreventionDialogComponent implements OnInit {
     if (this.forceNextPage === 'newGroup') {
       this.state.createGroup.users.push({...this.currentUser, lockAccount: true});
       this.setState(true, Pages.NewGroup);
+      return;
     } else if (this.forceNextPage === 'groupDescription') {
       this.state.data.currentGroup = this.forceGroup;
       this.setState(true, Pages.GroupDescription);
-    } else {
-      this.encounterPreventionService.getExclusionGroupsRequest();
-      this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
-
-      this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
-        filter(r => r),
-        switchMap(() => this.encounterPreventionService.encounterPreventionLength$)
-      ).subscribe(res => {
-        if (!res) {
-          this.setState(true, Pages.StartPage);
-        } else {
-          this.setState(true, Pages.Groups);
-        }
-      });
-
-      this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
-        filter(r => r),
-        switchMap(() => this.encounterPreventionService.exclusionGroups$),
-        tap(groups => {
-          if (this.data && this.data['currentGroupId']) {
-            const currentGroup = groups.find(g => +g.id === +this.data['currentGroupId']);
-            this.goDescription(currentGroup);
-            return;
-          }
-        })
-      ).subscribe((groups) => {
-        this.exclusionGroups = groups;
-        this.cdr.detectChanges();
-      });
-
-      this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
+      return;
+    } else if (this.data && this.data['currentPage'] === 'groups') {
+      this.setState(true, Pages.Groups);
     }
+    this.encounterPreventionService.getExclusionGroupsRequest();
+    this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
+
+    this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
+      filter(r => r),
+      switchMap(() => this.encounterPreventionService.encounterPreventionLength$)
+    ).subscribe(res => {
+      if (!res) {
+        this.setState(true, Pages.StartPage);
+      } else {
+        this.setState(true, Pages.Groups);
+      }
+    });
+
+    this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
+      filter(r => r),
+      switchMap(() => this.encounterPreventionService.exclusionGroups$),
+      tap(groups => {
+        if (this.data && this.data['currentGroupId']) {
+          const currentGroup = groups.find(g => +g.id === +this.data['currentGroupId']);
+          this.goDescription(currentGroup);
+          return;
+        }
+      })
+    ).subscribe((groups) => {
+      this.exclusionGroups = groups;
+      this.cdr.detectChanges();
+    });
+
+    this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
 
     this.encounterPreventionService.updatedExclusionGroup$
       .pipe(filter(r => !!r))

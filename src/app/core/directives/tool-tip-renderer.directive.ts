@@ -1,4 +1,4 @@
-import {ComponentRef, Directive, ElementRef, HostListener, Input, OnInit, TemplateRef} from '@angular/core';
+import {ComponentRef, Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {CustomToolTipComponent} from '../../shared/shared-components/custom-tool-tip/custom-tool-tip.component';
@@ -6,13 +6,14 @@ import {CustomToolTipComponent} from '../../shared/shared-components/custom-tool
 @Directive({
   selector: '[customToolTip]'
 })
-export class ToolTipRendererDirective implements OnInit {
+export class ToolTipRendererDirective implements OnInit, OnDestroy {
 
   /**
    * This will be used to show tooltip or not
    * This can be used to show the tooltip conditionally
    */
   @Input() showToolTip: boolean = true;
+  @Input() tooltipDelay: number = 0;
 
   // If this is specified then specified text will be showin in the tooltip
   @Input(`customToolTip`) text: string;
@@ -45,7 +46,7 @@ export class ToolTipRendererDirective implements OnInit {
         offsetY: 5,
       }]);
 
-    this._overlayRef = this._overlay.create({ positionStrategy});
+    this._overlayRef = this._overlay.create({ positionStrategy, panelClass: 'custom-tooltip'});
 
   }
 

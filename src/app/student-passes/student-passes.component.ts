@@ -21,7 +21,7 @@ import {filter, map} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
 import * as moment from 'moment';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
-import {uniqBy} from 'lodash';
+import {ExclusionGroup} from '../models/ExclusionGroup';
 
 @Component({
   selector: 'app-student-passes',
@@ -59,7 +59,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   loading$: Observable<boolean>;
   loaded$: Observable<boolean>;
   passesStats$: Observable<QuickPreviewPasses>;
-  exclusionStudents$: Observable<User[]>;
+  exclusionGroups$: Observable<ExclusionGroup[]>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -96,15 +96,13 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     this.loading$ = this.passesService.quickPreviewPassesLoading$;
     this.loaded$ = this.passesService.quickPreviewPassesLoaded$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
-    this.exclusionStudents$ = this.encounterPreventionService.exclusionGroups$
+    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$
       .pipe(
         filter(g => !!g.length),
         map((groups ) => {
-          const students = [];
-          for (let i = 0; i < groups.length; i++) {
-            students.push(...groups[i].users);
-          }
-          return uniqBy(students, 'id').filter(s => +s.id !== +this.profile.id);
+          return groups.reduce((acc, group) => {
+            return [...acc, {...group, users: group.users.filter(u => +u.id !== +this.profile.id)}];
+          }, []);
         })
       );
   }

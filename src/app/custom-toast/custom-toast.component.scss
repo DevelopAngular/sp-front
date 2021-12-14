@@ -6,6 +6,7 @@
     //justify-content: flex-end;
     //height: 100vh;
     //width: 100vw;
+    //z-index: 1002;
     position: relative;
     .backdrop {
       background-color: rgba(0, 0, 0, .3);
@@ -18,7 +19,7 @@
     }
       .content-wrapper {
         position: absolute;
-        z-index: 999;
+        z-index: 1002;
         transition: top .4s ease;
         border-radius: 10px;
         box-shadow: 0 5px 20px rgba(0,0,0,.13);
