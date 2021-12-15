@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {tooltipAnimation} from '../../../animations';
 
 @Component({
@@ -14,9 +14,12 @@ export class CustomToolTipComponent implements OnInit {
 
   @Input() contentTemplate;
 
+  @Output() closeTooltip: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   constructor() { }
 
   ngOnInit() {
+    // console.log('open');
   }
 
 }

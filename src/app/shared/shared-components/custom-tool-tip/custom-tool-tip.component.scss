@@ -1,12 +1,15 @@
 .wrapper {
   position: relative;
+  display: flex;
+  justify-content: center;
   &:before {
     content: '';
     position: absolute;
-    left: 0;
-    top: -30px;
-    height: 29px;
-    width: 143px;
+    background-color: red;
+    //left: 55px;
+    top: -35px;
+    height: 35px;
+    width: 106px;
   }
   .tooltip-container {
     box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
