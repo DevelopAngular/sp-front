@@ -90,17 +90,17 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   ngOnInit() {
     this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
     this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
-    this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+    this.encounterPreventionService.getExclusionGroupsForStudentRequest(this.profile.id);
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.lastStudentPasses = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loading$ = this.passesService.quickPreviewPassesLoading$;
     this.loaded$ = this.passesService.quickPreviewPassesLoaded$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
-    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$
+    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroupsForStudents$
       .pipe(
-        filter(g => !!g.length),
+        filter(g => !!g[this.profile.id]),
         map((groups ) => {
-          return groups.reduce((acc, group) => {
+          return groups[this.profile.id].reduce((acc, group) => {
             return [...acc, {...group, users: group.users.filter(u => +u.id !== +this.profile.id)}];
           }, []);
         })

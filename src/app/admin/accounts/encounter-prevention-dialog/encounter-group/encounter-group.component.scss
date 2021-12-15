@@ -6,8 +6,10 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   min-height: 50px;
   display: flex;
+  flex-direction: column;
   position: relative;
-  align-items: center;
+  //align-items: center;
+  //justify-content: center;
   cursor: pointer;
   transition: background-color .2s ease;
 
