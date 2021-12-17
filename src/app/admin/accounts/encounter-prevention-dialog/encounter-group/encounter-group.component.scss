@@ -9,7 +9,7 @@
   flex-direction: column;
   position: relative;
   //align-items: center;
-  //justify-content: center;
+  justify-content: center;
   cursor: pointer;
   transition: background-color .2s ease;
 
@@ -64,6 +64,7 @@
 
   .group-name {
     margin-left: 15px;
+    margin-top: 5px;
     font-size: 15px;
     color: $navy;
     font-weight: 700;
@@ -72,6 +73,7 @@
   .octagon {
     position: absolute;
     right: 15px;
+    top: 15px;
 
     .value {
       position: absolute;
