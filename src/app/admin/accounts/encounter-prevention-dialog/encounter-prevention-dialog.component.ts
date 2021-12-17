@@ -94,7 +94,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
 
     this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
       filter(r => r),
-      switchMap(() => this.encounterPreventionService.encounterPreventionLength$)
+      switchMap(() => this.encounterPreventionService.exclusionGroupsLength$)
     ).subscribe(res => {
       if (!res) {
         this.setState(true, Pages.StartPage);

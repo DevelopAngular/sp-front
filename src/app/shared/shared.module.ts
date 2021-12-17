@@ -191,6 +191,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DropdownComponent,
     AppTextareaComponent,
     SquareButtonComponent,
+    CustomToolTipComponent,
   ],
   providers: [
     {

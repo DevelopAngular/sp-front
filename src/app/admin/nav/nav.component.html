@@ -44,7 +44,7 @@
          [customToolTip]="user && user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
     >
       {{(user?user.display_name : '')}}
-      <img *ngIf="user && user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
+      <img *ngIf="user && user.badge" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
     </div>
     <div [style.display]="'flex'" #settingsButton>
       <app-icon-button
