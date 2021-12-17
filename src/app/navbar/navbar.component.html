@@ -77,13 +77,13 @@
           *ngIf="!isMobile"
           [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
           [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})"
-          [matTooltip]="user && user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
+          [matTooltip]="user && user.badge ? 'Thank you for referring a school to SmartPass and promoting innovative solutions for the next generation!' : null"
           [matTooltipClass]="'ds-tooltip'"
         >
           <span>
             {{ user?user.display_name:'' }}
           </span>
-          <img *ngIf="user && user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
+          <img *ngIf="user && user.badge" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
         </div>
       </ng-template>
 
