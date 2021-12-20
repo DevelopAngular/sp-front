@@ -14,6 +14,7 @@ export class CustomToolTipComponent implements OnInit {
 
   @Input() contentTemplate;
 
+  @Output() overEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() closeTooltip: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor() { }

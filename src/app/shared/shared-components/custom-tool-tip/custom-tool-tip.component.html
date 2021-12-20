@@ -1,4 +1,4 @@
-<div class="wrapper" (mouseleave)="closeTooltip.emit(true)">
+<div class="wrapper" (mouseleave)="closeTooltip.emit(true)" (mouseenter)="overEvent.emit()">
   <div class="tooltip-container" @tooltipAnimate>
     <ng-template #simpleText>
       <div class="ds-tooltip" *ngIf="text">

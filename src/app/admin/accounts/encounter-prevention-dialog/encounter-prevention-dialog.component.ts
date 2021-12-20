@@ -172,6 +172,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
         this.backEmit.emit();
         return;
       }
+      this.state.createGroup.users = [];
     }
     if (this.state.current_page === Pages.EditGroup) {
       this.encounterPreventionService.updateExclusionGroupRequest(this.state.data.currentGroup, {

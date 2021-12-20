@@ -3,13 +3,13 @@
     <div class="title">Notes</div>
     <div class="subtitle">{{ group.notes }}</div>
   </div>
-  <mat-divider></mat-divider>
+  <mat-divider *ngIf="group.notes"></mat-divider>
   <div class="status-container">
+    <div class="clicker" (mouseenter)="status.hover = true"
+         (mouseleave)="status.hover = false" (click)="preventionStatusForm.get('status').setValue(!preventionStatusForm.get('status').value)"></div>
     <div class="status"
      #status
      style="text-transform: none; border-radius: 7px"
-     (mouseenter)="status.hover = true"
-     (mouseleave)="status.hover = false"
      [style.background-color]="status.hover ? 'rgba(127, 135, 157, .1)' : 'transparent'"
     >
       <div class="input">
@@ -20,7 +20,7 @@
           [delimiter]="false"
         ></app-toggle-input>
       </div>
-      <div class="status-name" (click)="preventionStatusForm.get('status').setValue(!preventionStatusForm.get('status').value)">Prevention {{ preventionStatusForm.get('status').value ? 'enabled' : 'disabled' }}</div>
+      <div class="status-name">Prevention {{ preventionStatusForm.get('status').value ? 'enabled' : 'disabled' }}</div>
     </div>
   </div>
   <mat-divider></mat-divider>
