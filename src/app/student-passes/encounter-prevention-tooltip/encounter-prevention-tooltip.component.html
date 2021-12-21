@@ -7,9 +7,9 @@
 
   <div class="content">
     <div class="group">
-      <div class="group-name" *ngIf="groups[0].name">{{ groups[0].name }}</div>
+      <div class="group-name" *ngIf="groups[page].name">{{ groups[page].name }}</div>
       <div class="prevention-students">
-        <div class="student" *ngFor="let student of groups[0].users">
+        <div class="student" *ngFor="let student of groups[page].users">
           <div class="student-picture">
             <div *ngIf="student.profile_picture; else d" [ngStyle]="{'background': 'url(' + student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
             <ng-template #d>
@@ -22,7 +22,14 @@
           <!--      </div>-->
         </div>
       </div>
-      <div class="group-notes" *ngIf="groups[0].notes">{{ groups[0].notes }}</div>
+      <div class="group-notes" *ngIf="groups[page].notes">{{ groups[page].notes }}</div>
+    </div>
+    <div class="paginator">
+      <div class="button" style="left: 0" *ngIf="page > 0" appCrossPointerEventTarget (pointerClickEvent)="prevPage()"><img width="25" height="23" [src]="'./assets/Chevron Left (White).svg' | resolveAsset"/></div>
+      <div class="dots">
+        <div class="dot" *ngFor="let g of groups; let i = index" [style.background-color]="page === i ? '#FFFFFF' : 'transparent'"></div>
+      </div>
+      <div class="button" style="right: 0" *ngIf="page < groups.length - 1" appCrossPointerEventTarget (pointerClickEvent)="nextPage()"><img width="25" height="23" [src]="'./assets/Chevron Right (White).svg' | resolveAsset"/></div>
     </div>
   </div>
 </div>

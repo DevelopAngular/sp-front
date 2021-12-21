@@ -23,6 +23,11 @@
     padding: 18px;
     background-color: #050411;
     border-radius: 0 0 8px 8px;
+
+    .group {
+      height: 190px;
+      overflow: auto;
+    }
     .group-name {
       color: #FFFFFF;
       word-break: break-word;
@@ -79,6 +84,44 @@
         }
       }
 
+    }
+
+    .paginator {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 7px;
+      position: relative;
+
+      .button {
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+
+        &:hover {
+          background-color: #FFFFFF;
+          border-radius: 50%;
+          opacity: 0.7;
+        }
+      }
+
+      .dots {
+        display: flex;
+
+        .dot {
+          width: 7px;
+          height: 7px;
+          margin: 5px;
+          border-radius: 50%;
+          border: 2px solid #FFFFFF;
+          cursor: pointer;
+        }
+      }
     }
   }
 }

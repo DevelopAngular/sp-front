@@ -10,9 +10,20 @@ export class EncounterPreventionTooltipComponent implements OnInit {
 
   @Input() groups: ExclusionGroup[];
 
+  page: number = 0;
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  nextPage() {
+    this.page += 1;
+    console.log(this.page, this.groups.length);
+  }
+
+  prevPage() {
+    this.page -= 1;
   }
 
 }
