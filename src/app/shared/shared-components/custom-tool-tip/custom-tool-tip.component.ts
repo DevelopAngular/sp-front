@@ -13,6 +13,7 @@ export class CustomToolTipComponent implements OnInit {
   @Input() text;
 
   @Input() contentTemplate;
+  @Input() width: string;
 
   @Output() overEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() closeTooltip: EventEmitter<boolean> = new EventEmitter<boolean>();

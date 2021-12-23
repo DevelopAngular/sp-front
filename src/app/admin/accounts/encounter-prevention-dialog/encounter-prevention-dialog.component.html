@@ -92,8 +92,9 @@
                *ngFor="let exclusionGroup of exclusionGroups"
                [showToolTip]="!!exclusionGroup.notes"
                [customToolTip]="exclusionGroup.notes"
+               [width]="'250px'"
                [editable]="true"
-               [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 350}">
+               [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 330}">
             <app-encounter-group [group]="exclusionGroup" (clickEvent)="goDescription(exclusionGroup)"></app-encounter-group>
           </div>
         </div>

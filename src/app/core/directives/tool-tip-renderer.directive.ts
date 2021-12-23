@@ -31,6 +31,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   @Input() position: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
   @Input() editable: boolean = false;
   @Input() positionStrategy: ConnectedPosition;
+  @Input() width: string = 'auto';
 
   // If this is specified then specified text will be showin in the tooltip
   @Input(`customToolTip`) text: string;
@@ -39,7 +40,6 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   @Input() contentTemplate: TemplateRef<any>;
 
   private destroyOpen$: Subject<any> = new Subject<any>();
-  private overEvent: boolean;
 
   private _overlayRef: OverlayRef;
   private tooltipRef: ComponentRef<CustomToolTipComponent>;
@@ -119,6 +119,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
             this.tooltipRef = this._overlayRef.attach(new ComponentPortal(CustomToolTipComponent));
             this.tooltipRef.instance.contentTemplate = this.contentTemplate;
             this.tooltipRef.instance.text = this.text;
+            this.tooltipRef.instance.width = this.width;
 
             return this.tooltipRef.instance.closeTooltip;
           }
@@ -129,10 +130,10 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 
   @HostListener('mouseleave')
   hide() {
-    this.destroyOpen$.next();
     if (this.editable) {
       this.closeToolTip();
     }
+    this.destroyOpen$.next();
     // this.closeToolTip();
   }
 

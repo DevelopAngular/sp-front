@@ -12,12 +12,9 @@
       <div class="info" style="display: flex; align-items: center" *ngIf="data.encounterPrevention">
         <div class="exclusion-pass">
           <app-pass-tile
-            [forFuture]="false"
-            [fromPast]="true"
-            [forStaff]="false"
+            [forStaff]="true"
             [pass]="data.exclusionPass"
             [profileImage]="false"
-            [isMiniCard]="true"
             [encounterPreventionCard]="true"
           ></app-pass-tile>
         </div>
