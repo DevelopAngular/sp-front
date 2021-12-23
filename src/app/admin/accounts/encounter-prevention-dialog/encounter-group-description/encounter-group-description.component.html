@@ -12,7 +12,6 @@
         <div class="ds-dialog-subtitle" style="margin-left: 7px">Prevented Encounters</div>
       </div>
     </div>
-    <mat-divider></mat-divider>
 
     <div class="encounters">
       <div class="encounter" *ngFor="let encounter of group.prevented_encounters">
@@ -21,6 +20,7 @@
           [description]="description(encounter)"
         ></app-report-description>
       </div>
+      <div class="created"><span>Created</span> {{ getDate(group.created) }} at {{ getTime(group.created) }} <span *ngIf="group.issuer">by {{ group.issuer }}</span></div>
     </div>
   </div>
 

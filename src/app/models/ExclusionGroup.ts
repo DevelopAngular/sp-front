@@ -27,4 +27,5 @@ export interface ExclusionGroup {
   enabled?: boolean;
   created?: Date;
   last_updated?: Date;
+  issuer: string;
 }

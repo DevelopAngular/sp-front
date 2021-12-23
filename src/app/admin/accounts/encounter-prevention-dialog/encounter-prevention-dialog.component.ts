@@ -23,7 +23,7 @@ enum Pages {
 export interface EncountersState {
   pages_history: number[];
   current_page: number;
-  createGroup: ExclusionGroup;
+  createGroup: any;
   data: {
     currentGroup?: ExclusionGroup;
     showSaveButton: boolean;
