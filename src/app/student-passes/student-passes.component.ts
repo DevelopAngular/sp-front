@@ -148,6 +148,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   notClose(value) {
+    console.log('Close ==>>', value);
     this.destroyClose.emit(value);
   }
 

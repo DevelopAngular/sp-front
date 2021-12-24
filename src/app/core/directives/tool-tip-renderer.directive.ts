@@ -2,11 +2,13 @@ import {
   ComponentRef,
   Directive,
   ElementRef,
+  EventEmitter,
   HostListener,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   SimpleChanges,
   TemplateRef
 } from '@angular/core';
@@ -39,6 +41,8 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   // If this is specified then specified template will be rendered in the tooltip
   @Input() contentTemplate: TemplateRef<any>;
 
+  @Output() leave: EventEmitter<any> = new EventEmitter<any>();
+
   private destroyOpen$: Subject<any> = new Subject<any>();
 
   private _overlayRef: OverlayRef;
@@ -65,7 +69,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     this._overlayRef = this._overlay.create(
       {
         positionStrategy,
-        panelClass: 'custom-tooltip'
+        panelClass: 'custom-tooltip',
       }
     );
   }
@@ -96,7 +100,8 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
         originY: 'bottom',
         overlayX: 'center',
         overlayY: 'top',
-        offsetX: -100
+        offsetY: 15,
+        offsetX: -50
       };
     } else if (this.position === 'right') {
       return {
@@ -125,7 +130,9 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
           }
           return of(null);
         }),
-      ).subscribe(() => this.closeToolTip());
+      ).subscribe(() => {
+        this.closeToolTip();
+    });
   }
 
   @HostListener('mouseleave')
@@ -138,12 +145,15 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
+    this.destroyOpen$.next();
+    this.destroyOpen$.complete();
     this.closeToolTip();
   }
 
   private closeToolTip() {
     if (this._overlayRef) {
       this._overlayRef.detach();
+      this.leave.emit();
     }
   }
 

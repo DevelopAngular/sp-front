@@ -264,6 +264,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   studentNameLeave() {
+    // console.log('CLOSE ==>>>', this.destroyCloseQuickPreview);
     if (this.allowPopup && !this.isKioskMode && !this.destroyCloseQuickPreview) {
       this.destroyOpen$.next();
       interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {

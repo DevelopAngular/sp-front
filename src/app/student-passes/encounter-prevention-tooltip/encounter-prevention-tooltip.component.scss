@@ -4,6 +4,15 @@
   max-width: 230px;
   background-color: #050411;
   border-radius: 8px;
+  position: relative;
+
+  .overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+  }
   .header {
     padding: 10px;
 
@@ -48,6 +57,7 @@
     .group-notes {
       color: #FFFFFF;
       word-break: break-word;
+      text-align: left;
       font-size: 14px;
       margin-top: 3px;
       opacity: 0.8;

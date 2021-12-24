@@ -90,7 +90,7 @@
         <div class="groups" >
           <div class="group"
                *ngFor="let exclusionGroup of exclusionGroups"
-               [showToolTip]="!!exclusionGroup.notes"
+               [showToolTip]="!!exclusionGroup.notes && state.current_page === 3"
                [customToolTip]="exclusionGroup.notes"
                [width]="'250px'"
                [editable]="true"

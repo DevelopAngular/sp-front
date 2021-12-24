@@ -31,11 +31,12 @@
                   [size]="22"
                   customToolTip
                   [contentTemplate]="tooltip"
+                  (leave)="notClose(false)"
                 >
                   <img class="value" style="position: absolute; z-index: 10" height="18" [src]="'./assets/Walking One (White).svg' | resolveAsset">
                 </app-octagon>
                 <ng-template #tooltip>
-                  <app-encounter-prevention-tooltip (mouseleave)="notClose(false)" [groups]="exclusionGroups$ | async"></app-encounter-prevention-tooltip>
+                  <app-encounter-prevention-tooltip [groups]="exclusionGroups$ | async"></app-encounter-prevention-tooltip>
                 </ng-template>
               </span>
             </div>

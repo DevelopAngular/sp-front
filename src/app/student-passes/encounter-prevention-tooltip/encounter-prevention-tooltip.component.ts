@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ExclusionGroup} from '../../models/ExclusionGroup';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
@@ -13,6 +13,7 @@ import {NextStep} from '../../animations';
 export class EncounterPreventionTooltipComponent implements OnInit {
 
   @Input() groups: ExclusionGroup[];
+  @Output() leave: EventEmitter<any> = new EventEmitter<any>();
 
   page: number = 0;
   frameMotion$: BehaviorSubject<any>;
@@ -24,10 +25,7 @@ export class EncounterPreventionTooltipComponent implements OnInit {
   }
 
   nextPage() {
-    this.formService.setFrameMotionDirection();
-    setTimeout(() => {
-      this.page += 1;
-    }, 100);
+    this.page += 1;
   }
 
   prevPage() {

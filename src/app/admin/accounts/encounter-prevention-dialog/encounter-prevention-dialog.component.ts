@@ -184,6 +184,12 @@ export class EncounterPreventionDialogComponent implements OnInit {
         this.backEmit.emit();
         return;
       }
+      setTimeout(() => {
+        this.toast.openToast({
+          title: 'Encounter prevention group updated',
+          type: 'success'
+        });
+      }, 500);
     }
     this.setState(true, Pages.Groups);
   }
