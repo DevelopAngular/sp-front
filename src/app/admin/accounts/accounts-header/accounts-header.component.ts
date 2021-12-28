@@ -66,6 +66,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   user$: Observable<User>;
   isMiniButtons: boolean;
+  showNuxTooltip: Subject<boolean> = new Subject();
 
   selectedUsers: User[] = [];
 
@@ -130,6 +131,10 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         this.selectedUsers = res;
         this.cdr.detectChanges();
       });
+
+    setTimeout(() => {
+      this.showNuxTooltip.next(true);
+    }, 1000);
 
   }
 

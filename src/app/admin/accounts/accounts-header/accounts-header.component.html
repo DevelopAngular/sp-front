@@ -83,6 +83,9 @@
 
             <app-square-button
               style="margin-left: 10px"
+              nuxTooltip
+              [contentTemplate]="tooltip"
+              [showToolTip$]="showNuxTooltip"
               [backgroundColor]="'#1F195E'"
               (buttonClick)="openEncounterPrevention()">
               <div class="button-content">
@@ -91,6 +94,10 @@
                 </app-octagon>
               </div>
             </app-square-button>
+
+            <ng-template #tooltip>
+              <app-nux-encounter-prevention></app-nux-encounter-prevention>
+            </ng-template>
 
             <app-square-button
               style="margin-left: 10px"
