@@ -5,8 +5,8 @@
         <app-school-autocomplete
           inputLabel="School name"
           [tabIndex]="2"
-          [formGroup]="schoolForm"
-          [formControl]="schoolForm.controls.name"
+          [fGroup]="schoolForm"
+          [fControl]="schoolForm.controls.name"
           [forceError]="showErrors && !schoolForm.controls.name.valid"
           (name)="setName($event)"
           (schoolDiggerId)="setSchoolDiggerId($event)"
