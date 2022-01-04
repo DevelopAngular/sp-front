@@ -22,7 +22,7 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
-import {filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
@@ -67,6 +67,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   user$: Observable<User>;
   isMiniButtons: boolean;
   showNuxTooltip: Subject<boolean> = new Subject();
+  introsData: any;
 
   selectedUsers: User[] = [];
 
@@ -132,9 +133,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         this.cdr.detectChanges();
       });
 
-    setTimeout(() => {
-      this.showNuxTooltip.next(true);
-    }, 1000);
+    this.userService.introsData$.pipe(filter(res => !!res), debounceTime(1000), takeUntil(this.destroy$))
+      .subscribe(data => {
+        this.introsData = data;
+        this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version);
+      });
 
   }
 
@@ -349,6 +352,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       width: '425px',
       height: '500px',
     });
+  }
+
+  closeNuxToolTip() {
+    this.showNuxTooltip.next(false);
+    this.userService.updateIntrosEncounterRequest(this.introsData, 'universal',  '1');
   }
 
 }

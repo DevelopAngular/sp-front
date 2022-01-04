@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-nux-encounter-prevention',
@@ -6,6 +6,8 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./nux-encounter-prevention.component.scss']
 })
 export class NuxEncounterPreventionComponent implements OnInit {
+
+  @Output() close: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor() { }
 

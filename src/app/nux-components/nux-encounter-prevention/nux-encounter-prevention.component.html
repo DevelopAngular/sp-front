@@ -2,7 +2,7 @@
   <div class="new">New</div>
   <div class="info">"Encounter Prevention" lets you prevent two or more students from having passes at the same time.</div>
   <div class="buttons">
-    <app-gradient-button [gradient]="'#70819f, #70819f'">Learn more</app-gradient-button>
-    <app-gradient-button style="margin-left: 10px">Git it!</app-gradient-button>
+    <app-gradient-button [gradient]="'#70819f, #70819f'" [buttonLink]="'https://www.smartpass.app/encounterprevention'" [text]="'Learn more'" (buttonClick)="close.emit(false)"></app-gradient-button>
+    <app-gradient-button style="margin-left: 10px" (buttonClick)="close.emit(true)">Git it!</app-gradient-button>
   </div>
 </div>

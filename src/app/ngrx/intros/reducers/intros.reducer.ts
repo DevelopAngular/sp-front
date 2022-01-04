@@ -16,6 +16,7 @@ const reducer = createReducer(
     introsActions.getIntrosSuccess,
     introsActions.updateIntrosSuccess,
     introsActions.updateIntrosMainSuccess,
+    introsActions.updateIntrosEncounterSuccess,
     (state, {data}) => {
     return {...state, loading: false, loaded: true, data };
   }),
