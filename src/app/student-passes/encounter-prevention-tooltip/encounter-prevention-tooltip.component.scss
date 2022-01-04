@@ -1,64 +1,145 @@
 @import "../../../sp-colors";
 
 .wrapper {
-  padding: 18px;
+  max-width: 230px;
   background-color: #050411;
   border-radius: 8px;
-  max-width: 200px;
-  .title {
-    color: #FFFFFF;
-    font-size: 14px;
-  }
+  position: relative;
 
-  .subtitle {
-    color: #FFFFFF;
-    font-size: 14px;
-    margin-top: 6px;
+  .overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
   }
+  .header {
+    padding: 10px;
 
-  .prevention-students {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    .student {
-      background-color: #F7F7F7;
+    .header-content {
+      padding: 10px;
       border-radius: 8px;
-      height: 31px;
-      padding: 0px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      //margin-right: 10px;
-      //margin-bottom: 10px;
-      margin: 5px 0;
-      color: #1F194E;
-      white-space: nowrap;
-      position: relative;
-
-      .name {
-        color: $navy;
+      background-color: #333333;
+      .title {
+        color: #FFFFFF;
         font-size: 14px;
+        font-weight: bold;
       }
 
-      .delete {
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-        position: absolute;
-        right: 5px;
-        background-color: #F8F8F8;
-        box-shadow: -6px 1px 6px #F8F8F8;
-      }
-
-      .student-picture {
-        border-radius: 50%;
-        width: 23px;
-        height: 23px;
-        overflow: hidden;
-        margin-right: 4px;
+      .subtitle {
+        color: #FFFFFF;
+        font-size: 14px;
+        margin-top: 6px;
       }
     }
+  }
 
+  .content {
+    padding: 10px 18px;
+    //position: relative;
+
+    .group-wrapper {
+      //position: relative;
+    }
+
+    .group {
+      height: 130px;
+      overflow: auto;
+      //position: absolute;
+    }
+    .group-name {
+      color: #FFFFFF;
+      word-break: break-word;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .group-notes {
+      color: #FFFFFF;
+      word-break: break-word;
+      text-align: left;
+      font-size: 14px;
+      margin-top: 3px;
+      opacity: 0.8;
+    }
+    .prevention-students {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      .student {
+        background-color: #F7F7F7;
+        border-radius: 8px;
+        height: 31px;
+        padding: 0px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 5px 0;
+        color: #1F194E;
+        white-space: nowrap;
+        position: relative;
+
+        .name {
+          color: $navy;
+          font-size: 14px;
+        }
+
+        .delete {
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+          position: absolute;
+          right: 5px;
+          background-color: #F8F8F8;
+          box-shadow: -6px 1px 6px #F8F8F8;
+        }
+
+        .student-picture {
+          border-radius: 50%;
+          width: 23px;
+          height: 23px;
+          overflow: hidden;
+          margin-right: 4px;
+        }
+      }
+
+    }
+
+    .paginator {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 7px;
+      position: relative;
+
+      .button {
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+
+        &:hover {
+          background-color: #FFFFFF;
+          border-radius: 50%;
+          opacity: 0.7;
+        }
+      }
+
+      .dots {
+        display: flex;
+
+        .dot {
+          width: 9px;
+          height: 9px;
+          margin: 5px;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+      }
+    }
   }
 }

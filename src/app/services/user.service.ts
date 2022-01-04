@@ -96,7 +96,7 @@ import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/
 import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
+import {getIntros, updateIntros, updateIntrosEncounter, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
@@ -455,12 +455,20 @@ export class UserService implements OnDestroy {
     return of(null);
   }
 
+  updateIntrosEncounterRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosEncounter({intros, device, version}));
+  }
+
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
 
   updateIntrosReferral(device, version) {
     return this.http.patch('v1/intros/referral_reminder', {device, version});
+  }
+
+  updateIntrosEncounter(device, version) {
+    return this.http.patch('v1/intros/encounter_reminder', {device, version});
   }
 
   saveKioskModeLocation(locId) {

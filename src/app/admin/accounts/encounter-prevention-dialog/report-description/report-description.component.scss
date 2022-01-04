@@ -5,7 +5,8 @@
   border-radius: 6px;
   background: #F7F7F7;
   word-break: break-all;
-  cursor: pointer;
+  user-select: text !important;
+  -webkit-tap-highlight-color: $navy !important;
 
   .header {
     display: flex;

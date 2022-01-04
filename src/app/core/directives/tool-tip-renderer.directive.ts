@@ -1,18 +1,39 @@
-import {ComponentRef, Directive, ElementRef, HostListener, Input, OnInit, TemplateRef} from '@angular/core';
+import {
+  ComponentRef,
+  Directive,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  TemplateRef
+} from '@angular/core';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {CustomToolTipComponent} from '../../shared/shared-components/custom-tool-tip/custom-tool-tip.component';
+import {ConnectedPosition} from '@angular/cdk/overlay/position/flexible-connected-position-strategy';
+import {of, Subject, timer} from 'rxjs';
+import {switchMap, takeUntil} from 'rxjs/operators';
 
 @Directive({
   selector: '[customToolTip]'
 })
-export class ToolTipRendererDirective implements OnInit {
+export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 
   /**
    * This will be used to show tooltip or not
    * This can be used to show the tooltip conditionally
    */
   @Input() showToolTip: boolean = true;
+  @Input() tooltipDelay: number = 0;
+  @Input() position: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
+  @Input() editable: boolean = false;
+  @Input() positionStrategy: ConnectedPosition;
+  @Input() width: string = 'auto';
 
   // If this is specified then specified text will be showin in the tooltip
   @Input(`customToolTip`) text: string;
@@ -20,78 +41,119 @@ export class ToolTipRendererDirective implements OnInit {
   // If this is specified then specified template will be rendered in the tooltip
   @Input() contentTemplate: TemplateRef<any>;
 
+  @Output() leave: EventEmitter<any> = new EventEmitter<any>();
+
+  private destroyOpen$: Subject<any> = new Subject<any>();
+
   private _overlayRef: OverlayRef;
+  private tooltipRef: ComponentRef<CustomToolTipComponent>;
 
-  constructor(private _overlay: Overlay,
-              private _overlayPositionBuilder: OverlayPositionBuilder,
-              private _elementRef: ElementRef) { }
+  constructor(
+    private _overlay: Overlay,
+    private _overlayPositionBuilder: OverlayPositionBuilder,
+    private _elementRef: ElementRef
+  ) { }
 
-  /**
-   * Init life cycle event handler
-   */
   ngOnInit() {
-
+    if (!this.contentTemplate && !this.text) {
+      this.showToolTip = false;
+    }
     if (!this.showToolTip) {
       return;
     }
 
     const positionStrategy = this._overlayPositionBuilder
       .flexibleConnectedTo(this._elementRef)
-      .withPositions([{
+      .withPositions([this.editable ? this.positionStrategy : this.getPosition()]);
+
+    this._overlayRef = this._overlay.create(
+      {
+        positionStrategy,
+        panelClass: 'custom-tooltip',
+      }
+    );
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+  }
+
+  getPosition(): ConnectedPosition {
+    if (this.position === 'top') {
+      return {
+        originX: 'center',
+        originY: 'top',
+        overlayX: 'center',
+        overlayY: 'top',
+        offsetY: -55
+      };
+    } else if (this.position === 'bottom') {
+      return {
         originX: 'center',
         originY: 'bottom',
         overlayX: 'center',
         overlayY: 'top',
-        offsetY: 5,
-      }]);
-
-    this._overlayRef = this._overlay.create({ positionStrategy});
-
-  }
-
-  /**
-   * This method will be called whenever mouse enters in the Host element
-   * i.e. where this directive is applied
-   * This method will show the tooltip by instantiating the McToolTipComponent and attaching to the overlay
-   */
-  @HostListener('mouseenter')
-  show() {
-
-    // attach the component if it has not already attached to the overlay
-    if (this._overlayRef && !this._overlayRef.hasAttached()) {
-      const tooltipRef: ComponentRef<CustomToolTipComponent> = this._overlayRef.attach(new ComponentPortal(CustomToolTipComponent));
-      tooltipRef.instance.text = this.text;
-      tooltipRef.instance.contentTemplate = this.contentTemplate;
+        offsetY: 15,
+      };
+    } else if (this.position === 'left') {
+      return {
+        originX: 'center',
+        originY: 'bottom',
+        overlayX: 'center',
+        overlayY: 'top',
+        offsetY: 15,
+        offsetX: -50
+      };
+    } else if (this.position === 'right') {
+      return {
+        originX: 'center',
+        originY: 'top',
+        overlayX: 'center',
+        overlayY: 'top',
+      };
     }
   }
 
-  /**
-   * This method will be called when mouse goes out of the host element
-   * i.e. where this directive is applied
-   * This method will close the tooltip by detaching the overlay from the view
-   */
+  @HostListener('mouseenter')
+  show() {
+    // attach the component if it has not already attached to the overlay
+    timer(300)
+      .pipe(
+        takeUntil(this.destroyOpen$),
+        switchMap(() => {
+          if (this._overlayRef && !this._overlayRef.hasAttached() && this.showToolTip) {
+            this.tooltipRef = this._overlayRef.attach(new ComponentPortal(CustomToolTipComponent));
+            this.tooltipRef.instance.contentTemplate = this.contentTemplate;
+            this.tooltipRef.instance.text = this.text;
+            this.tooltipRef.instance.width = this.width;
+
+            return this.tooltipRef.instance.closeTooltip;
+          }
+          return of(null);
+        }),
+      ).subscribe(() => {
+        this.closeToolTip();
+    });
+  }
+
   @HostListener('mouseleave')
   hide() {
-    this.closeToolTip();
+    if (this.editable) {
+      this.closeToolTip();
+    }
+    this.destroyOpen$.next();
+    // this.closeToolTip();
   }
 
-  /**
-   * Destroy lifecycle event handler
-   * This method will make sure to close the tooltip
-   * It will be needed in case when app is navigating to different page
-   * and user is still seeing the tooltip; In that case we do not want to hang around the
-   * tooltip after the page [on which tooltip visible] is destroyed
-   */
   ngOnDestroy() {
+    this.destroyOpen$.next();
+    this.destroyOpen$.complete();
     this.closeToolTip();
   }
 
-  /**
-   * This method will close the tooltip by detaching the component from the overlay
-   */
   private closeToolTip() {
     if (this._overlayRef) {
       this._overlayRef.detach();
+      this.leave.emit();
     }
   }
 

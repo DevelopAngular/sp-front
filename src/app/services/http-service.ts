@@ -173,7 +173,6 @@ class SilentError extends Error {
 export class HttpService implements OnDestroy {
 
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
-  public errorToast$: ReplaySubject<SPError> = new ReplaySubject(1);
   public schoolSignInRegisterText$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   private _authContext: AuthContext = null;

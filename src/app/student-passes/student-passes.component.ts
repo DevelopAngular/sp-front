@@ -21,7 +21,7 @@ import {filter, map} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
 import * as moment from 'moment';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
-import {uniqBy} from 'lodash';
+import {ExclusionGroup} from '../models/ExclusionGroup';
 
 @Component({
   selector: 'app-student-passes',
@@ -45,6 +45,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   @Input() hasProfilePicture: boolean = true;
 
   @Output() close = new EventEmitter();
+  @Output() destroyClose = new EventEmitter();
 
   @ViewChild('profileImage') profileImage: ElementRef;
 
@@ -59,7 +60,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   loading$: Observable<boolean>;
   loaded$: Observable<boolean>;
   passesStats$: Observable<QuickPreviewPasses>;
-  exclusionStudents$: Observable<User[]>;
+  exclusionGroups$: Observable<ExclusionGroup[]>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -90,21 +91,19 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   ngOnInit() {
     this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
     this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
-    this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+    this.encounterPreventionService.getExclusionGroupsForStudentRequest(this.profile.id);
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.lastStudentPasses = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loading$ = this.passesService.quickPreviewPassesLoading$;
     this.loaded$ = this.passesService.quickPreviewPassesLoaded$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
-    this.exclusionStudents$ = this.encounterPreventionService.exclusionGroups$
+    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroupsForStudents$
       .pipe(
-        filter(g => !!g.length),
+        filter(g => !!g[this.profile.id]),
         map((groups ) => {
-          const students = [];
-          for (let i = 0; i < groups.length; i++) {
-            students.push(...groups[i].users);
-          }
-          return uniqBy(students, 'id').filter(s => +s.id !== +this.profile.id);
+          return groups[this.profile.id].reduce((acc, group) => {
+            return [...acc, {...group, users: group.users.filter(u => +u.id !== +this.profile.id)}];
+          }, []);
         })
       );
   }
@@ -146,6 +145,11 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       this.isOpenEvent$.next(false);
       this.domCheckerService.scalePassCardTrigger$.next('unresize');
     }
+  }
+
+  notClose(value) {
+    console.log('Close ==>>', value);
+    this.destroyClose.emit(value);
   }
 
   openPass({pass}) {

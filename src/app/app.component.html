@@ -1,16 +1,9 @@
 <div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false" [style.height]="'100%'" [style.min-height]="!hideScroll ? '100%' : 'auto'">
   <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-  <div *ngIf="errorToastTrigger | async">
-    <app-error-toast
-      [errorHeader]="(errorToastTrigger | async).header"
-      [errorMessage]="(errorToastTrigger | async).message"
-      (closeEvent)="errorToastTrigger.next(null)"
-    ></app-error-toast>
-  </div>
   <div class="toasts-wrapper" *ngIf="(toasts$ | async).length">
     <div class="toasts">
       <div class="toast" *ngFor="let toast index as i of toasts$ | async">
-        <app-custom-toast [toast]="toast" [indexPosition]="i"></app-custom-toast>
+        <app-custom-toast [user]="user$ | async" [toast]="toast" [indexPosition]="i"></app-custom-toast>
       </div>
     </div>
   </div>

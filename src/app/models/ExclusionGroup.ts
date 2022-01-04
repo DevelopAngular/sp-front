@@ -14,6 +14,7 @@ export interface PreventEncounters {
   conflict_pass_origin: string;
   conflict_pass_start_time: Date;
   conflict_pass_student_name: string;
+  conflict_pass_staff_name: string;
 }
 
 export interface ExclusionGroup {
@@ -26,4 +27,5 @@ export interface ExclusionGroup {
   enabled?: boolean;
   created?: Date;
   last_updated?: Date;
+  issuer: string;
 }

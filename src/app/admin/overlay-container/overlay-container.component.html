@@ -32,9 +32,7 @@
        [fontSize]="'14px'"
        (buttonClick)="onPublish()"
        (disabledButtonClick)="showFormErrors()"
-       [matTooltip]="saveButtonToolTip"
-        matTooltipClass="ds-tooltip"
-        >
+       [customToolTip]="saveButtonToolTip">
         <span *ngIf="!showPublishSpinner">Save</span>
         <div class="loading-theme_blue-gray" [style.color]="'red'" *ngIf="showPublishSpinner" >
           <mat-spinner  [diameter]="30"></mat-spinner>

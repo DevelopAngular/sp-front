@@ -267,6 +267,11 @@ div {
   border-radius: 14px;
 }
 
+.add-school-popup-container .mat-dialog-container {
+  padding: 0;
+  border-radius: 8px;
+}
+
 input:focus{
   outline-offset: 0;
   outline: none;
@@ -438,6 +443,10 @@ body {
 /* === Swiper Overrides === */
 .swiper-slide {
   margin: 10px 0;
+}
+
+.cdk-overlay-container {
+  z-index: 1005;
 }
 
 /* === Hubspot Overrides === */

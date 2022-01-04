@@ -70,6 +70,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 
   overlayPositions: ConnectedPosition[];
   scrollStrategy;
+  destroyCloseQuickPreview: boolean = false;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -245,7 +246,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setAnimationTrigger(value) {
-    if (!this.showBackgroundOverlay) {
+    if (!this.showBackgroundOverlay && !this.destroyCloseQuickPreview) {
       interval(200).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
         this.domCheckerService.fadeInOutTrigger$.next(value);
       });
@@ -263,7 +264,8 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   studentNameLeave() {
-    if (this.allowPopup && !this.isKioskMode) {
+    // console.log('CLOSE ==>>>', this.destroyCloseQuickPreview);
+    if (this.allowPopup && !this.isKioskMode && !this.destroyCloseQuickPreview) {
       this.destroyOpen$.next();
       interval(300).pipe(take(1), takeUntil(this.disableClose$)).subscribe(() => {
         this.isOpenTooltip.next(false);

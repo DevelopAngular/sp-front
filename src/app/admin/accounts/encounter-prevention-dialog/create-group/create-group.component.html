@@ -7,6 +7,7 @@
       [inputField]="true"
       [selectedOptions]="group.users"
       (onUpdate)="group.users = $event; onUpdate()"
+      [showStudentInfo]="false"
     ></app-sp-search>
   </div>
 
@@ -33,7 +34,7 @@
     ></app-textarea>
 
     <div class="info">
-      Teachers may see these notes when they are prevented from creating a pass for a student.
+      Students will not be able to see which students they are in a group with or details about the group.
     </div>
   </div>
 

@@ -28,6 +28,7 @@ export class ProgressInterceptor implements HttpInterceptor {
                           'o/token',
                           'pass_requests/',
                           'hall_passes/bulk_create',
+                          'hall_passes',
                           'forms/quoterequest',
                           '//server.test-cors.org'
                         ].every(_url => error.url.search(_url) < 0);

@@ -2,7 +2,6 @@ import {Component, EventEmitter, HostListener, Input, OnInit, Output, QueryList,
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
-import {BehaviorSubject} from 'rxjs';
 import {FormsService} from '../../../services/forms.service';
 
 declare const window;
@@ -20,20 +19,13 @@ export class ListSchoolsComponent implements OnInit {
   @Input() startTabIndex: number = -1;
   @Input() autoFocus: boolean = false;
   @Input() showErrors: boolean = false;
-  @ViewChildren('locationInput') locationInputs: QueryList<any>;
+  @Input() useLargeFormWhenNotFound: boolean;
 
   @Output() schoolCount = new EventEmitter<number>();
 
   inputCount: number = 1;
   innerWidth: number;
   mobile: boolean;
-
-  // Search Variables
-  private placePredictionService;
-  private currentPosition;
-  backgroundColors: string[] = [];
-  ignoreNextUpdate: boolean = false;
-  searchInfo: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -74,13 +66,7 @@ export class ListSchoolsComponent implements OnInit {
         school_digger_id: [null]
       })
     );
-    this.searchInfo.push({
-      showOptions: false,
-      mouseIn: false,
-      blockSearch: false,
-      searchSchools: new BehaviorSubject(null)
-    });
-    this.schoolCount.emit(this.searchInfo.length);
+    this.schoolCount.emit(this.schools.length);
   }
 
   showRemove(): boolean {
@@ -91,74 +77,8 @@ export class ListSchoolsComponent implements OnInit {
   }
 
   removeSchool(index): void {
-    let data = this.schools.removeAt(index);
-    this.searchInfo.splice(index, 1);
-    this.schoolCount.emit(this.searchInfo.length);
-  }
-
-  textColor(item) {
-    if (item.hovered) {
-      return '#1F195E';
-    } else {
-      return '#555558';
-    }
-  }
-
-  onSearch(search: string, i: number) {
-    if (search != undefined && !this.ignoreNextUpdate && search.length >= 4) {
-      this.formService.querySchools(search).subscribe((res: any[]) => {
-        if (res.length < 1) {
-          this.searchInfo[i]['showOptions'] = false;
-        } else {
-          this.searchInfo[i]['searchSchools'] = res.map(school => {
-            return {
-              'name': school['schoolName'],
-              'address': school['city'] + ', ' + school['state'],
-              'school_digger_id': school['schoolid']
-            };
-          });
-          this.searchInfo[i]['showOptions'] = true;
-        }
-      });
-    } else {
-      this.searchInfo[i]['showOptions'] = false;
-    }
-    if (this.ignoreNextUpdate) {
-      this.ignoreNextUpdate = false;
-    }
-    this.schools.at(i).get('school_digger_id').setValue(null);
-  }
-
-  chooseSchool(school, i) {
-    this.ignoreNextUpdate = true;
-    this.searchInfo[i]['showOptions'] = false;
-    this.schools.at(i).get('name').setValue(school.name);
-    this.schools.at(i).get('school_digger_id').setValue(school.school_digger_id);
-  }
-
-  mobileChooseSchool(a, school, i) {
-    this.backgroundColors[a] = '#FFFFFF';
-    this.chooseSchool(school, i);
-  }
-
-  blur(i) {
-    if (!this.searchInfo[i]['showOptions']) {
-      return;
-    }
-    this.searchInfo[i]['showOptions'] = this.searchInfo[i]['mouseIn'];
-  }
-
-  showSearch(i) {
-    return this.searchInfo[i]['showOptions'] && !this.searchInfo[i]['blockSearch'];
-  }
-
-  getSearchPosition(i) {
-    if (this.locationInputs === undefined) {
-      return 0;
-    }
-    let searchElement = this.locationInputs.toArray()[i].input;
-    let searchPosition = searchElement.nativeElement.getBoundingClientRect().y;
-    return searchPosition + 60;
+    this.schools.removeAt(index);
+    this.schoolCount.emit(this.schools.length);
   }
 
   getSchoolInputWidth() {

@@ -53,7 +53,11 @@
             [gradient]="'#1F195E, #1F195E'"
             [size]="'medium'"
             [cursor]="'pointer'"
-            (buttonClick)="openEncounterPrevention()">
+            (buttonClick)="openEncounterPrevention()"
+            nuxTooltip
+            [contentTemplate]="tooltip"
+            [showToolTip$]="showNuxTooltip"
+          >
             <div class="button-content">
               <app-octagon [size]="28">
                 <img class="value" height="17" [src]="'./assets/Walking One (White).svg' | resolveAsset">
@@ -63,6 +67,10 @@
            </span>
             </div>
           </app-gradient-button>
+
+          <ng-template #tooltip>
+            <app-nux-encounter-prevention (close)="closeNuxToolTip()"></app-nux-encounter-prevention>
+          </ng-template>
 
           <app-gradient-button
             [style.margin-left]="'15px'"
@@ -83,6 +91,9 @@
 
             <app-square-button
               style="margin-left: 10px"
+              nuxTooltip
+              [contentTemplate]="tooltip"
+              [showToolTip$]="showNuxTooltip"
               [backgroundColor]="'#1F195E'"
               (buttonClick)="openEncounterPrevention()">
               <div class="button-content">
@@ -91,6 +102,10 @@
                 </app-octagon>
               </div>
             </app-square-button>
+
+            <ng-template #tooltip>
+              <app-nux-encounter-prevention (close)="closeNuxToolTip()"></app-nux-encounter-prevention>
+            </ng-template>
 
             <app-square-button
               style="margin-left: 10px"

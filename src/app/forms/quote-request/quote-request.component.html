@@ -39,7 +39,8 @@
                        [tabAttentive]="true"
                        placeholder="wskinner@springfieldhs.org"
                        [formGroup]="quoteRequestForm"
-                       [forceError]="showErrors && !quoteRequestForm.controls.email.valid"
+                       [customToolTip]="!isNormalEmailError() && !isValidEmail() ? 'Please provide a school email.' : null"
+                       [forceError]="isNormalEmailError() || !isValidEmail()"
                        [controlName]="quoteRequestForm.controls.email"></app-input>
           </div>
           <div class="app-input-wrapper">

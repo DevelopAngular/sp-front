@@ -18,6 +18,7 @@ import {StudentPassesComponent} from '../student-passes/student-passes.component
 import {StudentPassesInfoCardComponent} from '../student-passes/student-passes-info-card/student-passes-info-card.component';
 import {EncounterPreventionTooltipComponent} from '../student-passes/encounter-prevention-tooltip/encounter-prevention-tooltip.component';
 import {OctagonComponent} from '../admin/accounts/encounter-prevention-dialog/octagon/octagon.component';
+import {NuxTooltipRendererDirective} from './directives/nux-tooltip-renderer.directive';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {OctagonComponent} from '../admin/accounts/encounter-prevention-dialog/oc
     StudentPassesInfoCardComponent,
     OctagonComponent,
     EncounterPreventionTooltipComponent,
+    NuxTooltipRendererDirective,
   ],
   imports: [
     CommonModule,
@@ -61,6 +63,7 @@ import {OctagonComponent} from '../admin/accounts/encounter-prevention-dialog/oc
         StudentPassesInfoCardComponent,
         OctagonComponent,
         EncounterPreventionTooltipComponent,
+        NuxTooltipRendererDirective,
     ]
 })
 export class CoreModule { }

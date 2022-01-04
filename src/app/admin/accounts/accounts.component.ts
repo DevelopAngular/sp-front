@@ -81,10 +81,16 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.queryParams.subscribe(res => {
+      if (res['profile-pictures'] === '') {
+        this.openProfilePictures();
+      }
+      if (res['encounter-prevention'] === '') {
+        this.openEncounterPrevention({currentPage: 'groups'});
+      }
       if (res.target === 'gsuite') {
         this.openSettingsDialog('g_suite', '');
       } else if (res.encounter_id) {
-        this.openEncounterPrevention(res.encounter_id);
+        this.openEncounterPrevention({currentGroupId: res.encounter_id});
       }
     });
 
@@ -231,13 +237,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 
-  openEncounterPrevention(id) {
+  openEncounterPrevention(data) {
     const encounterDialog = this.matDialog.open(EncounterPreventionDialogComponent, {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',
-      data: {currentGroupId: id}
+      data
     });
   }
 }

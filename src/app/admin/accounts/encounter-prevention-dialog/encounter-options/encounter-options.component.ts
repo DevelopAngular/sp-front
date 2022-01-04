@@ -3,6 +3,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {ExclusionGroup} from '../../../../models/ExclusionGroup';
 import {EncounterPreventionService} from '../../../../services/encounter-prevention.service';
+import {ToastService} from '../../../../services/toast.service';
 
 @Component({
   selector: 'app-encounter-options',
@@ -21,7 +22,8 @@ export class EncounterOptionsComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
     public dialogRef: MatDialogRef<EncounterOptionsComponent>,
-    private encounterService: EncounterPreventionService
+    private encounterService: EncounterPreventionService,
+    private toast: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -34,6 +36,10 @@ export class EncounterOptionsComponent implements OnInit {
 
     this.preventionStatusForm.get('status').valueChanges.subscribe(res => {
       this.encounterService.updateExclusionGroupRequest(this.group, {enabled: res});
+      this.toast.openToast({
+        title: `Encounter prevention group ${res ? 'enabled' : 'disabled'}`,
+        type: res ? 'success' : 'info'
+      });
     });
     this.updatePosition();
   }

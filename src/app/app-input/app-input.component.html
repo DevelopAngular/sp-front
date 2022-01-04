@@ -12,8 +12,7 @@
       </label>
       <div class="tooltip-container">
         <img
-           [matTooltip]="tooltipText"
-           matTooltipClass="ds-tooltip"
+           [customToolTip]="tooltipText"
            (mouseover)="over.emit({event: $event, action: 'timeLimit'})"
            (mouseleave)="leave.emit('timeLimit')"
            class="support-icon"
@@ -59,37 +58,36 @@
         {{ formGroup.get('timeLimit') ? 'min' : 'passes max' }}
       </div>
       <div class="tooltip-container tooltip-container__inline"
-           *ngIf="controlName.invalid
+           *ngIf="forceError ||
+            controlName.invalid
             &&
             controlName.touched
             &&
             (
-            controlName.errors.email_in_use ||
-            controlName.errors.invalid_email ||
-            controlName.errors.room_name ||
-            controlName.errors.folder_name ||
-            controlName.errors.room_number ||
-            controlName.errors.minlength ||
-            controlName.errors.uniqEmail ||
-            controlName.errors.email ||
-            controlName.errors.max ||
-            controlName.errors.min ||
-            controlName.errors.minPin
-            ) || forceError"
+            controlName.errors?.email_in_use ||
+            controlName.errors?.invalid_email ||
+            controlName.errors?.room_name ||
+            controlName.errors?.folder_name ||
+            controlName.errors?.room_number ||
+            controlName.errors?.minlength ||
+            controlName.errors?.uniqEmail ||
+            controlName.errors?.email ||
+            controlName.errors?.max ||
+            controlName.errors?.min ||
+            controlName.errors?.minPin)"
       >
         <img
-          [matTooltip]="
-            controlName.errors.folder_name ? 'Folder name already used' :
-            controlName.errors.room_name ? 'Room name already used' :
-            controlName.errors.email_in_use ? 'Email already in use' :
-            controlName.errors.invalid_email ? 'Please use your school email address' :
-            controlName.errors.minPin ? 'Pins must be 4 digits' :
-            controlName.errors.uniqEmail ? 'This email/username is already taken' :
-            controlName.errors.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' :
-            controlName.errors.email ? 'Must be Email' :
-            controlName.errors.max || controlName.errors.min  ? 'Must be between 1 and 120 minutes' : null
+          [customToolTip]="
+            controlName.errors?.folder_name ? 'Folder name already used' :
+            controlName.errors?.room_name ? 'Room name already used' :
+            controlName.errors?.email_in_use ? 'Email already in use' :
+            controlName.errors?.invalid_email ? 'Please use your school email address' :
+            controlName.errors?.minPin ? 'Pins must be 4 digits' :
+            controlName.errors?.uniqEmail ? 'This email/username is already taken' :
+            controlName.errors?.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' :
+            controlName.errors?.email ? 'Must be Email' :
+            controlName.errors?.max || controlName.errors?.min  ? 'Must be between 1 and 120 minutes' : null
           "
-          matTooltipClass="ds-tooltip"
           class="success-icon"
           [src]="'./assets/Report (Red).svg' | resolveAsset">
       </div>

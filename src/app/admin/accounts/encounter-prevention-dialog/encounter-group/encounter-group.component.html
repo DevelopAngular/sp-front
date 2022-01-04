@@ -1,12 +1,14 @@
 <div class="wrapper"
      #wrapper
+     [style.padding]="group.name ? '6px 0' : 0"
      (mouseenter)="wrapper.hovered = true"
      (mouseleave)="wrapper.hovered = false; wrapper.pressed = false"
      (mousedown)="wrapper.pressed = true"
      (click)="wrapper.pressed = false; clickEvent.emit($event)"
      [@pressState]="wrapper.pressed ? 'down' : 'up'"
 >
-  <div class="students" *ngIf="!group.name; else name">
+  <div class="group-name" *ngIf="group.name">{{ group.name }}</div>
+  <div class="students">
     <div class="student" *ngFor="let student of group.users">
       <div class="student-picture">
         <div *ngIf="student.profile_picture; else d" [ngStyle]="{'background': 'url(' + student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
@@ -26,7 +28,7 @@
     </div>
   </ng-template>
 
-  <div class="octagon">
+  <div class="octagon" [style.top]="group.name ? '15px' : '10px'">
     <app-octagon
       *ngIf="!wrapper.hovered; else go"
       [size]="28"

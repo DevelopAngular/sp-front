@@ -249,7 +249,8 @@
 .user-info .name,
 .assistant-name {
   margin: auto 0 auto auto;
-  //display: flex;
+  display: flex;
+  align-items: center;
   padding-right: 15px;
   white-space: nowrap;
   font-size: 14px;
