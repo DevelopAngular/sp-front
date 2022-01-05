@@ -74,6 +74,8 @@ export class SchoolAutocompleteComponent {
     this.ignoreNextUpdate = true;
     this.showOptions = false;
 
+    this.fControl.setValue(school.name);
+
     this.name.emit(school.name);
     this.schoolDiggerId.emit(school.schoolDiggerId);
     this.address.emit(school.addressFull);

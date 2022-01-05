@@ -8,7 +8,6 @@
           [fGroup]="schoolForm"
           [fControl]="schoolForm.controls.name"
           [forceError]="showErrors && !schoolForm.controls.name.valid"
-          (name)="setName($event)"
           (schoolDiggerId)="setSchoolDiggerId($event)"
           (address)="setAddress($event)">
         </app-school-autocomplete>

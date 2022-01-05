@@ -35,10 +35,6 @@ export class AddSchoolComponent implements OnInit {
     })
   }
 
-  setName(name) {
-    this.schoolForm.get('name').setValue(name);
-  }
-
   setSchoolDiggerId(schoolDiggerId) {
     this.schoolForm.get('schoolDiggerId').setValue(schoolDiggerId);
   }
