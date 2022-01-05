@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormsService} from '../../services/forms.service';
 
 @Component({
@@ -10,6 +10,7 @@ import {FormsService} from '../../services/forms.service';
 export class AddSchoolComponent implements OnInit {
 
   submitted: boolean = false;
+  showErrors: boolean = false;
 
   schoolForm: FormGroup;
   addressGroup: FormGroup;
@@ -27,7 +28,7 @@ export class AddSchoolComponent implements OnInit {
       'zip': [''],
     })
     this.schoolForm = this.fb.group({
-      'name': [null],
+      'name': [null, Validators.required],
       'schoolDiggerId': [null],
       'address': this.addressGroup,
       'contact': [null],
@@ -50,6 +51,11 @@ export class AddSchoolComponent implements OnInit {
   }
 
   submit() {
+    if (!this.schoolForm.valid || !this.addressGroup.valid) {
+      this.showErrors = true;
+      return;
+    }
+
     this.submitted = true;
     this.formService.addSchool(this.schoolForm.getRawValue()).subscribe(res => {
       console.log(res);

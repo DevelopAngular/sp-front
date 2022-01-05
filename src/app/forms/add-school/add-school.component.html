@@ -22,8 +22,8 @@
                    tabAttentive="true"
                    placeholder="324 Ridge Drive"
                    [formGroup]="schoolForm.controls.address"
-                   [forceError]="showErrors && !schoolForm.controls.address.controls.road.valid"
-                   [controlName]="schoolForm.controls.address.controls.road"></app-input>
+                   [forceError]="showErrors && !addressGroup.controls.road.valid"
+                   [controlName]="addressGroup.controls.road"></app-input>
         <app-input input_label="State"
                    width="90px"
                    [tabAttentive]="true"
@@ -32,8 +32,8 @@
                    tabAttentive="true"
                    placeholder="PA"
                    [formGroup]="schoolForm.controls.address"
-                   [forceError]="showErrors && !schoolForm.controls.address.controls.state.valid"
-                   [controlName]="schoolForm.controls.address.controls.state"></app-input>
+                   [forceError]="showErrors && !addressGroup.controls.state.valid"
+                   [controlName]="addressGroup.controls.state"></app-input>
       </div>
       <div class="row">
         <app-input input_label="City"
@@ -44,8 +44,8 @@
                    tabAttentive="true"
                    placeholder="Cityville"
                    [formGroup]="schoolForm.controls.address"
-                   [forceError]="showErrors && !schoolForm.controls.address.controls.city.valid"
-                   [controlName]="schoolForm.controls.address.controls.city"></app-input>
+                   [forceError]="showErrors && !addressGroup.controls.city.valid"
+                   [controlName]="addressGroup.controls.city"></app-input>
 
         <app-input input_label="ZIP"
                    width="90px"
@@ -55,8 +55,8 @@
                    tabAttentive="true"
                    placeholder="89475"
                    [formGroup]="schoolForm.controls.address"
-                   [forceError]="showErrors && !schoolForm.controls.address.controls.zip.valid"
-                   [controlName]="schoolForm.controls.address.controls.zip"></app-input>
+                   [forceError]="showErrors && !addressGroup.controls.zip.valid"
+                   [controlName]="addressGroup.controls.zip"></app-input>
       </div>
       <div id="confirm-wrapper">
         <app-gradient-button
