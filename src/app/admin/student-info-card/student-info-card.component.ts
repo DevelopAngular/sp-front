@@ -38,6 +38,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   adminCalendarOptions;
   selectedDate: {start: moment.Moment, end: moment.Moment};
   isFullScreenPasses: boolean;
+  isFullScreenReports: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<StudentInfoCardComponent>,
