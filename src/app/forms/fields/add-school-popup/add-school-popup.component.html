@@ -40,7 +40,7 @@
                  [formGroup]="schoolForm"
                  [forceError]="showErrors && !schoolForm.controls.city.valid"
                  [controlName]="schoolForm.controls.city"></app-input>
-      <app-input input_label="State"
+      <app-input input_label="State / Province"
                  width="110px"
                  [tabAttentive]="true"
                  [tabIndex]="askForSchoolName ? 4 : 3"
@@ -51,7 +51,7 @@
                  [controlName]="schoolForm.controls.state"></app-input>
     </div>
     <div class="row">
-      <app-input input_label="ZIP code"
+      <app-input input_label="Postal code"
                  width="170"
                  [tabAttentive]="true"
                  [tabIndex]="askForSchoolName ? 5 : 4"

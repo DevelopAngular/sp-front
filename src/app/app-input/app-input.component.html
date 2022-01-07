@@ -73,6 +73,7 @@
             controlName.errors?.minlength ||
             controlName.errors?.uniqEmail ||
             controlName.errors?.email ||
+            controlName.errors?.schoolEmail ||
             controlName.errors?.max ||
             controlName.errors?.min ||
             controlName.errors?.minPin)"
@@ -87,6 +88,7 @@
             controlName.errors?.uniqEmail ? 'This email/username is already taken' :
             controlName.errors?.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' :
             controlName.errors?.email ? 'Must be Email' :
+            controlName.errors?.schoolEmail ? 'Please use a school email' :
             controlName.errors?.max || controlName.errors?.min  ? 'Must be between 1 and 120 minutes' : null
           "
           matTooltipClass="ds-tooltip"
@@ -107,6 +109,7 @@
         !controlName.errors.room_number &&
         !controlName.errors.minlength &&
         !controlName.errors.uniqEmail &&
+        !controlName.errors.schoolEmail &&
         !controlName.errors.email &&
         !controlName.errors.max &&
         !controlName.errors.min
