@@ -7,10 +7,14 @@ import {QuickPreviewPasses} from '../../models/QuickPreviewPasses';
 import {UserService} from '../../services/user.service';
 import {School} from '../../models/School';
 import {HallPass} from '../../models/HallPass';
-import {map, tap} from 'rxjs/operators';
+import {filter, map, tap} from 'rxjs/operators';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {SettingsDescriptionPopupComponent} from '../../settings-description-popup/settings-description-popup.component';
 import {UserStats} from '../../models/UserStats';
+import {DateTimeFilterComponent} from '../explore/date-time-filter/date-time-filter.component';
+import * as moment from 'moment';
+import {CreateHallpassFormsComponent} from '../../create-hallpass-forms/create-hallpass-forms.component';
+import {ReportFormComponent} from '../../report-form/report-form.component';
 
 @Component({
   selector: 'app-student-info-card',
@@ -25,10 +29,15 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   profile: User;
 
   loadingPassesStats$: Observable<boolean>;
+  studentsStatsLoading$: Observable<boolean>;
   passesStats$: Observable<QuickPreviewPasses>;
   studentStats$: Observable<UserStats>;
   lastStudentPasses$: Observable<HallPass[]>;
   school: School;
+
+  adminCalendarOptions;
+  selectedDate: {start: moment.Moment, end: moment.Moment};
+  isFullScreenPasses: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<StudentInfoCardComponent>,
@@ -47,12 +56,17 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
     this.loadingPassesStats$ = this.passesService.quickPreviewPassesLoading$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
     this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
+    this.studentsStatsLoading$ = this.userService.studentsStatsLoading$;
   }
 
   ngAfterViewInit() {
     fromEvent(this.left.nativeElement, 'scroll').subscribe(res => {
       console.log(res);
     });
+  }
+
+  getDate(date) {
+    return moment(date).format('MMM YYYY') + ' at ' + moment(date).format('hh:mm A');
   }
 
   openStudentSettings(event) {
@@ -105,14 +119,14 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
         icon: './assets/Plus (Blue-Gray).svg',
         textColor: '#7f879d',
         backgroundColor: '#F4F4F4',
-        action: ''
+        action: 'now'
       },
       {
         label: 'Schedule pass',
         icon: './assets/Schedule pass (Blue-Gray).svg',
         textColor: '#7f879d',
         backgroundColor: '#F4F4F4',
-        action: ''
+        action: 'feature'
       }
     ];
     UNANIMATED_CONTAINER.next(true);
@@ -122,7 +136,58 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
       data: {trigger: event.currentTarget, settings }
     });
 
-    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false))).subscribe();
+    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false))).subscribe((action) => {
+        const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+          panelClass: 'main-form-dialog-container',
+          backdropClass: 'custom-backdrop',
+          maxWidth: '100vw',
+          data: {
+            'forLater': action === 'feature',
+            'forStaff': true,
+            'forInput': true,
+            'fromAdmin': true,
+            'adminSelectedStudent': this.profile
+          }
+        });
+    });
+  }
+
+  openDateFilter(event) {
+    UNANIMATED_CONTAINER.next(true);
+    const calendar = this.dialog.open(DateTimeFilterComponent, {
+      id: 'calendar_filter',
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        target: new ElementRef(event),
+        date: this.selectedDate,
+        options: this.adminCalendarOptions
+      }
+    });
+
+    calendar.afterClosed()
+      .pipe(
+        tap(() => UNANIMATED_CONTAINER.next(false)),
+        filter(res => res)
+      )
+      .subscribe(({date, options}) => {
+        this.adminCalendarOptions = options;
+        if (!date.start) {
+          this.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
+        } else {
+          this.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
+        }
+      });
+  }
+
+  openReportForm() {
+    const dialogRef = this.dialog.open(ReportFormComponent, {
+      panelClass: ['form-dialog-container', 'report-dialog'],
+      backdropClass: 'custom-backdrop',
+      width: '425px',
+      height: '500px',
+      data: {report: this.profile}
+    });
   }
 
 }

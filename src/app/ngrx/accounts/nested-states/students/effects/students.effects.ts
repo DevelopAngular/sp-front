@@ -141,7 +141,9 @@ export class StudentsEffects {
                 stats: {...stats, expired_passes: stats.expired_passes.map(pass => HallPass.fromJSON(pass))}
               });
             }),
-            catchError(error => of(studentsActions.getStudentStatsFailure({errorMessage: error.message})))
+            catchError(error => {
+              return of(studentsActions.getStudentStatsFailure({errorMessage: error.message}))
+            })
           );
       })
     );

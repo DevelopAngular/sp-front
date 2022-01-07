@@ -19,20 +19,26 @@
     </div>
 
     <div class="content">
-      <div class="student-passes-info" *ngIf="passesStats$ | async as stats">
+      <div class="student-passes-info" *ngIf="!(loadingPassesStats$ | async); else fakeStats">
         <div class="card-info">
-            <div class="title">{{ stats.past_passes_today }}</div>
+            <div class="title">{{ (passesStats$ | async)?.past_passes_today }}</div>
             <div class="subtitle">today</div>
         </div>
-        <div class="card-info" style="margin: 0 8px">
-          <div class="title">{{ stats.past_passes_week }}</div>
+        <div class="card-info">
+          <div class="title">{{ (passesStats$ | async)?.past_passes_week }}</div>
           <div class="subtitle">this week</div>
         </div>
         <div class="card-info">
-          <div class="title">{{ stats.past_passes_month }}</div>
+          <div class="title">{{ (passesStats$ | async)?.past_passes_month }}</div>
           <div class="subtitle">this month</div>
         </div>
       </div>
+
+      <ng-template #fakeStats>
+        <div class="student-passes-info">
+          <div class="fake-card-stats fake-animate" *ngFor="let card of [1, 1, 1]"></div>
+        </div>
+      </ng-template>
 
       <div class="forms">
         <div class="form">
@@ -43,18 +49,18 @@
           </div>
           <div class="title">Encounter prevention</div>
         </div>
-        <div class="form">
-          <div class="icon" style="background-color: #E48C15">
-            <img width="13px" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="">
-          </div>
-          <div class="title">Restrict all rooms</div>
-        </div>
-        <div class="form">
-          <div class="icon" style="background-color: #6651F1">
-            <img width="16px" [src]="'./assets/Pass Quota (White).svg' | resolveAsset" alt="">
-          </div>
-          <div class="title">Pass quota</div>
-        </div>
+<!--        <div class="form">-->
+<!--          <div class="icon" style="background-color: #E48C15">-->
+<!--            <img width="13px" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="">-->
+<!--          </div>-->
+<!--          <div class="title">Restrict all rooms</div>-->
+<!--        </div>-->
+<!--        <div class="form">-->
+<!--          <div class="icon" style="background-color: #6651F1">-->
+<!--            <img width="16px" [src]="'./assets/Pass Quota (White).svg' | resolveAsset" alt="">-->
+<!--          </div>-->
+<!--          <div class="title">Pass quota</div>-->
+<!--        </div>-->
 
         <div class="form">
           <div class="form-content-container">
@@ -97,25 +103,35 @@
           [gradient]="'#FFFFFF, #FFFFFF'"
           [leftIcon]="'./assets/Calendar (Navy).svg'"
           [rightIcon]="'./assets/Rect (Navy).svg'"
+          [size]="'medium'"
           [textColor]="'#1F195E'"
+          (buttonClick)="openDateFilter($event)"
         >This school year</app-gradient-button>
+
+        <app-square-button
+          [backgroundColor]="'#edcbd9'"
+          (buttonClick)="openReportForm()"
+        >
+          <img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset">
+        </app-square-button>
 
         <app-gradient-button
           [rightIcon]="'./assets/Plus (White).svg'"
           (buttonClick)="openCreatePassPopup($event)"
+          [size]="'medium'"
         >Create pass</app-gradient-button>
       </div>
     </div>
 
-    <div class="content" *ngIf="studentStats$ | async as studentStats">
+    <div class="content">
       <div class="block">
         <app-overview-container
           [title]="'Overview'"
           [icon]="'./assets/Overview (Navy).svg'">
-          <div class="info-cards">
+          <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakeInfo">
             <div class="info-card">
               <div class="title">PASSES CREATED</div>
-              <div class="value">{{ studentStats.expired_passes.length + ' Passes' }}</div>
+              <div class="value">{{ (studentStats$ | async)?.expired_passes.length + ' Passes' }}</div>
             </div>
             <div class="info-card">
               <div class="title">TIME SPENT OUT OF CLASS</div>
@@ -123,30 +139,62 @@
             </div>
             <div class="info-card">
               <div class="title">PASSES OVER TIME LIMIT</div>
-              <div class="value">{{ studentStats.over_time_limit + ' Passes' }}</div>
+              <div class="value">{{ (studentStats$ | async)?.over_time_limit + ' Passes' }}</div>
             </div>
             <div class="info-card">
               <div class="title">PASSES AUTO-ENDED</div>
-              <div class="value">{{ studentStats.auto_ended + ' Pass' }}</div>
+              <div class="value">{{ (studentStats$ | async)?.auto_ended + ' Pass' }}</div>
             </div>
           </div>
+
+          <ng-template #fakeInfo>
+            <div class="info-cards">
+              <div class="fake-card fake-animate" *ngFor="let pass of [1, 1, 1, 1]"></div>
+            </div>
+          </ng-template>
         </app-overview-container>
       </div>
       <div class="block">
         <app-overview-container
           [title]="'Passes'"
           [icon]="'./assets/Passes (Navy).svg'">
-          <div class="info-cards">
-            <div class="pass" *ngFor="let pass of studentStats.expired_passes">
-              <app-pass-tile
-                [forFuture]="false"
-                [fromPast]="true"
-                [forStaff]="false"
-                [pass]="pass"
-                [profileImage]="false"
-                [isMiniCard]="true"
-              ></app-pass-tile>
+          <div class="block-container">
+            <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakePasses">
+              <ng-container *ngFor="let pass of (studentStats$ | async)?.expired_passes; let i = index">
+                <app-pass-tile *ngIf="i <= 5"
+                   [forFuture]="false"
+                   [fromPast]="true"
+                   [forStaff]="false"
+                   [pass]="pass"
+                   [profileImage]="false"
+                   [isMiniCard]="true"
+                ></app-pass-tile>
+                <app-pass-tile *ngIf="(i > 5 && isFullScreenPasses)"
+                   [forFuture]="false"
+                   [fromPast]="true"
+                   [forStaff]="false"
+                   [pass]="pass"
+                   [profileImage]="false"
+                   [isMiniCard]="true"
+                ></app-pass-tile>
+              </ng-container>
             </div>
+
+            <ng-template #fakePasses>
+              <div class="info-cards">
+                <div class="fake-pass fake-animate" *ngFor="let pass of [1, 1, 1, 1, 1, 1]"></div>
+              </div>
+            </ng-template>
+
+            <app-gradient-button
+              [style.margin-top]="'20px'"
+              *ngIf="(studentStats$ | async)?.expired_passes.length > 6 && !(studentsStatsLoading$ | async)"
+              [gradient]="'#FFFFFF, #FFFFFF'"
+              [leftIcon]="isFullScreenPasses ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
+              [textColor]="'#7f879d'"
+              (buttonClick)="isFullScreenPasses = !isFullScreenPasses"
+            >{{ isFullScreenPasses ? 'Collapse' : 'See all ' + (studentStats$ | async)?.expired_passes.length + ' passes' }}
+            </app-gradient-button>
           </div>
         </app-overview-container>
       </div>
@@ -156,16 +204,16 @@
           [icon]="'./assets/Report (Navy).svg'">
 
           <div class="info-cards">
-            <div class="report" *ngFor="let report of [1, 2, 3, 4]">
-              <div class="date">May 27, 2021 at 8:53 AM</div>
-              <div class="description">No pass, wandering around the hallway and some more text dsfvgfb dfgbrgbr fgbrbetd vgb tedb dbtybn </div>
+            <div class="report" *ngFor="let report of (studentStats$ | async)?.reports">
+              <div class="date">{{ getDate(report.created) }}</div>
+              <div class="description">{{ report.message }}</div>
             </div>
           </div>
         </app-overview-container>
       </div>
     </div>
-    <div class="feedback-button">
-      <app-feedback-button></app-feedback-button>
-    </div>
+<!--    <div class="feedback-button">-->
+<!--      <app-feedback-button></app-feedback-button>-->
+<!--    </div>-->
   </div>
 </div>

@@ -45,7 +45,7 @@
     }
 
     .content {
-
+      width: 100%;
       .student-passes-info {
         display: flex;
         justify-content: space-between;
@@ -70,6 +70,14 @@
             color: $blue-gray;
             font-size: 14px;
           }
+        }
+
+        .fake-card-stats {
+          border-radius: 8px;
+          width: 117px;
+          height: 58px;
+          display: flex;
+          background-color: #E2E6EC;
         }
       }
 
@@ -137,6 +145,7 @@
 
       .buttons {
         display: flex;
+        justify-content: space-between;
       }
     }
 
@@ -174,6 +183,13 @@
             margin-top: 9px;
           }
         }
+
+        .fake-card {
+          width: 245px;
+          height: 89px;
+          border-radius: 12px;
+          background-color: #E2E6EC;
+        }
       }
 
       .block {
@@ -200,7 +216,35 @@
             -webkit-box-orient: vertical;
           }
         }
+
+        .block-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
       }
+    }
+  }
+
+  .fake-animate {
+    animation : fake-pass-shimmer 3s infinite linear;
+    background: linear-gradient(to right, #E2E6EC 4%, #e2e2e2 25%, #E2E6EC 36%);
+    background-size: 143px 100%;
+  }
+
+  .fake-pass {
+    width: 143px;
+    height: 86.5px;
+    border-radius: 12.75px;
+    background-color: #E2E6EC;
+  }
+
+  @keyframes fake-pass-shimmer {
+    0% {
+      background-position: -143px 0;
+    }
+    100% {
+      background-position: 143px 0;
     }
   }
 }
