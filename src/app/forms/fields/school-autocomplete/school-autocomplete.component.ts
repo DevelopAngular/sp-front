@@ -124,8 +124,6 @@ export class SchoolAutocompleteComponent {
     if (!this.defocused) {
       if (this.focusedAgain)
         this.showOptions = false;
-      else
-        this.defocused = !this.mouseIn;
     }
 
   }
