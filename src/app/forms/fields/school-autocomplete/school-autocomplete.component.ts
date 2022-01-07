@@ -116,7 +116,7 @@ export class SchoolAutocompleteComponent {
   popup(data) {
     let addSchoolPopup = this.matDialog.open(AddSchoolPopupComponent, {
       panelClass: 'add-school-popup-container',
-      //backdropClass: 'invis-backdrop',
+      backdropClass: 'white-backdrop',
       disableClose: true,
       data: {name: data},
     });

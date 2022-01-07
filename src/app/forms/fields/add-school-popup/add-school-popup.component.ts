@@ -26,7 +26,6 @@ export class AddSchoolPopupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.data);
     this.schoolForm = this.fb.group({
       name: [this.data['name'], Validators.required],
       road: ['', Validators.required],

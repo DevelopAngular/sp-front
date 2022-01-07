@@ -5,6 +5,29 @@ import {GoogleAnalyticsService} from '../../services/google-analytics.service';
 
 declare const gtag: Function;
 
+function schoolEmailValidator() {
+  const badEmails = [
+    'outlook.com',
+    'gmail.com',
+    'yahoo.com',
+    'hotmail.com',
+    'inbox.com',
+    'icloud.com',
+    'mail.com',
+    'yandex.com',
+  ];
+
+  return (control) => {
+    let email = control.value;
+    if (email === undefined || email.length < 8)
+      return true;
+    email = email.toLowerCase();
+
+    const forbidden = badEmails.some(e => email.endsWith(e));
+    return forbidden ? {schoolEmail: {value: control.value}} : null;
+  };
+}
+
 @Component({
   selector: 'app-quote-request',
   templateUrl: './quote-request.component.html',
@@ -38,7 +61,7 @@ export class QuoteRequestComponent implements OnInit {
     this.quoteRequestForm = this.fb.group({
       name: ['', Validators.required],
       position: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email, schoolEmailValidator()]],
       phone: ['', [Validators.required, Validators.pattern('[0-9 \\-()]{10,20}')]],
       schools: this.fb.array([])
     });
@@ -108,30 +131,6 @@ export class QuoteRequestComponent implements OnInit {
     } else {
       return '279px';
     }
-  }
-
-  isNormalEmailError() {
-    return this.showErrors && !this.quoteRequestForm.controls.email.valid;
-  }
-
-  isValidEmail() {
-    let email = this.quoteRequestForm.controls['email'].value;
-    if (email === undefined || email.length < 8)
-      return true;
-    email = email.toLowerCase();
-
-    let badEmails = [
-      'outlook.com',
-      'gmail.com',
-      'yahoo.com',
-      'hotmail.com',
-      'inbox.com',
-      'icloud.com',
-      'mail.com',
-      'yandex.com',
-    ];
-
-    return !badEmails.some(e => email.endsWith(e));
   }
 
 }
