@@ -7,7 +7,7 @@
   <form [formGroup]="schoolForm" [style.height]="askForSchoolName ? '400px' : '320px'">
     <div *ngIf="askForSchoolName" class="row">
       <app-input input_label="School name"
-                 width="360"
+                 [width]="mobile ? 240 : 360"
                  [input_value]="data['name']"
                  [tabAttentive]="true"
                  [tabIndex]="1"
@@ -20,7 +20,7 @@
     </div>
     <div class="row">
       <app-input input_label="Street Address"
-                 width="360px"
+                 [width]="mobile ? 240 : 360"
                  [tabAttentive]="true"
                  [tabIndex]="askForSchoolName ? 2 : 1"
                  [isFocus]="!askForSchoolName"
@@ -32,7 +32,7 @@
     </div>
     <div class="row">
       <app-input input_label="City"
-                 width="230px"
+                 [width]="mobile ? 150 : 230"
                  [tabAttentive]="true"
                  [tabIndex]="askForSchoolName ? 3 : 2"
                  tabAttentive="true"
@@ -40,8 +40,8 @@
                  [formGroup]="schoolForm"
                  [forceError]="showErrors && !schoolForm.controls.city.valid"
                  [controlName]="schoolForm.controls.city"></app-input>
-      <app-input input_label="State / Province"
-                 width="110px"
+      <app-input [input_label]="mobile ? 'State' : 'State / Province'"
+                 [width]="mobile ? 70 : 110"
                  [tabAttentive]="true"
                  [tabIndex]="askForSchoolName ? 4 : 3"
                  tabAttentive="true"
@@ -52,7 +52,7 @@
     </div>
     <div class="row">
       <app-input input_label="Postal code"
-                 width="170"
+                 [width]="mobile ? 110 : 170"
                  [tabAttentive]="true"
                  [tabIndex]="askForSchoolName ? 5 : 4"
                  tabAttentive="true"
@@ -61,7 +61,7 @@
                  [forceError]="showErrors && !schoolForm.controls.zip.valid"
                  [controlName]="schoolForm.controls.zip"></app-input>
       <app-input input_label="Country"
-                 width="170px"
+                 [width]="mobile ? 110 : 170"
                  [tabAttentive]="true"
                  [tabIndex]="askForSchoolName ? 6 : 5"
                  tabAttentive="true"

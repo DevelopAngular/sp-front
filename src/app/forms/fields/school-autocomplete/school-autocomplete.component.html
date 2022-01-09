@@ -45,7 +45,7 @@
                (pointerDownEvent)="notFoundHover = true"
                (pointerCancelEvent)="notFoundHover = false"
                [style.background-color]="notFoundHover ? '#F4F4F4' : '#FFFFFF'"
-               (click)="popup(fControl.value)">
+               (pointerClickEvent)="popup(fControl.value)">
             <div>
               {{fControl.value}}
             </div>
