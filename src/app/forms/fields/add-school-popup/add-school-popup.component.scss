@@ -11,10 +11,13 @@
 
 form {
   margin: 18px;
-  width: 380px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+
+  @media (min-width: 425px) {
+    width: 380px;
+  }
 }
 
 .row {
