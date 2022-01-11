@@ -152,4 +152,10 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
       this.input_type = 'password';
     }
   }
+
+  errorTooltipToggleMobile(element) {
+    if (window.innerWidth <= 425) {
+      element.toggle()
+    }
+  }
 }
