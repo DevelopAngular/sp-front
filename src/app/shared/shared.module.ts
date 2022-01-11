@@ -88,6 +88,7 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
 import {LocationCellComponent} from '../location-cell/location-cell.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
+import {NotificationFormComponent} from '../notification-form/notification-form.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -186,7 +187,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DateTimeComponent,
     LocationCellComponent,
     InvitationCardComponent,
-    ReportFormComponent
+    ReportFormComponent,
+    NotificationFormComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -269,6 +271,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     LocationCellComponent,
     InvitationCardComponent,
     ReportFormComponent,
+    NotificationFormComponent,
   ],
   providers: [
     {

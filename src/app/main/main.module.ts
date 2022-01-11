@@ -6,7 +6,6 @@ import {MainPageComponent} from '../main-page/main-page.component';
 import {SettingsComponent} from '../settings/settings.component';
 import {SharedModule} from '../shared/shared.module';
 import {MainRoutingModule} from './main-routing.module';
-import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {AnimatedHeaderDirective} from '../core/directives/animated-header.directive';
 import {NavbarComponent} from '../navbar/navbar.component';
 import {NavButtonComponent} from '../nav-button/nav-button.component';
@@ -27,7 +26,6 @@ import {PinInputComponent} from '../teacher-pin/pin-input/pin-input.component';
         SettingsComponent,
         FavoriteFormComponent,
         MainPageComponent,
-        NotificationFormComponent,
         AnimatedHeaderDirective,
         NavbarComponent,
         NavButtonComponent,

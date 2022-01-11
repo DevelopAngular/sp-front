@@ -1,5 +1,5 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup} from '@angular/forms';
 
 import {Subject} from 'rxjs';
@@ -40,6 +40,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
       private locService: LocationsService,
       public dialogRef: MatDialogRef<NotificationFormComponent>,
       private userService: UserService,
+      @Inject(MAT_DIALOG_DATA) private data: any
   ) {}
 
   get isDisabledNotif() {
@@ -55,26 +56,28 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      this.dataService.currentUser
-      .subscribe(user => {
-          this._zone.run(() => {
-              this.user = user;
-          });
-      });
+    if (this.data['profile']) {
+      this.user = this.data['profile'];
+    } else {
+      this.userService.user$
+        .subscribe(user => {
+          this.user = user;
+        });
+    }
 
-      this.userService.getUserNotification().pipe(takeUntil(this.destroy$)).subscribe(res => {
-          this.settings = res;
-          this.loaded = true;
-          this.buildForm();
-      });
+    this.userService.getUserNotification(this.user.id).pipe(takeUntil(this.destroy$)).subscribe(res => {
+        this.settings = res;
+        this.loaded = true;
+        this.buildForm();
+    });
 
-      this.change$.pipe(takeUntil(this.destroy$), switchMap(({id, value}) => {
-          if (value) {
-              return this.userService.enableNotification(id);
-          } else {
-              return this.userService.disableNotification(id);
-          }
-      })).subscribe(console.log);
+    this.change$.pipe(takeUntil(this.destroy$), switchMap(({id, value}) => {
+        if (value) {
+            return this.userService.enableNotification(id);
+        } else {
+            return this.userService.disableNotification(id);
+        }
+    })).subscribe(console.log);
   }
 
   ngOnDestroy() {

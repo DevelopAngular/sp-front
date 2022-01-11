@@ -33,6 +33,9 @@ import {SelectRoleComponent} from './accounts/select-role/select-role.component'
 import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-profile.component';
 import {StudentInfoCardComponent} from './student-info-card/student-info-card.component';
 import {OverviewContainerComponent} from './student-info-card/student-passes-overwiew/overview-container.component';
+import {ModelFilterComponent} from './student-info-card/model-filter/model-filter.component';
+
+;
 
 @NgModule({
     imports: [
@@ -70,7 +73,8 @@ import {OverviewContainerComponent} from './student-info-card/student-passes-ove
         ViewProfileComponent,
         StudentInfoCardComponent,
         OverviewContainerComponent
-    ],
+,
+        ModelFilterComponent    ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
         PdfGeneratorService,

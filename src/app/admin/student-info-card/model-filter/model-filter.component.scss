@@ -1,0 +1,28 @@
+@import "../../../../sp-colors";
+
+.wrapper {
+  background-color: #FFFFFF;
+  width: 244px;
+  border-radius: 9px;
+
+  .options-content {
+    padding: 15px 0 5px 0;
+
+    .option-container {
+      padding: 0 10px;
+      .option {
+        height: 40px;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        border-radius: 7px;
+        position: relative;
+        .label {
+          font-size: 14px;
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+}

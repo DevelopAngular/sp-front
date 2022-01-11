@@ -14,7 +14,7 @@
     </div>
 
     <div class="top-buttons">
-      <app-round-button [icon]="'Notifications'"></app-round-button>
+<!--      <app-round-button [icon]="'Notifications'" (buttonClick)="openNotification()"></app-round-button>-->
       <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
     </div>
 
@@ -99,14 +99,16 @@
   <div class="right">
     <div class="header">
       <div class="buttons">
-        <app-gradient-button
-          [gradient]="'#FFFFFF, #FFFFFF'"
-          [leftIcon]="'./assets/Calendar (Navy).svg'"
-          [rightIcon]="'./assets/Rect (Navy).svg'"
-          [size]="'medium'"
-          [textColor]="'#1F195E'"
-          (buttonClick)="openDateFilter($event)"
-        >This school year</app-gradient-button>
+        <div class="date-button" #dateButton>
+          <app-gradient-button
+            [gradient]="'#FFFFFF, #FFFFFF'"
+            [leftIcon]="'./assets/Calendar (Navy).svg'"
+            [rightIcon]="'./assets/Rect (Navy).svg'"
+            [size]="'medium'"
+            [textColor]="'#1F195E'"
+            (buttonClick)="openDateFilter($event)"
+          >{{ dateText(selectedDate) }}</app-gradient-button>
+        </div>
 
         <app-square-button
           [backgroundColor]="'#edcbd9'"
@@ -127,7 +129,9 @@
       <div class="block">
         <app-overview-container
           [title]="'Overview'"
-          [icon]="'./assets/Overview (Navy).svg'">
+          [icon]="'./assets/Overview (Navy).svg'"
+          (clickFilter)="openFilter($event)"
+        >
           <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakeInfo">
             <div class="info-card">
               <div class="title">PASSES CREATED</div>
@@ -157,7 +161,9 @@
       <div class="block">
         <app-overview-container
           [title]="'Passes'"
-          [icon]="'./assets/Passes (Navy).svg'">
+          [icon]="'./assets/Passes (Navy).svg'"
+          (clickFilter)="openFilter($event)"
+        >
           <div class="block-container">
             <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakePasses">
               <ng-container *ngIf="(studentStats$ | async).expired_passes.length; else emptyPassState">
@@ -211,7 +217,9 @@
       <div class="block">
         <app-overview-container
           [title]="'Reports'"
-          [icon]="'./assets/Report (Navy).svg'">
+          [icon]="'./assets/Report (Navy).svg'"
+          (clickFilter)="openFilter($event)"
+        >
           <div class="block-container">
             <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakeReports">
               <ng-container *ngIf="(studentStats$ | async).reports.length; else emptyReportState">

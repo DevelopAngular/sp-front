@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-overview-container',
@@ -11,6 +11,8 @@ export class OverviewContainerComponent implements OnInit {
   @Input() width: string = '100%';
   @Input() title: string;
   @Input() icon: string;
+
+  @Output() clickFilter: EventEmitter<{event: HTMLElement, action: string}> = new EventEmitter<{event: HTMLElement, action: string}>();
 
   constructor() { }
 

@@ -1,12 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {UserService} from '../services/user.service';
 import {HttpService} from '../services/http-service';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {User} from '../models/User';
 import {School} from '../models/School';
 import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-my-profile-dialog',
@@ -25,13 +25,19 @@ export class MyProfileDialogComponent implements OnInit {
     private userService: UserService,
     private http: HttpService,
     private formService: CreateFormService,
-    public dialogRef: MatDialogRef<MyProfileDialogComponent>
+    public dialogRef: MatDialogRef<MyProfileDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: any
   ) { }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    this.user$ = this.userService.user$;
-    this.schools$ = this.http.schoolsCollection$;
+    if (this.data['target'] && this.data['target'] === 'password') {
+      this.user$ = of(this.data['profile']);
+      this.page = 2;
+    } else {
+      this.user$ = this.userService.user$;
+      this.schools$ = this.http.schoolsCollection$;
+    }
   }
 
   nextStep() {
@@ -42,10 +48,14 @@ export class MyProfileDialogComponent implements OnInit {
   }
 
   back() {
-    this.formService.setFrameMotionDirection('back');
-    setTimeout(() => {
-      this.page = 1;
-    }, 100);
+    if (this.data['target'] && this.data['target'] === 'password') {
+      this.dialogRef.close();
+    } else {
+      this.formService.setFrameMotionDirection('back');
+      setTimeout(() => {
+        this.page = 1;
+      }, 100);
+    }
   }
 
 }

@@ -483,8 +483,8 @@ export class UserService implements OnDestroy {
      return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
-  getUserNotification() {
-    return this.http.get('v1/users/@me/notification_settings');
+  getUserNotification(id) {
+    return this.http.get(`v1/users/${id}/notification_settings`);
   }
 
   enableNotification(id) {

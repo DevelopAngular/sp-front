@@ -6,7 +6,7 @@
     </div>
 
     <div class="icon-button">
-      <app-round-button [size]="34" [icon]="'Dots'"></app-round-button>
+      <app-round-button [size]="34" [icon]="'Dots'" (buttonClick)="clickFilter.emit({event: $event, action: title})"></app-round-button>
     </div>
   </div>
   <div class="content">
