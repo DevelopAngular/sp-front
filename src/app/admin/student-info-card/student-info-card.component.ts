@@ -19,6 +19,10 @@ import {ModelFilterComponent} from './model-filter/model-filter.component';
 import {ToastService} from '../../services/toast.service';
 import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
 import {NotificationFormComponent} from '../../notification-form/notification-form.component';
+import {StatusPopupComponent} from '../profile-card-dialog/status-popup/status-popup.component';
+import {EncounterPreventionDialogComponent} from '../accounts/encounter-prevention-dialog/encounter-prevention-dialog.component';
+import {EncounterPreventionService} from '../../services/encounter-prevention.service';
+import {ExclusionGroup} from '../../models/ExclusionGroup';
 
 @Component({
   selector: 'app-student-info-card',
@@ -38,12 +42,16 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   passesStats$: Observable<QuickPreviewPasses>;
   studentStats$: Observable<UserStats>;
   lastStudentPasses$: Observable<HallPass[]>;
+
+  exclusionGroups$: Observable<ExclusionGroup[]>;
+  exclusionGroupsLoading$: Observable<boolean>;
+
   school: School;
 
   adminCalendarOptions;
   selectedDate: {start: moment.Moment, end: moment.Moment} = {
-    start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
-    end: moment('31/7/' + moment().add(1, 'year').year(), 'DD/MM/YYYY')
+    start: moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'),
+    end: moment('31/7/' + moment().year(), 'DD/MM/YYYY')
   };
   isFullScreenPasses: boolean;
   isFullScreenReports: boolean;
@@ -55,7 +63,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
     private passesService: HallPassesService,
     private userService: UserService,
     private cdr: ChangeDetectorRef,
-    private toast: ToastService
+    private toast: ToastService,
+    private encounterPreventionService: EncounterPreventionService
   ) { }
 
   ngOnInit(): void {
@@ -68,6 +77,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
     this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
     this.studentsStatsLoading$ = this.userService.studentsStatsLoading$;
+
+    this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
+    this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
   }
 
   ngAfterViewInit() {
@@ -117,8 +130,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
         textColor: '#E32C66',
         backgroundColor: '#F4F4F4',
         confirmButton: true,
-        description: 'Are you sure?',
-        action: 'delete'
+        description: 'Are you sure you want to delete account?',
+        action: 'delete',
+        withoutHoverDescription: true
       }
     ];
     UNANIMATED_CONTAINER.next(true);
@@ -145,6 +159,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
             height: '500px',
             data: {target: 'password', profile: this.profile}
           });
+        } else if (action === 'delete') {
+          this.userService.deleteUserRequest(this.profile.id, '_profile_student');
+          this.dialogRef.close();
         }
       });
   }
@@ -273,6 +290,34 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openStatusPopup(elem) {
+    const SPC = this.dialog.open(StatusPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': elem.currentTarget,
+        'profile': this.profile,
+        'profileStatus': this.profile.status,
+        'withoutDelete': true
+      }
+    });
+
+    SPC.afterClosed().pipe(filter(res => !!res)).subscribe((status) => {
+      this.userService.updateUserRequest(this.profile, {status});
+      this.toast.openToast({title: 'Account status updated', type: 'success'});
+    });
+  }
+
+  openEncounterPrevention(page, currentGroup?) {
+    const encounterDialog = this.dialog.open(EncounterPreventionDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: {'forceNextPage': page, currentUser: this.profile, forceGroup: currentGroup}
+    });
+  }
+
   dateText({start, end}): string {
     if (start.isSame(moment().subtract(3, 'days'), 'day')) {
       return 'Last 3 days';
@@ -282,7 +327,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
       return 'Last 30 days';
     } else if (start.isSame(moment().subtract(90, 'days'), 'day')) {
       return 'Last 90 days';
-    } else if (start.isSame(moment('1/8/' + moment().year(), 'DD/MM/YYYY'))) {
+    } else if (start.isSame(moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'))) {
       return 'This school year';
     }
     if (start && end) {

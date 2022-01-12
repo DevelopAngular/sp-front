@@ -78,6 +78,17 @@ export class EncounterPreventionDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (this.data) {
+      if (this.data['forceNextPage']) {
+        this.forceNextPage = this.data['forceNextPage'];
+      }
+      if (this.data['currentUser']) {
+        this.currentUser = this.data['currentUser'];
+      }
+      if (this.data['forceGroup']) {
+        this.forceGroup = this.data['forceGroup'];
+      }
+    }
     if (this.forceNextPage === 'newGroup') {
       this.state.createGroup.users.push({...this.currentUser, lockAccount: true});
       this.setState(true, Pages.NewGroup);
@@ -147,7 +158,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
   }
 
   back() {
-    if (this.state.current_page === Pages.StartPage || this.state.current_page === Pages.Groups) {
+    if (this.state.current_page === Pages.StartPage || this.state.current_page === Pages.Groups || (this.data && this.data['forceNextPage'])) {
         this.dialogRef.close();
     } else {
       if (!!this.forceNextPage) {
@@ -168,6 +179,9 @@ export class EncounterPreventionDialogComponent implements OnInit {
         students: this.state.createGroup.users.map(s => s.id),
         enabled: true
       });
+      if (this.data && this.data['forceNextPage']) {
+        this.dialogRef.close();
+      }
       if (this.forceNextPage) {
         this.backEmit.emit();
         return;
@@ -180,6 +194,9 @@ export class EncounterPreventionDialogComponent implements OnInit {
         notes: this.state.data.currentGroup.notes,
         students: this.state.data.currentGroup.users.map(s => s.id)
       });
+      if (this.data && this.data['forceNextPage']) {
+        this.dialogRef.close();
+      }
       if (this.forceNextPage) {
         this.backEmit.emit();
         return;
@@ -209,6 +226,13 @@ export class EncounterPreventionDialogComponent implements OnInit {
           this.setState(true, Pages.EditGroup);
         } else if (action === 'delete') {
           this.encounterPreventionService.deleteExclusionGroupRequest(this.state.data.currentGroup);
+          if (this.data && this.data['forceNextPage']) {
+            this.dialogRef.close();
+          }
+          if (this.forceNextPage) {
+            this.backEmit.emit();
+            return;
+          }
           this.setState(true, Pages.Groups);
         } else if (action === 'copy_link') {
           navigator.clipboard.writeText(`${window.location.href}?encounter_id=${this.state.data.currentGroup.id}`).then(() => {

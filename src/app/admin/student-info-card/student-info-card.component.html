@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="left" #left>
     <div class="back">
-      <app-round-button [icon]="'Chevron Left'"></app-round-button>
+      <app-round-button [icon]="'Chevron Left'" (buttonClick)="dialogRef.close()"></app-round-button>
     </div>
     <div class="avatar-content">
       <div class="avatar">
@@ -41,14 +41,49 @@
       </ng-template>
 
       <div class="forms">
-        <div class="form">
-          <div class="icon" style="background-color: #E32C66">
-            <app-octagon [size]="20" [backgroundColor]="'#E32C66'">
-              <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Walking One (White).svg' | resolveAsset" alt="">
-            </app-octagon>
+        <div class="form" style="flex-direction: column" *ngIf="!(exclusionGroupsLoading$ | async); else fakeForm">
+          <div class="card">
+            <div class="label">
+              <div class="icon" style="background-color: #E32C66">
+                <app-octagon [size]="20" [backgroundColor]="'#E32C66'">
+                  <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Walking One (White).svg' | resolveAsset" alt="">
+                </app-octagon>
+              </div>
+              <div class="title">Encounter prevention</div>
+            </div>
+            <div class="add-button">
+              <app-gradient-button
+                [size]="'editable'"
+                [minWidth]="'50px'"
+                [minHeight]="'31px'"
+                [textColor]="'#7F879D'"
+                [gradient]="'#FFFFFF, #FFFFFF'"
+                [hoverColor]="'#FFFFFF'"
+                [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
+                [leftImageWidth]="'16px'"
+                [leftImageHeight]="'16px'"
+                [withShadow]="false"
+                [fontSize]="'14px'"
+                (buttonClick)="openEncounterPrevention('newGroup')"
+              >Add</app-gradient-button>
+            </div>
           </div>
-          <div class="title">Encounter prevention</div>
+
+          <div class="groups">
+            <div class="group"
+                 *ngFor="let group of exclusionGroups$ | async"
+                 [showToolTip]="!!group.notes"
+                 [customToolTip]="group.notes"
+                 [editable]="true"
+                 [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 210}"
+            >
+              <app-encounter-group [group]="group" (clickEvent)="openEncounterPrevention('groupDescription', group)"></app-encounter-group>
+            </div>
+          </div>
         </div>
+        <ng-template #fakeForm>
+          <div class="form fake-animate"></div>
+        </ng-template>
 <!--        <div class="form">-->
 <!--          <div class="icon" style="background-color: #E48C15">-->
 <!--            <img width="13px" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="">-->
@@ -66,11 +101,13 @@
           <div class="form-content-container">
             <div class="form-content">
               <div class="title">Status</div>
-              <div class="status-value">{{ profile.status }}</div>
+              <div class="status-value" (click)="openStatusPopup($event)" [style.color]="profile.status === 'active' ? '#00B476' : (profile.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile.status }}
+                <span><img width="9px" [src]="'./assets/Chevron Down (' + (profile.status === 'active' ? 'Jade' : (profile.status === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
+              </div>
             </div>
             <div class="form-content">
               <div class="title">Last active</div>
-              <div class="value">Today at 10:34 AM</div>
+              <div class="value">{{ profile.last_login ? getDate(profile.last_login) : '-' }}</div>
             </div>
           </div>
         </div>

@@ -16,6 +16,7 @@ interface Option {
   confirmButton: boolean;
   action: string;
   disableClose?: boolean;
+  withoutHoverDescription?: boolean;
 }
 
 @Component({
@@ -44,8 +45,10 @@ export class SettingsDescriptionPopupComponent implements OnInit {
   ngOnInit(): void {
     this.triggerElementRef = this.data['trigger'];
     this.settings = this.data['settings'];
-    this.profile = this.data['profile'];
-    this.profileStatusActive = this.profile.status;
+    if (this.data['profile']) {
+      this.profile = this.data['profile'];
+      this.profileStatusActive = this.profile.status;
+    }
     this.updatePosition();
 
     this.disableCloseEvent$.subscribe(({action, event}) => {

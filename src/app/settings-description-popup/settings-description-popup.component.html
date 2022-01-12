@@ -4,7 +4,7 @@
       <div class="option"
            #opt
            (mouseenter)="opt.hover = true; hoverOption = option; showConfirmButton = false"
-           (mouseleave)="opt.hover = false; hoverOption = null"
+           (mouseleave)="opt.hover = false; !hoverOption.withoutHoverDescription ? hoverOption = null : null;"
            [style.background-color]="opt.hover ? option.backgroundColor : 'transparent'"
            (click)="selectedOption(option, $event)"
       >
@@ -13,13 +13,13 @@
       </div>
     </div>
   </div>
-  <mat-divider *ngIf="hoverOption || showConfirmButton"></mat-divider>
-  <div class="description" *ngIf="(hoverOption && hoverOption.description) || showConfirmButton">
+  <mat-divider *ngIf="(hoverOption && !hoverOption.withoutHoverDescription) || showConfirmButton"></mat-divider>
+  <div class="description" *ngIf="(hoverOption && hoverOption.description && !hoverOption.withoutHoverDescription) || showConfirmButton">
     {{ hoverOption.description }}
     <div class="button" *ngIf="showConfirmButton">
       <app-gradient-button
         [gradient]="'#E32C66, #E32C66'"
-        (buttonClick)="dialogRef.close({action: 'delete', event: $event})"
+        (buttonClick)="dialogRef.close('delete')"
       >Confirm delete</app-gradient-button>
     </div>
   </div>

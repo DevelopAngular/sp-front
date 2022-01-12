@@ -91,6 +91,20 @@
           display: flex;
           align-items: center;
           margin-top: 15px;
+          min-height: 42px;
+
+          .card {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+          }
+
+          .groups {
+            width: 100%;
+            .group {
+              margin-top: 10px;
+            }
+          }
 
           .icon {
             width: 26px;
@@ -119,15 +133,20 @@
               margin-left: 0;
             }
             .status-value {
-              color: $jade;
               font-size: 15px;
               margin-top: 4px;
+              cursor: pointer;
             }
 
             .value {
               @extend .status-value;
               color: $blue-gray;
             }
+          }
+
+          .label {
+            display: flex;
+            align-items: center;
           }
         }
       }
