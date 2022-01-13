@@ -16,7 +16,8 @@ export const passesInitialState: IPassesState = adapter.getInitialState({
   sortLoading: false,
   sortLoaded: false,
   sortValue: '',
-  totalCount: null
+  totalCount: null,
+  startPassLoading: false
 });
 
 const reducer = createReducer(
@@ -35,7 +36,9 @@ const reducer = createReducer(
   on(passesActions.sortPassesSuccess, (state, {next, passes, sortValue}) => {
     return adapter.addAll(passes, {...state, nextRequest: next, sortLoading: false, sortLoaded: true, sortValue});
   }),
-  on(passesActions.getMorePassesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false}))
+  on(passesActions.getMorePassesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false})),
+  on(passesActions.endPassAction, (state) => ({ ...state, startPassLoading: true })),
+  on(passesActions.endPassActionSuccess, passesActions.endPassActionFailure, (state) => ({ ...state, startPassLoading: false})),
 );
 
 

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy,
 import {HallPass} from '../models/HallPass';
 import {HttpService} from '../services/http-service';
 import {DataService} from '../services/data-service';
-import {interval, merge, of} from 'rxjs';
+import {interval, merge, Observable, of} from 'rxjs';
 import {filter, map, pluck} from 'rxjs/operators';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TimeService} from '../services/time.service';
@@ -32,13 +32,14 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   timeLeft: string = '';
   valid: boolean = true;
   returnData: any = {};
-  overlayWidth: number = 0;
+  overlayWidth: string = '0px';
   buttonWidth: number = 288;
 
   selectedDuration: number;
   selectedTravelType: string;
   performingAction: boolean;
   subscribers$;
+  endPassLoading$: Observable<boolean>;
 
   constructor(
       private http: HttpService,
@@ -61,6 +62,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.endPassLoading$ = this.hallPassService.startPassLoading$;
     if (JSON.parse(this.storage.getItem('pass_full_screen')) && !this.fullScreen) {
       setTimeout(() => {
         this.openBigPassCard();
@@ -78,7 +80,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
 
           const start: Date = this.pass.start_time;
           const dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
-          this.overlayWidth = (this.buttonWidth * (diff / dur));
+          this.overlayWidth = (this.buttonWidth * (diff / dur)) + 'px';
           return x;
       }
     })).subscribe(() => {
@@ -103,10 +105,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   }
 
   endPass() {
-    this.performingAction = true;
-    this.hallPassService.endPass(this.pass.id).subscribe(data => {
-      console.log('[Pass Ended]', data);
-    });
+    this.hallPassService.endPassRequest(this.pass.id);
   }
 
   closeDialog() {
