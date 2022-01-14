@@ -25,5 +25,3 @@ export const clearUser = createAction(`[User] Clear User`);
 export const getNuxAction = createAction(`[NUX] Get Nux Dates`);
 export const getNuxActionSuccess = createAction(`[NUX] Get Nux Dates Success`, props<{nuxDates: any}>());
 export const getNuxActionFailure = createAction(`[NUX] Get Nux Dates Failure`, props<{errorMessage: string}>());
-
-export const getNuxDateById = createAction(`[Nux] Get Nux By Id`, props<{id: string | number}>());

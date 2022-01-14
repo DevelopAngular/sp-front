@@ -37,6 +37,7 @@ import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/statu
 import {ToastService} from '../../../services/toast.service';
 import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-accounts-header',
@@ -143,7 +144,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         takeUntil(this.destroy$)
       ).subscribe(([intros, nuxDates, user]) => {
         this.introsData = intros;
-        this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version);
+        const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
+        this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
       });
 
   }
