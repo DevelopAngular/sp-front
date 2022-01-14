@@ -106,6 +106,9 @@ export class ProfilePicturesEffects {
             map(([students, teachers, assistants]) => [...students, ...teachers, ...assistants]),
             map((students: User[]) => {
               return students.reduce((acc, user) => {
+                if (user.primary_email.includes('@spnx.local')) {
+                  user.primary_email = user.primary_email.replace('@spnx.local', '');
+                }
                 if (user.extras.clever_student_number) {
                   return { ...acc, [user.extras.clever_student_number]: user, [user.primary_email.toLowerCase()]: user };
                 }
