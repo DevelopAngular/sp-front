@@ -106,6 +106,9 @@ export class ProfilePicturesEffects {
             map(([students, teachers, assistants]) => [...students, ...teachers, ...assistants]),
             map((students: User[]) => {
               return students.reduce((acc, user) => {
+                if (user.primary_email.includes('@spnx.local')) {
+                  user.primary_email = user.primary_email.replace('@spnx.local', '');
+                }
                 if (user.extras.clever_student_number) {
                   return { ...acc, [user.extras.clever_student_number]: user, [user.primary_email.toLowerCase()]: user };
                 }
@@ -123,7 +126,7 @@ export class ProfilePicturesEffects {
             }),
             switchMap((students) => {
               const picturesData: {userId: string | number, pictureId: number | string}[] = students.filter(s => !!s).map((s: User) => {
-                const pictureId = action.images_data[s.extras.clever_student_number] || action.images_data[s.primary_email];
+                const pictureId = action.images_data[s.primary_email.toLowerCase()];
                 return { userId: s.id, pictureId};
               });
               return [
@@ -146,7 +149,9 @@ export class ProfilePicturesEffects {
             return this.userService.currentUploadedGroup$.pipe(
               take(1),
               switchMap((uploadedGroup: ProfilePicturesUploadGroup) => {
-                return this.userService.uploadProfilePictures(action.picturesData.map(d => d.pictureId), action.picturesData.map(d => d.userId), uploadedGroup.id)
+                const pictures = action.picturesData.map(d => d.pictureId);
+                const users = action.picturesData.map(d => d.userId);
+                return this.userService.uploadProfilePictures(pictures, users, uploadedGroup.id)
                   .pipe(
                     switchMap((data) => {
                       return [

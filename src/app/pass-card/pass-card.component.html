@@ -101,7 +101,7 @@
       <div class="top-block" [style.justify-content]="data.kioskMode ? 'flex-start' : 'center'">
 
         <div *ngIf="isActive && !forStaff">
-          <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (click)="endPass()">
+          <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (onClick)="endPass()">
             <div class="end-pass-content">
               {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
             </div>

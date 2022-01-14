@@ -60,10 +60,10 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             if (!rows) {
               return of(null);
             }
-            const regexpEmail = new RegExp('(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])');
+            // const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
             const validate$ = rows.map(row => {
-              if (!regexpEmail.test(row[0]) && typeof row[0] !== 'number') {
-                row[0] = `${row[0]}@spnx.local`;
+              if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
+                row[0] = row[0].replace('@spnx.local', '');
               }
                 return of({ user_id: typeof row[0] === 'string' ? row[0].toLowerCase() : row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
             });
