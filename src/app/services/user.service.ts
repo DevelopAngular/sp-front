@@ -89,11 +89,11 @@ import {
   getLoadingGroups,
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
-import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
-import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
+import {getLoadedUser, getNuxDates, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
+import {clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {getIntros, updateIntros, updateIntrosMain} from '../ngrx/intros/actions';
+import {getIntros, updateIntros, updateIntrosEncounter, updateIntrosMain} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
@@ -251,6 +251,8 @@ export class UserService implements OnDestroy {
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
+  nuxDates$: Observable<{id: string, created: Date}[]> = this.store.select(getNuxDates);
+
   isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -272,6 +274,7 @@ export class UserService implements OnDestroy {
             this.http.effectiveUserId.next(null);
             this.clearRepresentedUsers();
             this.getUserRequest();
+            this.getNuxRequest();
           }),
           exhaustMap(() => {
             return combineLatest(this.user$.pipe(filter(res => !!res), take(1),
@@ -443,12 +446,20 @@ export class UserService implements OnDestroy {
     return of(null);
   }
 
+  updateIntrosEncounterRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosEncounter({intros, device, version}));
+  }
+
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
 
   updateIntrosReferral(device, version) {
     return this.http.patch('v1/intros/referral_reminder', {device, version});
+  }
+
+  updateIntrosEncounter(device, version) {
+    return this.http.patch('v1/intros/encounter_reminder', {device, version});
   }
 
   saveKioskModeLocation(locId) {
@@ -820,5 +831,13 @@ export class UserService implements OnDestroy {
 
   clearUploadedData() {
     this.store.dispatch(clearUploadedData());
+  }
+
+  getNuxRequest() {
+    this.store.dispatch(getNuxAction());
+  }
+
+  getNux() {
+    return this.http.get('v1/nux');
   }
 }

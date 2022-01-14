@@ -137,7 +137,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SettingsDescriptionPopupComponent,
     AppTextareaComponent,
     SquareButtonComponent,
-    NuxEncounterPreventionComponent,
+    NuxEncounterPreventionComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -194,7 +194,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     AppTextareaComponent,
     SquareButtonComponent,
     CustomToolTipComponent,
-    NuxEncounterPreventionComponent,
+    NuxEncounterPreventionComponent
   ],
   providers: [
     {

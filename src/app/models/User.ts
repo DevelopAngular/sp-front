@@ -19,7 +19,8 @@ export class User extends BaseModel {
               public show_expired_passes: boolean,
               public show_profile_pictures: string,
               public profile_picture: string,
-              public extras: any
+              public extras: any,
+              public first_login: Date
               ) {
     super();
   }
@@ -48,7 +49,8 @@ export class User extends BaseModel {
       show_expired_passes: boolean = !!JSON['show_expired_passes'],
       show_profile_pictures: string = JSON['show_profile_pictures'],
       profile_picture: string = JSON['profile_picture'],
-      extras: any = JSON['extras'];
+      extras: any = JSON['extras'],
+      first_login: Date = new Date(JSON['first_login']);
 
     const rolesJSON = JSON['roles'];
     const sync_types_json = JSON['sync_types'];
@@ -78,7 +80,8 @@ export class User extends BaseModel {
       show_expired_passes,
       show_profile_pictures,
       profile_picture,
-      extras
+      extras,
+      first_login
     );
   }
 
