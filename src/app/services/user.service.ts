@@ -89,8 +89,8 @@ import {
   getLoadingGroups,
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
-import {getLoadedUser, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
-import {clearUser, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
+import {getLoadedUser, getNuxDates, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
+import {clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {getIntros, updateIntros, updateIntrosEncounter, updateIntrosMain} from '../ngrx/intros/actions';
@@ -251,6 +251,8 @@ export class UserService implements OnDestroy {
 
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
+  nuxDates$: Observable<{id: string, created: Date}[]> = this.store.select(getNuxDates);
+
   isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -272,6 +274,7 @@ export class UserService implements OnDestroy {
             this.http.effectiveUserId.next(null);
             this.clearRepresentedUsers();
             this.getUserRequest();
+            this.getNuxRequest();
           }),
           exhaustMap(() => {
             return combineLatest(this.user$.pipe(filter(res => !!res), take(1),
@@ -828,5 +831,13 @@ export class UserService implements OnDestroy {
 
   clearUploadedData() {
     this.store.dispatch(clearUploadedData());
+  }
+
+  getNuxRequest() {
+    this.store.dispatch(getNuxAction());
+  }
+
+  getNux() {
+    return this.http.get('v1/nux');
   }
 }

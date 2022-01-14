@@ -123,6 +123,7 @@ export class ProfilePicturesEffects {
             }),
             switchMap((students) => {
               const picturesData: {userId: string | number, pictureId: number | string}[] = students.filter(s => !!s).map((s: User) => {
+
                 const pictureId = action.images_data[s.primary_email.toLowerCase()];
                 return { userId: s.id, pictureId};
               });

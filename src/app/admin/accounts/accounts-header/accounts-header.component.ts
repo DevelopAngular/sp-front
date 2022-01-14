@@ -133,9 +133,16 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         this.cdr.detectChanges();
       });
 
-    this.userService.introsData$.pipe(filter(res => !!res), debounceTime(1000), takeUntil(this.destroy$))
-      .subscribe(data => {
-        this.introsData = data;
+    combineLatest(
+      this.userService.introsData$.pipe(filter(res => !!res)),
+      this.userService.nuxDates$.pipe(filter(r => !!r)),
+      this.user$.pipe(filter(r => !!r))
+    )
+      .pipe(
+        debounceTime(1000),
+        takeUntil(this.destroy$)
+      ).subscribe(([intros, nuxDates, user]) => {
+        this.introsData = intros;
         this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version);
       });
 

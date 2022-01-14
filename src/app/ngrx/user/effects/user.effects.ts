@@ -107,6 +107,22 @@ export class UserEffects {
       );
   });
 
+  getNux$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(userActions.getNuxAction),
+        switchMap((action) => {
+          return this.userService.getNux()
+            .pipe(
+              map(nuxDates => {
+                return userActions.getNuxActionSuccess({nuxDates});
+              }),
+              catchError(error => of(userActions.getNuxActionFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService
