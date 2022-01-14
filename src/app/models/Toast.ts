@@ -15,4 +15,5 @@ export class Toast {
   exclusionPass?: any;
   issuer?: User;
   exclusionGroups?: ExclusionGroup[];
+  hideCloseButton?: boolean;
 }

@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {bumpIn} from '../animations';
-import {DataService} from '../services/data-service';
 
 @Component({
   selector: 'app-card-button',
@@ -25,18 +24,17 @@ export class CardButtonComponent implements OnInit {
 
   buttonDown = false;
 
-  constructor(private dataService: DataService) { }
+  constructor() { }
 
   ngOnInit() {
   // console.log('Passed gradiend ===> ', this.gradientColor.split(',')[0]);
   }
 
   get buttonState() {
-    return (this.disabled?'up':(this.buttonDown ? 'down' : 'up'));
+    return (this.disabled ? 'up' : (this.buttonDown ? 'down' : 'up'));
   }
 
   buttonClicked() {
-    // this.dataService.isActivePass$.next(false);
     if (!this.disabled) {
         this.onClick.emit();
     }

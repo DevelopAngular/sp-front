@@ -44,3 +44,8 @@ export const getPassesTotalCount = createSelector(
   (state: IPassesState) => state.totalCount
 );
 
+export const getStartPassLoading = createSelector(
+  getPassesState,
+  (state: IPassesState) => state.startPassLoading
+);
+

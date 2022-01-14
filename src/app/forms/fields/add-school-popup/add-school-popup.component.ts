@@ -14,6 +14,7 @@ export class AddSchoolPopupComponent implements OnInit {
 
   submitted: boolean = false;
   showErrors: boolean = false;
+  mobile: boolean;
 
   schoolForm: FormGroup;
 
@@ -26,7 +27,6 @@ export class AddSchoolPopupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.data);
     this.schoolForm = this.fb.group({
       name: [this.data['name'], Validators.required],
       road: ['', Validators.required],
@@ -35,6 +35,7 @@ export class AddSchoolPopupComponent implements OnInit {
       zip: ['', [Validators.required, Validators.pattern('[0-9]{5}')]],
       country: ['', [Validators.required, Validators.pattern('[A-Z]{2,3}')]],
     });
+    this.mobile = window.innerWidth < 425;
   }
 
   isValid() {

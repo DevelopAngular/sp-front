@@ -18,7 +18,7 @@ import {getPassStats} from '../ngrx/pass-stats/actions';
 import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
 import {bufferCount, mergeMap, reduce} from 'rxjs/operators';
 import {constructUrl} from '../live-data/helpers';
-import {getMorePasses, searchPasses, sortPasses} from '../ngrx/passes/actions';
+import {endPassAction, getMorePasses, searchPasses, sortPasses} from '../ngrx/passes/actions';
 import {
   getMorePassesLoading,
   getPassesCollection,
@@ -29,6 +29,7 @@ import {
   getPassesTotalCount,
   getSortPassesLoading,
   getSortPassesValue,
+  getStartPassLoading,
   getTotalPasses
 } from '../ngrx/passes/states';
 import {HallPass} from '../models/HallPass';
@@ -70,6 +71,7 @@ export class HallPassesService {
   sortPassesValue$: Observable<string> = this.store.select(getSortPassesValue);
   currentPassesCount$: Observable<number> = this.store.select(getPassesTotalCount);
   currentCountPassesInPage$: Observable<number> = this.store.select(getTotalPasses);
+  startPassLoading$: Observable<boolean> = this.store.select(getStartPassLoading);
 
   passFilters$: Observable<{[model: string]: PassFilters}> = this.store.select(getFiltersData);
   passFiltersLoading$: Observable<boolean> = this.store.select(getFiltersDataLoading);
@@ -130,6 +132,10 @@ export class HallPassesService {
 
     cancelPass(id, data) {
         return this.http.post(`v1/hall_passes/${id}/cancel`, data);
+    }
+
+    endPassRequest(passId) {
+      return this.store.dispatch(endPassAction({passId}));
     }
 
     endPass(id) {

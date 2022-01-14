@@ -15,4 +15,8 @@ export const sortPasses = createAction(`[${PASSES}] Sort Passes`, props<{queryPa
 export const sortPassesSuccess = createAction(`[${PASSES}] Sort Passes Success`, props<{next: string, passes: HallPass[], sortValue: string}>());
 export const sortPassesFailure = createAction(`[${PASSES}] Sort Passes Failure`, props<{errorMessage: string}>());
 
+export const endPassAction = createAction(`[${PASSES}] End Pass`, props<{passId: string | number}>());
+export const endPassActionSuccess = createAction(`[${PASSES}] End Pass Success`);
+export const endPassActionFailure = createAction(`[${PASSES}] End Pass Failure`, props<{errorMessage: string}>());
+
 

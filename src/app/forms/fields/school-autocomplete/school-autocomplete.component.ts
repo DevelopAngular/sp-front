@@ -30,6 +30,9 @@ export class SchoolAutocompleteComponent {
   blockSearch: boolean = false;
   searchSchools;
 
+  defocused: boolean = false;
+  focusedAgain: boolean = false;
+
   @ViewChild('searchAutocomplete') searchAutocomplete;
   currentPosition;
   backgroundColors: string[] = [];
@@ -74,6 +77,8 @@ export class SchoolAutocompleteComponent {
     this.ignoreNextUpdate = true;
     this.showOptions = false;
 
+    this.fControl.setValue(school.name);
+
     this.name.emit(school.name);
     this.schoolDiggerId.emit(school.schoolDiggerId);
     this.address.emit(school.addressFull);
@@ -82,13 +87,6 @@ export class SchoolAutocompleteComponent {
   mobileChooseSchool(a, school) {
     this.backgroundColors[a] = '#FFFFFF';
     this.chooseSchool(school);
-  }
-
-  blur() {
-    if (!this.showOptions) {
-      return;
-    }
-    this.showOptions = this.mouseIn;
   }
 
   showSearch() {
@@ -114,12 +112,30 @@ export class SchoolAutocompleteComponent {
   popup(data) {
     let addSchoolPopup = this.matDialog.open(AddSchoolPopupComponent, {
       panelClass: 'add-school-popup-container',
-      //backdropClass: 'invis-backdrop',
+      backdropClass: 'white-backdrop',
       disableClose: true,
       data: {name: data},
     });
     addSchoolPopup.componentInstance.askForSchoolName = this.useLargeFormWhenNotFound;
     this.showOptions = false;
+  }
+
+  blur() {
+    if (!this.defocused) {
+      if (this.focusedAgain)
+        this.showOptions = false;
+    }
+
+  }
+
+  focused() {
+    if (this.defocused) {
+      if (!this.focusedAgain) {
+        this.focusedAgain = true;
+        this.defocused = false;
+      }
+
+    }
   }
 
 }
