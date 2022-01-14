@@ -123,7 +123,7 @@ export class ProfilePicturesEffects {
             }),
             switchMap((students) => {
               const picturesData: {userId: string | number, pictureId: number | string}[] = students.filter(s => !!s).map((s: User) => {
-                const pictureId = action.images_data[s.extras.clever_student_number] || action.images_data[s.primary_email];
+                const pictureId = action.images_data[s.primary_email.toLowerCase()];
                 return { userId: s.id, pictureId};
               });
               return [
@@ -146,7 +146,9 @@ export class ProfilePicturesEffects {
             return this.userService.currentUploadedGroup$.pipe(
               take(1),
               switchMap((uploadedGroup: ProfilePicturesUploadGroup) => {
-                return this.userService.uploadProfilePictures(action.picturesData.map(d => d.pictureId), action.picturesData.map(d => d.userId), uploadedGroup.id)
+                const pictures = action.picturesData.map(d => d.pictureId);
+                const users = action.picturesData.map(d => d.userId);
+                return this.userService.uploadProfilePictures(pictures, users, uploadedGroup.id)
                   .pipe(
                     switchMap((data) => {
                       return [

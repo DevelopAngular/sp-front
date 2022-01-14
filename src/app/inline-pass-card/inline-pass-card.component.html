@@ -24,10 +24,21 @@
             <app-travel-view [pass]="pass"></app-travel-view>
         </div>
         <div class="button">
-            <app-card-button (onClick)="endPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'81px'"  [gradientColor]="pass?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
-                <div class="end-pass-content">
-                    {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
-                </div>
+            <app-card-button
+              (onClick)="endPass()"
+              [disabled]="endPassLoading$ | async"
+              [width]="buttonWidth +'px'"
+              [height]="'81px'"
+              [gradientColor]="pass?.color_profile.gradient_color"
+              [overlayWidth]="overlayWidth"
+              [valid]="valid"
+            >
+              <div class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">
+                  {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+              </div>
+              <ng-template #spinner>
+                <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
+              </ng-template>
             </app-card-button>
         </div>
     </div>

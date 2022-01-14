@@ -18,7 +18,6 @@ import {School} from '../models/School';
 import {DeviceDetection} from '../device-detection.helper';
 import {scalePassCards} from '../animations';
 import {DomCheckerService} from '../services/dom-checker.service';
-import * as moment from 'moment';
 import {UserService} from '../services/user.service';
 import {ToastService} from '../services/toast.service';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
@@ -54,7 +53,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   timeLeft: string = '';
   valid: boolean = true;
   returnData: any = {};
-  overlayWidth: number = 0;
+  overlayWidth: string = '0px';
   buttonWidth: number = 288;
 
   selectedDuration: number;
@@ -81,6 +80,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   showStudentInfoBlock: boolean = true;
   passForStudentsComponent: boolean;
   hideButton: boolean;
+
+  startEndPassLoading$: Observable<boolean>;
 
   isSeen: boolean;
 
@@ -166,13 +167,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
     this.currentSchool = this.userService.getUserSchool();
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+    this.startEndPassLoading$ = this.hallPassService.startPassLoading$;
 
     if (this.data['pass']) {
       this.isModal = true;
       this.pass = this.data['pass'];
-      console.log(moment(this.pass.start_time).format('DD MMMM YYYY hh:mm'));
-      console.log(moment(this.pass.end_time).format('DD MMMM YYYY hh:mm'));
-      console.log(moment(this.pass.expiration_time).format('DD MMMM YYYY hh:mm'));
       this.forInput = this.data['forInput'];
       this.isActive = this.data['isActive'];
       this.forFuture = this.data['forFuture'];
@@ -210,7 +209,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
         const start: Date = this.pass.start_time;
         const dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
-        this.overlayWidth = (this.buttonWidth * (diff / dur));
+        this.overlayWidth = (this.buttonWidth * (diff / dur)) + 'px';
       }), takeUntil(this.destroy$)).subscribe();
     }
     this.shortcutsService.onPressKeyEvent$
@@ -366,7 +365,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((data) => {
-        this.performingAction = true;
+        this.performingAction = false;
         this.dialogRef.close();
       });
   }
@@ -433,11 +432,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   endPass() {
-    this.hallPassService.endPass(this.pass.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.dialogRef.close();
-      });
+    this.hallPassService.endPassRequest(this.pass.id);
+    this.dialogRef.close();
   }
 
   genOption(display, color, action, icon?) {
