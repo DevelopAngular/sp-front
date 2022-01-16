@@ -5,6 +5,7 @@ import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
 import {EncounterPreventionService} from '../../../../services/encounter-prevention.service';
 import {ExclusionGroup} from '../../../../models/ExclusionGroup';
 import {of} from 'rxjs';
+import * as toast from '../../../toast/actions';
 
 @Injectable()
 export class ExclusionGroupsEffects {
@@ -48,8 +49,15 @@ export class ExclusionGroupsEffects {
         switchMap((action: any) => {
           return this.encounterPreventionService.createExclusionGroup(action.groupData)
             .pipe(
-              map((group: ExclusionGroup) => {
-                return exclusionGroupsActions.createExclusionGroupSuccess({group});
+              switchMap((group: ExclusionGroup) => {
+                return [
+                  exclusionGroupsActions.createExclusionGroupSuccess({group}),
+                  toast.openToastAction({data: {
+                    title: 'Encounter prevention group created',
+                    subtitle: 'Encounter prevention has been enabled.',
+                    type: 'success'
+                  }})
+                ];
               }),
               catchError(error => of(exclusionGroupsActions.createExclusionGroupFailure({errorMessage: error.message})))
             );
@@ -80,8 +88,14 @@ export class ExclusionGroupsEffects {
         switchMap((action) => {
           return this.encounterPreventionService.deleteExclusionGroup(action.group.id)
             .pipe(
-              map(() => {
-                return exclusionGroupsActions.removeExclusionGroupSuccess({group: action.group});
+              switchMap(() => {
+                return [
+                  exclusionGroupsActions.removeExclusionGroupSuccess({group: action.group}),
+                  toast.openToastAction({data: {
+                    title: 'Encounter prevention group deleted',
+                    type: 'error'
+                  }})
+                ];
               }),
               catchError(error => of(exclusionGroupsActions.removeExclusionGroupFailure({errorMessage: error.message})))
             );

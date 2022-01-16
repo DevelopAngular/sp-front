@@ -1,3 +1,17 @@
-.tooltip-container {
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+.wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  &:before {
+    content: '';
+    position: absolute;
+    //background-color: red;
+    //left: 55px;
+    top: -55px;
+    height: 55px;
+    width: 50px;
+  }
+  .tooltip-container {
+    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+  }
 }

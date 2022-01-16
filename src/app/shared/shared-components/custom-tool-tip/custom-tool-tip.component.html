@@ -1,7 +1,9 @@
-<div>
-  <div class="tooltip-container">
+<div class="wrapper" (mouseleave)="closeTooltip.emit(true)" (mouseenter)="overEvent.emit()">
+  <div class="tooltip-container" @tooltipAnimate>
     <ng-template #simpleText>
-      {{text}}
+      <div class="ds-tooltip" *ngIf="text" [style.width]="width">
+        {{ text }}
+      </div>
     </ng-template>
     <ng-container *ngTemplateOutlet="contentTemplate || simpleText">
     </ng-container>

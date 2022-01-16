@@ -9,8 +9,8 @@
       <span>Profile Pictures</span>
     </div>
     <div class="save-button"
-         [matTooltip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile picture files and the map file before uploading!' : null"
-         matTooltipClass="ds-tooltip">
+         [customToolTip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile picture files and the map file before uploading!' : null"
+         >
       <app-gradient-button
         *ngIf="page !== 3 && page !== 5"
         [disabled]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2"

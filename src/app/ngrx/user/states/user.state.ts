@@ -5,4 +5,5 @@ export interface UserState {
   userPin: string | number;
   loading: boolean;
   loaded: boolean;
+  nuxDates: any;
 }

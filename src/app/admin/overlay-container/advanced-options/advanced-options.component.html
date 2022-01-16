@@ -18,7 +18,7 @@
           <div class="toggle-content">
             <div class="title-line">
               <div class="label" [style.color]="nowRestricted ? (isRestrictionEmpty('now') ? '#E32C66' : '#1F194E') : '#7F879D'">Restriction for now</div>
-              <img [matTooltip]="tooltipText.restriction" matTooltipClass="ds-tooltip" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
+              <img [customToolTip]="tooltipText.restriction" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
             </div>
             <div class="toggle-options" *ngIf="nowRestricted">
               <div class="subtitle">Pass approval from: </div>
@@ -121,7 +121,7 @@
           <div class="toggle-content">
             <div class="title-line">
               <div class="label" [style.color]="futureRestricted ? (isRestrictionEmpty('future') ? '#E32C66' : '#1F194E') : '#7F879D'">Restriction for future</div>
-              <img [matTooltip]="tooltipText.scheduling_restricted" matTooltipClass="ds-tooltip" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
+              <img [customToolTip]="tooltipText.scheduling_restricted" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
             </div>
             <div class="toggle-options" *ngIf="futureRestricted">
               <div class="subtitle">Pass approval from: </div>

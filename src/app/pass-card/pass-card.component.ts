@@ -6,7 +6,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {catchError, filter, map, pluck, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -22,7 +22,6 @@ import {UserService} from '../services/user.service';
 import {ToastService} from '../services/toast.service';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
 import {isEmpty} from 'lodash';
-import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pass-card',
@@ -114,7 +113,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private userService: UserService,
       private toastService: ToastService,
       private encounterService: EncounterPreventionService,
-      private sanitizer: DomSanitizer
   ) {}
 
   getUserName(user: any) {
@@ -328,8 +326,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
      const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
       getRequest$.pipe(
         takeUntil(this.destroy$),
-        catchError(err => {
-          if (err.status === 403) {
+        switchMap(({conflict_student_ids, passes}) => {
+          if (conflict_student_ids) {
             if (!this.forStaff) {
               this.toastService.openToast({
                 title: 'Sorry, you can’t start your pass right now.',
@@ -341,20 +339,20 @@ export class PassCardComponent implements OnInit, OnDestroy {
               this.dialogRef.close();
               return of(null);
             } else {
-              const errorList = err.error.errors;
-              return zip(...errorList.map(id => {
+              return zip(...conflict_student_ids.map(id => {
                 return this.encounterService.getExclusionGroupsForStudentRequest(id)
                   .pipe(
                     filter(r => !isEmpty(r) && !!r[+id]),
                     take(1),
                     tap((groups) => {
+                      console.log(11111);
                       const exclusionGroups = groups[+id];
                       this.toastService.openToast({
                         title: 'This pass can’t start now to prevent encounter.',
                         subtitle: 'These students can’t have a pass at the same time.',
                         type: 'error',
                         encounterPrevention: true,
-                        exclusionPass: {...this.pass, travel_type: this.selectedTravelType},
+                        exclusionPass: {...this.pass, travel_type: this.selectedTravelType, student: this.selectedStudents.find(user => +user.id === +id)},
                         exclusionGroups
                       });
                     }));

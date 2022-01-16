@@ -26,11 +26,12 @@
           <div class="title">
             <div class="full-name" [@topBottomName]="animationTrigger">
               <span>{{ profile.first_name }} {{ profile.last_name }}</span>
-              <span style="margin-left: 7px;" *ngIf="(exclusionGroups$ | async)?.length">
+              <span style="margin-left: 7px;" *ngIf="(exclusionGroups$ | async)?.length" (mouseenter)="notClose(true)">
                 <app-octagon
                   [size]="22"
                   customToolTip
                   [contentTemplate]="tooltip"
+                  (leave)="notClose(false)"
                 >
                   <img class="value" style="position: absolute; z-index: 10" height="18" [src]="'./assets/Walking One (White).svg' | resolveAsset">
                 </app-octagon>

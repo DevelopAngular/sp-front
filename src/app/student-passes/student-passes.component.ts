@@ -45,6 +45,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   @Input() hasProfilePicture: boolean = true;
 
   @Output() close = new EventEmitter();
+  @Output() destroyClose = new EventEmitter();
 
   @ViewChild('profileImage') profileImage: ElementRef;
 
@@ -144,6 +145,11 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       this.isOpenEvent$.next(false);
       this.domCheckerService.scalePassCardTrigger$.next('unresize');
     }
+  }
+
+  notClose(value) {
+    console.log('Close ==>>', value);
+    this.destroyClose.emit(value);
   }
 
   openPass({pass}) {

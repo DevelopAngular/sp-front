@@ -23,7 +23,7 @@ enum Pages {
 export interface EncountersState {
   pages_history: number[];
   current_page: number;
-  createGroup: ExclusionGroup;
+  createGroup: any;
   data: {
     currentGroup?: ExclusionGroup;
     showSaveButton: boolean;
@@ -172,6 +172,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
         this.backEmit.emit();
         return;
       }
+      this.state.createGroup.users = [];
     }
     if (this.state.current_page === Pages.EditGroup) {
       this.encounterPreventionService.updateExclusionGroupRequest(this.state.data.currentGroup, {
@@ -183,6 +184,12 @@ export class EncounterPreventionDialogComponent implements OnInit {
         this.backEmit.emit();
         return;
       }
+      setTimeout(() => {
+        this.toast.openToast({
+          title: 'Encounter prevention group updated',
+          type: 'success'
+        });
+      }, 500);
     }
     this.setState(true, Pages.Groups);
   }

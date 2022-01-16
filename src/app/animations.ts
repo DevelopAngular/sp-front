@@ -322,4 +322,14 @@ export const resizeReportDescription = trigger('grow', [
     style({height: '{{startHeight}}px'}),
     animate('.3s ease-out'),
   ], {params: {startHeight: 0}})
-])
+]);
+
+export const tooltipAnimation = trigger('tooltipAnimate', [
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate('200ms', style({ opacity: 1 })),
+  ]),
+  transition(':leave', [
+    animate('200ms', style({ opacity: 0 }))
+  ])
+]);

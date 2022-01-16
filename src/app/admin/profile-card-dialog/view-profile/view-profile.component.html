@@ -63,8 +63,7 @@
 
           </div>
           <div class="status"
-               [matTooltip]="statusDescriptions[profileStatusActive] || null"
-               matTooltipClass="ds-tooltip"
+               [customToolTip]="statusDescriptions[profileStatusActive] || null"
                (click)="openStatusPopup()"
                [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'"
           >
@@ -143,7 +142,13 @@
         </div>
         <ng-template #groups>
           <div class="groups">
-            <div class="group" *ngFor="let group of exclusionGroups">
+            <div class="group"
+                 *ngFor="let group of exclusionGroups"
+                 [showToolTip]="!!group.notes"
+                 [customToolTip]="group.notes"
+                 [editable]="true"
+                 [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 330}"
+            >
               <app-encounter-group [group]="group" (clickEvent)="openExclusionGroups('groupDescription', group)"></app-encounter-group>
             </div>
           </div>

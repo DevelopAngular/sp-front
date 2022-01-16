@@ -28,7 +28,7 @@
     </div>
   </ng-template>
 
-  <div class="octagon">
+  <div class="octagon" [style.top]="group.name ? '15px' : '10px'">
     <app-octagon
       *ngIf="!wrapper.hovered; else go"
       [size]="28"

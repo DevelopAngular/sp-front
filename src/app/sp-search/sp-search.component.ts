@@ -128,6 +128,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() isProposed: boolean;
   @Input() proposedSearchString: string;
   @Input() displaySelectedTitle: boolean = true;
+  @Input() showStudentInfo: boolean = true;
 
   @Input() searchingTeachers: User[];
   @Input() searchingRoles: { id: number, role: string, icon: string }[];

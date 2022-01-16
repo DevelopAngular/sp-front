@@ -22,7 +22,7 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
-import {filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
 import {BulkAddComponent} from '../bulk-add/bulk-add.component';
@@ -37,6 +37,7 @@ import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/statu
 import {ToastService} from '../../../services/toast.service';
 import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-accounts-header',
@@ -66,6 +67,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   user$: Observable<User>;
   isMiniButtons: boolean;
+  showNuxTooltip: Subject<boolean> = new Subject();
+  introsData: any;
 
   selectedUsers: User[] = [];
 
@@ -129,6 +132,20 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       .subscribe(res => {
         this.selectedUsers = res;
         this.cdr.detectChanges();
+      });
+
+    combineLatest(
+      this.userService.introsData$.pipe(filter(res => !!res)),
+      this.userService.nuxDates$.pipe(filter(r => !!r)),
+      this.user$.pipe(filter(r => !!r))
+    )
+      .pipe(
+        debounceTime(1000),
+        takeUntil(this.destroy$)
+      ).subscribe(([intros, nuxDates, user]) => {
+        this.introsData = intros;
+        const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
+        this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
       });
 
   }
@@ -344,6 +361,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       width: '425px',
       height: '500px',
     });
+  }
+
+  closeNuxToolTip() {
+    this.showNuxTooltip.next(false);
+    this.userService.updateIntrosEncounterRequest(this.introsData, 'universal',  '1');
   }
 
 }
