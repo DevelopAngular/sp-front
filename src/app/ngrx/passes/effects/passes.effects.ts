@@ -86,7 +86,7 @@ export class PassesEffects {
                 passesActions.endPassActionFailure({errorMessage: error.message}),
                 openToastAction({data: {
                   title: 'Oh no! Something went wrong',
-                  subtitle: 'Please try again. If the issue keeps occuring, contact us at support@smartpss.app.',
+                  subtitle: 'Please try again. If the issue keeps occuring, contact us at support@smartpass.app.',
                   type: 'error',
                   hideCloseButton: true
                 }})
