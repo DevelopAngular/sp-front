@@ -113,6 +113,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  @HostListener('click')
   @HostListener('mouseenter')
   show() {
     // attach the component if it has not already attached to the overlay
