@@ -34,7 +34,7 @@ export class ProgressInterceptor implements HttpInterceptor {
                         ].every(_url => error.url.search(_url) < 0);
 
                         if ( (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
-                          this.toast.openToast({title: 'Oh no! Something went wrong', subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpss.app. (${error.status})`, type: 'error'});
+                          this.toast.openToast({title: 'Oh no! Something went wrong', subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`, type: 'error'});
                           // http.errorToast$.next({
                           //   header: 'Something went wrong.',
                           //   message: `Please try refreshing the page. If the issue keeps occurring, contact us below. Error status code:${error.status}`
