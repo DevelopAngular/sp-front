@@ -153,6 +153,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     csv: { inProcess: false, complete: false, error: null }
   };
   picturesLoaderPercent$: Observable<number>;
+  showProcessingSpinner$: Observable<boolean>;
   accountsWithoutPictures$: Observable<User[]>;
   uploadErrors$: Observable<ProfilePicturesError[]>;
   lastUploadedGroup$: Observable<ProfilePicturesUploadGroup>;
@@ -187,6 +188,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
       csvFile: new FormControl()
     });
     this.picturesLoaderPercent$ = this.userService.profilePictureLoaderPercent$;
+    this.showProcessingSpinner$ = this.picturesLoaderPercent$.pipe(map(percent => percent >= 95));
     this.accountsWithoutPictures$ = this.userService.missingProfilePictures$;
     this.uploadErrors$ = this.userService.profilePicturesUploadErrors$;
     this.lastUploadedGroup$ = this.userService.lastUploadedGroup$;
