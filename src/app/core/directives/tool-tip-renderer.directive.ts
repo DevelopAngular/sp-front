@@ -113,7 +113,8 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  @HostListener('mouseenter')
+  @HostListener('click')
+  @HostListener('pointerover')
   show() {
     // attach the component if it has not already attached to the overlay
     timer(300)
@@ -135,7 +136,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  @HostListener('mouseleave')
+  @HostListener('pointerout')
   hide() {
     if (this.editable) {
       this.closeToolTip();

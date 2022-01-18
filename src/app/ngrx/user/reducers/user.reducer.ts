@@ -6,7 +6,8 @@ const userInitialState: UserState = {
   user: null,
   userPin: null,
   loading: false,
-  loaded: false
+  loaded: false,
+  nuxDates: []
 };
 
 const reducer = createReducer(
@@ -30,6 +31,9 @@ const reducer = createReducer(
       ...state,
       userPin: pin
     };
+  }),
+  on(userActions.getNuxActionSuccess, (state, {nuxDates}) => {
+    return { ...state, nuxDates };
   })
 );
 

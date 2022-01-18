@@ -796,7 +796,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
-            })).pipe(takeUntil(this.destroy$)).subscribe(response => {
+            })).pipe(take(1), takeUntil(this.destroy$)).subscribe(response => {
               this.toast.openToast({title: 'Room updated', type: 'success'});
               this.dialogRef.close(true);
         });

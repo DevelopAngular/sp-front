@@ -2,7 +2,8 @@
   <div class="heading" #header>
     <div class="back-button">
       <img (click)="back()" *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
-      <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3">Cancel</div>
+      <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3 && !(showProcessingSpinner$ | async)">Cancel</div>
+      <div class="cancel" (click)="dialog.closeAll()" *ngIf="page === 3 && (showProcessingSpinner$ | async)">Close</div>
     </div>
     <div class="ds-dialog-title-white ds-flex-center-center">
       <img [src]="'./assets/Pictures (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
@@ -118,7 +119,7 @@
 
     <div class="page" *ngIf="page === 3">
 
-      <div class="image-container" *ngIf="(picturesLoaderPercent$ | async) < 95; else complete">
+      <div class="image-container" *ngIf="!(showProcessingSpinner$ | async); else complete">
 
         <svg width="124px" height="96px">
             <linearGradient id="lg" x1="0.5" y1="1" x2="0.5" y2="0">
@@ -138,6 +139,7 @@
             <img class="spinner" width="43px" height="43px" [src]="'./assets/Sync Loading (Turquoise).svg' | resolveAsset" alt="Sync">
             <div class="syncing-title">Pictures are being processed. This may take a while…</div>
           </div>
+          <div class="syncing-description">You may close this window.<br>Processing will continue in the background.</div>
         </div>
       </ng-template>
 

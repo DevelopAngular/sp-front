@@ -9,7 +9,8 @@
                [controlName]="fControl"
                [forceError]="forceError"
                (blurEvent)="blur()"
-               (onUpdate)="onSearch($event)"></app-input>
+               (onUpdate)="onSearch($event)"
+               (focusEvent)="focused()"></app-input>
   </div>
   <div *ngIf="showSearch()" #searchAutocomplete
        class="search-autocomplete-container">
@@ -44,7 +45,7 @@
                (pointerDownEvent)="notFoundHover = true"
                (pointerCancelEvent)="notFoundHover = false"
                [style.background-color]="notFoundHover ? '#F4F4F4' : '#FFFFFF'"
-               (click)="popup(fControl.value)">
+               (pointerClickEvent)="popup(fControl.value)">
             <div>
               {{fControl.value}}
             </div>

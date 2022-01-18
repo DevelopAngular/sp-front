@@ -6,6 +6,7 @@ import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 
 import * as passesActions from '../actions';
+import {openToastAction} from '../../toast/actions';
 import {HallPass} from '../../../models/HallPass';
 
 @Injectable()
@@ -66,6 +67,30 @@ export class PassesEffects {
                 return passesActions.sortPassesSuccess({next: nextUrl, passes: results, sortValue});
               }),
               catchError(error => of(passesActions.sortPassesFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  endPass$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(passesActions.endPassAction),
+        switchMap((action) => {
+          return this.hallPassesService.endPass(action.passId)
+            .pipe(
+              map(() => {
+                return passesActions.endPassActionSuccess();
+              }),
+              catchError(error => [
+                passesActions.endPassActionFailure({errorMessage: error.message}),
+                openToastAction({data: {
+                  title: 'Oh no! Something went wrong',
+                  subtitle: 'Please try again. If the issue keeps occuring, contact us at support@smartpass.app.',
+                  type: 'error',
+                  hideCloseButton: true
+                }})
+              ])
             );
         })
       );

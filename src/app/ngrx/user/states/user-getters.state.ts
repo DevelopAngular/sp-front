@@ -18,3 +18,8 @@ export const getLoadedUser = createSelector(
   getUserState,
   (state: UserState) => state.loaded
 );
+
+export const getNuxDates = createSelector(
+  getUserState,
+  (state: UserState) => state.nuxDates
+);
