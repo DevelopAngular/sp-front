@@ -113,13 +113,9 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  @HostListener('pointerdown')
-  @HostListener('mouseenter')
+  @HostListener('click')
+  @HostListener('pointerover')
   show() {
-    // stop second tooltip from opening
-    if (this._overlayRef.hasAttached())
-      return;
-
     // attach the component if it has not already attached to the overlay
     timer(300)
       .pipe(
@@ -140,7 +136,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  @HostListener('mouseleave')
+  @HostListener('pointerout')
   hide() {
     if (this.editable) {
       this.closeToolTip();
