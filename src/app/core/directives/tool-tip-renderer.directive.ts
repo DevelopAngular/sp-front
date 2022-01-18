@@ -48,9 +48,6 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   private _overlayRef: OverlayRef;
   private tooltipRef: ComponentRef<CustomToolTipComponent>;
 
-  // allow mobile users to click the icon so it doesn't dissappear
-  private allowDestroy: boolean = true;
-
   constructor(
     private _overlay: Overlay,
     private _overlayPositionBuilder: OverlayPositionBuilder,
@@ -116,18 +113,13 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  @HostListener('click', ['$event.target'])
-  click() {
-    // for mobile browsers
-    this.allowDestroy = !this.allowDestroy;
-    if (this.allowDestroy)
-      this.hide();
-    else
-      this.show();
-  }
-
+  @HostListener('pointerdown')
   @HostListener('mouseenter')
   show() {
+    // stop second tooltip from opening
+    if (this._overlayRef.hasAttached())
+      return;
+
     // attach the component if it has not already attached to the overlay
     timer(300)
       .pipe(
@@ -150,9 +142,6 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 
   @HostListener('mouseleave')
   hide() {
-    if (!this.allowDestroy)
-      return;
-
     if (this.editable) {
       this.closeToolTip();
     }
