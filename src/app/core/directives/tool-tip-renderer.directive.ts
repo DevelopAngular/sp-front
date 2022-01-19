@@ -29,7 +29,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
    * This can be used to show the tooltip conditionally
    */
   @Input() showToolTip: boolean = true;
-  @Input() tooltipDelay: number = 0;
+  @Input() nonDisappearing: boolean = true;
   @Input() position: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
   @Input() editable: boolean = false;
   @Input() positionStrategy: ConnectedPosition;
@@ -64,7 +64,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 
     const positionStrategy = this._overlayPositionBuilder
       .flexibleConnectedTo(this._elementRef)
-      .withPositions([this.editable ? this.positionStrategy : this.getPosition()]);
+      .withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
 
     this._overlayRef = this._overlay.create(
       {
@@ -126,6 +126,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
             this.tooltipRef.instance.contentTemplate = this.contentTemplate;
             this.tooltipRef.instance.text = this.text;
             this.tooltipRef.instance.width = this.width;
+            this.tooltipRef.instance.nonDisappearing = this.nonDisappearing;
 
             return this.tooltipRef.instance.closeTooltip;
           }
@@ -137,6 +138,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   }
 
   @HostListener('pointerout')
+  @HostListener('mouseleave')
   hide() {
     if (this.editable) {
       this.closeToolTip();
