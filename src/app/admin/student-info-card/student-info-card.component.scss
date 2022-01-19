@@ -33,6 +33,7 @@
         font-size: 24px;
         color: $navy;
         margin-top: 10px;
+        font-weight: bold;
       }
     }
 
@@ -64,11 +65,13 @@
           .title {
             font-size: 20px;
             color: $navy;
+            font-weight: bold;
           }
 
           .subtitle {
             color: $blue-gray;
             font-size: 14px;
+            font-weight: 500;
           }
         }
 
@@ -131,6 +134,7 @@
             .title {
               @extend .title;
               margin-left: 0;
+              font-weight: bold;
             }
             .status-value {
               font-size: 15px;
@@ -161,6 +165,10 @@
 
     .header {
       padding: 19px 40px;
+      background-color: #F0F2F5;
+      position: sticky;
+      top: 0;
+      z-index: 100;
 
       .buttons {
         display: flex;
@@ -194,6 +202,7 @@
           .title {
             font-size: 14px;
             color: $blue-gray;
+            font-weight: 500;
           }
 
           .value {
