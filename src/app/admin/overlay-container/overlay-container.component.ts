@@ -176,10 +176,14 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   get isFormIncomplete() {
-    if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom ||
-        this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder ||
-        this.currentPage === Pages.BulkEditRoomsInFolder) {
+    if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
       if (this.isDirtyColor || this.isDirtyIcon) {
+        if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.EditRoom) {
+          return !this.isValidRoomForm;
+        }
+        if (this.currentPage === Pages.EditFolder) {
+          return !this.form.get('folderName').valid;
+        }
         return false;
       }
       if (!this.selectedIcon || !this.color_profile) {
@@ -275,6 +279,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       return 'Please wait, rooms are still being uploaded.';
 
     return null;
+  }
+
+  get isValidRoomForm() {
+    return this.form.get('roomName').valid && this.form.get('roomNumber').valid && this.form.get('timeLimit').valid;
   }
 
   get showIncompleteButton() {
