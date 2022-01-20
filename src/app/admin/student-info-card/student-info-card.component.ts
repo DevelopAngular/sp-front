@@ -2,12 +2,12 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, El
 import {User} from '../../models/User';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {HallPassesService} from '../../services/hall-passes.service';
-import {fromEvent, Observable} from 'rxjs';
+import {fromEvent, Observable, Subject} from 'rxjs';
 import {QuickPreviewPasses} from '../../models/QuickPreviewPasses';
 import {UserService} from '../../services/user.service';
 import {School} from '../../models/School';
 import {HallPass} from '../../models/HallPass';
-import {filter, map, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {SettingsDescriptionPopupComponent} from '../../settings-description-popup/settings-description-popup.component';
 import {UserStats} from '../../models/UserStats';
@@ -23,6 +23,7 @@ import {StatusPopupComponent} from '../profile-card-dialog/status-popup/status-p
 import {EncounterPreventionDialogComponent} from '../accounts/encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {EncounterPreventionService} from '../../services/encounter-prevention.service';
 import {ExclusionGroup} from '../../models/ExclusionGroup';
+import {EditAvatarComponent} from '../profile-card-dialog/edit-avatar/edit-avatar.component';
 
 @Component({
   selector: 'app-student-info-card',
@@ -55,6 +56,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   };
   isFullScreenPasses: boolean;
   isFullScreenReports: boolean;
+
+  loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialogRef: MatDialogRef<StudentInfoCardComponent>,
@@ -316,6 +319,50 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
       height: '500px',
       data: {'forceNextPage': page, currentUser: this.profile, forceGroup: currentGroup}
     });
+  }
+
+  openEditAvatar(event) {
+    const ED = this.dialog.open(EditAvatarComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: { 'trigger': event.currentTarget, user: this.profile }
+    });
+
+    ED.afterClosed()
+      .pipe(
+        filter(r => !!r),
+        tap(({action, file}) => {
+          this.loadingProfilePicture.next(true);
+          if (action === 'add') {
+            this.userService.addProfilePictureRequest(this.profile, '_profile_student',  file);
+          } else if (action === 'edit') {
+            this.userService.addProfilePictureRequest(this.profile, '_profile_student', file);
+          }
+        }),
+        switchMap(() => {
+          return this.userService.currentUpdatedAccount$['_profile_student']
+            .pipe(filter(res => !!res));
+        }),
+        tap((user => {
+          this.profile = User.fromJSON(user);
+          this.userService.clearCurrentUpdatedAccounts();
+          this.loadingProfilePicture.next(false);
+        }))
+      ).subscribe();
+  }
+
+  deleteAvatar() {
+    this.loadingProfilePicture.next(true);
+    this.userService.deleteProfilePicture(this.profile, '_profile_student')
+      .pipe(
+        filter(res => !!res),
+        take(1)
+      )
+      .subscribe(res => {
+        this.profile = User.fromJSON({...this.profile, profile_picture: null});
+        this.userService.clearCurrentUpdatedAccounts();
+        this.loadingProfilePicture.next(false);
+      });
   }
 
   dateText({start, end}): string {

@@ -4,7 +4,7 @@
   height: 564px;
   display: flex;
   .left {
-    width: 367px;
+    min-width: 367px;
     padding: 25px;
     overflow: auto;
     display: flex;
@@ -24,10 +24,43 @@
       align-items: center;
 
       .avatar {
-        border-radius: 50%;
+        width: 88px;
+        height: 88px;
+        background-size: cover;
         overflow: hidden;
-        width: 92px;
-        height: 92px;
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .spinner {
+          position: absolute;
+        }
+
+        .add-avatar {
+          position: absolute;
+          z-index: 10;
+          left: 30px;
+          width: 28px;
+          height: 25px;
+          cursor: pointer;
+        }
+
+        .hover-backdrop {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          display: flex;
+          border-radius: 50%;
+          justify-content: center;
+          align-items: center;
+          background-color: $blue-gray;
+          opacity: .2;
+          z-index: 5;
+        }
       }
       .student-name {
         font-size: 24px;
@@ -94,7 +127,7 @@
           display: flex;
           align-items: center;
           margin-top: 15px;
-          min-height: 42px;
+          min-height: 33px;
 
           .card {
             display: flex;
@@ -139,7 +172,8 @@
             .status-value {
               font-size: 15px;
               margin-top: 4px;
-              cursor: pointer;
+              //cursor: pointer;
+              text-transform: capitalize;
             }
 
             .value {
@@ -159,7 +193,7 @@
 
   .right {
     background-color: #F0F2F5;
-    width: 590px;
+    min-width: 590px;
     overflow: auto;
     position: relative;
 

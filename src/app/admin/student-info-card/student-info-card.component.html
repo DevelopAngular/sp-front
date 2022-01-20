@@ -4,11 +4,24 @@
       <app-round-button [icon]="'Chevron Left'" (buttonClick)="dialogRef.close()"></app-round-button>
     </div>
     <div class="avatar-content">
-      <div class="avatar">
-        <div *ngIf="profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '92px', height: '92px'}"></div>
+      <div class="avatar"
+           #avatarContainer
+           (mouseenter)="avatarContainer.hover = true"
+           (mouseleave)="avatarContainer.hover = false"
+      >
+        <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
+          <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
+        </div>
+        <div *ngIf="profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
         <ng-template #d>
           <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
         </ng-template>
+        <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
+        <div class="buttons" *ngIf="!(loadingProfilePicture | async)">
+          <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+          <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
+        </div>
+
       </div>
       <div class="student-name">{{ profile.display_name }}</div>
     </div>
@@ -20,15 +33,15 @@
 
     <div class="content">
       <div class="student-passes-info" *ngIf="!(loadingPassesStats$ | async); else fakeStats">
-        <div class="card-info">
+        <div class="card-info" [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_today + ((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'">
             <div class="title">{{ (passesStats$ | async)?.past_passes_today }}</div>
             <div class="subtitle">today</div>
         </div>
-        <div class="card-info">
+        <div class="card-info" [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_week + ((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'">
           <div class="title">{{ (passesStats$ | async)?.past_passes_week }}</div>
           <div class="subtitle">this week</div>
         </div>
-        <div class="card-info">
+        <div class="card-info" [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_month + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') +  ' this month.'">
           <div class="title">{{ (passesStats$ | async)?.past_passes_month }}</div>
           <div class="subtitle">this month</div>
         </div>
@@ -69,7 +82,7 @@
             </div>
           </div>
 
-          <div class="groups">
+          <div class="groups" *ngIf="(exclusionGroups$ | async).length">
             <div class="group"
                  *ngFor="let group of exclusionGroups$ | async"
                  [showToolTip]="!!group.notes"
@@ -101,7 +114,7 @@
           <div class="form-content-container">
             <div class="form-content">
               <div class="title">Status</div>
-              <div class="status-value" (click)="openStatusPopup($event)" [style.color]="profile.status === 'active' ? '#00B476' : (profile.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile.status }}
+              <div class="status-value" style="cursor: pointer" (click)="openStatusPopup($event)" [style.color]="profile.status === 'active' ? '#00B476' : (profile.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile.status }}
                 <span><img width="9px" [src]="'./assets/Chevron Down (' + (profile.status === 'active' ? 'Jade' : (profile.status === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
               </div>
             </div>
@@ -140,7 +153,11 @@
           <app-gradient-button
             [gradient]="'#FFFFFF, #FFFFFF'"
             [leftIcon]="'./assets/Calendar (Navy).svg'"
+            [leftImageWidth]="'18px'"
+            [leftImageHeight]="'18px'"
             [rightIcon]="'./assets/Rect (Navy).svg'"
+            [rightIconWidth]="'8px'"
+            [rightIconHeight]="'8px'"
             [size]="'medium'"
             [textColor]="'#1F195E'"
             (buttonClick)="openDateFilter($event)"
@@ -155,8 +172,9 @@
         </app-square-button>
 
         <app-gradient-button
-          [rightIcon]="'./assets/Plus (White).svg'"
+          [leftIcon]="'./assets/Plus (White).svg'"
           (buttonClick)="openCreatePassPopup($event)"
+          [gradient]="'#00B467, #15D593'"
           [size]="'medium'"
         >Create pass</app-gradient-button>
       </div>
