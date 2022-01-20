@@ -2,15 +2,14 @@
    [@pressState]="pressed ? 'down' : 'up'"
    appCrossPointerEventTarget
    (pointerDownEvent)="pressed = true"
-   (pointerClickEvent)="pressed = false; buttonClick.emit($event)"
+   (pointerClickEvent)="pressed = false; selected = true; buttonClick.emit($event)"
    (mouseenter)="hovered = true"
    (mouseleave)="hovered = false; pressed = false"
-   [style.background-color]=""
    [ngStyle]="{
-    width: size + 'px',
-    height: size + 'px',
-    'background-color': backgroundColor
+    width: width + 'px',
+    height: width + 'px',
+    'background-color': getBackground()
    }"
 >
-<img [width]="iconWidth" [src]="'./assets/' + icon + ' (Blue-Gray).svg' | resolveAsset" [alt]="icon"/>
+<img [width]="iconWidth" [src]="'./assets/' + icon + ' (' + (selected ? 'Jade' : 'Blue-Gray') + ').svg' | resolveAsset" [alt]="icon"/>
 </div>

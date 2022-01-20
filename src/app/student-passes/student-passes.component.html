@@ -60,16 +60,25 @@
 
         <div class="student-info" *ngIf="passesStats$ | async as stats">
           <app-student-passes-info-card
+            [customToolTip]="'The student had ' + stats?.past_passes_today + (stats?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'"
+            [nonDisappearing]="false"
+            [editable]="true"
             [number]="stats?.past_passes_today"
             [title]="'today'"
             [loading]="loading$ | async"
           ></app-student-passes-info-card>
           <app-student-passes-info-card
+            [customToolTip]="'The student had ' + stats?.past_passes_week + (stats?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'"
+            [nonDisappearing]="false"
+            [editable]="true"
             [number]="stats?.past_passes_week"
             [title]="'this week'"
             [loading]="loading$ | async"
           ></app-student-passes-info-card>
           <app-student-passes-info-card
+            [customToolTip]="'The student had ' + stats?.past_passes_month + (stats?.past_passes_month === 1 ? ' pass' : ' passes') +  ' this month.'"
+            [nonDisappearing]="false"
+            [editable]="true"
             [number]="stats?.past_passes_month"
             [title]="'this month'"
             [loading]="loading$ | async"

@@ -4,8 +4,7 @@
   height: 564px;
   display: flex;
   .left {
-    min-width: 367px;
-    padding: 25px;
+    min-width: 417px;
     overflow: auto;
     display: flex;
     flex-direction: column;
@@ -18,75 +17,85 @@
       top: 24px;
     }
 
-    .avatar-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .left-header {
+      position: fixed;
+      width: 417px;
+      background-color: #FFFFFF;
+      z-index: 100;
+      .avatar-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 0 10px 0;
 
-      .avatar {
-        width: 88px;
-        height: 88px;
-        background-size: cover;
-        overflow: hidden;
-        border-radius: 50%;
-        position: relative;
+        .avatar {
+          width: 88px;
+          height: 88px;
+          background-size: cover;
+          overflow: hidden;
+          border-radius: 50%;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .spinner {
+            position: absolute;
+          }
+
+          .add-avatar {
+            position: absolute;
+            z-index: 10;
+            left: 30px;
+            width: 28px;
+            height: 25px;
+            cursor: pointer;
+          }
+
+          .hover-backdrop {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            border-radius: 50%;
+            justify-content: center;
+            align-items: center;
+            background-color: $blue-gray;
+            opacity: .2;
+            z-index: 5;
+          }
+        }
+        .student-name {
+          //font-size: 24px;
+          color: $navy;
+          margin-top: 10px;
+          font-weight: bold;
+          transition: font-size .3s ease;
+        }
+      }
+
+      .top-buttons {
         display: flex;
         align-items: center;
-        justify-content: center;
-
-        .spinner {
-          position: absolute;
-        }
-
-        .add-avatar {
-          position: absolute;
-          z-index: 10;
-          left: 30px;
-          width: 28px;
-          height: 25px;
-          cursor: pointer;
-        }
-
-        .hover-backdrop {
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 0;
-          bottom: 0;
-          display: flex;
-          border-radius: 50%;
-          justify-content: center;
-          align-items: center;
-          background-color: $blue-gray;
-          opacity: .2;
-          z-index: 5;
-        }
+        position: absolute;
+        right: 24px;
+        top: 24px;
       }
-      .student-name {
-        font-size: 24px;
-        color: $navy;
-        margin-top: 10px;
-        font-weight: bold;
-      }
-    }
-
-    .top-buttons {
-      display: flex;
-      align-items: center;
-      position: absolute;
-      right: 24px;
-      top: 24px;
     }
 
     .content {
-      width: 100%;
+      width: 367px;
+      padding: 25px;
+      margin-top: 130px;
       .student-passes-info {
         display: flex;
         justify-content: space-between;
         margin-top: 20px;
 
         .card-info {
-          background-color: #F4F4F4;
+          background-color: $gray050;
           border-radius: 8px;
           width: 117px;
           height: 58px;
@@ -121,7 +130,7 @@
         width: 100%;
 
         .form {
-          background-color: #F4F4F4;
+          background-color: $gray050;
           border-radius: 10px;
           padding: 17px;
           display: flex;

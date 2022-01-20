@@ -198,11 +198,11 @@ export const ResizeProfileImage = trigger('openCloseProfile', [
   state('open', style({
     width: '{{size}}px',
     height: '{{size}}px',
-  }), {params: {size: '75'}}),
+  }), {params: {size: '{{size}}'}}),
   state('close', style({
     width: '{{size}}px',
     height: '{{size}}px',
-  }), {params: {size: '42'}}),
+  }), {params: {size: '{{size}}'}}),
   transition('open <=> close', [
     animate('0.2s')
   ])

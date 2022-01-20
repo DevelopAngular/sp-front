@@ -1,8 +1,18 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {User} from '../../models/User';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {HallPassesService} from '../../services/hall-passes.service';
-import {fromEvent, Observable, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {QuickPreviewPasses} from '../../models/QuickPreviewPasses';
 import {UserService} from '../../services/user.service';
 import {School} from '../../models/School';
@@ -24,12 +34,14 @@ import {EncounterPreventionDialogComponent} from '../accounts/encounter-preventi
 import {EncounterPreventionService} from '../../services/encounter-prevention.service';
 import {ExclusionGroup} from '../../models/ExclusionGroup';
 import {EditAvatarComponent} from '../profile-card-dialog/edit-avatar/edit-avatar.component';
+import {ResizeProfileImage} from '../../animations';
 
 @Component({
   selector: 'app-student-info-card',
   templateUrl: './student-info-card.component.html',
   styleUrls: ['./student-info-card.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [ResizeProfileImage]
 })
 export class StudentInfoCardComponent implements OnInit, AfterViewInit {
 
@@ -57,6 +69,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   isFullScreenPasses: boolean;
   isFullScreenReports: boolean;
 
+  isScrollable: boolean;
+  animationTrigger = {value: 'open', params: {size: '88'}};
+
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
 
   constructor(
@@ -69,6 +84,17 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
     private toast: ToastService,
     private encounterPreventionService: EncounterPreventionService
   ) { }
+
+  @HostListener('document.scroll', ['$event'])
+  scroll(event) {
+    if (event.currentTarget.scrollTop > 20) {
+      this.isScrollable = true;
+      this.animationTrigger = {value: 'close', params: {size: '32'}};
+    } else {
+      this.isScrollable = false;
+      this.animationTrigger = {value: 'open', params: {size: '88'}};
+    }
+  }
 
   ngOnInit(): void {
     this.profile = this.data['profile'];
@@ -87,9 +113,15 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    fromEvent(this.left.nativeElement, 'scroll').subscribe(res => {
-      console.log(res);
-    });
+    // fromEvent(this.left.nativeElement, 'scroll').subscribe((event: any) => {
+    //   if (event.currentTarget.scrollTop >= 20) {
+    //     this.isScrollable = true;
+    //     this.animationTrigger = {value: 'close', params: {size: '32'}};
+    //   } else {
+    //     this.isScrollable = false;
+    //     this.animationTrigger = {value: 'open', params: {size: '88'}};
+    //   }
+    // });
   }
 
   getDate(date) {

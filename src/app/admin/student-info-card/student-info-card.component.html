@@ -1,34 +1,37 @@
 <div class="wrapper">
-  <div class="left" #left>
-    <div class="back">
-      <app-round-button [icon]="'Chevron Left'" (buttonClick)="dialogRef.close()"></app-round-button>
-    </div>
-    <div class="avatar-content">
-      <div class="avatar"
-           #avatarContainer
-           (mouseenter)="avatarContainer.hover = true"
-           (mouseleave)="avatarContainer.hover = false"
-      >
-        <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
-          <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
-        </div>
-        <div *ngIf="profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
-        <ng-template #d>
-          <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
-        </ng-template>
-        <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
-        <div class="buttons" *ngIf="!(loadingProfilePicture | async)">
-          <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
-          <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
-        </div>
-
+  <div class="left" #left (scroll)="scroll($event)">
+    <div class="left-header" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
+      <div class="back">
+        <app-round-button [icon]="'Chevron Left'" (buttonClick)="dialogRef.close()"></app-round-button>
       </div>
-      <div class="student-name">{{ profile.display_name }}</div>
-    </div>
+      <div class="avatar-content">
+        <div class="avatar"
+             [@openCloseProfile]="animationTrigger"
+             #avatarContainer
+             (mouseenter)="avatarContainer.hover = true"
+             (mouseleave)="avatarContainer.hover = false"
+        >
+          <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
+            <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
+          </div>
+          <div *ngIf="profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
+          <ng-template #d>
+            <img [@openCloseProfile]="animationTrigger" width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+          </ng-template>
+          <div *ngIf="avatarContainer.hover && !isScrollable" class="hover-backdrop"></div>
+          <div class="buttons" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
+            <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+            <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
+          </div>
 
-    <div class="top-buttons">
-<!--      <app-round-button [icon]="'Notifications'" (buttonClick)="openNotification()"></app-round-button>-->
-      <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
+        </div>
+        <div class="student-name" [style.font-size]="isScrollable ? '13px' : '24px'">{{ profile.display_name }}</div>
+      </div>
+
+      <div class="top-buttons">
+        <!--      <app-round-button [icon]="'Notifications'" (buttonClick)="openNotification()"></app-round-button>-->
+        <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
+      </div>
     </div>
 
     <div class="content">
