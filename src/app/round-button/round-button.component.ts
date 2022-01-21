@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {bumpIn} from '../animations';
-import {fromEvent, Subject} from 'rxjs';
-import {delay, filter} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-round-button',
@@ -36,10 +35,10 @@ export class RoundButtonComponent implements OnInit {
     } else if (this.size === 'small') {
       this.width = 34;
     }
-    fromEvent(document.body, 'click').pipe(delay(200), filter(() => !!this.selected)).subscribe(() => {
-      this.hovered = false;
-      this.selected = false;
-    });
+    // fromEvent(document.body, 'click').pipe(delay(200), filter(() => !!this.selected)).subscribe(() => {
+    //   this.hovered = false;
+    //   this.selected = false;
+    // });
   }
 
   getBackground(): string {
@@ -48,17 +47,17 @@ export class RoundButtonComponent implements OnInit {
         if (this.selected) {
           return '#C6ECDF';
         }
-        return '#E2E6EC';
+        return '#EAEDF1';
       }
       if (this.selected) {
         return '#D9F4EB';
       }
-      return '#EAEDF1';
+      return '#F0F2F5';
     }
     if (this.selected) {
       return '#E5F7F1';
     }
-    return '#F0F2F5';
+    return '#FFFFFF';
   }
 
 }

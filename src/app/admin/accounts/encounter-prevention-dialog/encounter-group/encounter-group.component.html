@@ -6,6 +6,7 @@
      (mousedown)="wrapper.pressed = true"
      (click)="wrapper.pressed = false; clickEvent.emit($event)"
      [@pressState]="wrapper.pressed ? 'down' : 'up'"
+     [style.background-color]="backgroundColor ? backgroundColor : 'transparent'"
 >
   <div class="group-name" *ngIf="group.name">{{ group.name }}</div>
   <div class="students">

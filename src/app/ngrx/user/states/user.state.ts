@@ -6,4 +6,5 @@ export interface UserState {
   loading: boolean;
   loaded: boolean;
   nuxDates: any;
+  currentUpdatedUser: User;
 }

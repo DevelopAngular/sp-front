@@ -92,7 +92,7 @@ import {
   getLoadingGroups,
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
-import {getLoadedUser, getNuxDates, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
+import {getCurrentUpdatedUser, getLoadedUser, getNuxDates, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
@@ -230,6 +230,7 @@ export class UserService implements OnDestroy {
   user$: Observable<User> = this.store.select(getUserData);
   userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
   loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
+  currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser)
 
   /**
   * Student Groups
@@ -434,7 +435,7 @@ export class UserService implements OnDestroy {
 
   updateUserRequest(user: User, data) {
     this.store.dispatch(updateUserAction({user, data}));
-    return this.user$;
+    return this.currentUpdatedUser$;
   }
 
   updateUser(userId, data) {

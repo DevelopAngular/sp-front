@@ -35,6 +35,8 @@ import {EncounterPreventionService} from '../../services/encounter-prevention.se
 import {ExclusionGroup} from '../../models/ExclusionGroup';
 import {EditAvatarComponent} from '../profile-card-dialog/edit-avatar/edit-avatar.component';
 import {ResizeProfileImage} from '../../animations';
+import {PassCardComponent} from '../../pass-card/pass-card.component';
+import {Util} from '../../../Util';
 
 @Component({
   selector: 'app-student-info-card',
@@ -46,6 +48,7 @@ import {ResizeProfileImage} from '../../animations';
 export class StudentInfoCardComponent implements OnInit, AfterViewInit {
 
   @ViewChild('left') left: ElementRef;
+  @ViewChild('right') right: ElementRef;
   @ViewChild('dateButton') dateButton: ElementRef;
 
   profile: User;
@@ -70,6 +73,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   isFullScreenReports: boolean;
 
   isScrollable: boolean;
+  isRightScroll: boolean;
   animationTrigger = {value: 'open', params: {size: '88'}};
 
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
@@ -96,6 +100,11 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  @HostListener('document.scroll', ['$event'])
+  rightScroll(event) {
+    this.isRightScroll = event.currentTarget.scrollTop > 10;
+  }
+
   ngOnInit(): void {
     this.profile = this.data['profile'];
     this.school = this.userService.getUserSchool();
@@ -113,19 +122,14 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // fromEvent(this.left.nativeElement, 'scroll').subscribe((event: any) => {
-    //   if (event.currentTarget.scrollTop >= 20) {
-    //     this.isScrollable = true;
-    //     this.animationTrigger = {value: 'close', params: {size: '32'}};
-    //   } else {
-    //     this.isScrollable = false;
-    //     this.animationTrigger = {value: 'open', params: {size: '88'}};
-    //   }
-    // });
   }
 
   getDate(date) {
     return moment(date).format('MMM YYYY') + ' at ' + moment(date).format('hh:mm A');
+  }
+
+  getLastActiveDate(date) {
+    return Util.formatDateTime(new Date(date));
   }
 
   getUserStats() {
@@ -160,7 +164,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
         action: 'password'
       },
       {
-        label: 'Delete Account',
+        label: 'Delete account',
         icon: './assets/Delete (Red).svg',
         textColor: '#E32C66',
         backgroundColor: '#F4F4F4',
@@ -337,9 +341,22 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
       }
     });
 
-    SPC.afterClosed().pipe(filter(res => !!res)).subscribe((status) => {
-      this.userService.updateUserRequest(this.profile, {status});
-      this.toast.openToast({title: 'Account status updated', type: 'success'});
+    SPC.afterClosed()
+      .pipe(
+        filter(res => !!res),
+        switchMap((status) => {
+          return this.userService.updateUserRequest(this.profile, {status});
+        }),
+        switchMap(() => {
+          return this.userService.currentUpdatedAccount$._profile_student;
+        }),
+        filter(r => !!r),
+        take(1)
+      ).subscribe((user) => {
+        this.profile = User.fromJSON(user);
+        this.toast.openToast({title: 'Account status updated', type: 'success'});
+        this.cdr.detectChanges();
+        this.userService.clearCurrentUpdatedAccounts();
     });
   }
 
@@ -395,6 +412,24 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
         this.userService.clearCurrentUpdatedAccounts();
         this.loadingProfilePicture.next(false);
       });
+  }
+
+  openPassCard({time$, pass}) {
+    pass.start_time = new Date(pass.start_time);
+    pass.end_time = new Date(pass.end_time);
+    const data = {
+      pass: pass,
+      fromPast: true,
+      forFuture: false,
+      forMonitor: false,
+      isActive: false,
+      forStaff: true,
+    };
+    const dialogRef = this.dialog.open(PassCardComponent, {
+      panelClass: 'search-pass-card-dialog-container',
+      backdropClass: 'custom-bd',
+      data: data,
+    });
   }
 
   dateText({start, end}): string {

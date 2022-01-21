@@ -1,8 +1,8 @@
 <div class="wrapper" [ngStyle]="{width: width}">
   <div class="header">
     <div class="title">
-      <img width="18" [src]="icon | resolveAsset">
-      <div style="margin-left: 10px">{{ title }}</div>
+      <img width="18" *ngIf="showIcon" [src]="icon | resolveAsset">
+      <div [style.margin-left]="showIcon ? '10px' : 0">{{ title }}</div>
     </div>
 
     <div class="icon-button">

@@ -2,7 +2,7 @@
    [@pressState]="pressed ? 'down' : 'up'"
    appCrossPointerEventTarget
    (pointerDownEvent)="pressed = true"
-   (pointerClickEvent)="pressed = false; selected = true; buttonClick.emit($event)"
+   (pointerClickEvent)="pressed = false; buttonClick.emit($event)"
    (mouseenter)="hovered = true"
    (mouseleave)="hovered = false; pressed = false"
    [ngStyle]="{
