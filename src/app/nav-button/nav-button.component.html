@@ -1,10 +1,18 @@
 <div class="nav-button-wrapper"
+     #button
      [style.color]="textColor"
+     [@pressState]="button.pressed ? 'down' : 'up'"
      appCrossPointerEventTarget
-     (pointerClickEvent)="doClick()"
+     (pointerClickEvent)="doClick(); button.pressed = false"
+     (mouseout)="button.hovered = true"
+     (mouseleave)="button.hovered = false; button.pressed = false"
+     (pointerDownEvent)="button.pressed = true"
+     [style.height]="button.hovered && !selected ? '56px' : '64px'"
+     [style.background-color]="button.hovered && !selected ? button.pressed ? '#EAEDF1' : '#F0F2F5' : 'transparent'"
 >
   <svg width="25px" height="25px" viewBox="0 0 150 150">
     <use [attr.xlink:href]="iconId"></use>
   </svg>
   <div class="nav-button-text">{{ content }} </div>
+  <div class="selected-tab-pointer" *ngIf="selected"></div>
 </div>

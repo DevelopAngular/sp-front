@@ -1,18 +1,12 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  AfterViewInit,
-  OnChanges
-} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {bumpIn} from '../animations';
 
 @Component({
   selector: 'app-nav-button',
   templateUrl: './nav-button.component.html',
-  styleUrls: ['./nav-button.component.scss']
+  styleUrls: ['./nav-button.component.scss'],
+  animations: [bumpIn]
 })
 export class NavButtonComponent implements OnInit, AfterViewInit, OnChanges {
 

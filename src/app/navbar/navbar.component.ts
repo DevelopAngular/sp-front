@@ -105,9 +105,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   isMyRoomRoute: boolean;
 
   countSchools$: Observable<number>;
+  isEnabledProfilePictures$: Observable<boolean>;
 
   buttonHash = {
-    passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
+    passes: {title: 'Home', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
     hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
     myRoom: {title: 'My Room', route: 'myroom', imgUrl: 'Room', requiredRoles: ['_profile_teacher', 'access_teacher_room'], hidden: true},
   };
@@ -214,6 +215,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit() {
     this.underlinePosition();
+    this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
     this.shortcutsService.onPressKeyEvent$
       .pipe(
         filter(() => !this.isMobile),
@@ -376,16 +378,16 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 550) {
-    if (this.isStaff && buttonsContainer && this.tabRefs ||
-      this.isAssistant && buttonsContainer && this.tabRefs) {
-      setTimeout(() => {
-        const tabRefsArray = refsArray.toArray();
-        const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
-        if (tabRefsArray[selectedTabRef]) {
-          this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
-        }
-      }, timeout);
-    }
+    // if (this.isStaff && buttonsContainer && this.tabRefs ||
+    //   this.isAssistant && buttonsContainer && this.tabRefs) {
+    //   setTimeout(() => {
+    //     const tabRefsArray = refsArray.toArray();
+    //     const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
+    //     if (tabRefsArray[selectedTabRef]) {
+    //       this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
+    //     }
+    //   }, timeout);
+    // }
   }
 
   getIcon(iconName: string, darkFill?: string, lightFill?: string) {
@@ -407,15 +409,15 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   selectTab(event: HTMLElement, container: HTMLElement) {
-    const containerRect = container.getBoundingClientRect();
-    const selectedTabRect = event.getBoundingClientRect();
-    const tabPointerHalfWidth = this.tabPointer.nativeElement.getBoundingClientRect().width / 2;
-
-    if (this.screenService.isDeviceLargeExtra) {
-      this.pts = (( event.offsetLeft + event.offsetWidth / 2) - tabPointerHalfWidth) + 'px';
-    } else {
-      this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) + 'px';
-    }
+    // const containerRect = container.getBoundingClientRect();
+    // const selectedTabRect = event.getBoundingClientRect();
+    // const tabPointerHalfWidth = this.tabPointer.nativeElement.getBoundingClientRect().width / 2;
+    //
+    // if (this.screenService.isDeviceLargeExtra) {
+    //   this.pts = (( event.offsetLeft + event.offsetWidth / 2) - tabPointerHalfWidth) + 'px';
+    // } else {
+    //   this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) + 'px';
+    // }
 
   }
 

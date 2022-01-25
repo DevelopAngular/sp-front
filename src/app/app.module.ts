@@ -136,7 +136,7 @@ const appRoutes: Routes = [
     ScrollHolderDirective,
     SupportButtonComponent,
     CustomToastComponent,
-    FeedbackWindowComponent
+    FeedbackWindowComponent,
   ],
   imports: [
     BrowserModule,

@@ -5,21 +5,31 @@
      *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
 >
   <div
-       class="bar" appNavbarElementSender
-       [ngClass]="{shadow: (isStaff || isAssistant) || screenService.isDeviceLargeExtra}"
-       #navbar>
-    <div [ngClass]="isIOSTablet ? 'ios-heading': 'heading'" class="grow">
+   class="bar" appNavbarElementSender
+   [ngClass]="{shadow: (isStaff || isAssistant) || screenService.isDeviceLargeExtra}"
+   [ngStyle]="{
+    padding: user.isStudent() ? 0 : '0 16px'
+   }"
+   #navbar
+  >
+    <div *ngIf="user.isStudent(); else staffLogo" [ngClass]="isIOSTablet ? 'ios-heading': 'heading'" class="grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
+
+    <ng-template #staffLogo>
+      <div class="logo-icon">
+        <img width="20" height="22" [src]="'./assets/SP Arrow (White).svg'" alt="logo">
+      </div>
+      <div class="search">
+        <app-student-search [width]="'242px'"></app-student-search>
+      </div>
+    </ng-template>
     <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
 
       <div *ngIf="isStaff && !this.screenService.isDeviceLargeExtra && user && !user.isAssistant() " class="teacherNav">
         <div *ngFor="let button of buttons; let i = index" class="teacherNav_tab">
           <ng-container *ngIf="buttonVisibility(button)">
-            <div
-                 #tabRef
-                 [style.transition]="'transform .4s ease'"
-            >
+            <div #tabRef [style.transition]="'transform .4s ease'">
               <app-nav-button
                       [selected]="tab === button.route"
                       [content]="button.title"
@@ -29,7 +39,7 @@
             </div>
           </ng-container>
         </div>
-        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>
+<!--        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>-->
       </div>
 
       <div *ngIf="user && user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra" class="teacherNav">
@@ -58,7 +68,7 @@
 
     </div>
 
-    <div [ngClass]="isIOSTablet ? 'ios-user-info' : 'user-info'" [style.flexDirection]="flexDirection">
+    <div [ngClass]="isIOSTablet ? 'ios-user-info' : 'user-info'" [style.flexDirection]="flexDirection" [style.padding-right]="user.isStudent() ? '15%' : 0">
       <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant"
            appCrossPointerEventTarget
            (pointerClickEvent)="showTeaches($event)"
@@ -80,7 +90,15 @@
           [customToolTip]="user && user.badge ? 'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!' : null"
         >
           <span>
-            {{ user?user.display_name:'' }}
+            <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async)">
+            <div *ngIf="user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
+            <ng-template #d>
+              <img width="34" height="34" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+            </ng-template>
+          </div>
+          </span>
+          <span>
+            {{ user? user.isStudent() ? user.display_name : user.first_name:'' }}
           </span>
           <img *ngIf="user && user.badge" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
         </div>
@@ -114,20 +132,6 @@
           <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
           <div class="inbox-number">{{ notificationBadge$ | async }}</div>
           <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Inbox Bottom', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">
-        </div>
-      </div>
-
-<!--      *ngIf="user.isAssistant() && this.screenService.isDeviceLargeExtra"-->
-      <div class="ds-mx-10" style="cursor: pointer;" #target *ngIf="false"
-           appCrossPointerEventTarget
-           (pointerClickEvent)="showTeaches(target)"
-      >
-        <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>
-        <div class="'assistant-name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
-          <span>
-            {{ effectiveUser?.user.display_name }}
-          </span>
-          <img width="10" class="ds-ml-5" [src]="getIcon('Chevron Down', 'White', 'Navy')" alt="Chevron Down.svg">
         </div>
       </div>
 
@@ -177,9 +181,10 @@
 <svg style="display: none;">
   <defs>
     <symbol id="SP Arrow">
-      <g id="Group-2" transform="translate(14.000000, 0.000000)" fill="currentColor">
-        <rect id="Rectangle" x="27" y="32" width="96" height="118" rx="16.969697"></rect>
-        <path d="M96,23.6238095 L42.2459627,23.6238095 C28.9911287,23.6238095 18.2459627,34.3689755 18.2459627,47.6238095 L18.2459627,123 L16.969697,123 C7.59759212,123 -6.28010944e-14,115.402408 -6.39488462e-14,106.030303 L-6.39488462e-14,16.969697 C-6.5096598e-14,7.59759212 7.59759212,-1.2489227e-14 16.969697,-1.42108547e-14 L79.030303,-1.42108547e-14 C88.4024079,-1.59324824e-14 96,7.59759212 96,16.969697 L96,23.6238095 Z" id="Combined-Shape"></path>
+      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icons8-school_building" transform="translate(9.000000, 0.000000)" fill="currentColor" fill-rule="nonzero">
+          <path d="M72,0 C68.688,0 66,2.688 66,6 C66,9.312 68.688,12 72,12 L90,12 C93.312,12 96,9.312 96,6 C96,2.688 93.312,0 90,0 L72,0 Z M66,18 C64.4655,18 62.930814,18.5848122 61.757814,19.7578128 L31.7578128,49.7578128 C30.6298122,50.8798128 30,52.41 30,54 L12,54 C5.37,54 0,59.37 0,66 L0,138 C0,144.63 5.37,150 12,150 L48,150 L48,126 C48,116.058 56.058,108 66,108 C75.942,108 84,116.058 84,126 L84,150 L120,150 C126.63,150 132,144.63 132,138 L132,66 C132,59.37 126.63,54 120,54 L102,54 C102,52.41 101.370186,50.8798128 100.242186,49.7578128 L70.242186,19.7578128 C69.069186,18.5848122 67.5345,18 66,18 Z M66,48 C75.942,48 84,56.058 84,66 C84,75.942 75.942,84 66,84 C56.058,84 48,75.942 48,66 C48,56.058 56.058,48 66,48 Z M18,72 L30,72 L30,84 L18,84 L18,72 Z M102,72 L114,72 L114,84 L102,84 L102,72 Z M18,96 L30,96 L30,108 L18,108 L18,96 Z M102,96 L114,96 L114,108 L102,108 L102,96 Z M18,120 L30,120 L30,132 L18,132 L18,120 Z M102,120 L114,120 L114,132 L102,132 L102,120 Z" id="Shape"></path>
+        </g>
       </g>
     </symbol>
     <symbol id="Walking">

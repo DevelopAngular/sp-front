@@ -51,6 +51,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
   @Output() controlValue = new EventEmitter();
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() focusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @Output() selfSearchCompletedEvent: EventEmitter<any> = new EventEmitter<any>();
 
@@ -126,12 +127,14 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
           takeUntil(this.destroyer$)
         )
         .subscribe((event: any) => {
-          if ( event.target.value.length > 0) {
-            this.showCloseIcon.next(true);
-          } else {
-            setTimeout(() => {
-              this.showCloseIcon.next(false);
-            }, 220);
+          if (this.closeIcon) {
+            if ( event.target.value.length > 0) {
+              this.showCloseIcon.next(true);
+            } else {
+              setTimeout(() => {
+                this.showCloseIcon.next(false);
+              }, 220);
+            }
           }
           this.ontextupdate.emit(event.target.value.trim());
         });
@@ -165,6 +168,8 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   focusAction(selected: boolean) {
     if (!selected) {
       this.blurEvent.emit(true);
+    } else {
+      this.focusEvent.emit(selected);
     }
   }
 

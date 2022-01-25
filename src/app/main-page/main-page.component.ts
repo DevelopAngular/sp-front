@@ -133,7 +133,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get currentNavbarHeight() {
     return this.router.url === '/main/hallmonitor' && this.screenService.isDeviceLargeExtra ||
-    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : '78px' ;
+    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : this.isStaff ? '64px' : '78px' ;
   }
 
   get showInbox() {

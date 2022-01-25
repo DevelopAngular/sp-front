@@ -19,7 +19,6 @@ import {TableService} from '../sp-data-table/table.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {StorageService} from '../../services/storage.service';
 import {ToastService} from '../../services/toast.service';
-import {StudentInfoCardComponent} from '../student-info-card/student-info-card.component';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -331,20 +330,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       permissions: this.profilePermissions,
     };
 
-    if (this.role === '_profile_student') {
-        this.matDialog.open(StudentInfoCardComponent, {
-          panelClass: 'student-pass-info-dialog',
-          data: {profile: evt._originalUserProfile}
-        });
-    } else {
-      const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-bd',
-        width: '425px',
-        height: '500px',
-        data: data
-      });
-    }
+    const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: data
+    });
   }
 
   loadMore() {

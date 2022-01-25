@@ -14,7 +14,6 @@ import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-opt
 import {OctagonComponent} from '../accounts/encounter-prevention-dialog/octagon/octagon.component';
 import {EncounterPreventionDialogComponent} from '../accounts/encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {CreateGroupComponent} from '../accounts/encounter-prevention-dialog/create-group/create-group.component';
-import {EncounterGroupComponent} from '../accounts/encounter-prevention-dialog/encounter-group/encounter-group.component';
 import {ReportDescriptionComponent} from '../accounts/encounter-prevention-dialog/report-description/report-description.component';
 import {EncounterOptionsComponent} from '../accounts/encounter-prevention-dialog/encounter-options/encounter-options.component';
 import {EncounterGroupDescriptionComponent} from '../accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
@@ -37,7 +36,6 @@ import {EncounterGroupDescriptionComponent} from '../accounts/encounter-preventi
       ColumnOptionsComponent,
       EncounterPreventionDialogComponent,
       CreateGroupComponent,
-      EncounterGroupComponent,
       ReportDescriptionComponent,
       EncounterOptionsComponent,
       EncounterGroupDescriptionComponent,
@@ -56,7 +54,6 @@ import {EncounterGroupDescriptionComponent} from '../accounts/encounter-preventi
       OctagonComponent,
       EncounterPreventionDialogComponent,
       CreateGroupComponent,
-      EncounterGroupComponent,
       ReportDescriptionComponent,
       EncounterOptionsComponent,
       EncounterGroupDescriptionComponent,

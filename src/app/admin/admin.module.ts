@@ -29,13 +29,8 @@ import {EditAvatarComponent} from './profile-card-dialog/edit-avatar/edit-avatar
 import {AccountsModule} from './accounts/accounts.module';
 import {ProfileCardDialogComponent} from './profile-card-dialog/profile-card-dialog.component';
 import {AddUserDialogComponent} from './add-user-dialog/add-user-dialog.component';
-import {SelectRoleComponent} from './accounts/select-role/select-role.component';
 import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-profile.component';
-import {StudentInfoCardComponent} from './student-info-card/student-info-card.component';
-import {OverviewContainerComponent} from './student-info-card/student-passes-overwiew/overview-container.component';
-import {ModelFilterComponent} from './student-info-card/model-filter/model-filter.component';
-
-;
+import {ModelFilterComponent} from '../student-info-card/model-filter/model-filter.component';
 
 @NgModule({
     imports: [
@@ -69,12 +64,9 @@ import {ModelFilterComponent} from './student-info-card/model-filter/model-filte
         EditAvatarComponent,
         ProfileCardDialogComponent,
         AddUserDialogComponent,
-        SelectRoleComponent,
         ViewProfileComponent,
-        StudentInfoCardComponent,
-        OverviewContainerComponent
-,
-        ModelFilterComponent    ],
+        ModelFilterComponent,
+    ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
         PdfGeneratorService,

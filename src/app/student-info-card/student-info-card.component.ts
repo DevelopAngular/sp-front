@@ -1,51 +1,44 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  HostListener,
-  Inject,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import {User} from '../../models/User';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {HallPassesService} from '../../services/hall-passes.service';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {User} from '../models/User';
+import {MatDialog} from '@angular/material/dialog';
+import {HallPassesService} from '../services/hall-passes.service';
 import {Observable, Subject} from 'rxjs';
-import {QuickPreviewPasses} from '../../models/QuickPreviewPasses';
-import {UserService} from '../../services/user.service';
-import {School} from '../../models/School';
-import {HallPass} from '../../models/HallPass';
-import {filter, map, switchMap, take, tap} from 'rxjs/operators';
-import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
-import {SettingsDescriptionPopupComponent} from '../../settings-description-popup/settings-description-popup.component';
-import {UserStats} from '../../models/UserStats';
-import {DateTimeFilterComponent} from '../explore/date-time-filter/date-time-filter.component';
+import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
+import {UserService} from '../services/user.service';
+import {School} from '../models/School';
+import {HallPass} from '../models/HallPass';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
+import {UserStats} from '../models/UserStats';
+import {DateTimeFilterComponent} from '../admin/explore/date-time-filter/date-time-filter.component';
 import * as moment from 'moment';
-import {CreateHallpassFormsComponent} from '../../create-hallpass-forms/create-hallpass-forms.component';
-import {ReportFormComponent} from '../../report-form/report-form.component';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {ReportFormComponent} from '../report-form/report-form.component';
 import {ModelFilterComponent} from './model-filter/model-filter.component';
-import {ToastService} from '../../services/toast.service';
-import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
-import {NotificationFormComponent} from '../../notification-form/notification-form.component';
-import {StatusPopupComponent} from '../profile-card-dialog/status-popup/status-popup.component';
-import {EncounterPreventionDialogComponent} from '../accounts/encounter-prevention-dialog/encounter-prevention-dialog.component';
-import {EncounterPreventionService} from '../../services/encounter-prevention.service';
-import {ExclusionGroup} from '../../models/ExclusionGroup';
-import {EditAvatarComponent} from '../profile-card-dialog/edit-avatar/edit-avatar.component';
-import {ResizeProfileImage} from '../../animations';
-import {PassCardComponent} from '../../pass-card/pass-card.component';
-import {Util} from '../../../Util';
+import {ToastService} from '../services/toast.service';
+import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
+import {NotificationFormComponent} from '../notification-form/notification-form.component';
+import {StatusPopupComponent} from '../admin/profile-card-dialog/status-popup/status-popup.component';
+import {EncounterPreventionDialogComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-prevention-dialog.component';
+import {EncounterPreventionService} from '../services/encounter-prevention.service';
+import {ExclusionGroup} from '../models/ExclusionGroup';
+import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
+import {ResizeProfileImage} from '../animations';
+import {PassCardComponent} from '../pass-card/pass-card.component';
+import {Util} from '../../Util';
+import {ActivatedRoute} from '@angular/router';
+import {HttpService} from '../services/http-service';
+
+declare const window;
 
 @Component({
   selector: 'app-student-info-card',
   templateUrl: './student-info-card.component.html',
   styleUrls: ['./student-info-card.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [ResizeProfileImage]
 })
-export class StudentInfoCardComponent implements OnInit, AfterViewInit {
+export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('left') left: ElementRef;
   @ViewChild('right') right: ElementRef;
@@ -63,6 +56,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   exclusionGroupsLoading$: Observable<boolean>;
 
   school: School;
+  schools$: Observable<School[]>;
 
   adminCalendarOptions;
   selectedDate: {start: moment.Moment, end: moment.Moment} = {
@@ -78,15 +72,17 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
 
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
-    public dialogRef: MatDialogRef<StudentInfoCardComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: any,
     private dialog: MatDialog,
     private passesService: HallPassesService,
     private userService: UserService,
     private cdr: ChangeDetectorRef,
     private toast: ToastService,
-    private encounterPreventionService: EncounterPreventionService
+    private encounterPreventionService: EncounterPreventionService,
+    private route: ActivatedRoute,
+    private http: HttpService
   ) { }
 
   @HostListener('document.scroll', ['$event'])
@@ -106,22 +102,38 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.profile = this.data['profile'];
-    this.school = this.userService.getUserSchool();
-    this.getUserStats();
-    this.passesService.getQuickPreviewPassesRequest(6, true);
+    // this.schools$ = this.http.schools$;
+    this.route.params
+      .pipe(
+        switchMap((params) => {
+          return this.userService.searchProfileById(params['id']);
+        }),
+        takeUntil(this.destroy$)
+      ).subscribe(res => {
+        this.profile = res;
+        this.school = this.userService.getUserSchool();
+        this.getUserStats();
+        this.passesService.getQuickPreviewPassesRequest(6, true);
+        this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
+
+        this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+      });
+    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
+    this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loadingPassesStats$ = this.passesService.quickPreviewPassesLoading$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
-    this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
     this.studentsStatsLoading$ = this.userService.studentsStatsLoading$;
-
-    this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
-    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
-    this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
+    // this.userService.searchProfileById(id)
+    // this.profile = this.data['profile'];
   }
 
   ngAfterViewInit() {
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getDate(date) {
@@ -200,7 +212,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit {
           });
         } else if (action === 'delete') {
           this.userService.deleteUserRequest(this.profile.id, '_profile_student');
-          this.dialogRef.close();
         }
       });
   }
