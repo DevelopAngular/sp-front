@@ -5,12 +5,10 @@ import {SharedModule} from '../shared/shared.module';
 import {AdminPageComponent} from './admin-page/admin-page.component';
 import {AdminRoutingModule} from './admin-routing.module';
 import {LinkGeneratedDialogComponent} from './link-generated-dialog/link-generated-dialog.component';
-import {PdfGeneratorService} from './pdf-generator.service';
 import {SettingsComponent} from './settings/settings.component';
 import {AdminSharedModule} from './shared/admin-shared.module';
 import {SchoolSettingDialogComponent} from './school-setting-dialog/school-setting-dialog.component';
 import {SearchFilterDialogComponent} from './explore/search-filter-dialog/search-filter-dialog.component';
-import {DateTimeFilterComponent} from './explore/date-time-filter/date-time-filter.component';
 import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
 import {AdvancedOptionsComponent} from './overlay-container/advanced-options/advanced-options.component';
 import {AddExistingRoomComponent} from './overlay-container/add-existing-room/add-existing-room.component';
@@ -47,7 +45,6 @@ import {ModelFilterComponent} from '../student-info-card/model-filter/model-filt
         LinkGeneratedDialogComponent,
         SchoolSettingDialogComponent,
         SearchFilterDialogComponent,
-        DateTimeFilterComponent,
         RoomsSearchComponent,
         AdvancedOptionsComponent,
         AddExistingRoomComponent,
@@ -69,7 +66,6 @@ import {ModelFilterComponent} from '../student-info-card/model-filter/model-filt
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
-        PdfGeneratorService,
     ],
 })
 export class AdminModule {}

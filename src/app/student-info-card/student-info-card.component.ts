@@ -28,7 +28,7 @@ import {ResizeProfileImage} from '../animations';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {Util} from '../../Util';
 import {ActivatedRoute} from '@angular/router';
-import {HttpService} from '../services/http-service';
+import {ReportInfoDialogComponent} from '../admin/explore/report-info-dialog/report-info-dialog.component';
 
 declare const window;
 
@@ -82,7 +82,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     private toast: ToastService,
     private encounterPreventionService: EncounterPreventionService,
     private route: ActivatedRoute,
-    private http: HttpService
   ) { }
 
   @HostListener('document.scroll', ['$event'])
@@ -440,6 +439,14 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       panelClass: 'search-pass-card-dialog-container',
       backdropClass: 'custom-bd',
       data: data,
+    });
+  }
+
+  openReportInfo(report) {
+    this.dialog.open(ReportInfoDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      data: {report: report}
     });
   }
 

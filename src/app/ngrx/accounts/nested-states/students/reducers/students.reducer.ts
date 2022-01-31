@@ -53,6 +53,12 @@ const reducer = createReducer(
   on(studentsActions.getStudentStats, (state) => ({...state, statsLoading: true, statsLoaded: false})),
   on(studentsActions.getStudentStatsSuccess, (state, {userId, stats}) => {
     return {...state, studentsStats: {...state.studentsStats, [userId]: stats}, statsLoading: false, statsLoaded: true};
+  }),
+  on(studentsActions.addReportToStats, (state, {report}) => {
+    return {...state, studentsStats: {...state.studentsStats, [report.student.id]: {
+      ...state.studentsStats[report.student.id],
+      reports: [report, ...state.studentsStats[report.student.id].reports]
+    }}};
   })
 );
 

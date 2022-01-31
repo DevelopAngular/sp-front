@@ -50,7 +50,7 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.showTooltip$.next(true)
+    this.showTooltip$.next(false);
   }
 
   search(value) {

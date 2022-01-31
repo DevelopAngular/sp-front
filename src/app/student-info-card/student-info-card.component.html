@@ -7,7 +7,8 @@
         </div>
         <div class="avatar-content">
           <div class="avatar"
-               [@openCloseProfile]="animationTrigger"
+               [style.width]="isScrollable ? '32px' : '88px'"
+               [style.height]="isScrollable ? '32px' : '88px'"
                #avatarContainer
                (mouseenter)="avatarContainer.hover = true"
                (mouseleave)="avatarContainer.hover = false"
@@ -15,9 +16,18 @@
             <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
               <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
             </div>
-            <div *ngIf="profile && profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
+            <div
+              *ngIf="profile && profile.profile_picture; else d"
+              [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover'}"
+              [style.width]="isScrollable ? '32px' : '88px'"
+              [style.height]="isScrollable ? '32px' : '88px'"
+            ></div>
             <ng-template #d>
-              <img [@openCloseProfile]="animationTrigger" width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+              <img
+                 [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar"
+                 [style.width]="isScrollable ? '32px' : '88px'"
+                 [style.height]="isScrollable ? '32px' : '88px'"
+              >
             </ng-template>
             <div *ngIf="avatarContainer.hover && !isScrollable" class="hover-backdrop"></div>
             <div class="buttons" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
@@ -176,7 +186,7 @@
                 [rightIcon]="'./assets/Rect (Navy).svg'"
                 [rightIconWidth]="'8px'"
                 [rightIconHeight]="'8px'"
-                [size]="'medium'"
+                [size]="'small'"
                 [textColor]="'#1F195E'"
                 (buttonClick)="openDateFilter($event)"
               >{{ dateText(selectedDate) }}</app-gradient-button>
@@ -188,6 +198,7 @@
               [customToolTip]="'Report student'"
               [nonDisappearing]="false"
               [editable]="true"
+              [height]="'40px'"
             >
               <img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset">
             </app-square-button>
@@ -197,7 +208,7 @@
               (buttonClick)="openCreatePassPopup($event)"
               [gradient]="'#00B467, #15D593'"
               [isGradient]="true"
-              [size]="'medium'"
+              [size]="'small'"
             >Create Pass</app-gradient-button>
           </div>
         </div>
@@ -242,14 +253,16 @@
               </ng-template>
             </app-overview-container>
           </div>
-          <div class="block">
+          <div class="block" [style.margin-top]="'30px'">
             <app-overview-container
               [title]="'Passes'"
               [icon]="'./assets/Passes (Navy).svg'"
               (clickFilter)="openFilter($event)"
             >
               <div class="block-container">
-                <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakePasses">
+                <div class="info-cards"
+                     *ngIf="!(studentsStatsLoading$ | async); else fakePasses"
+                >
                   <ng-container *ngIf="(studentStats$ | async) && (studentStats$ | async).expired_passes.length; else emptyPassState">
                     <ng-container *ngFor="let pass of (studentStats$ | async)?.expired_passes; let i = index">
                       <app-pass-tile
@@ -277,9 +290,9 @@
                   <ng-template #emptyPassState>
                     <div class="empty-state">
                       <div class="icon">
-                        <img width="59px" [src]="'./assets/Passes (Blue-Gray).svg' | resolveAsset">
+                        <img width="59px" [src]="'./assets/Passes (Gray-400).svg' | resolveAsset">
                       </div>
-                      <div class="title">No passes have been created yet</div>
+                      <div class="title">No passes have been created yet.</div>
                     </div>
                   </ng-template>
                 </div>
@@ -302,7 +315,7 @@
               </div>
             </app-overview-container>
           </div>
-          <div class="block">
+          <div class="block" [style.margin-top]="'30px'">
             <app-overview-container
               [title]="'Reports'"
               [icon]="'./assets/Report (Navy).svg'"
@@ -312,12 +325,12 @@
                 <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakeReports">
                   <ng-container *ngIf="(studentStats$ | async) && (studentStats$ | async).reports.length; else emptyReportState">
                     <ng-container *ngFor="let report of (studentStats$ | async)?.reports; let i = index">
-                      <div class="report" *ngIf="i <= 3">
-                        <div class="date">{{ getDate(report.created) }}</div>
+                      <div class="report" *ngIf="i <= 3" appCrossPointerEventTarget (pointerClickEvent)="openReportInfo(report)">
+                        <div class="date">{{ getLastActiveDate(report.created) }}</div>
                         <div class="description">{{ report.message }}</div>
                       </div>
-                      <div class="report" *ngIf="i > 3 && isFullScreenReports">
-                        <div class="date">{{ getDate(report.created) }}</div>
+                      <div class="report" *ngIf="i > 3 && isFullScreenReports" appCrossPointerEventTarget (pointerClickEvent)="openReportInfo(report)">
+                        <div class="date">{{ getLastActiveDate(report.created) }}</div>
                         <div class="description">{{ report.message }}</div>
                       </div>
                     </ng-container>
@@ -325,8 +338,8 @@
 
                   <ng-template #emptyReportState>
                     <div class="empty-state">
-                      <div class="icon"><img width="78px" [src]="'./assets/Report (Blue-Gray).svg' | resolveAsset"></div>
-                      <div class="title">Once a teacher reports a student, it’ll show up here</div>
+                      <div class="icon"><img width="78px" [src]="'./assets/Report (Gray-400).svg' | resolveAsset"></div>
+                      <div class="title">Once a teacher reports a student, it’ll show up here.</div>
                     </div>
                   </ng-template>
                 </div>

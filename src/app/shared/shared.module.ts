@@ -70,6 +70,8 @@ import {SmartpassSearchComponent} from '../smartpass-search/smartpass-search.com
 import {EncounterGroupComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group/encounter-group.component';
 import {SelectRoleComponent} from '../admin/accounts/select-role/select-role.component';
 import {NuxTeacherViewComponent} from '../nux-components/nux-teacher-view/nux-teacher-view.component';
+import {DateTimeFilterComponent} from '../admin/explore/date-time-filter/date-time-filter.component';
+import {ReportInfoDialogComponent} from '../admin/explore/report-info-dialog/report-info-dialog.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -150,6 +152,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EncounterGroupComponent,
     SelectRoleComponent,
     NuxTeacherViewComponent,
+    DateTimeFilterComponent,
+    ReportInfoDialogComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -213,6 +217,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EncounterGroupComponent,
     SelectRoleComponent,
     NuxTeacherViewComponent,
+    DateTimeFilterComponent,
+    ReportInfoDialogComponent,
   ],
   providers: [
     {

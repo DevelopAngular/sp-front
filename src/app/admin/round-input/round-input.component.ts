@@ -168,8 +168,9 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   focusAction(selected: boolean) {
     if (!selected) {
       this.blurEvent.emit(true);
+    } else {
+      this.focusEvent.emit(selected);
     }
-    this.focusEvent.emit(selected);
   }
 
   reset() {
