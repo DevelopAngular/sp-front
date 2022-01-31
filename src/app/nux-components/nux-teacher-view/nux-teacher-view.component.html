@@ -1,0 +1,8 @@
+<div class="wrapper">
+  <div class="new">New</div>
+  <div class="info">Search for a certain student and see previous passes, get quick insights, check permissions, and more...</div>
+  <div class="buttons">
+    <app-gradient-button [gradient]="'#70819f, #70819f'" [buttonLink]="'https://www.smartpass.app/encounterprevention'" [text]="'Learn more'" (buttonClick)="close.emit(false)"></app-gradient-button>
+    <app-gradient-button style="margin-left: 10px" (buttonClick)="close.emit(true)">Try it!</app-gradient-button>
+  </div>
+</div>

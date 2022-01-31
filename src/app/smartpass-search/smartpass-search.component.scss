@@ -1,46 +1,61 @@
 @import '../../sp-colors';
 
 .wrapper {
-  max-width: 290px;
   height: 40px;
   position: relative;
 
   .container {
     position: relative;
+    width: 327px;
 
-    .overlay-wrapper {
-      position: absolute;
-      background-color: #FFFFFF;
-      height: 307px;
-      top: -10px;
-      left: -10px;
-      right: -10px;
-      bottom: 0;
-      border-radius: 10px;
-      z-index: 100;
+    &.focused {
       box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.3);
+      border-radius: 8px 8px 10px 10px;
+
+      &:before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        background-color: #FFFFFF;
+        height: 10px;
+        width: 100%;
+      }
     }
 
     .header {
       display: flex;
       align-items: center;
+      padding: 0 15px;
+      justify-content: space-between;
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: $green500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+      }
     }
     .close {
-      margin-right: 23px;
       z-index: 110;
     }
 
-    .input {
-      z-index: 110;
+    .input-container {
+      position: relative;
+      .input {
+        z-index: 110;
+      }
     }
 
     .content {
       z-index: 110;
-      position: relative;
+      padding: 15px;
       background-color: #FFFFFF;
       overflow: auto;
-      padding: 60px 10px 20px 10px;
-      height: 234px;
+      height: 215px;
       border-radius: 10px;
 
       .search-result {

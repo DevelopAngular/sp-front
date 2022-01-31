@@ -66,9 +66,10 @@ import {SquareButtonComponent} from '../square-button/square-button.component';
 import {RoundButtonComponent} from '../round-button/round-button.component';
 import {FeedbackButtonComponent} from '../feedback-button/feedback-button.component';
 import {NuxEncounterPreventionComponent} from '../nux-components/nux-encounter-prevention/nux-encounter-prevention.component';
-import {StudentSearchComponent} from '../student-search/student-search.component';
+import {SmartpassSearchComponent} from '../smartpass-search/smartpass-search.component';
 import {EncounterGroupComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group/encounter-group.component';
 import {SelectRoleComponent} from '../admin/accounts/select-role/select-role.component';
+import {NuxTeacherViewComponent} from '../nux-components/nux-teacher-view/nux-teacher-view.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -145,9 +146,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     RoundButtonComponent,
     FeedbackButtonComponent,
     NuxEncounterPreventionComponent,
-    StudentSearchComponent,
+    SmartpassSearchComponent,
     EncounterGroupComponent,
     SelectRoleComponent,
+    NuxTeacherViewComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -207,9 +209,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     FeedbackButtonComponent,
     CustomToolTipComponent,
     NuxEncounterPreventionComponent,
-    StudentSearchComponent,
+    SmartpassSearchComponent,
     EncounterGroupComponent,
     SelectRoleComponent,
+    NuxTeacherViewComponent,
   ],
   providers: [
     {

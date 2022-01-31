@@ -17,11 +17,8 @@
     </div>
 
     <ng-template #staffLogo>
-      <div class="logo-icon">
-        <img width="20" height="22" [src]="'./assets/SP Arrow (White).svg'" alt="logo">
-      </div>
       <div class="search">
-        <app-student-search [width]="'242px'"></app-student-search>
+        <app-smartpass-search [width]="'242px'"></app-smartpass-search>
       </div>
     </ng-template>
     <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
