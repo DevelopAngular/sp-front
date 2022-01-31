@@ -4,6 +4,7 @@ import {HttpService} from '../services/http-service';
 import {environment} from '../../environments/environment';
 import {UserService} from '../services/user.service';
 import {StorageService} from '../services/storage.service';
+import _refiner from 'refiner-js';
 
 declare const window;
 
@@ -25,6 +26,7 @@ export class SignOutComponent implements AfterContentInit {
     }
     this.http.setSchool(null);
     this.userService.clearUser();
+    _refiner('resetUser');
   }
 
   ngAfterContentInit() {

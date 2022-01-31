@@ -29,6 +29,7 @@ import {UserService} from './services/user.service';
 import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
+import _refiner from 'refiner-js';
 
 declare const window;
 
@@ -119,6 +120,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(l => this.userService.user$.pipe(take(1))),
         filter(user => !!user),
         switchMap((user: User) => {
+          if (User.fromJSON(user).isAdmin() || User.fromJSON(user).isTeacher()) {
+            this.registerRefiner(User.fromJSON(user));
+          }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
             .pipe(
@@ -298,6 +302,27 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.hideSchoolToggleBar = data.hideSchoolToggleBar;
         this.hideScroll = data.hideScroll;
       });
+  }
+
+  registerRefiner(user) {
+    _refiner('setProject', 'e832a600-7fe2-11ec-9b7a-cd5d0014e33d');
+    _refiner('identifyUser', {
+      id: user.id,
+      email: user.primary_email,
+      created: user.created,
+      last_login: user.last_login,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      type: user.isAdmin() ? 'admin' : 'teacher',
+      status: user.status,
+      sync_types: user.sync_types,
+      first_login: user.first_login,
+      account: {
+        id: user.id,
+        name: user.display_name
+      }
+    });
+    // _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
   }
 
   hubSpotSettings(user) {
