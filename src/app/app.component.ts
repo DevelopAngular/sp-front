@@ -320,7 +320,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       name: user.display_name,
       account: {
         id: this.http.getSchool().id, // <- School Id
-        name: user.display_name
+        name: this.http.getSchool().name
       }
     });
     // _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
