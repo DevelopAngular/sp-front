@@ -529,7 +529,7 @@ export class LiveDataService {
         // console.log((+pass.start_time) - (+pass.created));
         console.log(pass);
         // return Math.abs((+pass.start_time) - (+pass.created)) < 5000 || (!pass.parent_request);
-        return moment(pass.start_time).isSameOrBefore(moment());
+        return moment(pass.start_time).startOf('minute').isSameOrBefore(moment().startOf('minute'), 'minute');
       },
     ];
 
