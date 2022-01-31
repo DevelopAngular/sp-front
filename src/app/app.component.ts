@@ -317,8 +317,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       status: user.status,
       sync_types: user.sync_types,
       first_login: user.first_login,
+      name: user.display_name,
       account: {
-        id: user.id,
+        id: this.http.getSchool().id, // <- School Id
         name: user.display_name
       }
     });
