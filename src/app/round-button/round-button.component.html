@@ -11,5 +11,5 @@
     'background-color': getBackground()
    }"
 >
-<img [width]="iconWidth" [src]="'./assets/' + icon + ' (' + (selected ? 'Jade' : 'Blue-Gray') + ').svg' | resolveAsset" [alt]="icon"/>
+<img [style.margin-right]="iconOffset + 'px'" [width]="iconWidth" [src]="'./assets/' + icon + ' (' + (selected ? 'Jade' : 'Blue-Gray') + ').svg' | resolveAsset" [alt]="icon"/>
 </div>

@@ -3,7 +3,7 @@
     <div class="left" #left (scroll)="scroll($event)">
       <div class="left-header" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
         <div class="back">
-          <app-round-button [icon]="'Chevron Left'"></app-round-button>
+          <app-round-button [icon]="'Chevron Left'" [iconOffset]="3" [iconWidth]="15"></app-round-button>
         </div>
         <div class="avatar-content">
           <div class="avatar"
@@ -64,10 +64,16 @@
             <div class="subtitle">this week</div>
           </div>
           <div class="card-info"
-               [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_month + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') +  ' this month.'"
+               customToolTip
+               [contentTemplate]="tooltip"
                [nonDisappearing]="false"
                [editable]="true"
           >
+            <ng-template #tooltip>
+              <div class="ds-tooltip" style="max-width: 265px">
+                {{ 'The student had ' + (passesStats$ | async)?.past_passes_month + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') +  ' this month.' }}
+              </div>
+            </ng-template>
             <div class="title">{{ (passesStats$ | async)?.past_passes_month }}</div>
             <div class="subtitle">this month</div>
           </div>
@@ -88,7 +94,12 @@
                     <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Walking One (White).svg' | resolveAsset" alt="">
                   </app-octagon>
                 </div>
-                <div class="title" style="font-weight: 600">Encounter Prevention</div>
+                <div class="title" style="font-weight: 600">Encounter Prevention
+                  <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                </div>
+                <ng-template #text>
+                  <div class="ds-tooltip" style="width: 200px">Prevent two or more students from having a pass at the same time. <a href="https://www.smartpass.app/support/encounter-prevention" target="_blank" style="color: #FFFFFF">Learn more.</a></div>
+                </ng-template>
               </div>
               <div class="add-button">
                 <app-gradient-button
@@ -145,7 +156,9 @@
                 </div>
               </div>
               <div class="form-content">
-                <div class="title">Last Active</div>
+                <div class="title">Last Active
+                  <span class="support-icon" customToolTip="The last time a student was signed in and active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                </div>
                 <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : '-' }}</div>
               </div>
             </div>
@@ -177,7 +190,12 @@
       <div class="header-container">
         <div class="header">
           <div class="buttons">
-            <div class="date-button" #dateButton>
+            <div class="date-button"
+                 #dateButton
+                 customToolTip="Filter passes and reports"
+                 [nonDisappearing]="false"
+                 [editable]="true"
+            >
               <app-gradient-button
                 [gradient]="'#FFFFFF, #FFFFFF'"
                 [leftIcon]="'./assets/Calendar (Navy).svg'"
@@ -195,7 +213,7 @@
             <app-square-button
               [backgroundColor]="'#edcbd9'"
               (buttonClick)="openReportForm()"
-              [customToolTip]="'Report student'"
+              customToolTip="Report student"
               [nonDisappearing]="false"
               [editable]="true"
               [height]="'40px'"
@@ -228,20 +246,51 @@
               (clickFilter)="openFilter($event)"
             >
               <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakeInfo">
-                <div class="info-card">
-                  <div class="title">PASSES CREATED</div>
+                <div class="info-card" #created (mouseenter)="created.hovered = true" (mouseleave)="created.hovered = false">
+                  <div class="title">PASSES CREATED
+                    <span class="support-icon" (mouseenter)="created.destroyClose = true" *ngIf="created.hovered || created.destroyClose" (leave)="created.destroyClose = false" customToolTip [contentTemplate]="createdTemplate"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                    <ng-template #createdTemplate>
+                      <div class="ds-tooltip" style="max-width: 270px">
+                        Number of passes the student has had, including passes teachers have created.
+                      </div>
+                    </ng-template>
+                  </div>
                   <div class="value">{{ (studentStats$ | async)?.expired_passes.length + ' passes' }}</div>
                 </div>
-                <div class="info-card">
-                  <div class="title">TIME SPENT OUT OF CLASS</div>
+                <div class="info-card" #outOfClass (mouseenter)="outOfClass.hovered = true" (mouseleave)="outOfClass.hovered = false">
+                  <div class="title">TIME SPENT OUT OF CLASS
+                    <span class="support-icon" (mouseenter)="outOfClass.destroyClose = true" *ngIf="outOfClass.hovered || outOfClass.destroyClose" (leave)="outOfClass.destroyClose = false" customToolTip [contentTemplate]="outOfClassTemplate"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                    <ng-template #outOfClassTemplate>
+                      <div class="ds-tooltip" style="max-width: 310px; text-align: left">
+                        <div>Sum of all of the durations of passes.<br/></div>
+                        <div style="color: #7f879d; margin-top: 5px">This includes time when the pass auto-ended, so the actual time out of class may be lower.</div>
+                      </div>
+                    </ng-template>
+                  </div>
                   <div class="value">{{ '1hr 13 min' }}</div>
                 </div>
-                <div class="info-card">
-                  <div class="title">PASSES OVER TIME LIMIT</div>
+                <div class="info-card" #overTime (mouseenter)="overTime.hovered = true" (mouseleave)="overTime.hovered = false">
+                  <div class="title">PASSES OVER TIME LIMIT
+                    <span class="support-icon" (mouseenter)="overTime.destroyClose = true" *ngIf="overTime.hovered || overTime.destroyClose" (leave)="overTime.destroyClose = false" customToolTip [contentTemplate]="overTimeTemplate"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                    <ng-template #overTimeTemplate>
+                      <div class="ds-tooltip" style="max-width: 290px; text-align: left">
+                        <div>Number of passes where the pass exceeded the time limit set for the pass.<br/></div>
+                        <div style="color: #7f879d; margin-top: 5px">For example, if a pass is set for 5 minutes and the pass isn`t ended after 5 minutes.</div>
+                      </div>
+                    </ng-template>
+                  </div>
                   <div class="value">{{ (studentStats$ | async)?.over_time_limit + ' passes' }}</div>
                 </div>
-                <div class="info-card">
-                  <div class="title">PASSES AUTO-ENDED</div>
+                <div class="info-card" #autoEnded (mouseenter)="autoEnded.hovered = true" (mouseleave)="autoEnded.hovered = false">
+                  <div class="title">PASSES AUTO-ENDED
+                    <span class="support-icon" (mouseenter)="autoEnded.destroyClose = true" *ngIf="autoEnded.hovered || autoEnded.destroyClose" (leave)="autoEnded.destroyClose = false" customToolTip [contentTemplate]="autoEndedTemplate"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                    <ng-template #autoEndedTemplate>
+                      <div class="ds-tooltip" style="max-width: 275px; text-align: left">
+                        <div>Number of passes automatically ended, likely where student forgot to end it.<br/></div>
+                        <div style="color: #7f879d; margin-top: 5px">Expiring passes count up and are automatically ended after <span style="text-decoration-line: underline; text-decoration-style: dashed; text-decoration-color: #7f879d">{{ school.pass_buffer_time === 1 ? school.pass_buffer_time + ' minute.' : school.pass_buffer_time + ' minutes.' }}</span></div>
+                      </div>
+                    </ng-template>
+                  </div>
                   <div class="value">{{ (studentStats$ | async)?.auto_ended + ' pass' }}</div>
                 </div>
               </div>

@@ -12,6 +12,7 @@ export class OverviewContainerComponent implements OnInit {
   @Input() title: string;
   @Input() icon: string;
   @Input() showIcon: boolean;
+  @Input() showRightIcon: boolean;
 
   @Output() clickFilter: EventEmitter<{event: HTMLElement, action: string}> = new EventEmitter<{event: HTMLElement, action: string}>();
 

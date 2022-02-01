@@ -15,6 +15,7 @@ export class RoundButtonComponent implements OnInit {
 
   @Input() icon: string;
   @Input() width: number = 44;
+  @Input() iconOffset: number = 0;
   @Input() backgroundColor: string = '#FFFFFF';
   @Input() iconWidth: number = 20;
   @Input() size: 'regular' | 'small' = 'regular';

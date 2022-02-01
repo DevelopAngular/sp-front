@@ -5,7 +5,7 @@
       <div [style.margin-left]="showIcon ? '10px' : 0">{{ title }}</div>
     </div>
 
-    <div class="icon-button">
+    <div class="icon-button" *ngIf="showRightIcon">
       <app-round-button [size]="'small'" [icon]="'Dots'" (buttonClick)="clickFilter.emit({event: $event, action: title})"></app-round-button>
     </div>
   </div>

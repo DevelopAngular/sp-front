@@ -1,4 +1,14 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {User} from '../models/User';
 import {MatDialog} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -36,7 +46,8 @@ declare const window;
   selector: 'app-student-info-card',
   templateUrl: './student-info-card.component.html',
   styleUrls: ['./student-info-card.component.scss'],
-  animations: [ResizeProfileImage]
+  animations: [ResizeProfileImage],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -101,7 +112,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngOnInit(): void {
-    // this.schools$ = this.http.schools$;
+    this.school = this.userService.getUserSchool();
     this.route.params
       .pipe(
         switchMap((params) => {
@@ -111,6 +122,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       ).subscribe(res => {
         this.profile = res;
         this.school = this.userService.getUserSchool();
+        this.cdr.detectChanges();
         this.getUserStats();
         this.passesService.getQuickPreviewPassesRequest(6, true);
         this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
@@ -157,7 +169,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         icon: './assets/Private Link (Blue-Gray).svg',
         textColor: '#7f879d',
         backgroundColor: '#F4F4F4',
-        action: 'link'
+        action: 'link',
+        tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
       },
       {
         label: 'Edit status',
