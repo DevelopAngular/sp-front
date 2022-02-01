@@ -37,7 +37,7 @@ import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit
 import {ResizeProfileImage} from '../animations';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {Util} from '../../Util';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ReportInfoDialogComponent} from '../admin/explore/report-info-dialog/report-info-dialog.component';
 
 declare const window;
@@ -93,6 +93,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     private toast: ToastService,
     private encounterPreventionService: EncounterPreventionService,
     private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   @HostListener('document.scroll', ['$event'])
@@ -135,8 +136,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     this.loadingPassesStats$ = this.passesService.quickPreviewPassesLoading$;
     this.passesStats$ = this.passesService.quickPreviewPassesStats$;
     this.studentsStatsLoading$ = this.userService.studentsStatsLoading$;
-    // this.userService.searchProfileById(id)
-    // this.profile = this.data['profile'];
+
+    this.passesService.createPassEvent$.pipe(take(1)).subscribe(res => {
+      this.router.navigate(['/main/passes']);
+    });
   }
 
   ngAfterViewInit() {
@@ -238,7 +241,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         action: 'now'
       },
       {
-        label: 'Schedule pass',
+        label: 'Create future pass',
         icon: './assets/Schedule pass (Blue-Gray).svg',
         textColor: '#7f879d',
         backgroundColor: '#F4F4F4',
@@ -252,7 +255,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       data: {trigger: elem.currentTarget, settings }
     });
 
-    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
+    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
       .subscribe((action) => {
         const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
           panelClass: 'main-form-dialog-container',

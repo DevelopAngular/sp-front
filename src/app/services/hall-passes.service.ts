@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, from, Observable, of} from 'rxjs';
+import {BehaviorSubject, from, Observable, of, Subject} from 'rxjs';
 import {Pinnable} from '../models/Pinnable';
 import {HttpService} from './http-service';
 import {Store} from '@ngrx/store';
@@ -92,6 +92,7 @@ export class HallPassesService {
   passStats$ = this.store.select(getPassStatsResult);
 
   isOpenPassModal$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  createPassEvent$: Subject<any> = new Subject<any>();
 
   constructor(
     private http: HttpService,

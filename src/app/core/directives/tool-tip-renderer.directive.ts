@@ -143,7 +143,6 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   @HostListener('mouseleave')
   hide() {
     if (this.editable) {
-      debugger;
       this.closeToolTip();
     }
     this.destroyOpen$.next();

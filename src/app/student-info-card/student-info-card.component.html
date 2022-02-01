@@ -374,11 +374,11 @@
                 <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakeReports">
                   <ng-container *ngIf="(studentStats$ | async) && (studentStats$ | async).reports.length; else emptyReportState">
                     <ng-container *ngFor="let report of (studentStats$ | async)?.reports; let i = index">
-                      <div class="report" *ngIf="i <= 3" appCrossPointerEventTarget (pointerClickEvent)="openReportInfo(report)">
+                      <div class="report" *ngIf="i <= 5" appCrossPointerEventTarget (pointerClickEvent)="openReportInfo(report)">
                         <div class="date">{{ getLastActiveDate(report.created) }}</div>
                         <div class="description">{{ report.message }}</div>
                       </div>
-                      <div class="report" *ngIf="i > 3 && isFullScreenReports" appCrossPointerEventTarget (pointerClickEvent)="openReportInfo(report)">
+                      <div class="report" *ngIf="i > 5 && isFullScreenReports" appCrossPointerEventTarget (pointerClickEvent)="openReportInfo(report)">
                         <div class="date">{{ getLastActiveDate(report.created) }}</div>
                         <div class="description">{{ report.message }}</div>
                       </div>

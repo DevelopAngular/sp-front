@@ -1,7 +1,7 @@
  <h1 [@HeaderSlideInOut] *ngIf="(isInboxClicked$ | async) && screenService.isDeviceMid" class="requests-title"
      [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})" [style.top]="(schoolsLength$ | async) > 1 ? '69.5px' : '19.5px'">Requests</h1>
   <div [@RequestCardSlideInOut] *ngIf="(isInboxClicked$ | async) && screenService.isDeviceMid">
-    <app-display-card [hasDivider]="false" [hasHeader]="false" [fontSize]="'29px'" [inbox]="true" >
+    <app-display-card [hasDivider]="false" [hasHeader]="false" [fontSize]="'28px'" [inbox]="true" >
       <div class="inbox-content">
         <app-notification-turn-on-btn></app-notification-turn-on-btn>
         <div class="requests-or-invitations">
@@ -136,7 +136,7 @@
         </div>
       </div>
       <div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
-        <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Inbox (Navy).svg':'')" [inbox]="true">
+        <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Notifications (Vavy).svg':'')" [inbox]="true">
           <div class="inbox-content">
             <div class="requests-or-invitations">
               <app-pass-collection
@@ -245,7 +245,7 @@
     </div>
   </div>
   <div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
-    <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Inbox (Navy).svg':'')" [inbox]="true">
+    <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Notifications (Navy).svg':'')" [inbox]="true">
       <div class="inbox-content">
         <div class="requests-or-invitations">
           <app-notification-turn-on-btn></app-notification-turn-on-btn>
@@ -275,9 +275,8 @@
           ></app-pass-collection>
         </div>
         <div *ngIf="!(inboxHasItems | async)" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-          <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
-          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
-          <div class="text ds-empty-text-info">No pass requests sent or received</div>
+          <img class="empty-inbox-svg" [src]="'./assets/Notifications (Gray-200).svg' | resolveAsset" alt="empty-svg">
+          <div class="ds-empty-text-title" style="width: 150px; text-align: center">No pass requests sent or received</div>
         </div>
       </div>
     </app-display-card>
