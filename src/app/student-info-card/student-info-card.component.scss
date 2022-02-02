@@ -4,10 +4,17 @@
   display: flex;
   background-color: #F0F2F5;
   height: calc(100% - 64px);
+  justify-content: center;
 
   .student-card-container {
     display: flex;
     padding: 40px;
+    .content-container {
+      display: flex;
+      //align-items: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.102836);
+      max-width: 1090px;
+    }
     .left {
       min-width: 417px;
       overflow: auto;
