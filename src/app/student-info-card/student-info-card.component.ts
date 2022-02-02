@@ -158,10 +158,19 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     return Util.formatDateTime(new Date(date));
   }
 
+  secondToTime(seconds) {
+    let time = '';
+    if (moment.utc(seconds * 1000).hours() > 0) {
+      time += moment.utc(seconds * 1000).hours() + 'hr ';
+    }
+    time += moment.utc(seconds * 1000).minutes() + ' min';
+    return time;
+  }
+
   getUserStats() {
     this.userService.getUserStatsRequest(this.profile.id, {
-      // 'created_after': this.selectedDate.end.toISOString(),
-      'created_after': this.selectedDate.start.toISOString()
+      'created_after': this.selectedDate.start.toISOString(),
+      'end_time_before': this.selectedDate.end.toISOString()
     });
   }
 
