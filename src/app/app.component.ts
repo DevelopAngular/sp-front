@@ -304,19 +304,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  registerRefiner(user) {
+  registerRefiner(user: User) {
     _refiner('setProject', 'e832a600-7fe2-11ec-9b7a-cd5d0014e33d');
     _refiner('identifyUser', {
       id: user.id,
       email: user.primary_email,
-      created: user.created,
-      last_login: user.last_login,
+      created_at: user.created,
+      last_login_at: user.last_login,
+      first_login_at: user.first_login,
       first_name: user.first_name,
       last_name: user.last_name,
       type: user.isAdmin() ? 'admin' : 'teacher',
       status: user.status,
       sync_types: user.sync_types,
-      first_login: user.first_login,
       name: user.display_name,
       account: {
         id: this.http.getSchool().id, // <- School Id
