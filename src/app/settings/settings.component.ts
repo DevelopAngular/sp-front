@@ -158,7 +158,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     if (this.targetElementRef && this.dialogRef) {
       const rect = this.targetElementRef.nativeElement.getBoundingClientRect();
-      matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 168 }px`, top: `${rect.bottom + 10}px` };
+      matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 230 }px`, top: `${rect.bottom + 10}px` };
       this.dialogRef.updatePosition(matDialogConfig.position);
     }
   }

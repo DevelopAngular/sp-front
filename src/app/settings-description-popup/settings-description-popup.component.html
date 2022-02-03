@@ -6,8 +6,7 @@
            (mouseenter)="opt.hover = true; hoverOption = option; showConfirmButton = false;"
            (mouseleave)="opt.hover = false; !hoverOption.withoutHoverDescription ? hoverOption = null : null;"
            [style.background-color]="opt.hover ? option.backgroundColor : 'transparent'"
-           (click)="selectedOption(option, $event)"
-      >
+           (click)="selectedOption(option, $event)">
         <img width="18" [src]="option.icon | resolveAsset" alt="opt-icon">
         <div class="label" [style.color]="option.textColor">{{ option.label }}</div>
       </div>

@@ -170,7 +170,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getUserStats() {
-    debugger;
     this.userService.getUserStatsRequest(this.profile.id, {
       'created_after': this.selectedDate.start.toISOString(),
       'end_time_before': this.selectedDate.end.toISOString()
