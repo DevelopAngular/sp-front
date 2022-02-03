@@ -93,7 +93,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     private toast: ToastService,
     private encounterPreventionService: EncounterPreventionService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) { }
 
   @HostListener('document.scroll', ['$event'])

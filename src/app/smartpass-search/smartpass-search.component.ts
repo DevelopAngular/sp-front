@@ -43,7 +43,7 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -62,6 +62,10 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
   goToUserPage(value) {
     this.router.navigateByUrl(`/main/student/${value.id}`);
     this.isFocus = false;
+  }
+
+  focusEvent(value) {
+    this.isFocus = value;
   }
 
 }

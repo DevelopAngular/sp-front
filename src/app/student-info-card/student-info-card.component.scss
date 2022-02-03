@@ -13,7 +13,7 @@
       display: flex;
       //align-items: center;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.102836);
-      max-width: 990px;
+      max-width: 970px;
     }
     .left {
       min-width: 417px;
@@ -54,7 +54,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px #7083A0;
+            box-shadow: 0 2px 5px rgba(112, 131, 160, .3);;
 
             .spinner {
               position: absolute;
@@ -231,10 +231,10 @@
         position: sticky;
         top: 0;
         z-index: 100;
-        min-width: 590px;
+        //min-width: 590px;
 
         .header {
-          padding: 19px 40px;
+          padding: 20px;
 
           .buttons {
             display: flex;
@@ -245,7 +245,7 @@
 
       .right {
         background-color: #F0F2F5;
-        min-width: 590px;
+        //min-width: 590px;
         overflow: auto;
         position: relative;
 
@@ -257,7 +257,7 @@
         }
 
         .content {
-          padding: 0 40px 25px 40px;
+          padding: 23px;
 
           .info-cards {
             display: flex;

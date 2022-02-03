@@ -1,4 +1,5 @@
 <div class="wrapper">
+  <div class="backdrop" appCrossPointerEventTarget (pointerClickEvent)="isFocus = false"></div>
   <div class="container" [ngClass]="{'focused': isFocus}">
     <div class="header">
       <div class="logo-icon" *ngIf="!isFocus">
@@ -28,7 +29,7 @@
             [fieldIconPosition]="'left'"
             [placeholder]="'Search Smartpass'"
             [backgroundColor]="'#F0F2F5'"
-            (focusEvent)="isFocus = $event"
+            (focusEvent)="focusEvent($event)"
             (ontextupdate)="search($event)"
           ></app-round-input>
         </div>
