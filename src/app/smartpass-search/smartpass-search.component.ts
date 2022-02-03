@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
-import {UserService} from '../services/user.service';
 import {Router} from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
+import {SmartpassSearchService} from '../services/smartpass-search.service';
 
 @Component({
   selector: 'app-smartpass-search',
@@ -40,13 +40,19 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
   public isFocus: boolean;
   public result: any[] = [];
   showTooltip$: Subject<boolean> = new Subject();
+  searchLoading$: Observable<boolean>;
+  searchLoaded$: Observable<boolean>;
+  searchResult$: Observable<any>;
 
   constructor(
-    private userService: UserService,
     private router: Router,
+    private spSearchService: SmartpassSearchService
   ) { }
 
   ngOnInit(): void {
+    this.searchResult$ = this.spSearchService.searchResult$;
+    this.searchLoading$ = this.spSearchService.searchLoading$;
+    this.searchLoaded$ = this.spSearchService.searchLoaded$;
   }
 
   ngAfterViewInit() {
@@ -54,14 +60,17 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
   }
 
   search(value) {
-    this.userService.searchProfile('_profile_student', 50, value).subscribe(res => {
-      this.result = res.results;
-    });
+    if (!value) {
+      this.spSearchService.clearResult();
+      return;
+    }
+    this.spSearchService.searchRequest(value);
   }
 
   goToUserPage(value) {
     this.router.navigateByUrl(`/main/student/${value.id}`);
     this.isFocus = false;
+    this.spSearchService.clearResult();
   }
 
   focusEvent(value) {

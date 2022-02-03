@@ -74,6 +74,7 @@ import {LoginDataEffects} from './ngrx/login-data/effects';
 import {ExclusionGroupsEffects} from './ngrx/encounters-prevention/excusion-groups/effects';
 import {ToastEffects} from './ngrx/toast/effects';
 import {FeedbackWindowComponent} from './feedback-button/feedback-window/feedback-window.component';
+import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -203,7 +204,8 @@ const appRoutes: Routes = [
       ProfilePicturesEffects,
       LoginDataEffects,
       ExclusionGroupsEffects,
-      ToastEffects
+      ToastEffects,
+      SmartpassSearchEffects,
     ]),
     StoreDevtoolsModule.instrument({}),
     HammerModule,

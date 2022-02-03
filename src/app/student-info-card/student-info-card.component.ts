@@ -67,12 +67,14 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   exclusionGroupsLoading$: Observable<boolean>;
 
   school: School;
-  schools$: Observable<School[]>;
 
-  adminCalendarOptions;
+  adminCalendarOptions = {
+    rangeId: 'range_6',
+    toggleResult: 'Range'
+  };
   selectedDate: {start: moment.Moment, end: moment.Moment} = {
     start: moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'),
-    end: moment('31/7/' + moment().year(), 'DD/MM/YYYY')
+    end: moment('31/7/' + moment().year(), 'DD/MM/YYYY').endOf('day')
   };
   isFullScreenPasses: boolean;
   isFullScreenReports: boolean;
@@ -168,6 +170,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getUserStats() {
+    debugger;
     this.userService.getUserStatsRequest(this.profile.id, {
       'created_after': this.selectedDate.start.toISOString(),
       'end_time_before': this.selectedDate.end.toISOString()

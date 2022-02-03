@@ -23,6 +23,7 @@ import {quickPreviewPassesReducer} from '../quick-preview-passes/reducers';
 import {profilePicturesReducer} from '../profile-pictures/reducers';
 import {loginDataReducer} from '../login-data/reducers';
 import {exclusionGroupsReducer} from '../encounters-prevention/excusion-groups/reducers/exclusion-groups.reducer';
+import {smartpassSearchReducer} from '../smartpass-search/reducers/smartpass-search.reducer';
 
 
 export interface AppState {
@@ -51,6 +52,7 @@ export interface AppState {
   readonly profilePictures;
   readonly loginData;
   readonly exclusionGroups;
+  readonly smartpassSearch;
 }
 
 export const reducers = {
@@ -78,5 +80,6 @@ export const reducers = {
   quickPreviewPasses: quickPreviewPassesReducer,
   profilePictures: profilePicturesReducer,
   loginData: loginDataReducer,
-  exclusionGroups: exclusionGroupsReducer
+  exclusionGroups: exclusionGroupsReducer,
+  smartpassSearch: smartpassSearchReducer,
 };

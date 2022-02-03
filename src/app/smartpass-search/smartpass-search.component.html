@@ -37,16 +37,19 @@
     </div>
 
     <div class="content" *ngIf="isFocus">
-      <div class="empty-state-no-search" *ngIf="!result.length">
+      <div class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center" *ngIf="searchLoading$ | async">
+        <mat-spinner [diameter]="55" [color]="'accent'"></mat-spinner>
+      </div>
+      <div class="empty-state-no-search" *ngIf="!(searchLoaded$ | async) && !(searchLoading$ | async)">
         <img [src]="'./assets/emptyStates/Students Empty State.svg'" alt="empty-state">
         <div class="title">Search for students</div>
         <div class="subtitle">See previous passes, get quick insights, check permissions, and more...</div>
       </div>
-      <div class="search-result" *ngIf="result.length">
+      <div class="search-result" *ngIf="(searchLoaded$ | async) && (searchResult$ | async).length">
         <div
           class="result-container"
           #opt
-          *ngFor="let value of result"
+          *ngFor="let value of searchResult$ | async"
           (mouseout)="opt.hovered = true"
           (mouseleave)="opt.hovered = false; opt.pressed = false"
           appCrossPointerEventTarget
