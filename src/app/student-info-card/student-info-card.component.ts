@@ -65,6 +65,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   exclusionGroups$: Observable<ExclusionGroup[]>;
   exclusionGroupsLoading$: Observable<boolean>;
+  user: User;
 
   school: School;
 
@@ -114,8 +115,20 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     this.isRightScroll = event.currentTarget.scrollTop > 10;
   }
 
+  get accountType() {
+    return this.profile.demo_account ? 'Demo' : this.profile.sync_types[0] === 'google' ? 'G Suite' : (this.profile.sync_types[0] === 'gg4l' ? 'GG4L' : this.profile.sync_types[0] === 'clever' ? 'Clever' : 'Standard');
+  }
+
   ngOnInit(): void {
     this.school = this.userService.getUserSchool();
+    this.userService.user$.pipe(
+      takeUntil(this.destroy$),
+      filter(r => !!r),
+      map(u => User.fromJSON(u))
+    )
+      .subscribe(user => {
+        this.user = user;
+      });
     this.route.params
       .pipe(
         switchMap((params) => {
@@ -141,6 +154,13 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
     this.passesService.createPassEvent$.pipe(take(1)).subscribe(res => {
       this.router.navigate(['/main/passes']);
+    });
+
+    this.userService.currentUpdatedAccount$._profile_student.pipe(filter(r => !!r))
+      .subscribe(user => {
+      this.profile = User.fromJSON(user);
+      this.cdr.detectChanges();
+      this.userService.clearCurrentUpdatedAccounts();
     });
   }
 
@@ -177,7 +197,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openStudentSettings(elem) {
-    const settings = [
+    const settings: any = [
       {
         label: 'Copy private link',
         icon: './assets/Private Link (Blue-Gray).svg',
@@ -185,33 +205,36 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         backgroundColor: '#F4F4F4',
         action: 'link',
         tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
-      },
-      {
-        label: 'Edit status',
-        icon: './assets/Account Mark (Blue-Gray).svg',
-        textColor: '#7f879d',
-        backgroundColor: '#F4F4F4',
-        action: 'status',
-        disableClose: true
-      },
-      {
-        label: 'Change password',
-        icon: './assets/Change Password (Blue-Gray).svg',
-        textColor: '#7f879d',
-        backgroundColor: '#F4F4F4',
-        action: 'password'
-      },
-      {
-        label: 'Delete account',
-        icon: './assets/Delete (Red).svg',
-        textColor: '#E32C66',
-        backgroundColor: '#F4F4F4',
-        confirmButton: true,
-        description: 'Are you sure you want to delete account?',
-        action: 'delete',
-        withoutHoverDescription: true
-      }
-    ];
+      }];
+    if (this.user.isAdmin()) {
+      settings.push(
+        {
+          label: 'Edit status',
+          icon: './assets/Account Mark (Blue-Gray).svg',
+          textColor: '#7f879d',
+          backgroundColor: '#F4F4F4',
+          action: 'status',
+          disableClose: true
+        },
+        {
+          label: 'Change password',
+          icon: './assets/Change Password (Blue-Gray).svg',
+          textColor: '#7f879d',
+          backgroundColor: '#F4F4F4',
+          action: 'password'
+        },
+        {
+          label: 'Delete account',
+          icon: './assets/Delete (Red).svg',
+          textColor: '#E32C66',
+          backgroundColor: '#F4F4F4',
+          confirmButton: true,
+          description: 'Are you sure you want to delete account?',
+          action: 'delete',
+          withoutHoverDescription: true
+        }
+      );
+    }
     UNANIMATED_CONTAINER.next(true);
     const st = this.dialog.open(SettingsDescriptionPopupComponent, {
       panelClass: 'consent-dialog-container',
@@ -381,19 +404,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     SPC.afterClosed()
       .pipe(
         filter(res => !!res),
-        switchMap((status) => {
-          return this.userService.updateUserRequest(this.profile, {status});
-        }),
-        switchMap(() => {
-          return this.userService.currentUpdatedAccount$._profile_student;
-        }),
-        filter(r => !!r),
-        take(1)
-      ).subscribe((user) => {
-        this.profile = User.fromJSON(user);
+      ).subscribe((status) => {
+        this.userService.updateUserRequest(this.profile, {status});
         this.toast.openToast({title: 'Account status updated', type: 'success'});
-        this.cdr.detectChanges();
-        this.userService.clearCurrentUpdatedAccounts();
     });
   }
 

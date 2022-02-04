@@ -72,6 +72,12 @@ import {SelectRoleComponent} from '../admin/accounts/select-role/select-role.com
 import {NuxTeacherViewComponent} from '../nux-components/nux-teacher-view/nux-teacher-view.component';
 import {DateTimeFilterComponent} from '../admin/explore/date-time-filter/date-time-filter.component';
 import {ReportInfoDialogComponent} from '../admin/explore/report-info-dialog/report-info-dialog.component';
+import {StatusPopupComponent} from '../admin/profile-card-dialog/status-popup/status-popup.component';
+import {EncounterPreventionDialogComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-prevention-dialog.component';
+import {CreateGroupComponent} from '../admin/accounts/encounter-prevention-dialog/create-group/create-group.component';
+import {ReportDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/report-description/report-description.component';
+import {EncounterOptionsComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-options/encounter-options.component';
+import {EncounterGroupDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -154,6 +160,12 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     NuxTeacherViewComponent,
     DateTimeFilterComponent,
     ReportInfoDialogComponent,
+    StatusPopupComponent,
+    EncounterPreventionDialogComponent,
+    CreateGroupComponent,
+    ReportDescriptionComponent,
+    EncounterOptionsComponent,
+    EncounterGroupDescriptionComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -219,6 +231,12 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     NuxTeacherViewComponent,
     DateTimeFilterComponent,
     ReportInfoDialogComponent,
+    StatusPopupComponent,
+    EncounterPreventionDialogComponent,
+    CreateGroupComponent,
+    ReportDescriptionComponent,
+    EncounterOptionsComponent,
+    EncounterGroupDescriptionComponent,
   ],
   providers: [
     {

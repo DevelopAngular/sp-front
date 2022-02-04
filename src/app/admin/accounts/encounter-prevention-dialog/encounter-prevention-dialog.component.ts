@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {filter, switchMap, tap} from 'rxjs/operators';
+import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
 import {EncounterOptionsComponent} from './encounter-options/encounter-options.component';
@@ -11,6 +11,7 @@ import {EncounterPreventionService} from '../../../services/encounter-prevention
 import {cloneDeep} from 'lodash';
 import {ToastService} from '../../../services/toast.service';
 import {User} from '../../../models/User';
+import {UserService} from '../../../services/user.service';
 
 enum Pages {
   StartPage = 0,
@@ -60,6 +61,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
   exclusionGroups: ExclusionGroup[];
   encounterPreventionLength$: Observable<number>;
   exclusionGroupsLoading$: Observable<boolean>;
+  user$: Observable<User>;
 
   options: {label: string, textColor: string, hoverColor: string, pressedColor: string, icon: string, action: string, description: string}[] = [
     // {label: 'Download report', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Download circle (Blue-Gray).svg', action: 'down_report',  description: ''},
@@ -75,9 +77,11 @@ export class EncounterPreventionDialogComponent implements OnInit {
     private encounterPreventionService: EncounterPreventionService,
     public cdr: ChangeDetectorRef,
     private toast: ToastService,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
+    this.user$ = this.userService.user$.pipe(map(u => User.fromJSON(u)));
     if (this.data) {
       if (this.data['forceNextPage']) {
         this.forceNextPage = this.data['forceNextPage'];

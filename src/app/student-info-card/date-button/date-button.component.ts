@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {bumpIn} from '../../animations';
 import * as moment from 'moment';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-date-button',
@@ -8,7 +8,16 @@ import * as moment from 'moment';
   styleUrls: ['./date-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    bumpIn
+    trigger('pressState', [
+      state('down', style({
+        transform: 'scale(0.98)'
+      })),
+      state('up', style({
+        transform: 'scale(1)'
+      })),
+      transition('up => down', animate('100ms ease-out')),
+      transition('down => up', animate('100ms ease-in'))
+    ])
   ]
 })
 export class DateButtonComponent implements OnInit {

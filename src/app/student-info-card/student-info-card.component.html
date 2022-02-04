@@ -31,9 +31,16 @@
                 >
               </ng-template>
               <div *ngIf="avatarContainer.hover && !isScrollable" class="hover-backdrop"></div>
-              <div class="buttons" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
-                <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
-                <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
+              <div class="buttons" customToolTip [showToolTip]="!user.isAdmin()" [editable]="true" [nonDisappearing]="false" [contentTemplate]="tooltip" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
+                <img (click)="user.isAdmin() ? openEditAvatar($event) : null" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+                <img (click)="user.isAdmin() ? deleteAvatar() : null" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
+
+                <ng-template #tooltip>
+                  <div class="ds-tooltip" style="text-align: left">
+                    <div class="only-admin">ADMIN ONLY</div>
+                    Only admins are able to add, edit or remove profile pictures.
+                  </div>
+                </ng-template>
               </div>
 
             </div>
@@ -102,8 +109,9 @@
                     <div class="ds-tooltip" style="width: 200px">Prevent two or more students from having a pass at the same time. <a href="https://www.smartpass.app/support/encounter-prevention" target="_blank" style="color: #FFFFFF">Learn more.</a></div>
                   </ng-template>
                 </div>
-                <div class="add-button">
+                <div class="add-button" customToolTip [contentTemplate]="tooltip" [showToolTip]="!user.isAdmin()">
                   <app-gradient-button
+                    [disabled]="!user.isAdmin()"
                     [size]="'editable'"
                     [minWidth]="'50px'"
                     [minHeight]="'31px'"
@@ -117,6 +125,13 @@
                     [fontSize]="'14px'"
                     (buttonClick)="openEncounterPrevention('newGroup')"
                   >Add</app-gradient-button>
+
+                  <ng-template #tooltip>
+                    <div class="ds-tooltip" style="text-align: left">
+                      <div class="only-admin">ADMIN ONLY</div>
+                      Only admins are able to manage encounter prevention groups.
+                    </div>
+                  </ng-template>
                 </div>
               </div>
 
@@ -152,8 +167,22 @@
               <div class="form-content-container">
                 <div class="form-content">
                   <div class="title">Status</div>
-                  <div class="status-value" style="cursor: pointer" (click)="openStatusPopup($event)" [style.color]="profile && profile?.status === 'active' ? '#00B476' : (profile && profile?.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile?.status }}
+                  <div class="status-value"
+                       [style.opacity]="!user.isAdmin() ? '0.5' : '1'"
+                       [showToolTip]="!user.isAdmin()"
+                       customToolTip
+                       [contentTemplate]="tooltip"
+                       style="cursor: pointer; text-transform: capitalize"
+                       (click)="user.isAdmin() ? openStatusPopup($event) : null"
+                       [style.color]="profile && profile?.status === 'active' ? '#00B476' : (profile && profile?.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile?.status }}
                     <span><img width="9px" [src]="'./assets/Chevron Down (' + (profile && profile?.status === 'active' ? 'Jade' : (profile && profile?.status === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
+
+                    <ng-template #tooltip>
+                      <div class="ds-tooltip" style="text-align: left">
+                        <div class="only-admin">ADMIN ONLY</div>
+                        Only admins are able to change the account status.
+                      </div>
+                    </ng-template>
                   </div>
                 </div>
                 <div class="form-content">
@@ -168,14 +197,19 @@
             <div class="form" style="flex-direction: column; align-items: flex-start">
               <div class="form-content">
                 <div class="title">Email</div>
-                <div class="value">{{ profile?.primary_email.toLowerCase() }}</div>
+                <div class="value">{{ profile?.primary_email }}</div>
               </div>
               <div class="form-content" [style.margin]="'20px 0'">
-                <app-select-role
-                  [selectedRoles]="[{id: 1, role: 'Student', icon: './assets/Student (Navy).svg'}]"
-                  [isAccessAdd]="false"
-                  [cardsBackground]="'#FFFFFF'"
-                ></app-select-role>
+                <div class="title">Account Type <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>
+                <ng-template #text>
+                  <div class="ds-tooltip" style="max-width: 290px">If an account signs in with a third-party such as Google or Clever, or is a Standard account and signs in with a dedicated SmartPass password.</div>
+                </ng-template>
+                <div class="value">{{ accountType }}</div>
+<!--                <app-select-role-->
+<!--                  [selectedRoles]="[{id: 1, role: 'Student', icon: './assets/Student (Navy).svg'}]"-->
+<!--                  [isAccessAdd]="false"-->
+<!--                  [cardsBackground]="'#FFFFFF'"-->
+<!--                ></app-select-role>-->
               </div>
 
               <div class="form-content">

@@ -12,7 +12,7 @@
     .content-container {
       display: flex;
       //align-items: center;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.102836);
+      //box-shadow: 0 6px 20px rgba(0, 0, 0, 0.102836);
       max-width: 970px;
     }
     .left {
@@ -202,7 +202,7 @@
                 margin-top: 4px;
                 font-weight: 400;
                 //cursor: pointer;
-                text-transform: capitalize;
+                //text-transform: capitalize;
               }
 
               .value {
@@ -390,4 +390,17 @@
       width: 220px;
     }
   }
+}
+
+.only-admin {
+  width: 93px;
+  height: 20px;
+  border-radius: 4px;
+  background-color: #EAEAFD;
+  color: #5352E4;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3px;
 }
