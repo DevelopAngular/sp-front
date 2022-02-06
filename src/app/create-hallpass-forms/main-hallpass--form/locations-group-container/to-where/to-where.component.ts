@@ -8,13 +8,14 @@ import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restricti
 import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
 import {PassLimit} from '../../../../models/PassLimit';
 import {LocationsService} from '../../../../services/locations.service';
+import {ToWherePassLimitDialog} from './to-where-pass-limit-dialog.component';
 
 @Component({
   selector: 'app-to-where',
@@ -74,7 +75,8 @@ export class ToWhereComponent implements OnInit {
     public screenService: ScreenService,
     private storage: StorageService,
     private tooltipDataService: TooltipDataService,
-    private locationService: LocationsService
+    private locationService: LocationsService,
+    private dialog: MatDialog
   ) {
     this.states = States;
   }
@@ -134,27 +136,59 @@ export class ToWhereComponent implements OnInit {
     return true;
   }
 
-  pinnableSelected(pinnable) {
-    if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
-      this.formService.setFrameMotionDirection('disable');
+  passLimitProtect(location, callback){
+    let passLimit = this.passLimits[location.id];
+    let passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to == passLimit.to_count;
+    if (passLimitReached) {
+      const dialogRef = this.dialog.open(ToWherePassLimitDialog, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '200px',
+        disableClose: true,
+        data: {passLimit: passLimit.to_count}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.override) {
+          setTimeout(() => {
+            callback();
+          }, 200);
+        }
+      });
     } else {
-      this.formService.setFrameMotionDirection('forward');
+      callback();
     }
+  }
 
-    this.formService.scalableBoxController.next(true);
+  pinnableSelected(pinnable) {
+    const emitSelectedPinnable = () => {
+      if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
+        this.formService.setFrameMotionDirection('disable');
+      } else {
+        this.formService.setFrameMotionDirection('forward');
+      }
 
-    setTimeout(() => {
-      this.formState.previousState = 2;
-      this.selectedPinnable.emit(pinnable);
-    }, 100);
+      this.formService.scalableBoxController.next(true);
+
+      setTimeout(() => {
+        this.formState.previousState = 2;
+        this.selectedPinnable.emit(pinnable);
+      }, 100);
+    };
+
+    this.passLimitProtect(pinnable.location, emitSelectedPinnable);
   }
 
   locationSelected(location) {
-    this.formService.setFrameMotionDirection('disable');
-    this.formService.scalableBoxController.next(true);
-    setTimeout(() => {
-      this.selectedLocation.emit(location);
-    }, 100);
+    const emitSelectedLocation = () => {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.scalableBoxController.next(true);
+      setTimeout(() => {
+        this.selectedLocation.emit(location);
+      }, 100);
+    };
+
+    this.passLimitProtect(location, emitSelectedLocation);
   }
 
   switchView(isGrid) {
