@@ -120,7 +120,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(l => this.userService.user$.pipe(take(1))),
         filter(user => !!user),
         switchMap((user: User) => {
-          if (User.fromJSON(user).isAdmin() || User.fromJSON(user).isTeacher()) {
+          const isFormsRoute = this.router.url.includes('/forms');
+          if ((User.fromJSON(user).isAdmin() || User.fromJSON(user).isTeacher()) && !isFormsRoute) {
             this.registerRefiner(User.fromJSON(user));
           }
           return this.nextReleaseService
@@ -305,6 +306,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   registerRefiner(user: User) {
+    debugger;
     _refiner('setProject', 'e832a600-7fe2-11ec-9b7a-cd5d0014e33d');
     _refiner('identifyUser', {
       id: user.id,
