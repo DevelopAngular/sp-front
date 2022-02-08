@@ -15,12 +15,13 @@ import {PinInputComponent} from '../teacher-pin/pin-input/pin-input.component';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {FromWhereComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/from-where/from-where.component';
 import {ToWhereComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-where/to-where.component';
+import {ToWherePassLimitDialog} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-where/to-where-pass-limit-dialog.component';
+import {LocationsGroupContainerComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/locations-group-container.component';
 import {ToCategoryComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-category/to-category.component';
 import {RestrictedTargetComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/restricted-target/restricted-target.component';
 import {RestrictedMessageComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/restricted-message/restricted-message.component';
 import {TeacherFooterComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/teacher-footer/teacher-footer.component';
 import {StudentFooterComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/student-footer/student-footer.component';
-import {LocationsGroupContainerComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/locations-group-container.component';
 import {GroupsContainerComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-container/groups-container.component';
 import {GroupsStep1Component} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-step1/groups-step1.component';
 import {GroupsStep2Component} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-step2/groups-step2.component';
@@ -59,6 +60,7 @@ import {NotificationFormComponent} from '../notification-form/notification-form.
       MainHallPassFormComponent,
       FromWhereComponent,
       ToWhereComponent,
+      ToWherePassLimitDialog,
       ToCategoryComponent,
       RestrictedTargetComponent,
       RestrictedMessageComponent,

@@ -14,6 +14,8 @@ import {ListSchoolsComponent} from './fields/list-schools/list-schools.component
 import {SchoolAutocompleteComponent} from './fields/school-autocomplete/school-autocomplete.component';
 import {AddSchoolPopupComponent} from './fields/add-school-popup/add-school-popup.component';
 
+import _refiner from 'refiner-js';
+
 @NgModule({
   declarations: [
     PredemoComponent,
@@ -32,4 +34,8 @@ import {AddSchoolPopupComponent} from './fields/add-school-popup/add-school-popu
   ]
 })
 export class FormsModule {
+  constructor() {
+    _refiner('stopPinging');
+    _refiner('resetUser');
+  }
 }
