@@ -59,6 +59,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   showCloseIcon: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   selected: boolean;
   value: string;
+  isFocus: boolean;
 
   public e: Observable<Event>;
   private destroyer$ = new Subject<any>();
@@ -108,6 +109,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     if (this.focused) {
       setTimeout(() => {
         this.input.nativeElement.focus();
+        this.isFocus = true
       }, 500);
     }
 
@@ -167,8 +169,10 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
 
   focusAction(selected: boolean) {
     if (!selected) {
+      this.isFocus = false;
       this.blurEvent.emit(true);
     } else {
+      this.isFocus = true;
       this.focusEvent.emit(selected);
     }
   }

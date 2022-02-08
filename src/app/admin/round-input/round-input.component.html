@@ -37,6 +37,7 @@
          (click)="focusAction(true)"
          (focusout)="focusAction(false)"
          [(ngModel)]="value"
+         [ngClass]="{isFocus: isFocus}"
       >
 
       <img *ngIf="fieldIcon && (fieldIconPosition === 'right') && !(showCloseIcon | async)" class="field-icon field-icon__right"

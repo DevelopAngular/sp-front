@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
+import {Component, HostListener, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import * as moment from 'moment';
 import {Moment} from 'moment';
@@ -10,7 +10,7 @@ import {Moment} from 'moment';
 })
 export class CalendarComponent implements OnInit {
 
-  triggerElementRef: ElementRef;
+  triggerElementRef: HTMLElement;
   previousSelectedDate: moment.Moment;
   default: Date;
   elementPosition;
@@ -48,7 +48,7 @@ export class CalendarComponent implements OnInit {
 
   updateCalendarPosition() {
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-      const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
+      const rect = this.triggerElementRef.getBoundingClientRect();
       this.elementPosition = rect.right < 1230;
       if (this.elementPosition) {
           matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 148 }px`, top: `${rect.bottom + 15}px` };

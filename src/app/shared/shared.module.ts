@@ -78,6 +78,7 @@ import {CreateGroupComponent} from '../admin/accounts/encounter-prevention-dialo
 import {ReportDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/report-description/report-description.component';
 import {EncounterOptionsComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-options/encounter-options.component';
 import {EncounterGroupDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
+import {WhiteButtonComponent} from '../ds-buttons/white-button/white-button.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -166,6 +167,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ReportDescriptionComponent,
     EncounterOptionsComponent,
     EncounterGroupDescriptionComponent,
+    WhiteButtonComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -237,6 +239,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ReportDescriptionComponent,
     EncounterOptionsComponent,
     EncounterGroupDescriptionComponent,
+    WhiteButtonComponent,
   ],
   providers: [
     {

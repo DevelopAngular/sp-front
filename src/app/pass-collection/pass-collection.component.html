@@ -1,21 +1,21 @@
 <div class="collection-wrapper" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
   <div class="collection-header" [style.width]="headerWidth">
     <div class="collection-title">
-      <img draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
+      <img *ngIf="icon" draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
       <div class="collection-title" [style.color]="_color">
         {{title}}
       </div>
     </div>
-    <ng-container *ngIf="currentPasses$ | async as passes">
-      <div class="search" *ngIf="searchPanel && (passes.length || !!search)">
-        <app-round-input
-          [isSearch]="true"
-          [placeholder]="'Search ' + (randomObject$ | async)"
-          [focused]="true"
-          (ontextupdate)="search = $event; searchValue.emit($event)"
-        ></app-round-input>
-      </div>
-    </ng-container>
+<!--    <ng-container *ngIf="currentPasses$ | async as passes">-->
+<!--      <div class="search" *ngIf="searchPanel && (passes.length || !!search)">-->
+<!--        <app-round-input-->
+<!--          [isSearch]="true"-->
+<!--          [placeholder]="'Search ' + (randomObject$ | async)"-->
+<!--          [focused]="true"-->
+<!--          (ontextupdate)="search = $event; searchValue.emit($event)"-->
+<!--        ></app-round-input>-->
+<!--      </div>-->
+<!--    </ng-container>-->
 
       <div class="filter-button"
          *ngIf="hasFilterPasses"

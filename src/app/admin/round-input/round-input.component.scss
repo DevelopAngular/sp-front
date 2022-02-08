@@ -34,13 +34,21 @@
     box-sizing: border-box;
     border-radius: 20px;
     font-size: 16px;
-    color: $navy;
-    caret-color: auto;
+    color: $navy500;
+    caret-color: $navy500;
     display: block;
     //cursor: default;
     &::placeholder {
-      color: #999999;
+      color: $gray500;
     }
+
+  &.isFocus {
+    &::placeholder {
+      color: $gray400;
+    }
+  }
+
+
     //&:focus {
     //  cursor: text;
     //}

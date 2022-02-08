@@ -11,7 +11,7 @@
           [type]="'text'"
           [focused]="true"
           [backgroundColor]="'#F4F4F4'"
-          [placeholder]="'Search'"
+          [placeholder]="'Filter passes'"
           [fieldIconPosition]="'left'"
           [closeIcon]="true"
           [selectReset$]="resetValue"
@@ -47,7 +47,7 @@
               [minWidth]="'215px'"
               [width]="'215px'"
               [type]="'text'"
-              [placeholder]="'Search'"
+              [placeholder]="'Filter passes'"
               [fieldIconPosition]="'left'"
               [closeIcon]="true"
               [pending$]="searchPending$"
@@ -77,7 +77,7 @@
              [style.color]="myRoomHeaderColor"
         >
           {{ selectedLocation ? selectedLocation.title : (roomOptions.length > 1 ? 'All Rooms' : roomOptions[0].title)}}
-          <img *ngIf="showArrow" class="disclosure-icon" [src]="getIcon('./assets/Chevron Down (Navy).svg') | resolveAsset">
+          <img *ngIf="showArrow" class="disclosure-icon" [src]="getIcon('./assets/Rect (Navy).svg') | resolveAsset">
         </div>
         <div [style.margin-left]="'auto'"
              [style.margin-right]="'10px'">
@@ -86,17 +86,30 @@
               [minWidth]="'215px'"
               [width]="'215px'"
               [type]="'text'"
-              [placeholder]="'Search'"
+              [placeholder]="'Filter passes'"
               [fieldIconPosition]="'left'"
               [closeIcon]="true"
+              [backgroundColor]="'#E2E6EC'"
               [pending$]="searchPending$"
               [isSearch]="true"
               (ontextupdate)="onSearch($event)"
             ></app-round-input>
           </div>
         </div>
-        <div class="calendar-wrapper">
-          <app-icon-button [size]="25" [srcString]="'Calendar'" (clickEvent)="chooseDate($event)"></app-icon-button>
+<!--        <div class="calendar-wrapper">-->
+<!--          <app-icon-button [size]="25" [srcString]="'Calendar'" (clickEvent)="chooseDate($event)"></app-icon-button>-->
+<!--        </div>-->
+        <div class="calendar-button">
+          <app-white-button
+            [icon]="'./assets/Calendar (Blue-Gray).svg'"
+            [width]="'106px'"
+            [height]="'40px'"
+            [iconWidth]="'18px'"
+            [text]="'Filter'"
+            [rightIcon]="'./assets/Rect (Blue-Gray).svg'"
+            [rightIconWidth]="'9px'"
+            (buttonClick)="chooseDate($event)"
+          ></app-white-button>
         </div>
 
         <div class="date-display-mobile" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
@@ -152,7 +165,7 @@
             [forStaff]="isStaff"
             [passProvider]="originPasses"
             [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
-            [icon]="'./assets/SP Arrow Reverse (Navy).svg'"
+            [icon]="'./assets/Home (Navy).svg'"
             [columns]="4"
             [filterModel]="'passes-from-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
@@ -172,14 +185,23 @@
 
           <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
             <div class="empty-container" *ngIf="inputValue != ''">
-              <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoomSearch.svg' | resolveAsset" alt="empty-svg">
-              <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">No Results</div>
-              <div class="small-text ds-empty-text-info">Search again or change the date</div>
+              <img class="empty-svg" width="60px" [src]="'./assets/Pass Search (Gray).svg' | resolveAsset" alt="empty-svg">
+<!--              <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">No Results</div>-->
+              <div class="small-text ds-empty-text-info">No passes on this date for the keyword “{{ inputValue }}”</div>
             </div>
             <div class="empty-container" *ngIf="inputValue==''">
-              <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoom.svg' | resolveAsset" alt="empty-svg">
-              <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">It's Blank</div>
-              <div class="small-text ds-empty-text-info">There aren't any passes here</div>
+              <img class="empty-svg" width="60px" height="" [src]="'./assets/Passes (Gray-400).svg' | resolveAsset" alt="empty-svg">
+<!--              <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">It's Blank</div>-->
+              <div class="small-text ds-empty-text-info">No passes to or from this room</div>
+              <app-white-button
+                [style.margin-top]="'6px'"
+                [width]="'116px'"
+                [height]="'27px'"
+                [text]="'Change date'"
+                [icon]="'./assets/Calendar (Blue-Gray).svg'"
+                [iconWidth]="'12px'"
+                (buttonClick)="chooseDate($event)"
+              ></app-white-button>
             </div>
           </div>
         </div>

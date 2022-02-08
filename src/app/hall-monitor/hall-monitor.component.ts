@@ -99,6 +99,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   isIpadWidth: boolean;
   isIpadSearchBar: boolean;
   isDeviceLargeExtra: boolean;
+  randomStringForSearchInput: string;
 
   reportBtn: ButtonRestriction = new ReportButtonRestriction();
   sortBtn: ButtonRestriction = new SortBtnRestriction();

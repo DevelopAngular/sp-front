@@ -90,6 +90,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  @ViewChild('calendar') calendar: ElementRef;
+
   testPasses: PassLikeProvider;
   activePasses: any;
   originPasses: any;
@@ -317,6 +319,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       }
   }
 
+  openCalendar() {
+    this.chooseDate(this.calendar.nativeElement as HTMLElement);
+  }
+
   getIcon(icon) {
     return this.darkTheme.getIcon({
       iconName: icon,
@@ -327,7 +333,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   chooseDate(event) {
-    const target = new ElementRef(event.currentTarget);
+    const target = event.currentTarget;
     const DR = this.dialog.open(CalendarComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
