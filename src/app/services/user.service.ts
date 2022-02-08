@@ -268,6 +268,8 @@ export class UserService implements OnDestroy {
 
   isEnableProfilePictures$: Observable<boolean>;
 
+  schools$: Observable<School[]>;
+
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -280,7 +282,7 @@ export class UserService implements OnDestroy {
     private loginService: GoogleLoginService,
     private loginDataService: LoginDataService
   ) {
-
+    this.schools$ = this.http.schools$;
     this.http.globalReload$
         .pipe(
           tap(() => {

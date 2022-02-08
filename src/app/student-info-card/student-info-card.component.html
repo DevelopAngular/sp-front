@@ -1,220 +1,222 @@
 <div class="wrapper" *ngIf="!!profile">
   <div class="student-card-container">
     <div class="content-container">
-      <div class="left" #left (scroll)="scroll($event)">
-        <div class="left-header" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
-          <div class="back">
-            <app-round-button [icon]="'Chevron Left'" [iconOffset]="3" [iconWidth]="15"></app-round-button>
-          </div>
-          <div class="avatar-content">
-            <div class="avatar"
-                 [style.width]="isScrollable ? '32px' : '88px'"
-                 [style.height]="isScrollable ? '32px' : '88px'"
-                 #avatarContainer
-                 (mouseenter)="avatarContainer.hover = true"
-                 (mouseleave)="avatarContainer.hover = false"
-            >
-              <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
-                <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
-              </div>
-              <div
-                *ngIf="profile && profile.profile_picture; else d"
-                [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover'}"
-                [style.width]="isScrollable ? '32px' : '88px'"
-                [style.height]="isScrollable ? '32px' : '88px'"
-              ></div>
-              <ng-template #d>
-                <img
-                  [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar"
+      <div class="sticky-container">
+        <div class="left" #left (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : ''">
+          <div class="left-header" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
+            <div class="back">
+              <app-round-button (buttonClick)="back()" [icon]="'Chevron Left'" [iconOffset]="3" [iconWidth]="15"></app-round-button>
+            </div>
+            <div class="avatar-content">
+              <div class="avatar"
+                   [style.width]="isScrollable ? '32px' : '88px'"
+                   [style.height]="isScrollable ? '32px' : '88px'"
+                   #avatarContainer
+                   (mouseenter)="avatarContainer.hover = true"
+                   (mouseleave)="avatarContainer.hover = false"
+              >
+                <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
+                  <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
+                </div>
+                <div
+                  *ngIf="profile && profile.profile_picture; else d"
+                  [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover'}"
                   [style.width]="isScrollable ? '32px' : '88px'"
                   [style.height]="isScrollable ? '32px' : '88px'"
-                >
-              </ng-template>
-              <div *ngIf="avatarContainer.hover && !isScrollable" class="hover-backdrop"></div>
-              <div class="buttons" customToolTip [showToolTip]="!user.isAdmin()" [editable]="true" [nonDisappearing]="false" [contentTemplate]="tooltip" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
-                <img (click)="user.isAdmin() ? openEditAvatar($event) : null" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
-                <img (click)="user.isAdmin() ? deleteAvatar() : null" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
-
-                <ng-template #tooltip>
-                  <div class="ds-tooltip" style="text-align: left">
-                    <div class="only-admin">ADMIN ONLY</div>
-                    Only admins are able to add, edit or remove profile pictures.
-                  </div>
+                ></div>
+                <ng-template #d>
+                  <img
+                    [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar"
+                    [style.width]="isScrollable ? '32px' : '88px'"
+                    [style.height]="isScrollable ? '32px' : '88px'"
+                  >
                 </ng-template>
-              </div>
-
-            </div>
-            <div class="student-name" [style.font-size]="isScrollable ? '13px' : '28px'">{{ profile?.display_name }}</div>
-          </div>
-
-          <div class="top-buttons">
-            <!--      <app-round-button [icon]="'Notifications'" (buttonClick)="openNotification()"></app-round-button>-->
-            <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
-          </div>
-        </div>
-
-        <div class="content">
-          <div class="student-passes-info" *ngIf="!(loadingPassesStats$ | async); else fakeStats">
-            <div class="card-info"
-                 [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_today + ((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'"
-                 [nonDisappearing]="false"
-                 [editable]="true"
-            >
-              <div class="title">{{ (passesStats$ | async)?.past_passes_today }}</div>
-              <div class="subtitle">today</div>
-            </div>
-            <div class="card-info"
-                 [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_week + ((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'"
-                 [nonDisappearing]="false"
-                 [editable]="true"
-            >
-              <div class="title">{{ (passesStats$ | async)?.past_passes_week }}</div>
-              <div class="subtitle">this week</div>
-            </div>
-            <div class="card-info"
-                 customToolTip
-                 [contentTemplate]="tooltip"
-                 [nonDisappearing]="false"
-                 [editable]="true"
-            >
-              <ng-template #tooltip>
-                <div class="ds-tooltip" style="max-width: 265px">
-                  {{ 'The student had ' + (passesStats$ | async)?.past_passes_month + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') +  ' this month.' }}
-                </div>
-              </ng-template>
-              <div class="title">{{ (passesStats$ | async)?.past_passes_month }}</div>
-              <div class="subtitle">this month</div>
-            </div>
-          </div>
-
-          <ng-template #fakeStats>
-            <div class="student-passes-info">
-              <div class="fake-card-stats fake-animate" *ngFor="let card of [1, 1, 1]"></div>
-            </div>
-          </ng-template>
-
-          <div class="forms">
-            <div class="form" style="flex-direction: column" *ngIf="!(exclusionGroupsLoading$ | async); else fakeForm">
-              <div class="card">
-                <div class="label">
-                  <div class="icon" style="background-color: #E32C66">
-                    <app-octagon [size]="20" [backgroundColor]="'#E32C66'">
-                      <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Walking One (White).svg' | resolveAsset" alt="">
-                    </app-octagon>
-                  </div>
-                  <div class="title" style="font-weight: 600">Encounter Prevention
-                    <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
-                  </div>
-                  <ng-template #text>
-                    <div class="ds-tooltip" style="width: 200px">Prevent two or more students from having a pass at the same time. <a href="https://www.smartpass.app/support/encounter-prevention" target="_blank" style="color: #FFFFFF">Learn more.</a></div>
-                  </ng-template>
-                </div>
-                <div class="add-button" customToolTip [contentTemplate]="tooltip" [showToolTip]="!user.isAdmin()">
-                  <app-gradient-button
-                    [disabled]="!user.isAdmin()"
-                    [size]="'editable'"
-                    [minWidth]="'50px'"
-                    [minHeight]="'31px'"
-                    [textColor]="'#7F879D'"
-                    [gradient]="'#FFFFFF, #FFFFFF'"
-                    [hoverColor]="'#FFFFFF'"
-                    [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
-                    [leftImageWidth]="'16px'"
-                    [leftImageHeight]="'16px'"
-                    [withShadow]="false"
-                    [fontSize]="'14px'"
-                    (buttonClick)="openEncounterPrevention('newGroup')"
-                  >Add</app-gradient-button>
+                <div *ngIf="avatarContainer.hover && !isScrollable" class="hover-backdrop"></div>
+                <div class="buttons" customToolTip [showToolTip]="!user.isAdmin()" [editable]="true" [nonDisappearing]="false" [contentTemplate]="tooltip" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
+                  <img (click)="user.isAdmin() ? openEditAvatar($event) : null" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+                  <img (click)="user.isAdmin() ? deleteAvatar() : null" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
 
                   <ng-template #tooltip>
                     <div class="ds-tooltip" style="text-align: left">
                       <div class="only-admin">ADMIN ONLY</div>
-                      Only admins are able to manage encounter prevention groups.
+                      Only admins are able to add, edit or remove profile pictures.
                     </div>
                   </ng-template>
                 </div>
-              </div>
 
-              <div class="groups" *ngIf="(exclusionGroups$ | async) && (exclusionGroups$ | async).length">
-                <div class="group"
-                     *ngFor="let group of exclusionGroups$ | async"
-                     [showToolTip]="!!group.notes"
-                     [customToolTip]="group.notes"
-                     [editable]="true"
-                     [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 210}"
-                >
-                  <app-encounter-group [group]="group" [backgroundColor]="'#FFFFFF'" (clickEvent)="openEncounterPrevention('groupDescription', group)"></app-encounter-group>
-                </div>
+              </div>
+              <div class="student-name" [style.font-size]="isScrollable ? '13px' : '28px'">{{ profile?.display_name }}</div>
+            </div>
+
+            <div class="top-buttons">
+              <!--      <app-round-button [icon]="'Notifications'" (buttonClick)="openNotification()"></app-round-button>-->
+              <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
+            </div>
+          </div>
+
+          <div class="content">
+            <div class="student-passes-info" *ngIf="!(loadingPassesStats$ | async); else fakeStats">
+              <div class="card-info"
+                   [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_today + ((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'"
+                   [nonDisappearing]="false"
+                   [editable]="true"
+              >
+                <div class="title">{{ (passesStats$ | async)?.past_passes_today }}</div>
+                <div class="subtitle">today</div>
+              </div>
+              <div class="card-info"
+                   [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_week + ((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'"
+                   [nonDisappearing]="false"
+                   [editable]="true"
+              >
+                <div class="title">{{ (passesStats$ | async)?.past_passes_week }}</div>
+                <div class="subtitle">this week</div>
+              </div>
+              <div class="card-info"
+                   customToolTip
+                   [contentTemplate]="tooltip"
+                   [nonDisappearing]="false"
+                   [editable]="true"
+              >
+                <ng-template #tooltip>
+                  <div class="ds-tooltip" style="max-width: 265px">
+                    {{ 'The student had ' + (passesStats$ | async)?.past_passes_month + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') +  ' this month.' }}
+                  </div>
+                </ng-template>
+                <div class="title">{{ (passesStats$ | async)?.past_passes_month }}</div>
+                <div class="subtitle">this month</div>
               </div>
             </div>
-            <ng-template #fakeForm>
-              <div class="form fake-animate"></div>
-            </ng-template>
-            <!--        <div class="form">-->
-            <!--          <div class="icon" style="background-color: #E48C15">-->
-            <!--            <img width="13px" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="">-->
-            <!--          </div>-->
-            <!--          <div class="title">Restrict all rooms</div>-->
-            <!--        </div>-->
-            <!--        <div class="form">-->
-            <!--          <div class="icon" style="background-color: #6651F1">-->
-            <!--            <img width="16px" [src]="'./assets/Pass Quota (White).svg' | resolveAsset" alt="">-->
-            <!--          </div>-->
-            <!--          <div class="title">Pass quota</div>-->
-            <!--        </div>-->
 
-            <div class="form">
-              <div class="form-content-container">
-                <div class="form-content">
-                  <div class="title">Status</div>
-                  <div class="status-value"
-                       [style.opacity]="!user.isAdmin() ? '0.5' : '1'"
-                       [showToolTip]="!user.isAdmin()"
-                       customToolTip
-                       [contentTemplate]="tooltip"
-                       style="cursor: pointer; text-transform: capitalize"
-                       (click)="user.isAdmin() ? openStatusPopup($event) : null"
-                       [style.color]="profile && profile?.status === 'active' ? '#00B476' : (profile && profile?.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile?.status }}
-                    <span><img width="9px" [src]="'./assets/Chevron Down (' + (profile && profile?.status === 'active' ? 'Jade' : (profile && profile?.status === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
+            <ng-template #fakeStats>
+              <div class="student-passes-info">
+                <div class="fake-card-stats fake-animate" *ngFor="let card of [1, 1, 1]"></div>
+              </div>
+            </ng-template>
+
+            <div class="forms">
+              <div class="form" style="flex-direction: column" *ngIf="!(exclusionGroupsLoading$ | async); else fakeForm">
+                <div class="card">
+                  <div class="label">
+                    <div class="icon" style="background-color: #E32C66">
+                      <app-octagon [size]="20" [backgroundColor]="'#E32C66'">
+                        <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Walking One (White).svg' | resolveAsset" alt="">
+                      </app-octagon>
+                    </div>
+                    <div class="title" style="font-weight: 600">Encounter Prevention
+                      <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                    </div>
+                    <ng-template #text>
+                      <div class="ds-tooltip" style="width: 200px">Prevent two or more students from having a pass at the same time. <a href="https://www.smartpass.app/support/encounter-prevention" target="_blank" style="color: #FFFFFF">Learn more.</a></div>
+                    </ng-template>
+                  </div>
+                  <div class="add-button" customToolTip [contentTemplate]="tooltip" [showToolTip]="!user.isAdmin()">
+                    <app-gradient-button
+                      [disabled]="!user.isAdmin()"
+                      [size]="'editable'"
+                      [minWidth]="'50px'"
+                      [minHeight]="'31px'"
+                      [textColor]="'#7F879D'"
+                      [gradient]="'#FFFFFF, #FFFFFF'"
+                      [hoverColor]="'#FFFFFF'"
+                      [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
+                      [leftImageWidth]="'16px'"
+                      [leftImageHeight]="'16px'"
+                      [withShadow]="false"
+                      [fontSize]="'14px'"
+                      (buttonClick)="openEncounterPrevention('newGroup')"
+                    >Add</app-gradient-button>
 
                     <ng-template #tooltip>
                       <div class="ds-tooltip" style="text-align: left">
                         <div class="only-admin">ADMIN ONLY</div>
-                        Only admins are able to change the account status.
+                        Only admins are able to manage encounter prevention groups.
                       </div>
                     </ng-template>
                   </div>
                 </div>
-                <div class="form-content">
-                  <div class="title">Last Active
-                    <span class="support-icon" customToolTip="The last time a student was signed in and active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+
+                <div class="groups" *ngIf="(exclusionGroups$ | async) && (exclusionGroups$ | async).length">
+                  <div class="group"
+                       *ngFor="let group of exclusionGroups$ | async"
+                       [showToolTip]="!!group.notes"
+                       [customToolTip]="group.notes"
+                       [editable]="true"
+                       [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 210}"
+                  >
+                    <app-encounter-group [group]="group" [backgroundColor]="'#FFFFFF'" (clickEvent)="openEncounterPrevention('groupDescription', group)"></app-encounter-group>
                   </div>
-                  <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : 'Hasn\'t signed in' }}</div>
                 </div>
               </div>
-            </div>
+              <ng-template #fakeForm>
+                <div class="form fake-animate"></div>
+              </ng-template>
+              <!--        <div class="form">-->
+              <!--          <div class="icon" style="background-color: #E48C15">-->
+              <!--            <img width="13px" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="">-->
+              <!--          </div>-->
+              <!--          <div class="title">Restrict all rooms</div>-->
+              <!--        </div>-->
+              <!--        <div class="form">-->
+              <!--          <div class="icon" style="background-color: #6651F1">-->
+              <!--            <img width="16px" [src]="'./assets/Pass Quota (White).svg' | resolveAsset" alt="">-->
+              <!--          </div>-->
+              <!--          <div class="title">Pass quota</div>-->
+              <!--        </div>-->
 
-            <div class="form" style="flex-direction: column; align-items: flex-start">
-              <div class="form-content">
-                <div class="title">Email</div>
-                <div class="value">{{ profile?.primary_email }}</div>
-              </div>
-              <div class="form-content" [style.margin]="'20px 0'">
-                <div class="title">Account Type <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>
-                <ng-template #text>
-                  <div class="ds-tooltip" style="max-width: 290px">If an account signs in with a third-party such as Google or Clever, or is a Standard account and signs in with a dedicated SmartPass password.</div>
-                </ng-template>
-                <div class="value">{{ accountType }}</div>
-<!--                <app-select-role-->
-<!--                  [selectedRoles]="[{id: 1, role: 'Student', icon: './assets/Student (Navy).svg'}]"-->
-<!--                  [isAccessAdd]="false"-->
-<!--                  [cardsBackground]="'#FFFFFF'"-->
-<!--                ></app-select-role>-->
+              <div class="form">
+                <div class="form-content-container">
+                  <div class="form-content">
+                    <div class="title">Status</div>
+                    <div class="status-value"
+                         [style.opacity]="!user.isAdmin() ? '0.5' : '1'"
+                         [showToolTip]="!user.isAdmin()"
+                         customToolTip
+                         [contentTemplate]="tooltip"
+                         style="cursor: pointer; text-transform: capitalize"
+                         (click)="user.isAdmin() ? openStatusPopup($event) : null"
+                         [style.color]="profile && profile?.status === 'active' ? '#00B476' : (profile && profile?.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile?.status }}
+                      <span><img width="9px" [src]="'./assets/Chevron Down (' + (profile && profile?.status === 'active' ? 'Jade' : (profile && profile?.status === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
+
+                      <ng-template #tooltip>
+                        <div class="ds-tooltip" style="text-align: left">
+                          <div class="only-admin">ADMIN ONLY</div>
+                          Only admins are able to change the account status.
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                  <div class="form-content">
+                    <div class="title">Last Active
+                      <span class="support-icon" customToolTip="The last time a student was signed in and active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                    </div>
+                    <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : 'Hasn\'t signed in' }}</div>
+                  </div>
+                </div>
               </div>
 
-              <div class="form-content">
-                <div class="title">School</div>
-                <div class="value">{{ school?.name }}</div>
+              <div class="form" style="flex-direction: column; align-items: flex-start">
+                <div class="form-content">
+                  <div class="title">Email</div>
+                  <div class="value">{{ profile?.primary_email }}</div>
+                </div>
+                <div class="form-content" [style.margin]="'20px 0'">
+                  <div class="title">Account Type <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>
+                  <ng-template #text>
+                    <div class="ds-tooltip" style="max-width: 290px">If an account signs in with a third-party such as Google or Clever, or is a Standard account and signs in with a dedicated SmartPass password.</div>
+                  </ng-template>
+                  <div class="value">{{ accountType }}</div>
+                  <!--                <app-select-role-->
+                  <!--                  [selectedRoles]="[{id: 1, role: 'Student', icon: './assets/Student (Navy).svg'}]"-->
+                  <!--                  [isAccessAdd]="false"-->
+                  <!--                  [cardsBackground]="'#FFFFFF'"-->
+                  <!--                ></app-select-role>-->
+                </div>
+
+                <div class="form-content">
+                  <div class="title">School</div>
+                  <div class="value">{{ school?.name }}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -301,7 +303,7 @@
                         </div>
                       </ng-template>
                     </div>
-                    <div class="value">{{ (studentStats$ | async)?.expired_passes.length + ' passes' }}</div>
+                    <div class="value">{{ (studentStats$ | async)?.expired_passes.length + ( (studentStats$ | async)?.expired_passes.length === 1 ? ' pass' : ' passes') }}</div>
                   </div>
                   <div class="info-card" #outOfClass (mouseenter)="outOfClass.hovered = true" (mouseleave)="outOfClass.hovered = false">
                     <div class="title">TIME SPENT OUT OF CLASS
@@ -341,11 +343,11 @@
                       <ng-template #overTimeTemplate>
                         <div class="ds-tooltip" style="max-width: 290px; text-align: left">
                           <div>Number of passes where the pass exceeded the time limit set for the pass.<br/></div>
-                          <div style="color: #7f879d; margin-top: 5px">For example, if a pass is set for 5 minutes and the pass isn`t ended after 5 minutes.</div>
+                          <div style="color: #7f879d; margin-top: 5px">For example, if a pass is started for 5 minutes and the pass isn't ended in that time.</div>
                         </div>
                       </ng-template>
                     </div>
-                    <div class="value">{{ (studentStats$ | async)?.over_time_limit + ' passes' }}</div>
+                    <div class="value">{{ (studentStats$ | async)?.over_time_limit + ( (studentStats$ | async)?.over_time_limit === 1 ? ' pass' : ' passes') }}</div>
                   </div>
                   <div class="info-card" #autoEnded (mouseenter)="autoEnded.hovered = true" (mouseleave)="autoEnded.hovered = false">
                     <div class="title">PASSES AUTO-ENDED
@@ -363,11 +365,11 @@
                       <ng-template #autoEndedTemplate>
                         <div class="ds-tooltip" style="max-width: 275px; text-align: left">
                           <div>Number of passes automatically ended, likely where student forgot to end it.<br/></div>
-                          <div style="color: #7f879d; margin-top: 5px">Expiring passes count up and are automatically ended after <span style="text-decoration-line: underline; text-decoration-style: dashed; text-decoration-color: #7f879d">{{ school.pass_buffer_time === 1 ? school.pass_buffer_time + ' minute.' : school.pass_buffer_time + ' minutes.' }}</span></div>
+                          <div style="color: #7f879d; margin-top: 5px">When pass time reaches zero, passes count up and are automatically ended after <span style="text-decoration-line: underline; text-decoration-style: dashed; text-decoration-color: #7f879d">{{ school.pass_buffer_time === 1 ? school.pass_buffer_time + ' minute.' : school.pass_buffer_time + ' minutes.' }}</span></div>
                         </div>
                       </ng-template>
                     </div>
-                    <div class="value">{{ (studentStats$ | async)?.auto_ended + ' pass' }}</div>
+                    <div class="value">{{ (studentStats$ | async)?.auto_ended + ((studentStats$ | async)?.auto_ended === 1 ? ' pass' : ' passes') }}</div>
                   </div>
                 </div>
 

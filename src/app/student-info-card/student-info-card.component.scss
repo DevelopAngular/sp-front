@@ -3,17 +3,21 @@
 .wrapper {
   display: flex;
   background-color: #F0F2F5;
-  height: calc(100% - 64px);
   justify-content: center;
+  position: relative;
 
   .student-card-container {
     display: flex;
-    padding: 40px;
+    padding: 20px 20px 40px 20px;
+
     .content-container {
       display: flex;
-      //align-items: center;
-      //box-shadow: 0 6px 20px rgba(0, 0, 0, 0.102836);
-      max-width: 970px;
+      max-width: 990px;
+    }
+
+    .sticky-container {
+      position: sticky;
+      top: 20px;
     }
     .left {
       min-width: 417px;
@@ -25,6 +29,8 @@
       background-color: #FFFFFF;
       box-shadow: 0 6px 10px rgba(0, 0, 0, 0.102836);
       border-radius: 10px;
+      height: calc(100% - 40px);
+      //overflow: auto;
 
       .back {
         position: absolute;
@@ -33,7 +39,8 @@
       }
 
       .left-header {
-        position: fixed;
+        position: sticky;
+        top: 0;
         width: 417px;
         background-color: #FFFFFF;
         z-index: 1;
@@ -85,11 +92,9 @@
             }
           }
           .student-name {
-            //font-size: 24px;
             color: $navy;
             margin-top: 10px;
             font-weight: bold;
-            //transition: font-size .3s ease;
           }
         }
 
@@ -105,7 +110,7 @@
       .content {
         width: 367px;
         padding: 25px;
-        margin-top: 130px;
+        //margin-top: 130px;
         .student-passes-info {
           display: flex;
           justify-content: space-between;
@@ -221,7 +226,7 @@
     }
 
     .scrolling-container {
-      overflow: auto;
+      //overflow: auto;
       position: relative;
       z-index: 10;
       border-radius: 0 10px 10px 0;
@@ -229,12 +234,12 @@
       .header-container {
         background-color: #F0F2F5;
         position: sticky;
-        top: 0;
+        top: 63px;
         z-index: 100;
         //min-width: 590px;
 
         .header {
-          padding: 20px;
+          padding: 20px 20px 20px 40px;
 
           .buttons {
             display: flex;
@@ -257,7 +262,7 @@
         }
 
         .content {
-          padding: 23px;
+          padding: 0 23px 23px 40px;
 
           .info-cards {
             display: flex;

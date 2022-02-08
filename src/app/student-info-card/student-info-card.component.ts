@@ -39,6 +39,7 @@ import {PassCardComponent} from '../pass-card/pass-card.component';
 import {Util} from '../../Util';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ReportInfoDialogComponent} from '../admin/explore/report-info-dialog/report-info-dialog.component';
+import {HttpService} from '../services/http-service';
 
 declare const window;
 
@@ -86,6 +87,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
 
+  schoolsLength$: Observable<number>;
+
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -97,16 +100,17 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     private encounterPreventionService: EncounterPreventionService,
     private route: ActivatedRoute,
     private router: Router,
+    private http: HttpService
   ) { }
 
   @HostListener('document.scroll', ['$event'])
   scroll(event) {
     if (event.currentTarget.scrollTop > 20) {
       this.isScrollable = true;
-      this.animationTrigger = {value: 'close', params: {size: '32'}};
+      // this.animationTrigger = {value: 'close', params: {size: '32'}};
     } else {
       this.isScrollable = false;
-      this.animationTrigger = {value: 'open', params: {size: '88'}};
+      // this.animationTrigger = {value: 'open', params: {size: '88'}};
     }
   }
 
@@ -121,6 +125,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit(): void {
     this.school = this.userService.getUserSchool();
+    this.schoolsLength$ = this.http.schoolsLength$;
     this.userService.user$.pipe(
       takeUntil(this.destroy$),
       filter(r => !!r),
@@ -140,7 +145,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.school = this.userService.getUserSchool();
         this.cdr.detectChanges();
         this.getUserStats();
-        this.passesService.getQuickPreviewPassesRequest(6, true);
+        this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
         this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
 
         this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
@@ -185,7 +190,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     if (moment.utc(seconds * 1000).hours() > 0) {
       time += moment.utc(seconds * 1000).hours() + 'hr ';
     }
-    time += moment.utc(seconds * 1000).minutes() + ' min';
+    time += (moment.utc(seconds * 1000).minutes() < 1 ? 1 : moment.utc(seconds * 1000).minutes()) + ' min';
     return time;
   }
 
@@ -194,6 +199,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       'created_after': this.selectedDate.start.toISOString(),
       'end_time_before': this.selectedDate.end.toISOString()
     });
+  }
+
+  back() {
+    window.history.back();
   }
 
   openStudentSettings(elem) {
@@ -223,16 +232,16 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           backgroundColor: '#F4F4F4',
           action: 'password'
         },
-        {
-          label: 'Delete account',
-          icon: './assets/Delete (Red).svg',
-          textColor: '#E32C66',
-          backgroundColor: '#F4F4F4',
-          confirmButton: true,
-          description: 'Are you sure you want to delete account?',
-          action: 'delete',
-          withoutHoverDescription: true
-        }
+        // {
+        //   label: 'Delete account',
+        //   icon: './assets/Delete (Red).svg',
+        //   textColor: '#E32C66',
+        //   backgroundColor: '#F4F4F4',
+        //   confirmButton: true,
+        //   description: 'Are you sure you want to delete account?',
+        //   action: 'delete',
+        //   withoutHoverDescription: true
+        // }
       );
     }
     UNANIMATED_CONTAINER.next(true);
@@ -248,7 +257,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           navigator.clipboard.writeText(`${window.location.href}?student_id=${this.profile.id}`).then(() => {
             this.toast.openToast({
               title: 'Link copied to clipboard!',
-              subtitle: 'Send this link to other admins if you want to share with them student information.',
+              subtitle: 'Share this student\'s info with other staff members by sending them the link.',
               type: 'info'
             });
           });
