@@ -41,21 +41,26 @@
           <app-square-button
             [backgroundColor]="'#edcbd9'"
             (buttonClick)="openReportForm()"
-            customToolTip="Report student"
+            customToolTip
+            [contentTemplate]="tooltip"
             [nonDisappearing]="false"
             [editable]="true"
             [width]="'40px'"
             [height]="'40px'"
           >
+            <ng-template #tooltip>
+              <div class="ds-tooltip">
+                Report Student
+              </div>
+            </ng-template>
             <img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset">
           </app-square-button>
 
-          <div class="search" *ngIf="(activePassProvider | async).length">
+          <div class="search">
             <app-round-input
               [isSearch]="true"
               [fieldIcon]="'./assets/Search Normal (Search-Gray).svg'"
-              [placeholder]="'Filter (ex.) \'' + randomStringForSearchInput + '\''"
-              [focused]="true"
+              [placeholder]="randomStringForSearchInput ? 'Filter (ex.) \'' + randomStringForSearchInput + '\'' : 'Filter'"
               [backgroundColor]="'#E2E6EC'"
               [minWidth]="'250px'"
               (ontextupdate)="onSearch($event)"

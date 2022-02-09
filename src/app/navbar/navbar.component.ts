@@ -93,6 +93,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   tab: string = 'passes';
   inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
   introsData: any;
+  kioskModeLocation: any;
 
   isOpenSettings: boolean;
 
@@ -288,6 +289,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
             });
           }
       });
+
+    this.kioskMode.currentRoom$.pipe(takeUntil(this.destroyer$))
+      .subscribe(location => this.kioskModeLocation = location);
 
     this.http.globalReload$
       .pipe(

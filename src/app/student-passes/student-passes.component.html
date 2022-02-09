@@ -4,18 +4,24 @@
     [@scaleStudentPasses]="scaleCardTrigger$ | async"
     [@resizeStudentPasses]="resizeTrigger$ | async"
     [@studentPassFadeInOut]="fadeInOutTrigger$ | async"
+    [@pressState]="pressed && !isOpen ? 'down' : 'up'"
     class="student-wrapper"
     appCrossPointerEventTarget
-    (pointerClickEvent)="openProfile()"
+    (pointerClickEvent)="openProfile(); pressed = false"
     [style.height]="height + 'px'"
     [style.padding]="isClose ? '10px 0' : 0"
     [style.cursor]="isOpen ? 'default' : 'pointer'"
+    [style.border]="!isOpen ? '1px solid #E2E6EC' : 'none'"
+    [style.background-color]="getBg()"
+    (mouseenter)="hovered = true"
+    (mouseleave)="hovered = false; pressed = false"
+    (pointerDownEvent)="pressed = true"
   >
     <div class="header-container"
       [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'"
       [style.border-radius]="isOpen ? '13px 13px 0 0' : '13px'"
     >
-      <div class="header" [style.padding]="isClose ? 0 : '15px 0'" [style.height]="">
+      <div class="header" [style.padding]="isClose ? 0 : '15px 0'" [style.background-color]="isOpen ? '#FFFFFF' : 'transparent'">
         <div class="profile-info" [style.padding]="isScrollable ? '0 0 0 17px' : (hasProfilePicture ? '0 17px' : '10px 17px')">
           <div class="profile-image avatar-animate" *ngIf="hasProfilePicture">
             <div [@openCloseProfile]="animationTrigger" *ngIf="profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
@@ -25,7 +31,7 @@
           </div>
           <div class="title">
             <div class="full-name" [@topBottomName]="animationTrigger">
-              <span>{{ profile.first_name }} {{ profile.last_name }}</span>
+              <span style="white-space: nowrap">{{ profile.first_name }} {{ profile.last_name }}</span>
               <span style="margin-left: 7px;" *ngIf="(exclusionGroups$ | async)?.length" (mouseenter)="notClose(true)">
                 <app-octagon
                   [size]="22"

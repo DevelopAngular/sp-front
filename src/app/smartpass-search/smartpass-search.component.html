@@ -2,10 +2,10 @@
   <div class="backdrop" *ngIf="isFocus" appCrossPointerEventTarget (pointerClickEvent)="isFocus = false"></div>
   <div class="container" [ngClass]="{'focused': isFocus}">
     <div class="header">
-      <div class="logo-icon" *ngIf="!isFocus" appCrossPointerEventTarget (pointerClickEvent)="isFocus = false">
+      <div class="logo-icon" *ngIf="!isFocus">
         <img width="20" height="22" [src]="'./assets/SP Arrow (White).svg'" alt="logo">
       </div>
-      <div class="close" *ngIf="isFocus">
+      <div class="close" *ngIf="isFocus" appCrossPointerEventTarget (pointerClickEvent)="isFocus = false">
         <img [src]="'./assets/Arrow Left (Blue-Gray).svg'" alt="arrow">
       </div>
 

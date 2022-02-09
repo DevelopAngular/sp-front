@@ -265,7 +265,7 @@
         </div>
         <div *ngIf="!(inboxHasItems | async)" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <img class="empty-inbox-svg" [src]="'./assets/Notifications (Gray-200).svg' | resolveAsset" alt="empty-svg">
-          <div class="ds-empty-text-title" style="width: 150px; text-align: center">No pass requests sent or received</div>
+          <div class="ds-empty-text-title" style="width: 150px; text-align: center; font-weight: 500">No pass requests sent or received</div>
         </div>
       </div>
     </app-display-card>

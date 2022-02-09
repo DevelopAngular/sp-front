@@ -13,6 +13,7 @@
   border-radius: 13px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
   overflow: hidden;
+  transition: background-color .2s ease;
 
   &:hover {
     .open {
@@ -37,7 +38,7 @@
     border-radius: 13px 13px 0 0;
     overflow: hidden;
     .header {
-      background-color: #FFFFFF;
+      //background-color: #FFFFFF;
       z-index: 20;
       padding: 15px 0;
       .profile-info {
