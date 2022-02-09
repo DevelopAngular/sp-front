@@ -73,6 +73,7 @@ export class DateButtonComponent implements OnInit {
         return moment(start).format('MMM DD');
       }
     }
+
     return start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
   }
 

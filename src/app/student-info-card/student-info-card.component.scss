@@ -8,7 +8,7 @@
 
   .student-card-container {
     display: flex;
-    padding: 20px 20px 40px 20px;
+    //padding: 20px 20px 40px 20px;
 
     .content-container {
       display: flex;
@@ -16,20 +16,21 @@
     }
 
     .sticky-container {
-      position: sticky;
-      top: 20px;
+      position: relative;
+      padding-top: 20px;
     }
     .left {
+      position: sticky;
+      top: 84px;
       min-width: 417px;
       overflow: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
       background-color: #FFFFFF;
       box-shadow: 0 6px 10px rgba(0, 0, 0, 0.102836);
       border-radius: 10px;
-      height: calc(100% - 40px);
+      //height: calc(100% - 40px);
       //overflow: auto;
 
       .back {
@@ -39,8 +40,8 @@
       }
 
       .left-header {
-        position: sticky;
-        top: 0;
+        position: fixed;
+        //top: 0;
         width: 417px;
         background-color: #FFFFFF;
         z-index: 1;
@@ -110,7 +111,7 @@
       .content {
         width: 367px;
         padding: 25px;
-        //margin-top: 130px;
+        margin-top: 130px;
         .student-passes-info {
           display: flex;
           justify-content: space-between;
@@ -234,8 +235,9 @@
       .header-container {
         background-color: #F0F2F5;
         position: sticky;
-        top: 63px;
+        top: 64px;
         z-index: 100;
+        padding-top: 20px;
         //min-width: 590px;
 
         .header {

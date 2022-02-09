@@ -76,7 +76,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   };
   selectedDate: {start: moment.Moment, end: moment.Moment} = {
     start: moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'),
-    end: moment('31/7/' + moment().year(), 'DD/MM/YYYY').endOf('day')
+    end: moment().endOf('day')
   };
   isFullScreenPasses: boolean;
   isFullScreenReports: boolean;
