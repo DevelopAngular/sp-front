@@ -306,7 +306,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   registerRefiner(user: User) {
-    debugger;
     _refiner('setProject', 'e832a600-7fe2-11ec-9b7a-cd5d0014e33d');
     _refiner('identifyUser', {
       id: user.id,

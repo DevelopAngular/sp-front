@@ -8,7 +8,7 @@ import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restricti
 import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
@@ -136,9 +136,9 @@ export class ToWhereComponent implements OnInit {
     return true;
   }
 
-  passLimitProtect(location, callback){
-    let passLimit = this.passLimits[location.id];
-    let passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to == passLimit.to_count;
+  passLimitProtect(location, callback) {
+    const passLimit = this.passLimits[location.id];
+    const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to === passLimit.to_count;
     if (passLimitReached) {
       const dialogRef = this.dialog.open(ToWherePassLimitDialog, {
         panelClass: 'overlay-dialog',
@@ -175,8 +175,11 @@ export class ToWhereComponent implements OnInit {
         this.selectedPinnable.emit(pinnable);
       }, 100);
     };
-
-    this.passLimitProtect(pinnable.location, emitSelectedPinnable);
+    if (pinnable.type === 'location') {
+      this.passLimitProtect(pinnable.location, emitSelectedPinnable);
+    } else {
+      emitSelectedPinnable();
+    }
   }
 
   locationSelected(location) {
