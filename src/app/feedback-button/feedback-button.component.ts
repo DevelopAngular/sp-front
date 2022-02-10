@@ -1,29 +1,39 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {FeedbackWindowComponent} from './feedback-window/feedback-window.component';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {bumpIn} from '../animations';
+import _refiner from 'refiner-js';
 
 @Component({
   selector: 'app-feedback-button',
   templateUrl: './feedback-button.component.html',
-  styleUrls: ['./feedback-button.component.scss']
+  styleUrls: ['./feedback-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [bumpIn]
 })
 export class FeedbackButtonComponent implements OnInit {
 
   @Input() buttonColor: string = '#FFFFFF';
 
+  hovered: boolean;
+  pressed: boolean;
+
   constructor(
-    private dialog: MatDialog
   ) { }
+
+  get bg() {
+    if (this.hovered) {
+      if (this.pressed) {
+        return '#E2E6EC';
+      }
+      return '#EAEDF1';
+    }
+    return '#F0F2F5';
+  }
 
   ngOnInit(): void {
   }
 
-  buttonClick(event) {
-    this.dialog.open(FeedbackWindowComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {target: event.currentTarget}
-    });
+  openWindow() {
+    _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d', true);
   }
 
 }

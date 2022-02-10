@@ -83,7 +83,9 @@
       </div>
 
       <ng-template #notAssistant>
+        <app-feedback-button></app-feedback-button>
         <div
+          style="margin-left: 12px"
           *ngIf="!isMobile"
           [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
           [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})"
