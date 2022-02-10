@@ -34,7 +34,7 @@
                       [selected]="tab === button.route"
                       [content]="button.title"
                       [icon]="button.imgUrl"
-                      (onClick)="updateTab(button.route); selectTab(tabRef, navButtonsContainer)">
+                      (onClick)="updateTab(button.route);">
               </app-nav-button>
             </div>
           </ng-container>
@@ -58,7 +58,7 @@
                 [selected]="tab === button.route"
                 [content]="button.title"
                 [icon]="button.imgUrl"
-                (onClick)="updateTab(button.route); selectTab(tabRef, navButtonsContainer)">
+                (onClick)="updateTab(button.route);">
               </app-nav-button>
             </div>
           </ng-container>
@@ -69,21 +69,36 @@
     </div>
 
     <div [ngClass]="isIOSTablet ? 'ios-user-info' : 'user-info'" [style.flexDirection]="flexDirection">
+      <div class="feedback">
+        <app-feedback-button></app-feedback-button>
+      </div>
       <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant"
            appCrossPointerEventTarget
            (pointerClickEvent)="showTeaches($event)"
       >
-        <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>
-        <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
+<!--        <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>-->
+        <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})" *ngIf="effectiveUser">
+          <span style="font-size: 13px; font-weight: 400; color: #B7C1CF; margin-right: 7px">Acting on <br/>behalf Of</span>
           <span>
-            {{ effectiveUser ? effectiveUser.user.display_name : '' }}
+            <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async)">
+            <div *ngIf="effectiveUser.user.profile_picture; else d" [ngStyle]="{'background': 'url(' + effectiveUser.user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
+            <ng-template #d>
+              <img width="32" height="32" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+            </ng-template>
+          </div>
           </span>
-          <img width="10" class="ds-ml-5" [src]="getIcon('Chevron Down', 'White', 'Navy')" alt="Chevron Down.svg">
+          <span>
+            {{ effectiveUser ? effectiveUser.user.first_name : '' }}
+          </span>
+          <img *ngIf="(effectiveUser.user && effectiveUser.user.badge)" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
+          <img width="10" class="ds-ml-5" [src]="getIcon('Rect', 'White', 'Navy')" alt="Rect">
         </div>
       </div>
 
       <ng-template #notAssistant>
-        <app-feedback-button></app-feedback-button>
+        <div class="feedback">
+          <app-feedback-button></app-feedback-button>
+        </div>
         <div
           style="margin-left: 12px"
           *ngIf="!isMobile"
@@ -157,7 +172,7 @@
   <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
     <div *ngFor="let button of buttons" class="teacherNav_tab" #tabRefMobile
          appCrossPointerEventTarget
-         (pointerClickEvent)="updateTab(button.route); selectTab(tabRefMobile, navButtonsContainerMobile)"
+         (pointerClickEvent)="updateTab(button.route);"
     >
       <ng-container *ngIf="isStaff && buttonVisibility(button) || user.isAssistant() && buttonVisibility(button)">
         <div

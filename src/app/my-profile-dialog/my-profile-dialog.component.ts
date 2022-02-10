@@ -31,7 +31,7 @@ export class MyProfileDialogComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    if (this.data['target'] && this.data['target'] === 'password') {
+    if (this.data && this.data['target'] && this.data['target'] === 'password') {
       this.user$ = of(this.data['profile']);
       this.page = 2;
     } else {
