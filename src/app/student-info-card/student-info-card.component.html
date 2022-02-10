@@ -3,54 +3,56 @@
     <div class="content-container">
       <div class="sticky-container">
         <div class="left" #left (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : ''">
-          <div class="left-header" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
-            <div class="back">
-              <app-round-button (buttonClick)="back()" [icon]="'Chevron Left'" [iconOffset]="3" [iconWidth]="15"></app-round-button>
-            </div>
-            <div class="avatar-content">
-              <div class="avatar"
-                   [style.width]="isScrollable ? '32px' : '88px'"
-                   [style.height]="isScrollable ? '32px' : '88px'"
-                   #avatarContainer
-                   (mouseenter)="avatarContainer.hover = true"
-                   (mouseleave)="avatarContainer.hover = false"
-              >
-                <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
-                  <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
-                </div>
-                <div
-                  *ngIf="profile && profile.profile_picture; else d"
-                  [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover'}"
-                  [style.width]="isScrollable ? '32px' : '88px'"
-                  [style.height]="isScrollable ? '32px' : '88px'"
-                ></div>
-                <ng-template #d>
-                  <img
-                    [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar"
+          <div style="position: relative; width: 100%">
+            <div class="left-header" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
+              <div class="back">
+                <app-round-button (buttonClick)="back()" [icon]="'Chevron Left'" [iconOffset]="3" [iconWidth]="15"></app-round-button>
+              </div>
+              <div class="avatar-content">
+                <div class="avatar"
+                     [style.width]="isScrollable ? '32px' : '88px'"
+                     [style.height]="isScrollable ? '32px' : '88px'"
+                     #avatarContainer
+                     (mouseenter)="avatarContainer.hover = true"
+                     (mouseleave)="avatarContainer.hover = false"
+                >
+                  <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
+                    <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
+                  </div>
+                  <div
+                    *ngIf="profile && profile.profile_picture; else d"
+                    [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover'}"
                     [style.width]="isScrollable ? '32px' : '88px'"
                     [style.height]="isScrollable ? '32px' : '88px'"
-                  >
-                </ng-template>
-                <div *ngIf="avatarContainer.hover && !isScrollable" class="hover-backdrop"></div>
-                <div class="buttons" customToolTip [showToolTip]="!user.isAdmin()" [editable]="true" [nonDisappearing]="false" [contentTemplate]="tooltip" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
-                  <img (click)="user.isAdmin() ? openEditAvatar($event) : null" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
-                  <img (click)="user.isAdmin() ? deleteAvatar() : null" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
-
-                  <ng-template #tooltip>
-                    <div class="ds-tooltip" style="text-align: left">
-                      <div class="only-admin">ADMIN ONLY</div>
-                      Only admins are able to add, edit or remove profile pictures.
-                    </div>
+                  ></div>
+                  <ng-template #d>
+                    <img
+                      [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar"
+                      [style.width]="isScrollable ? '32px' : '88px'"
+                      [style.height]="isScrollable ? '32px' : '88px'"
+                    >
                   </ng-template>
+                  <div *ngIf="avatarContainer.hover && !isScrollable" class="hover-backdrop"></div>
+                  <div class="buttons" customToolTip [showToolTip]="!user.isAdmin()" [editable]="true" [nonDisappearing]="false" [contentTemplate]="tooltip" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
+                    <img (click)="user.isAdmin() ? openEditAvatar($event) : null" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+                    <img (click)="user.isAdmin() ? deleteAvatar() : null" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
+
+                    <ng-template #tooltip>
+                      <div class="ds-tooltip" style="text-align: left">
+                        <div class="only-admin">ADMIN ONLY</div>
+                        Only admins are able to add, edit or remove profile pictures.
+                      </div>
+                    </ng-template>
+                  </div>
+
                 </div>
-
+                <div class="student-name" [style.font-size]="isScrollable ? '13px' : '28px'">{{ profile?.display_name }}</div>
               </div>
-              <div class="student-name" [style.font-size]="isScrollable ? '13px' : '28px'">{{ profile?.display_name }}</div>
-            </div>
 
-            <div class="top-buttons">
-              <!--      <app-round-button [icon]="'Notifications'" (buttonClick)="openNotification()"></app-round-button>-->
-              <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
+              <div class="top-buttons">
+                <!--      <app-round-button [icon]="'Notifications'" (buttonClick)="openNotification()"></app-round-button>-->
+                <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
+              </div>
             </div>
           </div>
 
