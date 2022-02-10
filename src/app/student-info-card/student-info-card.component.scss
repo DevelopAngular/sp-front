@@ -20,8 +20,8 @@
       padding-top: 20px;
     }
     .left {
-      position: sticky;
-      top: 84px;
+      position: fixed;
+      //top: 84px;
       min-width: 417px;
       overflow: auto;
       display: flex;
@@ -231,6 +231,7 @@
       position: relative;
       z-index: 10;
       border-radius: 0 10px 10px 0;
+      margin-left: 418px;
 
       .header-container {
         background-color: #F0F2F5;

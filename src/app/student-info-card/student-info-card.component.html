@@ -2,8 +2,7 @@
   <div class="student-card-container">
     <div class="content-container">
       <div class="sticky-container">
-        <div class="left" #left (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : ''">
-          <div style="position: relative; width: 100%">
+        <div class="left" #left (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 104px)'">
             <div class="left-header" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
               <div class="back">
                 <app-round-button (buttonClick)="back()" [icon]="'Chevron Left'" [iconOffset]="3" [iconWidth]="15"></app-round-button>
@@ -54,7 +53,6 @@
                 <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
               </div>
             </div>
-          </div>
 
           <div class="content">
             <div class="student-passes-info" *ngIf="!(loadingPassesStats$ | async); else fakeStats">
