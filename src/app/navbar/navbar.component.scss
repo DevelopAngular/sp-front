@@ -136,6 +136,7 @@
   height: 64px;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   user-select: none;
 
@@ -166,10 +167,12 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: $green500;
+    background: radial-gradient(circle at 73% 71%, #15D593, #00B467);
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 5px rgba(112, 131, 160, .1);
+    cursor: pointer;
   }
 
   .kiosk-title {
@@ -253,7 +256,7 @@
   //padding-right: 10%;
   width: 0;
   min-width: 200px;
-  flex-grow: 1;
+  //flex-grow: 1;
   .acting-behalf {
     font-size: 12px;
   }
@@ -272,7 +275,7 @@
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  color: $blue-gray;
+  color: $navy500;
 }
 
 //.static-loading{
@@ -309,6 +312,7 @@
   cursor: pointer;
   user-select: none;
   position: relative;
+  margin-left: 4px;
 }
 
 .inbox-wrapper-sm {
@@ -384,16 +388,16 @@
 
 .nav-buttons {
   position: relative;
-  flex-grow: 1;
+  //flex-grow: 1;
 }
 
 .selected-tab-pointer {
   transition: all 0.4s ease;
   position: absolute;
   bottom: 0;
-  height: 5px;
-  width: 70px;
-  border-radius: 4px 4px 0 0;
+  height: 3px;
+  width: 122px;
+  border-radius: 2px 2px 0 0;
   background-color: $jade;
 }
 

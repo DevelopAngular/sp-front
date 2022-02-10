@@ -11,7 +11,7 @@ import {SmartpassSearchService} from '../services/smartpass-search.service';
   animations: [
     trigger('inputAnimate', [
       state('open', style({
-        width: '255px'
+        width: '260px'
       })),
       state('close', style({
         width: '242px'
@@ -69,6 +69,12 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
 
   goToUserPage(value) {
     this.router.navigateByUrl(`/main/student/${value.id}`);
+    this.isFocus = false;
+    this.spSearchService.clearResult();
+  }
+
+  goToHomePage() {
+    this.router.navigateByUrl(`/main/passes`);
     this.isFocus = false;
     this.spSearchService.clearResult();
   }

@@ -1,0 +1,14 @@
+<div
+  class="wrapper"
+  [@pressState]="pressed ? 'down' : 'up'"
+  (mouseenter)="hovered = true"
+  (mouseleave)="hovered = false; pressed = false"
+  appCrossPointerEventTarget
+  (pointerDownEvent)="pressed = true"
+  (pointerClickEvent)="pressed = false; buttonClick.emit($event)"
+  [style.background-color]="bg"
+  [style.width]="width"
+  [style.height]="width"
+>
+  <img width="16px" [src]="'./assets/' + icon + ' (Blue-Gray).svg' | resolveAsset" alt="">
+</div>

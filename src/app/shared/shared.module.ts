@@ -79,6 +79,8 @@ import {ReportDescriptionComponent} from '../admin/accounts/encounter-prevention
 import {EncounterOptionsComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-options/encounter-options.component';
 import {EncounterGroupDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
 import {WhiteButtonComponent} from '../ds-buttons/white-button/white-button.component';
+import {WhiteRoundButtonComponent} from '../ds-buttons/white-round-button/white-round-button.component';
+import {IconOnlyButtonComponent} from '../ds-buttons/icon-only-button/icon-only-button.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -168,6 +170,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EncounterOptionsComponent,
     EncounterGroupDescriptionComponent,
     WhiteButtonComponent,
+    WhiteRoundButtonComponent,
+    IconOnlyButtonComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -240,6 +244,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EncounterOptionsComponent,
     EncounterGroupDescriptionComponent,
     WhiteButtonComponent,
+    WhiteRoundButtonComponent,
+    IconOnlyButtonComponent,
   ],
   providers: [
     {

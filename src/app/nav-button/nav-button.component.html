@@ -4,7 +4,7 @@
      [@pressState]="button.pressed ? 'down' : 'up'"
      appCrossPointerEventTarget
      (pointerClickEvent)="doClick(); button.pressed = false"
-     (mouseout)="button.hovered = true"
+     (mouseenter)="button.hovered = true"
      (mouseleave)="button.hovered = false; button.pressed = false"
      (pointerDownEvent)="button.pressed = true"
      [style.height]="button.hovered && !selected ? '56px' : '64px'"

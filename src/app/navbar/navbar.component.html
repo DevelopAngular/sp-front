@@ -8,12 +8,12 @@
    class="bar" appNavbarElementSender
    [ngClass]="{shadow: ((isStaff || isAssistant) && !isKioskMode) || screenService.isDeviceLargeExtra}"
    [ngStyle]="{
-    padding: '0 16px'
+    padding: user.isStudent() ? '0 16px' : '0 16px 0 0'
    }"
    #navbar
   >
     <div class="logo" *ngIf="user.isStudent() || isKioskMode; else staffLogo">
-      <div class="logo-icon">
+      <div class="logo-icon" appCrossPointerEventTarget (pointerClickEvent)="updateTab('passes')">
         <img width="20" height="22" [src]="'./assets/SP Arrow (White).svg'" alt="logo">
       </div>
       <div class="kiosk-title" *ngIf="isKioskMode">Kiosk</div>
@@ -86,7 +86,7 @@
         <div
           *ngIf="!isMobile"
           [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
-          [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})"
+          [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})"
           [customToolTip]="'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!'"
           [showToolTip]="(user && user.badge) && !isKioskMode"
         >
@@ -175,7 +175,7 @@
         </div>
       </ng-container>
     </div>
-    <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
+<!--    <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>-->
   </div>
 </div>
 
