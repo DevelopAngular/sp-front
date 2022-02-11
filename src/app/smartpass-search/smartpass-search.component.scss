@@ -19,7 +19,7 @@
     width: 327px;
 
     &.focused {
-      box-shadow: 0 5px 20px 5px rgba(0, 0, 0, .6);;
+      box-shadow: 0 5px 20px 5px rgba(0, 0, 0, .6);
       border-radius: 0 0 10px 0;
 
       &:before {
@@ -40,11 +40,6 @@
       .logo-icon {
         width: 40px;
         height: 40px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 73% 71%, #15D593, #00B467);
-        display: flex;
-        align-items: center;
-        justify-content: center;
         box-shadow: 0 2px 5px rgba(112, 131, 160, .1);
         cursor: pointer;
       }

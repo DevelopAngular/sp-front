@@ -230,6 +230,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
   }
 
+  get showProfilePictures() {
+    return this.http.getSchool().profile_pictures_enabled;
+  }
+
   ngOnInit() {
     combineLatest(
       this.dataService.currentUser,
@@ -488,7 +492,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   get collectionWidth() {
-    let maxWidth = 533;
+    let maxWidth = 755;
 
     if (this.screenService.createCustomBreakPoint(maxWidth)) {
         maxWidth = 336;

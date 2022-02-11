@@ -1,7 +1,7 @@
 <div class="icon-button-container"
      [style.width]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.height]="hasShadow ? size * 2 + 'px' : 'unset'"
-     [style.background-color]="bgc"
+     [style.background-color]="newIconButton ? newbgc : bgc"
      [@pressState]="selected ? 'down' : 'up'"
      (mouseover)="hovered = true;"
      (mouseleave)="hovered = false; down = false"

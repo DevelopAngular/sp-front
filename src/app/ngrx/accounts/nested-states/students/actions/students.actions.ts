@@ -42,3 +42,5 @@ export const getStudentStatsSuccess = createAction(`[User] Get Student Stats Suc
 export const getStudentStatsFailure = createAction(`[User] Get Student Stats Failure`, props<{errorMessage: string}>());
 
 export const addReportToStats = createAction(`[User] Add Report`, props<{report: Report}>());
+export const addReportToStatsSuccess = createAction(`[User] Add Report Success`, props<{report: Report}>());
+export const addReportToStatsFailure = createAction(`[User] Add Report Failure`, props<{errorMessage: string}>());

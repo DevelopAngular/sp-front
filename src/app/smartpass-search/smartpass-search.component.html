@@ -3,7 +3,7 @@
   <div class="container" [ngClass]="{'focused': isFocus}">
     <div class="header" [style.padding]="isFocus ? '0 15px 0 5px' : '0 16px'">
       <div class="logo-icon" *ngIf="!isFocus" appCrossPointerEventTarget (pointerClickEvent)="goToHomePage()">
-        <img width="20" height="22" [src]="'./assets/SP Arrow (White).svg'" alt="logo">
+        <img width="40px" height="40px" [src]="'./assets/Smartpass Logo (Green).svg'" alt="logo">
       </div>
       <div class="close" *ngIf="isFocus">
         <app-icon-only-button [size]="'regular'" [icon]="'Arrow Left'" (buttonClick)="isFocus = false"></app-icon-only-button>
@@ -17,18 +17,18 @@
            [position]="{originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 15}"
       >
         <ng-template #tooltip>
-          <app-nux-teacher-view (close)="showTooltip$.next(false)"></app-nux-teacher-view>
+          <app-nux-teacher-view (close)="showTooltip$.next(false)" (tryButton)="isFocus = true; focused = true; showTooltip$.next(false)"></app-nux-teacher-view>
         </ng-template>
         <div class="input">
           <app-round-input
             [isSearch]="true"
+            [selectReset$]="resetInputValue$"
             [focused]="focused"
             [boxShadow]="false"
             [width]="'100%'"
             [minWidth]="width"
-            [fieldIcon]="'./assets/Search Normal (Search-Gray).svg'"
             [fieldIconPosition]="'left'"
-            [placeholder]="'Search SmartPass'"
+            [placeholder]="'Search Students'"
             [backgroundColor]="'#F0F2F5'"
             (focusEvent)="focusEvent($event)"
             (ontextupdate)="search($event)"

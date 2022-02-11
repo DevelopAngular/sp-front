@@ -7,6 +7,7 @@ import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/oper
 import {AdminService} from '../../../services/admin.service';
 import {Report} from '../../../models/Report';
 import {addReportToStats} from '../../accounts/nested-states/students/actions';
+import {openToastAction} from '../../toast/actions';
 
 @Injectable()
 export class ReportsEffects {
@@ -52,7 +53,12 @@ export class ReportsEffects {
               switchMap((reports: Report[]) => {
                 return [
                   reportsActions.postReportSuccess({reports}),
-                  addReportToStats({report: reports[0]})
+                  addReportToStats({report: reports[0]}),
+                  openToastAction({data: {
+                    title: 'Report sent',
+                    subtitle: 'The report has been sent to admins.',
+                    type: 'success'
+                  }})
                 ];
               }),
               catchError(error => of(reportsActions.postReportFailure({errorMessage: error.message})))

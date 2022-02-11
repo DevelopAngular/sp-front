@@ -4,10 +4,10 @@
     <img [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back()">
 
     <div *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-      <div class="divider-text-students ds-dialog-title-white" [attr.data-motion-translate]="true"> <img class="divider-icon" [src]="'./assets/Search Eye (White).svg' | resolveAsset">Select Student(s)</div>
+      <div class="divider-text-students ds-dialog-title-white" [attr.data-motion-translate]="true">Select Student(s)</div>
     </div>
     <div *ngIf="!showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-      <div class="divider-text-message ds-dialog-title-white" [attr.data-motion-translate]="true"> <img class="divider-icon" [src]="'./assets/Message (White).svg' | resolveAsset">Message </div>
+      <div class="divider-text-message ds-dialog-title-white" [attr.data-motion-translate]="true">Message </div>
     </div>
   </div>
   <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white">
@@ -26,9 +26,9 @@
         </div>
         <div [ngClass]=" isIOSTablet ? 'ios-button-next ' : 'student-select_button-next'" *ngIf="showOptions && selectedStudents && selectedStudents.length > 0">
           <app-gradient-button
-            [gradient]="'#DA2370, #FB434A'"
+            [gradient]="'#E32C66, #E32C66'"
             [cursor]="'pointer'"
-            [hoverColor]="'#DA2370'"
+            [hoverColor]="'#E32C66'"
             [minWidth]="'104px'"
             [minHeight]="'35px'"
             [fontSize]="'16px'"
@@ -46,9 +46,9 @@
           <textarea class="message-box" #messageBox placeholder="Attach a message" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>
         <app-gradient-button
-          [gradient]="'#DA2370, #FB434A'"
+          [gradient]="'#E32C66, #E32C66'"
           [cursor]="'pointer'"
-          [hoverColor]="'#DA2370'"
+          [hoverColor]="'#E32C66'"
           [minWidth]="'104px'"
           [minHeight]="'35px'"
           [fontSize]="'16px'"

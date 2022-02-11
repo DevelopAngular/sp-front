@@ -43,6 +43,7 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
   searchLoading$: Observable<boolean>;
   searchLoaded$: Observable<boolean>;
   searchResult$: Observable<any>;
+  resetInputValue$: Subject<string> = new Subject<string>();
 
   constructor(
     private router: Router,
@@ -70,12 +71,14 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
   goToUserPage(value) {
     this.router.navigateByUrl(`/main/student/${value.id}`);
     this.isFocus = false;
+    this.resetInputValue$.next('');
     this.spSearchService.clearResult();
   }
 
   goToHomePage() {
     this.router.navigateByUrl(`/main/passes`);
     this.isFocus = false;
+    this.resetInputValue$.next('');
     this.spSearchService.clearResult();
   }
 

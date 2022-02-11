@@ -43,12 +43,12 @@
   </div>
   <div
       class="passes-wrapper passes-mobile-height"
-      [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'"
+      [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 155px)' : 'calc(100vh - 105px)'"
       [style.touch-action]="'auto'"
       *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
       [@PassesSlideTopBottom]
       [style.padding-bottom]="isSmartphone ? '50px' : '0px'"
-      [style.padding-top]="isSmartphone ? '0px' : '50px'"
+      [style.padding-top]="isSmartphone ? '0px' : '40px'"
       [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' "
       #scrollableArea
       (scroll)="scroll($event)"
@@ -161,7 +161,7 @@
 
 
 <div class="passes-wrapper"
-     (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 160px)' : 'calc(100vh - 128px)'"
+     (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 155px)' : 'calc(100vh - 105px)'"
      [style.overflow]="isStaff ? 'auto' : 'visible'"
      *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)">
   <h1 class="passes-heading">Passes</h1>
@@ -265,7 +265,7 @@
         </div>
         <div *ngIf="!(inboxHasItems | async)" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <img class="empty-inbox-svg" [src]="'./assets/Notifications (Gray-200).svg' | resolveAsset" alt="empty-svg">
-          <div class="ds-empty-text-title" style="width: 150px; text-align: center; font-weight: 500">No pass requests sent or received</div>
+          <div style="width: 150px; color: #D4D9E2; font-size: 17px; text-align: center; font-weight: 500">No pass requests sent or received</div>
         </div>
       </div>
     </app-display-card>

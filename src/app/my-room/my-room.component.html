@@ -112,6 +112,19 @@
           ></app-white-button>
         </div>
 
+        <div class="kioskButton">
+          <app-gradient-button
+            style="margin-left: 10px"
+            [disabled]="!showKioskModeButton"
+            [gradient]="'#1F195E, #1F195E'"
+            [leftIcon]="'./assets/Kiosk Mode (Blue-Gray).svg'"
+            [textColor]="'#7083A0'"
+            [rightIcon]="'./assets/Redirect (Black).svg'"
+            [rightIconWidth]="'12px'"
+            (buttonClick)="setRoomToKioskMode()"
+          >Kiosk Mode</app-gradient-button>
+        </div>
+
         <div class="date-display-mobile" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
       </div>
 
@@ -127,25 +140,25 @@
         </mat-card>
       </div>
 
-      <div class="kiosk-mode-button"
-           *ngIf="showKioskModeButton"
-           [style.background-color]="(darkTheme.isEnabled$ | async) ? '#134482' : '#F4F4F4'"
-           [@pressState]="buttonState"
-           (mouseenter)="onHover(true)"
-           (mouseleave)="onHover(false)"
+<!--      <div class="kiosk-mode-button"-->
+<!--           *ngIf="showKioskModeButton"-->
+<!--           [style.background-color]="(darkTheme.isEnabled$ | async) ? '#134482' : '#F4F4F4'"-->
+<!--           [@pressState]="buttonState"-->
+<!--           (mouseenter)="onHover(true)"-->
+<!--           (mouseleave)="onHover(false)"-->
 
-           appCrossPointerEventTarget
-           (pointerDownEvent)="onPress(true)"
-           (pointerClickEvent)="onPress(false); setRoomToKioskMode()"
-      >
-        <div class="ds-flex-center-center" [style.color]="darkTheme.getColor()">
-          <img width="20" height="20" class="ds-mr-10" [src]="darkTheme.getIcon({iconName: 'Tablet', darkFill: 'White', lightFill: 'Navy'})" alt="Tablet.svg">
-          <span>Enter Kiosk Mode</span>
-        </div>
-        <div class="kiosk-chevron">
-          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right', lightFill: 'Navy', darkFill: 'White'})" alt="Chevron Right.svg">
-        </div>
-      </div>
+<!--           appCrossPointerEventTarget-->
+<!--           (pointerDownEvent)="onPress(true)"-->
+<!--           (pointerClickEvent)="onPress(false); setRoomToKioskMode()"-->
+<!--      >-->
+<!--        <div class="ds-flex-center-center" [style.color]="darkTheme.getColor()">-->
+<!--          <img width="20" height="20" class="ds-mr-10" [src]="darkTheme.getIcon({iconName: 'Tablet', darkFill: 'White', lightFill: 'Navy'})" alt="Tablet.svg">-->
+<!--          <span>Enter Kiosk Mode</span>-->
+<!--        </div>-->
+<!--        <div class="kiosk-chevron">-->
+<!--          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right', lightFill: 'Navy', darkFill: 'White'})" alt="Chevron Right.svg">-->
+<!--        </div>-->
+<!--      </div>-->
 
       <div class="my-room-body" [@collectionsTrigger] = 'collectionsSlideState'>
         <div [style.maxWidth]="collectionWidth" [ngClass]="isIOSTablet ? 'ios-my-room-body-collections' : 'my-room-body-collections'">
@@ -155,9 +168,9 @@
             [forStaff]="isStaff"
             [passProvider]="activePasses"
             [title]="'Active Passes'"
-            [icon]="'./assets/Walking (Navy).svg'"
             [columns]="4"
             (currentPassesEmit)="currentPasses$.next($event)"
+            [showProfilePictures]="showProfilePictures"
           >
           </app-pass-collection>
           <app-pass-collection
@@ -169,6 +182,7 @@
             [columns]="4"
             [filterModel]="'passes-from-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
+            [showProfilePictures]="showProfilePictures"
           >
           </app-pass-collection>
           <app-pass-collection
@@ -180,6 +194,7 @@
             [columns]="4"
             [filterModel]="'passes-to-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
+            [showProfilePictures]="showProfilePictures"
           >
           </app-pass-collection>
 

@@ -38,6 +38,8 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() hasShadow: boolean = true;
   @Input() notificationBadge: boolean;
   @Input() notificationCount: number;
+  @Input() color: string = 'Blue-Gray';
+  @Input() newIconButton: boolean;
   @Output() clickEvent: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
   hovered: boolean = false;
@@ -63,7 +65,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.selected) {
         lightFill = 'Jade';
       } else {
-        lightFill = 'Blue-Gray';
+        lightFill = this.color;
       }
     }
 
@@ -92,30 +94,30 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustStyle(`${opacity}`);
   }
 
-  // get bgc() {
-  //   let alphaChannel: number;
-  //   let rgb: string;
-  //   if (this.onDarkShade) {
-  //     alphaChannel = .5;
-  //     if (this.hovered && !this.down) {
-  //       alphaChannel = .5;
-  //     } else {
-  //       alphaChannel = .25;
-  //     }
-  //     rgb = '247, 247, 247, ';
-  //
-  //   } else {
-  //     if (this.hovered && !this.down) {
-  //       alphaChannel = .75;
-  //     } else {
-  //       alphaChannel = .5;
-  //     }
-  //     rgb = '244, 244, 244, ';
-  //   }
-  //   return this.sanitizer.bypassSecurityTrustStyle(`rgba(${rgb}${ this.hasShadow ? alphaChannel : 0 }`);
-  // }
-
   get bgc() {
+    let alphaChannel: number;
+    let rgb: string;
+    if (this.onDarkShade) {
+      alphaChannel = .5;
+      if (this.hovered && !this.down) {
+        alphaChannel = .5;
+      } else {
+        alphaChannel = .25;
+      }
+      rgb = '247, 247, 247, ';
+
+    } else {
+      if (this.hovered && !this.down) {
+        alphaChannel = .75;
+      } else {
+        alphaChannel = .5;
+      }
+      rgb = '244, 244, 244, ';
+    }
+    return this.sanitizer.bypassSecurityTrustStyle(`rgba(${rgb}${ this.hasShadow ? alphaChannel : 0 }`);
+  }
+
+  get newbgc() {
     if (this.hovered) {
       if (this.down) {
         if (this.selected) {
@@ -144,18 +146,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    // fromEvent(document.body, 'click')
-    //   .pipe(
-    //     takeUntil(this.destroyer$)
-    //   )
-    //   .subscribe((evt: Event) => {
-    //     if (this.selected) {
-    //       this.selected = false;
-    //     }
-    //     if (this.pressed) {
-    //       this.pressed = false;
-    //     }
-    //   });
+
   }
 
   onClick(evt) {

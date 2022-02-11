@@ -11,16 +11,26 @@ import {bumpIn} from '../../animations';
 export class WhiteRoundButtonComponent implements OnInit {
 
   @Input() icon: string;
-  @Input() width: string = '34px';
+  @Input() size: 'regular' | 'small' = 'small';
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
 
   hovered: boolean;
   pressed: boolean;
 
+  width: string;
+  iconWidth: string;
+
   constructor() { }
 
   ngOnInit(): void {
+    if (this.size === 'small') {
+      this.width = '34px';
+      this.iconWidth = '16px';
+    } else if (this.size === 'regular') {
+      this.width = '40px';
+      this.iconWidth = '20px';
+    }
   }
 
   get bg() {

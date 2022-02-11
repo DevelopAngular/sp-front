@@ -149,6 +149,24 @@ export class StudentsEffects {
     );
   });
 
+  addReportToStats$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(studentsActions.addReportToStats),
+        switchMap((action) => {
+          return this.userService.studentsStats$.pipe(
+            map(stats => {
+              if (stats[action.report.student.id]) {
+                return studentsActions.addReportToStats({report: action.report});
+              } else {
+                return studentsActions.addReportToStatsFailure({errorMessage: 'This user does`t have a stats now'});
+              }
+            })
+          );
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private userService: UserService,

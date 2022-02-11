@@ -179,8 +179,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       this.currentPasses$.pipe(filter(r => !!r.length), take(1)).subscribe((passes) => {
           const pass = passes[Math.floor(Math.random() * passes.length)];
           const destinationName = pass.destination.title;
-          const studentName = pass.student.display_name;
-          const random = [destinationName, studentName];
+          // const studentName = pass.student.display_name;
+          const random = [destinationName];
           this.randomString.emit(random[Math.floor(Math.random() * random.length)]);
       });
     }

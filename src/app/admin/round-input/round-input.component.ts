@@ -34,7 +34,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() height: string = '40px';
   @Input() width: string;
   @Input() minWidth: string = '300px';
-  @Input() fieldIcon: string = './assets/Search Normal (Search-Gray).svg';
+  @Input() fieldIcon: string = './assets/Search Normal (Gray500).svg';
   @Input() fieldIconPosition: string = 'left'; // Can be 'right' or 'left'
   @Input() closeIcon: boolean = false;
   @Input() disabled: boolean = false;
