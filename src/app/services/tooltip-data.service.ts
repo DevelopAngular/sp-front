@@ -28,9 +28,16 @@ export class TooltipDataService {
   }
 
   tooltipDescription(currentPage: 'from' | 'to', passLimit: PassLimit): string {
-    if (!passLimit) {
+    if ([!passLimit, currentPage === 'from',
+      !this.http.getSchool().show_active_passes_number,
+      !passLimit.max_passes_to_active,
+      passLimit.to_count <= passLimit.max_passes_to].every(Boolean)
+    ) {
       return '';
     }
+
+    return `${passLimit.to_count}/${passLimit.max_passes_to} students have passes to this room.`;
+
     // TODO uncomment when branch SP-1050 is available
     // if (currentPage === 'from') {
     //   if (this.http.getSchool().show_active_passes_number) {
@@ -43,17 +50,5 @@ export class TooltipDataService {
     //     }
     //   }
     // } else
-      if (currentPage === 'to') {
-      if (this.http.getSchool().show_active_passes_number) {
-        if (passLimit.max_passes_to_active) {
-          if (passLimit.to_count <= passLimit.max_passes_to) {
-            return `${passLimit.to_count}/${passLimit.max_passes_to} students have passes to this room. ` + (passLimit.to_count === passLimit.max_passes_to ? `Wait for a spot to open` : ``);
-          }
-        } else {
-          return `${passLimit.to_count} students have passes to this room.`;
-        }
-      }
-    }
-    return 'Limit reached. Please wait for a spot to open.';
   }
 }

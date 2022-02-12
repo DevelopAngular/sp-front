@@ -136,32 +136,43 @@ export class ToWhereComponent implements OnInit {
     return true;
   }
 
-  passLimitProtect(location, callback) {
-    const passLimit = this.passLimits[location.id];
-    const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to === passLimit.to_count;
-    if (passLimitReached) {
+  countStudents(): number {
+    let sum = 0;
+    if (this.formState.data.selectedStudents)
+      sum += this.formState.data.selectedStudents.length;
+    return sum;
+  }
+
+  passLimitPromise(location) {
+    return new Promise<boolean>(resolve => {
+      const passLimit = this.passLimits[location.id];
+      const passLimitReached = passLimit.max_passes_to_active == true && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
+      if (!passLimitReached)
+        return resolve(true);
+
       const dialogRef = this.dialog.open(ToWherePassLimitDialog, {
         panelClass: 'overlay-dialog',
-        backdropClass: 'custom-bd',
-        width: '425px',
-        height: '200px',
+        backdropClass: 'custom-backdrop',
+        width: '450px',
+        height: '215px',
         disableClose: true,
-        data: {passLimit: passLimit.to_count}
+        data: {passLimit: passLimit.max_passes_to, studentCount: this.countStudents()}
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result.override) {
           setTimeout(() => {
-            callback();
+            return resolve(true);
           }, 200);
-        }
+        } else
+          return resolve(false);
       });
-    } else {
-      callback();
-    }
+    });
   }
 
   pinnableSelected(pinnable) {
-    const emitSelectedPinnable = () => {
+    console.log(this.passLimits);
+    const emitSelectedPinnable = (allowed) => {
+      if (!allowed) return;
       if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
         this.formService.setFrameMotionDirection('disable');
       } else {
@@ -175,23 +186,22 @@ export class ToWhereComponent implements OnInit {
         this.selectedPinnable.emit(pinnable);
       }, 100);
     };
-    if (pinnable.type === 'location') {
-      this.passLimitProtect(pinnable.location, emitSelectedPinnable);
-    } else {
-      emitSelectedPinnable();
-    }
+
+    if (pinnable.type !== 'location')
+      return emitSelectedPinnable(true);
+    else
+      this.passLimitPromise(pinnable.location).then(emitSelectedPinnable);
   }
 
   locationSelected(location) {
-    const emitSelectedLocation = () => {
+    this.passLimitPromise(location).then((allowed) => {
+      if (!allowed) return;
       this.formService.setFrameMotionDirection('disable');
       this.formService.scalableBoxController.next(true);
       setTimeout(() => {
         this.selectedLocation.emit(location);
       }, 100);
-    };
-
-    this.passLimitProtect(location, emitSelectedLocation);
+    });
   }
 
   switchView(isGrid) {

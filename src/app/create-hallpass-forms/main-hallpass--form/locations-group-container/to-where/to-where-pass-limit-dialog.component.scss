@@ -2,10 +2,11 @@
 @import '../../../../../sp-colors';
 
 .pass-limit-dialog {
-  padding: 20px;
+  padding: 25px;
   display: flex;
   gap: 20px;
-  height: calc(100% - 40px);
+  height: calc(100% - 50px);
+  box-shadow: 0 2px 26px 0 rgba(0, 0, 0, .4);
 
 
   .main-wrapper {
@@ -15,11 +16,12 @@
     height: 100%;
 
     .main-text {
-      @include textSize(20px, bold);
+      @include textSize(17px, bold);
     }
 
     .supporting-text {
-      @include textSize(16px, normal, $blue-gray);
+      @include textSize(15px, normal, $blue-gray);
+      padding-bottom: 20px;
     }
 
 
