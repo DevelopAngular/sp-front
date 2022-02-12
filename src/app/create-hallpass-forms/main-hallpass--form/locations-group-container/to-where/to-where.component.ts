@@ -146,7 +146,11 @@ export class ToWhereComponent implements OnInit {
   passLimitPromise(location) {
     return new Promise<boolean>(resolve => {
       const passLimit = this.passLimits[location.id];
-      const passLimitReached = passLimit.max_passes_to_active == true && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
+      console.log('location');
+      console.log(location)
+      console.log('passLimit');
+      console.log(passLimit);
+      const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
       if (!passLimitReached)
         return resolve(true);
 
@@ -171,6 +175,7 @@ export class ToWhereComponent implements OnInit {
 
   pinnableSelected(pinnable) {
     console.log(this.passLimits);
+    console.log(pinnable);
     const emitSelectedPinnable = (allowed) => {
       if (!allowed) return;
       if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
