@@ -4,7 +4,7 @@
       <div [ngClass]="isIOSTablet ? 'ios-options-wrapper' : 'options-wrapper'" (click)="toggleSearchBar()">
         <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
       </div>
-      <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
+      <div class="student-search-wrapper" *ngIf="isIpadSearchBar; else title">
         <app-round-input
           [focused]="true"
           [type]="inputRestrictionSm.type"
@@ -12,6 +12,7 @@
           [width]="'90%'"
           [placeholder]="inputRestrictionSm.placeholder"
           [backgroundColor]="'#F4F4F4'"
+          [boxShadow]="false"
           [fieldIconPosition]="inputRestrictionSm.fieldIconPosition"
           [closeIcon]="inputRestrictionSm.closeIcon"
           (ontextupdate)="onSearch($event)"
@@ -20,24 +21,33 @@
         ></app-round-input>
       </div>
 
+      <ng-template #title>
+        <div style="font-size: 22px; font-weight: bold" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})">
+          Hall Monitor
+        </div>
+      </ng-template>
+
       <div class="cancel-wrapper" *ngIf="isIpadSearchBar">
         <span class="cancel" (click)="cleanSearchValue();">Cancel</span>
       </div>
 
       <div [ngClass]="isIOSTablet ?  'ios-options-wrapper' : 'options-wrapper'" *ngIf="!isIpadSearchBar">
-        <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>
+<!--        <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>-->
+        <app-square-button (buttonClick)="openReportForm()" [height]="'40px'" [width]="'40px'" [backgroundColor]="'#edcbd9'">
+          <img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset">
+        </app-square-button>
       </div>
     </div>
 
 
 <!--    Web UA -->
-    <div class="web-wrapper">
-      <div class="header">
-        <div class="title">
+    <div class="web-wrapper" [ngClass]="{mobile: isMobile}">
+      <div class="header" *ngIf="!isMobile">
+        <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})">
           Hall Monitor
         </div>
 
-        <div class="buttons">
+        <div class="buttons" *ngIf="!isMobile">
           <app-square-button
             [backgroundColor]="'#edcbd9'"
             (buttonClick)="openReportForm()"
@@ -56,12 +66,13 @@
             <img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset">
           </app-square-button>
 
-          <div class="search">
+          <div class="search" *ngIf="!isMobile">
             <app-round-input
               [isSearch]="true"
               [fieldIcon]="'./assets/Search Normal (Gray500).svg'"
-              [placeholder]="randomStringForSearchInput ? 'Filter (ex.) \'' + randomStringForSearchInput + '\'' : 'Filter'"
+              [placeholder]="randomStringForSearchInput ? 'Filter (ex.) \'' + randomStringForSearchInput + '\'' : 'Filter passes'"
               [backgroundColor]="'#E2E6EC'"
+              [boxShadow]="false"
               [minWidth]="'250px'"
               (ontextupdate)="onSearch($event)"
             ></app-round-input>
@@ -69,9 +80,9 @@
         </div>
       </div>
 
-      <div class="content">
+      <div class="content" [style.min-width]="isMobile ? '100%' : '755px'">
         <app-pass-collection
-          [hasSort]="hallMonitorCollection.hasSort"
+          [hasSort]="true"
           [isActive]="hallMonitorCollection.isActive"
           [showEmptyHeader]="hallMonitorCollection.showEmptyHeader"
           [forStaff]="hallMonitorCollection.forStaff"

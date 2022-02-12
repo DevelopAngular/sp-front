@@ -105,7 +105,7 @@
         <ng-template #passes>
           <div class="pass-collection" [style.width]="isMobile ? '325px' : '300px'">
             <div class="title">
-              <div style="margin-left: 8px">Passes</div>
+              <div style="margin-left: 8px; font-weight: 600">Passes</div>
             </div>
             <div class="passes" *ngIf="!(loading$ | async); else fakePasses" [style.grid-template-columns]="isMobile ? 'repeat(auto-fill, 157px)' : 'repeat(auto-fill, 144px)'">
               <div class="pass" *ngFor="let pass of lastStudentPasses | async">

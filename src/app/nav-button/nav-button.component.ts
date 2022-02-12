@@ -1,6 +1,7 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {bumpIn} from '../animations';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-nav-button',
@@ -8,7 +9,7 @@ import {bumpIn} from '../animations';
   styleUrls: ['./nav-button.component.scss'],
   animations: [bumpIn]
 })
-export class NavButtonComponent implements OnInit, AfterViewInit, OnChanges {
+export class NavButtonComponent implements OnInit {
 
   @Input() icon: string;
   @Input() content: string;
@@ -19,7 +20,7 @@ export class NavButtonComponent implements OnInit, AfterViewInit, OnChanges {
   iconId: string;
 
   constructor(
-    private darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch
   ) { }
 
 
@@ -27,19 +28,9 @@ export class NavButtonComponent implements OnInit, AfterViewInit, OnChanges {
       return this.selected ? '#00B476' : this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
   }
 
-  ngAfterViewInit() {
-      // if (this.selected) {
-      //     this.doClick();
-      // }
+  get isMobile() {
+    return DeviceDetection.isMobile();
   }
-  ngOnChanges() {
-
-      // setTimeout(() => {
-      //   this.doClick();
-      // }, 1000);
-
-  }
-
 
   ngOnInit() {
       this.iconId = `#${this.icon}`;

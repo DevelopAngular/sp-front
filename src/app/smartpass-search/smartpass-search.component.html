@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="backdrop" *ngIf="isFocus" appCrossPointerEventTarget (pointerClickEvent)="isFocus = false"></div>
   <div class="container" [ngClass]="{'focused': isFocus}">
-    <div class="header" [style.padding]="isFocus ? '0 15px 0 5px' : '0 16px'">
+    <div class="header" [style.padding]="isFocus ? '0 15px 0 5px' : '0 16px'" [style.background-color]="darkTheme.getColor({dark: isFocus ? '#FFFFFF' : '#0F171E', white: '#FFFFFF'})">
       <div class="logo-icon" *ngIf="!isFocus" appCrossPointerEventTarget (pointerClickEvent)="goToHomePage()">
         <img width="40px" height="40px" [src]="'./assets/Smartpass Logo (Green).svg'" alt="logo">
       </div>

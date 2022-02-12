@@ -127,6 +127,10 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   ngOnInit() {
     this.detectDevice();
 
@@ -256,13 +260,13 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
 
-    if (this.screenService.isDeviceLargeExtra) {
-      this.hallMonitorCollection.hasSort = false;
-    }
+    // if (this.screenService.isDeviceLargeExtra) {
+    //   this.hallMonitorCollection.hasSort = false;
+    // }
 
-    if (this.screenService.isDesktopWidth) {
-      this.hallMonitorCollection.hasSort = true;
-    }
+    // if (this.screenService.isDesktopWidth) {
+    //   this.hallMonitorCollection.hasSort = true;
+    // }
   }
 
   @HostListener('window:resize')

@@ -14,7 +14,7 @@
   <div class="icon" *ngIf="icon">
     <img [style.width]="iconWidth" [src]="icon | resolveAsset">
   </div>
-  <div class="title">{{ text }}</div>
+  <div class="title" [style.font-weight]="fontWeight">{{ text }}</div>
 
   <img class="left-icon" *ngIf="rightIcon" [style.width]="rightIconWidth" [src]="rightIcon | resolveAsset">
 </div>

@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Observable, Subject} from 'rxjs';
 import {SmartpassSearchService} from '../services/smartpass-search.service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 @Component({
   selector: 'app-smartpass-search',
@@ -47,7 +48,8 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
 
   constructor(
     private router: Router,
-    private spSearchService: SmartpassSearchService
+    private spSearchService: SmartpassSearchService,
+    public darkTheme: DarkThemeSwitch
   ) { }
 
   ngOnInit(): void {

@@ -43,7 +43,7 @@
   </div>
   <div
       class="passes-wrapper passes-mobile-height"
-      [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 155px)' : 'calc(100vh - 105px)'"
+      [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 105px)'"
       [style.touch-action]="'auto'"
       *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
       [@PassesSlideTopBottom]
@@ -161,7 +161,7 @@
 
 
 <div class="passes-wrapper"
-     (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 155px)' : 'calc(100vh - 105px)'"
+     (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 105px)'"
      [style.overflow]="isStaff ? 'auto' : 'visible'"
      *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)|| (user && this.screenService.isIpadWidth)">
   <h1 class="passes-heading">Passes</h1>

@@ -71,7 +71,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
 
     return this.darkTheme.getIcon({
       iconName: this.srcString,
-      darkFill: this.blueWhite ? 'Blue-White' : 'White' ,
+      darkFill: this.blueWhite ? 'Blue-White' : this.selected ? 'Jade' : 'Navy' ,
       lightFill: lightFill
     });
   }

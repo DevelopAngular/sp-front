@@ -8,11 +8,11 @@
      (mouseleave)="button.hovered = false; button.pressed = false"
      (pointerDownEvent)="button.pressed = true"
      [style.height]="button.hovered && !selected ? '56px' : '64px'"
-     [style.background-color]="button.hovered && !selected ? button.pressed ? '#EAEDF1' : '#F0F2F5' : 'transparent'"
+     [style.background-color]="button.hovered && !selected ? button.pressed ? darkTheme.getColor({dark: '#364151', white: '#EAEDF1'}) : darkTheme.getColor({dark: '#2B3340', white: '#F0F2F5'}) : 'transparent'"
 >
   <svg width="25px" height="25px" viewBox="0 0 150 150">
     <use [attr.xlink:href]="iconId"></use>
   </svg>
   <div class="nav-button-text">{{ content }} </div>
-  <div class="selected-tab-pointer" *ngIf="selected"></div>
+  <div class="selected-tab-pointer" *ngIf="selected && !isMobile"></div>
 </div>

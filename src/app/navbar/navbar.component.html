@@ -20,7 +20,7 @@
     </div>
 
     <ng-template #staffLogo>
-      <div class="search">
+      <div class="search" *ngIf="!isMobile">
         <app-smartpass-search [width]="'242px'"></app-smartpass-search>
       </div>
     </ng-template>
@@ -70,7 +70,7 @@
 
     <div [ngClass]="isIOSTablet ? 'ios-user-info' : 'user-info'" [style.flexDirection]="flexDirection">
       <div class="ds-mx-10" style="cursor: pointer; display: flex; align-items: center;" *ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
-        <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode">
+        <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile">
           <app-feedback-button></app-feedback-button>
         </div>
         <div
@@ -98,7 +98,7 @@
       </div>
 
       <ng-template #notAssistant>
-        <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode">
+        <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile">
           <app-feedback-button></app-feedback-button>
         </div>
         <div
@@ -129,11 +129,11 @@
           appCrossPointerEventTarget
          (pointerClickEvent)="inboxClick()"
       >
-        <app-icon-button [eventBubbling]="true" [srcString]="'Inbox'" [size]="20"></app-icon-button>
+        <app-icon-button [eventBubbling]="true" [srcString]="'Notifications'" [size]="20"></app-icon-button>
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
-          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
-          <div class="inbox-number">{{ notificationBadge$ | async }}</div>
-          <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Inbox Bottom', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">
+<!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
+<!--          <div class="inbox-number">{{ notificationBadge$ | async }}</div>-->
+          <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Notifications', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">
         </div>
       </div>
 
@@ -142,15 +142,15 @@
            (pointerClickEvent)="inboxClick()"
       >
 <!--        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
-        <app-icon-button [@inboxAppearance] [eventBubbling]="true" *ngIf="!isInboxClicked" [srcString]="'Inbox'" [size]="20"></app-icon-button>
+        <app-icon-button [@inboxAppearance] [eventBubbling]="true" *ngIf="!isInboxClicked" [srcString]="'Notifications'" [size]="20"></app-icon-button>
         <div class="inbox-icon inbox-icon-arrow" [@inboxAppearance] *ngIf="isInboxClicked">
           <app-icon-button [srcString]="'Arrow Down'" [eventBubbling]="true" [size]="20"></app-icon-button>
         </div>
 <!--        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
         <div [@inboxAppearance] class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 && !isInboxClicked">
-          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
-          <div class="inbox-number">{{ notificationBadge$ | async }}</div>
-          <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Inbox Bottom', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">
+<!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
+<!--          <div class="inbox-number">{{ notificationBadge$ | async }}</div>-->
+          <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Notifications', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">
         </div>
       </div>
 

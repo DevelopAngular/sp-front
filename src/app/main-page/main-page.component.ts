@@ -36,7 +36,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   receivedRequests: any;
   isStaff: boolean;
   data: any;
-  navbarHeight: string = '78px';
+  navbarHeight: string = '64px';
   restriction$: Observable<boolean>;
 
   private destroy$: Subject<any> = new Subject<any>();
@@ -134,7 +134,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentNavbarHeight() {
     return this.router.url === '/main/hallmonitor' && this.screenService.isDeviceLargeExtra ||
-    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : this.isStaff ? '64px' : '78px' ;
+    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : '64px';
   }
 
   get showInbox() {

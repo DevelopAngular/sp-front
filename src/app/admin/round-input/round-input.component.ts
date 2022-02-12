@@ -102,7 +102,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   get _boxShadow() {
-    return this.sanitizer.bypassSecurityTrustStyle(this.boxShadow ? '0 0 6px 0 rgba(0, 0, 0, 0.1)' : 'none');
+    return this.sanitizer.bypassSecurityTrustStyle(this.boxShadow && !this.isMobile ? '0 0 6px 0 rgba(0, 0, 0, 0.1)' : 'none');
   }
 
   ngOnInit() {
