@@ -1,14 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {MatDialog} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -50,7 +40,7 @@ declare const window;
   animations: [ResizeProfileImage],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class StudentInfoCardComponent implements OnInit, OnDestroy {
 
   @ViewChild('left') left: ElementRef;
   @ViewChild('right') right: ElementRef;
@@ -84,6 +74,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   isScrollable: boolean;
   isRightScroll: boolean;
   animationTrigger = {value: 'open', params: {size: '88'}};
+  profileEmail: string;
 
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
 
@@ -163,13 +154,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
     this.userService.currentUpdatedAccount$._profile_student.pipe(filter(r => !!r))
       .subscribe(user => {
-      this.profile = User.fromJSON(user);
-      this.cdr.detectChanges();
-      this.userService.clearCurrentUpdatedAccounts();
+        this.profile = user;
+        this.cdr.detectChanges();
+        this.userService.clearCurrentUpdatedAccounts();
     });
-  }
-
-  ngAfterViewInit() {
   }
 
   ngOnDestroy() {
@@ -185,12 +173,22 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     return Util.formatDateTime(new Date(date));
   }
 
+  getEmailOrUsername() {
+    if (this.profile.primary_email.includes('@spnx.local')) {
+      this.profileEmail = this.profile.primary_email.replace('@spnx.local', '');
+      return 'Username';
+    } else {
+      this.profileEmail = this.profile.primary_email;
+      return 'Email';
+    }
+  }
+
   secondToTime(seconds) {
     let time = '';
     if (moment.utc(seconds * 1000).hours() > 0) {
       time += moment.utc(seconds * 1000).hours() + 'hr ';
     }
-    time += (moment.utc(seconds * 1000).minutes() < 1 ? 1 : moment.utc(seconds * 1000).minutes()) + ' min';
+    time += (moment.utc(seconds * 1000).minutes() < 1 && moment.utc(seconds * 1000).seconds() > 1 ? 1 : moment.utc(seconds * 1000).minutes()) + ' min';
     return time;
   }
 

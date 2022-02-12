@@ -197,8 +197,8 @@
 
               <div class="form" style="flex-direction: column; align-items: flex-start">
                 <div class="form-content">
-                  <div class="title">Email</div>
-                  <div class="value">{{ profile?.primary_email }}</div>
+                  <div class="title">{{ getEmailOrUsername() }}</div>
+                  <div class="value">{{ profileEmail }}</div>
                 </div>
                 <div class="form-content" [style.margin]="'20px 0'">
                   <div class="title">Account Type <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>
@@ -380,7 +380,7 @@
                 </ng-template>
               </app-overview-container>
             </div>
-            <div class="block" [style.margin-top]="'30px'">
+            <div class="block" [style.margin-top]="'40px'">
               <app-overview-container
                 [title]="'Passes'"
                 [icon]="'./assets/Passes (Navy).svg'"
@@ -443,7 +443,7 @@
                 </div>
               </app-overview-container>
             </div>
-            <div class="block" [style.margin-top]="'30px'">
+            <div class="block" [style.margin-top]="'40px'">
               <app-overview-container
                 [title]="'Reports'"
                 [icon]="'./assets/Report (Navy).svg'"
