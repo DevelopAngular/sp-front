@@ -109,8 +109,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   isEnabledProfilePictures$: Observable<boolean>;
 
   buttonHash = {
-    passes: {title: 'Home', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
-    hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
+    passes: {title: 'Home', route: 'passes', imgUrl: 'Home', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
+    hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'New Hall Monitor', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
     myRoom: {title: 'My Room', route: 'myroom', imgUrl: 'Room', requiredRoles: ['_profile_teacher', 'access_teacher_room'], hidden: true},
   };
 

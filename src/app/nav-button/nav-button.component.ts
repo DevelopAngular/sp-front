@@ -18,6 +18,7 @@ export class NavButtonComponent implements OnInit {
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
   iconId: string;
+  isDark;
 
   constructor(
     public darkTheme: DarkThemeSwitch
@@ -33,6 +34,7 @@ export class NavButtonComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isDark = this.darkTheme.isEnabled$.value;
       this.iconId = `#${this.icon}`;
   }
 
