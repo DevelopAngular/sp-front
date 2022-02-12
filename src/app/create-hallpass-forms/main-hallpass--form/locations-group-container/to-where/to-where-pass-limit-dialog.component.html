@@ -1,26 +1,28 @@
 <div class="pass-limit-dialog">
   <div class="icon-wrapper">
-    <img width="40" [src]="'./assets/Hand (Navy).svg' | resolveAsset">
+    <img width="30" [src]="'./assets/Hand (Navy).svg' | resolveAsset">
   </div>
   <div class="main-wrapper">
     <div class="main-text">
-      <span>Room limit reached: {{ data.passLimit }}/{{ data.passLimit }} students have passes to this room</span>
+      <span>{{ headText() }}</span>
     </div>
     <div class="supporting-text">
       <span>If this is an emergency, you can override the limit.</span>
     </div>
     <div class="buttons">
       <app-gradient-button
-        textColor="#D13F67"
-        customBackground="#F9EAEF"
-        (buttonClick)="override()"
-      >Override limit
+        textColor="#7083A0"
+        customBackground="#F0F2F5"
+        [withShadow]="false"
+        (buttonClick)="cancel()"
+      >Cancel
       </app-gradient-button>
       <app-gradient-button
         textColor="#FFFFFF"
-        customBackground="#7f879d"
-        (buttonClick)="cancel()"
-      >Don't override
+        customBackground="#E32C66"
+        [withShadow]="false"
+        (buttonClick)="override()"
+      >Override limit
       </app-gradient-button>
     </div>
   </div>

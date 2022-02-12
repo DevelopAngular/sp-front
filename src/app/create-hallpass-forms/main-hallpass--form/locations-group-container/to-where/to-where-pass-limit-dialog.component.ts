@@ -8,9 +8,16 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 })
 export class ToWherePassLimitDialog {
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { passLimit: number },
+    @Inject(MAT_DIALOG_DATA) public data: { passLimit: number, studentCount: number },
     private dialogRef: MatDialogRef<ToWherePassLimitDialog>
   ) {
+  }
+
+  headText() {
+    if (this.data.studentCount == 1)
+      return `Limit reached: ${this.data.passLimit}/${this.data.passLimit} students have passes to this room`;
+    else
+      return `Creating these ${this.data.studentCount} passes will exceed the room's ${this.data.passLimit} pass limit`
   }
 
   cancel() {
