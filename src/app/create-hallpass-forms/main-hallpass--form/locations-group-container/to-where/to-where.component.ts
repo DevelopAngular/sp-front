@@ -15,7 +15,7 @@ import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
 import {PassLimit} from '../../../../models/PassLimit';
 import {LocationsService} from '../../../../services/locations.service';
-import {ToWherePassLimitDialog} from './to-where-pass-limit-dialog.component';
+import {PassLimitDialog} from '../pass-limit-dialog/pass-limit-dialog.component';
 
 @Component({
   selector: 'app-to-where',
@@ -47,6 +47,7 @@ export class ToWhereComponent implements OnInit {
   @Input() isStaff: boolean;
   @Input() date;
   @Input() studentText;
+  @Input() passLimits: {[id: number]: PassLimit};
 
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
@@ -57,8 +58,6 @@ export class ToWhereComponent implements OnInit {
   public teacherRooms: Pinnable[] = [];
   public isLocationList$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(JSON.parse(this.storage.getItem('isGrid')));
   public hiddenBanner: boolean = JSON.parse(this.storage.getItem('hiddenBanner'));
-
-  passLimits: {[id: number]: PassLimit};
 
   public gridRestrictions: ToWhereGridRestriction = new ToWhereGridRestrictionLg();
 
@@ -75,7 +74,6 @@ export class ToWhereComponent implements OnInit {
     public screenService: ScreenService,
     private storage: StorageService,
     private tooltipDataService: TooltipDataService,
-    private locationService: LocationsService,
     private dialog: MatDialog
   ) {
     this.states = States;
@@ -103,10 +101,6 @@ export class ToWhereComponent implements OnInit {
           this.headerTransition['to-header_animation-back'] = false;
       }
     });
-
-    this.locationService.pass_limits_entities$.subscribe(res => {
-      this.passLimits = res;
-    });
   }
 
   isValidPinnable(pinnable: Pinnable) {
@@ -115,9 +109,6 @@ export class ToWhereComponent implements OnInit {
 
     if (this.isStaff && !this.formState.kioskMode)
       return true;
-
-    if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id]))
-      return false;
 
     if (
       (!this.formState.forLater &&
@@ -149,14 +140,20 @@ export class ToWhereComponent implements OnInit {
       const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
       if (!passLimitReached)
         return resolve(true);
+      if (!this.isStaff)
+        return resolve(true);
 
-      const dialogRef = this.dialog.open(ToWherePassLimitDialog, {
+      const dialogRef = this.dialog.open(PassLimitDialog, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         width: '450px',
         height: '215px',
         disableClose: true,
-        data: {passLimit: passLimit.max_passes_to, studentCount: this.countStudents()}
+        data: {
+          passLimit: passLimit.max_passes_to,
+          studentCount: this.countStudents(),
+          currentCount: passLimit.to_count,
+        }
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result.override) {

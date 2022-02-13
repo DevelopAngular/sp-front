@@ -26,6 +26,9 @@ import {NavbarDataService} from '../main/navbar-data.service';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {UserService} from '../services/user.service';
 import {School} from '../models/School';
+import {PassLimit} from '../models/PassLimit';
+import {LocationsService} from '../services/locations.service';
+import {PassLimitDialog} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 
 @Component({
   selector: 'app-request-card',
@@ -79,6 +82,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   removeShadow: boolean;
   leftTextShadow: boolean;
 
+  passLimits: {[id: number]: PassLimit};
+
   school: School;
   isEnableProfilePictures$: Observable<boolean>;
 
@@ -100,7 +105,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       private navbarData: NavbarDataService,
       private storage: StorageService,
       private domCheckerService: DomCheckerService,
-      private userService: UserService
+      private userService: UserService,
+      private locationsService: LocationsService
   ) {}
 
   get invalidDate() {
@@ -177,6 +183,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       this.solidColorRgba = Util.convertHex(this.request.gradient_color.split(',')[0], 100);
       this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
     }
+
+    this.locationsService.pass_limits_entities$.subscribe(res => {
+      this.passLimits = res;
+    });
   }
 
   ngOnDestroy(): void {
@@ -518,14 +528,55 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
-  approveRequest() {
-    this.performingAction = true;
-    const body = [];
-    this.requestService.acceptRequest(this.request.id, body)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-      this.dialogRef.close();
+  passLimitPromise(location) {
+    return new Promise<boolean>(resolve => {
+      const passLimit = this.passLimits[location.id];
+      const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
+      if (!passLimitReached)
+        return resolve(true);
+
+      const dialogRef = this.dialog.open(PassLimitDialog, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-backdrop',
+        width: '450px',
+        height: '215px',
+        disableClose: true,
+        data: {
+          passLimit: passLimit.max_passes_to,
+          studentCount: 1,
+          currentCount: passLimit.to_count,
+        }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.override) {
+          setTimeout(() => {
+            return resolve(true);
+          }, 200);
+        } else
+          return resolve(false);
+      });
     });
+  }
+
+  approveRequest() {
+    const approvePass = () => {
+      this.performingAction = true;
+      const body = [];
+      this.requestService.acceptRequest(this.request.id, body)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.dialogRef.close();
+        });
+    }
+
+    if (this.request.destination.id in this.passLimits) {
+      this.passLimitPromise(this.request.destination).then(allowed => {
+        if (allowed)
+          approvePass()
+      });
+    } else {
+      approvePass();
+    }
   }
 
   cancelClick() {

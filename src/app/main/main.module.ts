@@ -13,7 +13,7 @@ import {SharedModule} from '../shared/shared.module';
 import {MainRoutingModule} from './main-routing.module';
 import {FromWhereComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/from-where/from-where.component';
 import {ToWhereComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-where/to-where.component';
-import {ToWherePassLimitDialog} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-where/to-where-pass-limit-dialog.component';
+import {PassLimitDialog} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import {LocationsGroupContainerComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/locations-group-container.component';
 import {ToCategoryComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-category/to-category.component';
 import {RestrictedTargetComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/restricted-target/restricted-target.component';
@@ -57,7 +57,7 @@ import {PinInputComponent} from '../teacher-pin/pin-input/pin-input.component';
         MainPageComponent,
         FromWhereComponent,
         ToWhereComponent,
-        ToWherePassLimitDialog,
+        PassLimitDialog,
         ToCategoryComponent,
         RestrictedTargetComponent,
         RestrictedMessageComponent,

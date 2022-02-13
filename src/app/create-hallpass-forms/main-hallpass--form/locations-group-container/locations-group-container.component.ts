@@ -18,6 +18,7 @@ import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
 import {map} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
+import {PassLimit} from '../../../models/PassLimit';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -46,6 +47,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+  passLimits: {[id: number]: PassLimit};
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -133,6 +135,9 @@ export class LocationsGroupContainerComponent implements OnInit {
         this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
         this.user = user;
     });
+    this.locationsService.pass_limits_entities$.subscribe(res => {
+      this.passLimits = res;
+    });
   }
 
   fromWhere(location) {
@@ -211,7 +216,15 @@ export class LocationsGroupContainerComponent implements OnInit {
     } else {
         this.data.toLocation = pinnable.location;
         this.FORM_STATE.data.direction.to = pinnable.location;
-        const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
+
+        let restricted = pinnable.location.restricted && !this.showDate;
+        restricted = restricted || pinnable.location.scheduling_restricted && !!this.showDate;
+        if (pinnable.location.id in this.passLimits && !restricted) {
+          let passLimit = this.passLimits[pinnable.location.id];
+          restricted = restricted || passLimit && passLimit.to_count >= passLimit.max_passes_to;
+        }
+
+
         if (!this.isStaff && restricted && pinnable.location) {
             this.FORM_STATE.previousState = this.FORM_STATE.state;
             this.FORM_STATE.state = this.maybeSkipTeacherSelect();
