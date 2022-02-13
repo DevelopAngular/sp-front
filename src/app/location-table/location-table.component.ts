@@ -340,7 +340,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     if (!location)
       return false;
 
-    return this.tooltipService.reachedPassLimit(this.currentPage, location);
+    return true;
   }
 
   mergeLocations(url, withStars: boolean, category: string) {
