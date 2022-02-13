@@ -8,8 +8,6 @@ import {DomSanitizer} from '@angular/platform-browser';
 
 import {uniqBy} from 'lodash';
 import {DeviceDetection} from '../../../../device-detection.helper';
-import {LocationsService} from '../../../../services/locations.service';
-import {PassLimit} from '../../../../models/PassLimit';
 
 @Component({
   selector: 'app-restricted-target',
@@ -53,8 +51,6 @@ export class RestrictedTargetComponent implements OnInit {
 
   frameMotion$: BehaviorSubject<any>;
 
-  passLimits: {[id: number]: PassLimit};
-
   @Output() requestTarget: EventEmitter<any> = new EventEmitter<any>();
 
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
@@ -80,8 +76,7 @@ export class RestrictedTargetComponent implements OnInit {
 
   constructor(
     private formService: CreateFormService,
-    public sanitizer: DomSanitizer,
-    private locationsService: LocationsService
+    public sanitizer: DomSanitizer
   ) {
   }
 
@@ -147,10 +142,6 @@ export class RestrictedTargetComponent implements OnInit {
           this.headerTransition['rest-tar-header_animation-back'] = false;
       }
     });
-
-    this.locationsService.pass_limits_entities$.subscribe(res => {
-      this.passLimits = res;
-    });
   }
 
   textColor(item) {
@@ -178,12 +169,7 @@ export class RestrictedTargetComponent implements OnInit {
 
     setTimeout(() => {
 
-      let restricted = this.toLocation.restricted && !this.date;
-      restricted = restricted || this.toLocation.scheduling_restricted && !!this.date;
-      if (this.toLocation.id in this.passLimits && !restricted) {
-        let passLimit = this.passLimits[this.toLocation.id];
-        restricted = restricted || passLimit && passLimit.to_count >= passLimit.max_passes_to;
-      }
+      const restricted = ((this.toLocation.restricted && !this.date) || (this.toLocation.scheduling_restricted && !!this.date));
 
       this.formState.previousState = this.formState.state;
       if (restricted && this.pinnable.location) {

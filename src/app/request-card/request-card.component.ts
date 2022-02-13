@@ -184,6 +184,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
     }
 
+    this.locationsService.getPassLimitRequest();
     this.locationsService.pass_limits_entities$.subscribe(res => {
       this.passLimits = res;
     });
@@ -528,9 +529,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
-  passLimitPromise(location) {
+  passLimitPromise() {
     return new Promise<boolean>(resolve => {
-      const passLimit = this.passLimits[location.id];
+      const passLimit = this.passLimits[this.request.destination.id];
       const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
       if (!passLimitReached)
         return resolve(true);
@@ -570,7 +571,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     }
 
     if (this.request.destination.id in this.passLimits) {
-      this.passLimitPromise(this.request.destination).then(allowed => {
+      this.passLimitPromise().then(allowed => {
         if (allowed)
           approvePass()
       });
@@ -630,7 +631,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   goToPin() {
-    this.activeTeacherPin = true;
+    this.passLimitPromise().then(approved => {
+      this.activeTeacherPin = true;
+    });
   }
 
   openBigPassCard() {
