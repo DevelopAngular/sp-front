@@ -14,6 +14,11 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
 import {StorageService} from '../services/storage.service';
+import {
+  PassLimitDialog
+} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
+import {PassLimit} from '../models/PassLimit';
+import {LocationsService} from '../services/locations.service';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -39,6 +44,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   solidColorRgba2: string;
   removeShadow: boolean;
   leftTextShadow: boolean;
+  passLimits: {[id: number]: PassLimit};
 
   hoverDestroyer$: Subject<any>;
 
@@ -53,6 +59,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
       private renderer: Renderer2,
       private passesService: HallPassesService,
       private storage: StorageService,
+      private locationsService: LocationsService,
   ) { }
 
   get hasDivider() {
@@ -97,6 +104,10 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
       this.activeTeacherPin = !res;
     });
 
+    this.locationsService.getPassLimitRequest();
+    this.locationsService.pass_limits_entities$.subscribe(res => {
+      this.passLimits = res;
+    });
   }
 
   ngOnDestroy() {
@@ -241,5 +252,42 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   openBigPassCard() {
     this.storage.setItem('pass_full_screen', !this.isOpenBigPass);
     this.screenService.openBigPassCard(this.isOpenBigPass, this.request, 'inlineRequest');
+  }
+
+  goToPin() {
+    return new Promise<boolean>(resolve => {
+      if (!(this.request.destination.id in this.passLimits)) {
+        this.activeTeacherPin = true;
+        return;
+      }
+
+      const passLimit = this.passLimits[this.request.destination.id];
+      const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
+      if (!passLimitReached) {
+        this.activeTeacherPin = true;
+        return;
+      }
+
+
+      const dialogRef = this.dialog.open(PassLimitDialog, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-backdrop',
+        width: '450px',
+        height: '215px',
+        disableClose: true,
+        data: {
+          passLimit: passLimit.max_passes_to,
+          studentCount: 1,
+          currentCount: passLimit.to_count,
+        }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.override) {
+          setTimeout(() => {
+            this.activeTeacherPin = true;
+          }, 200);
+        }
+      });
+    });
   }
 }

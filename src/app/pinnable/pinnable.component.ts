@@ -131,16 +131,11 @@ export class PinnableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-
     if (!this.mock) {
       if (!!this.pinnable.location) {
-        this.restricted = this.pinnable.location.restricted && !this.forLater;
-        this.restricted = this.restricted || this.pinnable.location.scheduling_restricted && this.forLater;
-        this.restricted = this.restricted || this.passLimit && this.passLimit.to_count >= this.passLimit.max_passes_to;
+        this.restricted = ((this.pinnable.location.restricted && !this.forLater) || (this.pinnable.location.scheduling_restricted && this.forLater));
       }
-
     } else {
-
     }
   }
   ngOnChanges(changes: SimpleChanges): void {
