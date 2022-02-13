@@ -175,10 +175,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   closeProfile(event) {
     if (this.isOpen && this.isResize) {
       event.stopPropagation();
-      this.animationTrigger = {value: 'open', params: {size: '75'}};
-      this.resizeTrigger$.next('close');
-      this.isOpenEvent$.next(false);
-      this.domCheckerService.scalePassCardTrigger$.next('unresize');
+      // this.animationTrigger = {value: 'open', params: {size: '75'}};
+      // this.resizeTrigger$.next('close');
+      // this.isOpenEvent$.next(false);
+      // this.domCheckerService.scalePassCardTrigger$.next('unresize');
     }
   }
 

@@ -34,8 +34,11 @@ export class NavButtonComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isDark = this.darkTheme.isEnabled$.value;
-      this.iconId = `#${this.icon}`;
+    this.darkTheme.isEnabled$.subscribe(res => {
+      this.isDark = res;
+    });
+    // this.isDark = this.darkTheme.isEnabled$.value;
+    this.iconId = `#${this.icon}`;
   }
 
   doClick() {
