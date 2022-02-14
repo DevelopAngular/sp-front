@@ -4,10 +4,10 @@
     <img [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back()">
 
     <div *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-      <div class="divider-text-students ds-dialog-title-white" [attr.data-motion-translate]="true">Select Student(s)</div>
+      <div class="divider-text-students ds-dialog-title-white" [attr.data-motion-translate]="true">Report Student</div>
     </div>
     <div *ngIf="!showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-      <div class="divider-text-message ds-dialog-title-white" [attr.data-motion-translate]="true">Message </div>
+      <div class="divider-text-message ds-dialog-title-white" [attr.data-motion-translate]="true">Report Student</div>
     </div>
   </div>
   <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white">

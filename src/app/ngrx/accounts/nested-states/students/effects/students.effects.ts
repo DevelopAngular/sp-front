@@ -154,11 +154,9 @@ export class StudentsEffects {
       .pipe(
         ofType(studentsActions.addReportToStats),
         switchMap((action) => {
-          debugger;
           return this.userService.studentsStats$.pipe(
             take(1),
             map(stats => {
-              debugger;
               if (stats[action.report.student.id]) {
                 return studentsActions.addReportToStatsSuccess({report: action.report});
               } else {

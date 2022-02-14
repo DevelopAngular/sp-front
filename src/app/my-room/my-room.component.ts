@@ -1,4 +1,4 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, interval, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {Util} from '../../Util';
@@ -31,6 +31,8 @@ import {DeviceDetection} from '../device-detection.helper';
 import {HallPassesService} from '../services/hall-passes.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-my-room',
@@ -42,9 +44,9 @@ import {GoogleLoginService} from '../services/google-login.service';
     MyRoomAnimations.headerTrigger,
     MyRoomAnimations.calendarIconTrigger,
     bumpIn
-  ],
+  ]
 })
-export class MyRoomComponent implements OnInit, OnDestroy {
+export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private scrollableAreaName = 'MyRoom';
   private scrollableArea: HTMLElement;
@@ -114,6 +116,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location[]>(1);
 
+  schoolsLength$: Observable<number>;
+
   searchPending$: Subject<boolean> = new Subject<boolean>();
 
   hasPasses: Observable<boolean> = of(false);
@@ -154,7 +158,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private http: HttpService,
       public screenService: ScreenService,
       public router: Router,
-      private scrollPosition: ScrollPositionService
+      private scrollPosition: ScrollPositionService,
 
   ) {
     this.setSearchDate(this.timeService.nowDate());
@@ -235,6 +239,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+    this.schoolsLength$ = this.http.schoolsLength$;
     combineLatest(
       this.userService.user$.pipe(filter(u => !!u), map(u => User.fromJSON(u))),
       this.userService.effectiveUser,
@@ -308,8 +313,23 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
   }
 
+  ngAfterViewInit() {
+  }
+
   onPress(press: boolean) {
       this.buttonDown = press;
+  }
+
+  getSelectedDateText(date) {
+    if (moment(date).isSame(moment(), 'day')) {
+      return 'Today';
+    } else if (moment(date).isSame(moment().add(1, 'day'), 'day')) {
+      return 'Tomorrow';
+    } else if (moment(date).isSame(moment().subtract(1, 'day'), 'day')) {
+      return 'Yesterday';
+    } else {
+      return moment(date).format('MMM DD');
+    }
   }
 
   onHover(hover: boolean) {

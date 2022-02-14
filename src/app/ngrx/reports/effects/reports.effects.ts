@@ -51,14 +51,13 @@ export class ReportsEffects {
           return this.adminService.sendReport(action.data)
             .pipe(
               switchMap((reports: Report[]) => {
-                debugger;
                 return [
                   reportsActions.postReportSuccess({reports}),
                   addReportToStats({report: reports[0]}),
                   openToastAction({data: {
                     title: 'Report sent',
                     subtitle: 'The report has been sent to admins.',
-                    type: 'success'
+                    type: 'info'
                   }})
                 ];
               }),

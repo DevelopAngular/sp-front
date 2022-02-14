@@ -23,6 +23,7 @@ import {CollectionRestriction} from '../models/collection-restrictions/Collectio
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {HttpService} from '../services/http-service';
 
 @Component({
   selector: 'app-hall-monitor',
@@ -108,6 +109,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
   isEnableProfilePictures$: Observable<boolean>;
 
+  schoolsLength$: Observable<number>;
+
   selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
   sortMode: string = '';
 
@@ -122,7 +125,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     private liveDataService: LiveDataService,
     public darkTheme: DarkThemeSwitch,
     public screenService: ScreenService,
-    private scrollPosition: ScrollPositionService
+    private scrollPosition: ScrollPositionService,
+    private http: HttpService
   ) {
     this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }
@@ -133,6 +137,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.detectDevice();
+    this.schoolsLength$ = this.http.schoolsLength$;
 
     combineLatest(
       this.userService.user$.pipe(filter(u => !!u)),

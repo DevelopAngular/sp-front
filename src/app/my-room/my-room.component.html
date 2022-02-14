@@ -70,7 +70,7 @@
 
     </div>
   </div>
-  <div *ngIf="UI" class="my-room-wrapper" #scrollableArea>
+  <div *ngIf="UI" class="my-room-wrapper" #scrollableArea [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 114px)' : 'calc(100vh - 64px)'">
     <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
       <div class="my-room-header" [@headerTrigger]="headerState" *ngIf="screenService.isDesktopWidth">
         <div class="selected-teacher"
@@ -108,7 +108,7 @@
             [width]="'106px'"
             [height]="'40px'"
             [iconWidth]="'18px'"
-            [text]="'Filter'"
+            [text]="getSelectedDateText(searchDate$ | async)"
             [rightIcon]="'./assets/Rect (Blue-Gray).svg'"
             [fontWeight]="'500'"
             [rightIconWidth]="'9px'"
