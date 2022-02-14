@@ -2,7 +2,6 @@ import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angu
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, interval, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {Util} from '../../Util';
-import {DataService} from '../services/data-service';
 import {mergeObject} from '../live-data/helpers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {LoadingService} from '../services/loading.service';
@@ -13,7 +12,7 @@ import {User} from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {TimeService} from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {LocationsService} from '../services/locations.service';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -119,6 +118,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
+  isEnableProfilePictures$: Observable<boolean>;
 
   destroy$ = new Subject();
 
@@ -145,7 +145,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private locationService: LocationsService,
       private passesService: HallPassesService,
       public darkTheme: DarkThemeSwitch,
-      public dataService: DataService,
       public dialog: MatDialog,
       public userService: UserService,
       public loginService: GoogleLoginService,
@@ -231,23 +230,21 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   get showProfilePictures() {
-    return this.http.getSchool().profile_pictures_enabled;
+    return this.http.getSchool().profile_pictures_enabled && this.user.show_profile_pictures;
   }
 
   ngOnInit() {
+    this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
     combineLatest(
-      this.dataService.currentUser,
+      this.userService.user$.pipe(filter(u => !!u), map(u => User.fromJSON(u))),
       this.userService.effectiveUser,
     )
     .pipe(
-      this.loadingService.watchFirst,
       tap(([cu, eu]) => {
-        this._zone.run(() => {
-          this.user = cu;
-          this.effectiveUser = eu;
-          this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
-          this.canView = this.user.roles.includes('access_teacher_room');
-        });
+        this.user = cu;
+        this.effectiveUser = eu;
+        this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
+        this.canView = this.user.roles.includes('access_teacher_room');
       }),
       switchMap(([cu, eu]) => {
         return combineLatest(
@@ -257,7 +254,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         );
       }),
       takeUntil(this.destroy$),
-      take(1)
     )
     .subscribe(([locations, selected]: [Location[], Location]) => {
       this._zone.run(() => {

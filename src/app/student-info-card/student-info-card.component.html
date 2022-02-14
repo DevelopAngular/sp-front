@@ -229,23 +229,11 @@
             <div class="buttons">
               <div class="date-button"
                    #dateButton
-                   customToolTip="Filter passes and reports"
+                   customToolTip="Filter stats, passes, and reports"
                    [nonDisappearing]="false"
                    [editable]="true"
               >
                 <app-date-button [date]="selectedDate" (buttonClick)="openDateFilter($event)"></app-date-button>
-<!--                <app-gradient-button-->
-<!--                  [gradient]="'#FFFFFF, #FFFFFF'"-->
-<!--                  [leftIcon]="'./assets/Calendar (Navy).svg'"-->
-<!--                  [leftImageWidth]="'18px'"-->
-<!--                  [leftImageHeight]="'18px'"-->
-<!--                  [rightIcon]="'./assets/Rect (Navy).svg'"-->
-<!--                  [rightIconWidth]="'8px'"-->
-<!--                  [rightIconHeight]="'8px'"-->
-<!--                  [size]="'small'"-->
-<!--                  [textColor]="'#1F195E'"-->
-<!--                  (buttonClick)="openDateFilter($event)"-->
-<!--                >{{ dateText(selectedDate) }}</app-gradient-button>-->
               </div>
 
               <app-square-button

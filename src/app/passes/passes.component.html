@@ -92,7 +92,6 @@
             [headerWidth]="'92%'"
             [title]="'Active Passes'"
             [columns]="3"
-            (reportFromPassCard)="onReportFromPassCard($event)"
             (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
             [showProfilePictures]="showProfilePictures$ | async"
           ></app-pass-collection>
@@ -202,7 +201,6 @@
         [passProvider]="activePasses"
         [title]="'Active Passes'"
         [columns]="3"
-        (reportFromPassCard)="onReportFromPassCard($event)"
         [showProfilePictures]="showProfilePictures$ | async"
       ></app-pass-collection>
     </div>

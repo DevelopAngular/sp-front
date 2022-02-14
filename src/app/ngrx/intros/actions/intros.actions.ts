@@ -17,3 +17,7 @@ export const updateIntrosMainFailure = createAction(`[${INTROS}] Update intros M
 export const updateIntrosEncounter = createAction(`[${INTROS}] Update intros Encounter`, props<{intros: any, device: string, version: string}>());
 export const updateIntrosEncounterSuccess = createAction(`[${INTROS}] Update intros Encounter Success`, props<{data: any}>());
 export const updateIntrosEncounterFailure = createAction(`[${INTROS}] Update intros Encounter Failure`, props<{errorMessage: string}>());
+
+export const updateIntrosSearch = createAction(`[${INTROS}] Update intros Search`, props<{intros: any, device: string, version: string}>());
+export const updateIntrosSearchSuccess = createAction(`[${INTROS}] Update intros Search Success`, props<{data: any}>());
+export const updateIntrosSearchFailure = createAction(`[${INTROS}] Update intros Search Failure`, props<{errorMessage: string}>());

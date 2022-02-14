@@ -96,7 +96,7 @@ import {getCurrentUpdatedUser, getLoadedUser, getNuxDates, getSelectUserPin, get
 import {clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {getIntros, updateIntros, updateIntrosEncounter, updateIntrosMain} from '../ngrx/intros/actions';
+import {getIntros, updateIntros, updateIntrosEncounter, updateIntrosMain, updateIntrosSearch} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
@@ -465,6 +465,10 @@ export class UserService implements OnDestroy {
     this.store.dispatch(updateIntrosEncounter({intros, device, version}));
   }
 
+  updateIntrosSearchRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosSearch({intros, device, version}));
+  }
+
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
@@ -475,6 +479,10 @@ export class UserService implements OnDestroy {
 
   updateIntrosEncounter(device, version) {
     return this.http.patch('v1/intros/encounter_reminder', {device, version});
+  }
+
+  updateIntrosSearch(device, version) {
+    return this.http.patch('v1/intros/search_reminder', {device, version});
   }
 
   saveKioskModeLocation(locId) {

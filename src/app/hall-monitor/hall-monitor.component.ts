@@ -201,6 +201,10 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.reportFormInstance = dialogRef.componentInstance;
   }
 
+  getInputPlaceholder() {
+    return this.randomStringForSearchInput ? `Filter (ex. "${this.randomStringForSearchInput}")` : `Filter active passes`;
+  }
+
   openSortMenu() {
       const SM = this.dialog.open(SortMenuComponent, {
         position: { bottom: '1px' },
@@ -220,18 +224,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
           this.dataService.sort$.next(item.action);
           this.selectedSortOption = item;
       });
-  }
-
-  onReportFromPassCard(studends) {
-    if (studends) {
-      this.sendReports = studends;
-      this.isActiveMessage = true;
-      setTimeout(() => {
-        this.isActiveMessage = false;
-      }, 3000);
-    } else {
-      return;
-    }
   }
 
   onSearch(search: string) {

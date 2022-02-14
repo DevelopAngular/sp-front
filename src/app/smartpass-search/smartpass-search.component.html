@@ -17,7 +17,7 @@
            [position]="{originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 15}"
       >
         <ng-template #tooltip>
-          <app-nux-teacher-view (close)="showTooltip$.next(false)" (tryButton)="isFocus = true; focused = true; showTooltip$.next(false)"></app-nux-teacher-view>
+          <app-nux-teacher-view (close)="closeNuxTooltip()" (tryButton)="isFocus = true; focused = true; closeNuxTooltip()"></app-nux-teacher-view>
         </ng-template>
         <div class="input">
           <app-round-input
@@ -44,7 +44,7 @@
       <div class="empty-state-no-search" *ngIf="!(searchLoaded$ | async) && !(searchLoading$ | async)">
         <img [src]="'./assets/emptyStates/Students Empty State.svg'" alt="empty-state">
         <div class="title">Search for students</div>
-        <div class="subtitle">See previous passes, get quick insights, check permissions, and more...</div>
+        <div class="subtitle">See previous passes, get quick stats, check permissions, and more...</div>
       </div>
       <div class="empty-state-searched" *ngIf="(searchLoaded$ | async) && !(searchResult$ | async).length">
         No students found

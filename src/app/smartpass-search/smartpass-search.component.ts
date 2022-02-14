@@ -1,9 +1,12 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {Observable, Subject} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {SmartpassSearchService} from '../services/smartpass-search.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {debounceTime, filter, take, takeUntil} from 'rxjs/operators';
+import * as moment from 'moment';
+import {UserService} from '../services/user.service';
 
 @Component({
   selector: 'app-smartpass-search',
@@ -32,7 +35,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
     ])
   ]
 })
-export class SmartpassSearchComponent implements OnInit, AfterViewInit {
+export class SmartpassSearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() focused: boolean;
   @Input() height: string = '40px';
@@ -40,26 +43,50 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
 
   public isFocus: boolean;
   public result: any[] = [];
+  introsData: any;
   showTooltip$: Subject<boolean> = new Subject();
   searchLoading$: Observable<boolean>;
   searchLoaded$: Observable<boolean>;
   searchResult$: Observable<any>;
   resetInputValue$: Subject<string> = new Subject<string>();
 
+  private destroy$ = new Subject();
+
   constructor(
     private router: Router,
     private spSearchService: SmartpassSearchService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
     this.searchResult$ = this.spSearchService.searchResult$;
     this.searchLoading$ = this.spSearchService.searchLoading$;
     this.searchLoaded$ = this.spSearchService.searchLoaded$;
+
+    combineLatest(
+      this.userService.introsData$.pipe(filter(res => !!res)),
+      this.userService.nuxDates$.pipe(filter(r => !!r)),
+      this.userService.user$.pipe(filter(r => !!r))
+    )
+      .pipe(
+        debounceTime(1000),
+        take(1),
+        takeUntil(this.destroy$)
+      ).subscribe(([intros, nuxDates, user]) => {
+          this.introsData = intros;
+          const showNux = moment(user.first_login).isBefore(moment(nuxDates[1].created), 'day');
+          this.showTooltip$.next(!intros.search_reminder.universal.seen_version && showNux);
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngAfterViewInit() {
-    this.showTooltip$.next(false);
+    // this.showTooltip$.next(false);
   }
 
   search(value) {
@@ -86,6 +113,11 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit {
 
   focusEvent(value) {
     this.isFocus = value;
+  }
+
+  closeNuxTooltip() {
+    this.showTooltip$.next(false);
+    this.userService.updateIntrosSearchRequest(this.introsData, 'universal',  '1');
   }
 
 }

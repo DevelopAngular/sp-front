@@ -174,7 +174,7 @@
             [title]="'Active Passes'"
             [columns]="4"
             (currentPassesEmit)="currentPasses$.next($event)"
-            [showProfilePictures]="showProfilePictures"
+            [showProfilePictures]="(isEnableProfilePictures$ | async) && user.show_profile_pictures === 'everywhere'"
           >
           </app-pass-collection>
           <app-pass-collection
@@ -186,7 +186,7 @@
             [columns]="4"
             [filterModel]="'passes-from-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
-            [showProfilePictures]="showProfilePictures"
+            [showProfilePictures]="(isEnableProfilePictures$ | async) && user.show_profile_pictures === 'everywhere'"
           >
           </app-pass-collection>
           <app-pass-collection
@@ -198,7 +198,7 @@
             [columns]="4"
             [filterModel]="'passes-to-room'"
             (currentPassesEmit)="currentPasses$.next($event)"
-            [showProfilePictures]="showProfilePictures"
+            [showProfilePictures]="(isEnableProfilePictures$ | async) && user.show_profile_pictures === 'everywhere'"
           >
           </app-pass-collection>
 

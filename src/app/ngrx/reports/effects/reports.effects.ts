@@ -47,10 +47,11 @@ export class ReportsEffects {
     return this.actions$
       .pipe(
         ofType(reportsActions.postReport),
-        concatMap((action: any) => {
+        switchMap((action: any) => {
           return this.adminService.sendReport(action.data)
             .pipe(
               switchMap((reports: Report[]) => {
+                debugger;
                 return [
                   reportsActions.postReportSuccess({reports}),
                   addReportToStats({report: reports[0]}),

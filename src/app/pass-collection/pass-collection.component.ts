@@ -328,9 +328,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           backdropClass: 'custom-backdrop',
           data: {'report': dialogData['report']}
         });
-        reportRef.afterClosed().subscribe(dd => {
-          this.reportFromPassCard.emit(dd);
-        });
       }
     });
   }

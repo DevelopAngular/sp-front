@@ -154,10 +154,13 @@ export class StudentsEffects {
       .pipe(
         ofType(studentsActions.addReportToStats),
         switchMap((action) => {
+          debugger;
           return this.userService.studentsStats$.pipe(
+            take(1),
             map(stats => {
+              debugger;
               if (stats[action.report.student.id]) {
-                return studentsActions.addReportToStats({report: action.report});
+                return studentsActions.addReportToStatsSuccess({report: action.report});
               } else {
                 return studentsActions.addReportToStatsFailure({errorMessage: 'This user does`t have a stats now'});
               }
