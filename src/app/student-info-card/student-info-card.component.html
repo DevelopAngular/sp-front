@@ -8,7 +8,7 @@
                 <app-round-button (buttonClick)="back()" [icon]="'Chevron Left'" [iconOffset]="3" [iconWidth]="15"></app-round-button>
               </div>
               <div class="avatar-content">
-                <div class="avatar"
+                <div class="avatar" #avatar
                      [style.width]="isScrollable ? '32px' : '88px'"
                      [style.height]="isScrollable ? '32px' : '88px'"
                      #avatarContainer
@@ -31,21 +31,27 @@
                       [style.height]="isScrollable ? '32px' : '88px'"
                     >
                   </ng-template>
-                  <div *ngIf="avatarContainer.hover && !isScrollable" class="hover-backdrop"></div>
+                  <div
+                    *ngIf="avatarContainer.hover && !isScrollable"
+                    class="hover-backdrop"
+                    [style.cursor]="profile && !profile.profile_picture && user.isAdmin() ? 'pointer' : 'normal'"
+                    appCrossPointerEventTarget
+                    (pointerClickEvent)="profile && !profile.profile_picture && user.isAdmin() ? editWindow(avatar) : null"
+                  ></div>
                   <div class="buttons" customToolTip [showToolTip]="!user.isAdmin()" [editable]="true" [nonDisappearing]="false" [contentTemplate]="tooltip" *ngIf="!(loadingProfilePicture | async) && !isScrollable">
-                    <img (click)="user.isAdmin() ? openEditAvatar($event) : null" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+                    <img #editIcon (click)="user.isAdmin() ? editWindow(avatar) : null" *ngIf="avatarContainer.hover || isOpenAvatarDialog" class="add-avatar" [style.top]="!profile.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (profile.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
                     <img (click)="user.isAdmin() ? deleteAvatar() : null" *ngIf="avatarContainer.hover && profile.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
 
                     <ng-template #tooltip>
                       <div class="ds-tooltip" style="text-align: left">
                         <div class="only-admin">ADMIN ONLY</div>
-                        Only admins are able to add, edit or remove profile pictures.
+                        Please contact your admin so they can bulk upload profile pictures for your school.
                       </div>
                     </ng-template>
                   </div>
 
                 </div>
-                <div class="student-name" [style.font-size]="isScrollable ? '13px' : '28px'">{{ profile?.display_name }}</div>
+                <div class="student-name" [style.font-size]="isScrollable ? '13px' : isLongName ? '18px' : '28px'">{{ profile?.display_name }}</div>
               </div>
 
               <div class="top-buttons">

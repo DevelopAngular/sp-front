@@ -81,6 +81,8 @@ import {EncounterGroupDescriptionComponent} from '../admin/accounts/encounter-pr
 import {WhiteButtonComponent} from '../ds-buttons/white-button/white-button.component';
 import {WhiteRoundButtonComponent} from '../ds-buttons/white-round-button/white-round-button.component';
 import {IconOnlyButtonComponent} from '../ds-buttons/icon-only-button/icon-only-button.component';
+import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
+import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -172,6 +174,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     WhiteButtonComponent,
     WhiteRoundButtonComponent,
     IconOnlyButtonComponent,
+    EditAvatarComponent,
+    ProfilePictureComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -246,6 +250,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     WhiteButtonComponent,
     WhiteRoundButtonComponent,
     IconOnlyButtonComponent,
+    EditAvatarComponent,
+    ProfilePictureComponent,
   ],
   providers: [
     {

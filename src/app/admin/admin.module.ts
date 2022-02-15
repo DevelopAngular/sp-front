@@ -21,7 +21,6 @@ import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-room
 import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
 import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
 import {GeneratedTableDialogComponent} from './sp-data-table/generated-table-dialog/generated-table-dialog.component';
-import {EditAvatarComponent} from './profile-card-dialog/edit-avatar/edit-avatar.component';
 import {AccountsModule} from './accounts/accounts.module';
 import {ProfileCardDialogComponent} from './profile-card-dialog/profile-card-dialog.component';
 import {AddUserDialogComponent} from './add-user-dialog/add-user-dialog.component';
@@ -55,7 +54,6 @@ import {ModelFilterComponent} from '../student-info-card/model-filter/model-filt
         ImportRoomsComponent,
         OverlayContainerComponent,
         GeneratedTableDialogComponent,
-        EditAvatarComponent,
         ProfileCardDialogComponent,
         AddUserDialogComponent,
         ViewProfileComponent,

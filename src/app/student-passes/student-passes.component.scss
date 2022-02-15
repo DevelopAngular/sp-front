@@ -41,6 +41,7 @@
       //background-color: #FFFFFF;
       z-index: 20;
       padding: 15px 0;
+      cursor: pointer;
       .profile-info {
         display: flex;
         align-items: center;
@@ -63,7 +64,7 @@
           height: 50px;
           .full-name {
             color: $navy;
-            font-size: 22px;
+            //font-size: 22px;
             font-weight: bold;
             position: absolute;
             top: 0;
@@ -112,6 +113,7 @@
     padding: 0 17px;
     margin-top: 90px;
     background-color: #FFFFFF;
+    cursor: pointer;
 
     .student-info {
       display: flex;
@@ -162,6 +164,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        margin-top: 40px;
 
         .empty-title {
           font-size: 17px;
@@ -170,6 +173,19 @@
       }
     }
   }
+}
+
+.only-admin {
+  width: 93px;
+  height: 20px;
+  border-radius: 4px;
+  background-color: #EAEAFD;
+  color: #5352E4;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3px;
 }
 
 .avatar-animate {

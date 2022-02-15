@@ -79,6 +79,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   hovered: boolean;
   pressed: boolean;
+  headerInfoHover: boolean;
+
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -137,6 +139,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     return moment().isBefore(moment(pass.end_time));
   }
 
+  get isLongName() {
+    return this.profile.display_name.length > 20;
+  }
+
   get isOpen() {
     return this.isOpenEvent$.getValue() || !this.isResize;
   }
@@ -161,24 +167,24 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   openProfile() {
     if (this.isClose && this.isResize) {
-      if (this.isMobile) {
-        this.resizeTrigger$.next('open');
-        this.domCheckerService.scalePassCardTrigger$.next('resize');
-        this.isOpenEvent$.next(true);
-      } else {
-        this.router.navigate([`/main/student/${this.profile.id}`]);
-        this.dialogRef.close();
-      }
+      this.resizeTrigger$.next('open');
+      this.domCheckerService.scalePassCardTrigger$.next('resize');
+      this.isOpenEvent$.next(true);
     }
+  }
+
+  openStudentInfoPage() {
+    this.router.navigate([`/main/student/${this.profile.id}`]);
+    this.dialogRef.close();
   }
 
   closeProfile(event) {
     if (this.isOpen && this.isResize) {
       event.stopPropagation();
-      // this.animationTrigger = {value: 'open', params: {size: '75'}};
-      // this.resizeTrigger$.next('close');
-      // this.isOpenEvent$.next(false);
-      // this.domCheckerService.scalePassCardTrigger$.next('unresize');
+      this.animationTrigger = {value: 'open', params: {size: '75'}};
+      this.resizeTrigger$.next('close');
+      this.isOpenEvent$.next(false);
+      this.domCheckerService.scalePassCardTrigger$.next('unresize');
     }
   }
 

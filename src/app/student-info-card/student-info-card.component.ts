@@ -30,6 +30,9 @@ import {Util} from '../../Util';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ReportInfoDialogComponent} from '../admin/explore/report-info-dialog/report-info-dialog.component';
 import {HttpService} from '../services/http-service';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -45,6 +48,8 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
   @ViewChild('left') left: ElementRef;
   @ViewChild('right') right: ElementRef;
   @ViewChild('dateButton') dateButton: ElementRef;
+  @ViewChild('avatar') avatar: ElementRef;
+  @ViewChild('editIcon') editIcon: ElementRef;
 
   profile: User;
 
@@ -76,6 +81,8 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
   animationTrigger = {value: 'open', params: {size: '88'}};
   profileEmail: string;
 
+  isOpenAvatarDialog: boolean;
+
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
 
   schoolsLength$: Observable<number>;
@@ -91,7 +98,8 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
     private encounterPreventionService: EncounterPreventionService,
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpService
+    private http: HttpService,
+    private darkTheme: DarkThemeSwitch
   ) { }
 
   @HostListener('document.scroll', ['$event'])
@@ -112,6 +120,10 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
 
   get accountType() {
     return this.profile.demo_account ? 'Demo' : this.profile.sync_types[0] === 'google' ? 'G Suite' : (this.profile.sync_types[0] === 'gg4l' ? 'GG4L' : this.profile.sync_types[0] === 'clever' ? 'Clever' : 'Standard');
+  }
+
+  get isLongName() {
+    return this.profile.display_name.length > 20;
   }
 
   ngOnInit(): void {
@@ -427,15 +439,65 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
     });
   }
 
+  editWindow(event) {
+    this.isOpenAvatarDialog = true;
+    // if (!this.userService.getUserSchool().profile_pictures_completed) {
+    //   this.consentDialogOpen(this.editIcon.nativeElement);
+    // } else {
+    //   this.openEditAvatar(this.editIcon.nativeElement);
+    // }
+    this.consentDialogOpen(this.editIcon.nativeElement);
+  }
+
+  consentDialogOpen(evt) {
+    const options = [];
+    options.push(this.genOption('Add individual picture', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'individual', this.darkTheme.getIcon({iconName: 'Plus', darkFill: 'White', lightFill: 'Blue-Gray'})));
+    options.push(this.genOption('Bulk upload pictures', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'bulk', this.darkTheme.getIcon({iconName: 'Add Avatar', darkFill: 'White', lightFill: 'Blue-Gray'})));
+
+    UNANIMATED_CONTAINER.next(true);
+
+    const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {'options': options, 'trigger': new ElementRef(evt)}
+    });
+
+    cancelDialog.afterClosed().pipe(
+      tap(() => {
+        UNANIMATED_CONTAINER.next(false);
+        this.isOpenAvatarDialog = false;
+      }),
+      filter(r => !!r))
+      .subscribe(action => {
+        if (action === 'individual') {
+          this.isOpenAvatarDialog = true;
+          this.openEditAvatar(this.editIcon.nativeElement);
+        } else if (action === 'bulk') {
+          const PPD = this.dialog.open(ProfilePictureComponent, {
+            panelClass: 'accounts-profiles-dialog',
+            backdropClass: 'custom-bd',
+            width: '425px',
+            height: '500px'
+          });
+        }
+      });
+  }
+
+  genOption(display, color, action, icon?) {
+    return { display, color, action, icon };
+  }
+
   openEditAvatar(event) {
+    const target = event.currentTarget ? event.currentTarget : event;
     const ED = this.dialog.open(EditAvatarComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: { 'trigger': event.currentTarget, user: this.profile }
+      data: { 'trigger': target, user: this.profile }
     });
 
     ED.afterClosed()
       .pipe(
+        tap(() => this.isOpenAvatarDialog = false),
         filter(r => !!r),
         tap(({action, file}) => {
           this.loadingProfilePicture.next(true);
