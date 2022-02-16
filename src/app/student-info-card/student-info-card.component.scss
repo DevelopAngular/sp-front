@@ -21,17 +21,13 @@
     }
     .left {
       position: fixed;
-      //top: 84px;
       min-width: 417px;
       overflow: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
       background-color: #FFFFFF;
-      //box-shadow: 0 6px 10px rgba(0, 0, 0, 0.102836);
       border-radius: 10px;
-      //height: calc(100% - 40px);
-      //overflow: auto;
 
       .back {
         position: absolute;
@@ -41,16 +37,22 @@
 
       .left-header {
         position: fixed;
-        //top: 0;
         width: 417px;
         background-color: #FFFFFF;
         z-index: 1;
         border-radius: 10px 10px 0 0;
+
+        .scbl {
+          width: 32px !important;
+          height: 32px !important;
+        }
         .avatar-content {
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding: 24px 0 10px 0;
+          width: 417px;
+          margin-top: 24px;
+          //padding: 24px 0 10px 0;
 
           .avatar {
             width: 88px;
@@ -62,7 +64,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(112, 131, 160, .3);;
+            box-shadow: 0 2px 5px rgba(112, 131, 160, .3);
+
+            .image {
+              width: 88px;
+              height: 88px;
+            }
 
             .spinner {
               position: absolute;

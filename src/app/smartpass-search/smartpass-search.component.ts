@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {combineLatest, Observable, Subject} from 'rxjs';
@@ -33,9 +33,10 @@ import {UserService} from '../services/user.service';
       })),
       transition('open <=> close', animate('.3s ease')),
     ])
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SmartpassSearchComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SmartpassSearchComponent implements OnInit, OnDestroy {
 
   @Input() focused: boolean;
   @Input() height: string = '40px';
@@ -56,7 +57,8 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit, OnDestro
     private router: Router,
     private spSearchService: SmartpassSearchService,
     public darkTheme: DarkThemeSwitch,
-    private userService: UserService
+    private userService: UserService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -77,16 +79,13 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit, OnDestro
           this.introsData = intros;
           const showNux = moment(user.first_login).isBefore(moment(nuxDates[1].created), 'day');
           this.showTooltip$.next(!intros.search_reminder.universal.seen_version && showNux);
+          this.cdr.detectChanges();
     });
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  ngAfterViewInit() {
-    // this.showTooltip$.next(false);
   }
 
   search(value) {
@@ -102,6 +101,7 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit, OnDestro
     this.isFocus = false;
     this.resetInputValue$.next('');
     this.spSearchService.clearResult();
+    this.cdr.detectChanges();
   }
 
   goToHomePage() {
@@ -109,10 +109,12 @@ export class SmartpassSearchComponent implements OnInit, AfterViewInit, OnDestro
     this.isFocus = false;
     this.resetInputValue$.next('');
     this.spSearchService.clearResult();
+    this.cdr.detectChanges();
   }
 
   focusEvent(value) {
     this.isFocus = value;
+    this.cdr.detectChanges();
   }
 
   closeNuxTooltip() {
