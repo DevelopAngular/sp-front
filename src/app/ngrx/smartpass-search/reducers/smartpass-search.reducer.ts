@@ -4,6 +4,7 @@ import * as searchActions from '../actions';
 
 const searchInitialState: ISmartpassSearchState = {
   searchResult: [],
+  recentSearch: [],
   loading: false,
   loaded: false
 };
@@ -14,7 +15,10 @@ const reducer = createReducer(
   on(searchActions.searchActionSuccess, (state, {searchResult}) => {
     return {...state, loading: false, loaded: true, searchResult};
   }),
-  on(searchActions.clearSearchResult, state => ({...state, loading: false, loaded: false, searchResult: []}))
+  on(searchActions.clearSearchResult, state => ({...state, loading: false, loaded: false, searchResult: []})),
+  on(searchActions.postRecentSearchSuccess, (state, {search}) => {
+    return { ...state, recentSearch: [search, ...state.recentSearch] };
+  })
 );
 
 export function smartpassSearchReducer(state: any | undefined, action: Action) {

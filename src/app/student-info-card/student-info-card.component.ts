@@ -33,6 +33,7 @@ import {HttpService} from '../services/http-service';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {SmartpassSearchService} from '../services/smartpass-search.service';
 
 declare const window;
 
@@ -99,7 +100,8 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpService,
-    private darkTheme: DarkThemeSwitch
+    private darkTheme: DarkThemeSwitch,
+    private searchService: SmartpassSearchService
   ) { }
 
   @HostListener('document.scroll', ['$event'])
@@ -170,6 +172,10 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
         this.userService.clearCurrentUpdatedAccounts();
     });
+
+    // this.searchService.recentSearch$.subscribe(res => {
+    //   debugger;
+    // });
   }
 
   ngOnDestroy() {

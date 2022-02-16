@@ -170,6 +170,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   openProfile() {
+    this.pressed = false;
     if (this.isClose && this.isResize) {
       this.resizeTrigger$.next('open');
       this.domCheckerService.scalePassCardTrigger$.next('resize');

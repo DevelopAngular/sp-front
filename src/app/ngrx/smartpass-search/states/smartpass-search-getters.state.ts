@@ -9,6 +9,11 @@ export const getSmartpassSearchResult = createSelector(
   (state: ISmartpassSearchState) => state.searchResult
 );
 
+export const getResentSearch = createSelector(
+  getSmartpassSearchGettersState,
+  (state: ISmartpassSearchState) => state.recentSearch
+);
+
 export const getSmartpassSearchLoading = createSelector(
   getSmartpassSearchGettersState,
   (state: ISmartpassSearchState) => state.loading

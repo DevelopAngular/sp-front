@@ -100,6 +100,7 @@ export class SmartpassSearchComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(`/main/student/${value.id}`);
     this.isFocus = false;
     this.resetInputValue$.next('');
+    this.spSearchService.postSearchRequest(value.id);
     this.spSearchService.clearResult();
     this.cdr.detectChanges();
   }
