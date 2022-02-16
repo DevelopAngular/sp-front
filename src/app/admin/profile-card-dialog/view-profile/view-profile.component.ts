@@ -516,7 +516,7 @@ export class ViewProfileComponent implements OnInit {
 
     cancelDialog.afterClosed().pipe(tap(() => {
       UNANIMATED_CONTAINER.next(false);
-      this.isOpenAvatarDialog = false
+      this.isOpenAvatarDialog = false;
     }), filter(r => !!r))
       .subscribe(action => {
         if (action === 'individual') {
@@ -524,6 +524,7 @@ export class ViewProfileComponent implements OnInit {
           this.openEditAvatar(this.editIcon.nativeElement);
         } else if (action === 'bulk') {
           const PPD = this.matDialog.open(ProfilePictureComponent, {
+            id: 'student-info',
             panelClass: 'accounts-profiles-dialog',
             backdropClass: 'custom-bd',
             width: '425px',

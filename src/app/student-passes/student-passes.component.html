@@ -42,10 +42,11 @@
                 [contentTemplate]="tooltip"
                 [editable]="true"
                 [nonDisappearing]="false"
+                [showToolTip]="!(user$ | async).isAdmin()"
               >
               <ng-template #tooltip>
                 <div class="ds-tooltip" style="text-align: left">
-<!--                  <div class="only-admin">ADMIN ONLY</div>-->
+                  <div class="only-admin">ADMIN ONLY</div>
                   Please contact your admin so they can bulk upload profile pictures for your school.
                 </div>
               </ng-template>

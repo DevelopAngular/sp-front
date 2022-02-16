@@ -36,6 +36,7 @@ import * as moment from 'moment';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
 import {ExclusionGroup} from '../models/ExclusionGroup';
 import {Router} from '@angular/router';
+import {UserService} from '../services/user.service';
 
 @Component({
   selector: 'app-student-passes',
@@ -81,6 +82,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   pressed: boolean;
   headerInfoHover: boolean;
 
+  user$: Observable<User>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -101,7 +103,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     private domCheckerService: DomCheckerService,
     private passesService: HallPassesService,
     private encounterPreventionService: EncounterPreventionService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) { }
 
   ngAfterViewInit() {
@@ -111,6 +114,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   ngOnInit() {
+    this.user$ = this.userService.user$.pipe(map(u => User.fromJSON(u)));
     this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
     this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
     this.encounterPreventionService.getExclusionGroupsForStudentRequest(this.profile.id);

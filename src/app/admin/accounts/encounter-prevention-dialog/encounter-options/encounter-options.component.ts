@@ -4,6 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/
 import {ExclusionGroup} from '../../../../models/ExclusionGroup';
 import {EncounterPreventionService} from '../../../../services/encounter-prevention.service';
 import {ToastService} from '../../../../services/toast.service';
+import {filter, switchMap, take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-encounter-options',
@@ -34,12 +35,18 @@ export class EncounterOptionsComponent implements OnInit {
       status: new FormControl(this.group.enabled)
     });
 
-    this.preventionStatusForm.get('status').valueChanges.subscribe(res => {
-      this.encounterService.updateExclusionGroupRequest(this.group, {enabled: res});
-      this.toast.openToast({
-        title: `Encounter prevention group ${res ? 'enabled' : 'disabled'}`,
-        type: res ? 'success' : 'info'
-      });
+    this.preventionStatusForm.get('status').valueChanges
+      .pipe(
+        switchMap((res) => {
+          return this.encounterService.updateExclusionGroupRequest(this.group, {enabled: res})
+            .pipe(filter(r => !!r), take(1));
+        })
+      ).subscribe(res => {
+        this.group = res;
+        this.toast.openToast({
+          title: `Encounter prevention group ${res ? 'enabled' : 'disabled'}`,
+          type: res ? 'success' : 'info'
+        });
     });
     this.updatePosition();
   }

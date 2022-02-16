@@ -1,8 +1,19 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output
+} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {filter, map, switchMap, tap} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
 
 import {EncounterOptionsComponent} from './encounter-options/encounter-options.component';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
@@ -37,7 +48,7 @@ export interface EncountersState {
   styleUrls: ['./encounter-prevention-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EncounterPreventionDialogComponent implements OnInit {
+export class EncounterPreventionDialogComponent implements OnInit, OnDestroy {
 
   @Input() forceNextPage: string;
   @Input() forceGroup: ExclusionGroup;
@@ -70,6 +81,8 @@ export class EncounterPreventionDialogComponent implements OnInit {
     {label: 'Delete group', textColor: '#E32C66', hoverColor: '#fce9ef', pressedColor: '#fce9ef', icon: './assets/Delete (Red).svg', action: 'delete', description: 'Deleting a group will permanently delete all encounter prevention information. This action cannot be undone.'}
   ];
 
+  destroy$ = new Subject();
+
   constructor(
     private dialog: MatDialog,
     @Optional() private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>,
@@ -100,15 +113,15 @@ export class EncounterPreventionDialogComponent implements OnInit {
     } else if (this.forceNextPage === 'groupDescription') {
       this.state.data.currentGroup = this.forceGroup;
       this.setState(true, Pages.GroupDescription);
-      return;
     } else if (this.data && this.data['currentPage'] === 'groups') {
       this.setState(true, Pages.Groups);
+    } else {
+      this.encounterPreventionService.getExclusionGroupsRequest();
     }
-    this.encounterPreventionService.getExclusionGroupsRequest();
     this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
 
     this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
-      filter(r => r),
+      filter(r => r && !this.forceNextPage),
       switchMap(() => this.encounterPreventionService.exclusionGroupsLength$)
     ).subscribe(res => {
       if (!res) {
@@ -121,6 +134,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
     this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
       filter(r => r),
       switchMap(() => this.encounterPreventionService.exclusionGroups$),
+      takeUntil(this.destroy$),
       tap(groups => {
         if (this.data && this.data['currentGroupId']) {
           const currentGroup = groups.find(g => +g.id === +this.data['currentGroupId']);
@@ -136,10 +150,15 @@ export class EncounterPreventionDialogComponent implements OnInit {
     this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
 
     this.encounterPreventionService.updatedExclusionGroup$
-      .pipe(filter(r => !!r))
+      .pipe(filter(r => !!r), takeUntil(this.destroy$))
       .subscribe(group => {
         this.state.data.currentGroup = group;
       });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   setState(isNext, to, data?) {
