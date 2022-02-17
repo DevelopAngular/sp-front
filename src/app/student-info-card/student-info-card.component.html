@@ -3,14 +3,13 @@
     <div class="content-container">
       <div class="sticky-container">
         <div class="left" #left (scroll)="scroll($event)" [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 104px)'">
-            <div class="left-header" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
+            <div class="left-header" [style.height]="isScrollable ? '97px' : '166px'" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
               <div class="back">
                 <app-round-button (buttonClick)="back()" [icon]="'Chevron Left'" [iconOffset]="3" [iconWidth]="15"></app-round-button>
               </div>
               <div class="avatar-content">
                 <div class="avatar" #avatar
-                     [style.width]="isScrollable ? '32px' : '88px'"
-                     [style.height]="isScrollable ? '32px' : '88px'"
+                     [ngClass]="{scbl: isScrollable}"
                      #avatarContainer
                      (mouseenter)="avatarContainer.hover = true"
                      (mouseleave)="avatarContainer.hover = false"
@@ -19,16 +18,16 @@
                     <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
                   </div>
                   <div
+                    class="image"
                     *ngIf="profile && profile.profile_picture; else d"
                     [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover'}"
-                    [style.width]="isScrollable ? '32px' : '88px'"
-                    [style.height]="isScrollable ? '32px' : '88px'"
+                    [ngClass]="{scbl: isScrollable}"
                   ></div>
                   <ng-template #d>
                     <img
+                      class="image"
                       [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar"
-                      [style.width]="isScrollable ? '32px' : '88px'"
-                      [style.height]="isScrollable ? '32px' : '88px'"
+                      [ngClass]="{scbl: isScrollable}"
                     >
                   </ng-template>
                   <div

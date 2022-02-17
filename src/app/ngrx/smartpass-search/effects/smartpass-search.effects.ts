@@ -4,6 +4,7 @@ import * as searchActions from '../actions';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {of} from 'rxjs';
+import {SmartpassSearchService} from '../../../services/smartpass-search.service';
 
 @Injectable()
 export class SmartpassSearchEffects {
@@ -24,10 +25,27 @@ export class SmartpassSearchEffects {
       );
   });
 
+  postRecentSearch$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(searchActions.postRecentSearch),
+        switchMap((action) => {
+          return this.searchService.postSearch(action.userId)
+            .pipe(
+              map((search) => {
+                return searchActions.postRecentSearchSuccess({search});
+              }),
+              catchError(error => of(searchActions.postRecentSearchFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
 
   constructor(
     private actions$: Actions,
-    private userService: UserService
+    private userService: UserService,
+    private searchService: SmartpassSearchService
   ) {
   }
 }

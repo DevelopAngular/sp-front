@@ -109,7 +109,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private shortcutsService: KeyboardShortcutsService,
   ) {
     this.jwt = new JwtHelperService();
-    this.errorToast = this.httpService.errorToast$;
+    // this.errorToast = this.httpService.errorToast$;
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Signup Background.svg\')');
     window.appLoaded(0);
   }
@@ -126,10 +126,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
           }).pipe(
             catchError((err) => {
               if (err.status === 401) {
-                this.httpService.errorToast$.next({
-                  header: 'Key invalid.',
-                  message: 'Please contact us at support@smartpass.app'
-                });
+                // this.httpService.errorToast$.next({
+                //   header: 'Key invalid.',
+                //   message: 'Please contact us at support@smartpass.app'
+                // });
               }
               this.pending.next(false);
               return throwError(err);
@@ -265,10 +265,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         .pipe(
           catchError((err) => {
             if (err.status === 401) {
-              this.httpService.errorToast$.next({
-                header: 'Key invalid.',
-                message: 'Please contact us at support@smartpass.app'
-              });
+              // this.httpService.errorToast$.next({
+              //   header: 'Key invalid.',
+              //   message: 'Please contact us at support@smartpass.app'
+              // });
             }
             this.pending.next(false);
             return throwError(err);

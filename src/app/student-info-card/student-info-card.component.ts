@@ -33,6 +33,7 @@ import {HttpService} from '../services/http-service';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {SmartpassSearchService} from '../services/smartpass-search.service';
 
 declare const window;
 
@@ -99,7 +100,8 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpService,
-    private darkTheme: DarkThemeSwitch
+    private darkTheme: DarkThemeSwitch,
+    private searchService: SmartpassSearchService
   ) { }
 
   @HostListener('document.scroll', ['$event'])
@@ -170,6 +172,10 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
         this.userService.clearCurrentUpdatedAccounts();
     });
+
+    // this.searchService.recentSearch$.subscribe(res => {
+    //   debugger;
+    // });
   }
 
   ngOnDestroy() {
@@ -441,12 +447,11 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
 
   editWindow(event) {
     this.isOpenAvatarDialog = true;
-    // if (!this.userService.getUserSchool().profile_pictures_completed) {
-    //   this.consentDialogOpen(this.editIcon.nativeElement);
-    // } else {
-    //   this.openEditAvatar(this.editIcon.nativeElement);
-    // }
-    this.consentDialogOpen(this.editIcon.nativeElement);
+    if (!this.userService.getUserSchool().profile_pictures_completed) {
+      this.consentDialogOpen(this.editIcon.nativeElement);
+    } else {
+      this.openEditAvatar(this.editIcon.nativeElement);
+    }
   }
 
   consentDialogOpen(evt) {
@@ -474,6 +479,7 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
           this.openEditAvatar(this.editIcon.nativeElement);
         } else if (action === 'bulk') {
           const PPD = this.dialog.open(ProfilePictureComponent, {
+            id: 'student-info',
             panelClass: 'accounts-profiles-dialog',
             backdropClass: 'custom-bd',
             width: '425px',
@@ -512,7 +518,7 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
             .pipe(filter(res => !!res));
         }),
         tap((user => {
-          this.profile = User.fromJSON(user);
+          this.profile = user;
           this.userService.clearCurrentUpdatedAccounts();
           this.loadingProfilePicture.next(false);
         }))
@@ -527,7 +533,7 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe(res => {
-        this.profile = User.fromJSON({...this.profile, profile_picture: null});
+        this.profile = {...this.profile, profile_picture: null} as User;
         this.userService.clearCurrentUpdatedAccounts();
         this.loadingProfilePicture.next(false);
       });
