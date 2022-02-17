@@ -15,7 +15,6 @@ import {PinInputComponent} from '../teacher-pin/pin-input/pin-input.component';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {FromWhereComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/from-where/from-where.component';
 import {ToWhereComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-where/to-where.component';
-import {PassLimitDialog} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import {LocationsGroupContainerComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/locations-group-container.component';
 import {ToCategoryComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-category/to-category.component';
 import {RestrictedTargetComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/restricted-target/restricted-target.component';
@@ -60,7 +59,6 @@ import {NotificationFormComponent} from '../notification-form/notification-form.
       MainHallPassFormComponent,
       FromWhereComponent,
       ToWhereComponent,
-      ToWherePassLimitDialog,
       ToCategoryComponent,
       RestrictedTargetComponent,
       RestrictedMessageComponent,
