@@ -30,6 +30,7 @@ import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
+import {LoginDataService} from './services/login-data.service';
 
 declare const window;
 
@@ -99,7 +100,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private googleAnalytics: GoogleAnalyticsService,
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private loginDataService: LoginDataService
   ) {}
 
   ngOnInit() {
@@ -222,6 +224,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isAuthenticated = t;
         const path = window.location.pathname;
         if (!t && (path.includes('admin') ||  path.includes('main'))) {
+          if (path.includes('main/student')) {
+            this.storageService.setItem('initialUrl', path);
+          }
           this.router.navigate(['/']);
         }
       });
