@@ -129,26 +129,19 @@
 }
 
 .host {
-  //background-color: #FBFEFF;
-  //position: fixed;
-  //top: 50px;
   width: 100%;
-  z-index: 10;
+  z-index: 100;
 }
 .bar {
-  height: 78px;
-  /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
-  //position: relative;
+  height: 64px;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   user-select: none;
-  //padding-top: 15px;
-  //padding-bottom: 5px;
-  //
 
   &.shadow {
-    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.07);
+    box-shadow: 2px 0 10px rgba(16, 20, 24, .1);
   }
 }
 
@@ -164,7 +157,25 @@
   flex-direction: row;
   justify-content: left;
   width: 0;
-  padding-left: 10%;
+  //padding-left: 10%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 2px 5px rgba(112, 131, 160, .1);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .kiosk-title {
+    margin-left: 19px;
+    font-weight: 500;
+    color: $gray500;
+  }
 }
 
 .heading .title {
@@ -178,6 +189,10 @@
   letter-spacing: 0;
   text-align: center;
   color: #04CD33;
+}
+
+.feedback {
+  margin-right: 12px;
 }
 
 .heading .small, .navButton {
@@ -206,15 +221,16 @@
 }
 
 .teacherNav {
-  height: 78px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   &_tab {
+    height: 100%;
     display: flex;
     justify-content: center;
     margin: 0 10px;
-    flex: 1 1 auto;
+    //flex: 1 1 auto;
     align-items: center;
   }
 }
@@ -237,10 +253,6 @@
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 10%;
-  width: 0;
-  min-width: 200px;
-  flex-grow: 1;
   .acting-behalf {
     font-size: 12px;
   }
@@ -251,15 +263,14 @@
   margin: auto 0 auto auto;
   display: flex;
   align-items: center;
-  padding-right: 15px;
   white-space: nowrap;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: bold;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  color: $blue-gray;
+  color: $navy500;
 }
 
 //.static-loading{
@@ -296,6 +307,7 @@
   cursor: pointer;
   user-select: none;
   position: relative;
+  margin-left: 4px;
 }
 
 .inbox-wrapper-sm {
@@ -371,17 +383,27 @@
 
 .nav-buttons {
   position: relative;
-  flex-grow: 1;
+  //flex-grow: 1;
 }
 
 .selected-tab-pointer {
   transition: all 0.4s ease;
   position: absolute;
   bottom: 0;
-  height: 5px;
-  width: 70px;
-  border-radius: 4px 4px 0 0;
+  height: 3px;
+  width: 122px;
+  border-radius: 2px 2px 0 0;
   background-color: $jade;
+}
+
+.profile-image {
+  margin-right: 12px;
+  overflow: hidden;
+  border-radius: 50%;
+
+  img {
+    border-radius: 50%;
+  }
 }
 
 .tab--opacity-click {

@@ -12,12 +12,6 @@ import {DisabledChipComponent} from '../accounts/disabled-chip/disabled-chip.com
 import {SpDataTableComponent} from '../sp-data-table/sp-data-table.component';
 import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-options.component';
 import {OctagonComponent} from '../accounts/encounter-prevention-dialog/octagon/octagon.component';
-import {EncounterPreventionDialogComponent} from '../accounts/encounter-prevention-dialog/encounter-prevention-dialog.component';
-import {CreateGroupComponent} from '../accounts/encounter-prevention-dialog/create-group/create-group.component';
-import {EncounterGroupComponent} from '../accounts/encounter-prevention-dialog/encounter-group/encounter-group.component';
-import {ReportDescriptionComponent} from '../accounts/encounter-prevention-dialog/report-description/report-description.component';
-import {EncounterOptionsComponent} from '../accounts/encounter-prevention-dialog/encounter-options/encounter-options.component';
-import {EncounterGroupDescriptionComponent} from '../accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
 
 @NgModule({
   imports: [
@@ -35,12 +29,6 @@ import {EncounterGroupDescriptionComponent} from '../accounts/encounter-preventi
       DisabledChipComponent,
       SpDataTableComponent,
       ColumnOptionsComponent,
-      EncounterPreventionDialogComponent,
-      CreateGroupComponent,
-      EncounterGroupComponent,
-      ReportDescriptionComponent,
-      EncounterOptionsComponent,
-      EncounterGroupDescriptionComponent,
   ],
   exports: [
       ColorPalletPickerComponent,
@@ -54,12 +42,6 @@ import {EncounterGroupDescriptionComponent} from '../accounts/encounter-preventi
       SpDataTableComponent,
       ColumnOptionsComponent,
       OctagonComponent,
-      EncounterPreventionDialogComponent,
-      CreateGroupComponent,
-      EncounterGroupComponent,
-      ReportDescriptionComponent,
-      EncounterOptionsComponent,
-      EncounterGroupDescriptionComponent,
   ]
 })
 export class AdminSharedModule { }

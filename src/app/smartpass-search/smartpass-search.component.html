@@ -1,0 +1,77 @@
+<div class="wrapper">
+  <div class="backdrop" *ngIf="isFocus" appCrossPointerEventTarget (pointerClickEvent)="isFocus = false"></div>
+  <div class="container" [ngClass]="{'focused': isFocus}">
+    <div class="header" [style.padding]="isFocus ? '0 15px 0 5px' : '0 16px'" [style.background-color]="darkTheme.getColor({dark: isFocus ? '#FFFFFF' : '#0F171E', white: '#FFFFFF'})">
+      <div class="logo-icon" *ngIf="!isFocus" appCrossPointerEventTarget (pointerClickEvent)="goToHomePage()">
+        <img width="40px" height="40px" [src]="'./assets/Smartpass Logo (Green).svg'" alt="logo">
+      </div>
+      <div class="close" *ngIf="isFocus">
+        <app-icon-only-button [size]="'regular'" [icon]="'Arrow Left'" (buttonClick)="isFocus = false"></app-icon-only-button>
+      </div>
+
+      <div class="input-container"
+           [@inputAnimate]="isFocus ? 'open' : 'close'"
+           nuxTooltip
+           [contentTemplate]="tooltip"
+           [showToolTip$]="showTooltip$"
+           [position]="{originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 15}"
+      >
+        <ng-template #tooltip>
+          <app-nux-teacher-view (close)="closeNuxTooltip()" (tryButton)="isFocus = true; focused = true; closeNuxTooltip()"></app-nux-teacher-view>
+        </ng-template>
+        <div class="input">
+          <app-round-input
+            [isSearch]="true"
+            [selectReset$]="resetInputValue$"
+            [focused]="focused"
+            [boxShadow]="false"
+            [width]="'100%'"
+            [minWidth]="width"
+            [fieldIconPosition]="'left'"
+            [placeholder]="'Search Students'"
+            [backgroundColor]="'#F0F2F5'"
+            (focusEvent)="focusEvent($event)"
+            (ontextupdate)="search($event)"
+          ></app-round-input>
+        </div>
+      </div>
+    </div>
+
+    <div class="content" *ngIf="isFocus" [style.height]="(searchLoaded$ | async) && !(searchResult$ | async).length ? '40px' : '215px'">
+      <div class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center" *ngIf="false">
+        <mat-spinner [diameter]="55" [color]="'accent'"></mat-spinner>
+      </div>
+      <div class="empty-state-no-search" *ngIf="!(searchLoaded$ | async) && !(searchLoading$ | async)">
+        <img [src]="'./assets/emptyStates/Students Empty State.svg'" alt="empty-state">
+        <div class="title">Search for students</div>
+        <div class="subtitle">See previous passes, get quick stats, check permissions, and more...</div>
+      </div>
+      <div class="empty-state-searched" *ngIf="(searchLoaded$ | async) && !(searchResult$ | async).length">
+        No students found
+      </div>
+      <div class="search-result" *ngIf="(searchLoaded$ | async) && (searchResult$ | async).length">
+        <div
+          class="result-container"
+          #opt
+          *ngFor="let value of searchResult$ | async"
+          (mouseenter)="opt.hovered = true"
+          (mouseleave)="opt.hovered = false; opt.pressed = false"
+          appCrossPointerEventTarget
+          (pointerDownEvent)="opt.pressed = true"
+          (pointerClickEvent)="goToUserPage(value); opt.pressed = false"
+          [style.background-color]="opt.hovered ? opt.pressed ? '#EAEDF1' : '#F0F2F5' : 'transparent'"
+        >
+          <div class="value">
+            <div class="avatar">
+              <div *ngIf="value.profile_picture; else d" [ngStyle]="{'background': 'url(' + value.profile_picture + ') no-repeat left center/cover', width: '40px', height: '40px'}"></div>
+              <ng-template #d>
+                <img width="40" height="40" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+              </ng-template>
+            </div>
+            <div class="title">{{ value.display_name }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

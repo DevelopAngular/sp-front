@@ -89,7 +89,7 @@
                    (mouseleave)="showBackgroundOverlay = false; setAnimationTrigger('fadeOut'); studentNameLeave(cell)"
                    (mouseover)="destroyAnimation$.next(); showBackgroundOverlay = true; disableClose$.next()"
               >
-                <app-student-passes [profile]="student" [height]="300" [isResize]="false" (close)="cell.isOpenTooltip = false" [hasProfilePicture]="(isEnableProfilePictures$ | async) && !!(user$ | async).show_profile_pictures"></app-student-passes>
+                <app-student-passes [profile]="student" [height]="300" [isResize]="false" (close)="cell.isOpenTooltip = false"></app-student-passes>
               </div>
             </ng-template>
           </div>

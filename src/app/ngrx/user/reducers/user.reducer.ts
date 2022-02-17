@@ -7,7 +7,8 @@ const userInitialState: UserState = {
   userPin: null,
   loading: false,
   loaded: false,
-  nuxDates: []
+  nuxDates: [],
+  currentUpdatedUser: null
 };
 
 const reducer = createReducer(
@@ -22,7 +23,8 @@ const reducer = createReducer(
       ...state,
       user,
       loading: false,
-      loaded: true
+      loaded: true,
+      currentUpdatedUser: user
     };
   }),
   on(userActions.clearUser, state => ({...state, user: null, loaded: true, loading: false})),

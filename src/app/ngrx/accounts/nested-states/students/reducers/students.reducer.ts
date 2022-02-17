@@ -13,7 +13,10 @@ export const studentsAccountsInitialState: StudentsStates = adapter.getInitialSt
   lastAddedStudents: [],
   sortValue: '',
   addedUser: null,
-  currentUpdatedAccount: null
+  currentUpdatedAccount: null,
+  studentsStats: {},
+  statsLoading: false,
+  statsLoaded: false,
 });
 
 const reducer = createReducer(
@@ -46,7 +49,17 @@ const reducer = createReducer(
   on(studentsActions.sortStudentAccounts, (state, {students, next, sortValue}) => {
     return adapter.addAll(students, {...state, loading: false, loaded: true, nextRequest: next, sortValue});
   }),
-  on(studentsActions.clearCurrentUpdatedStudent, (state) => ({...state, currentUpdatedAccount: null}))
+  on(studentsActions.clearCurrentUpdatedStudent, (state) => ({...state, currentUpdatedAccount: null})),
+  on(studentsActions.getStudentStats, (state) => ({...state, statsLoading: true, statsLoaded: false})),
+  on(studentsActions.getStudentStatsSuccess, (state, {userId, stats}) => {
+    return {...state, studentsStats: {...state.studentsStats, [userId]: stats}, statsLoading: false, statsLoaded: true};
+  }),
+  on(studentsActions.addReportToStatsSuccess, (state, {report}) => {
+    return {...state, studentsStats: {...state.studentsStats, [report.student.id]: {
+      ...state.studentsStats[report.student.id],
+      reports: [report, ...state.studentsStats[report.student.id].reports]
+    }}};
+  })
 );
 
 export function studentsReducer(state: any | undefined, action: Action) {

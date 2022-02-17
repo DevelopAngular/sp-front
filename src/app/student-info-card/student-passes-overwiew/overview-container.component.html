@@ -1,0 +1,15 @@
+<div class="wrapper" [ngStyle]="{width: width}">
+  <div class="header">
+    <div class="title">
+      <img width="18" *ngIf="showIcon" [src]="icon | resolveAsset">
+      <div [style.margin-left]="showIcon ? '10px' : 0">{{ title }}</div>
+    </div>
+
+    <div class="icon-button" *ngIf="showRightIcon">
+      <app-round-button [size]="'small'" [icon]="'Dots'" (buttonClick)="clickFilter.emit({event: $event, action: title})"></app-round-button>
+    </div>
+  </div>
+  <div class="content">
+    <ng-content></ng-content>
+  </div>
+</div>

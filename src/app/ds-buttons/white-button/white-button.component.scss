@@ -1,0 +1,25 @@
+@import '../../../sp-colors';
+
+.wrapper {
+  border: 1px solid $gray300;
+  transition: background-color .2s ease;
+  box-shadow: 0 2px 10px rgba(16, 20, 24, 0.1);
+  border-radius: 8px;
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+
+  .icon {
+    margin-right: 8px;
+  }
+
+  .title {
+    color: $gray500;
+    font-size: 14px;
+  }
+
+  .left-icon {
+    margin-left: 6px;
+  }
+}

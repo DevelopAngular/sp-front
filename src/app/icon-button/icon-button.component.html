@@ -1,9 +1,10 @@
 <div class="icon-button-container"
      [style.width]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.height]="hasShadow ? size * 2 + 'px' : 'unset'"
-     [style.background-color]="bgc"
+     [style.background-color]="newIconButton ? newbgc : bgc"
+     [@pressState]="down ? 'down' : 'up'"
      (mouseover)="hovered = true;"
-     (mouseleave)="hovered = false;"
+     (mouseleave)="hovered = false; down = false"
      appCrossPointerEventTarget
      (pointerDownEvent)="down = true"
      (pointerClickEvent)="down = false; onClick($event)"
@@ -11,7 +12,6 @@
     <img [src]="src | resolveAsset"
          [attr.width]="size"
          [attr.height]="size"
-         [style.opacity]="opacity"
          draggable="false"
          class="icon"
          alt="img">

@@ -416,7 +416,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     st.afterClosed().pipe(
       tap(() => UNANIMATED_CONTAINER.next(false)),
       filter(r => !!r)
-    ).subscribe(action => {
+    ).subscribe((action) => {
         if (action === 'disable') {
           this.switchProfilePictures(false);
         } else {

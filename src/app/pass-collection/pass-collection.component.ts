@@ -20,7 +20,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {filter, map, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, take, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
@@ -87,6 +87,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() filterPasses = new EventEmitter();
   @Output() passClick = new EventEmitter<boolean>();
   @Output() searchValue = new EventEmitter<string>();
+  @Output() randomString = new EventEmitter<string>();
 
   currentPasses$: Observable<any>;
   activePassTime$;
@@ -172,18 +173,16 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.passProvider) {
       this.currentPasses$ = this.passProvider.pipe(
-        tap(passes => this.currentPassesEmit.emit(passes))
+        tap(passes => this.currentPassesEmit.emit(passes)),
       );
-      this.randomObject$ = this.currentPasses$.pipe(
-        map(passes => {
+
+      this.currentPasses$.pipe(filter(r => !!r.length), take(1)).subscribe((passes) => {
           const pass = passes[Math.floor(Math.random() * passes.length)];
           const destinationName = pass.destination.title;
-          const studentName = pass.student.display_name;
-          const random = [destinationName, studentName];
-          return random[Math.floor(Math.random() * random.length)];
-        }),
-        take(1)
-      );
+          // const studentName = pass.student.display_name;
+          const random = [destinationName];
+          this.randomString.emit(random[Math.floor(Math.random() * random.length)]);
+      });
     }
 
     if (this.isActive) {
@@ -328,9 +327,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           panelClass: 'form-dialog-container',
           backdropClass: 'custom-backdrop',
           data: {'report': dialogData['report']}
-        });
-        reportRef.afterClosed().subscribe(dd => {
-          this.reportFromPassCard.emit(dd);
         });
       }
     });

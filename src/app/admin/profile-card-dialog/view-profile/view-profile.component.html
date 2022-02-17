@@ -55,9 +55,14 @@
             <ng-template #d>
               <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
             </ng-template>
-            <div *ngIf="avatarContainer.hover" class="hover-backdrop"></div>
+            <div
+              *ngIf="avatarContainer.hover"
+              class="hover-backdrop"
+              (click)="!user.profile_picture ? editWindow($event) : null"
+              [style.cursor]="!user.profile_picture ? 'pointer' : 'normal'"
+            ></div>
             <div class="buttons" *ngIf="!(loadingProfilePicture | async)">
-              <img (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover" class="add-avatar" [style.top]="!user.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
+              <img #editIcon (click)="editWindow($event)" *ngIf="avatarContainer.hover || isOpenAvatarDialog" class="add-avatar" [style.top]="!user.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
               <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && user.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
             </div>
 

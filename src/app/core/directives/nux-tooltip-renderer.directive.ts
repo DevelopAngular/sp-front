@@ -16,6 +16,7 @@ import {CustomToolTipComponent} from '../../shared/shared-components/custom-tool
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {ConnectedPosition} from '@angular/cdk/overlay/position/flexible-connected-position-strategy';
 
 @Directive({
   selector: '[nuxTooltip]'
@@ -25,6 +26,13 @@ export class NuxTooltipRendererDirective implements OnInit, OnDestroy, OnChanges
   @Input() showToolTip$: Subject<boolean>;
   @Input(`nuxToolTip`) text: string;
   @Input() contentTemplate: TemplateRef<any>;
+  @Input() position: ConnectedPosition = {
+    originX: 'center',
+    originY: 'bottom',
+    overlayX: 'end',
+    overlayY: 'top',
+    offsetY: 15,
+  };
 
   @Output() leave: EventEmitter<any> = new EventEmitter<any>();
 
@@ -42,13 +50,7 @@ export class NuxTooltipRendererDirective implements OnInit, OnDestroy, OnChanges
   ngOnInit() {
     const positionStrategy = this._overlayPositionBuilder
       .flexibleConnectedTo(this._elementRef)
-      .withPositions([{
-        originX: 'center',
-        originY: 'bottom',
-        overlayX: 'end',
-        overlayY: 'top',
-        offsetY: 15,
-      }]);
+      .withPositions([this.position]);
 
     this._overlayRef = this._overlay.create({positionStrategy});
 

@@ -1,10 +1,10 @@
-<div *ngIf="user" style="position: relative; height: auto; min-height: calc(100% - 78px); overflow: visible" #scrollableArea>
+<div *ngIf="user" style="position: relative; height: auto; overflow: visible" #scrollableArea [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 114px)' : 'calc(100vh - 64px)'">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="ios-hall-monitor-top" *ngIf="isDeviceLargeExtra" [style.background-color]="darkTheme.getBackground('low', false)">
       <div [ngClass]="isIOSTablet ? 'ios-options-wrapper' : 'options-wrapper'" (click)="toggleSearchBar()">
         <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
       </div>
-      <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
+      <div class="student-search-wrapper" *ngIf="isIpadSearchBar; else title">
         <app-round-input
           [focused]="true"
           [type]="inputRestrictionSm.type"
@@ -12,6 +12,7 @@
           [width]="'90%'"
           [placeholder]="inputRestrictionSm.placeholder"
           [backgroundColor]="'#F4F4F4'"
+          [boxShadow]="false"
           [fieldIconPosition]="inputRestrictionSm.fieldIconPosition"
           [closeIcon]="inputRestrictionSm.closeIcon"
           (ontextupdate)="onSearch($event)"
@@ -20,73 +21,154 @@
         ></app-round-input>
       </div>
 
+      <ng-template #title>
+        <div style="font-size: 22px; font-weight: bold" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})">
+          Hall Monitor
+        </div>
+      </ng-template>
+
       <div class="cancel-wrapper" *ngIf="isIpadSearchBar">
         <span class="cancel" (click)="cleanSearchValue();">Cancel</span>
       </div>
 
       <div [ngClass]="isIOSTablet ?  'ios-options-wrapper' : 'options-wrapper'" *ngIf="!isIpadSearchBar">
-        <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>
+<!--        <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>-->
+        <app-square-button (buttonClick)="openReportForm()" [height]="'40px'" [width]="'40px'" [backgroundColor]="'#edcbd9'">
+          <img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset">
+        </app-square-button>
       </div>
     </div>
 
-    <div class="hall-monitor-bottom">
-      <app-pass-collection
-        [hasSort]="hallMonitorCollection.hasSort"
-        [isActive]="hallMonitorCollection.isActive"
-        [showEmptyHeader]="hallMonitorCollection.showEmptyHeader"
-        [forStaff]="hallMonitorCollection.forStaff"
-        [forMonitor]="hallMonitorCollection.forMonitor"
-        [passProvider]="activePassProvider"
-        [title]="hallMonitorCollection.title"
-        [icon]="hallMonitorCollection.icon"
-        [columns]="hallMonitorCollection.columns"
-        (reportFromPassCard)="onReportFromPassCard($event)"
-        [user]="user"
-        (sortMode)="updatePassCollection($event)"
-        [selectedSort]="'expiration_time'"
-        [searchPanel]="true"
-        (searchValue)="onSearch($event)"
-        [showProfilePictures]="(isEnableProfilePictures$ | async) && !!user.show_profile_pictures"
-      ></app-pass-collection>
-      <div class="report-desktop">
-        <app-icon-button [srcString]="'Report'" [size]="20" (clickEvent)="openReportForm()"></app-icon-button>
-      </div>
-      <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-        <div class="empty-container" *ngIf="inputValue">
-          <img width="74px" height="74px" class="empty-svg" [src]="'./assets/Pass Search (Gray).svg' | resolveAsset" alt="empty-svg">
-<!--          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>-->
-          <div class="empty-text">No active passes for the keyword “{{ inputValue }}”</div>
+
+<!--    Web UA -->
+    <div class="web-wrapper" [ngClass]="{mobile: isMobile}">
+      <div class="header" *ngIf="!isMobile">
+        <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})">
+          Hall Monitor
         </div>
-        <div class="empty-container" *ngIf="!inputValue">
-          <img width="74px" height="74px" class="empty-svg" [src]="'./assets/NoPasses (Gray).svg' | resolveAsset" alt="empty-svg">
-<!--          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Take the Day Off</div>-->
-          <div class="empty-text">No active passes</div>
+
+        <div class="buttons" *ngIf="!isMobile">
+          <app-square-button
+            [backgroundColor]="'#edcbd9'"
+            (buttonClick)="openReportForm()"
+            customToolTip
+            [contentTemplate]="tooltip"
+            [nonDisappearing]="false"
+            [editable]="true"
+            [width]="'40px'"
+            [height]="'40px'"
+          >
+            <ng-template #tooltip>
+              <div class="ds-tooltip">
+                Report Student
+              </div>
+            </ng-template>
+            <img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset">
+          </app-square-button>
+
+          <div class="search" *ngIf="!isMobile">
+            <app-round-input
+              [isSearch]="true"
+              [fieldIcon]="'./assets/Search Normal (Gray500).svg'"
+              [placeholder]="getInputPlaceholder()"
+              [backgroundColor]="'#E2E6EC'"
+              [boxShadow]="false"
+              [minWidth]="'250px'"
+              (ontextupdate)="onSearch($event)"
+            ></app-round-input>
+          </div>
+        </div>
+      </div>
+
+      <div class="content" [style.min-width]="isMobile ? '100%' : '755px'">
+        <app-pass-collection
+          [hasSort]="true"
+          [isActive]="hallMonitorCollection.isActive"
+          [showEmptyHeader]="hallMonitorCollection.showEmptyHeader"
+          [forStaff]="hallMonitorCollection.forStaff"
+          [forMonitor]="hallMonitorCollection.forMonitor"
+          [passProvider]="activePassProvider"
+          [title]="hallMonitorCollection.title"
+          [columns]="hallMonitorCollection.columns"
+          [user]="user"
+          (sortMode)="updatePassCollection($event)"
+          (randomString)="randomStringForSearchInput = $event"
+          [selectedSort]="'expiration_time'"
+          [showProfilePictures]="(isEnableProfilePictures$ | async) && !!user.show_profile_pictures"
+        ></app-pass-collection>
+
+        <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+          <div class="empty-container" *ngIf="inputValue">
+            <img width="74px" height="74px" class="empty-svg" [src]="'./assets/Pass Search (Gray).svg' | resolveAsset" alt="empty-svg">
+            <!--          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>-->
+            <div class="empty-text">No active passes for the keyword “{{ inputValue }}”</div>
+          </div>
+          <div class="empty-container" *ngIf="!inputValue">
+            <img width="74px" height="74px" class="empty-svg" [src]="'./assets/NoPasses (Gray).svg' | resolveAsset" alt="empty-svg">
+            <!--          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Take the Day Off</div>-->
+            <div class="empty-text">No active passes</div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="footer-message" *ngIf="isActiveMessage">
-      <div class="successfully-message">
-        {{ (sendReports.length > 1 ? 'Students ' : 'Student ') }}Reported Successfully
-      </div>
-    </div>
+<!--    <div class="hall-monitor-bottom">-->
+<!--      <app-pass-collection-->
+<!--        [hasSort]="hallMonitorCollection.hasSort"-->
+<!--        [isActive]="hallMonitorCollection.isActive"-->
+<!--        [showEmptyHeader]="hallMonitorCollection.showEmptyHeader"-->
+<!--        [forStaff]="hallMonitorCollection.forStaff"-->
+<!--        [forMonitor]="hallMonitorCollection.forMonitor"-->
+<!--        [passProvider]="activePassProvider"-->
+<!--        [title]="hallMonitorCollection.title"-->
+<!--        [icon]="hallMonitorCollection.icon"-->
+<!--        [columns]="hallMonitorCollection.columns"-->
+<!--        (reportFromPassCard)="onReportFromPassCard($event)"-->
+<!--        [user]="user"-->
+<!--        (sortMode)="updatePassCollection($event)"-->
+<!--        [selectedSort]="'expiration_time'"-->
+<!--        [searchPanel]="true"-->
+<!--        (searchValue)="onSearch($event)"-->
+<!--        [showProfilePictures]="(isEnableProfilePictures$ | async) && !!user.show_profile_pictures"-->
+<!--      ></app-pass-collection>-->
+<!--      <div class="report-desktop">-->
+<!--        <app-icon-button [srcString]="'Report'" [size]="20" (clickEvent)="openReportForm()"></app-icon-button>-->
+<!--      </div>-->
+<!--      <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">-->
+<!--        <div class="empty-container" *ngIf="inputValue">-->
+<!--          <img width="74px" height="74px" class="empty-svg" [src]="'./assets/Pass Search (Gray).svg' | resolveAsset" alt="empty-svg">-->
+<!--&lt;!&ndash;          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>&ndash;&gt;-->
+<!--          <div class="empty-text">No active passes for the keyword “{{ inputValue }}”</div>-->
+<!--        </div>-->
+<!--        <div class="empty-container" *ngIf="!inputValue">-->
+<!--          <img width="74px" height="74px" class="empty-svg" [src]="'./assets/NoPasses (Gray).svg' | resolveAsset" alt="empty-svg">-->
+<!--&lt;!&ndash;          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Take the Day Off</div>&ndash;&gt;-->
+<!--          <div class="empty-text">No active passes</div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="footer-message" *ngIf="isActiveMessage">-->
+<!--      <div class="successfully-message">-->
+<!--        {{ (sendReports.length > 1 ? 'Students ' : 'Student ') }}Reported Successfully-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
-  <div class="no-content-info" *ngIf="!canView">
-    <app-restriction-dummy></app-restriction-dummy>
-  </div>
+<!--  <div class="no-content-info" *ngIf="!canView">-->
+<!--    <app-restriction-dummy></app-restriction-dummy>-->
+<!--  </div>-->
 </div>
 
-  <div class="sort-btn" (click)="openSortMenu()" *ngIf="(hasPasses | async) && (passesLoaded | async) && isDeviceLargeExtra ">
-    <app-gradient-button
-      [size]="sortBtn.size"
-      [gradient]="sortBtn.gradient"
-      [cursor]="sortBtn.cursor"
-      [hoverColor]="sortBtn.hoverColor"
-      [minWidth]="sortBtn.minWidth"
-      [minHeight]="sortBtn.minHeight"
-    >
-      <span class="sort-btn-label">Sort</span>
-    </app-gradient-button>
-  </div>
+<!--  <div class="sort-btn" (click)="openSortMenu()" *ngIf="(hasPasses | async) && (passesLoaded | async) && isDeviceLargeExtra ">-->
+<!--    <app-gradient-button-->
+<!--      [size]="sortBtn.size"-->
+<!--      [gradient]="sortBtn.gradient"-->
+<!--      [cursor]="sortBtn.cursor"-->
+<!--      [hoverColor]="sortBtn.hoverColor"-->
+<!--      [minWidth]="sortBtn.minWidth"-->
+<!--      [minHeight]="sortBtn.minHeight"-->
+<!--    >-->
+<!--      <span class="sort-btn-label">Sort</span>-->
+<!--    </app-gradient-button>-->
+<!--  </div>-->
 
 
 <img (click)="back()" *ngIf="this.isReportFormOpened" [ngClass]="isIOSTablet ? 'ios-back-button-bottom' : 'back-button-bottom'"  [src]="'./assets/Back Button (White).svg' | resolveAsset" >

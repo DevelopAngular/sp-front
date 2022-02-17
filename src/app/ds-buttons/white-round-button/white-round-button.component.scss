@@ -1,0 +1,11 @@
+@import '../../../sp-colors';
+
+.wrapper {
+  border-radius: 50%;
+  border: 1px solid $gray300;
+  transition: background-color .2s ease;
+  box-shadow: 0 2px 5px rgba(112, 131, 160, .2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

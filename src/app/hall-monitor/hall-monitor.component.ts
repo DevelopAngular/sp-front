@@ -23,6 +23,7 @@ import {CollectionRestriction} from '../models/collection-restrictions/Collectio
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {HttpService} from '../services/http-service';
 
 @Component({
   selector: 'app-hall-monitor',
@@ -99,6 +100,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   isIpadWidth: boolean;
   isIpadSearchBar: boolean;
   isDeviceLargeExtra: boolean;
+  randomStringForSearchInput: string;
 
   reportBtn: ButtonRestriction = new ReportButtonRestriction();
   sortBtn: ButtonRestriction = new SortBtnRestriction();
@@ -106,6 +108,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
   isEnableProfilePictures$: Observable<boolean>;
+
+  schoolsLength$: Observable<number>;
 
   selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
   sortMode: string = '';
@@ -121,13 +125,19 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     private liveDataService: LiveDataService,
     public darkTheme: DarkThemeSwitch,
     public screenService: ScreenService,
-    private scrollPosition: ScrollPositionService
+    private scrollPosition: ScrollPositionService,
+    private http: HttpService
   ) {
     this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   ngOnInit() {
     this.detectDevice();
+    this.schoolsLength$ = this.http.schoolsLength$;
 
     combineLatest(
       this.userService.user$.pipe(filter(u => !!u)),
@@ -196,6 +206,10 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.reportFormInstance = dialogRef.componentInstance;
   }
 
+  getInputPlaceholder() {
+    return this.randomStringForSearchInput ? `Filter (ex. "${this.randomStringForSearchInput}")` : `Filter active passes`;
+  }
+
   openSortMenu() {
       const SM = this.dialog.open(SortMenuComponent, {
         position: { bottom: '1px' },
@@ -215,18 +229,6 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
           this.dataService.sort$.next(item.action);
           this.selectedSortOption = item;
       });
-  }
-
-  onReportFromPassCard(studends) {
-    if (studends) {
-      this.sendReports = studends;
-      this.isActiveMessage = true;
-      setTimeout(() => {
-        this.isActiveMessage = false;
-      }, 3000);
-    } else {
-      return;
-    }
   }
 
   onSearch(search: string) {
@@ -255,13 +257,13 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
 
-    if (this.screenService.isDeviceLargeExtra) {
-      this.hallMonitorCollection.hasSort = false;
-    }
+    // if (this.screenService.isDeviceLargeExtra) {
+    //   this.hallMonitorCollection.hasSort = false;
+    // }
 
-    if (this.screenService.isDesktopWidth) {
-      this.hallMonitorCollection.hasSort = true;
-    }
+    // if (this.screenService.isDesktopWidth) {
+    //   this.hallMonitorCollection.hasSort = true;
+    // }
   }
 
   @HostListener('window:resize')

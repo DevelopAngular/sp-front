@@ -91,6 +91,28 @@ export class IntrosEffects {
       );
   });
 
+  updateIntrosSearch$ = createEffect(() => {
+    return this.action$
+      .pipe(
+        ofType(introsActions.updateIntrosSearch),
+        switchMap((action) => {
+          return this.userService.updateIntrosSearch(action.device, action.version)
+            .pipe(
+              map(data => {
+                const updatedData = {
+                  ...action.intros,
+                  encounter_reminder: {
+                    [action.device]: {seen_version: action.version}
+                  }
+                };
+                return introsActions.updateIntrosSearchSuccess({data: updatedData});
+              }),
+              catchError(error => of(introsActions.updateIntrosSearchFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private action$: Actions,
     private userService: UserService

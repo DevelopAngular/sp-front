@@ -121,7 +121,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(user => !!user),
         switchMap((user: User) => {
           const isFormsRoute = this.router.url.includes('/forms');
-          if ((User.fromJSON(user).isAdmin() || User.fromJSON(user).isTeacher()) && !isFormsRoute) {
+          if ((!User.fromJSON(user).isStudent()) && !isFormsRoute) {
             this.registerRefiner(User.fromJSON(user));
           }
           return this.nextReleaseService

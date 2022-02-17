@@ -10,7 +10,7 @@
         <div class="flexCls">
           <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
           <div *ngIf="(!!icon && inbox)" class="inbox-wrapper">
-            <img class="inbox-icon" [src]="getIcon('./assets/Inbox (Navy).svg') | resolveAsset">
+            <img class="inbox-icon" [src]="getIcon('./assets/Notifications (Gray-200).svg') | resolveAsset">
           </div>
           <div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
             {{ title }}
