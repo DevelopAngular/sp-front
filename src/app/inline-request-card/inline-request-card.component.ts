@@ -14,9 +14,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
 import {StorageService} from '../services/storage.service';
-import {
-  PassLimitDialog
-} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
+import {PassLimitDialogComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import {PassLimit} from '../models/PassLimit';
 import {LocationsService} from '../services/locations.service';
 
@@ -269,7 +267,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
       }
 
 
-      const dialogRef = this.dialog.open(PassLimitDialog, {
+      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         width: '450px',

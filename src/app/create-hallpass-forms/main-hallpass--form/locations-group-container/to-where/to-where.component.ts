@@ -15,7 +15,7 @@ import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
 import {PassLimit} from '../../../../models/PassLimit';
 import {LocationsService} from '../../../../services/locations.service';
-import {PassLimitDialog} from '../pass-limit-dialog/pass-limit-dialog.component';
+import {PassLimitDialogComponent} from '../pass-limit-dialog/pass-limit-dialog.component';
 
 @Component({
   selector: 'app-to-where',
@@ -151,7 +151,7 @@ export class ToWhereComponent implements OnInit {
       if (!passLimitReached)
         return resolve(true);
 
-      const dialogRef = this.dialog.open(PassLimitDialog, {
+      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         width: '450px',

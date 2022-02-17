@@ -28,7 +28,7 @@ import {UserService} from '../services/user.service';
 import {School} from '../models/School';
 import {PassLimit} from '../models/PassLimit';
 import {LocationsService} from '../services/locations.service';
-import {PassLimitDialog} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
+import {PassLimitDialogComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 
 @Component({
   selector: 'app-request-card',
@@ -536,7 +536,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       if (!passLimitReached)
         return resolve(true);
 
-      const dialogRef = this.dialog.open(PassLimitDialog, {
+      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         width: '450px',
