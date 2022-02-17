@@ -59,6 +59,10 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       private timeService: TimeService
   ) { }
 
+  get showProfilePicture() {
+    return this.userService.getUserSchool().profile_pictures_enabled
+  }
+
   ngOnInit() {
     this.locationService.getPassLimitRequest();
       combineLatest(

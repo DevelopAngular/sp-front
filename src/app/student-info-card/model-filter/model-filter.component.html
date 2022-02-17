@@ -1,0 +1,31 @@
+<div class="wrapper">
+  <div class="options-content" [style.padding]="settings ? '15px 0 5px 0' : '5px 0'">
+    <div class="option-container" *ngFor="let option of settings">
+      <div class="option"
+           #opt
+           (mouseenter)="opt.hover = true"
+           (mouseleave)="opt.hover = false"
+           [style.background-color]="opt.hover ? '#F4F4F4' : 'transparent'"
+           (click)="dialogRef.close(option.action)"
+      >
+        <img width="18" [src]="option.icon | resolveAsset" alt="opt-icon">
+        <div class="label" [style.color]="'#7f879d'">{{ option.title }}</div>
+        <img height="13" style="position: absolute; right: 3px" [src]="'./assets/Chevron Right (Blue-Gray).svg'" alt="">
+      </div>
+    </div>
+    <mat-divider *ngIf="settings"></mat-divider>
+    <div class="option-container">
+      <div class="option"
+           #opt
+           (mouseenter)="opt.hover = true"
+           (mouseleave)="opt.hover = false"
+           [style.background-color]="opt.hover ? '#F4F4F4' : 'transparent'"
+           (click)="dialogRef.close('better')"
+      >
+        <img width="18" [src]="'./assets/Shout (Blue-Gray).svg'" alt="opt-icon">
+        <div class="label" style="white-space: nowrap" [style.color]="'#7f879d'">How could this be better?</div>
+      </div>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+</div>

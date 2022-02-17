@@ -203,6 +203,16 @@ div {
   padding: 0;
 }
 
+.student-pass-info-dialog .mat-dialog-container {
+  border-radius: 10px;
+  box-shadow: 0 2px 26px 0 rgba(0, 0, 0, 0.15);
+  width: 1007px;
+  height: 564px;
+  overflow: hidden;
+  z-index: 10;
+  padding: 0;
+}
+
 .editor-dialog{
   border-radius: 10px;
   overflow: hidden;

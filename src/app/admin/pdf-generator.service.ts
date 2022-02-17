@@ -37,7 +37,9 @@ declare const window;
                                               </g>
                                             </svg>`;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class PdfGeneratorService {
 
   private LOGO_IMG: string;

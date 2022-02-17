@@ -63,7 +63,26 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 import {AppTextareaComponent} from '../app-textarea/app-textarea.component';
 import {SquareButtonComponent} from '../square-button/square-button.component';
+import {RoundButtonComponent} from '../round-button/round-button.component';
+import {FeedbackButtonComponent} from '../feedback-button/feedback-button.component';
 import {NuxEncounterPreventionComponent} from '../nux-components/nux-encounter-prevention/nux-encounter-prevention.component';
+import {SmartpassSearchComponent} from '../smartpass-search/smartpass-search.component';
+import {EncounterGroupComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group/encounter-group.component';
+import {SelectRoleComponent} from '../admin/accounts/select-role/select-role.component';
+import {NuxTeacherViewComponent} from '../nux-components/nux-teacher-view/nux-teacher-view.component';
+import {DateTimeFilterComponent} from '../admin/explore/date-time-filter/date-time-filter.component';
+import {ReportInfoDialogComponent} from '../admin/explore/report-info-dialog/report-info-dialog.component';
+import {StatusPopupComponent} from '../admin/profile-card-dialog/status-popup/status-popup.component';
+import {EncounterPreventionDialogComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-prevention-dialog.component';
+import {CreateGroupComponent} from '../admin/accounts/encounter-prevention-dialog/create-group/create-group.component';
+import {ReportDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/report-description/report-description.component';
+import {EncounterOptionsComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-options/encounter-options.component';
+import {EncounterGroupDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
+import {WhiteButtonComponent} from '../ds-buttons/white-button/white-button.component';
+import {WhiteRoundButtonComponent} from '../ds-buttons/white-round-button/white-round-button.component';
+import {IconOnlyButtonComponent} from '../ds-buttons/icon-only-button/icon-only-button.component';
+import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
+import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -137,7 +156,26 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SettingsDescriptionPopupComponent,
     AppTextareaComponent,
     SquareButtonComponent,
-    NuxEncounterPreventionComponent
+    RoundButtonComponent,
+    FeedbackButtonComponent,
+    NuxEncounterPreventionComponent,
+    SmartpassSearchComponent,
+    EncounterGroupComponent,
+    SelectRoleComponent,
+    NuxTeacherViewComponent,
+    DateTimeFilterComponent,
+    ReportInfoDialogComponent,
+    StatusPopupComponent,
+    EncounterPreventionDialogComponent,
+    CreateGroupComponent,
+    ReportDescriptionComponent,
+    EncounterOptionsComponent,
+    EncounterGroupDescriptionComponent,
+    WhiteButtonComponent,
+    WhiteRoundButtonComponent,
+    IconOnlyButtonComponent,
+    EditAvatarComponent,
+    ProfilePictureComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -193,8 +231,27 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DropdownComponent,
     AppTextareaComponent,
     SquareButtonComponent,
+    RoundButtonComponent,
+    FeedbackButtonComponent,
     CustomToolTipComponent,
-    NuxEncounterPreventionComponent
+    NuxEncounterPreventionComponent,
+    SmartpassSearchComponent,
+    EncounterGroupComponent,
+    SelectRoleComponent,
+    NuxTeacherViewComponent,
+    DateTimeFilterComponent,
+    ReportInfoDialogComponent,
+    StatusPopupComponent,
+    EncounterPreventionDialogComponent,
+    CreateGroupComponent,
+    ReportDescriptionComponent,
+    EncounterOptionsComponent,
+    EncounterGroupDescriptionComponent,
+    WhiteButtonComponent,
+    WhiteRoundButtonComponent,
+    IconOnlyButtonComponent,
+    EditAvatarComponent,
+    ProfilePictureComponent,
   ],
   providers: [
     {

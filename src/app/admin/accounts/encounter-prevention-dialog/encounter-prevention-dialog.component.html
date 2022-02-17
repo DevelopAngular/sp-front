@@ -40,7 +40,7 @@
           [showToolTip]="(state.current_page === 1 && state.createGroup.users.length < 2) || (state.current_page === 2 && state.data.currentGroup.users.length < 2)"
         >Save</app-gradient-button>
         <app-gradient-button *ngIf="state.current_page === 3" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="state.data.currentGroup = null; goNewGroup()">New group</app-gradient-button>
-        <app-icon-button *ngIf="state.current_page === 4" [srcString]="'Dots'" [size]="17" (clickEvent)="openPopup($event)"></app-icon-button>
+        <app-icon-button *ngIf="state.current_page === 4 && (user$ | async).isAdmin()" [srcString]="'Dots'" [size]="17" (clickEvent)="openPopup($event)"></app-icon-button>
       </div>
     </div>
   </div>

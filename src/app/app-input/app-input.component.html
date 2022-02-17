@@ -88,7 +88,7 @@
             controlName.errors?.minlength ? 'Should be at least ' + controlName.errors.minlength.requiredLength + ' characters' :
             controlName.errors?.email ? 'Must be Email' :
             controlName.errors?.schoolEmail ? 'Please use a school email' :
-            controlName.errors?.max || controlName.errors?.min  ? 'Must be between 1 and 120 minutes' : null
+            controlName.errors?.max || controlName.errors?.min  ? 'Must be between 1 and 999 minutes' : null
           "
           class="success-icon"
           [src]="'./assets/Report (Red).svg' | resolveAsset">

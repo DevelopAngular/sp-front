@@ -3,7 +3,7 @@ import {UserService} from '../../../services/user.service';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as userActions from '../actions';
 import * as accountsActions from '../../accounts/actions/accounts.actions';
-import {catchError, concatMap, exhaustMap, map, mapTo, switchMap} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, mapTo, switchMap, withLatestFrom} from 'rxjs/operators';
 import {User} from '../../../models/User';
 import {of} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
@@ -51,11 +51,16 @@ export class UserEffects {
         concatMap((action: any) => {
           return this.userService.updateUser(action.user.id, action.data)
             .pipe(
-              map((user: User) => {
+              withLatestFrom(this.userService.user$),
+              map(([user, currentUser]: [User, User]) => {
                 if (action.data.pin) {
                   return userActions.updateUserPin({pin: action.data.pin});
                 }
-                return userActions.updateUserSuccess({user});
+                if (+user.id === +currentUser.id) {
+                  return userActions.updateUserSuccess({user});
+                } else {
+                  return accountsActions.updateAccounts({account: user});
+                }
               }),
               catchError(error => of(userActions.updateUserFailure({errorMessage: error.message})))
             );
@@ -63,15 +68,15 @@ export class UserEffects {
       );
   });
 
-  updateUserSuccess$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(userActions.updateUserSuccess),
-        map((action: any) => {
-          return accountsActions.updateAccounts({account: action.user});
-        })
-      );
-  });
+  // updateUserSuccess$ = createEffect(() => {
+  //   return this.actions$
+  //     .pipe(
+  //       ofType(userActions.updateUserSuccess),
+  //       map((action: any) => {
+  //         return accountsActions.updateAccounts({account: action.user});
+  //       })
+  //     );
+  // });
 
   updateUserPin$ = createEffect(() => {
     return this.actions$

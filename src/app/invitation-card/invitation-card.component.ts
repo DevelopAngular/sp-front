@@ -23,6 +23,7 @@ import {NavbarDataService} from '../main/navbar-data.service';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {scalePassCards} from '../animations';
 import {UserService} from '../services/user.service';
+import {HallPassesService} from '../services/hall-passes.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -81,7 +82,8 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
       private http: HttpService,
       private navbarData: NavbarDataService,
       private domCheckerService: DomCheckerService,
-      private userService: UserService
+      private userService: UserService,
+      private passesService: HallPassesService
   ) {}
 
   get isMobile() {
@@ -211,6 +213,7 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
         this.navbarData.inboxClick$.next(true);
       }
       this.dialogRef.close();
+      this.passesService.createPassEvent$.next();
     });
   }
 

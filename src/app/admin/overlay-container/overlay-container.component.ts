@@ -420,7 +420,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             Validators.required,
             Validators.pattern('^[0-9]*?[0-9]+$'),
             Validators.min(1),
-            Validators.max(120)
+            Validators.max(999)
             ]
         )
     });

@@ -1,40 +1,40 @@
 <div class="collection-wrapper" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
   <div class="collection-header" [style.width]="headerWidth">
     <div class="collection-title">
-      <img draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
+      <img *ngIf="icon" draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
       <div class="collection-title" [style.color]="_color">
         {{title}}
       </div>
     </div>
-    <ng-container *ngIf="currentPasses$ | async as passes">
-      <div class="search" *ngIf="searchPanel && (passes.length || !!search)">
-        <app-round-input
-          [isSearch]="true"
-          [placeholder]="'Search ' + (randomObject$ | async)"
-          [focused]="true"
-          (ontextupdate)="search = $event; searchValue.emit($event)"
-        ></app-round-input>
-      </div>
-    </ng-container>
+<!--    <ng-container *ngIf="currentPasses$ | async as passes">-->
+<!--      <div class="search" *ngIf="searchPanel && (passes.length || !!search)">-->
+<!--        <app-round-input-->
+<!--          [isSearch]="true"-->
+<!--          [placeholder]="'Search ' + (randomObject$ | async)"-->
+<!--          [focused]="true"-->
+<!--          (ontextupdate)="search = $event; searchValue.emit($event)"-->
+<!--        ></app-round-input>-->
+<!--      </div>-->
+<!--    </ng-container>-->
 
       <div class="filter-button"
          *ngIf="hasFilterPasses"
-         appCrossPointerEventTarget
-         (pointerClickEvent)="openFilter($event)"
       >
         <div class="icon" *ngIf="!selectedSort || selectedSort === 'all_time'; else sort">
-          <img width="15" draggable="false" [src]="'./assets/Filter (Blue-Gray).svg' | resolveAsset" alt="Filter">
+          <app-white-round-button [icon]="'Filter'" (buttonClick)="openFilter($event)"></app-white-round-button>
+<!--          <img width="15" draggable="false" [src]="'./assets/Filter (Blue-Gray).svg' | resolveAsset" alt="Filter">-->
         </div>
         <ng-template #sort>
-          <div class="selected-button" *ngIf="!!selectedSort">
+          <div class="selected-button" *ngIf="!!selectedSort" appCrossPointerEventTarget (pointerClickEvent)="openFilter($event)">
             <img width="15" draggable="false" [src]="'./assets/Filter (Navy).svg' | resolveAsset" alt="Filter">
             <div class="selected-title">{{ selectedText }}</div>
           </div>
         </ng-template>
 
       </div>
-      <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
-        <app-icon-button [srcString]="'Hall Monitor Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
+      <div class="sort-label" *ngIf="hasSort">
+<!--        <app-icon-button [srcString]="'Hall Monitor Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>-->
+        <app-white-round-button [icon]="'Hall Monitor Sort'" (buttonClick)="openSortDialog($event)"></app-white-round-button>
       </div>
   </div>
   <div *ngIf="(currentPasses$ | async) as currentPasses">

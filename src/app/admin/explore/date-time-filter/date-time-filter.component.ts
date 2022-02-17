@@ -19,7 +19,6 @@ export class DateTimeFilterComponent implements OnInit {
   constructor(
       @Inject(MAT_DIALOG_DATA) public data: any[],
       private _matDialogRef: MatDialogRef<DateTimeFilterComponent>,
-      private selfRef: ElementRef
   ) { }
 
   ngOnInit() {

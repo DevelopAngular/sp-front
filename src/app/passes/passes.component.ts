@@ -23,7 +23,6 @@ import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {NotificationService} from '../services/notification-service';
 import {TimeService} from '../services/time.service';
-import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NavbarDataService} from '../main/navbar-data.service';
 import {PassesAnimations} from './passes.animations';
@@ -436,18 +435,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
       mainFormRef.afterClosed().subscribe(res => {
         this.isOpenedModal = false;
-      });
-    }
-  }
-
-  onReportFromPassCard(evt) {
-    if (evt) {
-      this.dialog.open(ReportSuccessToastComponent, {
-        backdropClass: 'invisible-backdrop',
-        panelClass: 'main-form-dialog-container',
-        position: {
-          bottom: '50px'
-        }
       });
     }
   }

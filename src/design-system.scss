@@ -162,11 +162,11 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
 }
 
 .ds-empty-text-title {
-  @include textSize(17px, 800, $blue-gray)
+  @include textSize(17px, 800, $gray400)
 }
 
 .ds-empty-text-info {
-  @include textSize(15px, normal, $blue-gray)
+  @include textSize(17px, normal, $blue-gray)
 }
 
 /* === end === */

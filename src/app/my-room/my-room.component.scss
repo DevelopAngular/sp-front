@@ -1,3 +1,5 @@
+@import '../../sp-colors';
+
 .ios {
   &-search {
     display: none;
@@ -205,7 +207,7 @@
 
 .my-room-body {
   display: flex;
-  justify-content: center;
+  //justify-content: center;
   margin-bottom: 50px;
 }
 
@@ -221,7 +223,7 @@
 
 .my-room-left {
   width: 100%;
-  max-width: 533px;
+  max-width: 755px;
   min-height: calc(100% - 78px);
 }
 
@@ -294,8 +296,8 @@ input {
 }
 
 .disclosure-icon {
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 9px;
   margin-left: 13px
 }
 
@@ -309,12 +311,14 @@ input {
 .text {
   font-size: 16pt;
   text-align: center;
-  color: #7e879d;
+  color: $gray500;
   margin-top: 25px;
 }
 
 .small-text {
-  color: #767676;
+  color: $gray500;
+  text-align: center;
+  width: 170px;
 }
 
 .big-text {
@@ -326,11 +330,13 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .empty-svg {
   margin: 20px 0;
-  width: 250px;
+  //width: 250px;
 }
 
 .search {

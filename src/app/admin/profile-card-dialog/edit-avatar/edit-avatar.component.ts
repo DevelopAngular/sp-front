@@ -127,7 +127,7 @@ export class EditAvatarComponent implements OnInit, OnDestroy {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
 
-    matDialogConfig.position = { left: `${rect.left - 200}px`, top: `${rect.bottom}px` };
+    matDialogConfig.position = { left: `${rect.left - 100}px`, top: `${rect.bottom}px` };
 
     this.dialogRef.updatePosition(matDialogConfig.position);
   }

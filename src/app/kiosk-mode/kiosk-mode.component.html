@@ -1,6 +1,6 @@
 <div class="kiosk-mode-container">
   <div class="current-pass ds-mb-25">
-      <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'" [icon]="'./assets/Plus (Navy).svg'">
+      <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'">
         <div class="pass-buttons">
           <app-create-pass-button
                   [title]="'Now'"
@@ -11,6 +11,9 @@
                   [title]="'Future'"
                   [disabled]="true"
                   (onClick)="showMainForm(true)"
+                  customToolTip="Future passes cannot be created with Kiosk. Please use your own device or ask a teacher."
+                  [editable]="true"
+                  [nonDisappearing]="false"
           ></app-create-pass-button>
 
         </div>
@@ -19,13 +22,12 @@
   <div class="active-passes">
     <div class="active-passes" *ngIf="activePassesKiosk">
       <app-pass-collection
-              [isActive]="true"
-              [forStaff]="true"
-              [style.width]="'400px'"
-              [passProvider]="activePassesKiosk"
-              [title]="'Active Passes'"
-              [icon]="'./assets/Walking (Navy).svg'"
-              [columns]="3"
+        [isActive]="true"
+        [forStaff]="true"
+        [passProvider]="activePassesKiosk"
+        [title]="'Active Passes'"
+        [columns]="3"
+        [showProfilePictures]="showProfilePicture"
       >
       </app-pass-collection>
     </div>

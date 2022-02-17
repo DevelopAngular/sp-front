@@ -1,6 +1,5 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {User} from '../models/User';
-import {HttpService} from '../services/http-service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../services/admin.service';
 import {NextStep} from '../animations';
@@ -30,7 +29,7 @@ export class ReportFormComponent implements OnInit {
   reportMessage = '';
 
 
-  constructor(private http: HttpService,
+  constructor(
               private adminService: AdminService,
               private dialogRef: MatDialogRef<ReportFormComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
@@ -40,7 +39,6 @@ export class ReportFormComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.createForm.getFrameMotionDirection();
-    // this.dialogRef.updatePosition({top: '120px'});
      if (this.data) {
        this.selectedStudents.push(this.data['report']);
          this.showOptions = !this.data['report'];

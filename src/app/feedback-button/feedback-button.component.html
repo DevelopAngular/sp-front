@@ -1,0 +1,12 @@
+<div class="wrapper"
+     [@pressState]="pressed ? 'down' : 'up'"
+     (mouseenter)="hovered = true"
+     (mouseleave)="hovered = false; pressed = false"
+     appCrossPointerEventTarget
+     (pointerDownEvent)="pressed = true"
+     (pointerClickEvent)="pressed = false; openWindow()"
+     [style.background-color]="bg"
+>
+  <img width="18px" [src]="'./assets/New Chat (Navy).svg'" alt="">
+  <div class="title">Feedback</div>
+</div>

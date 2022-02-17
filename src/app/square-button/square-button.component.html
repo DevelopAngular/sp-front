@@ -1,6 +1,8 @@
 <div
   class="wrapper"
   [style.background-color]="backgroundColor"
+  [style.width]="width"
+  [style.height]="height"
   [@pressState]="buttonState"
   appCrossPointerEventTarget
   (pointerDownEvent)="buttonDown = true"

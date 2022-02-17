@@ -42,6 +42,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   @Input() contentTemplate: TemplateRef<any>;
 
   @Output() leave: EventEmitter<any> = new EventEmitter<any>();
+  @Output() isOpen: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   private destroyOpen$: Subject<any> = new Subject<any>();
 
@@ -127,6 +128,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
             this.tooltipRef.instance.text = this.text;
             this.tooltipRef.instance.width = this.width;
             this.tooltipRef.instance.nonDisappearing = this.nonDisappearing;
+            this.isOpen.emit(true);
 
             return this.tooltipRef.instance.closeTooltip;
           }
@@ -157,6 +159,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     if (this._overlayRef) {
       this._overlayRef.detach();
       this.leave.emit();
+      this.isOpen.emit(false);
     }
   }
 

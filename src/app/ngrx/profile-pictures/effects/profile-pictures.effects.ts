@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../services/user.service';
 import * as profilePicturesActions from '../actions';
 import {catchError, exhaustMap, last, map, mergeMap, switchMap, take, tap} from 'rxjs/operators';
-import {forkJoin, of, zip} from 'rxjs';
+import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {User} from '../../../models/User';
 import {ToastService} from '../../../services/toast.service';
@@ -13,7 +13,6 @@ import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadG
 import {ProfilePicturesError} from '../../../models/ProfilePicturesError';
 import {deleteAccountPicture} from '../../accounts/actions/accounts.actions';
 import {PollingService} from '../../../services/polling-service';
-import {fromArray} from 'rxjs/internal/observable/fromArray';
 
 @Injectable()
 export class ProfilePicturesEffects {

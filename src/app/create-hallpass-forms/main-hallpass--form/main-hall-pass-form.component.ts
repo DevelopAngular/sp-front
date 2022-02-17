@@ -140,8 +140,13 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
         if (this.dialogData['forLater']) {
           if (this.dialogData['forStaff']) {
-            this.FORM_STATE.step = 2;
-            this.FORM_STATE.state = this.dialogData['kioskMode'] ? 4 : 1;
+            if (this.dialogData['fromAdmin']) {
+              this.FORM_STATE.step = 1;
+              this.FORM_STATE.data.selectedStudents = [this.dialogData['adminSelectedStudent']];
+            } else {
+              this.FORM_STATE.step = 2;
+              this.FORM_STATE.state = this.dialogData['kioskMode'] ? 4 : 1;
+            }
             this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
           } else {
             this.FORM_STATE.step = 1;
@@ -155,8 +160,13 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
                 this.FORM_STATE.step = 3;
                 this.FORM_STATE.state = 2;
             } else {
+              if (this.dialogData['fromAdmin']) {
+                this.FORM_STATE.step = 3;
+                this.FORM_STATE.data.selectedStudents = [this.dialogData['adminSelectedStudent']];
+              } else {
                 this.FORM_STATE.step = 2;
                 this.FORM_STATE.state = this.dialogData['kioskMode'] ? 4 : 1;
+              }
             }
           } else {
             this.FORM_STATE.step = 3;
@@ -199,7 +209,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
           map(user => User.fromJSON(user))
         )
         .subscribe((user: User) => {
-          this.isStaff = user.isTeacher() || user.isAssistant();
+          this.isStaff = user.isTeacher() || user.isAssistant() || user.isAdmin();
           this.user = user;
           this.locationsService.getLocationsWithTeacherRequest(this.user);
 

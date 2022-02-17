@@ -79,7 +79,10 @@ import {
   getNextRequestStudents,
   getStudentsAccountsCollection,
   getStudentsAccountsEntities,
-  getStudentSort
+  getStudentSort,
+  getStudentsStats,
+  getStudentsStatsLoaded,
+  getStudentsStatsLoading
 } from '../ngrx/accounts/nested-states/students/states';
 import {getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup} from '../ngrx/student-groups/actions';
 import {StudentList} from '../models/StudentList';
@@ -89,11 +92,11 @@ import {
   getLoadingGroups,
   getStudentGroupsCollection
 } from '../ngrx/student-groups/states/groups-getters.state';
-import {getLoadedUser, getNuxDates, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
+import {getCurrentUpdatedUser, getLoadedUser, getNuxDates, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {getIntros, updateIntros, updateIntrosEncounter, updateIntrosMain} from '../ngrx/intros/actions';
+import {getIntros, updateIntros, updateIntrosEncounter, updateIntrosMain, updateIntrosSearch} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
@@ -125,6 +128,8 @@ import {ProfilePicturesError} from '../models/ProfilePicturesError';
 import {LoginDataService} from './login-data.service';
 import {GoogleLoginService} from './google-login.service';
 import {School} from '../models/School';
+import {UserStats} from '../models/UserStats';
+import {getStudentStats} from '../ngrx/accounts/nested-states/students/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -225,6 +230,7 @@ export class UserService implements OnDestroy {
   user$: Observable<User> = this.store.select(getUserData);
   userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
   loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
+  currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser)
 
   /**
   * Student Groups
@@ -249,11 +255,20 @@ export class UserService implements OnDestroy {
   missingProfilePictures$: Observable<User[]> = this.store.select(getMissingProfiles);
   profilePicturesUploadErrors$: Observable<ProfilePicturesError[]> = this.store.select(getUploadErrors);
 
+  /**
+   * Students Stats
+   */
+  studentsStats$: Observable<{[id: string]: UserStats}> = this.store.select(getStudentsStats);
+  studentsStatsLoading$: Observable<boolean> = this.store.select(getStudentsStatsLoading);
+  studentsStatsLoaded$: Observable<boolean> = this.store.select(getStudentsStatsLoaded);
+
   introsData$: Observable<any> = this.store.select(getIntrosData);
 
   nuxDates$: Observable<{id: string, created: Date}[]> = this.store.select(getNuxDates);
 
   isEnableProfilePictures$: Observable<boolean>;
+
+  schools$: Observable<School[]>;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -267,7 +282,7 @@ export class UserService implements OnDestroy {
     private loginService: GoogleLoginService,
     private loginDataService: LoginDataService
   ) {
-
+    this.schools$ = this.http.schools$;
     this.http.globalReload$
         .pipe(
           tap(() => {
@@ -422,7 +437,7 @@ export class UserService implements OnDestroy {
 
   updateUserRequest(user: User, data) {
     this.store.dispatch(updateUserAction({user, data}));
-    return this.user$;
+    return this.currentUpdatedUser$;
   }
 
   updateUser(userId, data) {
@@ -450,6 +465,10 @@ export class UserService implements OnDestroy {
     this.store.dispatch(updateIntrosEncounter({intros, device, version}));
   }
 
+  updateIntrosSearchRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosSearch({intros, device, version}));
+  }
+
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
@@ -460,6 +479,10 @@ export class UserService implements OnDestroy {
 
   updateIntrosEncounter(device, version) {
     return this.http.patch('v1/intros/encounter_reminder', {device, version});
+  }
+
+  updateIntrosSearch(device, version) {
+    return this.http.patch('v1/intros/search_reminder', {device, version});
   }
 
   saveKioskModeLocation(locId) {
@@ -474,8 +497,8 @@ export class UserService implements OnDestroy {
      return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
-  getUserNotification() {
-    return this.http.get('v1/users/@me/notification_settings');
+  getUserNotification(id) {
+    return this.http.get(`v1/users/${id}/notification_settings`);
   }
 
   enableNotification(id) {
@@ -831,6 +854,14 @@ export class UserService implements OnDestroy {
 
   clearUploadedData() {
     this.store.dispatch(clearUploadedData());
+  }
+
+  getUserStatsRequest(userId, queryParams?) {
+    return this.store.dispatch(getStudentStats({userId, queryParams}));
+  }
+
+  getUserStats(userId: string | number, queryParams) {
+    return this.http.get(constructUrl(`v1/users/${userId}/stats`, queryParams));
   }
 
   getNuxRequest() {

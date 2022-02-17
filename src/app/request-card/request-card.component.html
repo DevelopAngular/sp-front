@@ -287,7 +287,7 @@
   </div>
 
   <div class="student-footer-info" *ngIf="forStaff && isModal">
-    <app-student-passes [pass]="request" [profile]="request.student" [hasProfilePicture]="!!user.show_profile_pictures && (isEnableProfilePictures$ | async)"></app-student-passes>
+    <app-student-passes [pass]="request" [profile]="request.student"></app-student-passes>
   </div>
 </div>
 

@@ -7,6 +7,8 @@ import {User} from '../../../../../models/User';
 import {of} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {getCountAccounts} from '../../count-accounts/actions';
+import {UserStats} from '../../../../../models/UserStats';
+import {HallPass} from '../../../../../models/HallPass';
 
 @Injectable()
 export class StudentsEffects {
@@ -124,6 +126,44 @@ export class StudentsEffects {
               }),
               catchError(error => of(studentsActions.addUserToStudentProfileFailure({errorMessage: error.message})))
             );
+        })
+      );
+  });
+
+  getStudentStats$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(studentsActions.getStudentStats),
+      switchMap((action) => {
+        return this.userService.getUserStats(action.userId, action.queryParams)
+          .pipe(
+            map((stats: UserStats) => {
+              return studentsActions.getStudentStatsSuccess({userId: action.userId,
+                stats: {...stats, expired_passes: stats.expired_passes.map(pass => HallPass.fromJSON(pass))}
+              });
+            }),
+            catchError(error => {
+              return of(studentsActions.getStudentStatsFailure({errorMessage: error.message}))
+            })
+          );
+      })
+    );
+  });
+
+  addReportToStats$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(studentsActions.addReportToStats),
+        switchMap((action) => {
+          return this.userService.studentsStats$.pipe(
+            take(1),
+            map(stats => {
+              if (stats[action.report.student.id]) {
+                return studentsActions.addReportToStatsSuccess({report: action.report});
+              } else {
+                return studentsActions.addReportToStatsFailure({errorMessage: 'This user does`t have a stats now'});
+              }
+            })
+          );
         })
       );
   });

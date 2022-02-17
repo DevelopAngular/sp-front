@@ -23,3 +23,8 @@ export const getNuxDates = createSelector(
   getUserState,
   (state: UserState) => state.nuxDates
 );
+
+export const getCurrentUpdatedUser = createSelector(
+  getUserState,
+  (state: UserState) => state.currentUpdatedUser
+);
