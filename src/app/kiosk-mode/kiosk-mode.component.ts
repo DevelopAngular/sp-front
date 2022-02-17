@@ -63,7 +63,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.locationService.getPassLimitRequest();
       combineLatest(
         this.userService.user$,
-        this.userService.effectiveUser
+        this.userService.effectiveUser.pipe(filter(r => !!r))
       ).pipe(
           switchMap(([user, effectiveUser]) => {
             if (effectiveUser) {
