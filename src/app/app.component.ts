@@ -13,7 +13,7 @@ import {DeviceDetection} from './device-detection.helper';
 import {School} from './models/School';
 import {AdminService} from './services/admin.service';
 import {GoogleLoginService} from './services/google-login.service';
-import {HttpService, SPError} from './services/http-service';
+import {HttpService} from './services/http-service';
 import {KioskModeService} from './services/kiosk-mode.service';
 import {StorageService} from './services/storage.service';
 import {OverlayContainer} from '@angular/cdk/overlay';
@@ -60,7 +60,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
-  public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
   public isKioskMode: boolean;
@@ -121,10 +120,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(l => l),
         switchMap(l => this.userService.user$.pipe(take(1))),
         filter(user => !!user),
+        map(user => User.fromJSON(user)),
         switchMap((user: User) => {
           const isFormsRoute = this.router.url.includes('/forms');
-          if ((!User.fromJSON(user).isStudent()) && !isFormsRoute) {
-            this.registerRefiner(User.fromJSON(user));
+          if ((!user.isStudent()) && !isFormsRoute) {
+            this.registerRefiner(user);
+          }
+          if ((!user.isStudent()) && !isFormsRoute && !this.router.url.includes('kioskMode')) {
+            this.registerIntercom(user);
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -256,6 +259,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         map(() => this.activatedRoute),
         map((route) => {
           this.isKioskMode = this.router.url.includes('kioskMode');
+          window.Intercom('update');
           if (route.firstChild) {
             route = route.firstChild;
           }
@@ -330,6 +334,25 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
+  }
+
+  registerIntercom(user: User) {
+    window.Intercom('boot', {
+      user_id: user.id,
+      name: user.display_name,
+      email: user.primary_email,
+      created: user.created,
+      type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
+      status: user.status,
+      account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
+      first_login: user.first_login,
+      company: {
+        id: this.http.getSchool().id,
+        name: this.http.getSchool().name,
+        open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id="${this.http.getSchool().id}`,
+        open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id="${this.http.getSchool().id}`
+      }
+    });
   }
 
   hubSpotSettings(user) {

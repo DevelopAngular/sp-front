@@ -12,7 +12,7 @@
     *ngIf="isAuthenticated && ( schools && schools.length > 1 ) && !hideSchoolToggleBar && !isKioskMode"
     [schools]="schools">
   </app-school-toggle-bar>
-  <app-support-button *ngIf="showSupportButton"></app-support-button>
+<!--  <app-support-button *ngIf="showSupportButton"></app-support-button>-->
 <!--  style="height: 100%; overflow: hidden !important;"-->
   <div class="router-outlet">
     <router-outlet></router-outlet>
