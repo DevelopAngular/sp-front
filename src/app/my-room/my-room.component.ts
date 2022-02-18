@@ -261,16 +261,15 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       takeUntil(this.destroy$),
     )
     .subscribe(([locations, selected]: [Location[], Location]) => {
-      this._zone.run(() => {
         this.roomOptions = locations;
         if (!selected) {
-          this.selectedLocation$.next(locations);
+          this.selectedLocation = locations[0];
+          this.selectedLocation$.next([locations[0]]);
         } else {
           this.selectedLocation = selected;
           this.selectedLocation$.next([selected]);
         }
         this.userLoaded = true;
-      });
     });
 
     this.selectedLocation$

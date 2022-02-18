@@ -10,6 +10,11 @@
   justify-content: center;
   align-items: center;
 
+  &.disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
   .icon {
     margin-right: 8px;
   }

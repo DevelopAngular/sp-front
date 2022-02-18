@@ -3,7 +3,7 @@
      [style.position]="(isStaff || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
      [style.top]="(countSchools$ | async) > 1 && !hideButtons ? '50px' : 0"
      *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
-     [style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #B7C1CF' : 'none'"
+     [style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'"
 >
   <div
    class="bar" appNavbarElementSender

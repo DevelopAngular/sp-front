@@ -290,7 +290,7 @@ export class PdfGeneratorService {
 
   }
 
-  generateReport(data: any, orientation: string = 'p', page: string = '', title?: string): Observable<any> {
+  generateReport(data: any, orientation: string = 'p', page: string = '', title?: string, csvName: string = 'TestCSV'): Observable<any> {
 
     const prettyNow = prettyDate(this.timeService.nowDate());
 
@@ -341,21 +341,23 @@ export class PdfGeneratorService {
 
           let pageCounter: number = 1;
 
+          if (_headers.includes('Email')) {
+            _headers.splice(1, 1);
+          }
+
           const table = {
             top: page === 'explore' ? 70 : 153,
             left: 29,
             right: 29,
             lh: 35,
-            sp: Math.round((this.A4.width - (29 * 2)) / _headers.length),
+            sp: Math.round((this.A4.width) / _headers.length),
             col: 11,
 
             drawPagination: (total) => {
-              console.log(total);
               doc.setFontSize(14);
               doc.setTextColor('#333333');
 
               for (let pagePointer = 1; pagePointer <= total; pagePointer++) {
-                console.log(pagePointer, `Page ${pagePointer} of ${total}`);
 
                 const _pagination = `Page ${pagePointer} of ${total}`;
 
@@ -368,6 +370,9 @@ export class PdfGeneratorService {
               doc.setTextColor('#333333');
             },
             drawHeaders: (__headers: string[]) => {
+              if (__headers.includes('Email')) {
+                __headers.splice(1, 1);
+              }
 
               doc.setFontSize(12);
               doc.setTextColor('#1F194E');
@@ -438,7 +443,6 @@ export class PdfGeneratorService {
                                 doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1) - 5, cell[_headers[i]]);
                               }
                             } catch (e) {
-                              console.log(e);
                               doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), 'error');
                             }
                           }
@@ -520,7 +524,7 @@ export class PdfGeneratorService {
 
             // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
             if (page !== 'explore') {
-              LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, page !== 'hallmonitor' ? data : null);
+              LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, page !== 'hallmonitor' ? data : null, csvName);
             }
           };
 

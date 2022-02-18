@@ -8,7 +8,7 @@ import {LoadingService} from '../services/loading.service';
 import {User} from '../models/User';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {Report} from '../models/Report';
-import {delay, filter, map, takeUntil, tap} from 'rxjs/operators';
+import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {UserService} from '../services/user.service';
 import {ScreenService} from '../services/screen.service';
@@ -24,6 +24,9 @@ import {HallMonitorCollectionRestriction} from '../models/collection-restriction
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {HttpService} from '../services/http-service';
+import {HallPass} from '../models/HallPass';
+import {PdfGeneratorService} from '../admin/pdf-generator.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-hall-monitor',
@@ -126,13 +129,18 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     public screenService: ScreenService,
     private scrollPosition: ScrollPositionService,
-    private http: HttpService
+    private http: HttpService,
+    private pdf: PdfGeneratorService,
   ) {
     this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }
 
   get isMobile() {
     return DeviceDetection.isMobile();
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 
   ngOnInit() {
@@ -283,7 +291,34 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.isIpadSearchBar = false;
   }
 
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
+  previewPDF() {
+    this.activePassProvider
+      .pipe(
+        take(1),
+        map((hp_list: HallPass[]) => {
+          return hp_list.map(hp => {
+            return {
+              'Student Name': hp.student.display_name,
+              'Email': hp.student.primary_email,
+              'Origin': hp.origin.title,
+              'Destination': hp.destination.title,
+              'Travel Type': hp.travel_type
+                .split('_')
+                .map(chunk => chunk.slice(0, 1).toUpperCase()).join('')
+            };
+          });
+        }),
+        switchMap((active_hp: any[]) => {
+          if (active_hp.length) {
+            return this.pdf.generateReport(
+              active_hp,
+              'p',
+              'hallMonitor',
+              '',
+              `Active Passes at ${moment().format('DD/MM hh:mm A')} - SmartPass`
+            );
+          }
+        })
+      ).subscribe();
   }
 }

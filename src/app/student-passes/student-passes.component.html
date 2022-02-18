@@ -69,7 +69,7 @@
                 </ng-template>
               </span>
             </div>
-            <div class="email" [@showHideEmail]="animationTrigger">{{ profile.primary_email }}</div>
+            <div class="email" [@showHideEmail]="animationTrigger">{{ profile.primary_email | spEmail }}</div>
           </div>
 
           <div class="open" *ngIf="isClose; else close">

@@ -4,7 +4,6 @@ import {FormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
 import {AdminPageComponent} from './admin-page/admin-page.component';
 import {AdminRoutingModule} from './admin-routing.module';
-import {LinkGeneratedDialogComponent} from './link-generated-dialog/link-generated-dialog.component';
 import {SettingsComponent} from './settings/settings.component';
 import {AdminSharedModule} from './shared/admin-shared.module';
 import {SchoolSettingDialogComponent} from './school-setting-dialog/school-setting-dialog.component';
@@ -39,7 +38,6 @@ import {ModelFilterComponent} from '../student-info-card/model-filter/model-filt
     declarations: [
         AdminPageComponent,
         SettingsComponent,
-        LinkGeneratedDialogComponent,
         SchoolSettingDialogComponent,
         SearchFilterDialogComponent,
         RoomsSearchComponent,

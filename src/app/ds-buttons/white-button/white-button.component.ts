@@ -18,6 +18,7 @@ export class WhiteButtonComponent implements OnInit {
   @Input() rightIcon: string;
   @Input() rightIconWidth: string;
   @Input() fontWeight: string = 'Normal';
+  @Input() disabled: boolean;
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
 

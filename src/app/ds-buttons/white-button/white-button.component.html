@@ -3,11 +3,12 @@
   #wrapper
   [style.width]="width"
   [style.height]="height"
+  [ngClass]="{disabled: disabled}"
   [style.background-color]="bgColor()"
   [@pressState]="pressed ? 'down' : 'up'"
   appCrossPointerEventTarget
   (pointerDownEvent)="pressed = true"
-  (pointerClickEvent)="pressed = false; buttonClick.emit($event)"
+  (pointerClickEvent)="pressed = false; !disabled ? buttonClick.emit($event) : null"
   (mouseenter)="hover = true"
   (mouseleave)="hover = false; pressed = false"
 >

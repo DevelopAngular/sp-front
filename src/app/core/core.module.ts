@@ -19,6 +19,7 @@ import {StudentPassesInfoCardComponent} from '../student-passes/student-passes-i
 import {EncounterPreventionTooltipComponent} from '../student-passes/encounter-prevention-tooltip/encounter-prevention-tooltip.component';
 import {OctagonComponent} from '../admin/accounts/encounter-prevention-dialog/octagon/octagon.component';
 import {NuxTooltipRendererDirective} from './directives/nux-tooltip-renderer.directive';
+import {SpEmailPipe} from './pipes/sp-email.pipe';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import {NuxTooltipRendererDirective} from './directives/nux-tooltip-renderer.dir
     OctagonComponent,
     EncounterPreventionTooltipComponent,
     NuxTooltipRendererDirective,
+    SpEmailPipe,
   ],
   imports: [
     CommonModule,

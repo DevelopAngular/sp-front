@@ -48,6 +48,29 @@
         </div>
 
         <div class="buttons" *ngIf="!isMobile">
+
+          <app-white-button
+            [icon]="'./assets/Redirect (Blue-Gray).svg'"
+            [width]="'106px'"
+            [height]="'40px'"
+            [iconWidth]="'15px'"
+            [text]="'Export'"
+            [fontWeight]="'500'"
+            (buttonClick)="previewPDF()"
+            customToolTip
+            [contentTemplate]="tooltip"
+            [editable]="true"
+            [nonDisappearing]="false"
+            [disabled]="!(activePassProvider | async).length"
+            style="margin-right: 12px"
+          ></app-white-button>
+
+          <ng-template #tooltip>
+            <div class="ds-tooltip">
+              Export a snapshot of the list of active passes, instantly
+            </div>
+          </ng-template>
+
           <app-square-button
             [backgroundColor]="'#edcbd9'"
             (buttonClick)="openReportForm()"

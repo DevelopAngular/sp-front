@@ -83,6 +83,7 @@ import {WhiteRoundButtonComponent} from '../ds-buttons/white-round-button/white-
 import {IconOnlyButtonComponent} from '../ds-buttons/icon-only-button/icon-only-button.component';
 import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
+import {LinkGeneratedDialogComponent} from '../admin/link-generated-dialog/link-generated-dialog.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -176,6 +177,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IconOnlyButtonComponent,
     EditAvatarComponent,
     ProfilePictureComponent,
+    LinkGeneratedDialogComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -252,6 +254,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IconOnlyButtonComponent,
     EditAvatarComponent,
     ProfilePictureComponent,
+    LinkGeneratedDialogComponent,
   ],
   providers: [
     {
