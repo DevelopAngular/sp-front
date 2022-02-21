@@ -9,11 +9,11 @@
    class="bar" appNavbarElementSender
    [ngClass]="{shadow: ((isStaff || isAssistant) && !isKioskMode) || screenService.isDeviceLargeExtra}"
    [ngStyle]="{
-    padding: user.isStudent() || isKioskMode ? '0 16px' : '0 16px 0 0'
+    padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0'
    }"
    #navbar
   >
-    <div class="logo" *ngIf="user.isStudent() || isKioskMode; else staffLogo">
+    <div class="logo" *ngIf="(user && user.isStudent()) || isKioskMode; else staffLogo">
       <div class="logo-icon" appCrossPointerEventTarget (pointerClickEvent)="updateTab('passes')">
         <img width="40px" height="40px" [src]="'./assets/Smartpass Logo (Green).svg'" alt="logo">
       </div>
@@ -99,7 +99,7 @@
       </div>
 
       <ng-template #notAssistant>
-        <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile">
+        <div class="feedback" *ngIf="isStaff && !isKioskMode && !isMobile">
           <app-feedback-button></app-feedback-button>
         </div>
         <div
@@ -111,7 +111,7 @@
         >
           <span>
             <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async)">
-            <div *ngIf="user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
+            <div *ngIf="user && user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
             <ng-template #d>
               <img width="32" height="32" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
             </ng-template>
@@ -156,7 +156,7 @@
       </div>
 
       <div class="options-wrapper" #setButton>
-        <app-icon-button *ngIf="!user.isStudent() && !isKioskMode; else whiteButton"
+        <app-icon-button *ngIf="isStaff && !isKioskMode; else whiteButton"
           [newIconButton]="true"
           [srcString]="'Settings'"
           [color]="'Navy'"

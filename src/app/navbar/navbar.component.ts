@@ -19,8 +19,8 @@ import {Location} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
-import {Observable, ReplaySubject, Subject} from 'rxjs';
-import {exhaustMap, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
+import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 
 import {DataService} from '../services/data-service';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -264,39 +264,23 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       this.isInboxClicked = res;
     });
 
-    this.userService.user$
-      .pipe(
-        filter(user => !!user),
-        takeUntil(this.destroyer$)
-      )
-      .subscribe(user => {
-          this.user = User.fromJSON(user);
-          this.isStaff = this.user.isTeacher();
-          this.isAssistant = this.user.isAssistant();
-          this.showSwitchButton = [this.user.isAdmin(), this.user.isTeacher(), this.user.isStudent()].filter(val => !!val).length > 1;
-          if (!this.isAssistant) {
-            this.buttons.forEach((button) => {
-              if (
-                ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
-                &&
-                !this.hasRoles(button.requiredRoles)
-              ) {
-                this.fakeMenu.next(true);
-              }
-            });
-          }
-      });
-
     this.kioskMode.currentRoom$.pipe(takeUntil(this.destroyer$))
       .subscribe(location => this.kioskModeLocation = location);
 
     this.http.globalReload$
       .pipe(
         switchMap(() => {
-          return this.userService.effectiveUser.pipe(filter(u => !!u));
+          return combineLatest(
+            this.userService.effectiveUser,
+            this.userService.user$.pipe(filter(u => !!u))
+          );
         }),
         takeUntil(this.destroyer$),
-        exhaustMap((eu: RepresentedUser) => {
+        switchMap(([eu, user]: [RepresentedUser, User]) => {
+          this.user = User.fromJSON(user);
+          this.isStaff = this.user.isTeacher();
+          this.isAssistant = this.user.isAssistant();
+          this.showSwitchButton = [this.user.isAdmin(), this.user.isTeacher(), this.user.isStudent()].filter(val => !!val).length > 1;
           if (eu) {
               this.effectiveUser = eu;
               this.buttons.forEach((button) => {
@@ -308,9 +292,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
                       this.fakeMenu.next(true);
                   }
               });
-              return this.dataService.getLocationsWithTeacher(this.effectiveUser.user);
+              return this.dataService.getLocationsWithTeacher(eu.user);
           } else {
-            return this.dataService.getLocationsWithTeacher(this.user);
+            return this.dataService.getLocationsWithTeacher(user);
           }
         })
       )
