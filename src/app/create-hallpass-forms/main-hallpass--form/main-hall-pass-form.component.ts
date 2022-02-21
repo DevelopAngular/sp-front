@@ -193,17 +193,22 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.setFormSize();
     this.setContainerSize('end');
     this.checkDeviceScreen();
-      this.userService.user$
+    combineLatest(this.userService.user$.pipe(filter(r => !!r)), this.userService.effectiveUser.pipe(filter(u => !!u)))
         .pipe(
           takeUntil(this.destroy$),
-          map(user => User.fromJSON(user))
+          map(([user, effectiveUser]) => {
+            if (effectiveUser) {
+              return User.fromJSON(effectiveUser.user);
+            }
+            return User.fromJSON(user);
+          })
         )
         .subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAssistant();
           this.user = user;
           this.locationsService.getLocationsWithTeacherRequest(this.user);
 
-        });
+      });
 
       combineLatest(
           this.passesService.pinnables$,

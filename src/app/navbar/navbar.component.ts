@@ -290,7 +290,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.http.globalReload$
       .pipe(
         switchMap(() => {
-          return this.userService.effectiveUser;
+          return this.userService.effectiveUser.pipe(filter(u => !!u));
         }),
         takeUntil(this.destroyer$),
         exhaustMap((eu: RepresentedUser) => {
