@@ -121,6 +121,7 @@ export class SmartpassSearchComponent implements OnInit, OnDestroy {
   closeNuxTooltip() {
     this.showTooltip$.next(false);
     this.userService.updateIntrosSearchRequest(this.introsData, 'universal',  '1');
+    this.cdr.detectChanges();
   }
 
 }
