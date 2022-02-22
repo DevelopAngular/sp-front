@@ -30,7 +30,6 @@ import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
-import {LoginDataService} from './services/login-data.service';
 
 declare const window;
 
@@ -100,7 +99,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
     private toastService: ToastService,
-    private loginDataService: LoginDataService
   ) {}
 
   ngOnInit() {
@@ -122,12 +120,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(user => !!user),
         map(user => User.fromJSON(user)),
         switchMap((user: User) => {
-          const isFormsRoute = this.router.url.includes('/forms');
-          if ((!user.isStudent()) && !isFormsRoute) {
+          const urlBlackList = [
+            '/forms',
+            '/kioskMode',
+            '/login'
+          ];
+          const isAllowed = urlBlackList.every(route => !this.router.url.includes(route));
+          if ((!user.isStudent()) && isAllowed) {
             this.registerRefiner(user);
           }
-          if ((!user.isStudent()) && !isFormsRoute && !this.router.url.includes('kioskMode')) {
+          if ((!user.isStudent()) && isAllowed) {
+            window.Intercom('update', {'hide_default_launcher': false});
             this.registerIntercom(user);
+          } else {
+            window.Intercom('update', {'hide_default_launcher': true});
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -337,22 +343,25 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   registerIntercom(user: User) {
-    window.Intercom('boot', {
-      user_id: user.id,
-      name: user.display_name,
-      email: user.primary_email,
-      created: user.created,
-      type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
-      status: user.status,
-      account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
-      first_login: user.first_login,
-      company: {
-        id: this.http.getSchool().id,
-        name: this.http.getSchool().name,
-        open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id="${this.http.getSchool().id}`,
-        open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id="${this.http.getSchool().id}`
-      }
-    });
+    setTimeout(() => {
+      window.intercomSettings = {
+        user_id: user.id,
+        name: user.first_name,
+        email: user.primary_email,
+        created_at: user.created,
+        type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
+        status: user.status,
+        account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
+        first_login_at: user.first_login,
+        company: {
+          id: this.http.getSchool().id,
+          name: this.http.getSchool().name,
+          open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id="${this.http.getSchool().id}`,
+          open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id="${this.http.getSchool().id}`
+        }
+      };
+      window.Intercom('update');
+    }, 1000);
   }
 
   hubSpotSettings(user) {
