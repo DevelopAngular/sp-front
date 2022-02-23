@@ -3,18 +3,17 @@
     <div class="option-container" *ngFor="let option of settings">
       <div class="option"
            #opt
-           (mouseenter)="opt.hover = true; hoverOption = option; showConfirmButton = false"
-           (mouseleave)="opt.hover = false; hoverOption = null"
+           (mouseenter)="opt.hover = true; hoverOption = option; showConfirmButton = false;"
+           (mouseleave)="opt.hover = false; !hoverOption.withoutHoverDescription ? hoverOption = null : null;"
            [style.background-color]="opt.hover ? option.backgroundColor : 'transparent'"
-           (click)="selectedOption(option)"
-      >
+           (click)="selectedOption(option, $event)">
         <img width="18" [src]="option.icon | resolveAsset" alt="opt-icon">
         <div class="label" [style.color]="option.textColor">{{ option.label }}</div>
       </div>
     </div>
   </div>
-  <mat-divider *ngIf="hoverOption || showConfirmButton"></mat-divider>
-  <div class="description" *ngIf="hoverOption || showConfirmButton">
+  <mat-divider *ngIf="(hoverOption && !hoverOption.withoutHoverDescription) || showConfirmButton"></mat-divider>
+  <div class="description" *ngIf="(hoverOption && hoverOption.description && !hoverOption.withoutHoverDescription) || showConfirmButton">
     {{ hoverOption.description }}
     <div class="button" *ngIf="showConfirmButton">
       <app-gradient-button

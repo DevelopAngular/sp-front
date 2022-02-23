@@ -61,6 +61,7 @@ export class EncounterPreventionService {
 
   updateExclusionGroupRequest(group, updateFields) {
     this.store.dispatch(updateExclusionGroup({group, updateFields}));
+    return this.updatedExclusionGroup$;
   }
 
   updateExclusionGroup(group: ExclusionGroup, updateFields) {

@@ -16,6 +16,10 @@ import {StatusPopupComponent} from '../status-popup/status-popup.component';
 import {EditAvatarComponent} from '../edit-avatar/edit-avatar.component';
 import {ToastService} from '../../../services/toast.service';
 import {ExclusionGroup} from '../../../models/ExclusionGroup';
+import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
+import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
+import {ProfilePictureComponent} from '../../accounts/profile-picture/profile-picture.component';
 
 @Component({
   selector: 'app-view-profile',
@@ -49,6 +53,8 @@ export class ViewProfileComponent implements OnInit {
     }
   }
   @ViewChild('status') statusButton: ElementRef;
+  @ViewChild('avatarContainer') avatarContainer: ElementRef;
+  @ViewChild('editIcon') editIcon: ElementRef;
 
   public profile: any;
   public teacherAssignedTo: Location[] = [];
@@ -104,6 +110,8 @@ export class ViewProfileComponent implements OnInit {
   teacherRooms: Location[];
   teacherRoomsInitialState: Location[];
 
+  isOpenAvatarDialog: boolean;
+
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
 
   constructor(
@@ -113,7 +121,8 @@ export class ViewProfileComponent implements OnInit {
     private userService: UserService,
     private locationService: LocationsService,
     private formService: CreateFormService,
-    private toast: ToastService
+    private toast: ToastService,
+    private darkTheme: DarkThemeSwitch,
   ) {}
 
   get isAccessAdd() {
@@ -419,15 +428,26 @@ export class ViewProfileComponent implements OnInit {
    });
   }
 
+  editWindow(event) {
+    this.isOpenAvatarDialog = true;
+    if (!this.userService.getUserSchool().profile_pictures_completed) {
+      this.consentDialogOpen(this.editIcon.nativeElement);
+    } else {
+      this.openEditAvatar(this.editIcon.nativeElement);
+    }
+  }
+
   openEditAvatar(event) {
+    const target = event.currentTarget ? event.currentTarget : event;
     const ED = this.matDialog.open(EditAvatarComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: { 'trigger': event.currentTarget, user: this.user }
+      data: { 'trigger': target, user: this.user }
     });
 
     ED.afterClosed()
       .pipe(
+        tap(() => this.isOpenAvatarDialog = false),
         filter(r => !!r),
         tap(({action, file}) => {
           this.loadingProfilePicture.next(true);
@@ -475,6 +495,44 @@ export class ViewProfileComponent implements OnInit {
 
   openExclusionGroups(action, group?) {
     this.encounterGroupsEmit.emit({action, group});
+  }
+
+  genOption(display, color, action, icon?) {
+    return { display, color, action, icon };
+  }
+
+  consentDialogOpen(evt) {
+    const options = [];
+    options.push(this.genOption('Add individual picture', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'individual', this.darkTheme.getIcon({iconName: 'Plus', darkFill: 'White', lightFill: 'Blue-Gray'})));
+    options.push(this.genOption('Bulk upload pictures', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'bulk', this.darkTheme.getIcon({iconName: 'Add Avatar', darkFill: 'White', lightFill: 'Blue-Gray'})));
+
+    UNANIMATED_CONTAINER.next(true);
+
+    const cancelDialog = this.matDialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {'options': options, 'trigger': new ElementRef(evt)}
+    });
+
+    cancelDialog.afterClosed().pipe(tap(() => {
+      UNANIMATED_CONTAINER.next(false);
+      this.isOpenAvatarDialog = false;
+    }), filter(r => !!r))
+      .subscribe(action => {
+        if (action === 'individual') {
+          this.isOpenAvatarDialog = true;
+          this.openEditAvatar(this.editIcon.nativeElement);
+        } else if (action === 'bulk') {
+          const PPD = this.matDialog.open(ProfilePictureComponent, {
+            id: 'student-info',
+            panelClass: 'accounts-profiles-dialog',
+            backdropClass: 'custom-bd',
+            width: '425px',
+            height: '500px'
+          });
+          this.dialogRef.close();
+        }
+      });
   }
 
 }

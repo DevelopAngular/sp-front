@@ -36,7 +36,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   receivedRequests: any;
   isStaff: boolean;
   data: any;
-  navbarHeight: string = '78px';
+  navbarHeight: string = '64px';
   restriction$: Observable<boolean>;
 
   private destroy$: Subject<any> = new Subject<any>();
@@ -52,7 +52,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.sideNavService.toggleRight$.next(false);
     }
 
-    this.navbarHeight = this.currentNavbarHeight;
+    this.navbarHeight = this.currentNavbarHeight();
   }
 
   constructor(
@@ -87,6 +87,8 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       map(user => User.fromJSON(user)),
       exhaustMap(user => {
+        this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
+        this.navbarHeight = this.currentNavbarHeight();
         if (user.isAssistant()) {
           return this.userService.effectiveUser.pipe(filter(u => !!u), map(u => User.fromJSON(u.user)));
         } else {
@@ -107,7 +109,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.liveDataService.getPassLikeCollectionRequest(user);
           this.liveDataService.getExpiredPassesRequest(user, filters['past-passes'].default);
           this.liveDataService.getHallMonitorPassesRequest(of({sort: '-created', search_query: ''}));
-          this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
           if (user.roles.includes('hallpass_student')) {
             this.receivedRequests = this.liveDataService.invitations$;
             this.sentRequests = this.liveDataService.requests$;
@@ -131,9 +132,9 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
   }
 
-  get currentNavbarHeight() {
+  currentNavbarHeight() {
     return this.router.url === '/main/hallmonitor' && this.screenService.isDeviceLargeExtra ||
-    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : '78px' ;
+    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : '64px';
   }
 
   get showInbox() {
@@ -180,11 +181,9 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     );
 
-    this.navbarHeight = this.currentNavbarHeight;
-
     this.router.events.subscribe( event => {
         if ( event instanceof NavigationEnd) {
-          this.navbarHeight = this.currentNavbarHeight;
+          this.navbarHeight = this.currentNavbarHeight();
         }
     });
   }

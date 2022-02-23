@@ -1,0 +1,21 @@
+<div
+  class="wrapper"
+  #wrapper
+  [style.width]="width"
+  [style.height]="height"
+  [ngClass]="{disabled: disabled}"
+  [style.background-color]="bgColor()"
+  [@pressState]="pressed ? 'down' : 'up'"
+  appCrossPointerEventTarget
+  (pointerDownEvent)="pressed = true"
+  (pointerClickEvent)="pressed = false; !disabled ? buttonClick.emit($event) : null"
+  (mouseenter)="hover = true"
+  (mouseleave)="hover = false; pressed = false"
+>
+  <div class="icon" *ngIf="icon">
+    <img [style.width]="iconWidth" [src]="icon | resolveAsset">
+  </div>
+  <div class="title" [style.font-weight]="fontWeight">{{ text }}</div>
+
+  <img class="left-icon" *ngIf="rightIcon" [style.width]="rightIconWidth" [src]="rightIcon | resolveAsset">
+</div>

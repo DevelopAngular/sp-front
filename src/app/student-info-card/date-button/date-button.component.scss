@@ -1,0 +1,29 @@
+@import "../../../sp-colors";
+
+.wrapper {
+  border: 1px solid $gray300;
+  transition: background-color .2s ease;
+  box-shadow: 0 2px 10px rgba(16, 20, 24, 0.1);
+  border-radius: 8px;
+  display: flex;
+  height: 38px;
+  cursor: pointer;
+
+  .block {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    color: $gray500;
+    font-weight: 500;
+    font-size: 14px;
+
+    .title {
+      color: $navy500;
+      margin-right: 6px;
+    }
+
+    .date {
+      margin-left: 5px;
+    }
+  }
+}

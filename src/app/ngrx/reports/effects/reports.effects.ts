@@ -3,9 +3,11 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {of, throwError} from 'rxjs';
 
 import * as reportsActions from '../actions';
-import {catchError, concatMap, exhaustMap, map, take} from 'rxjs/operators';
+import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
 import {AdminService} from '../../../services/admin.service';
 import {Report} from '../../../models/Report';
+import {addReportToStats} from '../../accounts/nested-states/students/actions';
+import {openToastAction} from '../../toast/actions';
 
 @Injectable()
 export class ReportsEffects {
@@ -45,11 +47,19 @@ export class ReportsEffects {
     return this.actions$
       .pipe(
         ofType(reportsActions.postReport),
-        concatMap((action: any) => {
+        switchMap((action: any) => {
           return this.adminService.sendReport(action.data)
             .pipe(
-              map((reports: Report[]) => {
-                return reportsActions.postReportSuccess({reports});
+              switchMap((reports: Report[]) => {
+                return [
+                  reportsActions.postReportSuccess({reports}),
+                  addReportToStats({report: reports[0]}),
+                  openToastAction({data: {
+                    title: 'Report sent',
+                    subtitle: 'The report has been sent to admins.',
+                    type: 'info'
+                  }})
+                ];
               }),
               catchError(error => of(reportsActions.postReportFailure({errorMessage: error.message})))
             );

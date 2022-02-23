@@ -1,0 +1,15 @@
+<div class="wrapper"
+   [@pressState]="pressed ? 'down' : 'up'"
+   appCrossPointerEventTarget
+   (pointerDownEvent)="pressed = true"
+   (pointerClickEvent)="pressed = false; buttonClick.emit($event)"
+   (mouseenter)="hovered = true"
+   (mouseleave)="hovered = false; pressed = false"
+   [ngStyle]="{
+    width: width + 'px',
+    height: width + 'px',
+    'background-color': getBackground()
+   }"
+>
+<img [style.margin-right]="iconOffset + 'px'" [width]="iconWidth" [src]="'./assets/' + icon + ' (' + (selected ? 'Jade' : 'Blue-Gray') + ').svg' | resolveAsset" [alt]="icon"/>
+</div>

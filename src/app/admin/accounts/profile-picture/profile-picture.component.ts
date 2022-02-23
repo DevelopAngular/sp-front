@@ -175,7 +175,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ProfilePictureComponent>,
     private xlsxService: XlsxService,
     private zipService: ZipService,
-    private dialog: MatDialog,
+    public dialog: MatDialog,
     private userService: UserService,
     private toastService: ToastService,
     private renderer: Renderer2,
@@ -337,6 +337,9 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   }
 
   back() {
+    if (this.dialog.getDialogById('student-info')) {
+      this.dialogRef.close();
+    }
     this.backEmit.emit();
   }
 
@@ -416,7 +419,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     st.afterClosed().pipe(
       tap(() => UNANIMATED_CONTAINER.next(false)),
       filter(r => !!r)
-    ).subscribe(action => {
+    ).subscribe((action) => {
         if (action === 'disable') {
           this.switchProfilePictures(false);
         } else {

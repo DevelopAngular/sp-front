@@ -33,14 +33,24 @@
     //height: 40px;
     box-sizing: border-box;
     border-radius: 20px;
-    font-size: 16px;
-    color: $navy;
-    caret-color: auto;
+    font-size: 15px;
+    color: $navy500;
+    caret-color: $navy500;
     display: block;
     //cursor: default;
     &::placeholder {
-      color: #999999;
+      color: $gray500;
+      transition: color .2s ease;
     }
+
+  &.isFocus {
+    &::placeholder {
+      color: $gray400;
+      transition: color .2s ease;
+    }
+  }
+
+
     //&:focus {
     //  cursor: text;
     //}

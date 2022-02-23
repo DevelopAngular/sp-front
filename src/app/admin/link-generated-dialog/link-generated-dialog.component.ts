@@ -7,6 +7,7 @@ export interface LinkGeneratedDialogData {
   name: string;
   selectedReports: any[];
   pdfLink: string;
+  csvName: string;
 }
 
 @Component({
@@ -17,14 +18,15 @@ export interface LinkGeneratedDialogData {
 export class LinkGeneratedDialogComponent implements OnInit {
 
   name: string;
+  csvName: string;
 
   pdflink: string | SafeUrl;
 
-  static createDialog(dialog: MatDialog, name: string, pdfLink: string, selectedReports?: any) {
+  static createDialog(dialog: MatDialog, name: string, pdfLink: string, selectedReports?: any, csvName?: string) {
     return dialog.open(LinkGeneratedDialogComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
-      data: {name, pdfLink, selectedReports }
+      data: {name, pdfLink, selectedReports, csvName }
     });
   }
 
@@ -35,15 +37,15 @@ export class LinkGeneratedDialogComponent implements OnInit {
       public xlsx: XlsxService
       ) {
     this.name = data.name;
+    this.csvName = this.data.csvName;
     this.pdflink = this.sanitizer.bypassSecurityTrustUrl(data.pdfLink);
-    console.log('Link ===>>>>', this.pdflink);
   }
 
   ngOnInit() {
   }
 
   downloadXlsxFile() {
-    this.xlsx.generate(this.data.selectedReports);
+    this.xlsx.generate(this.data.selectedReports, this.csvName);
   }
 
 }

@@ -1,9 +1,22 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {User} from '../models/User';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {HallPass} from '../models/HallPass';
 
 import {
+  bumpIn,
   ResizeProfileImage,
   resizeStudentPasses,
   scaleStudentPasses,
@@ -11,7 +24,7 @@ import {
   studentPassFadeInOut,
   topBottomProfileName
 } from '../animations';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
@@ -22,6 +35,8 @@ import {DeviceDetection} from '../device-detection.helper';
 import * as moment from 'moment';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
 import {ExclusionGroup} from '../models/ExclusionGroup';
+import {Router} from '@angular/router';
+import {UserService} from '../services/user.service';
 
 @Component({
   selector: 'app-student-passes',
@@ -33,7 +48,8 @@ import {ExclusionGroup} from '../models/ExclusionGroup';
     topBottomProfileName,
     scaleStudentPasses,
     resizeStudentPasses,
-    studentPassFadeInOut
+    studentPassFadeInOut,
+    bumpIn
   ]
 })
 export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -62,6 +78,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   passesStats$: Observable<QuickPreviewPasses>;
   exclusionGroups$: Observable<ExclusionGroup[]>;
 
+  hovered: boolean;
+  pressed: boolean;
+  headerInfoHover: boolean;
+
+  user$: Observable<User>;
+
   destroy$: Subject<any> = new Subject<any>();
 
   @HostListener('document.scroll', ['$event'])
@@ -77,9 +99,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   constructor(
     private dialog: MatDialog,
+    @Optional() private dialogRef: MatDialogRef<PassCardComponent>,
     private domCheckerService: DomCheckerService,
     private passesService: HallPassesService,
-    private encounterPreventionService: EncounterPreventionService
+    private encounterPreventionService: EncounterPreventionService,
+    private router: Router,
+    private userService: UserService
   ) { }
 
   ngAfterViewInit() {
@@ -89,6 +114,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   ngOnInit() {
+    this.user$ = this.userService.user$.pipe(map(u => User.fromJSON(u)));
     this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
     this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
     this.encounterPreventionService.getExclusionGroupsForStudentRequest(this.profile.id);
@@ -117,6 +143,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     return moment().isBefore(moment(pass.end_time));
   }
 
+  get isLongName() {
+    return this.profile.display_name.length > 20;
+  }
+
   get isOpen() {
     return this.isOpenEvent$.getValue() || !this.isResize;
   }
@@ -129,12 +159,28 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     return DeviceDetection.isMobile();
   }
 
+  getBg() {
+    if (this.hovered && !this.isOpen) {
+      if (this.pressed) {
+        return '#EAEDF1';
+      }
+      return '#F0F2F5';
+    }
+    return '#FFFFFF';
+  }
+
   openProfile() {
+    this.pressed = false;
     if (this.isClose && this.isResize) {
       this.resizeTrigger$.next('open');
       this.domCheckerService.scalePassCardTrigger$.next('resize');
       this.isOpenEvent$.next(true);
     }
+  }
+
+  openStudentInfoPage() {
+    this.router.navigate([`/main/student/${this.profile.id}`]);
+    this.dialogRef.close();
   }
 
   closeProfile(event) {
@@ -148,8 +194,13 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   notClose(value) {
-    console.log('Close ==>>', value);
-    this.destroyClose.emit(value);
+    if (value) {
+      setTimeout(() => {
+        this.destroyClose.emit(value);
+      }, 200);
+    } else {
+      this.destroyClose.emit(value);
+    }
   }
 
   openPass({pass}) {

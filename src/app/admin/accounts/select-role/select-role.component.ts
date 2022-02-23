@@ -13,6 +13,7 @@ export class SelectRoleComponent implements OnInit {
   @Input() selectedRoles: {id: number, role: string, icon: string, description: string}[] = [];
   @Input() isAccessAdd: boolean = true;
   @Input() invalid: boolean;
+  @Input() cardsBackground: string = '#F4F4F4'
 
   @Output() onSelect: EventEmitter<{id: number, role: string, icon: string, description: string}[]> = new EventEmitter<{id: number, role: string, icon: string, description: string}[]>();
 

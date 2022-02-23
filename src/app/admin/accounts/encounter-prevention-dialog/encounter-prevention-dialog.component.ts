@@ -1,8 +1,19 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output
+} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {filter, switchMap, tap} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
 
 import {EncounterOptionsComponent} from './encounter-options/encounter-options.component';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
@@ -11,6 +22,7 @@ import {EncounterPreventionService} from '../../../services/encounter-prevention
 import {cloneDeep} from 'lodash';
 import {ToastService} from '../../../services/toast.service';
 import {User} from '../../../models/User';
+import {UserService} from '../../../services/user.service';
 
 enum Pages {
   StartPage = 0,
@@ -36,7 +48,7 @@ export interface EncountersState {
   styleUrls: ['./encounter-prevention-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EncounterPreventionDialogComponent implements OnInit {
+export class EncounterPreventionDialogComponent implements OnInit, OnDestroy {
 
   @Input() forceNextPage: string;
   @Input() forceGroup: ExclusionGroup;
@@ -60,6 +72,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
   exclusionGroups: ExclusionGroup[];
   encounterPreventionLength$: Observable<number>;
   exclusionGroupsLoading$: Observable<boolean>;
+  user$: Observable<User>;
 
   options: {label: string, textColor: string, hoverColor: string, pressedColor: string, icon: string, action: string, description: string}[] = [
     // {label: 'Download report', textColor: '#7F879D', hoverColor: '#F4F4F4', icon: './assets/Download circle (Blue-Gray).svg', action: 'down_report',  description: ''},
@@ -68,6 +81,8 @@ export class EncounterPreventionDialogComponent implements OnInit {
     {label: 'Delete group', textColor: '#E32C66', hoverColor: '#fce9ef', pressedColor: '#fce9ef', icon: './assets/Delete (Red).svg', action: 'delete', description: 'Deleting a group will permanently delete all encounter prevention information. This action cannot be undone.'}
   ];
 
+  destroy$ = new Subject();
+
   constructor(
     private dialog: MatDialog,
     @Optional() private dialogRef: MatDialogRef<EncounterPreventionDialogComponent>,
@@ -75,9 +90,22 @@ export class EncounterPreventionDialogComponent implements OnInit {
     private encounterPreventionService: EncounterPreventionService,
     public cdr: ChangeDetectorRef,
     private toast: ToastService,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
+    this.user$ = this.userService.user$.pipe(map(u => User.fromJSON(u)));
+    if (this.data) {
+      if (this.data['forceNextPage']) {
+        this.forceNextPage = this.data['forceNextPage'];
+      }
+      if (this.data['currentUser']) {
+        this.currentUser = this.data['currentUser'];
+      }
+      if (this.data['forceGroup']) {
+        this.forceGroup = this.data['forceGroup'];
+      }
+    }
     if (this.forceNextPage === 'newGroup') {
       this.state.createGroup.users.push({...this.currentUser, lockAccount: true});
       this.setState(true, Pages.NewGroup);
@@ -85,15 +113,15 @@ export class EncounterPreventionDialogComponent implements OnInit {
     } else if (this.forceNextPage === 'groupDescription') {
       this.state.data.currentGroup = this.forceGroup;
       this.setState(true, Pages.GroupDescription);
-      return;
     } else if (this.data && this.data['currentPage'] === 'groups') {
       this.setState(true, Pages.Groups);
+    } else {
+      this.encounterPreventionService.getExclusionGroupsRequest();
     }
-    this.encounterPreventionService.getExclusionGroupsRequest();
     this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
 
     this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
-      filter(r => r),
+      filter(r => r && !this.forceNextPage),
       switchMap(() => this.encounterPreventionService.exclusionGroupsLength$)
     ).subscribe(res => {
       if (!res) {
@@ -106,6 +134,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
     this.encounterPreventionService.exclusionGroupsLoaded$.pipe(
       filter(r => r),
       switchMap(() => this.encounterPreventionService.exclusionGroups$),
+      takeUntil(this.destroy$),
       tap(groups => {
         if (this.data && this.data['currentGroupId']) {
           const currentGroup = groups.find(g => +g.id === +this.data['currentGroupId']);
@@ -121,10 +150,15 @@ export class EncounterPreventionDialogComponent implements OnInit {
     this.encounterPreventionLength$ = this.encounterPreventionService.encounterPreventionLength$;
 
     this.encounterPreventionService.updatedExclusionGroup$
-      .pipe(filter(r => !!r))
+      .pipe(filter(r => !!r), takeUntil(this.destroy$))
       .subscribe(group => {
         this.state.data.currentGroup = group;
       });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   setState(isNext, to, data?) {
@@ -147,7 +181,7 @@ export class EncounterPreventionDialogComponent implements OnInit {
   }
 
   back() {
-    if (this.state.current_page === Pages.StartPage || this.state.current_page === Pages.Groups) {
+    if (this.state.current_page === Pages.StartPage || this.state.current_page === Pages.Groups || (this.data && this.data['forceNextPage'])) {
         this.dialogRef.close();
     } else {
       if (!!this.forceNextPage) {
@@ -168,6 +202,9 @@ export class EncounterPreventionDialogComponent implements OnInit {
         students: this.state.createGroup.users.map(s => s.id),
         enabled: true
       });
+      if (this.data && this.data['forceNextPage']) {
+        this.dialogRef.close();
+      }
       if (this.forceNextPage) {
         this.backEmit.emit();
         return;
@@ -180,6 +217,9 @@ export class EncounterPreventionDialogComponent implements OnInit {
         notes: this.state.data.currentGroup.notes,
         students: this.state.data.currentGroup.users.map(s => s.id)
       });
+      if (this.data && this.data['forceNextPage']) {
+        this.dialogRef.close();
+      }
       if (this.forceNextPage) {
         this.backEmit.emit();
         return;
@@ -209,6 +249,13 @@ export class EncounterPreventionDialogComponent implements OnInit {
           this.setState(true, Pages.EditGroup);
         } else if (action === 'delete') {
           this.encounterPreventionService.deleteExclusionGroupRequest(this.state.data.currentGroup);
+          if (this.data && this.data['forceNextPage']) {
+            this.dialogRef.close();
+          }
+          if (this.forceNextPage) {
+            this.backEmit.emit();
+            return;
+          }
           this.setState(true, Pages.Groups);
         } else if (action === 'copy_link') {
           navigator.clipboard.writeText(`${window.location.href}?encounter_id=${this.state.data.currentGroup.id}`).then(() => {

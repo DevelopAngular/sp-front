@@ -2,7 +2,6 @@ import {Component, EventEmitter, HostListener, Input, OnInit, Output, QueryList,
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
-import {BehaviorSubject} from 'rxjs';
 import {FormsService} from '../../../services/forms.service';
 
 declare const window;

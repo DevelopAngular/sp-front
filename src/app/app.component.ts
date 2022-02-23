@@ -13,7 +13,7 @@ import {DeviceDetection} from './device-detection.helper';
 import {School} from './models/School';
 import {AdminService} from './services/admin.service';
 import {GoogleLoginService} from './services/google-login.service';
-import {HttpService, SPError} from './services/http-service';
+import {HttpService} from './services/http-service';
 import {KioskModeService} from './services/kiosk-mode.service';
 import {StorageService} from './services/storage.service';
 import {OverlayContainer} from '@angular/cdk/overlay';
@@ -59,7 +59,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
-  public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
   public isKioskMode: boolean;
@@ -99,7 +98,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private googleAnalytics: GoogleAnalyticsService,
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -119,10 +118,22 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(l => l),
         switchMap(l => this.userService.user$.pipe(take(1))),
         filter(user => !!user),
+        map(user => User.fromJSON(user)),
         switchMap((user: User) => {
-          const isFormsRoute = this.router.url.includes('/forms');
-          if ((User.fromJSON(user).isAdmin() || User.fromJSON(user).isTeacher()) && !isFormsRoute) {
-            this.registerRefiner(User.fromJSON(user));
+          const urlBlackList = [
+            '/forms',
+            '/kioskMode',
+            '/login'
+          ];
+          const isAllowed = urlBlackList.every(route => !this.router.url.includes(route));
+          if ((!user.isStudent()) && isAllowed) {
+            this.registerRefiner(user);
+          }
+          if ((!user.isStudent()) && isAllowed) {
+            window.Intercom('update', {'hide_default_launcher': false});
+            this.registerIntercom(user);
+          } else {
+            window.Intercom('update', {'hide_default_launcher': true});
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -222,6 +233,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isAuthenticated = t;
         const path = window.location.pathname;
         if (!t && (path.includes('admin') ||  path.includes('main'))) {
+          if (path.includes('main/student')) {
+            this.storageService.setItem('initialUrl', path);
+          }
           this.router.navigate(['/']);
         }
       });
@@ -251,6 +265,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         map(() => this.activatedRoute),
         map((route) => {
           this.isKioskMode = this.router.url.includes('kioskMode');
+          window.Intercom('update');
           if (route.firstChild) {
             route = route.firstChild;
           }
@@ -325,6 +340,28 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
+  }
+
+  registerIntercom(user: User) {
+    setTimeout(() => {
+      window.intercomSettings = {
+        user_id: user.id,
+        name: user.first_name,
+        email: user.primary_email,
+        created_at: user.created,
+        type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
+        status: user.status,
+        account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
+        first_login_at: user.first_login,
+        company: {
+          id: this.http.getSchool().id,
+          name: this.http.getSchool().name,
+          open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id="${this.http.getSchool().id}`,
+          open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id="${this.http.getSchool().id}`
+        }
+      };
+      window.Intercom('update');
+    }, 1000);
   }
 
   hubSpotSettings(user) {

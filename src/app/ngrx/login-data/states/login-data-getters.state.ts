@@ -8,3 +8,8 @@ export const getLoginDataQueryParams = createSelector(
   getLoginDataState,
   (state: ILoginDataState) => state.queryParams
 );
+
+export const getUrlAfterLogin = createSelector(
+  getLoginDataState,
+  (state: ILoginDataState) => state.urlAfterLogin
+);

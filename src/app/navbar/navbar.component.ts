@@ -19,8 +19,8 @@ import {Location} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
-import {Observable, ReplaySubject, Subject} from 'rxjs';
-import {exhaustMap, filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {combineLatest, Observable, ReplaySubject, Subject} from 'rxjs';
+import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
 
 import {DataService} from '../services/data-service';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -93,6 +93,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   tab: string = 'passes';
   inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
   introsData: any;
+  kioskModeLocation: any;
 
   isOpenSettings: boolean;
 
@@ -105,11 +106,12 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   isMyRoomRoute: boolean;
 
   countSchools$: Observable<number>;
+  isEnabledProfilePictures$: Observable<boolean>;
 
   buttonHash = {
-    passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
-    hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
-    myRoom: {title: 'My Room', route: 'myroom', imgUrl: 'Room', requiredRoles: ['_profile_teacher', 'access_teacher_room'], hidden: true},
+    passes: {title: 'Home', route: 'passes', imgUrl: 'School', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
+    hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'New Hall Monitor', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
+    myRoom: {title: 'My Room', route: 'myroom', imgUrl: 'Room', requiredRoles: ['_profile_teacher', 'access_teacher_room'], hidden: false},
   };
 
   buttons = Object.values(this.buttonHash);
@@ -128,7 +130,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   @HostListener('window:resize')
     checkDeviceWidth() {
-        this.underlinePosition();
         this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
 
         if (this.islargeDeviceWidth) {
@@ -213,7 +214,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.underlinePosition();
+    this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
     this.shortcutsService.onPressKeyEvent$
       .pipe(
         filter(() => !this.isMobile),
@@ -235,7 +236,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           const currentButton = this.buttons.find(button => button.route === route[key[0]]);
           if (this.buttonVisibility(currentButton)) {
             this.updateTab(currentButton.route);
-            this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer, 0);
           }
         }
       });
@@ -264,36 +264,20 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       this.isInboxClicked = res;
     });
 
-    this.userService.user$
-      .pipe(
-        filter(user => !!user),
-        takeUntil(this.destroyer$)
-      )
-      .subscribe(user => {
-          this.user = User.fromJSON(user);
-          this.isStaff = this.user.isTeacher();
-          this.isAssistant = this.user.isAssistant();
-          this.showSwitchButton = [this.user.isAdmin(), this.user.isTeacher(), this.user.isStudent()].filter(val => !!val).length > 1;
-          if (!this.isAssistant) {
-            this.buttons.forEach((button) => {
-              if (
-                ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
-                &&
-                !this.hasRoles(button.requiredRoles)
-              ) {
-                this.fakeMenu.next(true);
-              }
-            });
-          }
-      });
+    this.kioskMode.currentRoom$.pipe(takeUntil(this.destroyer$))
+      .subscribe(location => this.kioskModeLocation = location);
 
     this.http.globalReload$
       .pipe(
         switchMap(() => {
-          return this.userService.effectiveUser.pipe(filter(u => !!u));
+          return combineLatest([this.userService.effectiveUser, this.userService.user$.pipe(filter(u => !!u))]);
         }),
         takeUntil(this.destroyer$),
-        exhaustMap((eu: RepresentedUser) => {
+        switchMap(([eu, user]: [RepresentedUser, User]) => {
+          this.user = User.fromJSON(user);
+          this.isStaff = this.user.isTeacher();
+          this.isAssistant = this.user.isAssistant();
+          this.showSwitchButton = [this.user.isAdmin(), this.user.isTeacher(), this.user.isStudent()].filter(val => !!val).length > 1;
           if (eu) {
               this.effectiveUser = eu;
               this.buttons.forEach((button) => {
@@ -305,9 +289,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
                       this.fakeMenu.next(true);
                   }
               });
-              return this.dataService.getLocationsWithTeacher(this.effectiveUser.user);
+              return this.dataService.getLocationsWithTeacher(eu.user);
           } else {
-            return this.dataService.getLocationsWithTeacher(this.user);
+            return this.dataService.getLocationsWithTeacher(user);
           }
         })
       )
@@ -358,34 +342,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.underlinePosition();
     this.navbarElementsService.navbarRef$.next(this.navbar);
-  }
-
-  underlinePosition() {
-    this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer);
-    if (this.screenService.isDesktopWidth) {
-      setTimeout( () => {
-        this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer);
-      }, 0);
-    }
-
-    if (this.screenService.isDeviceLargeExtra) {
-      this.setCurrentUnderlinePos(this.tabRefsMobile, this.navButtonsContainerMobile);
-    }
-  }
-
-  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 550) {
-    if (this.isStaff && buttonsContainer && this.tabRefs ||
-      this.isAssistant && buttonsContainer && this.tabRefs) {
-      setTimeout(() => {
-        const tabRefsArray = refsArray.toArray();
-        const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
-        if (tabRefsArray[selectedTabRef]) {
-          this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
-        }
-      }, timeout);
-    }
   }
 
   getIcon(iconName: string, darkFill?: string, lightFill?: string) {
@@ -404,19 +361,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       hover: hover,
       hoveredColor: hoveredColor
     });
-  }
-
-  selectTab(event: HTMLElement, container: HTMLElement) {
-    const containerRect = container.getBoundingClientRect();
-    const selectedTabRect = event.getBoundingClientRect();
-    const tabPointerHalfWidth = this.tabPointer.nativeElement.getBoundingClientRect().width / 2;
-
-    if (this.screenService.isDeviceLargeExtra) {
-      this.pts = (( event.offsetLeft + event.offsetWidth / 2) - tabPointerHalfWidth) + 'px';
-    } else {
-      this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) + 'px';
-    }
-
   }
 
   hasRoles(roles: string[]) {

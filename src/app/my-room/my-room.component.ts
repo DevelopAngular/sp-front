@@ -1,8 +1,7 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, interval, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {Util} from '../../Util';
-import {DataService} from '../services/data-service';
 import {mergeObject} from '../live-data/helpers';
 import {LiveDataService} from '../live-data/live-data.service';
 import {LoadingService} from '../services/loading.service';
@@ -13,7 +12,7 @@ import {User} from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {TimeService} from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {LocationsService} from '../services/locations.service';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -32,6 +31,8 @@ import {DeviceDetection} from '../device-detection.helper';
 import {HallPassesService} from '../services/hall-passes.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-my-room',
@@ -43,9 +44,9 @@ import {GoogleLoginService} from '../services/google-login.service';
     MyRoomAnimations.headerTrigger,
     MyRoomAnimations.calendarIconTrigger,
     bumpIn
-  ],
+  ]
 })
-export class MyRoomComponent implements OnInit, OnDestroy {
+export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private scrollableAreaName = 'MyRoom';
   private scrollableArea: HTMLElement;
@@ -90,6 +91,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  @ViewChild('calendar') calendar: ElementRef;
+
   testPasses: PassLikeProvider;
   activePasses: any;
   originPasses: any;
@@ -113,10 +116,13 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location[]>(1);
 
+  schoolsLength$: Observable<number>;
+
   searchPending$: Subject<boolean> = new Subject<boolean>();
 
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
+  isEnableProfilePictures$: Observable<boolean>;
 
   destroy$ = new Subject();
 
@@ -143,7 +149,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private locationService: LocationsService,
       private passesService: HallPassesService,
       public darkTheme: DarkThemeSwitch,
-      public dataService: DataService,
       public dialog: MatDialog,
       public userService: UserService,
       public loginService: GoogleLoginService,
@@ -153,7 +158,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private http: HttpService,
       public screenService: ScreenService,
       public router: Router,
-      private scrollPosition: ScrollPositionService
+      private scrollPosition: ScrollPositionService,
 
   ) {
     this.setSearchDate(this.timeService.nowDate());
@@ -228,20 +233,23 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
   }
 
+  get showProfilePictures() {
+    return this.http.getSchool().profile_pictures_enabled && this.user.show_profile_pictures;
+  }
+
   ngOnInit() {
+    this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+    this.schoolsLength$ = this.http.schoolsLength$;
     combineLatest(
-      this.dataService.currentUser,
+      this.userService.user$.pipe(filter(u => !!u), map(u => User.fromJSON(u))),
       this.userService.effectiveUser,
     )
     .pipe(
-      this.loadingService.watchFirst,
       tap(([cu, eu]) => {
-        this._zone.run(() => {
-          this.user = cu;
-          this.effectiveUser = eu;
-          this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
-          this.canView = this.user.roles.includes('access_teacher_room');
-        });
+        this.user = cu;
+        this.effectiveUser = eu;
+        this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
+        this.canView = this.user.roles.includes('access_teacher_room');
       }),
       switchMap(([cu, eu]) => {
         return combineLatest(
@@ -251,19 +259,17 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         );
       }),
       takeUntil(this.destroy$),
-      take(1)
     )
     .subscribe(([locations, selected]: [Location[], Location]) => {
-      this._zone.run(() => {
         this.roomOptions = locations;
         if (!selected) {
-          this.selectedLocation$.next(locations);
+          this.selectedLocation = locations[0];
+          this.selectedLocation$.next([locations[0]]);
         } else {
           this.selectedLocation = selected;
           this.selectedLocation$.next([selected]);
         }
         this.userLoaded = true;
-      });
     });
 
     this.selectedLocation$
@@ -306,8 +312,23 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
   }
 
+  ngAfterViewInit() {
+  }
+
   onPress(press: boolean) {
       this.buttonDown = press;
+  }
+
+  getSelectedDateText(date) {
+    if (moment(date).isSame(moment(), 'day')) {
+      return 'Today';
+    } else if (moment(date).isSame(moment().add(1, 'day'), 'day')) {
+      return 'Tomorrow';
+    } else if (moment(date).isSame(moment().subtract(1, 'day'), 'day')) {
+      return 'Yesterday';
+    } else {
+      return moment(date).format('MMM DD');
+    }
   }
 
   onHover(hover: boolean) {
@@ -315,6 +336,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       if (!hover) {
           this.buttonDown = false;
       }
+  }
+
+  openCalendar() {
+    this.chooseDate(this.calendar.nativeElement as HTMLElement);
   }
 
   getIcon(icon) {
@@ -327,7 +352,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   chooseDate(event) {
-    const target = new ElementRef(event.currentTarget);
+    const target = event.currentTarget;
     const DR = this.dialog.open(CalendarComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
@@ -482,7 +507,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   get collectionWidth() {
-    let maxWidth = 533;
+    let maxWidth = 755;
 
     if (this.screenService.createCustomBreakPoint(maxWidth)) {
         maxWidth = 336;

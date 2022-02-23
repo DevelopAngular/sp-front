@@ -4,13 +4,10 @@ import {FormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
 import {AdminPageComponent} from './admin-page/admin-page.component';
 import {AdminRoutingModule} from './admin-routing.module';
-import {LinkGeneratedDialogComponent} from './link-generated-dialog/link-generated-dialog.component';
-import {PdfGeneratorService} from './pdf-generator.service';
 import {SettingsComponent} from './settings/settings.component';
 import {AdminSharedModule} from './shared/admin-shared.module';
 import {SchoolSettingDialogComponent} from './school-setting-dialog/school-setting-dialog.component';
 import {SearchFilterDialogComponent} from './explore/search-filter-dialog/search-filter-dialog.component';
-import {DateTimeFilterComponent} from './explore/date-time-filter/date-time-filter.component';
 import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
 import {AdvancedOptionsComponent} from './overlay-container/advanced-options/advanced-options.component';
 import {AddExistingRoomComponent} from './overlay-container/add-existing-room/add-existing-room.component';
@@ -23,14 +20,11 @@ import {BulkEditRoomsInFolderComponent} from './overlay-container/bulk-edit-room
 import {ImportRoomsComponent} from './overlay-container/import-rooms/import-rooms.component';
 import {OverlayContainerComponent} from './overlay-container/overlay-container.component';
 import {GeneratedTableDialogComponent} from './sp-data-table/generated-table-dialog/generated-table-dialog.component';
-
-import {StatusPopupComponent} from './profile-card-dialog/status-popup/status-popup.component';
-import {EditAvatarComponent} from './profile-card-dialog/edit-avatar/edit-avatar.component';
 import {AccountsModule} from './accounts/accounts.module';
 import {ProfileCardDialogComponent} from './profile-card-dialog/profile-card-dialog.component';
 import {AddUserDialogComponent} from './add-user-dialog/add-user-dialog.component';
-import {SelectRoleComponent} from './accounts/select-role/select-role.component';
 import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-profile.component';
+import {ModelFilterComponent} from '../student-info-card/model-filter/model-filter.component';
 
 @NgModule({
     imports: [
@@ -44,10 +38,8 @@ import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-prof
     declarations: [
         AdminPageComponent,
         SettingsComponent,
-        LinkGeneratedDialogComponent,
         SchoolSettingDialogComponent,
         SearchFilterDialogComponent,
-        DateTimeFilterComponent,
         RoomsSearchComponent,
         AdvancedOptionsComponent,
         AddExistingRoomComponent,
@@ -60,16 +52,13 @@ import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-prof
         ImportRoomsComponent,
         OverlayContainerComponent,
         GeneratedTableDialogComponent,
-        StatusPopupComponent,
-        EditAvatarComponent,
         ProfileCardDialogComponent,
         AddUserDialogComponent,
-        SelectRoleComponent,
         ViewProfileComponent,
+        ModelFilterComponent,
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
-        PdfGeneratorService,
     ],
 })
 export class AdminModule {}

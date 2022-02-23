@@ -15,6 +15,7 @@ export class StatusPopupComponent implements OnInit {
   hoverOption;
   showConfirmButton: boolean;
   isBulkEdit: boolean;
+  withoutDelete: boolean;
 
   options: {label: string, textColor: string, hoverColor: string, icon: string, description: string, status?: string}[];
 
@@ -28,6 +29,7 @@ export class StatusPopupComponent implements OnInit {
     this.profile = this.data['profile'];
     this.isBulkEdit = this.data['bulkEdit'];
     this.profileStatus = this.data['profileStatus'];
+    this.withoutDelete = this.data['withoutDelete'];
     this.updatePosition();
     this.options = [
       {
@@ -47,15 +49,18 @@ export class StatusPopupComponent implements OnInit {
         description: this.profileStatus === 'suspended' ? 'Disabling an account prevents them from signing in. They’ll still show up in SmartPass search, can make passes, etc.' :
           'Suspending an account will not delete any data association, but no-one will see or be able to interact with this account.',
         status: this.profileStatus === 'suspended' ? 'disabled' : 'suspended'
-      },
-      {
+      }
+    ];
+
+    if (!this.withoutDelete) {
+      this.options.push({
         label: 'Delete account' + (this.isBulkEdit ? 's' : ''),
         textColor: '#E32C66',
         hoverColor: '#fce9ef',
         icon: './assets/Delete (Red).svg',
         description: 'Deleting an account will permanently delete any data associated with this account. This action cannot be undone.',
-      }
-    ];
+      });
+    }
 
     if (this.isBulkEdit) {
       this.options.splice(1, 0, {

@@ -25,34 +25,34 @@
     </div>
 
     <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="locations" #optionsWrapper>
-      <div class="option" #_option>
+<!--      <div class="option" #_option>-->
 
-        <div class="option-data"
-             [ngClass]="{
-                'option-wrapper': !darkTheme.isEnabled$.value,
-                'option-wrapper__dark': darkTheme.isEnabled$.value
-               }"
-             [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (!selectedLocation ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
-             appCrossPointerEventTarget
-             (pointerClickEvent)="closeDropdown('all_rooms');"
-             (pointerDownEvent)="_option.pressed = true"
-             (pointerCancelEvent)="_option.pressed = false; _option.hovered = false"
-             (mouseover)="_option.hovered = true; _option.pressed = false"
-             (mouseleave)="_option.pressed = false; _option.hovered = false"
-        >
-          <div class="option-data_leftside" style="display: flex; align-items: center">
-            <img width="19" [src]="darkTheme.getIcon({ iconName: 'Room', darkFill: 'White', lightFill: (!selectedLocation ? 'Navy' : 'Blue-Gray') })">
-            <span style="margin-left: 5px" [style.color]="!selectedLocation ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">All Rooms</span>
-          </div>
-          <div class="option-data_rightside">
-            <div class="marked-room">
-              <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg">
-            </div>
-          </div>
-        </div>
+<!--        <div class="option-data"-->
+<!--             [ngClass]="{-->
+<!--                'option-wrapper': !darkTheme.isEnabled$.value,-->
+<!--                'option-wrapper__dark': darkTheme.isEnabled$.value-->
+<!--               }"-->
+<!--             [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (!selectedLocation ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"-->
+<!--             appCrossPointerEventTarget-->
+<!--             (pointerClickEvent)="closeDropdown('all_rooms');"-->
+<!--             (pointerDownEvent)="_option.pressed = true"-->
+<!--             (pointerCancelEvent)="_option.pressed = false; _option.hovered = false"-->
+<!--             (mouseover)="_option.hovered = true; _option.pressed = false"-->
+<!--             (mouseleave)="_option.pressed = false; _option.hovered = false"-->
+<!--        >-->
+<!--&lt;!&ndash;          <div class="option-data_leftside" style="display: flex; align-items: center">&ndash;&gt;-->
+<!--&lt;!&ndash;            <img width="19" [src]="darkTheme.getIcon({ iconName: 'Room', darkFill: 'White', lightFill: (!selectedLocation ? 'Navy' : 'Blue-Gray') })">&ndash;&gt;-->
+<!--&lt;!&ndash;            <span style="margin-left: 5px" [style.color]="!selectedLocation ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">All Rooms</span>&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--          <div class="option-data_rightside">-->
+<!--            <div class="marked-room">-->
+<!--              <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg">-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
-        <!--      <div class="option-divider"></div>-->
-      </div>
+<!--        &lt;!&ndash;      <div class="option-divider"></div>&ndash;&gt;-->
+<!--      </div>-->
 
       <div class="option" *ngFor="let location of locations" #_option>
         <div class="option-data"

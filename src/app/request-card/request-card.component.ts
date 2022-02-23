@@ -28,7 +28,7 @@ import {UserService} from '../services/user.service';
 import {School} from '../models/School';
 import {PassLimit} from '../models/PassLimit';
 import {LocationsService} from '../services/locations.service';
-import {PassLimitDialog} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
+import {PassLimitDialogComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 
 @Component({
   selector: 'app-request-card',
@@ -184,6 +184,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       this.solidColorRgba2 = Util.convertHex(this.request.gradient_color.split(',')[1], 100);
     }
 
+    this.locationsService.getPassLimitRequest();
     this.locationsService.pass_limits_entities$.subscribe(res => {
       this.passLimits = res;
     });
@@ -528,14 +529,14 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
-  passLimitPromise(location) {
+  passLimitPromise() {
     return new Promise<boolean>(resolve => {
-      const passLimit = this.passLimits[location.id];
+      const passLimit = this.passLimits[this.request.destination.id];
       const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
       if (!passLimitReached)
         return resolve(true);
 
-      const dialogRef = this.dialog.open(PassLimitDialog, {
+      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         width: '450px',
@@ -570,7 +571,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     }
 
     if (this.request.destination.id in this.passLimits) {
-      this.passLimitPromise(this.request.destination).then(allowed => {
+      this.passLimitPromise().then(allowed => {
         if (allowed)
           approvePass()
       });
@@ -630,7 +631,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   goToPin() {
-    this.activeTeacherPin = true;
+    this.passLimitPromise().then(approved => {
+      this.activeTeacherPin = true;
+    });
   }
 
   openBigPassCard() {

@@ -345,7 +345,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
                     filter(r => !isEmpty(r) && !!r[+id]),
                     take(1),
                     tap((groups) => {
-                      console.log(11111);
                       const exclusionGroups = groups[+id];
                       this.toastService.openToast({
                         title: 'This pass can’t start now to prevent encounter.',
@@ -364,6 +363,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       )
       .subscribe((data) => {
         this.performingAction = false;
+        this.hallPassService.createPassEvent$.next(true);
         this.dialogRef.close();
       });
   }

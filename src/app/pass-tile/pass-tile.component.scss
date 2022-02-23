@@ -118,22 +118,28 @@
   bottom: 0;
   height: 29px;
   width: 100%;
-  background-color: black;
-  opacity: 0.15;
+  background: rgba(255, 255, 255, 0.35);
+  mix-blend-mode: overlay;
+  opacity: 0.5;
   border-radius: 0 0 12.75px 12.75px;
-  transition: opacity .3s ease-in;
+  transition: opacity .2s ease-in;
 }
 
 .names-overlay{
     position: absolute;
-    bottom: 0px;
-    background: rgba(200, 200, 200, .7);
-    mix-blend-mode: soft-light;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.35);
+    mix-blend-mode: overlay;
     width: 143px;
     height: 29px;
     border-radius: 0 0 12.75px 12.75px;
     cursor: pointer;
     user-select: none;
+    transition: background-color .2s ease-in;
+
+  &:hover {
+    opacity: 0.5;
+  }
 }
 
 .names{

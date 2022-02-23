@@ -6,14 +6,14 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
   templateUrl: './pass-limit-dialog.component.html',
   styleUrls: ['./pass-limit-dialog.component.scss'],
 })
-export class PassLimitDialog {
+export class PassLimitDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {
       passLimit: number,
       studentCount: number,
       currentCount: number
     },
-    private dialogRef: MatDialogRef<PassLimitDialog>
+    private dialogRef: MatDialogRef<PassLimitDialogComponent>
   ) {
   }
 

@@ -13,7 +13,8 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 export class SquareButtonComponent implements OnInit {
 
-  @Input() width: string;
+  @Input() width: string = '50px';
+  @Input() height: string = '50px';
   @Input() backgroundColor: string = '#00B476';
   @Input() disabled: boolean = false;
   @Input() withShadow: boolean = true;

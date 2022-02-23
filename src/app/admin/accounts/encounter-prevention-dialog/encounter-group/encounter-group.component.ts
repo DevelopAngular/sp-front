@@ -12,6 +12,7 @@ import {bumpIn} from '../../../../animations';
 export class EncounterGroupComponent implements OnInit {
 
   @Input() group: ExclusionGroup;
+  @Input() backgroundColor: string;
 
   @Output() clickEvent: EventEmitter<any> = new EventEmitter<any>();
 

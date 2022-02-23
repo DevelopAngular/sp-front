@@ -5,7 +5,7 @@ variables:
   # AUTO_DEVOPS_DOMAIN: notify-messenger-notify-server-staging.lavanote.com
   # AUTO_DEVOPS_DOMAIN: smartpass.app
 
-  KUBERNETES_VERSION: 1.16.3
+  KUBERNETES_VERSION: 1.21.6
   HELM_VERSION: 2.17.0
   SENTRY_ORG: "smartpass"
   SENTRY_PROJECT: "hall-pass-web"
@@ -38,7 +38,7 @@ deploy_next_release:
     IMAGE_TAG_SUFFIX: "testing"
     INCLUDE_SOURCEMAPS: "true"
   environment:
-    name: testing
+    name: next-release
     url: "https://smartpass-testing.lavanote.com"
   only:
     refs:
@@ -63,9 +63,6 @@ feature_build:
   variables:
     AUTO_DEVOPS_DOMAIN: "smartpass-feature.lavanote.com"
     IMAGE_TAG_SUFFIX: "feature-testing"
-  environment:
-    name: feature-testing
-    url: "https://smartpass-feature.lavanote.com"
   only:
     refs:
       - /^feat\/.*$/
@@ -155,9 +152,6 @@ build_production:
   variables:
     AUTO_DEVOPS_DOMAIN: "smartpass.app"
     IMAGE_TAG_SUFFIX: "production"
-  environment:
-    name: production
-    url: "https://smartpass.app"
   only:
     refs:
     - production
