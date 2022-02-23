@@ -64,6 +64,7 @@ testing_deploy:
   environment:
     name: testing
     url: "https://smartpass-testing.lavanote.com"
+    deployment_tier: development
   when: manual
   needs: [testing_build]
   except:
