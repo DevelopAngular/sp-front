@@ -14,40 +14,7 @@ stages:
   - build
   - deploy
 
-deploy_next_release:
-  stage: deploy
-  script:
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ nodejs@old npm@old yarn@old
-    - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.37.4/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
-    - chmod +x /usr/local/bin/sentry-cli
-    - ls -l / ; pwd
-    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
-    - pwd
-    - source scripts/auto_devops.sh
-    - scripts/build.sh
-    - install_dependencies
-    - download_chart
-    - ensure_namespace
-    - install_tiller
-    - create_secret
-    - deploy
-  variables:
-    AUTO_DEVOPS_DOMAIN: "smartpass-testing.lavanote.com"
-    IMAGE_TAG_SUFFIX: "testing"
-    INCLUDE_SOURCEMAPS: "true"
-  environment:
-    name: next-release
-    url: "https://smartpass-testing.lavanote.com"
-  only:
-    refs:
-      - "next-release"
-    kubernetes: active
-  tags:
-    - "docker-passthrough"
-
-feature_build:
+testing_build:
   stage: build
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
@@ -61,16 +28,15 @@ feature_build:
     - source scripts/auto_devops.sh
     - scripts/build.sh
   variables:
-    AUTO_DEVOPS_DOMAIN: "smartpass-feature.lavanote.com"
-    IMAGE_TAG_SUFFIX: "feature-testing"
+    AUTO_DEVOPS_DOMAIN: "smartpass-testing.lavanote.com"
+    IMAGE_TAG_SUFFIX: "testing"
+    INCLUDE_SOURCEMAPS: "true"
   only:
-    refs:
-      - /^feat\/.*$/
     kubernetes: active
   tags:
     - "docker-passthrough"
 
-feature_deploy:
+testing_deploy:
   stage: deploy
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
@@ -90,16 +56,14 @@ feature_deploy:
     - create_secret
     - deploy
   variables:
-    AUTO_DEVOPS_DOMAIN: "smartpass-feature.lavanote.com"
-    IMAGE_TAG_SUFFIX: "feature-testing"
+    AUTO_DEVOPS_DOMAIN: "smartpass-testing.lavanote.com"
+    IMAGE_TAG_SUFFIX: "testing"
   environment:
-    name: feature-testing
-    url: "https://smartpass-feature.lavanote.com"
+    name: testing
+    url: "https://smartpass-testing.lavanote.com"
   when: manual
-  needs: [feature_build]
+  needs: [testing_build]
   only:
-    refs:
-      - /^feat\/.*$/
     kubernetes: active
   tags:
     - "docker-passthrough"
@@ -188,36 +152,3 @@ deploy_production:
   tags:
   - "docker-passthrough"
 
-
-deploy_staging_local:
-  stage: deploy
-  script:
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ nodejs@old npm@old yarn@old
-    - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.37.4/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
-    - chmod +x /usr/local/bin/sentry-cli
-    - ls -l / ; pwd
-    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
-    - pwd
-    - source scripts/auto_devops.sh
-    - scripts/build.sh
-    - install_dependencies
-    - download_chart
-    - ensure_namespace
-    - install_tiller
-    - create_secret
-    - deploy
-  variables:
-    AUTO_DEVOPS_DOMAIN: "smartpass-local.lavanote.com"
-    IMAGE_TAG_SUFFIX: "production-local"
-  environment:
-    name: local
-    url: "https://smartpass-local.lavanote.com"
-  when: manual
-  only:
-    refs:
-      - master
-    kubernetes: active
-  tags:
-    - "docker-passthrough"
