@@ -271,7 +271,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       .pipe(
         switchMap(() => {
           return combineLatest(
-            this.userService.effectiveUser,
+            this.userService.effectiveUser.pipe(filter(u => !!u)),
             this.userService.user$.pipe(filter(u => !!u))
           );
         }),
