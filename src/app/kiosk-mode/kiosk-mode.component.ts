@@ -60,7 +60,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   get showProfilePicture() {
-    return this.userService.getUserSchool().profile_pictures_enabled
+    return this.userService.getUserSchool()?.profile_pictures_enabled
   }
 
   ngOnInit() {
