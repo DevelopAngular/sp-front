@@ -20,32 +20,6 @@ function check_kube_domain() {
 
 function deploy() {
     track="${1-stable}"
-    name="$CI_ENVIRONMENT_SLUG"
-
-    if [[ "$track" != "stable" ]]; then
-      name="$name-$track"
-    fi
-
-    replicas="1"
-    service_enabled="false"
-    postgres_enabled="$POSTGRES_ENABLED"
-    # canary uses stable db
-    [[ "$track" == "canary" ]] && postgres_enabled="false"
-
-    env_track=$( echo $track | tr -s  '[:lower:]'  '[:upper:]' )
-    env_slug=$( echo ${CI_ENVIRONMENT_SLUG//-/_} | tr -s  '[:lower:]'  '[:upper:]' )
-
-    if [[ "$track" == "stable" ]]; then
-      # for stable track get number of replicas from `PRODUCTION_REPLICAS`
-      eval new_replicas=\$${env_slug}_REPLICAS
-      service_enabled="true"
-    else
-      # for all tracks get number of replicas from `CANARY_PRODUCTION_REPLICAS`
-      eval new_replicas=\$${env_track}_${env_slug}_REPLICAS
-    fi
-    if [[ -n "$new_replicas" ]]; then
-      replicas="$new_replicas"
-    fi
 
     if [[ "$CI_PROJECT_VISIBILITY" != "public" ]]; then
       secret_name='gitlab-registry'
@@ -53,33 +27,10 @@ function deploy() {
       secret_name=''
     fi
 
-    helm_command='helm upgrade --install'
-    name_arg=""
-
-    set +e
-    chart_status=$(helm status --tiller-namespace "$KUBE_NAMESPACE" "$name" | grep 'STATUS:')
-    helm_exit_code=$?
-    set -e
-
-    # If the chart does not exist or was deleted, use install because helm
-    # will refuse to upgrade --install a deleted chart
-
-    if [ "${helm_exit_code}" -ne 0 ] ; then
-        helm_command='helm install'
-        name_arg="--name"
-    fi
-
-    if [ "${chart_status}" = "STATUS: DELETED" ] ; then
-        helm_command='helm install'
-        name_arg="--name"
-    fi
-
-    echo "Using helm verb: ${helm_command}"
-
     template_f=$(mktemp)
 
     helm template \
-      --set service.enabled="$service_enabled" \
+      --set service.enabled="false" \
       --set web.repository="$CI_APPLICATION_REPOSITORY" \
       --set web.tag="$CI_APPLICATION_TAG" \
       --set web.pullPolicy=IfNotPresent \
@@ -93,25 +44,6 @@ function deploy() {
       chart/ | tee "$template_f"
 
     kubectl apply --namespace "$KUBE_NAMESPACE" -f "$template_f"
-
-    # Intentionally unquoted so helm and verbs are separate args
-#    $helm_command \
-#      --wait \
-#      --debug \
-#      --set service.enabled="$service_enabled" \
-#      --set web.repository="$CI_APPLICATION_REPOSITORY" \
-#      --set web.tag="$CI_APPLICATION_TAG" \
-#      --set web.pullPolicy=IfNotPresent \
-#      --set web.secrets[0].name="$secret_name" \
-#      --set application.name="$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG" \
-#      --set application.track="$track" \
-#      --set service.url="$AUTO_DEVOPS_DOMAIN" \
-#      --set service.domain="$AUTO_DEVOPS_DOMAIN" \
-#      --set web.replicaCount="1" \
-#      --namespace="$KUBE_NAMESPACE" \
-#      --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
-#      $name_arg "$name" \
-#      chart/
 
     sleep 10
 }
@@ -144,29 +76,6 @@ function setup_docker() {
         export DOCKER_HOST='tcp://localhost:2375'
       fi
     fi
-}
-
-function download_chart() {
-    if [[ ! -d chart ]]; then
-      auto_chart=${AUTO_DEVOPS_CHART:-gitlab/auto-deploy-app}
-      auto_chart_name=$(basename $auto_chart)
-      auto_chart_name=${auto_chart_name%.tgz}
-    else
-      auto_chart="chart"
-      auto_chart_name="chart"
-    fi
-
-    helm init --client-only
-    helm repo add gitlab https://charts.gitlab.io
-    if [[ ! -d "$auto_chart" ]]; then
-      helm fetch ${auto_chart} --untar
-    fi
-    if [ "$auto_chart_name" != "chart" ]; then
-      mv ${auto_chart_name} chart
-    fi
-
-    helm dependency update chart/
-    helm dependency build chart/
 }
 
 function ensure_namespace() {
@@ -214,17 +123,4 @@ function create_secret() {
 
 function persist_environment_url() {
   echo $CI_ENVIRONMENT_URL > environment_url.txt
-}
-
-function delete() {
-    track="${1-stable}"
-    name="$CI_ENVIRONMENT_SLUG"
-
-    if [[ "$track" != "stable" ]]; then
-      name="$name-$track"
-    fi
-
-    if [[ -n "$(helm ls -q "^$name$")" ]]; then
-      helm delete "$name"
-    fi
 }

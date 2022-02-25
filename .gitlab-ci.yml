@@ -6,7 +6,7 @@ variables:
   # AUTO_DEVOPS_DOMAIN: smartpass.app
 
   KUBERNETES_VERSION: 1.21.6
-  HELM_VERSION: 2.17.0
+  HELM_VERSION: 3.6.2
   SENTRY_ORG: "smartpass"
   SENTRY_PROJECT: "hall-pass-web"
 
@@ -53,7 +53,6 @@ testing_deploy:
     - source scripts/auto_devops.sh
     # no build command. This causes it to reuse the pre-built images because IMAGE_TAG_SUFFIX is shared.
     - install_dependencies
-    - download_chart
     - ensure_namespace
     - install_tiller
     - create_secret
@@ -90,7 +89,6 @@ deploy_staging:
     - source scripts/auto_devops.sh
     - scripts/build.sh
     - install_dependencies
-    - download_chart
     - ensure_namespace
     - install_tiller
     - create_secret
@@ -140,7 +138,6 @@ deploy_production:
   - source scripts/auto_devops.sh
   # build is not specified here. The IMAGE_TAG_SUFFIX will be used to match to the build with the same commit sha.
   - install_dependencies
-  - download_chart
   - ensure_namespace
   - install_tiller
   - create_secret
