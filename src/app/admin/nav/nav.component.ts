@@ -240,7 +240,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
         } else if (action === 'bug') {
           window.open('https://www.smartpass.app/bugreport');
         } else if (action === 'privacy') {
-          window.open('https://www.smartpass.app/legal');
+          window.open('https://www.smartpass.app/privacy?new=true');
         } else if (action === 'refer') {
           if (this.introsData.referral_reminder.universal && !this.introsData.referral_reminder.universal.seen_version) {
             this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
