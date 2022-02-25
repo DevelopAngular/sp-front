@@ -33,6 +33,7 @@ testing_build:
     INCLUDE_SOURCEMAPS: "true"
   except:
     - master
+    - production
   only:
     kubernetes: active
   tags:
@@ -69,6 +70,7 @@ testing_deploy:
   needs: [testing_build]
   except:
     - master
+    - production
   only:
     kubernetes: active
   tags:
