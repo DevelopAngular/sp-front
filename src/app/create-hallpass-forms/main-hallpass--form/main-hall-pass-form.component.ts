@@ -203,10 +203,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.setFormSize();
     this.setContainerSize('end');
     this.checkDeviceScreen();
-    combineLatest([
-        this.userService.user$.pipe(filter(r => !!r)),
-        this.userService.effectiveUser
-    ])
+    combineLatest(this.userService.user$.pipe(filter(r => !!r)), this.userService.effectiveUser.pipe(filter(u => !!u)))
         .pipe(
           takeUntil(this.destroy$),
           map(([user, effectiveUser]) => {
@@ -217,7 +214,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe((user: User) => {
-          this.isStaff = user.isTeacher() || user.isAssistant() || user.isAdmin();
+          this.isStaff = user.isTeacher() || user.isAssistant();
           this.user = user;
           this.locationsService.getLocationsWithTeacherRequest(this.user);
 

@@ -711,27 +711,46 @@ export class ExploreComponent implements OnInit, OnDestroy {
       .subscribe(sort => {
         switch (sortColumn) {
           case 'Student Name':
+            if (this.queryParams.sort === '-student_name') {
+              delete queryParams.sort;
+              delete this.queryParams.sort;
+              break;
+            }
             queryParams.sort = sort && sort === 'asc' ? '-student_name' : 'student_name';
             break;
           case 'Origin':
+            if (this.queryParams.sort === '-origin_name') {
+              delete queryParams.sort;
+              delete this.queryParams.sort;
+              break;
+            }
             queryParams.sort = sort && sort === 'asc' ? '-origin_name' : 'origin_name';
             break;
           case 'Destination':
+            if (this.queryParams.sort === '-destination_name') {
+              delete queryParams.sort;
+              delete this.queryParams.sort;
+              break;
+            }
             queryParams.sort = sort && sort === 'asc' ? '-destination_name' : 'destination_name';
             break;
           case 'Duration':
+            if (this.queryParams.sort === '-duration') {
+              delete queryParams.sort;
+              delete this.queryParams.sort;
+              break;
+            }
             queryParams.sort = sort && sort === 'asc' ? '-duration' : 'duration';
             break;
           case 'Pass start time':
+            if (this.queryParams.sort === '-start_time') {
+              delete queryParams.sort;
+              delete this.queryParams.sort;
+              break;
+            }
             queryParams.sort = sort && sort === 'asc' ? '-start_time' : 'start_time';
         }
-        if (sort === 'desc') {
-          if (this.currentView$.getValue() === 'pass_search') {
-            queryParams.sort = 'start_time';
-          } else {
-            delete queryParams.sort;
-          }
-        }
+        console.log(sortColumn, queryParams);
         queryParams.limit = 300;
         this.queryParams = {...this.queryParams, ...queryParams};
         this.hallPassService.sortHallPassesRequest(this.queryParams);
