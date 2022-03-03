@@ -203,7 +203,10 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.setFormSize();
     this.setContainerSize('end');
     this.checkDeviceScreen();
-    combineLatest(this.userService.user$.pipe(filter(r => !!r)), this.userService.effectiveUser.pipe(filter(u => !!u)))
+    combineLatest([
+      this.userService.user$.pipe(filter(r => !!r)),
+      this.userService.effectiveUser
+    ])
         .pipe(
           takeUntil(this.destroy$),
           map(([user, effectiveUser]) => {
