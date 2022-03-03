@@ -1,5 +1,8 @@
 image: docker:19.03.10
 
+services:
+  - docker:19.03.10-dind
+
 variables:
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
   # AUTO_DEVOPS_DOMAIN: notify-messenger-notify-server-staging.lavanote.com
