@@ -119,7 +119,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get isKioskMode() {
-    return !!this.kioskMode.currentRoom$.getValue();
+    return !!this.kioskMode.getCurrentRoom().getValue();
   }
 
   constructor(

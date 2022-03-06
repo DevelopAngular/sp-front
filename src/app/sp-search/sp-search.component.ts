@@ -203,7 +203,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   get isKioskMode() {
-    return this.kioskMode.currentRoom$.getValue();
+    return this.kioskMode.getCurrentRoom().getValue();
   }
 
   private getEmitedValue() {

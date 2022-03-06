@@ -291,7 +291,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (data.hubspot &&
           ((data.currentUser && !data.currentUser.isStudent()) &&
-            data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value)) && !this.screen.isDeviceLargeExtra
+            data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.getCurrentRoom().value)) && !this.screen.isDeviceLargeExtra
         ) {
           if (!existingHub) {
             this.showSupportButton = true;

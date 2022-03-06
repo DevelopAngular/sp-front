@@ -191,7 +191,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   get isKioskMode() {
-    return !!this.kioskMode.currentRoom$.value;
+    return !!this.kioskMode.getCurrentRoom().value;
   }
 
   get isSafari() {
@@ -264,7 +264,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       this.isInboxClicked = res;
     });
 
-    this.kioskMode.currentRoom$.pipe(takeUntil(this.destroyer$))
+    this.kioskMode.getCurrentRoom().pipe(takeUntil(this.destroyer$))
       .subscribe(location => this.kioskModeLocation = location);
 
     this.http.globalReload$

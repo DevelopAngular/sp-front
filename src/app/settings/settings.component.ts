@@ -73,7 +73,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   get isKioskMode(): boolean {
-    return !!this.kioskMode.currentRoom$.value;
+    return !!this.kioskMode.getCurrentRoom().value;
   }
 
   get isMobile() {
@@ -99,7 +99,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       });
     if (this.data) {
       this.targetElementRef = this.data['trigger'];
-      this.isSwitch = this.data['isSwitch'] && !this.kioskMode.currentRoom$.value;
+      this.isSwitch = this.data['isSwitch'] && !this.kioskMode.getCurrentRoom().value;
     }
 
     this.sideNavService.sideNavData.pipe(takeUntil(this.destroy$)).subscribe( sideNavData => {

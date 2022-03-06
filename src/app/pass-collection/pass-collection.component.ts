@@ -295,11 +295,11 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         fromPast: pass['end_time'] < now,
         forFuture: pass['start_time'] > now,
         forMonitor: this.forMonitor,
-        forStaff: this.forStaff && !this.kioskMode.currentRoom$.value,
-        kioskMode: !!this.kioskMode.currentRoom$.value,
+        forStaff: this.forStaff && !this.kioskMode.getCurrentRoom().value,
+        kioskMode: !!this.kioskMode.getCurrentRoom().value,
         hideReport: this.isAdminPage,
         activePassTime$: this.activePassTime$,
-        showStudentInfoBlock: !this.kioskMode.currentRoom$.value
+        showStudentInfoBlock: !this.kioskMode.getCurrentRoom().value
       };
       data.isActive = !data.fromPast && !data.forFuture;
     } else {
