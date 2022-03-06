@@ -1,0 +1,50 @@
+@import "../../sp-colors";
+@import "../../design-system";
+
+.offline-bar-wrapper {
+  width: 0;
+  height: 0;
+
+  .offline-bar {
+    margin-top: -80px;
+    margin-left: 20px;
+    background-color: black;
+    height: 40px;
+    position: absolute;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 8px 20px;
+    border-radius: 10px;
+  }
+
+  .offline-bar-icon-wrapper {
+    display: flex;
+
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .offline-bar-text {
+    @include textSize(16px, normal, white);
+  }
+
+  .offline-bar-action-wrapper span {
+    @include textSize(16px, normal, $jade);
+  }
+
+  .offline-bar-close {
+    display: flex;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .offline-preload {
+    display: none;
+  }
+}

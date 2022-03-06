@@ -1,0 +1,23 @@
+<div class="offline-bar-wrapper">
+  <div *ngIf="isDisplaying" class="offline-bar">
+    <div class="offline-bar-icon-wrapper">
+      <img draggable="false" class="offline-bar-icon" [src]="(statusIcon$ | async) | resolveAsset">
+    </div>
+    <span class="offline-bar-text">
+      {{ statusText$ | async }}
+    </span>
+    <div class="offline-bar-action-wrapper">
+      <span *ngIf="!(isConnected$ | async); else cancelBlock" (click)="refresh()">Refresh</span>
+      <ng-template #cancelBlock>
+        <div (click)="close()" class="offline-bar-close">
+          <img draggable="false" [src]="'./assets/Cancel (Blue-Gray).svg' | resolveAsset">
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!--
+  Preload images before socket disconnects
+  -->
+  <img class="offline-preload" [src]="'./assets/Disconnected (Blue-Gray).svg' | resolveAsset" display="none">
+</div>
