@@ -22,7 +22,7 @@ testing_build:
   script:
     - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils
+    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils yarn
     - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
     - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
     - mkdir ~/.nvm/versions
@@ -31,6 +31,8 @@ testing_build:
     - source ~/.profile
     - bash
     - nvm -v
+    - "mkdir ~/.nvm/.cache && mkdir ~/.nvm/.cache/bin && mkdir ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl"
+    - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
     - nvm install $(cat .nvmrc)
     - nvm use
     - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.49.0/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"

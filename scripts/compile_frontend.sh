@@ -10,7 +10,7 @@ set -e
 #else
   # echo "Using fresh yarn install"
   # yarn install
-  npm install
+  npm ci
 #fi
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
