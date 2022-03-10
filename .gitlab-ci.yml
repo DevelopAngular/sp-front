@@ -22,10 +22,13 @@ testing_build:
   script:
     - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++
+    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils
     - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
     - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
     - mkdir ~/.nvm/versions
+    - echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> ~/.profile
+    - echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> ~/.profile
+    - source ~/.profile
     - bash
     - nvm -v
     - nvm install $(cat .nvmrc)
