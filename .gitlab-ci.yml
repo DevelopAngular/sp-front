@@ -24,6 +24,9 @@ testing_build:
     - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
     - apk add --no-cache bash tree git python make g++
     - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
+    - mkdir ~/.nvm/versions
+    - bash
     - nvm -v
     - nvm install $(cat .nvmrc)
     - nvm use
