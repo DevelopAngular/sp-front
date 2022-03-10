@@ -40,12 +40,11 @@ export function validationAccounts<T>(userService): MonoTypeOperatorFunction<Imp
     }),
     map(({users, isValidEmail}: {users: ImportAccount[], isValidEmail: {exists: boolean}[]}) => {
       return users.map((user, index) => {
-        const regExpPassword = new RegExp('[0-9a-zA-Z]{8,}');
         return {
           ...user,
           existsEmail: isValidEmail[index].exists,
           invalidEmail: !user.primary_email,
-          invalidPassword: !regExpPassword.test(user.password),
+          invalidPassword: user.password.length < 8,
           invalidType: !user.type ||
             (user.type.toLowerCase() !== 'admin' &&
             user.type.toLowerCase() !== 'teacher' &&
