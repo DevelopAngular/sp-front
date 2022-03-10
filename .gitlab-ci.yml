@@ -60,7 +60,7 @@ testing_deploy:
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ nodejs@old npm@old yarn@old
+    - apk add --no-cache bash tree git python make g++ yarn@old
     - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.49.0/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
     - chmod +x /usr/local/bin/sentry-cli
     - ls -l / ; pwd
@@ -127,7 +127,19 @@ build_production:
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ nodejs@old npm@old yarn@old
+    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils yarn
+    - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
+    - mkdir ~/.nvm/versions
+    - echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> ~/.profile
+    - echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> ~/.profile
+    - source ~/.profile
+    - bash
+    - nvm -v
+    - "mkdir ~/.nvm/.cache && mkdir ~/.nvm/.cache/bin && mkdir ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl"
+    - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
+    - nvm install $(cat .nvmrc)
+    - nvm use
     - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.49.0/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
     - chmod +x /usr/local/bin/sentry-cli
     - ls -l / ; pwd
