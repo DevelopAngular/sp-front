@@ -405,7 +405,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       case 'rooms':
         if (search !== '') {
           this.pending$.next(true);
-          const url = `&search=${search}&starred=false`;
+          const url = `&search=${search}`;
           this.locationService.searchLocations(100, url)
             .subscribe((locs) => {
                 this.foundLocations = locs.results;
