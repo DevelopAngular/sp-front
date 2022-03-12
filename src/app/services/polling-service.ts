@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {$WebSocket} from 'angular2-websocket/angular2-websocket';
-import {BehaviorSubject, NEVER, Observable, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, NEVER, Observable, Subject, Subscription, fromEvent, merge} from 'rxjs';
 import {filter, map, publish, refCount, switchMap, tap} from 'rxjs/operators';
 import {HttpService} from './http-service';
 import {Logger} from './logger.service';
@@ -43,9 +43,10 @@ export class PollingService {
   private rawMessageStream: Subject<RawMessage> = new Subject();
 
   private sendMessageQueue$ = new Subject();
-
   private websocket: $WebSocket = null;
-  isConnected$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  isConnected$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  isOnline$: Observable<boolean>;
 
   private failedHeartbeats: number = 0;
   private lastHeartbeat: number = Date.now();
@@ -53,15 +54,16 @@ export class PollingService {
 
   constructor(private http: HttpService,
               private _logger: Logger) {
-    this.connect();
+    this.connectWebsocket();
     this.createEventListener();
     this.listenForHeartbeat();
+    this.createOnlineListener();
     setTimeout(() => {
       this.checkForHeartbeat();
     }, this.getHeartbeatTime());
   }
 
-  private connect(): void {
+  private connectWebsocket(): void {
     this.http.authContext$.subscribe(ctx => {
         if (ctx === null) {
           return NEVER;
@@ -75,11 +77,14 @@ export class PollingService {
         });
         console.log('Websocket created');
 
+        let opened = false;
+
         ws.onOpen(() => {
           if (this.websocket !== null) {
             this.websocket.close(true);
             this.websocket = ws;
           }
+          opened = true;
 
           console.log('Websocket opened');
           ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
@@ -105,6 +110,11 @@ export class PollingService {
             ws.send4Direct(JSON.stringify(message));
           });
         });
+
+        setTimeout(() => {
+          if (!opened)
+            ws.close(true);
+        }, 5000);
 
         ws.onMessage(event => {
           this.rawMessageStream.next({
@@ -141,20 +151,20 @@ export class PollingService {
       });
   }
 
-  private disconnect(): void {
+  private disconnectWebsocket(): void {
     if (this.websocket === null)
       return;
 
     this.websocket.close(true);
   }
 
-  reconnect(): void {
+  reconnectWebsocket(): void {
     if (this.lastReconnectAttempt + 2 * 1000 < Date.now())
       return;
     this.lastReconnectAttempt = Date.now();
 
-    this.disconnect();
-    this.connect();
+    this.disconnectWebsocket();
+    this.connectWebsocket();
   }
 
   private createEventListener(): void {
@@ -169,6 +179,13 @@ export class PollingService {
     ).subscribe(event => {
       this.eventStream.next(event);
     });
+  }
+
+  private createOnlineListener(): void {
+    this.isOnline$ = merge(
+      fromEvent(window, 'online').pipe(map(e => true)),
+      fromEvent(window, 'offline').pipe(map(e => false)),
+    );
   }
 
   listen(filterString?: string): Observable<PollingEvent> {
@@ -202,7 +219,7 @@ export class PollingService {
       this.isConnected$.next(false);
       this.failedHeartbeats += 1;
       if (this.websocket !== null)
-        this.reconnect();
+        this.reconnectWebsocket();
     } else {
       this.isConnected$.next(true);
       this.failedHeartbeats = 0;
