@@ -64,6 +64,9 @@ export class PollingService {
   }
 
   private connectWebsocket(): void {
+    if (this.websocket !== null)
+      return;
+
     this.http.authContext$.subscribe(ctx => {
         if (ctx === null) {
           return NEVER;
@@ -76,14 +79,11 @@ export class PollingService {
           reconnectIfNotNormalClose: false,
         });
         console.log('Websocket created');
+        this.websocket = ws;
 
         let opened = false;
 
         ws.onOpen(() => {
-          if (this.websocket !== null) {
-            this.websocket.close(true);
-            this.websocket = ws;
-          }
           opened = true;
 
           console.log('Websocket opened');
@@ -159,7 +159,7 @@ export class PollingService {
   }
 
   reconnectWebsocket(): void {
-    if (this.lastReconnectAttempt + 2 * 1000 < Date.now())
+    if (this.lastReconnectAttempt + 10 * 1000 < Date.now())
       return;
     this.lastReconnectAttempt = Date.now();
 
@@ -183,8 +183,15 @@ export class PollingService {
 
   private createOnlineListener(): void {
     this.isOnline$ = merge(
-      fromEvent(window, 'online').pipe(map(e => true)),
-      fromEvent(window, 'offline').pipe(map(e => false)),
+      fromEvent(window, 'online').pipe(map(e => {
+        this.connectWebsocket();
+        return true;
+      })),
+      fromEvent(window, 'offline').pipe(map(e => {
+        this.isConnected$.next(false);
+        this.disconnectWebsocket();
+        return false;
+      })),
     );
   }
 

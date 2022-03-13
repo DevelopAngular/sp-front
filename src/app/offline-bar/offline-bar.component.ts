@@ -30,8 +30,7 @@ export class OfflineBarComponent implements OnInit {
     ).pipe(map(data => {
       let online, isConnected;
       [online, isConnected] = data;
-      if (!online) return false;
-      return isConnected;
+      return online && isConnected;
     }));
     this.isConnected$.subscribe(isConnected => {
       if (isConnected) {
