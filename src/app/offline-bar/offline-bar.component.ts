@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, BehaviorSubject, combineLatest} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, startWith} from 'rxjs/operators';
 import {PollingService} from '../services/polling-service';
 
 @Component({
@@ -26,7 +26,8 @@ export class OfflineBarComponent implements OnInit {
     this.statusText$ = new BehaviorSubject('Your internet connection was restored.');
 
     this.isConnected$ = combineLatest(
-      this.pollingService.isOnline$, this.pollingService.isConnected$
+      this.pollingService.isOnline$.pipe(startWith(true)),
+      this.pollingService.isConnected$.pipe(startWith(true))
     ).pipe(map(data => {
       let online, isConnected;
       [online, isConnected] = data;
