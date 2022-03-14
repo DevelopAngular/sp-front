@@ -1,0 +1,15 @@
+{
+  "integrationFolder": "cypress/integration",
+  "supportFile": "cypress/support/index.ts",
+  "screenshotOnRunFailure": false,
+  "videoUploadOnPasses": false,
+  "pluginsFile": "cypress/plugins/index.ts",
+  "fixturesFolder": "cypress/fixtures",
+  "baseUrl": "http://localhost:4200",
+  "env": {
+    "studentUsername": "svango",
+    "studentPassword": "wgeklh23$",
+    "teacherUsername": "fjennings",
+    "teacherPassword": "agfokfhl3"
+  }
+}

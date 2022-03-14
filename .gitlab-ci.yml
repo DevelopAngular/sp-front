@@ -15,6 +15,7 @@ variables:
 
 stages:
   - build
+  - test
   - deploy
 
 testing_build:
@@ -51,6 +52,34 @@ testing_build:
     - production
   only:
     kubernetes: active
+  tags:
+    - "docker-passthrough"
+
+testing_e2e:
+  stage: test
+  script:
+    - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
+    - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
+    - apk add --no-cache bash git python make g++ libstdc++ coreutils
+    - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
+    - mkdir ~/.nvm/versions
+    - echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> ~/.profile
+    - echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> ~/.profile
+    - source ~/.profile
+    - bash
+    - nvm -v
+    - "mkdir ~/.nvm/.cache && mkdir ~/.nvm/.cache/bin && mkdir ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl"
+    - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
+    - nvm install $(cat .nvmrc)
+    - nvm use
+    - ls -l / ; pwd
+    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
+    - pwd
+    - npm ci
+    - npm run e2e
+  only:
+    - merge_requests
   tags:
     - "docker-passthrough"
 
