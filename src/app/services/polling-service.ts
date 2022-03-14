@@ -46,17 +46,16 @@ export class PollingService {
   private websocket: $WebSocket = null;
 
   isConnected$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  isOnline$: Observable<boolean>;
 
   private failedHeartbeats: number = 0;
   private lastHeartbeat: number = Date.now();
-  private lastReconnectAttempt: number = Date.now();
 
   constructor(private http: HttpService,
               private _logger: Logger) {
     this.connectWebsocket();
     this.createEventListener();
     this.listenForHeartbeat();
+    this.listenForAuthentication();
     this.createOnlineListener();
     setTimeout(() => {
       this.checkForHeartbeat();
@@ -84,6 +83,8 @@ export class PollingService {
         let opened = false;
 
         ws.onOpen(() => {
+          if (this.websocket !== ws)
+            return;
           opened = true;
 
           console.log('Websocket opened');
@@ -100,7 +101,6 @@ export class PollingService {
               data: null,
             },
           });
-          this.isConnected$.next(true);
 
           if (sendMessageSubscription !== null) {
             sendMessageSubscription.unsubscribe();
@@ -156,14 +156,11 @@ export class PollingService {
       return;
 
     this.websocket.close(true);
+    this.websocket = null;
   }
 
-  reconnectWebsocket(): void {
-    if (this.lastReconnectAttempt + 10 * 1000 < Date.now())
-      return;
-    this.lastReconnectAttempt = Date.now();
-
-    this.disconnectWebsocket();
+  refreshHeartbeatTimer(): void {
+    this.failedHeartbeats = 0;
     this.connectWebsocket();
   }
 
@@ -182,17 +179,13 @@ export class PollingService {
   }
 
   private createOnlineListener(): void {
-    this.isOnline$ = merge(
-      fromEvent(window, 'online').pipe(map(e => {
-        this.connectWebsocket();
-        return true;
-      })),
-      fromEvent(window, 'offline').pipe(map(e => {
-        this.isConnected$.next(false);
-        this.disconnectWebsocket();
-        return false;
-      })),
-    );
+    fromEvent(window, 'online').subscribe(() => {
+      this.refreshHeartbeatTimer();
+    });
+    fromEvent(window, 'offline').subscribe(() => {
+      this.isConnected$.next(false);
+      this.disconnectWebsocket();
+    });
   }
 
   listen(filterString?: string): Observable<PollingEvent> {
@@ -221,14 +214,20 @@ export class PollingService {
       });
   }
 
+  private listenForAuthentication(): void {
+    this.listen('authenticate.success')
+      .subscribe((data) => {
+        this.isConnected$.next(true);
+      });
+  }
+
   private checkForHeartbeat(): void {
     if (this.lastHeartbeat < Date.now() - 20000) {
       this.isConnected$.next(false);
       this.failedHeartbeats += 1;
-      if (this.websocket !== null)
-        this.reconnectWebsocket();
+      this.disconnectWebsocket();
+      this.connectWebsocket();
     } else {
-      this.isConnected$.next(true);
       this.failedHeartbeats = 0;
     }
 
