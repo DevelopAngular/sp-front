@@ -8,7 +8,7 @@ import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {filter, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, switchMap, takeUntil, startWith} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {LocationsService} from '../services/locations.service';
@@ -65,31 +65,34 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.locationService.getPassLimitRequest();
-      combineLatest(
-        this.userService.user$,
-        this.userService.effectiveUser.pipe(filter(r => !!r))
-      ).pipe(
-          switchMap(([user, effectiveUser]) => {
-            if (effectiveUser) {
-              return this.locationService.getLocationsWithTeacherRequest(effectiveUser.user);
-            }
-              return this.locationService.getLocationsWithTeacherRequest(user);
-          }),
-        filter((res: any[]) => !!res.length),
-        takeUntil(this.destroy$)
-      )
+    combineLatest(
+      this.userService.user$.pipe(startWith(null)),
+      this.userService.effectiveUser.pipe(filter(r => !!r)).pipe(startWith(null))
+    ).pipe(
+      switchMap(([user, effectiveUser]) => {
+        if (effectiveUser) {
+          return this.locationService.getLocationsWithTeacherRequest(effectiveUser.user);
+        }
+        if (user) {
+          return this.locationService.getLocationsWithTeacherRequest(user);
+        }
+        return of([]);
+      }),
+      filter((res: any[]) => !!res.length),
+      takeUntil(this.destroy$)
+    )
       .subscribe(locations => {
-          const kioskJwtToken = this.storage.getItem('kioskToken');
-          const jwtHelper = new JwtHelperService();
-          this.userData = jwtHelper.decodeToken(kioskJwtToken);
-          const kioskLocation = locations.find(loc => +loc.id === this.userData.kiosk_location_id);
-          this.liveDataService.getMyRoomActivePassesRequest(
-            of({sort: '-created', search_query: ''}),
-            {type: 'location', value: [kioskLocation]},
-            this.timeService.nowDate()
-          );
-          this.kioskMode.currentRoom$.next(kioskLocation);
-      });
+        const kioskJwtToken = this.storage.getItem('kioskToken');
+        const jwtHelper = new JwtHelperService();
+        this.userData = jwtHelper.decodeToken(kioskJwtToken);
+        const kioskLocation = locations.find(loc => +loc.id === this.userData.kiosk_location_id);
+        this.liveDataService.getMyRoomActivePassesRequest(
+          of({sort: '-created', search_query: ''}),
+          {type: 'location', value: [kioskLocation]},
+          this.timeService.nowDate()
+        );
+        this.kioskMode.setCurrentRoom(kioskLocation);
+    });
 
     this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
   }
@@ -116,7 +119,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       if (event.keyCode === 13 && this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
           combineLatest(
               this.userService.searchUserByCardId(this.cardReaderValue),
-              this.passesService.getActivePassesKioskMode(this.kioskMode.currentRoom$.value.id)
+              this.passesService.getActivePassesKioskMode(this.kioskMode.getCurrentRoom().value.id)
           ).pipe(
               switchMap(([user, passes]: [User[], HallPass[]]) => {
                   this.cardReaderValue = '';
@@ -150,7 +153,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
               'forStaff': true,
               'forInput': true,
               'kioskMode': true,
-              'kioskModeRoom': this.kioskMode.currentRoom$.value,
+              'kioskModeRoom': this.kioskMode.getCurrentRoom().value,
               'kioskModeSelectedUser': student
           }
       });

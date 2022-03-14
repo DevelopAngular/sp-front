@@ -376,7 +376,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       kioskRoom = Object.assign({}, this.selectedLocation);
     }
-    this.kioskMode.currentRoom$.next(kioskRoom);
+    this.kioskMode.setCurrentRoom(kioskRoom);
     this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
       // Switch into kiosk mode
 
