@@ -78,8 +78,6 @@ testing_e2e:
     - pwd
     - npm ci
     - npm run e2e
-  only:
-    - merge_requests
   tags:
     - "docker-passthrough"
 
