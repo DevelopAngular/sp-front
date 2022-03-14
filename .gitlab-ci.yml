@@ -60,7 +60,7 @@ testing_e2e:
   script:
     - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash git python make g++ libstdc++ coreutils
+    - apk add --no-cache bash git python make g++ libstdc++ coreutils libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
     - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
     - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
     - mkdir ~/.nvm/versions
