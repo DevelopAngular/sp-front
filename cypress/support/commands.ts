@@ -44,6 +44,7 @@
 
 // @ts-ignore
 Cypress.Commands.add('login', (username: string, password: string) => {
+  cy.visit('http://localhost:4200');
   cy.get('div.input-container input[autocomplete="username"]').type(username);
   cy.get('div.button > app-gradient-button > div.button').click({force: true});
   cy.get('div.input-container input[autocomplete="password"]').type(password);
