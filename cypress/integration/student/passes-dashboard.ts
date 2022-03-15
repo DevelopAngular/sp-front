@@ -9,7 +9,7 @@ describe('Student - Passes Dashboard', () => {
   };
 
   const clickOnFuturePass = () => {
-    cy.get('app-create-pass-button>div').first().click({force: true});
+    cy.get('app-create-pass-button>div').last().click({force: true});
   };
 
   const searchForCurrentRoom = (roomName: string) => {
