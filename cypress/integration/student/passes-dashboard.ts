@@ -1,17 +1,11 @@
+import * as PassDashboard from '../../support/functions/pass-dashboard';
+
 /**
  * Responsible for all interactions a student can make on the main dashboard page
  */
 
 describe('Student - Passes Dashboard', () => {
   // useful functions to execute on the student passes dashboard
-  const clickOnNowPass = () => {
-    cy.get('app-create-pass-button>div').first().click({force: true});
-  };
-
-  const clickOnFuturePass = () => {
-    cy.get('app-create-pass-button>div').last().click({force: true});
-  };
-
   const searchForCurrentRoom = (roomName: string) => {
     cy.get('app-round-input input').type(roomName);
   };
@@ -24,13 +18,13 @@ describe('Student - Passes Dashboard', () => {
     cy.get('mat-grid-tile > figure > app-pinnable > div:not(.isSameRoom)').contains(roomName).click();
   };
 
-  const cancelModal = () => {
-    cy.get('div.cdk-overlay-backdrop.custom-backdrop').click({force: true});
-  };
-
   const startPass = () => {
     cy.get('div.start-pass-content').click({force: true});
   };
+
+  const endPass = () => {
+    cy.get('div.end-pass-content').click();
+  }
 
   before(() => {
     // @ts-ignore
@@ -46,34 +40,62 @@ describe('Student - Passes Dashboard', () => {
    *    - Future
    *  - Previous Passes
    *  - Section of Pass Requests
-   *  - User name in top rioht
+   *  - User name in top right
    *  - Settings button
    *  - Settings menu items
    */
 
   describe('Pass Management', () => {
-    beforeEach(() => {
+    // end any existing passes before the test suite starts
+    before(() => {
       if (cy.$$('div.end-pass-content').length) {
-        cy.get('div.end-pass-content').click();
+        endPass();
         cy.wait(500);
       }
     });
+
+    // beforeEach(() => {
+    //   cy.clock();
+    // });
+
     it('should be able to create a one-way pass', () => {
       expect(true).to.equal(true);
-
-      clickOnNowPass();
+      PassDashboard.openCreatePassDialog('now');
+      cy.wait(500);
       selectCurrentRoom('Bathroom');
       cy.wait(500);
       selectDestination('Nurse');
       cy.wait(500);
-      /**
-       * Since there's currently some bugs in Cypress around the dragging of elements,
-       * the arrows will be used to set the duration slider down to a single minute
-       */
-      cy.get('mat-slider').type(new Array(50).fill('{downArrow}').join());
+
+      PassDashboard.setMinimumPassDuration();
       startPass();
       cy.get('app-inline-pass-card').should('exist').should('have.length', 1);
     });
+
+    it('should not be able to create a pass if a pass is in progress', () => {
+      cy.get('app-create-pass-button>div').should('not.exist');
+    });
+
+    it('should mark an expired pass as "Expiring"', () => {
+      cy.clock(Date.now());
+      cy.tick(60000);
+      cy.wait(1000);
+      cy.get('app-inline-pass-card div.end-pass-content').should('have.class', 'isExpiring');
+    });
+
+    it('should expire the pass if the buffer time has passed', () => {
+      const expiredPasses = cy.$$('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper').length;
+      const now = new Date();
+      const futureBufferDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1);
+      cy.clock(Date.now());
+      cy.tick(3600000) // an hour
+      // expect(cy.$$('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper').length).to.equal(expiredPasses + 1);
+      cy.get('app-create-pass-button>div').should('exist').should('be.visible');
+    });
+
+    // it('should be able to end a pass', () => {
+    //   endPass();
+    // })
 
     /** Now Cards - Actions and UX
      * These may be separate tests or multiple of these may be tested in a single test

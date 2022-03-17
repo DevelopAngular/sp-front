@@ -59,4 +59,3 @@ Cypress.Commands.add('logout', () => {
   cy.get('div.sign-out').click();
   cy.wait(5000);
 });
-

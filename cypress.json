@@ -1,5 +1,7 @@
 {
   "integrationFolder": "cypress/integration",
+  "viewportHeight": 1080,
+  "viewportWidth": 1920,
   "supportFile": "cypress/support/index.ts",
   "screenshotOnRunFailure": false,
   "videoUploadOnPasses": false,
@@ -7,9 +9,11 @@
   "fixturesFolder": "cypress/fixtures",
   "baseUrl": "http://localhost:4200",
   "env": {
-    "studentUsername": "svango",
-    "studentPassword": "wgeklh23$",
+    "studentUsername": "demostudent2@cypress.smartpass.app",
+    "studentPassword": "b3-Iop6(Nt",
     "teacherUsername": "fjennings",
-    "teacherPassword": "agfokfhl3"
+    "teacherPassword": "agfokfhl3",
+    "adminUsername": "smartpass-admin@cypress.smartpass.app",
+    "adminPassword": "CmN9qyLf"
   }
 }
