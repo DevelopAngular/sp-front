@@ -5,7 +5,6 @@ import {HttpService} from './http-service';
 
 import {switchMap, take} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
-import {SwPush} from '@angular/service-worker';
 
 declare var window: any;
 
@@ -47,30 +46,11 @@ export class NotificationService {
 
   constructor(
     private afm: AngularFireMessaging,
-    private http: HttpService,
-    private sw: SwPush
+    private http: HttpService
   ) {
     this.afm.messages.subscribe((message) => {
       const notif: Notif = Notif.fromJSON(message);
       this.displayNotification(notif);
-    });
-
-    if (this.sw.isEnabled) {
-      this.sw.messages.subscribe(m => {
-        console.log('Message ===>>', m);
-      });
-    }
-
-    this.sw.subscription.subscribe(res => {
-      console.log('Worker Info ==>>>>>>', res);
-    });
-
-    this.sw.messages.subscribe(mes => {
-      console.log('Messages ===>>>>>', mes);
-    });
-
-    this.sw.notificationClicks.subscribe(res => {
-      console.log('ClickEvent ===>>>>>', res);
     });
   }
 
@@ -164,7 +144,6 @@ export class NotificationService {
     };
 
     if (DeviceDetection.isAndroid()) {
-      console.log('Android ====>>>>>>>>>>>', notification.notification, notifOptions);
       new ServiceWorkerRegistration().showNotification(notification.notification.title, notifOptions)
         .then(() => {
           this.showFunc.bind(this);
@@ -173,7 +152,6 @@ export class NotificationService {
           this.errorFunc.bind(this);
         });
     } else {
-      console.log('====>>>>>>>>>>>', notification.notification, notifOptions);
       const notif = new Notification(notification.notification.title, notifOptions);
       notif.onshow = this.showFunc.bind(this);
       notif.onerror = this.errorFunc.bind(this);
