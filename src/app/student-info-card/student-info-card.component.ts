@@ -202,11 +202,20 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
   }
 
   secondToTime(seconds) {
-    let time = '';
-    if (moment.utc(seconds * 1000).hours() > 0) {
-      time += moment.utc(seconds * 1000).hours() + 'hr ';
+    if (!seconds) {
+      return '0 min';
     }
-    time += (moment.utc(seconds * 1000).minutes() < 1 && moment.utc(seconds * 1000).seconds() > 1 ? 1 : moment.utc(seconds * 1000).minutes()) + ' min';
+    let time = '';
+    const days = moment.duration(seconds * 1000).days();
+    let hours = moment.duration(seconds * 1000).hours();
+    const minutes = moment.duration(seconds * 1000).minutes();
+    if (days > 0) {
+      hours = hours + (days * 24);
+    }
+    if (hours > 0) {
+      time += hours + 'hr ';
+    }
+    time += (minutes < 1 && moment.duration(seconds * 1000).seconds() > 1 ? 1 : minutes) + ' min';
     return time;
   }
 
