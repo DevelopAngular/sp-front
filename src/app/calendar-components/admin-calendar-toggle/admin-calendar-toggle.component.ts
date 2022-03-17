@@ -79,12 +79,7 @@ export class AdminCalendarToggleComponent implements OnInit, OnDestroy {
 
   constructor(private cdr: ChangeDetectorRef) { }
 
-  get rangeDate() {
-    return this.rangeOptions.find(opt => opt.id === 'range_4');
-  }
-
   ngOnInit() {
-    // console.log(this.selectedOptions);
     if (this.selectedOptions) {
       setTimeout(() => {
           this.toggleResult = this.selectedOptions.toggleResult;
@@ -133,7 +128,6 @@ export class AdminCalendarToggleComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         const rect = this.container.getBoundingClientRect();
-        const direction = this.windowInnerHeight > window.innerHeight ? 'up' : 'down';
         let h;
 
         if (this.openCalendar &&  this.toggleResult === 'Range') {
@@ -176,7 +170,6 @@ export class AdminCalendarToggleComponent implements OnInit, OnDestroy {
     } else if (id === 'range_4') {
       this.openCalendar = true;
       this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
-      // this.selectedDate = { start: null, end: null };
       setTimeout(() => {
         this.rangeButton.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
       }, 100);
@@ -193,7 +186,6 @@ export class AdminCalendarToggleComponent implements OnInit, OnDestroy {
   }
 
   selectedDaysOption(id) {
-    // debugger;
       this.openTimeRange = id === 'days_2';
       if (this.openTimeRange) {
           this.settingsRes.emit({toggleResult: this.toggleResult, dayOptId: id});
@@ -233,10 +225,6 @@ export class AdminCalendarToggleComponent implements OnInit, OnDestroy {
         this.settingsRes.emit({toggleResult: this.toggleResult});
         this.adminCalendarRes.emit({start: selectedDates[0], end: selectedDates[1]});
     }
-  }
-
-  resetDate() {
-      this.selectedDate = { start: null, end: null };
   }
 
   changeRangeTime(start, date) {
