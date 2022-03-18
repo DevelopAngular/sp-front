@@ -1,4 +1,4 @@
-import * as PassDashboard from '../../support/functions/pass-dashboard'
+import * as PassFunctions from '../../support/functions/passes'
 
 /**
  * Responsible for all interactions a teacher can make on the main dashboard page
@@ -6,41 +6,11 @@ import * as PassDashboard from '../../support/functions/pass-dashboard'
 
 describe('Teacher - Passes Dashboard', () => {
   // useful functions to execute on the student passes dashboard
-  const searchForStudent = (studentName: string) => {
-    cy.get('app-round-input input[placeholder="Search students"]').type(studentName);
-  };
-
-  const selectStudentFromSearchList = (studentName: string) => {
-    cy.get('div.option-list_item').click({multiple: true});
-  };
-
   const nextStep = () => {
     cy.get(' div.content-right_next app-gradient-button > div').click();
   };
 
-  const searchForCurrentRoom = (roomName: string) => {
-    cy.get('app-round-input input').type(roomName);
-  };
 
-  const selectCurrentRoom = (roomName: string) => {
-    cy.get('app-location-cell div.info').contains(roomName).click({force: true});
-  };
-
-  const selectDestination = (roomName: string) => {
-    cy.get('mat-grid-tile > figure > app-pinnable > div:not(.isSameRoom)').contains(roomName).click();
-  };
-
-  const cancelModal = () => {
-    cy.get('div.cdk-overlay-backdrop.custom-backdrop').click({force: true});
-  };
-
-  const startPass = () => {
-    cy.get('div.start-pass-content').click({force: true});
-  };
-
-  const getActivePasses = (): number => {
-    return cy.$$('div.active-passes > app-pass-collection > div.collection-wrapper  app-pass-tile').length;
-  }
 
   before(() => {
     // @ts-ignore
@@ -61,17 +31,17 @@ describe('Teacher - Passes Dashboard', () => {
       cy.wait(100);
     })
     it('should create a "Now" pass for a student', () => {
-      PassDashboard.openCreatePassDialog('now');
-      searchForStudent('Sally Vango');
+      PassFunctions.openCreatePassDialog('now');
+      PassFunctions.searchForStudent('Demo Student1');
       cy.wait(200);
-      selectStudentFromSearchList('Sally Vango');
+      PassFunctions.selectStudentFromSearchList('Demo Student1');
       nextStep();
-      selectCurrentRoom('Bathroom');
+      PassFunctions.selectCurrentRoom('Bathroom');
       cy.wait(500);
-      selectDestination('Nurse');
+      PassFunctions.selectDestination('Nurse');
       cy.wait(500);
-      PassDashboard.setMinimumPassDuration();
-      startPass();
+      PassFunctions.setMinimumPassDuration();
+      PassFunctions.startPass();
     });
 
     it('should end an active pass for a student', () => {
@@ -81,20 +51,20 @@ describe('Teacher - Passes Dashboard', () => {
     });
     //
     it('should send a pass to 2 students', () => {
-      PassDashboard.openCreatePassDialog('now');
-      searchForStudent('Sally Vango');
+      PassFunctions.openCreatePassDialog('now');
+      PassFunctions.searchForStudent('Demo Student1');
       cy.wait(200);
-      selectStudentFromSearchList('Sally Vango');
-      searchForStudent('d3');
+      PassFunctions.selectStudentFromSearchList('Demo Student1');
+      PassFunctions.searchForStudent('Demo Student2');
       cy.wait(200);
-      selectStudentFromSearchList('d3');
+      PassFunctions.selectStudentFromSearchList('Demo Student2');
       nextStep();
-      selectCurrentRoom('Bathroom');
+      PassFunctions.selectCurrentRoom('Bathroom');
       cy.wait(500);
-      selectDestination('Nurse');
+      PassFunctions.selectDestination('Nurse');
       cy.wait(500);
-      PassDashboard.setMinimumPassDuration();
-      startPass();
+      PassFunctions.setMinimumPassDuration();
+      PassFunctions.startPass();
     })
 
     it('should end an expired pass for a student', () => {

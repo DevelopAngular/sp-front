@@ -1,4 +1,5 @@
-import * as PassDashboard from '../../support/functions/pass-dashboard';
+import * as PassFunctions from '../../support/functions/passes';
+import * as moment from 'moment';
 
 /**
  * Responsible for all interactions a student can make on the main dashboard page
@@ -57,14 +58,14 @@ describe('Student - Passes Dashboard', () => {
 
       it('should be able to create a one-way pass', () => {
         expect(true).to.equal(true);
-        PassDashboard.openCreatePassDialog('now');
+        PassFunctions.openCreatePassDialog('now');
         cy.wait(500);
         selectCurrentRoom('Bathroom');
         cy.wait(500);
         selectDestination('Nurse');
         cy.wait(500);
 
-        PassDashboard.setMinimumPassDuration();
+        PassFunctions.setMinimumPassDuration();
         startPass();
         cy.get('app-inline-pass-card').should('exist').should('have.length', 1);
       });
@@ -106,10 +107,14 @@ describe('Student - Passes Dashboard', () => {
 
       it('should create a scheduled pass', () => {
         const numberOfScheduledPasses = cy.$$('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').length;
-        const today = new Date();
-        scheduledDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 10);
-        PassDashboard.openCreatePassDialog('future');
-        cy.get('div.week-date > div.date-text').contains(today.getDate() + 1).click({force: true});
+        const todayMoment = moment();
+        while (todayMoment.isoWeekday() !== 1) {
+          todayMoment.add(1, 'day')
+        }
+
+        scheduledDate = todayMoment.toDate();
+        PassFunctions.openCreatePassDialog('future');
+        cy.get('div.week-date > div.date-text').contains(scheduledDate.getDate()).click({force: true});
         cy.get('div.hours > input.timeInput').clear().type('10');
         cy.get('div.minutes > input.timeInput').clear().type('0');
         cy.get('div.format[draggable="false"]').then(el => {
@@ -123,7 +128,7 @@ describe('Student - Passes Dashboard', () => {
         selectDestination('Water Fountain');
         cy.wait(500);
 
-        PassDashboard.setMinimumPassDuration();
+        PassFunctions.setMinimumPassDuration();
         startPass();
         cy.get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').should('have.length', numberOfScheduledPasses + 1);
       });

@@ -11,8 +11,8 @@
   "env": {
     "studentUsername": "demostudent2@cypress.smartpass.app",
     "studentPassword": "b3-Iop6(Nt",
-    "teacherUsername": "fjennings",
-    "teacherPassword": "agfokfhl3",
+    "teacherUsername": "demoteacher1@cypress.smartpass.app",
+    "teacherPassword": "j6UmyudW2f",
     "adminUsername": "smartpass-admin@cypress.smartpass.app",
     "adminPassword": "CmN9qyLf"
   }

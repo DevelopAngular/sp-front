@@ -22,3 +22,31 @@ export const setMinimumPassDuration = () => {
     slider.type('{downArrow}{downArrow}');
   }
 }
+
+export const searchForStudent = (studentName: string) => {
+  cy.get('app-round-input input[placeholder="Search students"]').type(studentName);
+};
+
+export const selectStudentFromSearchList = (studentName: string) => {
+  cy.get('div.option-list_item').click({multiple: true});
+};
+
+export const searchForCurrentRoom = (roomName: string) => {
+  cy.get('app-round-input input').type(roomName);
+};
+
+export const selectCurrentRoom = (roomName: string) => {
+  cy.get('app-location-cell div.info').contains(roomName).click({force: true});
+};
+
+export const selectDestination = (roomName: string) => {
+  cy.get('mat-grid-tile > figure > app-pinnable > div:not(.isSameRoom)').contains(roomName).click();
+};
+
+export const startPass = () => {
+  cy.get('div.start-pass-content').click({force: true});
+};
+
+export const getActivePasses = (): number => {
+  return cy.$$('div.active-passes > app-pass-collection > div.collection-wrapper  app-pass-tile').length;
+}
