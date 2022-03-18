@@ -46,56 +46,106 @@ describe('Student - Passes Dashboard', () => {
    */
 
   describe('Pass Management', () => {
-    // end any existing passes before the test suite starts
-    before(() => {
-      if (cy.$$('div.end-pass-content').length) {
-        endPass();
+    describe('Now Passes', () => {
+      // end any existing passes before the test suite starts
+      before(() => {
+        if (cy.$$('div.end-pass-content').length) {
+          endPass();
+          cy.wait(500);
+        }
+      });
+
+      it('should be able to create a one-way pass', () => {
+        expect(true).to.equal(true);
+        PassDashboard.openCreatePassDialog('now');
         cy.wait(500);
-      }
+        selectCurrentRoom('Bathroom');
+        cy.wait(500);
+        selectDestination('Nurse');
+        cy.wait(500);
+
+        PassDashboard.setMinimumPassDuration();
+        startPass();
+        cy.get('app-inline-pass-card').should('exist').should('have.length', 1);
+      });
+
+      it('should not be able to create a pass if a pass is in progress', () => {
+        cy.get('app-create-pass-button>div').should('not.exist');
+      });
+
+      it('should mark an expired pass as "Expiring"', () => {
+        cy.clock(Date.now());
+        cy.tick(60000);
+        cy.wait(1000);
+        cy.get('app-inline-pass-card div.end-pass-content').should('have.class', 'isExpiring');
+      });
+
+      it('should expire the pass if the buffer time has passed', () => {
+        const expiredPasses = cy.$$('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper').length;
+        const now = new Date();
+        const futureBufferDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1);
+        cy.clock(Date.now());
+        cy.tick(3600000) // an hour
+        // expect(cy.$$('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper').length).to.equal(expiredPasses + 1);
+        cy.get('app-create-pass-button>div').should('exist').should('be.visible');
+      });
+
+      it('should be able to end a pass', () => {
+        endPass();
+      })
     });
 
-    // beforeEach(() => {
-    //   cy.clock();
-    // });
+    describe('Future Passes', () => {
+      let scheduledDate: Date;
+      before(() => {
+        if (cy.$$('div.end-pass-content').length) {
+          endPass();
+          cy.wait(500);
+        }
+      });
 
-    it('should be able to create a one-way pass', () => {
-      expect(true).to.equal(true);
-      PassDashboard.openCreatePassDialog('now');
-      cy.wait(500);
-      selectCurrentRoom('Bathroom');
-      cy.wait(500);
-      selectDestination('Nurse');
-      cy.wait(500);
+      it('should create a scheduled pass', () => {
+        const numberOfScheduledPasses = cy.$$('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').length;
+        const today = new Date();
+        scheduledDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 10);
+        PassDashboard.openCreatePassDialog('future');
+        cy.get('div.week-date > div.date-text').contains(today.getDate() + 1).click({force: true});
+        cy.get('div.hours > input.timeInput').clear().type('10');
+        cy.get('div.minutes > input.timeInput').clear().type('0');
+        cy.get('div.format[draggable="false"]').then(el => {
+          if (el.text() === 'PM') {
+            el.trigger('click');
+          }
+        });
+        cy.get('div.next-button > app-gradient-button > div.button').click();
+        selectCurrentRoom('Bathroom');
+        cy.wait(500);
+        selectDestination('Water Fountain');
+        cy.wait(500);
 
-      PassDashboard.setMinimumPassDuration();
-      startPass();
-      cy.get('app-inline-pass-card').should('exist').should('have.length', 1);
-    });
+        PassDashboard.setMinimumPassDuration();
+        startPass();
+        cy.get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').should('have.length', numberOfScheduledPasses + 1);
+      });
 
-    it('should not be able to create a pass if a pass is in progress', () => {
-      cy.get('app-create-pass-button>div').should('not.exist');
-    });
+      /**
+       * This test should rely on the mocking of web sockets to manually set a pass over to the active state
+       */
+      // it('should move the scheduled pass to active after some time', () => {
+      //   cy.clock(scheduledDate);
+      //   cy.tick(61000);
+      //   cy.wait(100);
+      //   cy.get('app-inline-pass-card').should('exist').should('have.length', 1);
+      // });
 
-    it('should mark an expired pass as "Expiring"', () => {
-      cy.clock(Date.now());
-      cy.tick(60000);
-      cy.wait(1000);
-      cy.get('app-inline-pass-card div.end-pass-content').should('have.class', 'isExpiring');
-    });
-
-    it('should expire the pass if the buffer time has passed', () => {
-      const expiredPasses = cy.$$('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper').length;
-      const now = new Date();
-      const futureBufferDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1);
-      cy.clock(Date.now());
-      cy.tick(3600000) // an hour
-      // expect(cy.$$('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper').length).to.equal(expiredPasses + 1);
-      cy.get('app-create-pass-button>div').should('exist').should('be.visible');
-    });
-
-    // it('should be able to end a pass', () => {
-    //   endPass();
-    // })
+      it('should delete the scheduled pass', () => {
+        const numberOfScheduledPasses = cy.$$('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').length;
+        cy.get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').first().click({force: true});
+        cy.get('div.pass-card-header app-icon-button > div.icon-button-container').click();
+        cy.get('div.options-container').contains('Delete Scheduled Pass').parent().click();
+        cy.get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').should('have.length', numberOfScheduledPasses - 1);
+      })
+    })
 
     /** Now Cards - Actions and UX
      * These may be separate tests or multiple of these may be tested in a single test
