@@ -30,6 +30,7 @@ import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
+import {CheckForUpdateService} from './services/check-for-update.service';
 
 declare const window;
 
@@ -99,9 +100,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
     private toastService: ToastService,
+    private updateService: CheckForUpdateService,
   ) {}
 
   ngOnInit() {
+    this.updateService.check();
     this.customToastOpen$ = this.toastService.isOpen$;
     this.toasts$ = this.toastService.toasts$;
     this.user$ = this.userService.user$.pipe(map(user => User.fromJSON(user)));
