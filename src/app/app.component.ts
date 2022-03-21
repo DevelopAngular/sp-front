@@ -32,6 +32,7 @@ import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
 import {CheckForUpdateService} from './services/check-for-update.service';
 import {LocalizejsService} from './services/localizejs.service';
+import {ColorProfile} from './models/ColorProfile';
 
 declare const window;
 
@@ -51,6 +52,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   shortcuts: ShortcutInput[];
   currentRoute: string;
+
+  needToUpdateApp$: Subject<{active: boolean, color: ColorProfile}>;
 
   private dialogContainer: HTMLElement;
   @ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
@@ -118,6 +121,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         window.history.pushState({}, '');
       }
     });
+
+    this.needToUpdateApp$ = this.updateService.needToUpdate$;
 
     // set only an already set up language is found
     // otherwise let the language component try to translate
@@ -433,6 +438,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           (this.overlayContainer as ConsentMenuOverlay).restoreContainer();
         }
       });
+  }
+
+  updateApp() {
+    this.updateService.update();
   }
 
 }

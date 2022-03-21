@@ -8,6 +8,18 @@
     </div>
   </div>
 
+  <div
+    class="update-bar"
+    *ngIf="needToUpdateApp$ | async as update"
+    [style.background-color]="update.color.solid_color"
+    [style.color]="'#FFFFFF'"
+  >
+    <div class="circle" style="background-color: white"></div>
+    <div class="title">Update available.
+      <span style="font-weight: 600; cursor: pointer" appCrossPointerEventTarget (pointerClickEvent)="updateApp()">Click to update</span>
+    </div>
+  </div>
+
   <app-school-toggle-bar
     *ngIf="isAuthenticated && ( schools && schools.length > 1 ) && !hideSchoolToggleBar && !isKioskMode"
     [schools]="schools">
