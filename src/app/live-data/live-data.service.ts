@@ -431,7 +431,7 @@ export class LiveDataService {
     const filterIds = filter.map(l => l.id);
 
     const queryFilter: QueryParams = {
-      limit: 20,
+      limit: 1000,
       origin: filterIds
     };
     const filters: FilterFunc<HallPass>[] = [
@@ -474,7 +474,7 @@ export class LiveDataService {
     const filterIds = filter.map(l => l.id);
 
     const queryFilter: QueryParams = {
-      limit: 20,
+      limit: 1000,
       destination: filterIds
     };
     const filters: FilterFunc<HallPass>[] = [
