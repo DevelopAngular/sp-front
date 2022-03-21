@@ -32,6 +32,7 @@ import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
 import {CheckForUpdateService} from './services/check-for-update.service';
 import {ColorProfile} from './models/ColorProfile';
+import {Util} from '../Util';
 
 declare const window;
 
@@ -393,6 +394,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     myPush(['setPath', '/admin/dashboard']);
     myPush(['trackPageView']);
 
+  }
+
+  getBarBg(color, hovered, pressed) {
+    if (hovered) {
+      if (pressed) {
+        return Util.convertHex(color, 20);
+      }
+      return Util.convertHex(color, 15);
+    }
+    return Util.convertHex(color, 10);
   }
 
   ngOnDestroy() {
