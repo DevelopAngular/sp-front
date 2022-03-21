@@ -1,21 +1,40 @@
 import {ApplicationRef, Injectable} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
-import {first} from 'rxjs/operators';
-import {concat, interval} from 'rxjs';
+import {filter, first, map, switchMap, take} from 'rxjs/operators';
+import {concat, interval, Subject} from 'rxjs';
+import {AdminService} from './admin.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CheckForUpdateService {
 
-  constructor(private appRef: ApplicationRef, private updates: SwUpdate) {
+  needToUpdate$: Subject<{active: boolean, color: any}> = new Subject<{active: boolean, color: any}>();
 
-    updates.available.subscribe(event => {
-      if (confirm('Do you want to update app?')) {
-        updates.activateUpdate().then(() => {
-          document.location.reload();
-        });
-      }
+  constructor(
+    private appRef: ApplicationRef,
+    private updates: SwUpdate,
+    private adminService: AdminService
+  ) {
+
+    updates.available.pipe(
+      switchMap(() => {
+        return this.adminService.loadedColorProfiles$;
+      }),
+      take(1),
+      switchMap(loaded => {
+        if (loaded) {
+          return this.adminService.colorProfiles$;
+        } else {
+          return this.adminService.getColorsRequest();
+        }
+      }),
+      filter(r => !!r.length),
+      map(colors => {
+        return colors[Math.floor(Math.random() * colors.length)];
+      })
+    ).subscribe(color => {
+      this.needToUpdate$.next({active: true, color});
     });
   }
 
@@ -25,5 +44,11 @@ export class CheckForUpdateService {
     const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
 
     everySixHoursOnceAppIsStable$.subscribe(() => this.updates.checkForUpdate());
+  }
+
+  update() {
+    this.updates.activateUpdate().then(() => {
+      document.location.reload();
+    });
   }
 }

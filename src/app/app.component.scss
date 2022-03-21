@@ -17,6 +17,26 @@
   left: 0;
 }
 
+.update-bar {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .circle {
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+  }
+
+  .title {
+    font-weight: 500;
+    font-size: 15px;
+    margin-left: 10px;
+  }
+}
+
 .toasts-wrapper {
   //position: absolute;
   //top: 0;
