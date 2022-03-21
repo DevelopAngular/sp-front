@@ -617,8 +617,8 @@ export class UserService implements OnDestroy {
     return this.http.patch(`v1/users/${id}/roles`, data);
   }
 
-  deleteUserRequest(id, role) {
-    this.store.dispatch(removeAccount({id, role}));
+  deleteUserRequest(user: User, role) {
+    this.store.dispatch(removeAccount({user, role}));
     return of(null);
   }
 

@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
-import * as teachersActions from '../actions';
 import {catchError, concatMap, exhaustMap, map, mapTo, switchMap, take} from 'rxjs/operators';
 import {forkJoin, of, zip} from 'rxjs';
 import {LocationsService} from '../../../../../services/locations.service';
@@ -9,6 +8,8 @@ import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
 import {Location} from '../../../../../models/Location';
+import * as teachersActions from '../actions';
+import * as accountActions from '../../../actions/accounts.actions';
 
 @Injectable()
 export class TeachersEffects {
@@ -135,8 +136,11 @@ export class TeachersEffects {
         concatMap((action: any) => {
           return this.userService.deleteUserFromProfile(action.id, 'teacher')
             .pipe(
-              map(user => {
-                return teachersActions.removeTeacherSuccess({id: action.id});
+              switchMap((user: User) => {
+                return [
+                  teachersActions.removeTeacherSuccess({id: action.id}),
+                  accountActions.updateAccounts({account: user})
+                ];
               }),
               catchError(error => of(teachersActions.removeTeacherFailure({errorMessage: error.message})))
             );
@@ -191,8 +195,8 @@ export class TeachersEffects {
             .pipe(
               switchMap((user: User) => {
                 return [
-                  teachersActions.updateTeacherAccount({profile: user}),
-                  teachersActions.addUserToTeacherProfileSuccess({teacher: user})
+                  teachersActions.addUserToTeacherProfileSuccess({teacher: user}),
+                  accountActions.updateAccounts({account: user})
                 ];
               }),
               catchError(error => of(teachersActions.addUserToTeacherProfileFailure({errorMessage: error.message})))
