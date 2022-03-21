@@ -33,7 +33,7 @@
               [overlayWidth]="overlayWidth"
               [valid]="valid"
             >
-              <div class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">
+              <div [ngClass]="{'isExpiring': isExpiring}" class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">
                   {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
               </div>
               <ng-template #spinner>
