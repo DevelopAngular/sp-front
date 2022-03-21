@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {$WebSocket} from 'angular2-websocket/angular2-websocket';
-import {BehaviorSubject, NEVER, Observable, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, NEVER, Observable, Subject, Subscription, fromEvent, merge} from 'rxjs';
 import {filter, map, publish, refCount, switchMap, tap} from 'rxjs/operators';
 import {HttpService} from './http-service';
 import {Logger} from './logger.service';
@@ -39,104 +39,133 @@ function doesFilterMatch(prefix: string, path: string): boolean {
 })
 export class PollingService {
 
-  private readonly eventStream: Observable<PollingEvent>;
+  private eventStream: Subject<PollingEvent> = new Subject();
+  private rawMessageStream: Subject<RawMessage> = new Subject();
 
   private sendMessageQueue$ = new Subject();
+  private websocket: $WebSocket = null;
 
-  isConnected$ = new BehaviorSubject(false);
+  isConnected$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  private failedHeartbeats: number = 0;
+  private lastHeartbeat: number = Date.now();
 
   constructor(private http: HttpService,
               private _logger: Logger) {
-
-    this.eventStream = this.getEventListener().pipe(publish(), refCount());
+    this.connectWebsocket();
+    this.createEventListener();
+    this.listenForHeartbeat();
+    this.listenForAuthentication();
+    this.createOnlineListener();
+    setTimeout(() => {
+      this.checkForHeartbeat();
+    }, this.getHeartbeatTime());
   }
 
-  private getRawListener(): Observable<RawMessage> {
-    return this.http.authContext$.pipe(
-        switchMap( ctx => {
-          if (ctx === null) {
-            return NEVER;
-          }
+  private connectWebsocket(): void {
+    if (this.websocket !== null)
+      return;
 
-          return new Observable<RawMessage>(s => {
-            let sendMessageSubscription: Subscription = null;
+    this.http.authContext$.subscribe(ctx => {
+        if (ctx === null) {
+          return NEVER;
+        }
 
-            const url = ctx.server.ws_url;
-            const ws = new $WebSocket(url, null, {
-              maxTimeout: 5000,
-              reconnectIfNotNormalClose: true,
-            });
-            console.log('Websocket created');
+        let sendMessageSubscription: Subscription = null;
 
-            ws.onOpen(() => {
-              console.log('Websocket opened');
-              ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
+        const url = ctx.server.ws_url;
+        const ws = new $WebSocket(url, null, {
+          reconnectIfNotNormalClose: false,
+        });
+        console.log('Websocket created');
+        this.websocket = ws;
 
-              // any time the websocket opens, trigger an invalidation event because listeners can't trust their
-              // current state but by refreshing and listening from here, they will get all updates. (technically
-              // there is a small unsafe window because the invalidation event should be sent when the authentication
-              // success event is received)
-              s.next({
-                type: 'message',
-                data: {
-                  action: 'invalidate',
-                  data: null,
-                },
-              });
-              this.isConnected$.next(true);
+        let opened = false;
 
-              if (sendMessageSubscription !== null) {
-                sendMessageSubscription.unsubscribe();
-                sendMessageSubscription = null;
-              }
-              sendMessageSubscription = this.sendMessageQueue$.subscribe(message => {
-                ws.send4Direct(JSON.stringify(message));
-              });
-            });
+        ws.onOpen(() => {
+          if (this.websocket !== ws)
+            return;
+          opened = true;
 
-            ws.onMessage(event => {
-              s.next({
-                type: 'message',
-                data: JSON.parse(event.data),
-              });
-            });
+          console.log('Websocket opened');
+          ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
 
-            ws.onError(event => {
-              s.next({
-                type: 'error',
-                data: event,
-              });
-            });
-
-            /* This observable should never complete, so the following code has been disabled.
-
-            // we can't use .onClose() because onClose is triggered whenever the internal connection closes
-            // even if a reconnect will be attempted.
-            ws.getDataStream().subscribe(() => null, () => null, () => {
-              s.complete();
-            });
-             */
-
-            ws.onClose(() => {
-              if (sendMessageSubscription !== null) {
-                sendMessageSubscription.unsubscribe();
-                sendMessageSubscription = null;
-                // debugger
-              }
-              this.isConnected$.next(false);
-            });
-
-            return () => {
-              console.log('Websocket closed');
-              ws.close();
-            };
+          // any time the websocket opens, trigger an invalidation event because listeners can't trust their
+          // current state but by refreshing and listening from here, they will get all updates. (technically
+          // there is a small unsafe window because the invalidation event should be sent when the authentication
+          // success event is received)
+          this.rawMessageStream.next({
+            type: 'message',
+            data: {
+              action: 'invalidate',
+              data: null,
+            },
           });
-        })
-    );
+
+          if (sendMessageSubscription !== null) {
+            sendMessageSubscription.unsubscribe();
+            sendMessageSubscription = null;
+          }
+          sendMessageSubscription = this.sendMessageQueue$.subscribe(message => {
+            ws.send4Direct(JSON.stringify(message));
+          });
+        });
+
+        setTimeout(() => {
+          if (!opened)
+            ws.close(true);
+        }, 5000);
+
+        ws.onMessage(event => {
+          this.rawMessageStream.next({
+            type: 'message',
+            data: JSON.parse(event.data),
+          });
+        });
+
+        ws.onError(event => {
+          this.rawMessageStream.next({
+            type: 'error',
+            data: event,
+          });
+        });
+
+        /* This observable should never complete, so the following code has been disabled.
+
+        // we can't use .onClose() because onClose is triggered whenever the internal connection closes
+        // even if a reconnect will be attempted.
+        ws.getDataStream().subscribe(() => null, () => null, () => {
+          s.complete();
+        });
+         */
+
+        ws.onClose(() => {
+          if (sendMessageSubscription !== null) {
+            sendMessageSubscription.unsubscribe();
+            sendMessageSubscription = null;
+            // debugger
+          }
+          this.isConnected$.next(false);
+          this.websocket = null;
+        });
+      });
   }
 
-  private getEventListener(): Observable<PollingEvent> {
-    return this.getRawListener().pipe(
+  private disconnectWebsocket(): void {
+    if (this.websocket === null)
+      return;
+
+    this.websocket.close(true);
+    this.websocket = null;
+  }
+
+  refreshHeartbeatTimer(): void {
+    this.failedHeartbeats = 0;
+    this.connectWebsocket();
+  }
+
+  private createEventListener(): void {
+    this.rawMessageStream.pipe(
       tap(event => {
         if (event.type !== 'message') {
           this._logger.error(event);
@@ -144,14 +173,26 @@ export class PollingService {
       }),
       filter(event => event.type === 'message'),
       map(event => event.data),
-    );
+    ).subscribe(event => {
+      this.eventStream.next(event);
+    });
+  }
+
+  private createOnlineListener(): void {
+    fromEvent(window, 'online').subscribe(() => {
+      this.refreshHeartbeatTimer();
+    });
+    fromEvent(window, 'offline').subscribe(() => {
+      this.isConnected$.next(false);
+      this.disconnectWebsocket();
+    });
   }
 
   listen(filterString?: string): Observable<PollingEvent> {
     if (filterString) {
-      return this.eventStream.pipe(filter(e => doesFilterMatch(filterString, e.action)));
+      return this.eventStream.pipe(publish(), refCount(), filter(e => doesFilterMatch(filterString, e.action)));
     } else {
-      return this.eventStream;
+      return this.eventStream.pipe(publish(), refCount());
     }
   }
 
@@ -159,4 +200,39 @@ export class PollingService {
     this.sendMessageQueue$.next({action, data});
   }
 
+  private getHeartbeatTime(): number {
+    if (this.failedHeartbeats == 0) {
+      return 20 * 1000;
+    }
+    return Math.min(Math.pow(2, this.failedHeartbeats), 30) * 1000;
+  }
+
+  private listenForHeartbeat(): void {
+    this.listen('heartbeat')
+      .subscribe((data) => {
+        this.lastHeartbeat = Date.now();
+      });
+  }
+
+  private listenForAuthentication(): void {
+    this.listen('authenticate.success')
+      .subscribe((data) => {
+        this.isConnected$.next(true);
+      });
+  }
+
+  private checkForHeartbeat(): void {
+    if (this.lastHeartbeat < Date.now() - 20000) {
+      this.isConnected$.next(false);
+      this.failedHeartbeats += 1;
+      this.disconnectWebsocket();
+      this.connectWebsocket();
+    } else {
+      this.failedHeartbeats = 0;
+    }
+
+    setTimeout(() => {
+      this.checkForHeartbeat();
+    }, this.getHeartbeatTime());
+  }
 }

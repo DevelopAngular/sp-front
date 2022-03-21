@@ -1,0 +1,60 @@
+@import "../../sp-colors";
+@import "../../design-system";
+
+.offline-bar-wrapper {
+  width: 0;
+  height: 0;
+
+  .offline-bar {
+    margin-top: -80px;
+    margin-left: 20px;
+    background-color: #2B3340;
+    height: 40px;
+    position: absolute;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 8px 20px;
+    border-radius: 10px;
+  }
+
+  .offline-bar-icon-wrapper {
+    display: flex;
+
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .offline-bar-text {
+    @include textSize(16px, normal, white);
+  }
+
+  .offline-bar-action-wrapper span {
+    @include textSize(16px, normal, $jade);
+  }
+
+  .offline-preload {
+    display: none;
+  }
+
+  .offline-bar-action-wrapper {
+    transition: background-color 0.5s;
+    border-radius: 5px;
+    padding: 5px;
+
+    .offline-bar-action {
+      display: flex;
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .offline-bar-action-wrapper:active {
+    background-color: #101418;
+  }
+}

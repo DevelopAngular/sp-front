@@ -36,6 +36,7 @@ import {LocationCellComponent} from '../location-cell/location-cell.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
+import {OfflineBarComponent} from '../offline-bar/offline-bar.component';
 
 
 @NgModule({
@@ -81,6 +82,7 @@ import {NotificationFormComponent} from '../notification-form/notification-form.
       InvitationCardComponent,
       ReportFormComponent,
       NotificationFormComponent,
+      OfflineBarComponent,
     ],
     providers: []
 })
