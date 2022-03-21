@@ -261,7 +261,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       data: {
         'trigger': event.currentTarget,
         'profileStatus': true,
-        'bulkEdit': true
+        'bulkEdit': true,
+        'withoutDelete': true
       }
     });
 
