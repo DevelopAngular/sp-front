@@ -1,8 +1,8 @@
 export const openCreatePassDialog = (passType: 'now' | 'future') => {
   passType === 'now'
     ? cy.get('app-create-pass-button>div').first().click({force: true})
-    : cy.get('app-create-pass-button>div').last().click({force: true})
-}
+    : cy.get('app-create-pass-button>div').last().click({force: true});
+};
 
 /**
  * Since there's currently some bugs in Cypress around the dragging of elements,
@@ -21,7 +21,7 @@ export const setMinimumPassDuration = () => {
     // any pass time starting at less than 60 minutes down to 1 minute.
     slider.type('{downArrow}{downArrow}');
   }
-}
+};
 
 export const searchForStudent = (studentName: string) => {
   cy.get('app-round-input input[placeholder="Search students"]').type(studentName);
@@ -49,4 +49,9 @@ export const startPass = () => {
 
 export const getActivePasses = (): number => {
   return cy.$$('div.active-passes > app-pass-collection > div.collection-wrapper  app-pass-tile').length;
-}
+};
+
+export const searchForTeacher = (teacherName: string) => {
+  cy.get('input[placeholder="Search teachers"]').type(teacherName);
+  cy.get('div.option-list_item').contains(teacherName).parent().click();
+};
