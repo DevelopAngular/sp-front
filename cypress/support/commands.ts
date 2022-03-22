@@ -54,7 +54,7 @@ Cypress.Commands.add('login', (username: string, password: string) => {
 
 // @ts-ignore
 Cypress.Commands.add('logout', () => {
-  cy.get('.options-wrapper > app-white-round-button').click();
+  cy.get('.options-wrapper div.wrapper').first().click();
   cy.wait(500);
   cy.get('div.sign-out').click();
   cy.wait(5000);

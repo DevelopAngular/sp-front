@@ -7,10 +7,6 @@ import * as moment from 'moment';
 
 describe('Student - Passes Dashboard', () => {
   // useful functions to execute on the student passes dashboard
-  const searchForCurrentRoom = (roomName: string) => {
-    cy.get('app-round-input input').type(roomName);
-  };
-
   const selectCurrentRoom = (roomName: string) => {
     cy.get('app-location-cell div.info').contains(roomName).click({force: true});
   };
@@ -25,7 +21,7 @@ describe('Student - Passes Dashboard', () => {
 
   const endPass = () => {
     cy.get('div.end-pass-content').click();
-  }
+  };
 
   before(() => {
     // @ts-ignore
@@ -47,7 +43,7 @@ describe('Student - Passes Dashboard', () => {
    */
 
   describe('Pass Management', () => {
-    describe('Now Passes', () => {
+    describe.skip('Now Passes', () => {
       // end any existing passes before the test suite starts
       before(() => {
         if (cy.$$('div.end-pass-content').length) {
@@ -83,20 +79,19 @@ describe('Student - Passes Dashboard', () => {
 
       it('should expire the pass if the buffer time has passed', () => {
         const expiredPasses = cy.$$('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper').length;
-        const now = new Date();
-        const futureBufferDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1);
         cy.clock(Date.now());
-        cy.tick(3600000) // an hour
-        // expect(cy.$$('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper').length).to.equal(expiredPasses + 1);
+        cy.tick(3600000); // an hour
+        cy.get('div.past-passes.pass-collection app-pass-collection app-pass-tile > div.tile-wrapper')
+          .should('have.length', expiredPasses + 1);
         cy.get('app-create-pass-button>div').should('exist').should('be.visible');
       });
 
       it('should be able to end a pass', () => {
         endPass();
-      })
+      });
     });
 
-    describe('Future Passes', () => {
+    describe.skip('Future Passes', () => {
       let scheduledDate: Date;
       before(() => {
         if (cy.$$('div.end-pass-content').length) {
@@ -106,10 +101,12 @@ describe('Student - Passes Dashboard', () => {
       });
 
       it('should create a scheduled pass', () => {
-        const numberOfScheduledPasses = cy.$$('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').length;
+        const numberOfScheduledPasses = cy
+          .$$('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper')
+          .length;
         const todayMoment = moment();
         while (todayMoment.isoWeekday() !== 1) {
-          todayMoment.add(1, 'day')
+          todayMoment.add(1, 'day');
         }
 
         scheduledDate = todayMoment.toDate();
@@ -130,7 +127,9 @@ describe('Student - Passes Dashboard', () => {
 
         PassFunctions.setMinimumPassDuration();
         startPass();
-        cy.get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').should('have.length', numberOfScheduledPasses + 1);
+        cy
+          .get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper')
+          .should('have.length', numberOfScheduledPasses + 1);
       });
 
       /**
@@ -144,13 +143,17 @@ describe('Student - Passes Dashboard', () => {
       // });
 
       it('should delete the scheduled pass', () => {
-        const numberOfScheduledPasses = cy.$$('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').length;
+        const numberOfScheduledPasses = cy
+          .$$('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper')
+          .length;
         cy.get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').first().click({force: true});
         cy.get('div.pass-card-header app-icon-button > div.icon-button-container').click();
         cy.get('div.options-container').contains('Delete Scheduled Pass').parent().click();
-        cy.get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').should('have.length', numberOfScheduledPasses - 1);
-      })
-    })
+        cy
+          .get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper')
+          .should('have.length', numberOfScheduledPasses - 1);
+      });
+    });
 
     /** Now Cards - Actions and UX
      * These may be separate tests or multiple of these may be tested in a single test
@@ -171,5 +174,74 @@ describe('Student - Passes Dashboard', () => {
      * TODO: A student should be able to send a request to a teacher
      *
      */
+  });
+
+  describe.only('Request Pass', () => {
+    const requestPassMessage = 'Some Message';
+    it('should request a "now" pass with a message', () => {
+      cy.visit('http://localhost:4200/main/passes');
+      PassFunctions.openCreatePassDialog('now');
+      PassFunctions.selectCurrentRoom('Bathroom');
+      cy.get('img[alt="LOCK"].lock').parent().click();
+      PassFunctions.searchForTeacher('demoteacher1');
+      cy.get('textarea.message-box').type(requestPassMessage);
+      cy.get('div.rest-mes-content app-gradient-button div.button').click();
+      PassFunctions.setMinimumPassDuration();
+      cy.get('div.request-button-content').click();
+      cy.wait(1000);
+      cy.get('app-inline-request-card')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+    });
+
+    /**
+     * Ideally, we should mock the web-socket connection and manually pass in a
+     * pass.request.accept message but, at the time of writing this, it's currently
+     * difficult to justifiably mock the websocket connection.
+     *
+     * The following test will have to perform of accepting a student pass request manually and then
+     * log back into the student's portal to check if the pass was accepted.
+     *
+     * Note that this test is flaky at best but there currently isn't an easy way to mock
+     * the code.
+     */
+    it('should receive an accepted "Now" pass request', () => {
+      // @ts-ignore
+      cy.logout(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+
+      const numberOfActivePasses = PassFunctions.getActivePasses();
+      // if the previous test has passed, then there should be a request
+      cy.get('div.main-page-right app-pass-tile div.tile-wrapper').first().click();
+      cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
+      cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
+      cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
+      cy.get('app-request-card div.resend-button-content').click();
+      cy
+        .get('div.active-passes > app-pass-collection > div.collection-wrapper  app-pass-tile')
+        .should('have.length', numberOfActivePasses + 1);
+
+      cy.get('.options-wrapper div.icon-button-container').first().click();
+      cy.get('div.sign-out').click();
+      cy.wait(5000);
+      // @ts-ignore
+      cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
+      cy.get('app-inline-pass-card')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+    });
+
+    it('should end an active pass from an accepted pass request', () => {
+      endPass();
+    });
+
+    // it('should receive a denied pass request', () => {
+    //
+    // });
+    //
+    // it('should re-try a denied pass request', () => {
+    //
+    // });
   });
 });
