@@ -1,7 +1,5 @@
-import {closeModal} from '../../support/functions/general';
-
 describe('Admin - UI and Actions', () => {
-    const timeout = 100000;
+    const timeout = 10000;
     // just visiting admin urls will not work
     const getNavAction = (label: string): Cypress.Chainable<JQuery<HTMLElement>> => {
         return cy.get('app-nav app-nav-button',  {timeout}).contains(label);
@@ -80,7 +78,6 @@ describe('Admin - UI and Actions', () => {
                     cy.get('app-gradient-button').contains('Delete room').should('exist').click();
                 });
                 cy.get('mat-dialog-container > app-consent-menu').contains('Confirm Delete').click();
-                cy.wait(1000);
 
         })
     }); 
