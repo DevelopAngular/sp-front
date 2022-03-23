@@ -294,7 +294,7 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
             data: {target: 'password', profile: this.profile}
           });
         } else if (action === 'delete') {
-          this.userService.deleteUserRequest(this.profile.id, '_profile_student');
+          this.userService.deleteUserRequest(this.profile, '_profile_student');
         }
       });
   }

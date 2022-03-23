@@ -60,7 +60,7 @@ export class GroupsStep2Component implements OnInit {
                 };
 
                 students.forEach((student) => {
-                  const founded = _emails.findIndex(email => student.primary_email === email);
+                  const founded = _emails.findIndex(email => student.primary_email.toLowerCase() === email.toLowerCase());
 
                   if (founded !== -1) {
 
@@ -81,23 +81,16 @@ export class GroupsStep2Component implements OnInit {
       )
       .subscribe((students) => {
         this.loadingIndicator = false;
-        console.log(students);
         this.uploadedStudents = students;
         this.selectedStudents = uniqBy(this.selectedStudents.concat(students.existingStudents), 'id');
         this.form.get('users').setValue(this.selectedStudents);
-        this.test();
       });
 
-  }
-
-  test() {
-    console.log(this.selectedStudents, this.form.value);
   }
 
   nextStep() {
     const dto = this.form.value;
           dto.users = dto.users.map(user => user.id);
-    // console.log(dto);
     this.userService.createStudentGroupRequest(dto)
       .subscribe((group) => {
         for ( const control in this.form.controls) {
