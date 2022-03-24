@@ -43,7 +43,7 @@
   </div>
   <div
       class="passes-wrapper passes-mobile-height"
-      [style.height]="isStaff ? ((schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 105px)') : ''"
+      [style.height]="isStaff ? ((schoolsLength$ | async) > 1 ? ((isUpdateBar$ |  async) ? 'calc(100vh - 193px)' : 'calc(100vh - 154px)') : ((isUpdateBar$ |  async) ? 'calc(100vh - 144px)' : 'calc(100vh - 105px)')) : ''"
       [style.touch-action]="'auto'"
       *ngIf="!(isInboxClicked$ | async) && user && screenService.isDeviceMid"
       [@PassesSlideTopBottom]

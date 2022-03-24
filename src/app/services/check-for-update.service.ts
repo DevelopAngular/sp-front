@@ -1,15 +1,17 @@
-import {ApplicationRef, Injectable} from '@angular/core';
+import {ApplicationRef, Injectable, OnDestroy} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
-import {filter, first, map, switchMap, take} from 'rxjs/operators';
-import {concat, interval, Subject} from 'rxjs';
+import {filter, first, map, switchMap, take, takeUntil} from 'rxjs/operators';
+import {concat, interval, ReplaySubject, Subject} from 'rxjs';
 import {AdminService} from './admin.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CheckForUpdateService {
+export class CheckForUpdateService implements OnDestroy{
 
-  needToUpdate$: Subject<{active: boolean, color: any}> = new Subject<{active: boolean, color: any}>();
+  needToUpdate$: ReplaySubject<{active: boolean, color: any}> = new ReplaySubject<{active: boolean, color: any}>();
+
+  destroy$ = new Subject();
 
   constructor(
     private appRef: ApplicationRef,
@@ -18,6 +20,7 @@ export class CheckForUpdateService {
   ) {
 
     updates.available.pipe(
+      takeUntil(this.destroy$),
       switchMap(() => {
         return this.adminService.loadedColorProfiles$;
       }),
@@ -36,6 +39,11 @@ export class CheckForUpdateService {
     ).subscribe(color => {
       this.needToUpdate$.next({active: true, color});
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   check() {
