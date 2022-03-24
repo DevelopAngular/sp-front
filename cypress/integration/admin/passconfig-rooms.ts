@@ -28,23 +28,58 @@ describe('Admin - UI and Actions', () => {
         return  arr[Math.floor(Math.random() * arr.length)];
     }
 
-    describe("Rooms", () => {
+    const randomRoomTitle = (arr: Array<string>): string => {
+        let titleRoom = randomArrayValue<string>(arr);
+        // it appears that title cannot be shown larger than 15 chars, 4 are for the random chars
+        if (titleRoom.length > (15 - 4)) titleRoom = titleRoom.substr(0, 11);
+        titleRoom += '_' + Math.floor(Math.random()*100);
+        while (arr.includes(titleRoom)) {
+            titleRoom += '_' + Math.floor(Math.random()*100);
+            // obey to the max chars
+            titleRoom = titleRoom.substr(0, 15);
+        }
+        return titleRoom;
+    };
 
-        before(() => {
-            // @ts-ignore
-            cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-        });
-    
-        it('should have the expected UI', () => {
-            getNavAction('Rooms').should('exist').click({force: true});
-            getRoomAction('Add').should('exist').click({force: true});
-            getConsentAction('New Room').should('exist').click({force: true});
-            cy.get('mat-dialog-container > app-overlay-container > form')
-                .should('exist')
+    before(() => {
+        // login
+        cy.visit('');
+        cy.get('google-signin app-input:eq(0)').type(Cypress.env('adminUsername'));
+        cy.get('google-signin app-gradient-button').click();
+        cy.get('google-signin app-input:eq(1)').type(Cypress.env('adminPassword'));
+        cy.get('google-signin app-gradient-button').click();
+        // @ts-ignore
+        //cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
+    });
+
+    after(()=> {
+        // logout
+        cy.get('app-nav app-icon-button').click();
+        cy.get('app-settings div.sign-out').click();
+    });
+
+    describe("Rooms", () => {
+        // if this test succeeded we can subsequently access needed UI elements to perform the room related actions
+        it('should have the expected UI elements and overlay', () => {
+
+            getNavAction('Rooms').should('exist').click();
+            getRoomAction('Add').should('exist').click();
+            getConsentAction('New Room').should('exist').click();
+            cy.get('mat-dialog-container > app-overlay-container')
+            .should('exist').should('be.visible'); 
+            cy.get('mat-dialog-container > app-overlay-container > form').should('exist')
                 .within(() => cy.get('app-gradient-button').contains('Save').should('exist'));
         });
-        
+
+        it('should the overlay being clicked the Room Add ', () => {
+            cy.get('div.cdk-overlay-backdrop').click({force: true});
+            cy.get('mat-dialog-container > app-overlay-container > form').should('not.exist');
+        });
+      
+        // 
         it('should create/add a room', () => {
+            openAddRoomDialog();
+
             // order must mimic order of input elements as they appear in html
             const mockRoom = ['Cy test', '42', '10'];
 
@@ -53,17 +88,10 @@ describe('Admin - UI and Actions', () => {
             const roomsNum = pinnables.length;
             // titles of existent rooms
             const pinnablesTitles = pinnables.map((_, el) => el.textContent.trim()).get();
-            let titleRoom = randomArrayValue<string>(pinnablesTitles);
-            console.log(pinnablesTitles, roomsNum);
+            let titleRoom = randomRoomTitle(pinnablesTitles);
             cy.get('app-room form').should('exist')
-            cy.get('app-room form app-input').each(($el, i) => {
-                if (i >= mockRoom.length) throw new Error('unexpected number of inputs[type=text]');
-                // ensure title room is unique
+            cy.get('app-room form app-input').should('have.length', 3).each(($el, i) => {
                 if (i === 0) {
-                    titleRoom += '_' + Math.floor(Math.random()*100);
-                    while (pinnablesTitles.includes(titleRoom)) {
-                        titleRoom += '_' + Math.floor(Math.random()*100);
-                    }
                     cy.wrap($el).type(titleRoom, {delay: 20});
                     return;
                 }
@@ -76,6 +104,27 @@ describe('Admin - UI and Actions', () => {
             cy.get('app-restriction-picker span').should('have.length', peak);
             const inx = Math.floor(Math.random() * peak);
             cy.get(`app-restriction-picker span:eq(${inx})`).click();
+
+            // advanced options
+            cy.get('app-advanced-options app-toggle-input').should('have.length', 3).each(($el, i) => {
+                cy.wrap($el).click();
+                if (i == 2) {
+                    cy.get('app-advanced-options app-input').should('exist').type('10');
+                }
+            });
+           /*
+            // this seldomly works
+            cy.get('app-advanced-options app-toggle-input').should('have.length', 3).and(($elems) => {
+                let $el = $elems.get(0);
+                Cypress.dom.wrap($el).click();
+                $el = $elems.get(1);
+                Cypress.dom.wrap($el).click();
+                $el = $elems.get(2);
+                Cypress.dom.wrap($el).click();
+                cy.wait(1000);
+                cy.get('app-advanced-options app-input').should('exist').type('10');
+            });*/
+
             // choose a svg icon
             // no svg icons are loaded at this point, only an empty visual shell
             // when not testing, after you filled the title room input it triggers the load of a suggestion svg list
@@ -101,7 +150,9 @@ describe('Admin - UI and Actions', () => {
                 });
             cy.get('mat-dialog-container > app-consent-menu').contains('Confirm Delete').click();
             cy.get('app-pinnable-collection app-pinnable').should('have.length', roomsNum);
+            cy.get('app-custom-toast', {timeout}).contains('Room deleted').should('exist');
         })
+
     }); 
 
 });
