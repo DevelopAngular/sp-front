@@ -40,24 +40,46 @@ describe('Admin - UI and Actions', () => {
         }
         return titleRoom;
     };
-    
-    describe("Rooms", () => {
 
-        before(() => {
-            // @ts-ignore
-            cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-        });
-    
-        it('should have the expected UI', () => {
-            getNavAction('Rooms').should('exist').click({force: true});
-            getRoomAction('Add').should('exist').click({force: true});
-            getConsentAction('New Room').should('exist').click({force: true});
-            cy.get('mat-dialog-container > app-overlay-container > form')
-                .should('exist')
+    before(() => {
+        // login
+        cy.visit('');
+        cy.get('google-signin app-input:eq(0)').type(Cypress.env('adminUsername'));
+        cy.get('google-signin app-gradient-button').click();
+        cy.get('google-signin app-input:eq(1)').type(Cypress.env('adminPassword'));
+        cy.get('google-signin app-gradient-button').click();
+        // @ts-ignore
+        //cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
+    });
+
+    after(()=> {
+        // logout
+        cy.get('app-nav app-icon-button').click();
+        cy.get('app-settings div.sign-out').click();
+    });
+
+    describe("Rooms", () => {
+        // if this test succeeded we can subsequently access needed UI elements to perform the room related actions
+        it('should have the expected UI elements and overlay', () => {
+
+            getNavAction('Rooms').should('exist').click();
+            getRoomAction('Add').should('exist').click();
+            getConsentAction('New Room').should('exist').click();
+            cy.get('mat-dialog-container > app-overlay-container')
+            .should('exist').should('be.visible'); 
+            cy.get('mat-dialog-container > app-overlay-container > form').should('exist')
                 .within(() => cy.get('app-gradient-button').contains('Save').should('exist'));
         });
-        
+
+        it('should the overlay being clicked the Room Add ', () => {
+            cy.get('div.cdk-overlay-backdrop').click({force: true});
+            cy.get('mat-dialog-container > app-overlay-container > form').should('not.exist');
+        });
+      
+        // 
         it('should create/add a room', () => {
+            openAddRoomDialog();
+
             // order must mimic order of input elements as they appear in html
             const mockRoom = ['Cy test', '42', '10'];
 
@@ -130,6 +152,7 @@ describe('Admin - UI and Actions', () => {
             cy.get('app-pinnable-collection app-pinnable').should('have.length', roomsNum);
             cy.get('app-custom-toast', {timeout}).contains('Room deleted').should('exist');
         })
+
     }); 
 
 });
