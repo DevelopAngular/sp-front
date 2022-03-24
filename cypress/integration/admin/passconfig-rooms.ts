@@ -24,6 +24,23 @@ describe('Admin - UI and Actions', () => {
         return cy.get(`${selector}:eq(${inx})`);
     }
 
+    const randomArrayValue = <T>(arr: Array<T>): T => {
+        return  arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    const randomRoomTitle = (arr: Array<string>): string => {
+        let titleRoom = randomArrayValue<string>(arr);
+        // it appears that title cannot be shown larger than 15 chars, 4 are for the random chars
+        if (titleRoom.length > (15 - 4)) titleRoom = titleRoom.substr(0, 11);
+        titleRoom += '_' + Math.floor(Math.random()*100);
+        while (arr.includes(titleRoom)) {
+            titleRoom += '_' + Math.floor(Math.random()*100);
+            // obey to the max chars
+            titleRoom = titleRoom.substr(0, 15);
+        }
+        return titleRoom;
+    };
+    
     describe("Rooms", () => {
 
         before(() => {
@@ -43,12 +60,20 @@ describe('Admin - UI and Actions', () => {
         it('should create/add a room', () => {
             // order must mimic order of input elements as they appear in html
             const mockRoom = ['Cy test', '42', '10'];
+
+            const pinnables = cy.$$('app-pinnable-collection app-pinnable');
             // number of rooms displayed as pinnables
-            const roomsNum = cy.$$('app-pinnable-collection app-pinnable').length;
+            const roomsNum = pinnables.length;
+            // titles of existent rooms
+            const pinnablesTitles = pinnables.map((_, el) => el.textContent.trim()).get();
+            let titleRoom = randomRoomTitle(pinnablesTitles);
             cy.get('app-room form').should('exist')
-            cy.get('app-room form').find('input[type=text]').each(($el, i) => {
-                if (i >= mockRoom.length) throw new Error('unexpected number of inputs[type=text]');
-                cy.wrap($el).focus().type(mockRoom[i], {delay: 20});
+            cy.get('app-room form app-input').should('have.length', 3).each(($el, i) => {
+                if (i === 0) {
+                    cy.wrap($el).type(titleRoom, {delay: 20});
+                    return;
+                }
+                cy.wrap($el).type(mockRoom[i], {delay: 20});
             });
             // get a random color from color picker
             randomIndexElement('app-color-pallet-picker app-color').click();
@@ -57,28 +82,53 @@ describe('Admin - UI and Actions', () => {
             cy.get('app-restriction-picker span').should('have.length', peak);
             const inx = Math.floor(Math.random() * peak);
             cy.get(`app-restriction-picker span:eq(${inx})`).click();
+
+            // advanced options
+            cy.get('app-advanced-options app-toggle-input').should('have.length', 3).each(($el, i) => {
+                cy.wrap($el).click();
+                if (i == 2) {
+                    cy.get('app-advanced-options app-input').should('exist').type('10');
+                }
+            });
+           /*
+            // this seldomly works
+            cy.get('app-advanced-options app-toggle-input').should('have.length', 3).and(($elems) => {
+                let $el = $elems.get(0);
+                Cypress.dom.wrap($el).click();
+                $el = $elems.get(1);
+                Cypress.dom.wrap($el).click();
+                $el = $elems.get(2);
+                Cypress.dom.wrap($el).click();
+                cy.wait(1000);
+                cy.get('app-advanced-options app-input').should('exist').type('10');
+            });*/
+
             // choose a svg icon
+            // no svg icons are loaded at this point, only an empty visual shell
+            // when not testing, after you filled the title room input it triggers the load of a suggestion svg list
+            // so we have to trigger the svgs loading typing 'room'
+            cy.get('app-icon-picker app-round-input').type('room');
+            cy.wait(2000);
             randomIndexElement('app-icon-picker div.icon-wrapper').click();
             // click on save
             cy.get('mat-dialog-container > app-overlay-container > form app-gradient-button').contains('Save').should('exist').click();
             //cy.get('app-input input[class~=ng-invalid]').should('not.exist');
             // get the toaster element instead of wait
             cy.get('app-custom-toast', {timeout}).contains('New room added').should('exist');
-            const title = mockRoom[0];
             // wait here for our expected last  pinnable
-            cy.wait(1000);
-            const lastPinnable = cy.get('app-pinnable-collection app-pinnable', {timeout}).last().contains(title).should('exist');
+            cy.wait(2000);
             // check if a new pinnable has added
-            const currentRoomsNum = cy.$$('app-pinnable-collection app-pinnable').length;
-            if (roomsNum !== currentRoomsNum) throw new Error('pinnable collection has not increased in number');
+            cy.get('app-pinnable-collection app-pinnable').should('have.length', roomsNum+1);
+            const lastPinnable = cy.get('app-pinnable-collection app-pinnable', {timeout}).last().contains(titleRoom).should('exist');
             lastPinnable.click();
             cy.get('mat-dialog-container > app-overlay-container app-room')
                 .should('exist')
                 .within(() => {
                     cy.get('app-gradient-button').contains('Delete room').should('exist').click();
                 });
-                cy.get('mat-dialog-container > app-consent-menu').contains('Confirm Delete').click();
-
+            cy.get('mat-dialog-container > app-consent-menu').contains('Confirm Delete').click();
+            cy.get('app-pinnable-collection app-pinnable').should('have.length', roomsNum);
+            cy.get('app-custom-toast', {timeout}).contains('Room deleted').should('exist');
         })
     }); 
 
