@@ -15,8 +15,12 @@ import {filter as _filter} from 'lodash';
 import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {User} from '../models/User';
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 declare const window;
+
+class School {
+}
 
 @Component({
   selector: 'app-main-page',
@@ -26,7 +30,7 @@ declare const window;
 
 export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  public topPadding = '0px';
+  public topPadding;
 
   inboxHasItems: Observable<boolean> = of(null);
   currentRequest$ = new BehaviorSubject<Request>(null);
@@ -38,6 +42,9 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   data: any;
   navbarHeight: string = '64px';
   restriction$: Observable<boolean>;
+  schools: School[];
+  isKioskMode: boolean;
+  isUpdateBar$: Subject<any>;
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -67,17 +74,20 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private _zone: NgZone,
     private router: Router,
     private http: HttpService,
-    private passesService: HallPassesService
+    private passesService: HallPassesService,
+    private updateService: CheckForUpdateService
   ) {
 
     this.http.schoolsCollection$
-      .pipe(
+    .pipe(
         takeUntil(this.destroy$),
-        map(schools => _filter(schools, (school => school.my_roles.length > 0)))
-      )
-      .subscribe((schools) => {
-        this.topPadding = schools.length > 1 && !this.http.checkIfTokenIsKiosk() ? '50px' : '0px';
-      });
+        map((schools) => {
+          return _filter(schools, (school => school.my_roles.length > 0));
+        })
+    ).subscribe(schools => {
+      this.schools = schools;
+    });
+
     this.restriction$ = this.userService.blockUserPage$;
 
     const dbUser$ = this.http.globalReload$
@@ -148,6 +158,8 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isKioskMode = this.http.checkIfTokenIsKiosk();
+    this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.toggleLeft = this.sideNavService.toggleLeft;
     this.toggleRight = this.sideNavService.toggleRight;
 

@@ -57,6 +57,7 @@ import * as moment from 'moment';
 import {PassLimitService} from '../services/pass-limit.service';
 import {PassLimitInfo} from '../models/HallPassLimits';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 @Component({
   selector: 'app-passes',
@@ -158,6 +159,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isStaff = false;
   currentScrollPosition: number;
 
+  isUpdateBar$: Subject<any>;
+
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
@@ -249,7 +252,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private passesService: HallPassesService,
     private sideNavService: SideNavService,
     private locationsService: LocationsService,
-    private passLimitsService: PassLimitService
+    private passLimitsService: PassLimitService,
+    private updateService: CheckForUpdateService
   ) {
 
     this.userService.user$
@@ -379,6 +383,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;
