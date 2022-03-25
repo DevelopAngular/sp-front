@@ -56,6 +56,7 @@ export class CheckForUpdateService implements OnDestroy{
 
   update() {
     this.updates.activateUpdate().then(() => {
+      console.log('Window reloaded......');
       document.location.reload();
     });
   }
