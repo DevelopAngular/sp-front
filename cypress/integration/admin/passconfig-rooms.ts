@@ -64,8 +64,8 @@ describe('Admin - UI and Actions', () => {
 
     const chooseDemoSchool = (name: 'Cypress Testing School 1' | 'Cypress Testing School 2' = 'Cypress Testing School 1') => {
         cy.get('app-school-toggle-bar div.selected-school').should('exist').click();
-        cy.get('app-dropdown').contains('Cypress Testing School 1').should('exist').click();
-        cy.get('app-school-toggle-bar').contains('Cypress Testing School 1').should('be.visible');
+        cy.get('app-dropdown').contains(name).should('exist').click();
+        cy.get('app-school-toggle-bar').contains(name).should('be.visible');
     };
 
     before(() => {
@@ -183,18 +183,6 @@ describe('Admin - UI and Actions', () => {
                         cy.get('app-round-input').should('exist').type('t');
                         cy.get('div.options-wrapper').should('be.visible').get('div.option-list_item').should('be.visible');
                     });
-            /*
-                // this seldomly works
-                cy.get('app-advanced-options app-toggle-input').should('have.length', 3).and(($elems) => {
-                    let $el = $elems.get(0);
-                    Cypress.dom.wrap($el).click();
-                    $el = $elems.get(1);
-                    Cypress.dom.wrap($el).click();
-                    $el = $elems.get(2);
-                    Cypress.dom.wrap($el).click();
-                    cy.wait(1000);
-                    cy.get('app-advanced-options app-input').should('exist').type('10');
-                });*/
 
                 // choose a svg icon
                 // no svg icons are loaded at this point, only an empty visual shell
@@ -211,33 +199,52 @@ describe('Admin - UI and Actions', () => {
                 cy.get('mat-dialog-container > app-overlay-container > form app-gradient-button').contains('Save').should('exist').click();
                 // get the toaster element instead of wait
                 cy.get('app-custom-toast', {timeout}).contains('New room added').should('exist');
+            });
+
+            it('should lists newly added room in the rooms list', () => {
                 // wait here for our expected last  pinnable
                 // check if a new pinnable has added
                 cy.get('app-pinnable-collection app-pinnable').should('have.length', roomsNum+1)
+                    .last().contains(titleRoom)
                     // increment when success
-                    .then(() => roomsNum += 1);
+                    .then(() => {
+                        roomsNum += 1;
+                        pinnablesTitles.push(titleRoom);
+                        cy.log(`room "${titleRoom}" has been added in rooms list`);    
+                    });
             });
 
             it('should list of rooms in the "From Where" and “To Where?” match our expanded list', () => {
+                
+                const expectEqualRoomList = ($elems: JQuery<HTMLElement>) => {
+                    roomlistTitles = $elems.map((_, el:HTMLElement) => el.textContent.trim()).get().sort();
+                    expect(roomlistTitles).to.eql(roomlistTitlesAdmin);
+                };
+
                 logout();
                 login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
                 cy.log('testing Pass Now type');
                 PassFunctions.openCreatePassDialog('now');
+                
+                const roomlistTitlesAdmin = pinnablesTitles.sort();
+                let roomlistTitles: string[];
+              
                 // wait for the UI Pass Dialog to appears
-                const fromcells = 'app-create-hallpass-forms app-main-hallpass-form app-from-where app-location-table app-location-cell';
-                cy.get(fromcells).should('exist').should('have.length', roomsNum);
-                randomIndexElement(fromcells + ' div.info').click({force: true});
-                const tocells = 'app-create-hallpass-forms app-main-hallpass-form app-to-where app-pinnable';
-                cy.get(tocells).should('exist').should('have.length', roomsNum);
+                const fromcells = 'app-create-hallpass-forms app-main-hallpass-form app-from-where app-location-table app-location-cell div.title';
+                cy.get(fromcells).should('have.length', roomsNum).then(($ee) => expectEqualRoomList($ee));
+              
+                randomIndexElement(fromcells).click({force: true});
+                const tocells = 'app-create-hallpass-forms app-main-hallpass-form app-to-where app-pinnable div.title';
+                cy.get(tocells).should('have.length', roomsNum).then(($ee) => expectEqualRoomList($ee));
                 closeModal();
                 cy.get(tocells).should('not.exist');
 
                 cy.log('testing Pass Future type');
                 PassFunctions.openCreatePassDialog('future');
                 cy.get('app-create-hallpass-forms app-main-hallpass-form app-date-time app-gradient-button').should('be.visible').click();
-                cy.get(fromcells).should('exist').should('have.length', roomsNum);
-                randomIndexElement(fromcells + ' div.info').click({force: true});
-                cy.get(tocells).should('exist').should('have.length', roomsNum);
+                cy.get(fromcells).should('have.length', roomsNum).then(($ee) => expectEqualRoomList($ee));
+                randomIndexElement(fromcells).click({force: true});
+                cy.get(tocells).should('have.length', roomsNum).then(($ee) => expectEqualRoomList($ee));
                 closeModal();
                 cy.get(tocells).should('not.exist');
 
@@ -245,6 +252,9 @@ describe('Admin - UI and Actions', () => {
                 cy.logout();
                 login();
             });
+
+            // TODO
+            it.skip('should editing the added room be reflected in the pass student view');
 
             // no need here for closeModal - the action itself closes the backdrop
             it('should delete last added room', () => {
