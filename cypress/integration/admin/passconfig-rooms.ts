@@ -1,4 +1,5 @@
-import { closeModal } from "../../support/functions/general";
+import { closeModal } from '../../support/functions/general';
+import * as PassFunctions from '../../support/functions/passes';
 
 describe('Admin - UI and Actions', () => {
     const timeout = 10000;
@@ -16,8 +17,8 @@ describe('Admin - UI and Actions', () => {
     };
 
     const openAddRoomDialog = () => {
-        getRoomAction('Add').click({force: true});
-        getConsentAction('New Room').click({force: true});
+        getRoomAction('Add').click();
+        getConsentAction('New Room').click();
     }
 
     const randomIndexElement = (selector: string): Cypress.Chainable<JQuery<HTMLElement>> =>  {
@@ -44,33 +45,51 @@ describe('Admin - UI and Actions', () => {
         return titleRoom;
     };
 
-    before(() => {
-        // login
+    const login = (
+        username: string = Cypress.env('adminUsername'), 
+        password: string = Cypress.env('adminPassword'),
+    ) => {
         cy.visit('');
-        cy.get('google-signin app-input:eq(0)').type(Cypress.env('adminUsername'));
+        cy.get('google-signin app-input:eq(0)').type(username);
         cy.get('google-signin app-gradient-button').click();
-        cy.get('google-signin app-input:eq(1)').type(Cypress.env('adminPassword'));
+        cy.get('google-signin app-input:eq(1)').type(password);
         cy.get('google-signin app-gradient-button').click();
+    };
+
+    const logout = () => {
+        // the concret div.icon-button-container seems to properly trigger click event
+        cy.get('app-nav app-icon-button div.icon-button-container').should('exist').click({force: true});
+        cy.get('app-root mat-dialog-container > app-settings div.sign-out', {timeout}).should('exist').click({force: true});
+    };
+
+    const chooseDemoSchool = (name: 'Cypress Testing School 1' | 'Cypress Testing School 2' = 'Cypress Testing School 1') => {
+        cy.get('app-school-toggle-bar div.selected-school').should('exist').click();
+        cy.get('app-dropdown').contains('Cypress Testing School 1').should('exist').click();
+        cy.get('app-school-toggle-bar').contains('Cypress Testing School 1').should('be.visible');
+    };
+
+    before(() => {
+        login();
         // @ts-ignore
         //cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
     });
 
     after(()=> {
-        // logout
-        // the concret div.icon-button-container seems to properly trigger click event
-        cy.get('app-nav app-icon-button div.icon-button-container').should('exist').click({force: true});
-        cy.get('app-root mat-dialog-container > app-settings div.sign-out', {timeout}).should('exist').click({force: true});
+        logout();
     });
 
     describe("Rooms", () => {
+        it('should change to the demo school', () => {
+            // move to "Cypress Testing School 1"
+            chooseDemoSchool();
+        });
+
         // if this test succeeded we can subsequently access needed UI elements to perform the room related actions
         it('should have the expected UI elements and overlay', () => {
-
-            getNavAction('Rooms').should('exist').click();
-            getRoomAction('Add').should('exist').click();
-            getConsentAction('New Room').should('exist').click();
-            cy.get('mat-dialog-container > app-overlay-container')
-            .should('exist').should('be.visible'); 
+            getNavAction('Rooms').should('be.visible').click();
+            getRoomAction('Add').should('be.visible').click();
+            getConsentAction('New Room').should('be.visible').click();
+            cy.get('mat-dialog-container > app-overlay-container').should('be.visible'); 
             cy.get('mat-dialog-container > app-overlay-container > form').should('exist')
                 .within(() => cy.get('app-gradient-button').contains('Save').should('exist'));
         });
@@ -185,7 +204,8 @@ describe('Admin - UI and Actions', () => {
                 cy.intercept('GET', 'https://smartpass.app/api/icons/search?query=room').as('searchIconsByRoom');
                 // the request will be made here
                 cy.get('app-icon-picker app-round-input').type('room', {delay: 0});
-                cy.wait('@searchIconsByRoom');
+                // allow server a healthy time
+                cy.wait('@searchIconsByRoom', {responseTimeout: 50000});
                 randomIndexElement('app-icon-picker div.icon-wrapper').click();
                 // click on save
                 cy.get('mat-dialog-container > app-overlay-container > form app-gradient-button').contains('Save').should('exist').click();
@@ -193,11 +213,31 @@ describe('Admin - UI and Actions', () => {
                 cy.get('app-custom-toast', {timeout}).contains('New room added').should('exist');
                 // wait here for our expected last  pinnable
                 // check if a new pinnable has added
-                cy.get('app-pinnable-collection app-pinnable').should('have.length', roomsNum+1);
+                cy.get('app-pinnable-collection app-pinnable').should('have.length', roomsNum+1)
+                    // increment when success
+                    .then(() => roomsNum += 1);
+            });
+
+            it('should list of rooms in the "From Where" and “To Where?” match our expanded list', () => {
+                logout();
+                login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
+                PassFunctions.openCreatePassDialog('now');
+                // wait for the UI Pass Dialog to appears
+                const fromcells = 'app-create-hallpass-forms app-main-hallpass-form app-from-where app-location-table app-location-cell';
+                cy.get(fromcells).should('exist').should('have.length', roomsNum);
+                randomIndexElement(fromcells + ' div.info').click({force: true});
+                const tocells = 'app-create-hallpass-forms app-main-hallpass-form app-to-where app-pinnable';
+                cy.get(tocells).should('exist').should('have.length', roomsNum);
+                closeModal();
+                // @ts-ignore
+                cy.logout();
+                login();
             });
 
             // no need here for closeModal - the action itself closes the backdrop
             it('should delete last added room', () => {
+                chooseDemoSchool();
+                getNavAction('Rooms').click();
                 const lastPinnable = cy.get('app-pinnable-collection app-pinnable', {timeout}).last().contains(titleRoom).should('exist');
                 lastPinnable.click();
                 cy.get('mat-dialog-container > app-overlay-container app-room')
@@ -207,7 +247,8 @@ describe('Admin - UI and Actions', () => {
                     });
                 cy.get('mat-dialog-container > app-consent-menu').contains('Confirm Delete').click();
                 cy.get('app-pinnable-collection app-pinnable').should('have.length', roomsNum);
-                cy.get('app-custom-toast', {timeout}).contains('Room deleted').should('exist');
+                cy.get('app-custom-toast', {timeout}).contains('Room deleted').should('exist')
+                    .then(() => roomsNum -= 1);
             });
 
         });
