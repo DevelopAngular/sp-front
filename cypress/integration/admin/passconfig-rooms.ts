@@ -221,6 +221,7 @@ describe('Admin - UI and Actions', () => {
             it('should list of rooms in the "From Where" and “To Where?” match our expanded list', () => {
                 logout();
                 login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
+                cy.log('testing Pass Now type');
                 PassFunctions.openCreatePassDialog('now');
                 // wait for the UI Pass Dialog to appears
                 const fromcells = 'app-create-hallpass-forms app-main-hallpass-form app-from-where app-location-table app-location-cell';
@@ -229,6 +230,17 @@ describe('Admin - UI and Actions', () => {
                 const tocells = 'app-create-hallpass-forms app-main-hallpass-form app-to-where app-pinnable';
                 cy.get(tocells).should('exist').should('have.length', roomsNum);
                 closeModal();
+                cy.get(tocells).should('not.exist');
+
+                cy.log('testing Pass Future type');
+                PassFunctions.openCreatePassDialog('future');
+                cy.get('app-create-hallpass-forms app-main-hallpass-form app-date-time app-gradient-button').should('be.visible').click();
+                cy.get(fromcells).should('exist').should('have.length', roomsNum);
+                randomIndexElement(fromcells + ' div.info').click({force: true});
+                cy.get(tocells).should('exist').should('have.length', roomsNum);
+                closeModal();
+                cy.get(tocells).should('not.exist');
+
                 // @ts-ignore
                 cy.logout();
                 login();
