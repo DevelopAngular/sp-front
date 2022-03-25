@@ -1,6 +1,6 @@
 <div class="admin-wrapper" *ngIf="hostVisibility"
   [style.height]="(schoolsLength$ | async) > 1 ? ((isUpdate$ | async) ? 'calc(100vh - 89px)' : 'calc(100vh - 50px)') : ((isUpdate$ | async) ? 'calc(100vh - 39px)' : '100vh')"
-  [style.padding-top]="(schoolsLength$ | async) > 1 ? '50px' : '0px'"
+  [style.padding-top]="(schoolsLength$ | async) > 1 ? ((isUpdate$ | async) ? '89px' : '50px') : ((isUpdate$ | async) ? '39px' : '0px')"
 >
   <app-nav (restrictAccess)="hideOutlet($event)"></app-nav>
   <ng-container *ngIf="showDummySwitcher$ | async">
