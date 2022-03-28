@@ -1,5 +1,5 @@
 <div class="assigned-teachers">
-  <div *ngFor="let teacher of selectedProfiles; let i = index" #chip class="teacher"
+  <div *ngFor="let teacher of results; let i = index" #chip class="teacher"
     (mouseenter)="chipHover(chip, true)"
     (mouseleave)="chipHover(chip, false)"
     [style.opacity]="chip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"

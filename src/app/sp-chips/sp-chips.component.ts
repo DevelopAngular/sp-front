@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
+import {uniqBy} from 'lodash';
 import {User} from '../models/User';
 
 @Component({
@@ -22,6 +23,10 @@ export class SpChipsComponent implements OnInit {
   constructor(
     private sanitizer: DomSanitizer,
   ) { }
+
+  get results() {
+    return uniqBy(this.selectedProfiles, 'title');
+  }
 
   ngOnInit() {
   }
