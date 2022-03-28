@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../../../services/user.service';
-import * as assistantsActions from '../actions';
 import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
 import {defer, forkJoin, of, zip} from 'rxjs';
 import {HttpService} from '../../../../../services/http-service';
 import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
+import * as assistantsActions from '../actions';
+import * as accountActions from '../../../actions/accounts.actions';
 
 @Injectable()
 export class AssistantsEffects {
@@ -147,8 +148,11 @@ export class AssistantsEffects {
         concatMap((action: any) => {
           return this.userService.deleteUserFromProfile(action.id, 'assistant')
             .pipe(
-              map(user => {
-                return assistantsActions.removeAssistantSuccess({id: action.id});
+              switchMap((user: User) => {
+                return [
+                  assistantsActions.removeAssistantSuccess({id: action.id}),
+                  accountActions.updateAccounts({account: user})
+                ];
               }),
               catchError(error => of(assistantsActions.removeAssistantFailure({errorMessage: error.message})))
             );
@@ -243,8 +247,8 @@ export class AssistantsEffects {
             .pipe(
               switchMap((user: User) => {
                 return [
-                  assistantsActions.updateAssistantAccount({profile: user}),
-                  assistantsActions.addUserToAssistantProfileSuccess({assistant: user})
+                  assistantsActions.addUserToAssistantProfileSuccess({assistant: user}),
+                  accountActions.updateAccounts({account: user})
                 ];
               }),
               catchError(error => of(assistantsActions.addUserToAssistantProfileFailure({errorMessage: error.message})))
