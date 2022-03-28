@@ -94,8 +94,6 @@ describe('Admin - UI and Actions', () => {
         login();
         chooseDemoSchool();
         getNavAction('Rooms').click();
-        // @ts-ignore
-        //cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
     });
 
     after(()=> {
@@ -103,6 +101,11 @@ describe('Admin - UI and Actions', () => {
     });
 
     describe("Rooms", () => {
+        it('should change to the demo school', () => {
+            // move to "Cypress Testing School 1"
+            chooseDemoSchool();
+        });
+
         // if this test succeeded we can subsequently access needed UI elements to perform the room related actions
         // has a testing value?
         it.skip('should have the expected UI elements and overlay', () => {
@@ -212,7 +215,9 @@ describe('Admin - UI and Actions', () => {
                         cy.get('app-round-input').type('t');
                         cy.get('div.options-wrapper div.option-list_item').should('be.visible');
                     });
+<<<<<<< HEAD
                 */
+                //
                 // choose a svg icon
                 // no svg icons are loaded at this point, only an empty visual shell
                 // when not testing, after you filled the title room input it triggers the load of a suggestion svg list
@@ -221,6 +226,7 @@ describe('Admin - UI and Actions', () => {
                 const keyword = 'room'; // it is expected to returns icons
                 cy.intercept('GET', 'https://smartpass.app/api/icons/search?query=' + keyword).as('searchIconsByRoom');
                 // the request will be made here
+
                 cy.get('app-icon-picker app-round-input').type(keyword, {delay: 0});
                 // allow server a healthy time
                 // and try to avoid the isConnected = false waiting for the last of element as indicated by server 
