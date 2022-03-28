@@ -1,7 +1,7 @@
 export const openCreatePassDialog = (passType: 'now' | 'future') => {
   passType === 'now'
-    ? cy.get('app-create-pass-button>div').first().click({force: true})
-    : cy.get('app-create-pass-button>div').last().click({force: true});
+    ? cy.get('app-create-pass-button:eq(0)>div').first().click({force: true})
+    : cy.get('app-create-pass-button:eq(1)>div').last().click({force: true});
 };
 
 /**
