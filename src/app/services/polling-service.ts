@@ -48,7 +48,7 @@ export class PollingService {
   isConnected$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   private failedHeartbeats: number = 0;
-  private lastHeartbeat: number = Date.now();
+  private lastHeartbeat: number = Date.now() + 30 * 1000;
 
   constructor(private http: HttpService,
               private _logger: Logger) {
@@ -145,7 +145,6 @@ export class PollingService {
             sendMessageSubscription = null;
             // debugger
           }
-          this.isConnected$.next(false);
           this.websocket = null;
         });
       });
