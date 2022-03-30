@@ -1,10 +1,25 @@
 import { closeModal } from '../../support/functions/general';
 import * as PassFunctions from '../../support/functions/passes';
 
-// TODO: Add room number tests at a later date
+const defaultRoomNames = ['Bathroom', 'Water Fountain', 'Nurse', 'Guidance', 'Main Office', 'Library'];
 
+// needs to be modifiable as when a test retry 
+// to avoid server existent room error
 const ROOM_TITLE = 'CyRoom';
 const MODIFIED_TITLE = 'CyChangedRoom';
+
+const ROOM_NUM = '42';
+const MODIFIED_ROOM_NUM = '24';
+
+const ROOM_TIME = '2';
+const MODIFIED_ROOM_TIME = '1';
+
+const TRAVEL_TYPE_INDEX = 1;// One-way
+const MODIFIED_TRAVEL_TYPE_INDEX = 0;// Round-trip
+const MODIFIED_TRAVEL_TYPE = 'Round-trip';
+
+const PASSES_LIMIT = '10';
+const MODIFIED_PASSES_LIMIT = '5';
 
 describe('Admin - UI and Actions', () => {
     const timeout = 10000;
@@ -152,7 +167,7 @@ describe('Admin - UI and Actions', () => {
             // no need here for closeModal - the action itself closes the backdrop
             it('should create/add a room', function() {
                 // order must mimic order of input elements as they appear in html
-                const mockRoom = [ROOM_TITLE, '41', '10'];
+                const mockRoom = [ROOM_TITLE, ROOM_NUM, ROOM_TIME];
                 cy.get('app-room form app-input').should('have.length', 3).each(($el, i) => {
                   cy.wrap($el).type(mockRoom[i]);
                 });
@@ -160,20 +175,17 @@ describe('Admin - UI and Actions', () => {
                 randomIndexElement('app-color-pallet-picker app-color').click();
                 // choose a travel type
                 const peak = 3;
-                // const inx = Math.floor(Math.random() * peak);
-                // isConnected may be false at tims
-                // cy.get(`app-restriction-picker span:eq(${inx})`).should('have.attr', 'isConnected', true).click();
-                // cy.get(`app-restriction-picker span:eq(${inx})`).click();
                 cy.get('app-restriction-picker span').should('have.length', peak).then($elems => {
-                    const inx = Math.floor(Math.random() * peak);
+                    const inx = TRAVEL_TYPE_INDEX;
                     cy.wrap($elems.get(inx)).click();
                 });
 
                 // advanced options
+                // restrictions
                 cy.get('app-advanced-options app-toggle-input').should('have.length', 3).each(($el, i) => {
-                    cy.wrap($el).click();
-                    if (i === 2) {
-                        cy.get('app-advanced-options app-input').type('10');
+                    cy.wrap($el).click();// check each
+                    if (i === 2) { // 2nth  option  will open an input
+                        cy.get('app-advanced-options app-input').type(PASSES_LIMIT);
                     }
                 });
 
@@ -202,7 +214,6 @@ describe('Admin - UI and Actions', () => {
                 // the request will be made here
 
                 cy.get('app-icon-picker app-round-input').type(keyword, {delay: 0});
-                // allow server a healthy time
                 // and try to avoid the isConnected = false waiting for the last of element as indicated by server
                 cy.wait('@searchIconsByRoom', {responseTimeout: 50000})
                     .then(({response}) => {
@@ -212,7 +223,10 @@ describe('Admin - UI and Actions', () => {
                         cy.log(`got ${len} icons`);
                         // TODO pick one of them
                         cy.get('app-icon-picker div.icon-collection div.icon-container').should('have.length', len)
-                            .first().should('be.visible').click();
+                            .first().should('be.visible').then(element => {
+                                expect(Cypress.dom.isDetached(element)).to.be.false;
+                                element.click();
+                            });
                     });
                     // click on save
                     cy.get('mat-dialog-container > app-overlay-container > form app-gradient-button div.button').contains('Save').click();
@@ -233,7 +247,9 @@ describe('Admin - UI and Actions', () => {
 
             it('should list of rooms in the "From Where" and “To Where?” match our expanded list', function() {
 
-                const roomlistTitlesAdmin = pinnablesTitles.sort();
+                // assumed that ROOM_TITLE has been successfuly added
+                const roomlistTitlesAdmin = [ROOM_TITLE, ...pinnablesTitles].sort();
+                const roomsNum = roomlistTitlesAdmin.length;
                 let roomlistTitles: string[];
 
                 const expectEqualRoomList = ($elems: JQuery<HTMLElement>) => {
@@ -251,20 +267,20 @@ describe('Admin - UI and Actions', () => {
 
                 // wait for the UI Pass Dialog to appears
                 const fromcells = 'app-create-hallpass-forms app-main-hallpass-form app-from-where app-location-table app-location-cell div.title';
-                // cy.get(fromcells).should('have.length', this.roomsNum).then(($ee) => expectEqualRoomList($ee));
+                cy.get(fromcells).should('have.length', roomsNum).then(($ee) => expectEqualRoomList($ee));
 
                 randomIndexElement(fromcells).click({force: true});
                 const tocells = 'app-create-hallpass-forms app-main-hallpass-form app-to-where app-pinnable div.title';
-                // cy.get(tocells).should('have.length', this.roomsNum).then(($ee) => expectEqualRoomList($ee));
+                cy.get(tocells).should('have.length', roomsNum).then(($ee) => expectEqualRoomList($ee));
                 closeModal();
                 cy.get(tocells).should('not.exist');
 
                 cy.log('testing Pass Future type');
                 PassFunctions.openCreatePassDialog('future');
                 cy.get('app-create-hallpass-forms app-main-hallpass-form app-date-time app-gradient-button').should('be.visible').click();
-                // cy.get(fromcells).should('have.length', this.roomsNum).then(($ee) => expectEqualRoomList($ee));
+                cy.get(fromcells).should('have.length', roomsNum).then(($ee) => expectEqualRoomList($ee));
                 randomIndexElement(fromcells).click({force: true});
-                // cy.get(tocells).should('have.length', this.roomsNum).then(($ee) => expectEqualRoomList($ee));
+                cy.get(tocells).should('have.length', roomsNum).then(($ee) => expectEqualRoomList($ee));
                 closeModal();
                 cy.get(tocells).should('not.exist');
 
@@ -281,7 +297,6 @@ describe('Admin - UI and Actions', () => {
 
                     // modify title
                     cy.get('app-pinnable-collection app-pinnable').should('be.visible').then((pinns) => {
-                        // const currtitles = pinns.map((_, el) => el.textContent.trim()).get();
                         cy.log(`proposed modified title "${MODIFIED_TITLE}"`);
                     });
 
@@ -293,14 +308,25 @@ describe('Admin - UI and Actions', () => {
                     cy.get('app-room form app-input').should('have.length', 3);
                     // title
                     cy.get('app-room form app-input:eq(0)').should('be.visible').type('{selectall}{del}' + MODIFIED_TITLE + '{enter}');
+                    cy.get('app-room form app-input:eq(1)').should('be.visible').type('{selectall}{del}' + MODIFIED_ROOM_NUM + '{enter}');
+                    cy.get('app-room form app-input:eq(2)').should('be.visible').type('{selectall}{del}' + MODIFIED_ROOM_TIME + '{enter}');
+                    // TODO create a function
+                    const peak = 3;
+                    cy.get('app-restriction-picker span').should('have.length', peak).then($elems => {
+                        const inx = MODIFIED_TRAVEL_TYPE_INDEX;
+                        cy.wrap($elems.get(inx)).click();
+                    });
+                    cy.intercept({
+                      method: 'PATCH',
+                      url: /api\/prod-us-central\/v1\/pinnables\/\d+$/
+                    }).as('updateRoomRequest');
                     cy
                       .get('app-overlay-container > form app-gradient-button div.button div.text-content').should('have.length', 3)
                       .contains('Save')
                       .click();
-                    // cy.contains('app-custom-toast', 'Room updated').should('exist');
-                    cy.get('app-overlay-container > form', {timeout}).should('not.exist');
                     // it takes time to update the dom with titlemodified so the use of timeout
-                    cy.wait(1500);
+                    cy.wait('@updateRoomRequest');
+                    cy.contains('app-custom-toast', 'Room updated').should('exist');
                     // https://smartpass.app/api/prod-us-central/v1/pinnables/12421
                     cy.log(`room should have title "${MODIFIED_TITLE}"`);
                     cy.contains('app-pinnable-collection app-pinnable div.title', MODIFIED_TITLE, {timeout})
@@ -309,60 +335,105 @@ describe('Admin - UI and Actions', () => {
                     logout();
                 });
 
-                it('should view the modified test room in the Pass Now student view', { retries: 3 }, function() {
+                it('should view the modified test room in the Pass Now / Future student view', { retries: 3 }, function() {
                         cy.log('logging as student');
                         // @ts-ignore
                         cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'));
                         chooseDemoSchool();
-                        PassFunctions.openCreatePassDialog('now');
                         cy.log('testing Pass Now type');
                         PassFunctions.openCreatePassDialog('now');
 
                         // wait for the UI Pass Dialog to appears
-                        const fromcells = 'app-from-where app-location-cell div.title';
+                        const fromcellsTitle = 'app-from-where app-location-cell div.title';
+                        const fromcellsRoom = 'app-from-where app-location-cell div.room';
                         cy.log(`now from: testing "${MODIFIED_TITLE}"`);
-                        cy.contains(fromcells, MODIFIED_TITLE).should('have.length', 1).should('be.visible');
+                        cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).should('be.visible');
+                        cy.contains(fromcellsRoom, MODIFIED_ROOM_NUM).should('have.length', 1).should('be.visible');
                         cy.get('app-location-cell div.info').contains(MODIFIED_TITLE).click({force: true});
-                        // TODO just to draw attention
-                        // here MODIFIED_TITLE exists in UI Pass Now From side
-                        // and it is expected toexists in the PassNow To side
-                        // instead there exists the unmodified title
-                        // so, we have the  modified title in Pass Now From but old title in Pass Now To
-                        cy.contains(fromcells).should('not.exist');
-                        // randomIndexElement(fromcells).click();
+                        cy.contains(fromcellsTitle).should('not.exist');
 
-                        // when the Pass To is a list like Pass From
-                        // const tocells = 'app-to-where app-location-cell';
                         const tocells = 'app-to-where app-pinnable';
-                        // cy.log(`now to: testing "${MODIFIED_TITLE}"`);
                         cy.contains(tocells, MODIFIED_TITLE).should('not.exist');
-                        // cy.get(tocells).should('have.length', this.roomsNum)
-                        // //TODO here it is a stop for you to see in the Cypress browser
-                        //     //.pause()
-                        //     .contains(MODIFIED_TITLE); // TODO it is not found
-                        //     //.contains(this.titleRoom);
                         closeModal();
-                        // cy.get(tocells).should('not.exist');
 
                         cy.log('testing Pass Future type');
                         PassFunctions.openCreatePassDialog('future');
                         cy
                           .get('app-create-hallpass-forms app-main-hallpass-form app-date-time app-gradient-button').should('be.visible')
                           .click();
-                        cy.contains(fromcells, MODIFIED_TITLE).should('have.length', 1).should('be.visible');
+                        cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).should('be.visible');
+                        cy.contains(fromcellsRoom, MODIFIED_ROOM_NUM).should('have.length', 1).should('be.visible');
                         cy.get('app-location-cell div.info').contains(MODIFIED_TITLE).click({force: true});
                         cy.log(`future from testing "${MODIFIED_TITLE}"`);
-                        cy.contains(fromcells, MODIFIED_TITLE).should('have.length', 1).click({force: true});
-                        // randomIndexElement(fromcells).click({force: true});
-                        cy.contains(fromcells).should('not.exist');
+                        cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).click({force: true});
+                        cy.contains(fromcellsTitle).should('not.exist');
 
                         cy.log(`future to testing "${MODIFIED_TITLE}"`);
                         cy.contains(tocells, MODIFIED_TITLE).should('have.length', 1);
-                        // cy.get(tocells).should('have.length', this.roomsNum)
-                        //     .contains(MODIFIED_TITLE);
-                            // TODO same for Pass Future
-                            // .contains(this.titleRoom);
                         closeModal();
+                        cy.get(tocells).should('not.exist');
+
+                        // @ts-ignore
+                        cy.logout();
+                });
+
+                it('should the modified test room reflects changes of title, duration, travel type on the Send Request Card', function() {
+                        const DEMO_TEACHER = 'Demo Teacher1';
+                        const openCardRequestThanTest = () => {
+                            cy.get('app-sp-search input').should('have.length', 1).should('be.visible').type(DEMO_TEACHER);
+                            cy.get('app-sp-search div.options-wrapper').contains(DEMO_TEACHER).should('exist').should('be.visible').click();
+                            cy.get('app-create-hallpass-forms app-main-hallpass-form div.text-content').contains('Skip').click();
+                            cy.get('app-request-card div.pass-card-header div.pass-card-header-text').contains(MODIFIED_TITLE);
+                            cy.get('app-request-card')
+                                .within(() => {
+                                    cy.get('app-traveltype-picker div.option').contains(MODIFIED_TRAVEL_TYPE);
+                                    cy.get('app-duration-picker div.large').contains(MODIFIED_ROOM_TIME);
+                                });
+                            closeModal();
+                        };
+
+                        cy.log('logging as student');
+                        // @ts-ignore
+                        cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'));
+                        chooseDemoSchool();
+                        cy.log('testing Pass Now type');
+                        PassFunctions.openCreatePassDialog('now');
+
+                        // wait for the UI Pass Dialog to appears
+                        const fromcellsTitle = 'app-from-where app-location-cell div.title';
+                        const fromcellsRoom = 'app-from-where app-location-cell div.room';
+                        cy.log(`now from: testing "${MODIFIED_TITLE}"`);
+                        cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).should('be.visible');
+                        cy.contains(fromcellsRoom, MODIFIED_ROOM_NUM).should('have.length', 1).should('be.visible');
+                        // choose from default rooms
+                        // random name from defaultRoomNames?
+                        const ANY_ROOM_THAN_MODIFIED = 'Bathroom';
+                        cy.get('app-location-cell div.info').contains(ANY_ROOM_THAN_MODIFIED).click({force: true});
+                        cy.contains(fromcellsTitle).should('not.exist');
+
+                        const tocells = 'app-to-where app-pinnable';
+                        cy.contains(tocells, MODIFIED_TITLE).should('have.length', 1).should('be.visible').click();
+                        openCardRequestThanTest();
+
+                        cy.log('testing Pass Future type');
+                        PassFunctions.openCreatePassDialog('future');
+                        cy
+                          .get('app-create-hallpass-forms app-main-hallpass-form app-date-time app-gradient-button').should('be.visible')
+                          .click();
+                        cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).should('be.visible');
+                        cy.contains(fromcellsRoom, MODIFIED_ROOM_NUM).should('have.length', 1).should('be.visible');
+
+                        cy.get('app-location-cell div.info').contains(ANY_ROOM_THAN_MODIFIED).click({force: true});
+                        cy.contains(fromcellsTitle).should('not.exist');
+
+                        cy.get('app-location-cell div.info').contains(MODIFIED_TITLE).click({force: true});
+                        cy.log(`future from testing "${MODIFIED_TITLE}"`);
+                        cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).click({force: true});
+                        cy.contains(fromcellsTitle).should('not.exist');
+
+                        cy.log(`future to testing "${MODIFIED_TITLE}"`);
+                        cy.contains(tocells, MODIFIED_TITLE).should('have.length', 1).should('be.visible').click();
+                        openCardRequestThanTest();
                         cy.get(tocells).should('not.exist');
 
                         // @ts-ignore
@@ -376,13 +447,17 @@ describe('Admin - UI and Actions', () => {
                         chooseDemoSchool();
                         getNavAction('Rooms').click();
 
-                        const defaultRoomNames = ['Bathroom', 'Water Fountain', 'Nurse', 'Guidance', 'Main Office', 'Library'];
                         cy.get('app-pinnable div.title-bar > div.title').each(element => {
                           const roomTitle = element.text();
                           if (!defaultRoomNames.includes(roomTitle)) {
                             element.parent().parent().parent().trigger('click');
                             cy.get('mat-dialog-container > app-overlay-container app-room app-gradient-button').contains('Delete room').click({force: true});
+                            cy.intercept({
+                              method: 'DELETE',
+                              url: /api\/prod-us-central\/v1\/pinnables\/\d+$/
+                            }).as('deleteRoomRequest');
                             cy.get('mat-dialog-container > app-consent-menu').contains('Confirm Delete').click();
+                            cy.wait('@deleteRoomRequest');
                             cy.get('app-custom-toast', {timeout}).contains('Room deleted').should('exist');
                           }
                         });
