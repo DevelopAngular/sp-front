@@ -18,8 +18,9 @@
     <app-pass-limit-tooltip *ngIf="showTooltipWithDelay" [description]="!isSameRoom ? tooltipDescription : 'You selected ' + pinnable.title + ' as the origin (where you are now)!'"></app-pass-limit-tooltip>
   </ng-template>
 
-     <div *ngIf="selected" class="selected-overlay"></div>
+  <div *ngIf="selected" class="selected-overlay"></div>
   <div class="pinnable-card" [style.background]="getGradient()" [style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'" [style.opacity]="valid ? 1 : 0.5" [style.height]="height">
+    <div class="disable-room-block" *ngIf="disabledRoom">Closed</div>
     <img draggable="false" *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON">
     <div *ngIf="selected" class="selected-icon-wrapper">
       <img class="selected-icon" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="ICON">

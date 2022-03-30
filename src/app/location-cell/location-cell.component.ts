@@ -53,6 +53,8 @@ export class LocationCellComponent implements OnInit, OnDestroy {
 
   @Input() isFavorite: boolean;
 
+  @Input() disabledRoom: boolean;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
@@ -86,6 +88,9 @@ export class LocationCellComponent implements OnInit, OnDestroy {
   }
 
   get tooltipDescription(): string {
+    if (!this.value.enable && this.currentPage === 'to') {
+      return 'This room has been closed by an admin.';
+    }
     if (this.passLimit && this.currentPage !== 'from') {
       return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit);
     }
@@ -109,6 +114,9 @@ export class LocationCellComponent implements OnInit, OnDestroy {
           // (this.currentPage === 'from' && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
           (this.currentPage === 'to' && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
         );
+    }
+    if (!this.value.enable && this.currentPage === 'to') {
+      return true;
     }
   }
 
@@ -151,6 +159,9 @@ export class LocationCellComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.value.starred = this.starred;
+    if (!this.value.enable && this.currentPage === 'to') {
+      this.valid = false;
+    }
     this.shortcutsService.onPressKeyEvent$
       .pipe(pluck('key'), takeUntil(this.destroy$))
       .subscribe(key => {

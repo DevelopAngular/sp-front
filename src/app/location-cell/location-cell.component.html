@@ -14,6 +14,7 @@
     <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
     <div class="title">
       {{value.title}}
+      <span class="disabled-block" *ngIf="disabledRoom && currentPage === 'to'">Closed</span>
     </div>
     <div class="room" [style.color]="roomColor">
       <img style="z-index: 1000" *ngIf="isFavorite" cdkDragHandle appCrossPointerEventTarget (pointerClickEvent)="$event.stopPropagation()" style="margin-left: 5px" width="14" height="14" [src]="'./assets/Burger (Blue-Gray).svg'" alt="">

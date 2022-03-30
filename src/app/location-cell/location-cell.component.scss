@@ -22,6 +22,14 @@
   white-space: nowrap;
   align-items: center;
   position: relative;
+
+  .disabled-block {
+    padding: 5px;
+    color: #FFFFFF;
+    border-radius: 10px;
+    background-color: $red500;
+    margin-left: 5px;
+  }
 }
 
 .divider{

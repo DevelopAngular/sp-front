@@ -78,6 +78,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   passLimitForm: FormGroup;
+  enableRoomForm: FormGroup;
   showErrors: boolean;
 
   showPublishSpinner: boolean;
@@ -441,6 +442,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.pattern('^[0-9]*?[0-9]+$')]
       )
     });
+
+    this.enableRoomForm = new FormGroup({
+      isEnable: new FormControl(true)
+    });
   }
 
   generateAdvOptionsModel(loc: Location) {
@@ -659,6 +664,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
                 max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
                 max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
+                enable: this.enableRoomForm.get('isEnable').value,
                 ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)
@@ -718,7 +724,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             id = location.id;
             data = location;
             data.category = this.folderData.folderName + salt;
-            // debugger;
+            debugger;
             if (!data.max_passes_to_active && data.enable_queue) {
               data.max_passes_to_active = true;
             }
@@ -776,6 +782,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     }
 
     if (this.currentPage === Pages.EditRoom) {
+      debugger;
         const location = {
             title: this.roomData.roomName,
             room: this.roomData.roomNumber,
@@ -788,6 +795,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
             max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
             max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
+            enable: this.roomData.enable
         };
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
@@ -967,7 +975,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       max_passes_from: +this.passLimitForm.get('from').value,
       max_passes_from_active: false,
       max_passes_to: +this.passLimitForm.get('to').value,
-      max_passes_to_active: !!this.passLimitForm.get('toEnabled').value
+      max_passes_to_active: !!this.passLimitForm.get('toEnabled').value,
+      enable: room.enable
     };
   }
 

@@ -59,6 +59,8 @@ export class PinnableComponent implements OnInit, OnChanges {
 
   @Input() isSameRoom: boolean;
 
+  @Input() disabledRoom: boolean;
+
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
@@ -118,9 +120,15 @@ export class PinnableComponent implements OnInit, OnChanges {
           (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
         );
     }
+    if (this.pinnable.location && !this.pinnable.location.enable) {
+      return true;
+    }
   }
 
   get tooltipDescription(): string {
+    if (this.pinnable.location && !this.pinnable.location.enable) {
+      return 'This room has been closed by an admin.';
+    }
     if (this.passLimit) {
       return this.passLimit && this.tooltipService.tooltipDescription('to', this.passLimit);
     }
@@ -135,7 +143,9 @@ export class PinnableComponent implements OnInit, OnChanges {
       if (!!this.pinnable.location) {
         this.restricted = ((this.pinnable.location.restricted && !this.forLater) || (this.pinnable.location.scheduling_restricted && this.forLater));
       }
-    } else {
+    }
+    if (this.disabledRoom) {
+      this.disabled = true;
     }
   }
   ngOnChanges(changes: SimpleChanges): void {

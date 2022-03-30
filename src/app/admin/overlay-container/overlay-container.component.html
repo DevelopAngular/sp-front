@@ -50,13 +50,13 @@
   <div class="content">
     <div class="left-block">
       <div class="block" #block>
-        <app-room [form]="form" *ngIf="currentPage === 1 || currentPage === 2" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (roomDataResult)="roomResult($event)"></app-room>
+        <app-room [form]="form" *ngIf="currentPage === 1 || currentPage === 2" [passLimitForm]="passLimitForm" [isEnableRoomForm]="enableRoomForm" [showErrors]="showErrors" (roomDataResult)="roomResult($event)"></app-room>
 
         <app-folder [form]="form" *ngIf="currentPage === 3 || currentPage === 4" (folderDataResult)="folderResult($event)"></app-folder>
 
-        <app-new-room-in-folder [form]="form" *ngIf="currentPage === 5" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (errorsEmit)="showFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
+        <app-new-room-in-folder [form]="form" *ngIf="currentPage === 5" [passLimitForm]="passLimitForm" [isEnableRoomForm]="enableRoomForm" [showErrors]="showErrors" (errorsEmit)="showFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
 
-        <app-edit-room-in-folder *ngIf="currentPage === 6" (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="showFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
+        <app-edit-room-in-folder *ngIf="currentPage === 6" (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="showFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [isEnableRoomForm]="enableRoomForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
 
         <div class="existing-rooms" *ngIf="currentPage === 8">
           <app-add-existing-room
@@ -83,8 +83,14 @@
     <div class="right-block">
       <div class="right-content">
         <div class="appearance-content" *ngIf="currentPage !== 9">
-          <div class="inactive" *ngIf="disabledRightBlock"></div>
-          <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>
+          <div class="inactive" *ngIf="disabledRightBlock" [style.top]="(currentPage === 5 || currentPage === 6 ? '64px' : 0)"></div>
+          <div class="enable-room" *ngIf="currentPage === 1 || currentPage === 2 || currentPage === 5 || currentPage === 6">
+            <div class="info">{{ enableRoomForm.get('isEnable').value ? 'Enable room' : 'Disable room' }}</div>
+            <div class="toggle">
+              <app-toggle-input [form]="enableRoomForm" [controlName]="'isEnable'" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+            </div>
+          </div>
+<!--          <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>-->
           <div class="color-picker">
             <app-color-pallet-picker [selectedColorProfile]="color_profile" [showError]="showErrors" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
           </div>

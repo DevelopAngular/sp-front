@@ -15,6 +15,8 @@ export class NewRoomInFolderComponent implements OnInit {
 
   @Input() passLimitForm: FormGroup;
 
+  @Input() isEnableRoomForm: FormGroup;
+
   @Input() showErrors: boolean;
 
   @Output() back = new EventEmitter();
@@ -41,7 +43,8 @@ export class NewRoomInFolderComponent implements OnInit {
       advOptState: {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
-      }
+      },
+      enable: true
   };
 
   constructor() { }

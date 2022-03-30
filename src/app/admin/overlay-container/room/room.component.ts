@@ -32,6 +32,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() passLimitForm: FormGroup;
 
+  @Input() isEnableRoomForm: FormGroup;
+
   @Output() back = new EventEmitter();
 
   @Output()
@@ -49,7 +51,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       advOptState: {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
-      }
+      },
+      enable: true
   };
 
   initialData: RoomData;
@@ -147,8 +150,10 @@ export class RoomComponent implements OnInit, OnDestroy {
                   restricted: !!pinnable.location.restricted,
                   scheduling_restricted: !!pinnable.location.scheduling_restricted,
                   timeLimit: pinnable.location.max_allowed_time,
-                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions
+                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  enable: pinnable.location.enable
               };
+              this.isEnableRoomForm.patchValue({isEnable: pinnable.location.enable});
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
               this.passLimitForm.patchValue({
@@ -166,8 +171,10 @@ export class RoomComponent implements OnInit, OnDestroy {
                   travelType: data.travel_types,
                   restricted: !!data.restricted,
                   scheduling_restricted: !!data.scheduling_restricted,
-                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions
+                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  enable: data.enable
               };
+            this.isEnableRoomForm.patchValue({isEnable: data.enable});
           }
       }
 
@@ -193,6 +200,11 @@ export class RoomComponent implements OnInit, OnDestroy {
         debounceTime(450)
       ).subscribe(() => {
           this.checkValidRoomOptions();
+      });
+
+      this.isEnableRoomForm.get('isEnable').valueChanges.subscribe(res => {
+        this.data.enable = res;
+        this.change$.next();
       });
   }
 
