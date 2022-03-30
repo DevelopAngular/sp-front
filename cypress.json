@@ -9,6 +9,8 @@
   "fixturesFolder": "cypress/fixtures",
   "baseUrl": "http://localhost:4200",
   "env": {
+    "student1Username": "demostudent1@cypress.smartpass.app",
+    "student1Password": "uG8F2uAhBW",
     "studentUsername": "demostudent2@cypress.smartpass.app",
     "studentPassword": "b3-Iop6(Nt",
     "teacherUsername": "demoteacher1@cypress.smartpass.app",
