@@ -42,13 +42,39 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+import 'cypress-wait-until';
+
+const pressLoginSubmitButton = () => {
+  cy.get('app-gradient-button > div.button:not(.disabled)').click({force: true});
+};
+
+const submitUsername = (username: string) => {
+  cy.intercept({
+    method: 'GET',
+    url: '/api/discovery/email_info*'
+  }).as('emailCheck');
+  cy.get('div.input-container input[autocomplete="username"]').type(username);
+  pressLoginSubmitButton();
+  cy.wait('@emailCheck');
+};
+
+const submitPassword = (password: string) => {
+  cy.intercept({
+    method: 'POST',
+    url: '/api/discovery/v2/find'
+  }).as('credentialCheck');
+  cy.get('div.input-container input[autocomplete="password"]').type(password);
+  pressLoginSubmitButton();
+  cy.wait('@credentialCheck');
+};
+
 // @ts-ignore
 Cypress.Commands.add('login', (username: string, password: string) => {
   cy.visit('http://localhost:4200');
-  cy.get('div.input-container input[autocomplete="username"]').type(username);
-  cy.get('div.button > app-gradient-button > div.button').click({force: true});
-  cy.get('div.input-container input[autocomplete="password"]').type(password);
-  cy.get('div.button > app-gradient-button > div.button').click({force: true});
+  submitUsername(username);
+  cy.waitUntil(() => cy.get('div.input-password').should('have.css', 'opacity', '1'));
+  submitPassword(password);
+  cy.get('div.error').should('not.exist');
   cy.wait(10000);
 });
 
