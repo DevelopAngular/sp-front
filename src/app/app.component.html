@@ -8,6 +8,24 @@
     </div>
   </div>
 
+  <div
+    class="update-bar"
+    #updateBar
+    *ngIf="needToUpdateApp$ | async as update"
+    [style.background-color]="getBarBg(update.color.solid_color, updateBar.hover, updateBar.pressed)"
+    (mouseenter)="updateBar.hover = true"
+    (mouseleave)="updateBar.hover = false; updateBar.pressed = false"
+    appCrossPointerEventTarget
+    (pointerClickEvent)="updateApp(); updateBar.pressed = false"
+    (pointerDownEvent)="updateBar.pressed = true"
+    [style.border-bottom]="'1px solid ' + getBarBg(update.color.solid_color, true, true)"
+  >
+    <div class="circle" [style.background-color]="update.color.solid_color"></div>
+    <div class="title" [style.color]="update.color.solid_color">Update available.
+      <span style="font-weight: 600">Click to update</span>
+    </div>
+  </div>
+
   <app-school-toggle-bar
     *ngIf="isAuthenticated && ( schools && schools.length > 1 ) && !hideSchoolToggleBar && !isKioskMode"
     [schools]="schools">

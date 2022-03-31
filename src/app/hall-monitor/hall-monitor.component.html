@@ -1,4 +1,5 @@
-<div *ngIf="user" style="position: relative; height: auto; overflow: visible" #scrollableArea [style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 114px)' : 'calc(100vh - 64px)'">
+<div *ngIf="user" style="position: relative; height: auto; overflow: visible" #scrollableArea
+     [style.height]="(schoolsLength$ | async) > 1 ? ((isUpdateBar$ | async) ? 'calc(100vh - 153px)' : 'calc(100vh - 114px)') : ((isUpdateBar$ | async) ? 'calc(100vh - 103px)' : 'calc(100vh - 64px)')">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="ios-hall-monitor-top" *ngIf="isDeviceLargeExtra" [style.background-color]="darkTheme.getBackground('low', false)">
       <div [ngClass]="isIOSTablet ? 'ios-options-wrapper' : 'options-wrapper'" (click)="toggleSearchBar()">

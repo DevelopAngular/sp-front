@@ -26,7 +26,7 @@
     </mat-card>
   </mat-sidenav>
 
-  <mat-sidenav-content [style.padding-top]="topPadding">
+  <mat-sidenav-content [style.padding-top]="schools.length > 1 && !this.isKioskMode ? ((isUpdateBar$ | async) ? '89px' : '50px') : ((isUpdateBar$ | async) ? '39px' : '0px')">
     <div class="sticky" [style.height]="navbarHeight">
       <app-navbar (settingsClick)="onSettingClick($event)"></app-navbar>
     </div>

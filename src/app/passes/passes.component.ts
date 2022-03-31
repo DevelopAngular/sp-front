@@ -39,6 +39,7 @@ import {SideNavService} from '../services/side-nav.service';
 import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 import {LocationsService} from '../services/locations.service';
 import * as moment from 'moment';
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 @Component({
   selector: 'app-passes',
@@ -140,6 +141,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isStaff = false;
   currentScrollPosition: number;
 
+  isUpdateBar$: Subject<any>;
+
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
@@ -228,7 +231,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private httpService: HttpService,
     private passesService: HallPassesService,
     private sideNavService: SideNavService,
-    private locationsService: LocationsService
+    private locationsService: LocationsService,
+    private updateService: CheckForUpdateService
   ) {
 
     this.userService.user$
@@ -321,6 +325,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;

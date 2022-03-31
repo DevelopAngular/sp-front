@@ -32,6 +32,7 @@ import {HallPassesService} from '../services/hall-passes.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
 import * as moment from 'moment';
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 
 @Component({
@@ -138,6 +139,8 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 
   currentPasses$ = new Subject();
 
+  isUpdateBar$: Subject<any>;
+
   currentPassesDates: Map<string, number> = new Map();
   holdScrollPosition: number = 0;
 
@@ -159,7 +162,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       public screenService: ScreenService,
       public router: Router,
       private scrollPosition: ScrollPositionService,
-
+      private updateService: CheckForUpdateService
   ) {
     this.setSearchDate(this.timeService.nowDate());
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -238,6 +241,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
     this.schoolsLength$ = this.http.schoolsLength$;
     combineLatest(
