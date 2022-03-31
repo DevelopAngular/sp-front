@@ -11,18 +11,19 @@
 
     <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 7.5px">
       <div class="pinnable-item-container" >
+        <div class="disable-room-block" *ngIf="pinnable.location && !pinnable.location.enable">Disabled</div>
         <!--[style.animation-delay]="(i * .1) + 's'"-->
         <div [ngClass]="{'pinnable-item': this.bulkSelect}">
           <app-pinnable
-                  [forStaff]="true"
-                  [width]="'143px'"
-                  [height]="'86.5px'"
-                  [selected]="isSelected(pinnable)"
-                  [forBulk]="bulkSelect"
-                  [forCollection]="true"
-                  [pinnable]="pinnable"
-                  (clampedEvent)="toggleBulk()"
-                  (onSelectEvent)="updatePinnables($event)"
+            [forStaff]="true"
+            [width]="'143px'"
+            [height]="'86.5px'"
+            [selected]="isSelected(pinnable)"
+            [forBulk]="bulkSelect"
+            [forCollection]="true"
+            [pinnable]="pinnable"
+            (clampedEvent)="toggleBulk()"
+            (onSelectEvent)="updatePinnables($event)"
           ></app-pinnable>
         </div>
       </div>

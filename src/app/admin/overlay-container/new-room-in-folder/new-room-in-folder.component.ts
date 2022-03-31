@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {RoomData} from '../overlay-data.service';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
 
 @Component({
@@ -15,11 +15,13 @@ export class NewRoomInFolderComponent implements OnInit {
 
   @Input() passLimitForm: FormGroup;
 
-  @Input() isEnableRoomForm: FormGroup;
+  @Input() isEnableRoomTrigger$: Subject<boolean>;
 
   @Input() showErrors: boolean;
 
   @Output() back = new EventEmitter();
+
+  @Output() roomDataResult: EventEmitter<{data: RoomData, buttonState: ValidButtons}> = new EventEmitter<{data: RoomData, buttonState: ValidButtons}>();
 
   @Output() add: EventEmitter<RoomData> = new EventEmitter<RoomData>();
 
@@ -79,6 +81,7 @@ export class NewRoomInFolderComponent implements OnInit {
   roomResult({data, buttonState}) {
     this.roomInFolderData = data;
     this.roomValidButtons.next(buttonState);
+    this.roomDataResult.emit({data, buttonState});
   }
 
 }

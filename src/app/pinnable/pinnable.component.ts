@@ -120,13 +120,13 @@ export class PinnableComponent implements OnInit, OnChanges {
           (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
         );
     }
-    if (this.pinnable.location && !this.pinnable.location.enable) {
+    if (this.pinnable.location && !this.pinnable.location.enable && this.currentPage === 'to') {
       return true;
     }
   }
 
   get tooltipDescription(): string {
-    if (this.pinnable.location && !this.pinnable.location.enable) {
+    if (this.pinnable.location && !this.pinnable.location.enable && this.currentPage === 'to') {
       return 'This room has been closed by an admin.';
     }
     if (this.passLimit) {
@@ -144,8 +144,9 @@ export class PinnableComponent implements OnInit, OnChanges {
         this.restricted = ((this.pinnable.location.restricted && !this.forLater) || (this.pinnable.location.scheduling_restricted && this.forLater));
       }
     }
-    if (this.disabledRoom) {
+    if (this.disabledRoom && this.currentPage === 'to') {
       this.disabled = true;
+      this.valid = false;
     }
   }
   ngOnChanges(changes: SimpleChanges): void {

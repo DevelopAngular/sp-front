@@ -10,7 +10,7 @@
      [style.cursor]="cursor"
      cdkDrag [cdkDragDisabled]="!isFavorite"
 >
-  <div *ngIf="type==='location'" class="info" customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip || isSameRoom">
+  <div *ngIf="type==='location'" class="info" customToolTip [editable]="true" [nonDisappearing]="false" [contentTemplate]="tooltip" [showToolTip]="showTooltip || isSameRoom">
     <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
     <div class="title">
       {{value.title}}
@@ -29,7 +29,7 @@
   </div>
 
   <ng-template #tooltip>
-    <app-pass-limit-tooltip *ngIf="showTooltipWithDelay" [description]="!isSameRoom ? tooltipDescription : 'You selected ' + value.title + ' as the origin (where you are now)!'"></app-pass-limit-tooltip>
+    <app-pass-limit-tooltip [isHand]="value.enable" *ngIf="showTooltipWithDelay" [description]="!isSameRoom ? tooltipDescription : 'You selected ' + value.title + ' as the origin (where you are now)!'"></app-pass-limit-tooltip>
   </ng-template>
 
   <div *ngIf="type==='teachers'" class="info">

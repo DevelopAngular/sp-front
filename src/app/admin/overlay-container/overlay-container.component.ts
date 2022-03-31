@@ -1,12 +1,12 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap,} from 'rxjs/operators';
 
-import {NextStep} from '../../animations';
+import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
 import {Location} from '../../models/Location';
 import {HttpService} from '../../services/http-service';
@@ -19,12 +19,13 @@ import {FolderData, OverlayDataService, Pages, RoomData} from './overlay-data.se
 import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lodash';
 import {ColorProfile} from '../../models/ColorProfile';
 import {ToastService} from '../../services/toast.service';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 
 @Component({
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
   styleUrls: ['./overlay-container.component.scss'],
-  animations: [NextStep]
+  animations: [NextStep, bumpIn]
 
 })
 export class OverlayContainerComponent implements OnInit, OnDestroy {
@@ -78,7 +79,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   passLimitForm: FormGroup;
-  enableRoomForm: FormGroup;
+  enableRoomTrigger: Subject<boolean> = new Subject<boolean>();
+  isOpenRoom: boolean;
   showErrors: boolean;
 
   showPublishSpinner: boolean;
@@ -103,7 +105,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       private formService: CreateFormService,
       public sanitizer: DomSanitizer,
       public overlayService: OverlayDataService,
-      private toast: ToastService
+      private toast: ToastService,
+      private dialog: MatDialog,
   ) {}
 
   getHeaderData() {
@@ -442,10 +445,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.pattern('^[0-9]*?[0-9]+$')]
       )
     });
-
-    this.enableRoomForm = new FormGroup({
-      isEnable: new FormControl(true)
-    });
   }
 
   generateAdvOptionsModel(loc: Location) {
@@ -664,7 +663,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
                 max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
                 max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
-                enable: this.enableRoomForm.get('isEnable').value,
+                enable: this.isOpenRoom,
                 ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)
@@ -724,7 +723,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             id = location.id;
             data = location;
             data.category = this.folderData.folderName + salt;
-            debugger;
             if (!data.max_passes_to_active && data.enable_queue) {
               data.max_passes_to_active = true;
             }
@@ -782,7 +780,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     }
 
     if (this.currentPage === Pages.EditRoom) {
-      debugger;
         const location = {
             title: this.roomData.roomName,
             room: this.roomData.roomNumber,
@@ -858,6 +855,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   roomResult({data, buttonState}) {
     this.roomData = data;
+    this.isOpenRoom = this.roomData.enable;
     this.roomValidButtons.next(buttonState);
   }
 
@@ -868,6 +866,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   newRoomInFolder(room: RoomData) {
       this.oldFolderData = cloneDeep(this.folderData);
+      this.isOpenRoom = room.enable;
       this.folderData.roomsInFolder.push({
         ...this.normalizeRoomData(room),
         ...this.normalizeAdvOptData(room),
@@ -881,6 +880,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   editRoomFolder(room: RoomData) {
     this.oldFolderData = cloneDeep(this.folderData);
+    this.isOpenRoom = room.enable;
     this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
     this.folderData.roomsInFolder.push({
       ...this.normalizeRoomData(room),
@@ -987,6 +987,20 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       random += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return random;
+  }
+
+  openCloseRoomToggle(event) {
+    const options = [{display: this.isOpenRoom ? 'Close' : 'Open', color: this.isOpenRoom ? '#DA2370' : '#00B476', buttonColor: '#DA2370, #FB434A', action: this.isOpenRoom ? 'close' : 'open'}];
+    const CM = this.dialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {trigger: new ElementRef(event.currentTarget), options}
+    });
+
+    CM.afterClosed().pipe(filter(res => !!res)).subscribe(value => {
+      this.enableRoomTrigger.next(value === 'open');
+    });
+
   }
 
   catchFile(evt: DragEvent) {

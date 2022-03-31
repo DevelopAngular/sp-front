@@ -1,3 +1,5 @@
+@import "../../../../sp-colors";
+
 .wrapper {
   overflow: auto;
   height: 100%;
@@ -49,6 +51,15 @@
           align-items: center;
           cursor: pointer;
           width: 235px;
+
+          .disabled-block {
+            padding: 3px 5px;
+            font-size: 14px;
+            background-color: $gray100;
+            color: $gray500;
+            border-radius: 14px;
+            margin-left: 5px;
+          }
         }
       }
 

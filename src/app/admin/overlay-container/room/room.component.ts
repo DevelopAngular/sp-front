@@ -32,7 +32,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() passLimitForm: FormGroup;
 
-  @Input() isEnableRoomForm: FormGroup;
+  @Input() isEnableRoomTrigger$: Subject<boolean>;
 
   @Output() back = new EventEmitter();
 
@@ -153,7 +153,6 @@ export class RoomComponent implements OnInit, OnDestroy {
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
                   enable: pinnable.location.enable
               };
-              this.isEnableRoomForm.patchValue({isEnable: pinnable.location.enable});
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
               this.passLimitForm.patchValue({
@@ -174,7 +173,6 @@ export class RoomComponent implements OnInit, OnDestroy {
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
                   enable: data.enable
               };
-            this.isEnableRoomForm.patchValue({isEnable: data.enable});
           }
       }
 
@@ -202,7 +200,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           this.checkValidRoomOptions();
       });
 
-      this.isEnableRoomForm.get('isEnable').valueChanges.subscribe(res => {
+      this.isEnableRoomTrigger$.subscribe(res => {
         this.data.enable = res;
         this.change$.next();
       });

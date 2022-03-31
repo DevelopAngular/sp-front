@@ -50,13 +50,44 @@
   <div class="content">
     <div class="left-block">
       <div class="block" #block>
-        <app-room [form]="form" *ngIf="currentPage === 1 || currentPage === 2" [passLimitForm]="passLimitForm" [isEnableRoomForm]="enableRoomForm" [showErrors]="showErrors" (roomDataResult)="roomResult($event)"></app-room>
+        <app-room
+          [form]="form"
+          *ngIf="currentPage === 1 || currentPage === 2"
+          [passLimitForm]="passLimitForm"
+          [isEnableRoomTrigger$]="enableRoomTrigger"
+          [showErrors]="showErrors"
+          (roomDataResult)="roomResult($event)"
+        ></app-room>
 
-        <app-folder [form]="form" *ngIf="currentPage === 3 || currentPage === 4" (folderDataResult)="folderResult($event)"></app-folder>
+        <app-folder
+          [form]="form"
+          *ngIf="currentPage === 3 || currentPage === 4"
+          (folderDataResult)="folderResult($event)"
+        ></app-folder>
 
-        <app-new-room-in-folder [form]="form" *ngIf="currentPage === 5" [passLimitForm]="passLimitForm" [isEnableRoomForm]="enableRoomForm" [showErrors]="showErrors" (errorsEmit)="showFormErrors()" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
+        <app-new-room-in-folder
+          [form]="form" *ngIf="currentPage === 5"
+          [passLimitForm]="passLimitForm"
+          [isEnableRoomTrigger$]="enableRoomTrigger"
+          [showErrors]="showErrors"
+          (errorsEmit)="showFormErrors()"
+          (roomDataResult)="roomResult($event)"
+          (add)="newRoomInFolder($event)"
+          (back)="back(false)"
+        ></app-new-room-in-folder>
 
-        <app-edit-room-in-folder *ngIf="currentPage === 6" (deleteRoom)="deleteRoomInFolder($event)" (errorsEmit)="showFormErrors()" [form]="form" [passLimitForm]="passLimitForm" [isEnableRoomForm]="enableRoomForm" [showErrors]="showErrors" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
+        <app-edit-room-in-folder
+          *ngIf="currentPage === 6"
+          (deleteRoom)="deleteRoomInFolder($event)"
+          (errorsEmit)="showFormErrors()"
+          [form]="form"
+          [passLimitForm]="passLimitForm"
+          [isEnableRoomTrigger$]="enableRoomTrigger"
+          [showErrors]="showErrors"
+          (roomDataResult)="roomResult($event)"
+          (save)="editRoomFolder($event)"
+          (back)="back(false)"
+        ></app-edit-room-in-folder>
 
         <div class="existing-rooms" *ngIf="currentPage === 8">
           <app-add-existing-room
@@ -68,11 +99,27 @@
           </app-add-existing-room>
         </div>
 
-        <app-bulk-edit-rooms *ngIf="currentPage === 9" (bulkEditResult)="bulkEditResult($event)" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors"></app-bulk-edit-rooms>
+        <app-bulk-edit-rooms
+          *ngIf="currentPage === 9"
+          (bulkEditResult)="bulkEditResult($event)"
+          [form]="form"
+          [passLimitForm]="passLimitForm"
+          [showErrors]="showErrors"
+        ></app-bulk-edit-rooms>
 
-        <app-bulk-edit-rooms-in-folder *ngIf="currentPage === 10" [form]="form" [passLimitForm]="passLimitForm" [showErrors]="showErrors" (bulkEditResult)="bulkEditInFolder($event)" (errorsEmit)="showFormErrors()" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
+        <app-bulk-edit-rooms-in-folder
+          *ngIf="currentPage === 10" [form]="form"
+          [passLimitForm]="passLimitForm"
+          [showErrors]="showErrors"
+          (bulkEditResult)="bulkEditInFolder($event)"
+          (errorsEmit)="showFormErrors()"
+          (back)="back(false)"
+        ></app-bulk-edit-rooms-in-folder>
 
-        <app-import-rooms [form]="form" *ngIf="currentPage === 7" (back)="back(false)"></app-import-rooms>
+        <app-import-rooms
+          [form]="form" *ngIf="currentPage === 7"
+          (back)="back(false)"
+        ></app-import-rooms>
 
       </div>
       <div class="shadow" *ngIf="showBottomShadow"></div>
@@ -85,9 +132,20 @@
         <div class="appearance-content" *ngIf="currentPage !== 9">
           <div class="inactive" *ngIf="disabledRightBlock" [style.top]="(currentPage === 5 || currentPage === 6 ? '64px' : 0)"></div>
           <div class="enable-room" *ngIf="currentPage === 1 || currentPage === 2 || currentPage === 5 || currentPage === 6">
-            <div class="info">{{ enableRoomForm.get('isEnable').value ? 'Enable room' : 'Disable room' }}</div>
+            <div class="info">Availability</div>
             <div class="toggle">
-              <app-toggle-input [form]="enableRoomForm" [controlName]="'isEnable'" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+<!--              <app-toggle-input [form]="enableRoomForm" [controlName]="'isEnable'" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>-->
+              <div class="toggle-button"
+                   #toggle
+                   appCrossPointerEventTarget
+                   [ngClass]="{disabled: !isOpenRoom}"
+                   (pointerDownEvent)="toggle.pressed = true"
+                   (pointerClickEvent)="toggle.pressed = false; openCloseRoomToggle($event)"
+                   (mouseleave)="toggle.pressed = false"
+                   [@pressState]="toggle.pressed ? 'down' : 'up'"
+              >{{ isOpenRoom ? 'Open' : 'Close' }}
+                <img width="8px" height="6px" style="margin-left: 6px" [src]="'./assets/Rect (' + (isOpenRoom ? 'Green500' : 'Red500') + ').svg'" alt="">
+              </div>
             </div>
           </div>
 <!--          <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>-->

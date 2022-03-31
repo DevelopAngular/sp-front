@@ -1,3 +1,5 @@
+@import "../../../sp-colors";
+
 .collection-wrapper{
 
 }
@@ -50,9 +52,25 @@
     user-select: none;
 }
 .pinnable-item-container {
+  position: relative;
   .pinnable-item {
     width: auto;
     animation: wiggle .3s ease infinite;
+  }
+
+  .disable-room-block {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 10;
+    padding: 3px 5px;
+    border-radius: 14px;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $gray100;
+    color: $gray500;
   }
 }
 @keyframes wiggle {

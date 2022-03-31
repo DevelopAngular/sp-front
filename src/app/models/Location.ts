@@ -64,7 +64,7 @@ export class Location extends BaseModel {
       max_passes_from_active: boolean = !!JSON['max_passes_from_active'],
       max_passes_to: number = JSON['max_passes_to'],
       max_passes_to_active: boolean = !!JSON['max_passes_to_active'],
-      enable: boolean = !!JSON('enable'),
+      enable: boolean = !!JSON['enable'],
       current_active_pass_count_as_destination: number = JSON['current_active_pass_count_as_destination'],
       current_active_pass_count_as_origin: number = JSON['current_active_pass_count_as_origin'],
       has_reached_limit_as_destination: boolean = !!JSON['has_reached_limit_as_destination'],

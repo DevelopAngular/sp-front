@@ -24,9 +24,10 @@
   position: relative;
 
   .disabled-block {
-    padding: 5px;
+    padding: 3px 5px;
+    font-size: 14px;
     color: #FFFFFF;
-    border-radius: 10px;
+    border-radius: 14px;
     background-color: $red500;
     margin-left: 5px;
   }

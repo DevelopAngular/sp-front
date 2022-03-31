@@ -786,6 +786,30 @@
     .info {
       color: $navy500;
       font-size: 15px;
+      font-weight: bold;
+    }
+
+    .toggle {
+
+      .toggle-button {
+        width: 77px;
+        height: 40px;
+        background-color: $green100;
+        border: 2px solid $green200;
+        border-radius: 8px;
+        color: $green500;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &.disabled {
+          background-color: $red100;
+          border: 2px solid $red150;
+          color: $red500;
+        }
+      }
     }
   }
 }
