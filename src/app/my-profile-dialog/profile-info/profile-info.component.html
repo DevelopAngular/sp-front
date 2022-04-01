@@ -18,16 +18,16 @@
       </div>
       <div class="block-item">
         <div class="label">Name</div>
-        <div class="item-content">{{ user.display_name }}</div>
+        <div class="item-content" ignore>{{ user.display_name }}</div>
       </div>
       <div class="block-item">
         <div class="label">Email/username</div>
-        <div class="item-content">{{ user.primary_email }}</div>
+        <div class="item-content" ignore>{{ user.primary_email }}</div>
       </div>
       <div class="block-item">
         <div class="label">School</div>
-        <div class="item-content" *ngFor="let school of schools">
-          {{ school.name + ' (' + checkUserRoles(school.my_roles) + ')' }}
+        <div class="item-content" *ngFor="let school of schools" style="white-space: pre">
+          <span ignore>{{ school.name }}</span> {{ '(' + checkUserRoles(school.my_roles) + ')' }}
         </div>
       </div>
       <div class="block-item" style="margin-bottom: 15px">
