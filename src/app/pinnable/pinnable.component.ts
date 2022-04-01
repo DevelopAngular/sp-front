@@ -146,7 +146,7 @@ export class PinnableComponent implements OnInit, OnChanges {
     }
     if (this.disabledRoom && this.currentPage === 'to') {
       this.disabled = true;
-      this.valid = false;
+      // this.valid = false;
     }
   }
   ngOnChanges(changes: SimpleChanges): void {

@@ -9,7 +9,7 @@
      (pointerDownEvent)="onPress(true);"
      [ngClass]="{'isSameRoom': isSameRoom}"
 
-     (mouseenter)="hovered = true; tooltipDelay(true, 1000)"
+     (mouseenter)="hovered = true; tooltipDelay(true, 0)"
      (mouseleave)="onPress(false); hovered = false; tooltipDelay(false)"
      customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip || isSameRoom"
      [editable]="true" [nonDisappearing]="false"
@@ -24,8 +24,9 @@
        [style.background]="getGradient()"
        [style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'"
        [style.height]="height"
+       [style.opacity]="valid ? 1 : 0.5"
   >
-    <div class="disabled" *ngIf="!valid"></div>
+    <div class="disabled" *ngIf="pinnable.location && !pinnable.location.enable"></div>
     <div class="disable-room-block" *ngIf="disabledRoom">Closed</div>
     <img draggable="false" *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON">
     <div *ngIf="selected" class="selected-icon-wrapper">

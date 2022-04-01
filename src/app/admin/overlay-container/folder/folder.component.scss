@@ -55,9 +55,10 @@
           .disabled-block {
             padding: 3px 5px;
             font-size: 14px;
-            background-color: $gray100;
-            color: $gray500;
+            font-weight: bold;
+            color: #FFFFFF;
             border-radius: 14px;
+            background-color: $red500;
             margin-left: 5px;
           }
         }

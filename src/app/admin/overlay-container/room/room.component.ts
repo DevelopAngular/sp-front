@@ -3,7 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {merge, Subject} from 'rxjs';
-import {debounceTime, filter, pluck, takeUntil, tap} from 'rxjs/operators';
+import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
@@ -195,7 +195,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.initialData = cloneDeep(this.data);
 
       merge(this.form.valueChanges, this.change$).pipe(
-        debounceTime(450)
+        // debounceTime(450)
       ).subscribe(() => {
           this.checkValidRoomOptions();
       });

@@ -134,7 +134,6 @@
           <div class="enable-room" *ngIf="currentPage === 1 || currentPage === 2 || currentPage === 5 || currentPage === 6">
             <div class="info">Availability</div>
             <div class="toggle">
-<!--              <app-toggle-input [form]="enableRoomForm" [controlName]="'isEnable'" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>-->
               <div class="toggle-button"
                    #toggle
                    appCrossPointerEventTarget
@@ -143,7 +142,7 @@
                    (pointerClickEvent)="toggle.pressed = false; openCloseRoomToggle($event)"
                    (mouseleave)="toggle.pressed = false"
                    [@pressState]="toggle.pressed ? 'down' : 'up'"
-              >{{ isOpenRoom ? 'Open' : 'Close' }}
+              >{{ isOpenRoom ? 'Open' : 'Closed' }}
                 <img width="8px" height="6px" style="margin-left: 6px" [src]="'./assets/Rect (' + (isOpenRoom ? 'Green500' : 'Red500') + ').svg'" alt="">
               </div>
             </div>

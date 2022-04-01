@@ -52,7 +52,7 @@
                 <div class="room-edit" (click)="setToEditRoom(room)">
                   <mat-list-item>
                     {{ room.title }}
-                    <div class="disabled-block" *ngIf="!room.enable">Disabled</div>
+                    <div class="disabled-block" *ngIf="!room.enable">Closed</div>
                   </mat-list-item>
                   <img style="margin-right: 10px" draggable="false" width="22" height="25" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">
                 </div>

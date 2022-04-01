@@ -11,7 +11,7 @@
 
     <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 7.5px">
       <div class="pinnable-item-container" >
-        <div class="disable-room-block" *ngIf="pinnable.location && !pinnable.location.enable">Disabled</div>
+<!--        <div class="disable-room-block" *ngIf="pinnable.location && !pinnable.location.enable"></div>-->
         <!--[style.animation-delay]="(i * .1) + 's'"-->
         <div [ngClass]="{'pinnable-item': this.bulkSelect}">
           <app-pinnable
@@ -20,6 +20,7 @@
             [height]="'86.5px'"
             [selected]="isSelected(pinnable)"
             [forBulk]="bulkSelect"
+            [disabledRoom]="pinnable.location && !pinnable.location.enable"
             [forCollection]="true"
             [pinnable]="pinnable"
             (clampedEvent)="toggleBulk()"
