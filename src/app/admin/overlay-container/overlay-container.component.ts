@@ -3,8 +3,8 @@ import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/form
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap,} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -20,6 +20,7 @@ import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lod
 import {ColorProfile} from '../../models/ColorProfile';
 import {ToastService} from '../../services/toast.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-overlay-container',
@@ -91,6 +92,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
       future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
   };
+
+  introsData: any;
+  showNuxTooltip: Subject<boolean> = new Subject<boolean>();
+
   frameMotion$: BehaviorSubject<any>;
 
   destroy$: Subject<any> = new Subject<any>();
@@ -304,7 +309,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.pinnablesCollectionIds$ = this.hallPassService.pinnablesCollectionIds$;
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
        this.currentPage = res.currentPage;
@@ -400,6 +404,20 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           this.showBottomShadow = true;
         }
       });
+
+    combineLatest(
+      this.userService.introsData$.pipe(filter(res => !!res)),
+      this.userService.nuxDates$.pipe(filter(r => !!r)),
+      this.userService.user$.pipe(filter(r => !!r))
+    )
+      .pipe(
+        debounceTime(1000),
+        takeUntil(this.destroy$)
+      ).subscribe(([intros, nuxDates, user]) => {
+          this.introsData = intros;
+          const showNux = moment(user.first_login).isBefore(moment(nuxDates[2].created), 'day');
+          this.showNuxTooltip.next(!this.introsData.disable_room_reminder.universal.seen_version && showNux);
+    });
   }
 
   ngOnDestroy() {
@@ -1014,5 +1032,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         selectedRoomsInFolder: [_room]
       });
     }, 10);
+  }
+
+  closeDisableRoomNux() {
+    this.showNuxTooltip.next(false);
+    this.userService.updateIntrosDisableRequest(this.introsData, 'universal',  '1');
   }
 }

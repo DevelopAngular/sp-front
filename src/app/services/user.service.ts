@@ -96,7 +96,14 @@ import {getCurrentUpdatedUser, getLoadedUser, getNuxDates, getSelectUserPin, get
 import {clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {getIntros, updateIntros, updateIntrosEncounter, updateIntrosMain, updateIntrosSearch} from '../ngrx/intros/actions';
+import {
+  getIntros,
+  updateIntros,
+  updateIntrosDisableRoom,
+  updateIntrosEncounter,
+  updateIntrosMain,
+  updateIntrosSearch
+} from '../ngrx/intros/actions';
 import {getIntrosData} from '../ngrx/intros/state';
 import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
@@ -483,6 +490,14 @@ export class UserService implements OnDestroy {
 
   updateIntrosSearch(device, version) {
     return this.http.patch('v1/intros/search_reminder', {device, version});
+  }
+
+  updateIntrosDisableRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosDisableRoom({intros, device, version}));
+  }
+
+  updateIntrosDisableRoom(device, version) {
+    return this.http.patch('v1/intros/disable_room_reminder', {device, version});
   }
 
   saveKioskModeLocation(locId) {

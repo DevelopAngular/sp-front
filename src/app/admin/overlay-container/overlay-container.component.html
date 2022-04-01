@@ -133,7 +133,9 @@
           <div class="inactive" *ngIf="disabledRightBlock" [style.top]="(currentPage === 5 || currentPage === 6 ? '64px' : 0)"></div>
           <div class="enable-room" *ngIf="currentPage === 1 || currentPage === 2 || currentPage === 5 || currentPage === 6">
             <div class="info">Availability</div>
-            <div class="toggle">
+            <div class="toggle" nuxTooltip
+                 [contentTemplate]="tooltip"
+                 [showToolTip$]="showNuxTooltip">
               <div class="toggle-button"
                    #toggle
                    appCrossPointerEventTarget
@@ -145,6 +147,10 @@
               >{{ isOpenRoom ? 'Open' : 'Closed' }}
                 <img width="8px" height="6px" style="margin-left: 6px" [src]="'./assets/Rect (' + (isOpenRoom ? 'Green500' : 'Red500') + ').svg'" alt="">
               </div>
+
+              <ng-template #tooltip>
+                <app-nux-universal [description]="'Temporarily close or “shut down” a room.'" (gotItEvent)="closeDisableRoomNux()"></app-nux-universal>
+              </ng-template>
             </div>
           </div>
 <!--          <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>-->
