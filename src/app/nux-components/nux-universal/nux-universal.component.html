@@ -2,7 +2,7 @@
   <div class="new">New</div>
   <div class="info">{{ description }}</div>
   <div class="buttons">
-    <app-gradient-button [gradient]="'#70819f, #70819f'" [buttonLink]="link" (buttonClick)="gotItEvent.emit(false)">Learn more</app-gradient-button>
+    <app-gradient-button [gradient]="'#70819f, #70819f'" [buttonLink]="link" [text]="'Learn more'" (buttonClick)="gotItEvent.emit(true)"></app-gradient-button>
     <app-gradient-button style="margin-left: 10px" (buttonClick)="gotItEvent.emit(true)">Got it!</app-gradient-button>
   </div>
 </div>
