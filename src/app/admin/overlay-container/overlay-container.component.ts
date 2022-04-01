@@ -20,7 +20,6 @@ import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lod
 import {ColorProfile} from '../../models/ColorProfile';
 import {ToastService} from '../../services/toast.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-overlay-container',
@@ -415,8 +414,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       ).subscribe(([intros, nuxDates, user]) => {
           this.introsData = intros;
-          const showNux = moment(user.first_login).isBefore(moment(nuxDates[2].created), 'day');
-          this.showNuxTooltip.next(!this.introsData.disable_room_reminder.universal.seen_version && showNux);
+          // const showNux = moment(user.first_login).isBefore(moment(nuxDates[2].created), 'day');
+          this.showNuxTooltip.next(!this.introsData.disable_room_reminder.universal.seen_version);
     });
   }
 
