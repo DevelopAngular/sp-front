@@ -43,7 +43,7 @@
              [maxlength]="maxLength"
              [formControl]="controlName"
              [type]="input_type"
-             [attr.ignore]="input_type == 'password' ? '' : null"
+             ignore
              (focus)="updateFocus(inp); controlName.markAsUntouched(); inp.focused = true"
              (blur)=" onBlur(inp.value)"
              (mouseover)="hovered = true"
