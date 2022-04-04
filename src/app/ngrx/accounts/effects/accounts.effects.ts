@@ -144,15 +144,15 @@ export class AccountsEffects {
         ofType(accountsActions.removeAccount),
         map((action: any) => {
           if (action.role === '' || action.role === '_all') {
-            return roleActions.removeAllAccount({id: action.id});
+            return roleActions.removeAllAccount({id: action.user.id});
           } else if (action.role === '_profile_admin') {
-            return roleActions.removeAdminAccount({id: action.id});
+            return roleActions.removeAdminAccount({id: action.user.id});
           } else if (action.role === '_profile_teacher') {
-            return roleActions.removeTeacher({id: action.id});
+            return roleActions.removeTeacher({id: action.user.id});
           } else if (action.role === '_profile_student') {
-            return roleActions.removeStudent({id: action.id});
+            return roleActions.removeStudent({id: action.user.id});
           } else if (action.role === '_profile_assistant') {
-            return roleActions.removeAssistant({id: action.id});
+            return roleActions.removeAssistant({id: action.user.id});
           }
 
           return action;

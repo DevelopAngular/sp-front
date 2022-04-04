@@ -56,7 +56,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.data['profile']) {
+    if (this.data && this.data['profile']) {
       this.user = this.data['profile'];
     } else {
       this.userService.user$

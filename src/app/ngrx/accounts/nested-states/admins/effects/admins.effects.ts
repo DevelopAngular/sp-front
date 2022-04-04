@@ -8,6 +8,7 @@ import {User} from '../../../../../models/User';
 import {getCountAccounts} from '../../count-accounts/actions';
 import * as adminsActions from '../actions';
 import * as userActions from '../../../../user/actions';
+import * as accountActions from '../../../actions/accounts.actions';
 
 @Injectable()
 export class AdminsEffects {
@@ -87,8 +88,11 @@ export class AdminsEffects {
         concatMap((action) => {
           return this.userService.deleteUserFromProfile(action.id, 'admin')
             .pipe(
-              map(user => {
-                return adminsActions.removeAdminAccountSuccess({id: action.id});
+              switchMap((user: User) => {
+                return [
+                  adminsActions.removeAdminAccountSuccess({id: action.id}),
+                  accountActions.updateAccounts({account: user})
+                ];
               }),
               catchError(error => of(adminsActions.removeAdminAccountFailure({errorMessage: error.message})))
             );
@@ -150,8 +154,8 @@ export class AdminsEffects {
             .pipe(
               switchMap((user: User) => {
                 return [
-                  adminsActions.updateAdminAccount({profile: user}),
-                  adminsActions.addUserToAdminProfileSuccess({admin: user})
+                  adminsActions.addUserToAdminProfileSuccess({admin: user}),
+                  accountActions.updateAccounts({account: user})
                 ];
               }),
               catchError(error => of(adminsActions.addUserToAdminProfileFailure({errorMessage: error.message})))

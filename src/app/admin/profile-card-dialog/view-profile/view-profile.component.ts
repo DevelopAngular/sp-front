@@ -320,7 +320,7 @@ export class ViewProfileComponent implements OnInit {
       });
       if (rolesToRemove.length) {
         zip(...rolesToRemove.map(role => {
-          return this.userService.deleteUserRequest(this.user.id, `_profile_${role.role.toLowerCase()}`);
+          return this.userService.deleteUserRequest(this.user, `_profile_${role.role.toLowerCase()}`);
         })).subscribe();
       }
       zip(...this.userRoles.map(role => {
@@ -410,10 +410,10 @@ export class ViewProfileComponent implements OnInit {
      if (status === 'delete') {
        if (this.user.userRoles().length > 1) {
          this.user.userRoles().forEach(role => {
-           return this.userService.deleteUserRequest(this.profile.id, role);
+           return this.userService.deleteUserRequest(this.profile, role);
          });
        } else {
-         this.userService.deleteUserRequest(this.profile.id, this.data.role);
+         this.userService.deleteUserRequest(this.profile, this.data.role);
        }
        this.toast.openToast({title: 'Account deleted', type: 'error'});
        this.back();

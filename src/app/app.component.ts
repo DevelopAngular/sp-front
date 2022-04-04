@@ -48,6 +48,7 @@ export const INITIAL_LOCATION_PATHNAME =  new ReplaySubject<string>(1);
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   shortcuts: ShortcutInput[];
+  currentRoute: string;
 
   private dialogContainer: HTMLElement;
   @ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
@@ -119,13 +120,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(l => this.userService.user$.pipe(take(1))),
         filter(user => !!user),
         map(user => User.fromJSON(user)),
-        switchMap((user: User) => {
+        switchMap((user) => {
+          this.currentRoute = window.location.pathname;
           const urlBlackList = [
             '/forms',
             '/kioskMode',
             '/login'
           ];
-          const isAllowed = urlBlackList.every(route => !this.router.url.includes(route));
+          const isAllowed = urlBlackList.every(route => !this.currentRoute.includes(route));
           if ((!user.isStudent()) && isAllowed) {
             this.registerRefiner(user);
           }
@@ -291,7 +293,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (data.hubspot &&
           ((data.currentUser && !data.currentUser.isStudent()) &&
-            data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value)) && !this.screen.isDeviceLargeExtra
+            data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.getCurrentRoom().value)) && !this.screen.isDeviceLargeExtra
         ) {
           if (!existingHub) {
             this.showSupportButton = true;

@@ -1,0 +1,23 @@
+<div class="offline-bar-wrapper">
+  <div *ngIf="isDisplaying" class="offline-bar">
+    <div class="offline-bar-icon-wrapper">
+      <img draggable="false" class="offline-bar-icon" [src]="(statusIcon$ | async) | resolveAsset">
+    </div>
+    <span class="offline-bar-text">
+      {{ statusText$ | async }}
+    </span>
+    <div class="offline-bar-action-wrapper">
+      <div (click)="action()" class="offline-bar-action">
+        <img draggable="false" [src]="(actionIcon$ | async) | resolveAsset">
+      </div>
+    </div>
+  </div>
+
+  <!--
+  Preload images before socket disconnects
+  -->
+  <img class="offline-preload" [src]="'./assets/Disconnected (Blue-Gray).svg' | resolveAsset" display="none">
+  <img class="offline-preload" [src]="'./assets/Cancel (Blue-Gray).svg' | resolveAsset" display="none">
+  <img class="offline-preload" [src]="'./assets/Connected (Jade).svg' | resolveAsset" display="none">
+  <img class="offline-preload" [src]="'./assets/Refresh (Jade).svg' | resolveAsset" display="none">
+</div>

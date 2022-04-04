@@ -1,4 +1,5 @@
 import {SafeHtml} from '@angular/platform-browser';
+import * as moment from 'moment';
 
 export function wrapToHtml(
 
@@ -30,10 +31,5 @@ export function wrapToHtml(
 }
 
 export function prettyDate(date: Date) {
-  const time = date.getHours() < 12
-    ?
-    `${date.getHours()}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()} AM`
-    :
-    `${date.getHours() - 12}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()} PM`;
-  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} at ${time}`;
+  return moment(date).format('MM/DD/YYYY') + ' at ' + moment(date).format('hh:mm A');
 }

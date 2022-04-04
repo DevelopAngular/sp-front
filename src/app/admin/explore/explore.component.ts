@@ -276,7 +276,20 @@ export class ExploreComponent implements OnInit, OnDestroy {
             }
             this.passSearchState.isEmpty = false;
             const response = passes.map(pass => {
-              const duration = moment.duration(moment(pass.end_time).diff(moment(pass.start_time)));
+              const diff = moment(pass.end_time).diff(moment(pass.start_time));
+              let minutes = moment.duration(diff).minutes();
+              if (minutes < 0) {
+                minutes = 0;
+              }
+              const hours = moment.duration(diff).hours();
+              if (hours > 0) {
+                minutes = minutes * 60;
+              }
+              let seconds = moment.duration(diff).seconds();
+              if (seconds < 0) {
+                seconds = 0;
+              }
+              const duration = `${minutes}` + (seconds === 0 ? ' min' : `:${seconds < 10 ? '0' + seconds : seconds} min`);
               const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
 <!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
@@ -286,7 +299,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 'Origin': pass.origin.title,
                 'Destination': pass.destination.title,
                 'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
-                'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
+                'Duration': duration
               };
 
               const currentObj = {};

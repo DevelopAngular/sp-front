@@ -261,7 +261,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       data: {
         'trigger': event.currentTarget,
         'profileStatus': true,
-        'bulkEdit': true
+        'bulkEdit': true,
+        'withoutDelete': true
       }
     });
 
@@ -273,10 +274,10 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
             return zip(...this.selectedUsers.map(user => {
               if (User.fromJSON(user).userRoles().length > 1) {
                 return zip(...User.fromJSON(user).userRoles().map(role => {
-                  return this.userService.deleteUserRequest(user.id, role);
+                  return this.userService.deleteUserRequest(user, role);
                 }));
               } else {
-                return this.userService.deleteUserRequest(user.id, this.currentTab);
+                return this.userService.deleteUserRequest(user, this.currentTab);
               }
             })).pipe(mapTo(res));
           } else {
