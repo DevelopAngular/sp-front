@@ -1,7 +1,3 @@
-Cypress.on('uncaught:exception', (err, runnable) => {
-  return false;
-});
-
 describe('Login Page', () => {
   let containerElement: JQuery<HTMLElement>;
   before(() => {
@@ -10,6 +6,13 @@ describe('Login Page', () => {
     cy.get('.container').then(el => {
       containerElement = el;
     });
+  });
+
+  afterEach(function() {
+    if (this.currentTest.state === 'failed') {
+      // @ts-ignore
+      Cypress.runner.stop();
+    }
   });
 
   describe('Contains the proper DOM elements', () => {
@@ -87,12 +90,7 @@ describe('Login Page', () => {
       });
 
       it('should redirect for correct email/password credentials', () => {
-        cy.get('div.input-container input[autocomplete="username"]').type(Cypress.env('studentUsername'));
-        submit();
-        cy.get('div.input-container input[autocomplete="password"]').type(Cypress.env('studentPassword'));
-        submit();
-        cy.get('div.error').should('not.exist');
-        cy.wait(10000);
+        cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
         cy.url().should('equal', 'http://localhost:4200/main/passes');
       });
     });

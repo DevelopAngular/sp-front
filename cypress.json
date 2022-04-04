@@ -2,6 +2,8 @@
   "integrationFolder": "cypress/integration",
   "viewportHeight": 1080,
   "viewportWidth": 1920,
+  "defaultCommandTimeout": 10000,
+  "pageLoadTimeout": 120000,
   "supportFile": "cypress/support/index.ts",
   "screenshotOnRunFailure": false,
   "videoUploadOnPasses": false,

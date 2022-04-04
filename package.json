@@ -8,9 +8,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e:ci": "ng e2e",
-    "e2e:local-run": "concurrently \"ng serve\" \"wait-on http-get://localhost:4200 && cypress run --config-file cypress.json\" --kill-others --success first",
-    "e2e:local-watch": "concurrently \"ng serve\" \"wait-on http-get://localhost:4200 && cypress open --config-file cypress.json\" --kill-others --success first",
+    "e2e:ci": "concurrently \"ng serve\" \"wait-on http-get://localhost:4200 && cypress run --config-file cypress.json\" --kill-others --success first",
+    "e2e:local-run": "ng e2e",
+    "e2e:local-watch": "concurrently \"ng serve\" \"wait-on http-get://localhost:4200 && cypress open --config-file cypress.json --browser=chrome\" --kill-others --success first",
     "build-stats": "ng build --stats-json",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
@@ -87,6 +87,7 @@
     "@types/oboe": "^2.0.28",
     "codelyzer": "^5.1.2",
     "concat": "^1.0.3",
+    "concurrently": "^7.0.0",
     "cypress": "^9.5.1",
     "cypress-wait-until": "^1.7.2",
     "jasmine-core": "~3.5.0",
@@ -101,6 +102,7 @@
     "ts-node": "~6.0.5",
     "tslint": "~6.1.0",
     "typescript": "~4.0.5",
+    "wait-on": "^6.0.1",
     "webpack-bundle-analyzer": "^3.3.2"
   }
 }
