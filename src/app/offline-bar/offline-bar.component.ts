@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable, BehaviorSubject, combineLatest} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
 import {PollingService} from '../services/polling-service';
 
 @Component({
@@ -10,11 +9,10 @@ import {PollingService} from '../services/polling-service';
 })
 export class OfflineBarComponent implements OnInit {
 
-  isDisplaying: boolean = false
+  isDisplaying: boolean = false;
   isActionClose: boolean = true;
   autoCloseTimeout: any = null;
 
-  isConnected$: Observable<boolean>;
   statusIcon$: BehaviorSubject<string>;
   statusText$: BehaviorSubject<string>;
   actionIcon$: BehaviorSubject<string>;
@@ -28,8 +26,8 @@ export class OfflineBarComponent implements OnInit {
     this.statusText$ = new BehaviorSubject('Your internet connection was restored.');
     this.actionIcon$ = new BehaviorSubject('./assets/Cancel (Blue-Gray).svg');
 
-    this.isConnected$ = this.pollingService.isConnected$;
-    this.isConnected$.subscribe(isConnected => {
+    let isFirstStatus = true;
+    this.pollingService.isConnected$.subscribe(isConnected => {
       if (isConnected) {
         this.statusIcon$.next('./assets/Connected (Jade).svg');
         this.statusText$.next('Your internet connection was restored.');
@@ -40,12 +38,14 @@ export class OfflineBarComponent implements OnInit {
         }, 10000);
         this.isActionClose = true;
       } else {
+        if (isFirstStatus) this.pollingService.refreshHeartbeatTimer();
         this.statusIcon$.next('./assets/Disconnected (Blue-Gray).svg');
         this.statusText$.next('You are currently offline.');
         this.actionIcon$.next('./assets/Refresh (Jade).svg');
         this.isDisplaying = true;
         this.isActionClose = false;
       }
+      isFirstStatus = false;
     });
   }
 
