@@ -46,8 +46,8 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.isLocalizeAdded === false && (this.currentLang !== this.sourceLang)) {
         this.addLocalize();
       } else {
-        window.Localize?.hideWidget();
-        window.Localize?.setLanguage(this.currentLang);
+        (window as any).Localize?.hideWidget();
+        (window as any).Localize?.setLanguage(this.currentLang);
       }
     });
   }
@@ -84,7 +84,7 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
 
-  isLocalizeAdded: bool = false;
+  isLocalizeAdded: boolean = false;
 
   addLocalize() {
     if (this.isLocalizeAdded) return;
