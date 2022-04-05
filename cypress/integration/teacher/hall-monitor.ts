@@ -1,4 +1,4 @@
-import * as PassFunctions from "../../support/functions/passes";
+import * as PassFunctions from '../../support/functions/passes';
 
 context('Hall Monitor Page', () => {
   /**
@@ -12,7 +12,14 @@ context('Hall Monitor Page', () => {
       cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
       cy.visit('http://localhost:4200/main/hallmonitor');
       cy.wait(5000);
-    })
+    });
+
+    afterEach(function() {
+      if (this.currentTest.state === 'failed') {
+        // @ts-ignore
+        Cypress.runner.stop();
+      }
+    });
 
     it('should highlight the proper nav button', () => {
       cy.get('div.nav-button-wrapper').contains('Hall Monitor').siblings('div.selected-tab-pointer').should('exist');
@@ -29,8 +36,8 @@ context('Hall Monitor Page', () => {
         .invoke('val').should('equal', '');
 
       cy.get(`${headerSelector} div.buttons app-white-button > div.wrapper`).should('exist').then(el => {
-        expect(el.hasClass('disabled')).to.equal(numberOfActivePasses === 0)
-      })
+        expect(el.hasClass('disabled')).to.equal(numberOfActivePasses === 0);
+      });
 
       cy.get(`${headerSelector} div.buttons app-square-button > div.wrapper`).should('exist').should('be.visible');
     });
@@ -38,7 +45,7 @@ context('Hall Monitor Page', () => {
     it('should have a proper Active Passes Section', () => {
       cy.get('div.content div.collection-title').should('contain.text', 'Active Passes');
       cy.get('div.content div.collection-title').should('exist').should('be.visible');
-      const numberOfActivePasses = cy.$$('div.content app-pass-collection app-pass-tile div.tile-wrapper').length
+      const numberOfActivePasses = cy.$$('div.content app-pass-collection app-pass-tile div.tile-wrapper').length;
       if (numberOfActivePasses === 0) {
         cy.get('div.content div.empty-container').should('exist').should('be.visible');
         cy.get('div.content div.empty-container img.empty-svg').should('exist').should('be.visible');
@@ -77,6 +84,6 @@ context('Hall Monitor Page', () => {
       cy.get('div.collection-grid-wrapper app-pass-tile>div').first().click({force: true});
       cy.get('mat-dialog-container div.header-content app-icon-button>div').click();
       cy.get('app-consent-menu div.options-container > div:last-of-type > div').click();
-    })
-  })
-})
+    });
+  });
+});
