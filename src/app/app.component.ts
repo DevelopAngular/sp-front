@@ -30,6 +30,7 @@ import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
+import {LocalizejsService} from './services/localizejs.service';
 
 declare const window;
 
@@ -100,6 +101,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
     private toastService: ToastService,
+    private localize: LocalizejsService,
   ) {}
 
   ngOnInit() {
@@ -113,6 +115,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         window.history.pushState({}, '');
       }
     });
+
+    const savedLang = this.storageService.getItem('codelang');
+    console.log(savedLang)
+    if (!!savedLang) {
+      this.http.currentLang$.pipe(takeUntil(this.subscriber$), filter(res => !!res)).subscribe(chosenLang => {
+        this.localize.load_localize_scripts();
+        const sourceLanguage = this.localize.getSourceLanguage();
+        console.log(sourceLanguage);
+        //TODO: get sourcelanguage
+        this.localize.from('en').to(chosenLang);
+      });
+    }
 
     this.userService.loadedUser$
       .pipe(
