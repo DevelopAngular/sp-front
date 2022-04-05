@@ -1,0 +1,84 @@
+@import "../../design-system";
+@import "../../sp-colors";
+
+  .host {
+    //max-width: 425px;
+    //min-width: 300px;
+    height: 500px;
+    border-radius: 17px;
+    font-weight: bold;
+    background: #FFFFFF;
+    .language-header {
+      @extend .ds-flex-center-center;
+      height: 70px;
+      background-color: $navy;
+      color: #FFFFFF;
+      font-size: 14px;
+      padding-left: 10px;
+      position: relative;
+      .back-button {
+        position: absolute;
+        left: 20px;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+      }
+    }
+    .language-content {
+      .language-content-picker {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      min-height: 4rem;
+      background-color:rgb(236, 241, 255);
+      border-radius: 15px;
+    }
+    .language-content-hint {
+      font-weight: normal;
+      padding: 1rem;
+      color: rgb(127, 135, 157);
+    }
+    display: flex;
+    flex-flow: column;
+      padding: 30px;
+      height: 430px;
+      overflow: auto;
+      box-sizing: border-box;
+      .theme {
+        font-size: 16px;
+        font-weight: 500;
+        color: $navy;
+      }
+
+     .lang-toggle-bar-wrapper {
+      z-index: 111;
+      .selected-lang {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        .lang-name {
+          padding-right: 10px;
+          color: #134482;
+        }
+        .disclosure-icon {
+          width: 20px;
+        }
+      }
+     }
+
+    }
+  }
+
+@media all and (max-width: 475px) {
+  .host {
+    .language-content {
+      padding: 30px 15px;
+
+        .theme {
+          margin-bottom: 7px;
+        }
+    }
+  }
+}
+
+

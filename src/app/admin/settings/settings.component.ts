@@ -41,6 +41,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
     },
     {
       'hidden': false,
+      'icon': 'Glasses',
+      'action': 'language',
+      'title': 'Language',
+      'isNew': true,
+    },
+    {
+      'hidden': false,
       'icon': 'Referal',
       'action': 'refer',
       'title': 'Refer a friend',

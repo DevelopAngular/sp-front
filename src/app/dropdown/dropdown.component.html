@@ -11,9 +11,9 @@
     <div class="main">{{ mainHeader }}</div><br/>
     <div>{{ heading }}</div>
   </div>
-  <mat-divider *ngIf="!!heading && (locations || schools || sortData || teachers)"></mat-divider>
+  <mat-divider *ngIf="!!heading && (locations || schools || sortData || teachers || langs)"></mat-divider>
 
-  <div class="opt-container" *ngIf="locations || schools || sortData || teachers">
+  <div class="opt-container" *ngIf="locations || schools || sortData || teachers || langs">
 
     <div class="search" *ngIf="isSearchField">
       <app-round-input
@@ -112,6 +112,36 @@
         <!--      <div class="option-divider"></div>-->
       </div>
     </div>
+
+
+    <div class="options-wrapper" [style.padding]="isSearchField ? '10px 0 22px 0' : '22px 0'" [style.max-height]="optionsMaxHeight"  *ngIf="langs">
+      <div class="option" *ngFor="let lang of langs" #langList>
+        <div #_option class="option-data"
+             [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+             [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (lang === selectedLang ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
+             appCrossPointerEventTarget
+             (pointerClickEvent)="_matDialogRef.close(lang)"
+             (pointerDownEvent)="_option.pressed = true"
+             (pointerCancelEvent)="_option.pressed = false; _option.hovered = false"
+             (mouseover)="_option.hovered = true"
+             (mouseleave)="_option.hovered = false; _option.pressed = false"
+        >
+          <div>
+            <span [style.color]="lang === selectedLang ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ lang }}</span>
+          </div>
+          <div class="option-data_rightside">
+            <div class="marked-room">
+              <img *ngIf="lang === selectedLang" [style.width]="'20px'" [style.height]="'20px'"  [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
+            </div>
+          </div>
+        </div>
+        <!--      <div class="option-divider"></div>-->
+      </div>
+    </div>
+
 
     <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="teachers && selectedTeacher" #optionsWrapper>
       <div class="option sort" *ngFor="let teacher of teachers">

@@ -49,6 +49,7 @@ import {TeacherPinStudentComponent} from '../teacher-pin-student/teacher-pin-stu
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {SpLanguageComponent} from '../sp-language/sp-language.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-info.component';
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
@@ -142,6 +143,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ReportSuccessToastComponent,
     RestrictionPickerComponent,
     SpAppearanceComponent,
+    SpLanguageComponent,
     TeacherPinStudentComponent,
     MyProfileDialogComponent,
     ProfileInfoComponent,

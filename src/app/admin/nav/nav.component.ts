@@ -23,6 +23,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
+import {SpLanguageComponent} from '../../sp-language/sp-language.component';
 import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
 
 import * as moment from 'moment';
@@ -195,7 +196,6 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSettings(event) {
-
     if (!this.selectedSettings) {
       this.selectedSettings = true;
       const target = new ElementRef(event.currentTarget);
@@ -231,6 +231,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
           window.open('https://smartpass.app/about');
         } else if (action === 'appearance') {
           this.dialog.open(SpAppearanceComponent, {
+            panelClass: 'sp-form-dialog',
+          });
+        } else if (action === 'language') {
+          this.dialog.open(SpLanguageComponent, {
             panelClass: 'sp-form-dialog',
           });
         } else if (action === 'wishlist') {

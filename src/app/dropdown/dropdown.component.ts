@@ -23,6 +23,7 @@ export class DropdownComponent implements OnInit {
   }
 
   @ViewChildren('schoolList') schoolList: QueryList<School>;
+  @ViewChildren('langList') langList: QueryList<string>;
   @ViewChildren('_option') locationsList: QueryList<Location>;
 
   user: User;
@@ -30,6 +31,8 @@ export class DropdownComponent implements OnInit {
   locations: Location[];
   selectedLocation: Location;
   schools: School[];
+  langs: string[];
+  selectedLang: string;
   initialSchools: School[];
   selectedSchool: School;
   teachers: RepresentedUser[];
@@ -55,9 +58,11 @@ export class DropdownComponent implements OnInit {
     this.heading = data['heading'];
     this.locations = data['locations'];
     this.schools = data['schools'];
+    this.langs = data['langs'];
     this.teachers = data['teachers'];
     this.selectedLocation = data['selectedLocation'];
     this.selectedSchool = data['selectedSchool'];
+    this.selectedLang = data['selectedLang'];
     this.selectedTeacher = data['selectedTeacher'];
     this.user = data['user'];
     this.scrollPosition = data['scrollPosition'];
@@ -104,6 +109,8 @@ export class DropdownComponent implements OnInit {
       return this.locationsList;
     } else if ((this.schoolList as any)._results.length) {
       return this.schoolList;
+    } else if ((this.langList as any)._results.length) {
+      return this.langList;
     }
   }
 

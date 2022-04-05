@@ -1,0 +1,37 @@
+<div class="host">
+
+  <div class="language-header">
+
+    <div class="back-button"
+         appCrossPointerEventTarget
+         (pointerClickEvent)="dialogRef.close()"
+    >
+      <img [width]="28" [src]="'./assets/Back Button (Blue-White).svg'"
+      >
+    </div>
+
+    <div>
+      <img [width]="24" [src]="'./assets/Glasses (White).svg'" alt="Glasses (White).svg">
+    </div>
+    <div class="ds-dialog-title-white ds-pl-10">
+      <span>Language</span>
+    </div>
+
+  </div>
+
+  <div class="language-content">
+    <div class="language-content-picker">
+      <span>Language</span>
+      <div class="lang-toggle-bar-wrapper" #langToggle>
+        <div class="selected-lang" #targetElement (click)="showOptions(targetElement)">
+          <span class="lang-name">{{ currentLang }}</span>
+          <img class="disclosure-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset">
+        </div>
+      </div>
+    </div>
+    <span class="language-content-hint">Choose the language you'd like to use with SmartPass</span>
+
+  </div>
+
+
+</div>
