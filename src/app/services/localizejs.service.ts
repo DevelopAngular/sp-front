@@ -19,11 +19,15 @@ export class LocalizejsService {
 
   to(tolang) {
     console.log(LocalizejsService.isLocalizeAdded );
-      if (LocalizejsService.isLocalizeAdded === false) {
-        this.load_localize_scripts();
-        return;
-      } 
+    const fn = () => {
       this.setLanguage(tolang);
+      this.lang = tolang;
+    };  
+    if (LocalizejsService.isLocalizeAdded === false) {
+      this.load_localize_scripts(fn);
+      return;
+    } 
+    fn();
   }
 
   getSourceLanguage() {
@@ -31,13 +35,14 @@ export class LocalizejsService {
   }
 
   setLanguage(lang=null) {
+    console.log(lang, this.lang);
     if (lang === this.lang) return; 
     this.lang = lang?? this.lang;
     (window as any).Localize?.hideWidget();
     (window as any).Localize?.setLanguage(this.lang);
   }
 
-  public load_localize_scripts() {
+  public load_localize_scripts(fn: Function|null) {
     if (LocalizejsService.isLocalizeAdded) return;
 
     const head = document.getElementsByTagName('head')[0];
@@ -62,27 +67,33 @@ export class LocalizejsService {
     ];
 
     const secondscript = document.createElement('script');
-    const second$ = fromEvent(secondscript, 'load');
+    const second$ = fromEvent(secondscript, 'inline-script-inserted');
 
     const thirdscript = document.createElement('script');
-    const third$ = fromEvent(thirdscript, 'load');
+    const third$ = fromEvent(thirdscript, 'inline-script-inserted');
 
-    const done$ = combineLatest(first$, second$, third$);
+    const done$ = combineLatest(second$, third$);
     done$.subscribe(v => {
-      console.log(v);
-    //  this.setLanguage(tolang);
-      //this.lang = tolang;
       LocalizejsService.isLocalizeAdded = true;
+      if(fn !== null) fn();
     });
 
+    // first must be loaded in the DOM before any other
+    // in order for Localizejs to work 
+    first$.subscribe(() => {
+      const event = new CustomEvent("inline-script-inserted", { "detail": "inserted" });
+
+      secondscript.innerHTML = inners[0];
+      head.insertBefore(secondscript, head.firstChild);
+      secondscript.dispatchEvent(event);
+
+      thirdscript.innerHTML = inners[1];
+      head.insertBefore(thirdscript, head.firstChild);
+      thirdscript.dispatchEvent(event);
+    
+    });
     firstscript.src = "https://global.localizecdn.com/localize.js";
     head.insertBefore(firstscript, head.firstChild);
-
-    secondscript.innerHTML = inners[0];
-    head.insertBefore(secondscript, head.firstChild);
-
-    thirdscript.innerHTML = inners[1];
-    head.insertBefore(thirdscript, head.firstChild);
 
     return done$;
 

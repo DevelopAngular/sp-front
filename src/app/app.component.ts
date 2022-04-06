@@ -115,17 +115,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         window.history.pushState({}, '');
       }
     });
-/*
     const savedLang = this.storageService.getItem('codelang');
     if (!!savedLang) {
       this.http.currentLang$.pipe(takeUntil(this.subscriber$), filter(res => !!res)).subscribe(chosenLang => {
-        this.localize.load_localize_scripts();
-        const sourceLanguage = this.localize.getSourceLanguage();
-        //TODO: get sourcelanguage
-        this.localize.from('en').to(chosenLang);
+        this.localize.load_localize_scripts(() => {
+          // Localizejs saves in localstorage an intem ljs-source-lang that stores the original lanuage
+          // the original language may be taken from lang html attribute of page
+          // or the official way below
+          const sourceLanguage = this.localize.getSourceLanguage();
+          this.localize.from(sourceLanguage).to(chosenLang);
+        });
       });
     }
-*/
+
     this.userService.loadedUser$
       .pipe(
         filter(l => l),
