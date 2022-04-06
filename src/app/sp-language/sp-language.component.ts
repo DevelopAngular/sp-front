@@ -38,6 +38,8 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    this.currentLang = this.http.getLang();
+
     this.http.langs$.pipe(takeUntil(this.subscriber$)).subscribe(langs => {
       this.langs = langs;
       this.langs = this.langs.sort( (lang, other) => {

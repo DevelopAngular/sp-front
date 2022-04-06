@@ -1,5 +1,7 @@
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
+import {ReplaySubject, Observable, combineLatest, fromEvent} from 'rxjs';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +9,8 @@ import {Injectable} from '@angular/core';
 export class LocalizejsService {
 
   static isLocalizeAdded: boolean = false;
+
+  private done$: ReplaySubject<boolean> = new ReplaySubject();
 
   private lang:string;
 
@@ -16,10 +20,12 @@ export class LocalizejsService {
   }
 
   to(tolang) {
-    //TODO: sync load_localize_scripts with setLangiage
+    console.log(LocalizejsService.isLocalizeAdded );
       if (LocalizejsService.isLocalizeAdded === false) {
-        this.lang = tolang;
         this.load_localize_scripts();
+        this.setLanguage(tolang);
+        this.lang = tolang;
+        return;
       } 
       this.setLanguage(tolang);
   }
@@ -35,19 +41,26 @@ export class LocalizejsService {
     (window as any).Localize?.setLanguage(this.lang);
   }
 
-  //TODO: make sure the scripts has loaded
   public load_localize_scripts() {
     if (LocalizejsService.isLocalizeAdded) return;
 
     const head = document.getElementsByTagName('head')[0];
 
     const script = document.createElement('script');
-    script.onload = () => {
-      this.load_inline_scripts();
-      LocalizejsService.isLocalizeAdded = true;
-    }
+    const firstscript = fromEvent(script, 'load').pipe(tap(evt => {
+      console.log('f',evt);
+      this.done$.next(true);
+    })).subscribe();
     script.src = "https://global.localizecdn.com/localize.js";
     head.insertBefore(script, head.firstChild);
+
+    this.load_inline_scripts();
+
+    this.done$
+      .subscribe(v => {
+        console.log('done',v);
+        LocalizejsService.isLocalizeAdded = true;
+      });
   }
 
   private load_inline_scripts() {
@@ -68,9 +81,14 @@ export class LocalizejsService {
       `
     ];
   
-    let otherscript;
+    const loads = [];
     for(let inner of inners) {
-      otherscript = document.createElement('script');
+      const otherscript = document.createElement('script');
+      fromEvent(otherscript, 'load').pipe(tap(evt => {
+        console.log('o',evt);
+        this.done$.next(true);
+      })).subscribe();
+
       otherscript.innerHTML = inner;
       head.insertBefore(otherscript, head.firstChild);
     }
