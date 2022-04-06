@@ -1,6 +1,6 @@
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {ReplaySubject, Observable, combineLatest, fromEvent} from 'rxjs';
+import {Observable, combineLatest, fromEvent} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 @Injectable({
@@ -9,8 +9,6 @@ import {tap} from 'rxjs/operators';
 export class LocalizejsService {
 
   static isLocalizeAdded: boolean = false;
-
-  private done$: ReplaySubject<boolean> = new ReplaySubject();
 
   private lang:string;
 
@@ -23,8 +21,6 @@ export class LocalizejsService {
     console.log(LocalizejsService.isLocalizeAdded );
       if (LocalizejsService.isLocalizeAdded === false) {
         this.load_localize_scripts();
-        this.setLanguage(tolang);
-        this.lang = tolang;
         return;
       } 
       this.setLanguage(tolang);
@@ -46,25 +42,9 @@ export class LocalizejsService {
 
     const head = document.getElementsByTagName('head')[0];
 
-    const script = document.createElement('script');
-    const firstscript = fromEvent(script, 'load').pipe(tap(evt => {
-      console.log('f',evt);
-      this.done$.next(true);
-    })).subscribe();
-    script.src = "https://global.localizecdn.com/localize.js";
-    head.insertBefore(script, head.firstChild);
+    const firstscript = document.createElement('script');
+    const first$ = fromEvent(firstscript, 'load');
 
-    this.load_inline_scripts();
-
-    this.done$
-      .subscribe(v => {
-        console.log('done',v);
-        LocalizejsService.isLocalizeAdded = true;
-      });
-  }
-
-  private load_inline_scripts() {
-    const head = document.getElementsByTagName('head')[0];
     const key = environment.localizejs.apiKey;
     const inners = [
       '!function(a){if(!a.Localize){a.Localize={};for(var e=["translate","untranslate","phrase","initialize","translatePage","setLanguage","getLanguage","getSourceLanguage","detectLanguage","getAvailableLanguages","untranslatePage","bootstrap","prefetch","on","off","hideWidget","showWidget"],t=0;t<e.length;t++)a.Localize[e[t]]=function(){}}}(window);',
@@ -80,17 +60,31 @@ export class LocalizejsService {
       Localize.setLanguage('${this.lang}');
       `
     ];
-  
-    const loads = [];
-    for(let inner of inners) {
-      const otherscript = document.createElement('script');
-      fromEvent(otherscript, 'load').pipe(tap(evt => {
-        console.log('o',evt);
-        this.done$.next(true);
-      })).subscribe();
 
-      otherscript.innerHTML = inner;
-      head.insertBefore(otherscript, head.firstChild);
-    }
-  }
-} 
+    const secondscript = document.createElement('script');
+    const second$ = fromEvent(secondscript, 'load');
+
+    const thirdscript = document.createElement('script');
+    const third$ = fromEvent(thirdscript, 'load');
+
+    const done$ = combineLatest(first$, second$, third$);
+    done$.subscribe(v => {
+      console.log(v);
+    //  this.setLanguage(tolang);
+      //this.lang = tolang;
+      LocalizejsService.isLocalizeAdded = true;
+    });
+
+    firstscript.src = "https://global.localizecdn.com/localize.js";
+    head.insertBefore(firstscript, head.firstChild);
+
+    secondscript.innerHTML = inners[0];
+    head.insertBefore(secondscript, head.firstChild);
+
+    thirdscript.innerHTML = inners[1];
+    head.insertBefore(thirdscript, head.firstChild);
+
+    return done$;
+
+  } 
+}
