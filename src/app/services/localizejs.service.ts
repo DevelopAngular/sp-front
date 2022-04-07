@@ -1,7 +1,7 @@
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {Observable, combineLatest, fromEvent} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {merge, fromEvent, of} from 'rxjs';
+import {take, catchError, retry} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class LocalizejsService {
     return this;
   }
 
-  to(tolang) {
+  to(tolang:string) {
     console.log(LocalizejsService.isLocalizeAdded );
     const fn = () => {
       this.setLanguage(tolang);
@@ -67,13 +67,16 @@ export class LocalizejsService {
     ];
 
     const secondscript = document.createElement('script');
-    const second$ = fromEvent(secondscript, 'inline-script-inserted');
+    const second$ = fromEvent(secondscript, 'inline-script-inserted').pipe(take(1));
 
     const thirdscript = document.createElement('script');
-    const third$ = fromEvent(thirdscript, 'inline-script-inserted');
+    const third$ = fromEvent(thirdscript, 'inline-script-inserted').pipe(take(1));
 
-    const done$ = combineLatest(second$, third$);
-    done$.subscribe(v => {
+    const done$ = merge(second$, third$).pipe(retry(2), catchError(err => {
+        console.log(err);
+        return of('en');
+    }));
+    done$.subscribe(() => {
       LocalizejsService.isLocalizeAdded = true;
       if(fn !== null) fn();
     });
@@ -83,6 +86,7 @@ export class LocalizejsService {
     first$.subscribe(() => {
       const event = new CustomEvent("inline-script-inserted", { "detail": "inserted" });
 
+      //TODO try catch here
       secondscript.innerHTML = inners[0];
       head.insertBefore(secondscript, head.firstChild);
       secondscript.dispatchEvent(event);
@@ -94,8 +98,6 @@ export class LocalizejsService {
     });
     firstscript.src = "https://global.localizecdn.com/localize.js";
     head.insertBefore(firstscript, head.firstChild);
-
-    return done$;
-
   } 
+
 }
