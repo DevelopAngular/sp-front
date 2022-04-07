@@ -3,7 +3,7 @@ import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, O
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter as _filter, find} from 'lodash';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip, of} from 'rxjs';
 
 import {filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {BUILD_INFO_REAL} from '../build-info';
@@ -117,14 +117,22 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     const savedLang = this.storageService.getItem('codelang');
     if (!!savedLang) {
-      this.http.currentLang$.pipe(takeUntil(this.subscriber$), filter(res => !!res)).subscribe(chosenLang => {
-        this.localize.load_localize_scripts(() => {
-          // Localizejs saves in localstorage an intem ljs-source-lang that stores the original lanuage
-          // the original language may be taken from lang html attribute of page
-          // or the official way below
-          const sourceLanguage = this.localize.getSourceLanguage();
-          this.localize.from(sourceLanguage).to(chosenLang);
-        });
+      this.http.currentLang$.pipe(
+        takeUntil(this.subscriber$),
+        filter(res => !!res),
+      ).subscribe(chosenLang => {
+        try {
+          this.localize.load_localize_scripts(() => {
+            // Localizejs saves in localstorage an intem ljs-source-lang that stores the original lanuage
+            // the original language may be taken from lang html attribute of page
+            // or the official way below
+            const sourceLanguage = this.localize.getSourceLanguage();
+            this.localize.from(sourceLanguage).to(chosenLang);
+          });
+        } catch (err) {
+          //TODO: disable certain language
+          console.log(err);
+        }
       });
     }
 
