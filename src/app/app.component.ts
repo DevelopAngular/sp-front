@@ -115,6 +115,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         window.history.pushState({}, '');
       }
     });
+
+    // set only an already set up language is found
+    // otherwise let the language component try to translate
     const savedLang = this.storageService.getItem('codelang');
     if (!!savedLang) {
       this.http.currentLang$.pipe(
@@ -130,8 +133,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.localize.from(sourceLanguage).to(chosenLang);
           });
         } catch (err) {
-          //TODO: disable certain language
-          console.log(err);
+          this.localize.disableLanguage();
         }
       });
     }

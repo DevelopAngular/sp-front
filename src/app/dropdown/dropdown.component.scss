@@ -131,6 +131,10 @@
   }
 }
 
+.option-disabled {
+  text-decoration: line-through;
+  pointer-events: none;
+}
 .option-roles {
   color: #999999;
   padding-top: 3px;

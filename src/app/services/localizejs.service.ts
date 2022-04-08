@@ -1,6 +1,6 @@
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {concat, fromEvent, of, throwError} from 'rxjs';
+import {concat, fromEvent, throwError, ReplaySubject, Observable, bindCallback} from 'rxjs';
 import {tap, map, take, catchError, retry} from 'rxjs/operators';
 import {HttpService} from './http-service';
 
@@ -12,12 +12,23 @@ export class LocalizejsService {
   static isLocalizeAdded: boolean = false;
 
   static readonly RETRY_NUM = 2;
+  static readonly PREFIX = 'smartpass-localizejs-';
 
   private lang:string;
+  public readonly langThatNoNeedsTranslation = 'en';
+
+  public disableLanguageSubject:ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
+  public disableLanguage$: Observable<boolean>;
 
   constructor(
     private http: HttpService,
-  ){}
+  ){
+    this.disableLanguage$ = (this.disableLanguageSubject as Observable<boolean>);
+  }
+
+  disableLanguage(mode:boolean=true) {
+    this.disableLanguageSubject.next(mode);
+  }
 
   from(fromlang:string) {
     this.lang = fromlang;
@@ -25,15 +36,19 @@ export class LocalizejsService {
   }
 
   to(tolang:string) {
-    const fn = () => {
-      this.setLanguage(tolang);
-      this.lang = tolang;
-    };  
-    if (LocalizejsService.isLocalizeAdded === false) {
-      this.load_localize_scripts(fn);
-      return;
-    } 
-    fn();
+    try {
+      const fn = () => {
+        this.setLanguage(tolang);
+        this.lang = tolang;
+      };  
+      if (LocalizejsService.isLocalizeAdded === false) {
+        this.load_localize_scripts(fn);
+        return;
+      } 
+      fn();
+    } catch (err) {
+      this.disableLanguage(); 
+    }
   }
 
   getSourceLanguage() {
@@ -47,26 +62,36 @@ export class LocalizejsService {
     (window as any).Localize?.setLanguage(this.lang);
   }
 
+  cleanScripts() {
+    ['1','2','3'].map(n => document.getElementById(LocalizejsService.PREFIX+n)?.remove());
+  }
+
+  catchAndClean() {
+    const fn = err => {
+      this.disableLanguage();
+      this.cleanScripts();
+    }
+    return bindCallback(fn);
+  }
+
   public load_localize_scripts(fn: Function|null) {
     if (LocalizejsService.isLocalizeAdded) return;
 
-    const PREFIX = 'smartpass-localizejs-';
     // add ids to clean orphan scripts that has been added to DOM
     const firstscript = document.createElement('script');
-    firstscript.id = PREFIX+'1';
+    firstscript.id = LocalizejsService.PREFIX+'1';
     const first$ = fromEvent(firstscript, 'load').pipe(take(1));
 
     const secondscript = document.createElement('script');
-    secondscript.id = PREFIX+'2';
+    secondscript.id = LocalizejsService.PREFIX+'2';
     const second$ = fromEvent(secondscript, 'inline-script-inserted').pipe(take(1));
 
     const thirdscript = document.createElement('script');
-    thirdscript.id = PREFIX+'3';
+    thirdscript.id = LocalizejsService.PREFIX+'3';
     const third$ = fromEvent(thirdscript, 'inline-script-inserted').pipe(take(1));
 
     const head = document.getElementsByTagName('head')[0];
 
-    const cleanScripts = () => ['1','2','3'].map(n => document.getElementById(PREFIX+n)?.remove());
 
     // first must be loaded in the DOM before any other
     // in order for Localizejs to work 
@@ -100,21 +125,18 @@ export class LocalizejsService {
         head.insertBefore(thirdscript, secondscript.nextElementSibling);
         thirdscript.dispatchEvent(event);
       }),
-      catchError(async err => {
-        console.log('lang', err);
-        cleanScripts();
-      }),
+      //TODO: remove it as it is here to test error
+      /*tap(() => {
+          throw new Error('intended error');
+        }),*/
+      catchError(this.catchAndClean()),
     );
     
     concat(first$, lang$, second$, third$).pipe(
       retry(LocalizejsService.RETRY_NUM),
-      catchError(async err => {
-        cleanScripts();
-      }),
+      catchError(this.catchAndClean()),
     ).subscribe(
       res => {
-        console.log('sub', res);
-        //throw new Error('Boom');
         LocalizejsService.isLocalizeAdded = true;
         if(fn !== null) fn();
       },

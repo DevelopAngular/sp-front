@@ -23,6 +23,7 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
   public langs: string[];
 
   public currentLang:string;
+  private isDisabledLang:boolean = false;
 
   private subscriber$ = new Subject();
 
@@ -51,6 +52,16 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.localize.from(this.currentLang).to(chosenLang);
       this.currentLang = chosenLang;
     });
+
+    this.localize.disableLanguage$
+    .pipe(
+      takeUntil(this.subscriber$),
+    )
+    .subscribe(mode => {
+      this.isDisabledLang = mode;
+      this.localize.setLanguage(this.localize.langThatNoNeedsTranslation);
+      this.storageService.setItem('codelang', this.localize.langThatNoNeedsTranslation);
+    });
   }
 
   ngOnDestroy() {
@@ -71,6 +82,7 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
           'alignSelf': true,
           'langs': this.langs,
           'selectedLang': this.currentLang,
+          'isDisabledLang': this.isDisabledLang,
           'heading': 'SELECT LANGUAGE',
           'trigger': target,
           'isSearchField': false,
