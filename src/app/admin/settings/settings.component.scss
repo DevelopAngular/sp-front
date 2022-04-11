@@ -1,3 +1,5 @@
+@import "../../../sp-colors.scss";
+
 .settings-wrapper {
   width: 244px;
   position: relative;
@@ -43,6 +45,11 @@
             color: #FFFFFF;
             font-size: 13px;
             margin-left: 20px;
+          }
+
+          .release-language {
+              text-transform: uppercase;
+              background-color: $green500;
           }
         }
 

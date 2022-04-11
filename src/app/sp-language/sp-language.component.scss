@@ -2,17 +2,16 @@
 @import "../../sp-colors";
 
   .host {
-    //max-width: 425px;
+    width: 425px;
     //min-width: 300px;
     height: 500px;
-    border-radius: 17px;
+    border-radius: 14px;
     font-weight: bold;
-    background: #FFFFFF;
+    background: $white;
+    color: $navy500;
     .language-header {
       @extend .ds-flex-center-center;
       height: 70px;
-      background-color: $navy;
-      color: #FFFFFF;
       font-size: 14px;
       padding-left: 10px;
       position: relative;
@@ -25,46 +24,55 @@
       }
     }
     .language-content {
-      .language-content-picker {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      min-height: 4rem;
-      background-color:rgb(236, 241, 255);
-      border-radius: 15px;
-    }
-    .language-content-hint {
-      font-weight: normal;
-      padding: 1rem;
-      color: rgb(127, 135, 157);
-    }
-    display: flex;
-    flex-flow: column;
-      padding: 30px;
-      height: 430px;
-      overflow: auto;
-      box-sizing: border-box;
-      .theme {
-        font-size: 16px;
-        font-weight: 500;
-        color: $navy;
-      }
-
-     .lang-toggle-bar-wrapper {
-      z-index: 111;
-      .selected-lang {
+        .language-content-picker {
+         box-sizing: border-box;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          height: 76px;
+          width: 388px;
+          padding: 22px;
+          background-color: $gray050;
+          border-radius: 10px;
+          margin: 0px auto;
+          font-size: 15px;
+        }
+        .language-content-hint {
+          font-weight: normal;
+          font-size: 14px;
+          width: 362px;
+          top: 91px;
+          color: $gray500;
+          margin: 91px auto;
+        }
         display: flex;
-        align-items: center;
-        cursor: pointer;
-        .lang-name {
-          padding-right: 10px;
-          color: #134482;
+        flex-flow: column;
+        height: 430px;
+        overflow: auto;
+        box-sizing: border-box;
+        .theme {
+            font-size: 16px;
+            font-weight: 500;
+            color: $navy;
         }
-        .disclosure-icon {
-          width: 20px;
-        }
-      }
-     }
+
+         .lang-toggle-bar-wrapper {
+          z-index: 111;
+          font-weight: normal;
+          font-size: 14px;
+          .selected-lang {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            .lang-name {
+              padding-right: 7px;
+            }
+            .disclosure-icon {
+              width: 5px;
+              height: 9px;;
+            }
+          }
+         }
 
     }
   }
@@ -80,5 +88,3 @@
     }
   }
 }
-
-
