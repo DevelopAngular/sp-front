@@ -281,6 +281,12 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
 
 /* === end === */
 
+/* setting  width and height*/
+@mixin wh($width, $height) {
+  width: $width + 0px;
+  height: $height + 0px;
+}
+
 /* === Common Box Spaces ===*/
 
 @mixin margin($space, $side) {

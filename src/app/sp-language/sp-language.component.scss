@@ -2,12 +2,10 @@
 @import "../../sp-colors";
 
   .host {
-    //max-width: 425px;
-    //min-width: 300px;
-    height: 500px;
-    border-radius: 17px;
-    font-weight: bold;
-    background: #FFFFFF;
+    font-family: $primaryFont;
+    @wh(425, 500);
+    border-radius: 14px;
+    background: $white;
     .language-header {
       @extend .ds-flex-center-center;
       height: 70px;
@@ -26,13 +24,13 @@
     }
     .language-content {
       .language-content-picker {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      min-height: 4rem;
-      background-color:rgb(236, 241, 255);
-      border-radius: 15px;
-    }
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        min-height: 4rem;
+        background-color:rgb(236, 241, 255);
+        border-radius: 15px;
+      }
     .language-content-hint {
       font-weight: normal;
       padding: 1rem;
