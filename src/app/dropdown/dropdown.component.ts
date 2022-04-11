@@ -11,7 +11,7 @@ import {cloneDeep} from 'lodash';
 @Component({
   selector: 'app-dropdown',
   templateUrl: './dropdown.component.html',
-  styleUrls: ['./dropdown.component.scss']
+  styleUrls: ['./dropdown.component.scss', '../shared/shared-styles/feature.cycle.scss']
 })
 export class DropdownComponent implements OnInit {
   options: HTMLElement;
@@ -34,6 +34,7 @@ export class DropdownComponent implements OnInit {
   langs: string[];
   selectedLang: string;
   isDisabledLang: boolean;
+  betaLanguage: string = '';
   initialSchools: School[];
   selectedSchool: School;
   teachers: RepresentedUser[];
@@ -65,6 +66,7 @@ export class DropdownComponent implements OnInit {
     this.selectedSchool = data['selectedSchool'];
     this.selectedLang = data['selectedLang'];
     this.isDisabledLang = data['isDisabledLang'];
+    this.betaLanguage = data['betaLanguage'];
     this.selectedTeacher = data['selectedTeacher'];
     this.user = data['user'];
     this.scrollPosition = data['scrollPosition'];

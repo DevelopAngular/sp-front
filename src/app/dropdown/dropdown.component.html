@@ -132,6 +132,7 @@
         >
           <div>
             <span [style.color]="lang === selectedLang ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ lang }}</span>
+            <span *ngIf="lang === betaLanguage" class="beta ds-ml-15 ds-p-5">beta</span>
           </div>
           <div class="option-data_rightside">
             <div class="marked-room">

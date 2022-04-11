@@ -1,35 +1,35 @@
 <div class="host">
 
-  <div class="language-header">
+  <div class="language-header ds-dialog-title">
 
     <div class="back-button"
          appCrossPointerEventTarget
          (pointerClickEvent)="dialogRef.close()"
     >
-      <img [width]="28" [src]="'./assets/Back Button (Blue-White).svg'"
+      <img [width]="34" [src]="'./assets/Back Button (Blue-White).svg'"
       >
     </div>
 
     <div>
-      <img [width]="24" [src]="'./assets/Glasses (White).svg'" alt="Glasses (White).svg">
+      <img [width]="26" [src]="'./assets/Glasses (Navy).svg'" alt="Glasses (Navy).svg">
     </div>
-    <div class="ds-dialog-title-white ds-pl-10">
+    <div class="ds-pl-10">
       <span>Language</span>
     </div>
 
   </div>
 
-  <div class="language-content">
-    <div class="language-content-picker">
-      <span>Language</span>
+  <div class="language-content ds-mt-20">
+    <div class="language-content-picker ds-p-20">
+      <span class="ds-dialog-heading">Language</span>
       <div class="lang-toggle-bar-wrapper" #langToggle>
         <div class="selected-lang" #targetElement (click)="showOptions(targetElement)">
-          <span class="lang-name">{{ currentLang }}</span>
+          <span class="lang-name ds-dialog-normal-text">{{ currentLang }}</span>
           <img class="disclosure-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset">
         </div>
       </div>
     </div>
-    <span class="language-content-hint">Choose the language you'd like to use with SmartPass</span>
+    <span class="language-content-hint ds-mt-15">Choose the language you'd like to use with SmartPass</span>
 
   </div>
 

@@ -16,6 +16,7 @@ export class LocalizejsService {
 
   private lang:string;
   public readonly langThatNoNeedsTranslation = 'en';
+  public readonly langThatIsBeta = 'es';
 
   public disableLanguageSubject:ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
   public disableLanguage$: Observable<boolean>;

@@ -1,0 +1,25 @@
+@import '../../../design-system';
+@import '../../../sp-colors';
+
+.release {
+  width: 44px;
+  height: 21px;
+  background-color: #E32C66;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 13px;
+  margin-left: 20px;
+}
+
+.beta {
+  @include textSize(13px, bold, $applyColor: false); 
+  text-transform: uppercase;
+  color: $yellow500;
+  background-color: $yellow100;
+  border-radius: 4px;
+}
+
+

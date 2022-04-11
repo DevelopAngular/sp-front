@@ -57,8 +57,8 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
     .pipe(
       takeUntil(this.subscriber$),
     )
-    .subscribe(mode => {
-      this.isDisabledLang = mode;
+    .subscribe(disabledState => {
+      this.isDisabledLang = disabledState;
       this.localize.setLanguage(this.localize.langThatNoNeedsTranslation);
       this.storageService.setItem('codelang', this.localize.langThatNoNeedsTranslation);
     });
@@ -83,6 +83,7 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
           'langs': this.langs,
           'selectedLang': this.currentLang,
           'isDisabledLang': this.isDisabledLang,
+          'betaLanguage': this.localize.langThatIsBeta,
           'heading': 'SELECT LANGUAGE',
           'trigger': target,
           'isSearchField': false,
