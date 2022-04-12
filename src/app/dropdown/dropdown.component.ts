@@ -36,6 +36,7 @@ export class DropdownComponent implements OnInit {
   selectedLang: string;
   isDisabledLang: boolean;
   betaLanguage: string = '';
+  countryCodes = COUNTRY_CODES;
   initialSchools: School[];
   selectedSchool: School;
   teachers: RepresentedUser[];
@@ -67,7 +68,6 @@ export class DropdownComponent implements OnInit {
     this.selectedSchool = data['selectedSchool'];
     this.selectedLang = data['selectedLang'];
     this.isDisabledLang = data['isDisabledLang'];
-    this.countryCodes = COUNTRY_CODES;
     this.betaLanguage = data['betaLanguage'];
     this.selectedTeacher = data['selectedTeacher'];
     this.user = data['user'];
