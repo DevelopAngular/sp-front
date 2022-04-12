@@ -14,11 +14,16 @@
   margin-left: 20px;
 }
 
+.release-language {
+    text-transform: uppercase;
+    background-color: $green500 !important;
+}
+
 .beta {
   @include textSize(13px, bold, $applyColor: false); 
   text-transform: uppercase;
   color: $yellow500;
-  background-color: $yellow100;
+  background-color: $yellow100 !important;
   border-radius: 4px;
 }
 

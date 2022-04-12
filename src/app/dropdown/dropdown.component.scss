@@ -1,5 +1,6 @@
 @import "../../design-system";
 @import '../../sp-colors';
+@import "../shared/shared-styles/feature.cycle.scss";
 
 :host {
   position: relative;
@@ -66,6 +67,7 @@
     //height: calc(100% - 50px);
     overflow: auto;
     box-sizing: border-box;
+    text-transform: capitalize;
 
   &.sort-wrapper{
       padding: 15px 0;

@@ -6,12 +6,12 @@
          appCrossPointerEventTarget
          (pointerClickEvent)="dialogRef.close()"
     >
-      <img [width]="34" [src]="'./assets/Back Button (Blue-White).svg'"
+      <img [width]="34" [src]="'./assets/Back Button (Gray-White).svg'"
       >
     </div>
 
     <div>
-      <img [width]="26" [src]="'./assets/Glasses (Navy).svg'" alt="Glasses (Navy).svg">
+      <img [width]="26" [src]="'./assets/Language (Navy).svg'" alt="Language (Navy).svg">
     </div>
     <div class="ds-pl-10">
       <span>Language</span>
@@ -24,7 +24,7 @@
       <span class="ds-dialog-heading">Language</span>
       <div class="lang-toggle-bar-wrapper" #langToggle>
         <div class="selected-lang" #targetElement (click)="showOptions(targetElement)">
-          <span class="lang-name ds-dialog-normal-text">{{ currentLang }}</span>
+          <span class="lang-name ds-dialog-normal-text">{{ countryCodes[currentLang] }}</span>
           <img class="disclosure-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset">
         </div>
       </div>

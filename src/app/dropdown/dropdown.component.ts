@@ -7,11 +7,12 @@ import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {DeviceDetection} from '../device-detection.helper';
 import {cloneDeep} from 'lodash';
+import {COUNTRY_CODES} from '../services/localizejs.service';
 
 @Component({
   selector: 'app-dropdown',
   templateUrl: './dropdown.component.html',
-  styleUrls: ['./dropdown.component.scss', '../shared/shared-styles/feature.cycle.scss']
+  styleUrls: ['./dropdown.component.scss']
 })
 export class DropdownComponent implements OnInit {
   options: HTMLElement;
@@ -53,7 +54,7 @@ export class DropdownComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any[],
     _matDialogRef: MatDialogRef<DropdownComponent>,
     public  darkTheme: DarkThemeSwitch,
-    private renderer: Renderer2
+    private renderer: Renderer2,
   ) {
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
@@ -66,6 +67,7 @@ export class DropdownComponent implements OnInit {
     this.selectedSchool = data['selectedSchool'];
     this.selectedLang = data['selectedLang'];
     this.isDisabledLang = data['isDisabledLang'];
+    this.countryCodes = COUNTRY_CODES;
     this.betaLanguage = data['betaLanguage'];
     this.selectedTeacher = data['selectedTeacher'];
     this.user = data['user'];

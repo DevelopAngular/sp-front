@@ -227,6 +227,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'action': 'appearance',
       'title': 'Appearance'
     });
+    this.settings.push({
+      'hidden': false,
+      'background': '#134482',
+      'icon': 'Language',
+      'action': 'language',
+      'title': 'Language',
+      'isNew': true
+    });
     if (this.isStaff) {
       this.settings.push({
         'hidden': this.isKioskMode,

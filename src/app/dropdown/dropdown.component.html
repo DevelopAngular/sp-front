@@ -114,7 +114,7 @@
     </div>
 
 
-    <div class="options-wrapper" ignore [style.padding]="isSearchField ? '10px 0 22px 0' : '22px 0'" [style.max-height]="optionsMaxHeight"  *ngIf="langs">
+    <div class="options-wrapper" [style.padding]="isSearchField ? '10px 0 22px 0' : '22px 0'" [style.max-height]="optionsMaxHeight"  *ngIf="langs">
       <div class="option" *ngFor="let lang of langs" #langList>
         <div #_option class="option-data"
              [ngClass]="{
@@ -131,7 +131,7 @@
              (mouseleave)="_option.hovered = false; _option.pressed = false"
         >
           <div>
-            <span [style.color]="lang === selectedLang ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ lang }}</span>
+            <span [style.color]="lang === selectedLang ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ countryCodes[lang] }}</span>
             <span *ngIf="lang === betaLanguage" class="beta ds-ml-15 ds-p-5">beta</span>
           </div>
           <div class="option-data_rightside">

@@ -41,7 +41,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     },
     {
       'hidden': false,
-      'icon': 'Glasses',
+      'icon': 'Language',
       'action': 'language',
       'title': 'Language',
       'isNew': true,

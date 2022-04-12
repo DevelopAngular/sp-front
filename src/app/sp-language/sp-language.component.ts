@@ -7,7 +7,7 @@ import {Subject} from 'rxjs';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {NavbarDataService} from '../main/navbar-data.service';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
-import {LocalizejsService} from '../services/localizejs.service';
+import {LocalizejsService, COUNTRY_CODES} from '../services/localizejs.service';
 import {StorageService} from '../services/storage.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
@@ -24,6 +24,7 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public currentLang:string;
   private isDisabledLang:boolean = false;
+  private countryCodes = COUNTRY_CODES;
 
   private subscriber$ = new Subject();
 

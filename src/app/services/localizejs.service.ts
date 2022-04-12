@@ -150,3 +150,5 @@ export class LocalizejsService {
   } 
 
 }
+
+export var COUNTRY_CODES = {en: 'english', es: 'spanish'};

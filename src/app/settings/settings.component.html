@@ -60,7 +60,7 @@
           <div class="setting-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
             {{setting.title}}
           </div>
-          <div class="release" *ngIf="setting.isNew">New</div>
+          <div class="release" [class.release-language]="setting.action === 'language'" *ngIf="setting.isNew">New</div>
           <div class="set-up" *ngIf="!(teacherPin$ | async) && setting.action === 'myPin'">Set-Up</div>
         </div>
 <!--        <mat-divider class="divider"-->

@@ -1,4 +1,6 @@
 @import "../../../sp-colors.scss";
+@import "../../shared/shared-styles/feature.cycle.scss";
+
 
 .settings-wrapper {
   width: 244px;
@@ -33,24 +35,6 @@
           -ms-user-select: none;
           user-select: none;
           display: flex;
-
-          .release {
-            width: 44px;
-            height: 21px;
-            background-color: #E32C66;
-            border-radius: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FFFFFF;
-            font-size: 13px;
-            margin-left: 20px;
-          }
-
-          .release-language {
-              text-transform: uppercase;
-              background-color: $green500;
-          }
         }
 
         .switch-icon {
