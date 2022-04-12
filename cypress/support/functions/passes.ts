@@ -24,7 +24,15 @@ export const setMinimumPassDuration = () => {
 };
 
 export const searchForStudent = (studentName: string) => {
+  // @ts-ignore
+  const url = new URL('https://smartpass.app/api/prod-us-central/v1/users?role=_profile_student&limit=50');
+  url.searchParams.set('search', studentName);
+  cy.intercept({
+    method: 'GET',
+    url: url.toString().replaceAll('+', '%20')
+  }).as('studentSearchRequest');
   cy.get('app-round-input input[placeholder="Search students"]').type(studentName);
+  cy.wait('@studentSearchRequest');
 };
 
 export const selectStudentFromSearchList = (studentName: string) => {

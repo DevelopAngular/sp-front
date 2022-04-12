@@ -90,7 +90,8 @@
         <div #_option class="option-data"
              [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
-                'option-wrapper__dark': darkTheme.isEnabled$.value
+                'option-wrapper__dark': darkTheme.isEnabled$.value,
+                'current-school': school.id === selectedSchool.id && school.name === selectedSchool.name
                }"
              [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (school.id === selectedSchool.id && school.name === selectedSchool.name ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
              appCrossPointerEventTarget

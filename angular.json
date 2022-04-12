@@ -194,7 +194,6 @@
             "watch": false,
             "headless": true,
             "record": false,
-            "browser": "chrome",
             "video": false,
             "configFile": "./cypress.json"
           },
