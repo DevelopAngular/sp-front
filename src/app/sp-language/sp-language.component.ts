@@ -23,7 +23,7 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public currentLang:string;
   private isDisabledLang:boolean = false;
-  private countryCodes = COUNTRY_CODES;
+  public countryCodes = COUNTRY_CODES;
 
   private subscriber$ = new Subject();
 
