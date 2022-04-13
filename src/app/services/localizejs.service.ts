@@ -152,7 +152,8 @@ export class LocalizejsService {
   } 
 
   setLanguageUntranslated() {
-    this.setLanguage(this.langThatNoNeedsTranslation); 
+    // set directly language
+    (window as any).Localize?.setLanguage(this.langThatNoNeedsTranslation);
     this.storageService.removeItem('codelang');
   }
 
