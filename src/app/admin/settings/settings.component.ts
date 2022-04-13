@@ -4,6 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RELEASE_NAME} from '../../../build-info';
 import {LocalStorage} from '@ngx-pwa/local-storage';
+import {LocalizejsService} from '../../services/localizejs.service';
 import {combineLatest, Subject} from 'rxjs';
 
 @Component({
@@ -63,6 +64,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public darkTheme: DarkThemeSwitch,
     private elemRef: ElementRef,
+    private localize: LocalizejsService,
     private pwaStorage: LocalStorage
   ) {
   }
@@ -118,6 +120,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   signOut() {
     this.dialogRef.close('signout');
     localStorage.removeItem('fcm_sw_registered');
+    this.localize.setLanguageUntranslated();
     combineLatest(this.pwaStorage.removeItem('servers'),
       this.pwaStorage.removeItem('authData') )
       .subscribe();

@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {concat, fromEvent, throwError, ReplaySubject, Observable, bindCallback} from 'rxjs';
 import {tap, map, take, catchError, retry} from 'rxjs/operators';
 import {HttpService} from './http-service';
+import {StorageService} from '../services/storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,7 @@ export class LocalizejsService {
 
   constructor(
     private http: HttpService,
+    private storageService: StorageService,
   ){
     this.disableLanguage$ = (this.disableLanguageSubject as Observable<boolean>);
   }
@@ -148,6 +150,11 @@ export class LocalizejsService {
     firstscript.src = "https://global.localizecdn.com/localize.js";
     head.insertBefore(firstscript, head.firstChild);
   } 
+
+  setLanguageUntranslated() {
+    this.setLanguage(this.langThatNoNeedsTranslation); 
+    this.storageService.removeItem('codelang');
+  }
 
 }
 

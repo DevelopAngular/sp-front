@@ -8,7 +8,6 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {NavbarDataService} from '../main/navbar-data.service';
 import {NavbarElementsRefsService} from '../services/navbar-elements-refs.service';
 import {LocalizejsService, COUNTRY_CODES} from '../services/localizejs.service';
-import {StorageService} from '../services/storage.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
@@ -35,7 +34,6 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
     private navbarService: NavbarDataService,
     private navbarElementsService: NavbarElementsRefsService,
     private localize: LocalizejsService,
-    private storageService: StorageService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
@@ -60,8 +58,7 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
     )
     .subscribe(disabledState => {
       this.isDisabledLang = disabledState;
-      this.localize.setLanguage(this.localize.langThatNoNeedsTranslation);
-      this.storageService.setItem('codelang', this.localize.langThatNoNeedsTranslation);
+      this.localize.setLanguageUntranslated()
     });
   }
 

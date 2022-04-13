@@ -18,6 +18,8 @@
     "teacherUsername": "demoteacher1@cypress.smartpass.app",
     "teacherPassword": "j6UmyudW2f",
     "adminUsername": "smartpass-admin@cypress.smartpass.app",
-    "adminPassword": "CmN9qyLf"
+    "adminPassword": "CmN9qyLf",
+    "secretaryUsername": "tsecretary@demontehs.org",
+    "secretaryPassword": "sectest",
   }
 }
