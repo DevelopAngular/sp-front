@@ -39,6 +39,7 @@
           </app-round-input>
         </div>
 
+        <!-- TODO: Come up with a better way to represent gradient/square buttons instead of separate components  -->
         <div class="buttons" *ngIf="!isMiniButtons; else squareButtons">
           <app-gradient-button
             *ngIf="showIntegrations$ | async"
@@ -49,6 +50,14 @@
             [textColor]="'#1F194E'"
             (buttonClick)="openIntegrations()"
           >Integrations</app-gradient-button>
+
+          <app-gradient-button
+            [gradient]="'#6651F1, #6651F1'"
+            [style.margin-left]="'15px'"
+            [size]="'medium'"
+            [cursor]="'pointer'"
+            (buttonClick)="openPassLimits()"
+          >Pass Limits</app-gradient-button>
 
           <app-gradient-button
             [style.margin-left]="'15px'"

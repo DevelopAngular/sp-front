@@ -38,6 +38,7 @@ import {ToastService} from '../../../services/toast.service';
 import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
 import * as moment from 'moment';
+import {PassLimitDialogComponent} from '../pass-limit-dialog/pass-limit-dialog.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -320,6 +321,15 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       .subscribe(({action, status}) => {
         this.openSettingsDialog(action, status);
       });
+  }
+
+  openPassLimits() {
+    const passLimitsDialogRef = this.matDialog.open(PassLimitDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-id',
+      width: '425px',
+      height: '500px',
+    });
   }
 
   openSettingsDialog(action, status) {

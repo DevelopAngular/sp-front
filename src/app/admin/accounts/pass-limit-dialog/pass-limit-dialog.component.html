@@ -1,0 +1,81 @@
+<ng-container [ngSwitch]="pageNumber">
+  <div class="sp-dialog wrapper">
+    <div class="header">
+      <div class="background-header"></div>
+      <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+      <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+        <img width="21" height="21" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" alt="Options">
+        <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div #passLimitsIntro class="accent-background-section ds-flex-row" style="position:relative">
+        <div style="width: 50px"></div>
+        <div style="width: 80%">
+          <p class="ds-section-header" style="margin-top: 0">Limit the number of passes students can have per day</p>
+          <p>
+            Set them school-wide, or just for individual students. Teachers can override it, and students only see the limit when it reaches 2 remaining.
+            <a href="#">Learn more.</a>
+          </p>
+        </div>
+
+        <button id="closePassLimitsIntro" (click)="passLimitsIntro.style.display = 'none'">
+          <img style="width: 25px" src="assets/Cancel%20(Blue-Gray).svg">
+        </button>
+      </div>
+      <div class="accent-background-section ds-flex-row ds-flex-center-between">
+        <span class="ds-section-header">
+          School Pass Limit
+           <div class="tooltip-container" style="display: inline">
+              <img
+                [customToolTip]="passLimitToggleTooltip"
+                class="custom-tooltip-icon support-icon"
+                [src]="'./assets/Support (Gray).svg' | resolveAsset">
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
+              </div>
+            </div>
+        </span>
+        <app-toggle-input
+          style="width: auto"
+          controlSize="small"
+          [form]="passLimitForm"
+          [delimiter]="false"
+        ></app-toggle-input>
+      </div>
+
+      <div class="accent-background-section ds-flex-column ds-flex-center-between" style="margin-bottom: 40px">
+        <span class="ds-section-header">
+          Limits for Individual Students
+           <div class="tooltip-container" style="display: inline">
+              <img
+                [customToolTip]="individualLimitsTooltop"
+                class="custom-tooltip-icon support-icon"
+                [src]="'./assets/Support (Gray).svg' | resolveAsset">
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
+              </div>
+            </div>
+        </span>
+
+        <div class="individual-limits-list">
+          <div *ngFor="let individualLimit of individualLimits"></div>
+          <p class="ds-dialog-subtitle" *ngIf="individualLimits.length === 0" style="opacity: 0.5">
+            No individual limits set
+          </p>
+
+          <app-gradient-button
+            gradient="#00B476"
+            textColor="#FFFFFF"
+            text="Add Limit"
+            leftIcon="assets/Plus (White).svg"
+            (buttonClick)="addIndividualLimit()">
+            Add Pass Limit
+          </app-gradient-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ng-container>
