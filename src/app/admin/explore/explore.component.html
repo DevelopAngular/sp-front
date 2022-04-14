@@ -37,6 +37,15 @@
           [openedFilter]="!!dialog.getDialogById('students_filter')">
         </app-filter-button>
       </div>
+      <div class="filter">
+        <app-filter-button *ngSwitchCase="2"
+         (buttonClick)="openFilter($event, 'status')"
+         [title]="(!reportSearchData.selectedStatus || reportSearchData.selectedStatus.length > 1 ? 'Status' + (reportSearchData.selectedStatus && reportSearchData.selectedStatus.length ? ' (' + reportSearchData.selectedStatus.length + ')' : '') : reportSearchData.selectedStatus[0])"
+         [filter]="reportSearchData.selectedStatus && !!reportSearchData.selectedStatus.length"
+         (clearData)="reportSearchData.selectedStatus = null; autoSearch()"
+         [openedFilter]="!!dialog.getDialogById('status_filter')">
+        </app-filter-button>
+      </div>
       <div class="filter" *ngSwitchCase="2">
         <app-filter-button
          (buttonClick)="openFilter($event, 'teachers')"
