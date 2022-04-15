@@ -48,13 +48,25 @@
           ></app-toggle-input>
         </div>
 
-        <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 10px" class="ds-flex-row">
+        <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 10px; flex-wrap: wrap;" class="ds-flex-row">
           <app-input
+            (blurEvent)="showLimitFormatError = passLimitForm.controls['limits'].invalid"
             [isFocus]="true"
-            width="100px"
-            placeholder="5"
+            width="125px"
+            placeholder="# of passes"
             [formGroup]="passLimitForm"
             [controlName]="passLimitForm.get('limits')"></app-input>
+
+          <app-gradient-button
+            id="passLimitFrequencyButton"
+            style="margin-top: 4px"
+            textColor="#000000"
+            gradient="#F4F4F4"
+            (buttonClick)="triggerFrequencyDialog()">
+            per {{passLimitForm.value['frequency']}}
+          </app-gradient-button>
+
+          <p style="width: 100%; color: #E32C66" *ngIf="showLimitFormatError">Proper format: 1 pass, 4 passes, 10 passes</p>
         </div>
       </div>
 
@@ -93,4 +105,9 @@
 
 </ng-container>
 
-<ng-template #passLimitsFrequencyDialog></ng-template>
+<ng-template #passLimitsFrequencyDialog>
+  <p (click)="selectFrequency('day')">per day</p>
+  <p (click)="selectFrequency('week')">per week</p>
+  <p (click)="selectFrequency('month')">per month</p>
+  <p (click)="selectFrequency('semester')">per semester</p>
+</ng-template>
