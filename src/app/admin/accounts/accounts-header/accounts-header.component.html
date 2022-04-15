@@ -52,10 +52,10 @@
           >Integrations</app-gradient-button>
 
           <app-gradient-button
-            [gradient]="'#6651F1, #6651F1'"
+            gradient="#6651F1, #6651F1"
             [style.margin-left]="'15px'"
-            [size]="'medium'"
-            [cursor]="'pointer'"
+            size="medium"
+            cursor="pointer"
             (buttonClick)="openPassLimits()"
           >Pass Limits</app-gradient-button>
 
@@ -100,8 +100,11 @@
               <img width="28" [src]="'./assets/Integrations (Navy).svg' | resolveAsset">
             </app-square-button>
 
+            <app-square-button (buttonClick)="openPassLimits()" [backgroundColor]="'#6651F1'">
+              <img width="28" [src]="'./assets/Integrations (Navy).svg' | resolveAsset">
+            </app-square-button>
+
             <app-square-button
-              style="margin-left: 10px"
               nuxTooltip
               [contentTemplate]="tooltip"
               [showToolTip$]="showNuxTooltip"
@@ -119,7 +122,6 @@
             </ng-template>
 
             <app-square-button
-              style="margin-left: 10px"
               (buttonClick)="addUser($event)">
               <img width="28" height="28" [src]="'./assets/Plus (White).svg' | resolveAsset">
             </app-square-button>

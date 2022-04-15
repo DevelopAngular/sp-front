@@ -24,8 +24,9 @@
           <img style="width: 25px" src="assets/Cancel%20(Blue-Gray).svg">
         </button>
       </div>
-      <div class="accent-background-section ds-flex-row ds-flex-center-between">
-        <span class="ds-section-header">
+      <div class="accent-background-section ds-flex-column">
+        <div style="display: flex" class="ds-flex-row ds-flex-center-between">
+           <span class="ds-section-header">
           School Pass Limit
            <div class="tooltip-container" style="display: inline">
               <img
@@ -37,12 +38,24 @@
               </div>
             </div>
         </span>
-        <app-toggle-input
-          style="width: auto"
-          controlSize="small"
-          [form]="passLimitForm"
-          [delimiter]="false"
-        ></app-toggle-input>
+          <app-toggle-input
+            style="width: auto"
+            controlSize="small"
+            [form]="passLimitForm"
+            controlName="enabled"
+            [delimiter]="false"
+            (pushOutValue)="toggleMainPassLimits($event)"
+          ></app-toggle-input>
+        </div>
+
+        <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 10px" class="ds-flex-row">
+          <app-input
+            [isFocus]="true"
+            width="100px"
+            placeholder="5"
+            [formGroup]="passLimitForm"
+            [controlName]="passLimitForm.get('limits')"></app-input>
+        </div>
       </div>
 
       <div class="accent-background-section ds-flex-column ds-flex-center-between" style="margin-bottom: 40px">
@@ -79,3 +92,5 @@
   </div>
 
 </ng-container>
+
+<ng-template #passLimitsFrequencyDialog></ng-template>
