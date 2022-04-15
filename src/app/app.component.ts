@@ -118,7 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // set only an already set up language is found
     // otherwise let the language component try to translate
-    const savedLang = this.storageService.getItem('codelang');
+    /*const savedLang = this.storageService.getItem('codelang');
     if (!!savedLang) {
       this.http.currentLang$.pipe(
         takeUntil(this.subscriber$),
@@ -136,7 +136,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           this.localize.disableLanguage();
         }
       });
-    }
+    }*/
 
     this.userService.loadedUser$
       .pipe(
