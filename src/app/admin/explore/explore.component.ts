@@ -4,6 +4,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
+import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
 import {HallPassesService} from '../../services/hall-passes.service';
@@ -56,6 +57,7 @@ export interface SearchData {
   selectedDestinationRooms?: any[];
   selectedOriginRooms?: any[];
   selectedTeachers?: User[];
+  selectedStatus?: User[];
 }
 
 @Component({
@@ -119,6 +121,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   reportSearchData: SearchData = {
     selectedStudents: null,
     selectedTeachers: null,
+    selectedStatus: null,
     selectedDate: null
   };
 
@@ -238,10 +241,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
           };
           return this.contactTraceService.contactTraceLoaded$;
         } else if (view === 'report_search') {
-          this.isCheckbox$.next(false);
+          this.isCheckbox$.next(true);
           this.reportSearchData = {
             selectedStudents: null,
             selectedDate: null,
+            selectedStatus: null,
             selectedTeachers: null
           };
           this.searchReports();
@@ -396,8 +400,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
             return [{
               'Student Name': null,
               'Message': null,
+              'Status': null,
               'Submitted by': null,
-              'Date submitted': null
+              'Date submitted': null,
             }];
           }
           this.reportSearchState.isEmpty = false;
@@ -405,6 +410,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             const result = {
               'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
               'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
+              'Status': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.status || 'No report status'}</div>`),
               'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
               'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`)
             };
@@ -551,6 +557,28 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.autoSearch();
           this.cdr.detectChanges();
         });
+    } else if (action === 'status') {
+      const statusFilter = this.dialog.open(StatusFilterComponent, {
+        id: `${action}_filter`,
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {
+          'trigger': new ElementRef(event).nativeElement,
+          'selectedStatus': this.reportSearchData.selectedStatus,
+          'type': 'selectedStatus',
+          'multiSelect': true
+        }
+      });
+
+      statusFilter.afterClosed()
+        .pipe(
+          tap(() => UNANIMATED_CONTAINER.next(false)),
+          filter(res => res)
+        ).subscribe(({students, type}) => {
+          this.reportSearchData.selectedStatus = students;
+          this.autoSearch();
+          this.cdr.detectChanges();
+        });
     } else if (action === 'calendar') {
       const calendar = this.dialog.open(DateTimeFilterComponent, {
         id: 'calendar_filter',
@@ -681,6 +709,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
     if (this.reportSearchData.selectedTeachers) {
       queryParams['issuer'] = this.reportSearchData.selectedTeachers.map(t => t.id);
+    }
+    if (this.reportSearchData.selectedStatus) {
+      queryParams['status'] = this.reportSearchData.selectedStatus.map(s => s);
     }
     if (this.reportSearchData.selectedDate) {
       let start;
