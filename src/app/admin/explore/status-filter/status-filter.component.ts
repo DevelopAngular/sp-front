@@ -29,6 +29,8 @@ export class StatusFilterComponent implements OnInit {
     public dialogRef: MatDialogRef<StatusFilterComponent>,
   ) { }
 
+  statuses: Status[keyof Status][];
+
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
     this.type = this.data['type'];
@@ -39,7 +41,8 @@ export class StatusFilterComponent implements OnInit {
     }
     this.updateDialogPosition();
 
-    this.statuses = [Status.Active, Status.Closed];
+    //this.statuses = [Status.Active, Status.Closed];
+    this.statuses = Object.keys(Status).filter(k => isNaN(Number(k))).map(k => Status[k]);
   }
 
   updateDialogPosition() {
