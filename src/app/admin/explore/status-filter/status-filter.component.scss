@@ -1,15 +1,42 @@
+@import '../../../../sp-colors';
+@import '../../../../design-system';
+@import '../../../../util';
+
+%chip-format {
+  @extend %first-letter-up;
+  box-sizing: border-box;
+  padding: 7px;
+  border-radius: 17px;
+  @include textSize(14px, 500, $applyColor: false);
+  line-height: 14px;
+  @include wh(63, 30);
+  text-align: center;
+}
+
 .wrapper {
   padding: 25px;
-  background-color: #FFFFFF;
-  border-radius: 12px;
+  background-color: $white;
+  border-radius: 9px;
 
   .content {
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    .button {
-      margin-top: 26px;
+    .active {
+      @extend %chip-format;
+      color: $green500;
+      background-color: $green100;
+    }
+
+    .closed {
+      @extend %chip-format;
+      color: $navy500;
+      background-color: $navy100;
+    }
+
+    .active + .closed {
+      margin-top: 14px;
     }
   }
 }

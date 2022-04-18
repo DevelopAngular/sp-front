@@ -10,7 +10,6 @@ import {Status} from '../../../models/Report';
   selector: 'app-status-filter',
   templateUrl: './status-filter.component.html',
   styleUrls: ['./status-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusFilterComponent implements OnInit {
 
@@ -19,13 +18,8 @@ export class StatusFilterComponent implements OnInit {
   selectedStatus: Status;
   initialStatus: Status = Status.Active;
 
-  isMultiSelect: boolean;
-  update: boolean;
-
-  type: 'selectedStatus';
-
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any[],
+    @Inject(MAT_DIALOG_DATA) public data: Status,
     public dialogRef: MatDialogRef<StatusFilterComponent>,
   ) { }
 
@@ -33,15 +27,10 @@ export class StatusFilterComponent implements OnInit {
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
-    this.type = this.data['type'];
-    this.isMultiSelect = this.data['multiSelect'];
-    if (this.data[this.type]) {
-      this.selectedStatus = cloneDeep(this.data[this.type]);
-      this.initialStatus = cloneDeep(this.data[this.type]);
-    }
+    this.selectedStatus = cloneDeep(this.data['status']);
+    this.initialStatus = cloneDeep(this.data['status']);
     this.updateDialogPosition();
 
-    //this.statuses = [Status.Active, Status.Closed];
     this.statuses = Object.keys(Status).filter(k => isNaN(Number(k))).map(k => Status[k]);
   }
 
@@ -53,11 +42,9 @@ export class StatusFilterComponent implements OnInit {
   }
 
   updateStatus(status) {
-    this.selectedStatus = status;
-  }
-
-  saveStatus() {
-    this.dialogRef.close({status: this.selectedStatus, type: this.type});
+    this.selectedStatus = status as Status;
+    console.log(this.data, status, this.selectedStatus)
+    this.dialogRef.close({status: this.selectedStatus});
   }
 
 }
