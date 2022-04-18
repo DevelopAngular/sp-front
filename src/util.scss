@@ -1,0 +1,11 @@
+/* setting  width and height*/
+@mixin wh($width, $height) {
+  width: $width + 0px;
+  height: $height + 0px;
+}
+
+%first-letter-up {
+  &::first-letter {
+    text-transform: capitalize;
+  }
+}
