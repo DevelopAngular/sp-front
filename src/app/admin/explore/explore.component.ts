@@ -24,12 +24,12 @@ import {AdminService} from '../../services/admin.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
-import {Report} from '../../models/Report';
+import {Report, Status} from '../../models/Report';
 import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
 import {XlsxService} from '../../services/xlsx.service';
-import {Status} from '../../models/Report';
+import {StatusChipComponent} from './status-chip/status-chip.component';
 
 declare const window;
 
@@ -411,7 +411,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
             const result = {
               'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
               'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
-              'Status': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.status || 'No report status'}</div>`),
+              'Status': this.domSanitizer.bypassSecurityTrustHtml(`<app-status-chip
+                                                                  [status]="${report.status}"
+                                                                  ></app-status-chip>`),
               'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
               'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`)
             };

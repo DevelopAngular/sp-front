@@ -86,6 +86,7 @@
           </ng-template>
 
             <td
+              #statuscells
               mat-cell
               [ngClass]="{'fake-container': !element[column], noCheckbox: !(isCheckbox | async)}"
               [style.height]="!element[column] ? itemSize + 'px' : 'auto'"

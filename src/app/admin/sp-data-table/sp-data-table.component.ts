@@ -9,7 +9,14 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
+  ViewChildren,
+  ComponentFactory,
+  ComponentRef, 
+  ComponentFactoryResolver,
+  ViewContainerRef,
+  QueryList,
+  ElementRef
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
@@ -23,6 +30,7 @@ import {TableService} from './table.service';
 import {cloneDeep, isEmpty} from 'lodash';
 import {filter, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
+import {StatusChipComponent} from '../explore/status-chip/status-chip.component';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
@@ -161,15 +169,25 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
   }
 
+
   constructor(
     private cdr: ChangeDetectorRef,
     private storage: StorageService,
     private dialog: MatDialog,
     private tableService: TableService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private resolver: ComponentFactoryResolver
   ) {
   }
 
+  // TODO: ViewContainerRef needed to add at runtime the status-chip
+  @ViewChildren('statuscells', { read: ElementRef }) statuscells!: QueryList<ElementRef>;
+  componentRefs: ComponentRef<StatusChipComponent>[];
+  ngAfterViewInit() {
+    this.statuscells.changes.subscribe((cells) => {
+      cells.map(x => console.log(x));
+    });
+  }
   get viewportDataItems(): number {
     return Math.floor(this.viewport.getViewportSize() / this.itemSize);
   }
