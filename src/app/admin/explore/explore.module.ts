@@ -12,6 +12,7 @@ import {SharedModule} from '../../shared/shared.module';
 import {SearchCalendarComponent} from './search-calendar/search-calendar.component';
 import {AdminModule} from '../admin.module';
 import {AdminSharedModule} from '../shared/admin-shared.module';
+import { StatusChipComponent } from './status-chip/status-chip.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import {AdminSharedModule} from '../shared/admin-shared.module';
     StudentFilterComponent,
     StatusFilterComponent,
     SearchCalendarComponent,
+    StatusChipComponent,
   ],
   imports: [
     CommonModule,

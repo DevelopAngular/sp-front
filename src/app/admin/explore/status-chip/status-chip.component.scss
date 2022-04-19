@@ -1,0 +1,29 @@
+@import '../../../../sp-colors';
+@import '../../../../util';
+
+%chip-format {
+  @extend %first-letter-up;
+  // TODO: investigate first-letter
+  text-transform: capitalize;
+  box-sizing: border-box;
+  padding: 7px;
+  border-radius: 17px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  @include wh(63, 30);
+  text-align: center;
+  cursor: pointer;
+}
+
+.active {
+  @extend %chip-format;
+  color: $green500;
+  background-color: $green100;
+}
+
+.closed {
+  @extend %chip-format;
+  color: $navy500;
+  background-color: $navy100;
+}

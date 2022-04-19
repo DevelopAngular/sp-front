@@ -1,43 +1,16 @@
 @import '../../../../sp-colors';
-@import '../../../../design-system';
-@import '../../../../util';
-
-%chip-format {
-  @extend %first-letter-up;
-  box-sizing: border-box;
-  padding: 7px;
-  border-radius: 17px;
-  @include textSize(14px, 500, $applyColor: false);
-  line-height: 14px;
-  @include wh(63, 30);
-  text-align: center;
-  cursor: pointer;
-}
 
 .wrapper {
-  padding: 25px;
+  box-sizing: border-box;
+  width: 204px;
+  height: 103px;
+  padding: 25px 15px;
   background-color: $white;
   border-radius: 9px;
 
   .content {
     display: flex;
     flex-direction: column;
-    align-items: center;
-
-    .active {
-      @extend %chip-format;
-      color: $green500;
-      background-color: $green100;
-    }
-
-    .closed {
-      @extend %chip-format;
-      color: $navy500;
-      background-color: $navy100;
-    }
-
-    .active + .closed {
-      margin-top: 14px;
-    }
+    gap: 24px;
   }
 }

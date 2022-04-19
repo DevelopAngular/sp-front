@@ -42,11 +42,13 @@ export class StatusFilterComponent implements OnInit {
   updateDialogPosition() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
-    matDialogConfig.position = { left: `${rect.left}px`, top: `${rect.bottom + 13}px` };
+    // align to left as it appears to be aligned to the right
+    // 204 is width of status container
+    matDialogConfig.position = { left: `${rect.left - (204 - rect.width)}px`, top: `${rect.bottom + 13}px` };
     this.dialogRef.updatePosition(matDialogConfig.position);
   }
 
-  updateStatus(status) {
+  chooseStatus(status: Status) {
     this.selectedStatus = status as Status;
     this.buttonClick.emit(this.selectedStatus);
     this.dialogRef.close({status: this.selectedStatus, type: this.type});
