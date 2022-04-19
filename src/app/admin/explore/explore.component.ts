@@ -29,6 +29,7 @@ import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
 import {XlsxService} from '../../services/xlsx.service';
+import {Status} from '../../models/Report';
 
 declare const window;
 
@@ -57,7 +58,7 @@ export interface SearchData {
   selectedDestinationRooms?: any[];
   selectedOriginRooms?: any[];
   selectedTeachers?: User[];
-  selectedStatus?: User[];
+  selectedStatus?: Status;
 }
 
 @Component({
@@ -566,7 +567,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
           'trigger': new ElementRef(event).nativeElement,
           'selectedStatus': this.reportSearchData.selectedStatus,
           'type': 'selectedStatus',
-          'multiSelect': true
         }
       });
 
@@ -574,8 +574,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => UNANIMATED_CONTAINER.next(false)),
           filter(res => res)
-        ).subscribe(({students, type}) => {
-          this.reportSearchData.selectedStatus = students;
+        ).subscribe(({status, type}) => {
+          this.reportSearchData.selectedStatus = status;
           this.autoSearch();
           this.cdr.detectChanges();
         });
@@ -711,7 +711,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       queryParams['issuer'] = this.reportSearchData.selectedTeachers.map(t => t.id);
     }
     if (this.reportSearchData.selectedStatus) {
-      queryParams['status'] = this.reportSearchData.selectedStatus.map(s => s);
+      queryParams['status'] = this.reportSearchData.selectedStatus;
     }
     if (this.reportSearchData.selectedDate) {
       let start;

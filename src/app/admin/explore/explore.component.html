@@ -40,7 +40,7 @@
       <div class="filter">
         <app-filter-button *ngSwitchCase="2"
          (buttonClick)="openFilter($event, 'status')"
-         [title]="(!reportSearchData.selectedStatus || reportSearchData.selectedStatus.length > 1 ? 'Status' + (reportSearchData.selectedStatus && reportSearchData.selectedStatus.length ? ' (' + reportSearchData.selectedStatus.length + ')' : '') : reportSearchData.selectedStatus[0])"
+         [title]="reportSearchData.selectedStatus ? 'Status ' + reportSearchData.selectedStatus : 'Status'"
          [filter]="reportSearchData.selectedStatus && !!reportSearchData.selectedStatus.length"
          (clearData)="reportSearchData.selectedStatus = null; autoSearch()"
          [openedFilter]="!!dialog.getDialogById('status_filter')">

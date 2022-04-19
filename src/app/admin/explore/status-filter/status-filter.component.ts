@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Output, EventEmitter, Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 
 import {cloneDeep, isEqual} from 'lodash';
@@ -15,8 +15,12 @@ export class StatusFilterComponent implements OnInit {
 
   triggerElementRef: HTMLElement;
 
+  type: 'selectedStatus';
+
   selectedStatus: Status;
   initialStatus: Status = Status.Active;
+
+  @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Status,
@@ -29,6 +33,7 @@ export class StatusFilterComponent implements OnInit {
     this.triggerElementRef = this.data['trigger'];
     this.selectedStatus = cloneDeep(this.data['status']);
     this.initialStatus = cloneDeep(this.data['status']);
+    this.type = this.data['type'];
     this.updateDialogPosition();
 
     this.statuses = Object.keys(Status).filter(k => isNaN(Number(k))).map(k => Status[k]);
@@ -43,8 +48,8 @@ export class StatusFilterComponent implements OnInit {
 
   updateStatus(status) {
     this.selectedStatus = status as Status;
-    console.log(this.data, status, this.selectedStatus)
-    this.dialogRef.close({status: this.selectedStatus});
+    this.buttonClick.emit(this.selectedStatus);
+    this.dialogRef.close({status: this.selectedStatus, type: this.type});
   }
 
 }
