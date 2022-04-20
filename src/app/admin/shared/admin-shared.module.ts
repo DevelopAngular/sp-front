@@ -12,6 +12,7 @@ import {DisabledChipComponent} from '../accounts/disabled-chip/disabled-chip.com
 import {SpDataTableComponent} from '../sp-data-table/sp-data-table.component';
 import {ColumnOptionsComponent} from '../sp-data-table/column-options/column-options.component';
 import {OctagonComponent} from '../accounts/encounter-prevention-dialog/octagon/octagon.component';
+import { StatusChipComponent } from '../explore/status-chip/status-chip.component';
 
 @NgModule({
   imports: [
@@ -29,6 +30,7 @@ import {OctagonComponent} from '../accounts/encounter-prevention-dialog/octagon/
       DisabledChipComponent,
       SpDataTableComponent,
       ColumnOptionsComponent,
+      StatusChipComponent, 
   ],
   exports: [
       ColorPalletPickerComponent,
@@ -42,6 +44,7 @@ import {OctagonComponent} from '../accounts/encounter-prevention-dialog/octagon/
       SpDataTableComponent,
       ColumnOptionsComponent,
       OctagonComponent,
+      StatusChipComponent, 
   ]
 })
 export class AdminSharedModule { }

@@ -30,7 +30,7 @@ import {TableService} from './table.service';
 import {cloneDeep, isEmpty} from 'lodash';
 import {filter, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
-import {StatusChipComponent} from '../explore/status-chip/status-chip.component';
+//import {StatusChipComponent} from '../explore/status-chip/status-chip.component';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
@@ -181,13 +181,14 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   }
 
   // TODO: ViewContainerRef needed to add at runtime the status-chip
-  @ViewChildren('statuscells', { read: ElementRef }) statuscells!: QueryList<ElementRef>;
+  /*@ViewChildren('statuscells', { read: ElementRef }) statuscells!: QueryList<ElementRef>;
   componentRefs: ComponentRef<StatusChipComponent>[];
   ngAfterViewInit() {
     this.statuscells.changes.subscribe((cells) => {
       cells.map(x => console.log(x));
     });
-  }
+  }*/
+
   get viewportDataItems(): number {
     return Math.floor(this.viewport.getViewportSize() / this.itemSize);
   }

@@ -411,9 +411,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             const result = {
               'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
               'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
-              'Status': this.domSanitizer.bypassSecurityTrustHtml(`<app-status-chip
-                                                                  [status]="${report.status}"
-                                                                  ></app-status-chip>`),
+              'Status': report.status,
               'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
               'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`)
             };
