@@ -1,4 +1,21 @@
-<span 
-  [ngClass]="classname"
-  (click)="blink()"  
->{{ label }}</span>
+<ng-container *ngIf="editable else presentational">
+  <div class="wrapper"
+       #button
+       (mouseenter)="button.hover = true"
+       (mouseleave)="button.hover = false; button.pressed = false"
+       appCrossPointerEventTarget
+       (pointerDownEvent)="button.pressed = true"
+       (pointerCancelEvent)="button.pressed = false"
+  >
+        <ng-container *ngTemplateOutlet="presentational"></ng-container>
+        <img *ngIf="button.hover" width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
+  </div>
+</ng-container>
+
+<ng-template #presentational>
+  <span 
+    #element
+    [ngClass]="classname"
+    (click)="blink($event)"  
+  >{{ label }}</span>
+</ng-template>

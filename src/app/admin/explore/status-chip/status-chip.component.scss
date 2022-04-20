@@ -27,3 +27,15 @@
   color: $navy500;
   background-color: $navy100;
 }
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 5px;
+  padding-right: 10px;
+  @include wh(95, 40);
+  background-color: $gray100;
+  border-radius: 8px;
+}

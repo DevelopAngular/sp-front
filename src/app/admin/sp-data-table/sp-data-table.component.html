@@ -103,8 +103,13 @@
             <td
               mat-cell
               *matCellDef="let element"
+              pointerClickEvent="null"
             >
-              <app-status-chip [status]="element[column]"></app-status-chip>
+              <app-status-chip 
+                [editable]="true" 
+                [status]="element[column]"
+              >
+              </app-status-chip>
             </td>
           </ng-template>
 
