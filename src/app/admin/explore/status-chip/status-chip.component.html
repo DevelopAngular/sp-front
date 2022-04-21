@@ -6,9 +6,10 @@
        appCrossPointerEventTarget
        (pointerDownEvent)="button.pressed = true"
        (pointerCancelEvent)="button.pressed = false"
+       (click)="blink($event)"  
   >
         <ng-container *ngTemplateOutlet="presentational"></ng-container>
-        <img *ngIf="button.hover" width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
+        <img *ngIf="button.hover || didOpen" width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
   </div>
 </ng-container>
 

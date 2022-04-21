@@ -1,8 +1,8 @@
-import {Component, OnInit, Input, Output, EventEmitter, ElementRef} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {filter, map} from 'rxjs/operators';
 import {Status} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
+import {StatusNotifyerService} from '../status-notifyer.service';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 
 @Component({
@@ -14,6 +14,7 @@ export class StatusChipComponent implements OnInit {
 
   @Input() status: Status;
   @Input() editable: boolean;
+  @ViewChild('button') trigger: ElementRef<HTMLElement>;
 
   @Output() statusClick: EventEmitter<Status> = new EventEmitter<Status>();
 
@@ -22,11 +23,19 @@ export class StatusChipComponent implements OnInit {
   // class associated with status
   classname: string;
 
+  // did open the panel with status options 
+  didOpen: boolean = false;
+
   constructor(
     public dialog: MatDialog,
+    public notifyer: StatusNotifyerService, 
   ) { }
 
   ngOnInit(): void {
+    this.redress();
+  }
+
+  redress() {
     this.label = this.status;
     this.classname = this.status;
   }
@@ -34,26 +43,38 @@ export class StatusChipComponent implements OnInit {
   ngAfterViewInit() {
   }
 
-  blink($event) {
+  blink($event: MouseEvent) {
     $event.stopPropagation();
-    const target = $event.target.parentElement;
     this.statusClick.emit(this.status);
+
     if (this.editable) {
       UNANIMATED_CONTAINER.next(true);
+      
       const conf = {
         id: `status_editor`,
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
-          trigger: target 
+          trigger: this.trigger.nativeElement
         } 
       };
       const chosen = this.dialog.open(StatusEditorComponent, conf);
-      chosen.afterClosed()
-      .subscribe(s => {
-        console.log(s);
+      
+      this.didOpen = true;
+      
+      const subDialog = chosen.afterClosed()
+      .subscribe(() => {
         UNANIMATED_CONTAINER.next(false);
-      })
+        this.didOpen = false;
+        //TODO after all future movements will cease do this
+        subDialog.unsubscribe();
+      });
+      
+      const sub = this.notifyer.getStatus().subscribe((other:Status) => {
+        this.status = other;
+        this.redress();
+        sub.unsubscribe();
+      });
     }
   }
 

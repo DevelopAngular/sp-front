@@ -8,7 +8,7 @@ export class StatusBaseComponent implements OnInit {
 
   triggerElementRef: HTMLElement;
 
-  type:string = 'selectedStatus';
+  readonly type:string = 'selectedStatus';
 
   selectedStatus: Status;
   initialStatus: Status;
@@ -23,11 +23,10 @@ export class StatusBaseComponent implements OnInit {
   statuses: Status[keyof Status][];
 
   ngOnInit() {
-    console.log(this.data)
     this.triggerElementRef = this.data['trigger'];
     this.selectedStatus = this.data['status'];
     this.initialStatus = this.data['status'];
-    this.type = this.data['type'];
+    //this.type = this.data['type'];
     this.updateDialogPosition();
 
     this.statuses = Object.keys(Status).filter(k => isNaN(Number(k))).map(k => Status[k]);

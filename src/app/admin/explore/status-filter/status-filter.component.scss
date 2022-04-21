@@ -1,16 +1,18 @@
 @import '../../../../sp-colors';
 
 .wrapper {
+  display: flex;
+  align-items: center;
   box-sizing: border-box;
   width: 204px;
   height: 103px;
-  padding: 25px 15px;
+  padding: 14px 16px;
   background-color: $white;
   border-radius: 9px;
 
   .content {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 28px;
   }
 }

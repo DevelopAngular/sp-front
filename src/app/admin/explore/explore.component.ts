@@ -29,7 +29,6 @@ import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
 import {XlsxService} from '../../services/xlsx.service';
-import {StatusChipComponent} from './status-chip/status-chip.component';
 
 declare const window;
 

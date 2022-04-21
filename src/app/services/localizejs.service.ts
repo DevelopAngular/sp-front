@@ -1,7 +1,7 @@
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {concat, fromEvent, throwError, ReplaySubject, Observable, bindCallback} from 'rxjs';
-import {tap, map, take, catchError, retry} from 'rxjs/operators';
+import {concat, fromEvent, ReplaySubject, Observable, bindCallback} from 'rxjs';
+import {map, take, catchError, retry} from 'rxjs/operators';
 import {HttpService} from './http-service';
 import {StorageService} from '../services/storage.service';
 

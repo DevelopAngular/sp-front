@@ -1,5 +1,5 @@
-﻿import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
+﻿import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
 import {SmartpassLogoComponent} from '../smartpass-logo/smartpass-logo.component';
 import {DisplayCardComponent} from '../display-card/display-card.component';
@@ -85,6 +85,7 @@ import {IconOnlyButtonComponent} from '../ds-buttons/icon-only-button/icon-only-
 import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {LinkGeneratedDialogComponent} from '../admin/link-generated-dialog/link-generated-dialog.component';
+import { StatusChipComponent } from '../admin/explore/status-chip/status-chip.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -180,6 +181,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EditAvatarComponent,
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
+    StatusChipComponent, 
   ],
   exports: [
     ReactiveFormsModule,
@@ -257,6 +259,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EditAvatarComponent,
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
+    StatusChipComponent, 
   ],
   providers: [
     {

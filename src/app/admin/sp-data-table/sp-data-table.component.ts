@@ -10,13 +10,6 @@ import {
   OnInit,
   Output,
   ViewChild,
-  ViewChildren,
-  ComponentFactory,
-  ComponentRef, 
-  ComponentFactoryResolver,
-  ViewContainerRef,
-  QueryList,
-  ElementRef
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
@@ -176,18 +169,8 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private tableService: TableService,
     private domSanitizer: DomSanitizer,
-    private resolver: ComponentFactoryResolver
   ) {
   }
-
-  // TODO: ViewContainerRef needed to add at runtime the status-chip
-  /*@ViewChildren('statuscells', { read: ElementRef }) statuscells!: QueryList<ElementRef>;
-  componentRefs: ComponentRef<StatusChipComponent>[];
-  ngAfterViewInit() {
-    this.statuscells.changes.subscribe((cells) => {
-      cells.map(x => console.log(x));
-    });
-  }*/
 
   get viewportDataItems(): number {
     return Math.floor(this.viewport.getViewportSize() / this.itemSize);

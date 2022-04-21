@@ -6,6 +6,11 @@
   </div>
   <div class="content" (scroll)="scroll($event)">
     <div class="block">
+      <div class="status">
+        <app-status-chip 
+          [status]="report.status"
+        ></app-status-chip>
+      </div>
       <div class="title">Student</div>
       <div class="subtitle">{{ report.student.display_name }}</div>
       <div class="subtitle">{{ report.student.primary_email }}</div>
