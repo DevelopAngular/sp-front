@@ -1,4 +1,4 @@
-import {Output, EventEmitter, Component, Inject, OnInit} from '@angular/core';
+import {ElementRef, ViewChild, Output, EventEmitter, Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 
 import {Status} from '../../models/Report';
@@ -12,6 +12,8 @@ export class StatusBaseComponent implements OnInit {
 
   selectedStatus: Status;
   initialStatus: Status;
+
+  @ViewChild('panel') panel: ElementRef<HTMLElement>;
 
   @Output() buttonClick: EventEmitter<Status> = new EventEmitter<Status>();
 

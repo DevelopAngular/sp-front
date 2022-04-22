@@ -1,5 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
+import {finalize, tap} from 'rxjs/operators';
 import {Status} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
 import {StatusNotifyerService} from '../status-notifyer.service';
@@ -40,16 +41,11 @@ export class StatusChipComponent implements OnInit {
     this.classname = this.status;
   }
 
-  ngAfterViewInit() {
-  }
-
   blink($event: MouseEvent) {
     $event.stopPropagation();
     this.statusClick.emit(this.status);
 
     if (this.editable) {
-      UNANIMATED_CONTAINER.next(true);
-      
       const conf = {
         id: `status_editor`,
         panelClass: 'consent-dialog-container',
@@ -63,11 +59,12 @@ export class StatusChipComponent implements OnInit {
       this.didOpen = true;
       
       const subDialog = chosen.afterClosed()
+      .pipe(
+        tap(() => UNANIMATED_CONTAINER.next(true)),
+        finalize(() => UNANIMATED_CONTAINER.next(false)),
+      )
       .subscribe(() => {
-        UNANIMATED_CONTAINER.next(false);
         this.didOpen = false;
-        //TODO after all future movements will cease do this
-        subDialog.unsubscribe();
       });
       
       const sub = this.notifyer.getStatus().subscribe((other:Status) => {
