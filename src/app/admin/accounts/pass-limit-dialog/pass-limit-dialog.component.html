@@ -1,5 +1,5 @@
 <ng-container [ngSwitch]="pageNumber">
-  <div class="sp-dialog wrapper">
+  <div class="sp-dialog wrapper" *ngSwitchCase="1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
     <div class="header">
       <div class="background-header"></div>
       <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
@@ -48,7 +48,7 @@
           ></app-toggle-input>
         </div>
 
-        <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 10px; flex-wrap: wrap;" class="ds-flex-row">
+        <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
           <app-input
             (blurEvent)="showLimitFormatError = passLimitForm.controls['limits'].invalid"
             [isFocus]="true"
@@ -61,8 +61,7 @@
             id="passLimitFrequencyButton"
             style="margin-top: 4px"
             textColor="#000000"
-            gradient="#F4F4F4"
-            (buttonClick)="triggerFrequencyDialog()">
+            gradient="#F4F4F4">
             per {{passLimitForm.value['frequency']}}
           </app-gradient-button>
 
@@ -70,44 +69,47 @@
         </div>
       </div>
 
-      <div class="accent-background-section ds-flex-column ds-flex-center-between" style="margin-bottom: 40px">
-        <span class="ds-section-header">
-          Limits for Individual Students
-           <div class="tooltip-container" style="display: inline">
-              <img
-                [customToolTip]="individualLimitsTooltop"
-                class="custom-tooltip-icon support-icon"
-                [src]="'./assets/Support (Gray).svg' | resolveAsset">
-              <div class="arrow-down-container">
-                <div class="arrow-down"></div>
-              </div>
-            </div>
-        </span>
+<!-- TODO: Uncomment the following when individual pass limits are implemented -->
+<!--      -->
+<!--      <div class="accent-background-section ds-flex-column ds-flex-center-between" style="margin-bottom: 40px">-->
+<!--        <span class="ds-section-header">-->
+<!--          Limits for Individual Students-->
+<!--           <div class="tooltip-container" style="display: inline">-->
+<!--              <img-->
+<!--                [customToolTip]="individualLimitsTooltop"-->
+<!--                class="custom-tooltip-icon support-icon"-->
+<!--                [src]="'./assets/Support (Gray).svg' | resolveAsset">-->
+<!--              <div class="arrow-down-container">-->
+<!--                <div class="arrow-down"></div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--        </span>-->
 
-        <div class="individual-limits-list">
-          <div *ngFor="let individualLimit of individualLimits"></div>
-          <p class="ds-dialog-subtitle" *ngIf="individualLimits.length === 0" style="opacity: 0.5">
-            No individual limits set
-          </p>
+<!--        <div class="individual-limits-list">-->
+<!--          <div *ngFor="let individualLimit of individualLimits"></div>-->
+<!--          <p class="ds-dialog-subtitle" *ngIf="individualLimits.length === 0" style="opacity: 0.5">-->
+<!--            No individual limits set-->
+<!--          </p>-->
 
-          <app-gradient-button
-            gradient="#00B476"
-            textColor="#FFFFFF"
-            text="Add Limit"
-            leftIcon="assets/Plus (White).svg"
-            (buttonClick)="addIndividualLimit()">
-            Add Pass Limit
-          </app-gradient-button>
-        </div>
-      </div>
+<!--          <app-gradient-button-->
+<!--            gradient="#00B476"-->
+<!--            textColor="#FFFFFF"-->
+<!--            text="Add Limit"-->
+<!--            leftIcon="assets/Plus (White).svg"-->
+<!--            (buttonClick)="addIndividualLimit()">-->
+<!--            Add Pass Limit-->
+<!--          </app-gradient-button>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
   </div>
 
 </ng-container>
 
-<ng-template #passLimitsFrequencyDialog>
-  <p (click)="selectFrequency('day')">per day</p>
-  <p (click)="selectFrequency('week')">per week</p>
-  <p (click)="selectFrequency('month')">per month</p>
-  <p (click)="selectFrequency('semester')">per semester</p>
-</ng-template>
+<!--TODO: Implement when multiple pass frequencies are implemented -->
+<!--<ng-template #passLimitsFrequencyDialog>-->
+<!--  <p (click)="selectFrequency('day')">per day</p>-->
+<!--  <p (click)="selectFrequency('week')">per week</p>-->
+<!--  <p (click)="selectFrequency('month')">per month</p>-->
+<!--  <p (click)="selectFrequency('semester')">per semester</p>-->
+<!--</ng-template>-->
