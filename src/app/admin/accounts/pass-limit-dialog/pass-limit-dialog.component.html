@@ -4,14 +4,15 @@
       <div class="background-header"></div>
       <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
       <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <img width="21" height="21" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" alt="Options">
         <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
       </div>
     </div>
 
     <div class="content">
       <div #passLimitsIntro class="accent-background-section ds-flex-row" style="position:relative">
-        <div style="width: 50px"></div>
+        <div style="width: 50px">
+          <img [src]="'./assets/Pass Limit (Purple).svg' | resolveAsset" alt="Options">
+        </div>
         <div style="width: 80%">
           <p class="ds-section-header" style="margin-top: 0">Limit the number of passes students can have per day</p>
           <p>
