@@ -5,6 +5,7 @@ import {CreateFormService} from '../../../create-hallpass-forms/create-form.serv
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {NextStep} from '../../../animations';
 import {ScreenService} from '../../../services/screen.service';
+import {PassLimitService} from '../../../services/pass-limit.service';
 
 /**
  * TODOS for individual pass limits
@@ -46,11 +47,21 @@ export class PassLimitDialogComponent implements OnInit {
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<PassLimitDialogComponent>,
     public screenService: ScreenService,
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private passLimit: PassLimitService
   ) { }
 
   ngOnInit(): void {
+    this.passLimitForm.disable();
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    this.passLimit.getPassLimit().subscribe(pl => {
+      this.passLimitForm.patchValue({
+        enabled: pl.limitEnabled,
+        limits: pl.passLimit,
+        frequency: pl.frequency
+      });
+      this.passLimitForm.enable();
+    });
   }
 
   toggleMainPassLimits(enabled: boolean) {
