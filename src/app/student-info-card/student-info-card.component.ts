@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {User} from '../models/User';
 import {MatDialog} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -34,6 +43,7 @@ import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {SmartpassSearchService} from '../services/smartpass-search.service';
+import {PassLimitsDialogComponent} from '../teacher/pass-limits-dialog/pass-limits-dialog.component';
 
 declare const window;
 
@@ -454,6 +464,18 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
       width: '425px',
       height: '500px',
       data: {'forceNextPage': page, currentUser: this.profile, forceGroup: currentGroup}
+    });
+  }
+
+  openPassLimitsDialog() {
+    this.dialog.open(PassLimitsDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-id',
+      width: '425px',
+      height: '500px',
+      data: {
+        profile: this.profile
+      }
     });
   }
 

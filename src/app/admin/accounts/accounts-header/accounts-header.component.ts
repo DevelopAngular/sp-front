@@ -324,7 +324,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   openPassLimits() {
-    const passLimitsDialogRef = this.matDialog.open(PassLimitDialogComponent, {
+    this.matDialog.open(PassLimitDialogComponent, {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-id',
       width: '425px',

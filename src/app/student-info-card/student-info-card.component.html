@@ -153,6 +153,55 @@
                   </div>
                 </div>
               </div>
+
+              <div class="form" style="flex-direction: column" *ngIf="!(exclusionGroupsLoading$ | async); else fakeForm">
+                <div class="card">
+                  <div class="label">
+                    <div class="icon" style="background-color: #5E4FED">
+                      <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+                    </div>
+                    <div class="title" style="font-weight: 600">Pass Limits
+                      <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                    </div>
+                    <ng-template #text>
+                      <div class="ds-tooltip" style="width: 200px">Limit the number of passes certain individual students can have per day. This overrides the school limit if set. <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: #FFFFFF">Learn more.</a></div>
+                    </ng-template>
+                  </div>
+                  <div class="add-button" customToolTip [contentTemplate]="tooltip" [showToolTip]="!user.isAdmin()">
+                    <app-gradient-button
+                      style="transform: rotate(180deg)"
+                      [size]="'editable'"
+                      [minWidth]="'50px'"
+                      [minHeight]="'31px'"
+                      [textColor]="'#7F879D'"
+                      [gradient]="'#FFFFFF, #FFFFFF'"
+                      [hoverColor]="'#FFFFFF'"
+                      [leftIcon]="'./assets/Arrow Left (Blue-Gray).svg'"
+                      [withShadow]="false"
+                      [fontSize]="'14px'"
+                      (buttonClick)="openPassLimitsDialog()"></app-gradient-button>
+
+                    <ng-template #tooltip>
+                      <div class="ds-tooltip" style="text-align: left">
+                        <div class="only-admin">ADMIN ONLY</div>
+                        Only admins are able to manage encounter prevention groups.
+                      </div>
+                    </ng-template>
+                  </div>
+                </div>
+
+                <div class="groups" *ngIf="(exclusionGroups$ | async) && (exclusionGroups$ | async).length">
+                  <div class="group"
+                       *ngFor="let group of exclusionGroups$ | async"
+                       [showToolTip]="!!group.notes"
+                       [customToolTip]="group.notes"
+                       [editable]="true"
+                       [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 210}"
+                  >
+                    <app-encounter-group [group]="group" [backgroundColor]="'#FFFFFF'" (clickEvent)="openEncounterPrevention('groupDescription', group)"></app-encounter-group>
+                  </div>
+                </div>
+              </div>
               <ng-template #fakeForm>
                 <div class="form fake-animate"></div>
               </ng-template>
