@@ -71,10 +71,8 @@ const reducer = createReducer(
     reportsActions.postReport,
       state => ({ ...state, loading: true, loaded: false })),
   on(reportsActions.getReportsSuccess, (state, { reports, next }) => {
-        
     //TODO: remove it when done
-    reports = mocked(10);
-    
+    //reports = mocked(10);
     return adapter.addAll(reports, {...state, loading: false, loaded: true, next});
   }),
   on(reportsActions.searchReportsSuccess, (state, {reports}) => {
