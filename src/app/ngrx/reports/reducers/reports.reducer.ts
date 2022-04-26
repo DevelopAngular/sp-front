@@ -51,7 +51,7 @@ const mocked = (n: number): Report[] => {
       id: ''+(i+100),
       student: student as User,
       message: 'test message ' + i,
-      status: Status.Active,
+      status: (i%2==0 ? Status.Active : Status.Closed),
       issuer: teacher as User,
       created: new Date(),
       last_updated: new Date(),

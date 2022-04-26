@@ -1,7 +1,7 @@
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {concat, fromEvent, throwError, ReplaySubject, Observable, bindCallback} from 'rxjs';
-import {tap, map, take, catchError, retry} from 'rxjs/operators';
+import {concat, fromEvent, ReplaySubject, Observable, bindCallback} from 'rxjs';
+import {map, take, catchError, retry} from 'rxjs/operators';
 import {HttpService} from './http-service';
 import {StorageService} from '../services/storage.service';
 
@@ -106,10 +106,11 @@ export class LocalizejsService {
           '!function(a){if(!a.Localize){a.Localize={};for(var e=["translate","untranslate","phrase","initialize","translatePage","setLanguage","getLanguage","getSourceLanguage","detectLanguage","getAvailableLanguages","untranslatePage","bootstrap","prefetch","on","off","hideWidget","showWidget"],t=0;t<e.length;t++)a.Localize[e[t]]=function(){}}}(window);',
           `Localize.initialize({
             key: '${key}',
-            rememberLanguage: true,
+            rememberLanguage: false,
             autoApprove: true,
             retranslateOnNewPhrases: true,
-            translateTimeElement: true,
+            saveNewPhrasesFromSource: false,
+            translateTimeElement: false,
             hideWidget: true,
           });
           Localize.hideWidget();

@@ -1,15 +1,18 @@
+@import '../../../../sp-colors';
+
 .wrapper {
-  padding: 25px;
-  background-color: #FFFFFF;
-  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 204px;
+  height: 103px;
+  padding: 14px 16px;
+  background-color: $white;
+  border-radius: 9px;
 
   .content {
     display: flex;
     flex-direction: column;
-    align-items: center;
-
-    .button {
-      margin-top: 26px;
-    }
+    gap: 28px;
   }
 }

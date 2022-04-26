@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChild, NgModuleRef, ComponentFactoryResolver} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 
@@ -38,8 +38,17 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ReportInfoDialogComponent>,
-    private pdfService: PdfGeneratorService
-  ) { }
+    private pdfService: PdfGeneratorService,
+    private resolver: ComponentFactoryResolver
+  ) {
+ 
+    const factory = resolver.resolveComponentFactory(ReportInfoDialogComponent);
+    console.log('the factory:', factory);
+
+    // Access the private ngModule property.
+    const ngModuleRef: NgModuleRef<any> = (factory as any).ngModule;
+    console.log('the module name:', ngModuleRef.instance.constructor.name)
+  }
 
   get dateFormat() {
     return moment(this.report.created).format('MMM DD, YYYY') + ' at ' + moment(this.report.created).format('hh:mm A');

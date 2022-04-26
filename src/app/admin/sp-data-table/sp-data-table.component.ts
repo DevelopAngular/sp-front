@@ -9,7 +9,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
@@ -23,6 +23,7 @@ import {TableService} from './table.service';
 import {cloneDeep, isEmpty} from 'lodash';
 import {filter, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
+//import {StatusChipComponent} from '../explore/status-chip/status-chip.component';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
@@ -161,12 +162,13 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
   }
 
+
   constructor(
     private cdr: ChangeDetectorRef,
     private storage: StorageService,
     private dialog: MatDialog,
     private tableService: TableService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
   ) {
   }
 

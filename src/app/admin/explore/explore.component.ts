@@ -24,7 +24,7 @@ import {AdminService} from '../../services/admin.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
-import {Report} from '../../models/Report';
+import {Report, Status} from '../../models/Report';
 import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
@@ -57,7 +57,7 @@ export interface SearchData {
   selectedDestinationRooms?: any[];
   selectedOriginRooms?: any[];
   selectedTeachers?: User[];
-  selectedStatus?: User[];
+  selectedStatus?: Status;
 }
 
 @Component({
@@ -410,7 +410,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             const result = {
               'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
               'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
-              'Status': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.status || 'No report status'}</div>`),
+              'Status': report.status,
               'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
               'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`)
             };
@@ -566,7 +566,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
           'trigger': new ElementRef(event).nativeElement,
           'selectedStatus': this.reportSearchData.selectedStatus,
           'type': 'selectedStatus',
-          'multiSelect': true
         }
       });
 
@@ -574,8 +573,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => UNANIMATED_CONTAINER.next(false)),
           filter(res => res)
-        ).subscribe(({students, type}) => {
-          this.reportSearchData.selectedStatus = students;
+        ).subscribe(({status, type}) => {
+          this.reportSearchData.selectedStatus = status;
           this.autoSearch();
           this.cdr.detectChanges();
         });
@@ -711,7 +710,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       queryParams['issuer'] = this.reportSearchData.selectedTeachers.map(t => t.id);
     }
     if (this.reportSearchData.selectedStatus) {
-      queryParams['status'] = this.reportSearchData.selectedStatus.map(s => s);
+      queryParams['status'] = this.reportSearchData.selectedStatus;
     }
     if (this.reportSearchData.selectedDate) {
       let start;

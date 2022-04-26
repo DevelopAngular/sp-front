@@ -1,16 +1,15 @@
-<div class="wrapper">
+<div 
+  #panel
+  class="wrapper">
   <div class="content">
-    <ng-container *ngFor="let choice of statuses">
-    <div class="button">
-      <app-gradient-button
-        [size]="'small'"
-        [gradient]="'#ECF1FF, #ECF1FF'"
-        [textColor]="'#1F195E'"
-        (buttonClick)="saveStatus()"
+    <ng-container 
+      *ngFor="let status of statuses"
+    >
+      <app-status-chip
+        (statusClick)="chooseStatus($event)"  
+        [status]="status"
       >
-        {{ choice }}
-      </app-gradient-button>
-    </div>
+      </app-status-chip>
     </ng-container>
   </div>
 </div>
