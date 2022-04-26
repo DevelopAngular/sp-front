@@ -13,6 +13,7 @@ export const environment = {
     ws_url: 'wss://smartpass.app/api/staging/v1/long_polling',
     // ws_url: 'ws://localhost:8053/api/debug/v1/long_polling',
   },
+  funData: false,
   localizejs: {
     apiKey: 'k2CZfKQ5Wqkbk',
   },
@@ -24,7 +25,6 @@ export const environment = {
     storageBucket: 'notifyhallpass.appspot.com',
     messagingSenderId: '625620388494'
   },
-  funData: false,
   gg4l: {
     clientId: 'PTRDNUBGDX',
     secretKey: 'zSEk2Qi4UdKWdbRj8ZYUkgJ+bslK9J5DDPxvmMbJd+g='
