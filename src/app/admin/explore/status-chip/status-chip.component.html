@@ -9,8 +9,8 @@
        (pointerCancelEvent)="button.pressed = false"
        (click)="blink($event)"  
   >
-        <ng-container *ngTemplateOutlet="presentational"></ng-container>
-        <img *ngIf="button.hover || didOpen" width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
+        <ng-container *ngTemplateOutlet="isLoading ? loading : presentational"></ng-container>
+        <img *ngIf="(isLoading === false) && (button.hover || didOpen)" width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
   </div>
 </ng-container>
 
@@ -20,4 +20,8 @@
     [ngClass]="classname"
     (click)="blink($event)"  
   >{{ label }}</span>
+</ng-template>
+
+<ng-template #loading>
+  <mat-spinner [diameter]="25"></mat-spinner>
 </ng-template>

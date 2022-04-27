@@ -16,7 +16,8 @@ export class StatusEditorComponent extends StatusBaseComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<StatusEditorComponent>,
-    public notifyer: StatusNotifyerService) {
+    public notifyer: StatusNotifyerService
+    ) {
     super(data, dialogRef);
   }
 
@@ -32,7 +33,7 @@ export class StatusEditorComponent extends StatusBaseComponent {
     // bottom is out of viewport
     // calculate dif
     const dy = (rect.bottom - (window.innerHeight || document.documentElement.clientHeight));
-    // 0 is harsh, itmay be bigger enough not to allow an option to be hidden complete
+    // 0 is harsh, it may be bigger enough not to allow an option to be hidden complete
     if (dy > 0) {
       position.top = (rect.top - dy)+'px';
     }
@@ -44,12 +45,14 @@ export class StatusEditorComponent extends StatusBaseComponent {
   }
 
   chooseStatus(status: Status) {
+    const isSameStatus = (this.data?.prevstatus === status);
     super.chooseStatus(status);
     const remoteid = this.data?.remoteid ?? null;
-    if (remoteid === null) {
+    if (remoteid === null || isSameStatus) {
       this.notifyer.setStatus(status);
     } else {
+      // this will do a http request
       this.notifyer.setStatus(status, remoteid);
+      }
     }   
   }
-}

@@ -9,7 +9,7 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 @Component({
   selector: 'app-status-chip',
   templateUrl: './status-chip.component.html',
-  styleUrls: ['./status-chip.component.scss']
+  styleUrls: ['./status-chip.component.scss'],
 })
 export class StatusChipComponent implements OnInit {
 
@@ -28,6 +28,9 @@ export class StatusChipComponent implements OnInit {
   // did open the panel with status options 
   didOpen: boolean = false;
 
+  // shows a loading hint
+  isLoading: boolean = false;
+
   constructor(
     public dialog: MatDialog,
     public notifyer: StatusNotifyerService, 
@@ -37,6 +40,7 @@ export class StatusChipComponent implements OnInit {
   ngOnInit(): void {
     this.redress();
     this.didOpen = false;
+    this.isLoading = false;
   }
 
   redress() {
@@ -50,7 +54,8 @@ export class StatusChipComponent implements OnInit {
 
     if (this.editable) {
       const data = {
-        trigger: this.trigger.nativeElement
+        trigger: this.trigger.nativeElement,
+        prevstatus: this.status,
       } 
       if (!!this.remoteid) {
         data['remoteid'] = this.remoteid;
@@ -67,7 +72,10 @@ export class StatusChipComponent implements OnInit {
       chosen.afterClosed()
       .pipe(
         take(1),
-        tap(() => UNANIMATED_CONTAINER.next(true)),
+        tap(v => {
+          UNANIMATED_CONTAINER.next(true);
+          if (this.status !== v?.status) this.isLoading = true;
+        }),
         finalize(() => {
           UNANIMATED_CONTAINER.next(false);
           this.didOpen = false;
@@ -76,11 +84,20 @@ export class StatusChipComponent implements OnInit {
       )
       .subscribe();
       
-      const sub = this.notifyer.getStatus().subscribe((other:Status) => {
-        this.status = other;
-        this.redress();
-        sub.unsubscribe();
-      });
+      this.notifyer.getStatus()
+      .pipe(
+        take(1),
+        tap(v => {
+          UNANIMATED_CONTAINER.next(true);
+          this.status = v;
+          this.redress();
+        }),
+        finalize(() => {
+          UNANIMATED_CONTAINER.next(false);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }),
+      ).subscribe();
     }
   }
 

@@ -26,7 +26,7 @@ export class StatusNotifyerService {
         catchError(err => err)
       ).subscribe(() => this.notifyer$.next(value));
     } else {
-      this.notifyer$.next(value)
+      this.notifyer$.next(value);
     }
   }
 

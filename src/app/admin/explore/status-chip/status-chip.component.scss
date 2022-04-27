@@ -1,6 +1,10 @@
 @import '../../../../sp-colors';
 @import '../../../../util';
 
+:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {   
+  stroke: $navy200;
+}
+
 %chip-format {
   @extend %first-letter-up;
   // TODO: investigate first-letter
