@@ -1,6 +1,7 @@
 <ng-container *ngIf="editable else presentational">
   <div class="wrapper"
        #button
+       [style.background]="didOpen === true ? '#F0F2F5' : null"
        (mouseenter)="button.hover = true"
        (mouseleave)="button.hover = false; button.pressed = false"
        appCrossPointerEventTarget

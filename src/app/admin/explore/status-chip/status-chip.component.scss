@@ -19,13 +19,17 @@
 .active {
   @extend %chip-format;
   color: $green500;
-  background-color: $green100;
+  &:hover {
+    background-color: $green100;
+  }
 }
 
 .closed {
   @extend %chip-format;
   color: $navy500;
-  background-color: $navy100;
+  &:hover {
+    background-color: $navy100;
+  }
 }
 
 .wrapper {
@@ -36,6 +40,8 @@
   padding: 5px;
   padding-right: 10px;
   @include wh(95, 40);
-  background-color: $gray100;
+  &:hover {
+    background-color: $gray100;
+  }
   border-radius: 8px;
 }

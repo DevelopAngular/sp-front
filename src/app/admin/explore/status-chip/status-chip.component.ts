@@ -1,6 +1,6 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {finalize, tap} from 'rxjs/operators';
+import {finalize, tap, take} from 'rxjs/operators';
 import {Status} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
 import {StatusNotifyerService} from '../status-notifyer.service';
@@ -31,10 +31,12 @@ export class StatusChipComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     public notifyer: StatusNotifyerService, 
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
     this.redress();
+    this.didOpen = false;
   }
 
   redress() {
@@ -47,7 +49,7 @@ export class StatusChipComponent implements OnInit {
     this.statusClick.emit(this.status);
 
     if (this.editable) {
-      let data = {
+      const data = {
         trigger: this.trigger.nativeElement
       } 
       if (!!this.remoteid) {
@@ -60,17 +62,19 @@ export class StatusChipComponent implements OnInit {
         data,
       };
       const chosen = this.dialog.open(StatusEditorComponent, conf);
-      
       this.didOpen = true;
-      
-      const subDialog = chosen.afterClosed()
+     
+      chosen.afterClosed()
       .pipe(
+        take(1),
         tap(() => UNANIMATED_CONTAINER.next(true)),
-        finalize(() => UNANIMATED_CONTAINER.next(false)),
+        finalize(() => {
+          UNANIMATED_CONTAINER.next(false);
+          this.didOpen = false;
+          this.cdr.detectChanges();
+        }),
       )
-      .subscribe(() => {
-        this.didOpen = false;
-      });
+      .subscribe();
       
       const sub = this.notifyer.getStatus().subscribe((other:Status) => {
         this.status = other;

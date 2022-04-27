@@ -123,7 +123,7 @@
             [style.height]="itemSize + 'px'"
             (mouseenter)="rowCont.hover = true"
             (mouseleave)="rowCont.hover = false"
-            [style.background-color]="isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick && !row.isFake ? '#F1F2F4' : '#FFFFFF'"
+            [style.background-color]="isSelected(row) ? '#ECF1FF' : rowCont.hover && isRowClick && !row.isFake ? '#F5F6F8' : '#FFFFFF'"
             [style.cursor]="isRowClick && !row.isFake ? 'pointer' : 'default'"
             appCrossPointerEventTarget (pointerClickEvent)="isRowClick && !row.isFake ? rowOnClick(row) : null">
         </tr>
