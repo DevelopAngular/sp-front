@@ -14,7 +14,7 @@ export class StatusEditorComponent extends StatusBaseComponent {
   type = 'editedStatus';
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: Status,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<StatusEditorComponent>,
     public notifyer: StatusNotifyerService) {
     super(data, dialogRef);
@@ -45,6 +45,11 @@ export class StatusEditorComponent extends StatusBaseComponent {
 
   chooseStatus(status: Status) {
     super.chooseStatus(status);
-    this.notifyer.setStatus(status);
+    const remoteid = this.data?.remoteid ?? null;
+    if (remoteid === null) {
+      this.notifyer.setStatus(status);
+    } else {
+      this.notifyer.setStatus(status, remoteid);
+    }   
   }
 }

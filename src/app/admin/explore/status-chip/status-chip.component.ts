@@ -15,6 +15,7 @@ export class StatusChipComponent implements OnInit {
 
   @Input() status: Status;
   @Input() editable: boolean;
+  @Input() remoteid: number;
   @ViewChild('button') trigger: ElementRef<HTMLElement>;
 
   @Output() statusClick: EventEmitter<Status> = new EventEmitter<Status>();
@@ -46,13 +47,17 @@ export class StatusChipComponent implements OnInit {
     this.statusClick.emit(this.status);
 
     if (this.editable) {
+      let data = {
+        trigger: this.trigger.nativeElement
+      } 
+      if (!!this.remoteid) {
+        data['remoteid'] = this.remoteid;
+      }
       const conf = {
         id: `status_editor`,
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {
-          trigger: this.trigger.nativeElement
-        } 
+        data,
       };
       const chosen = this.dialog.open(StatusEditorComponent, conf);
       
