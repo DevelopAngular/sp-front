@@ -2,7 +2,7 @@ import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
-  selector: 'pass-limit-dialog',
+  selector: 'admin-pass-limits-dialog',
   templateUrl: './pass-limit-dialog.component.html',
   styleUrls: ['./pass-limit-dialog.component.scss'],
 })

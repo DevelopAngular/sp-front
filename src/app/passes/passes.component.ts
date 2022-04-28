@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject} from 'rxjs';
 import {
   filter,
   map,
@@ -152,6 +152,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   user: User;
   studentPassLimit: HallPassLimit;
   remainingPasses: number;
+  passLimitInfo: Observable<{ current?: number, max?: number, showPasses: boolean }>;
   isStaff = false;
   currentScrollPosition: number;
 
@@ -267,9 +268,17 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.receivedRequests = this.liveDataService.invitations$;
           this.sentRequests = this.liveDataService.requests$.pipe(
             map(req => req.filter((r) => !!r.request_time)));
+          this.passLimitInfo = forkJoin({
+            current: this.passLimits.getRemainingLimits(),
+            max: this.passLimits.getPassLimit().pipe(map(l => l.passLimit)),
+            showPasses: of(true)
+          });
         } else {
           this.receivedRequests = this.liveDataService.requests$;
           this.sentRequests = this.liveDataService.invitations$;
+          this.passLimitInfo = of({
+            showPasses: false
+          });
         }
     });
 
@@ -287,7 +296,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser.pipe(
       takeUntil(this.destroy$),
+
       switchMap((user: User) => {
+        console.log(user);
         return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
       }
     ))

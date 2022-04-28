@@ -173,8 +173,7 @@
         <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'22px'">
           <div class="pass-buttons">
             <app-create-pass-button
-                    [passLimitMax]="studentPassLimit?.passLimit || 0"
-                    [passLimitCounter]="remainingPasses || 0"
+                    [passLimitInfo]="passLimitInfo"
                     [title]="'Now'"
                     (onClick)="showMainForm(false)"
             ></app-create-pass-button>

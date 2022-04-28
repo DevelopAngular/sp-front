@@ -14,34 +14,34 @@
     (pointerCancelEvent)="buttonDown = false"
 >
 
-  <ng-container *ngIf="title === 'Now'">
-    <ng-template #passLimitToolTip>
-      <div class="ds-tooltip" style="width: 200px">
-        <span>{{passLimitCounter}}/{{passLimitMax}} passes remaining today.</span>
-        <span *ngIf="passLimitCounter === 0">You must request a pass from a teacher.</span>
-      </div>
-    </ng-template>
+  <ng-container *ngIf="(passLimitInfo | async) as info">
+    <ng-container *ngIf="title === 'Now' && info.showPasses">
+      <ng-template #passLimitToolTip>
+        <div class="ds-tooltip" style="width: 200px">
+          <span>{{info.current}}/{{info.max}} passes remaining today.</span>
+          <span *ngIf="info.current === 0">You must request a pass from a teacher.</span>
+        </div>
+      </ng-template>
 
-    <ng-template #noPassLimitsRemaining>
-      <div
-        class="pass-limit-counter pass-limit-locked">
+      <ng-template #noPassLimitsRemaining>
+        <div
+          class="pass-limit-counter pass-limit-locked">
         <span customToolTip [contentTemplate]="passLimitToolTip">
           <img src="assets/Lock%20(White).svg" style="width: 85%">
         </span>
-      </div>
-    </ng-template>
+        </div>
+      </ng-template>
 
-    <div
-      *ngIf="passLimitCounter > 0; else noPassLimitsRemaining"
-      [ngClass]="{
-        'pass-limit-one-remaining': passLimitCounter === 1
+      <div
+        *ngIf="info.current > 0; else noPassLimitsRemaining"
+        [ngClass]="{
+        'pass-limit-one-remaining': info.current === 1
       }"
-      class="pass-limit-counter">
-      <span customToolTip [contentTemplate]="passLimitToolTip">{{passLimitCounter}}</span>
-    </div>
+        class="pass-limit-counter">
+        <span customToolTip [contentTemplate]="passLimitToolTip">{{info.current}}</span>
+      </div>
+    </ng-container>
 
-
+    <div class="title">{{ title }}</div>
   </ng-container>
-
-  <div class="title">{{ title }}</div>
 </div>

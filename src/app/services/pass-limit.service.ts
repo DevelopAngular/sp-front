@@ -36,4 +36,8 @@ export class PassLimitService {
   getRemainingLimits(): Observable<number> {
     return of(0);
   }
+
+  updatePassLimits(pl: HallPassLimit) {
+    return this.http.put('vi/pass-limits/update', pl);
+  }
 }

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PassLimitDialogComponent } from './pass-limit-dialog.component';
+import { PassLimitDialogComponent } from './admin-pass-limits-dialog.component';
 
 describe('PassLimitDialogComponent', () => {
   let component: PassLimitDialogComponent;

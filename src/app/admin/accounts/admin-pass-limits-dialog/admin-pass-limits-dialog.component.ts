@@ -1,11 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {NextStep} from '../../../animations';
 import {ScreenService} from '../../../services/screen.service';
 import {PassLimitService} from '../../../services/pass-limit.service';
+import {map} from 'rxjs/operators';
+import {HallPassLimit} from '../../../models/HallPassLimits';
 
 /**
  * TODOS for individual pass limits
@@ -20,14 +22,13 @@ import {PassLimitService} from '../../../services/pass-limit.service';
  */
 
 @Component({
-  selector: 'app-pass-limit-dialog',
-  templateUrl: './pass-limit-dialog.component.html',
-  styleUrls: ['./pass-limit-dialog.component.scss'],
+  selector: 'app-admin-pass-limits-dialog',
+  templateUrl: './admin-pass-limits-dialog.component.html',
+  styleUrls: ['./admin-pass-limits-dialog.component.scss'],
   animations: [NextStep]
 })
-export class PassLimitDialogComponent implements OnInit {
+export class AdminPassLimitDialogComponent implements OnInit {
   // TODO: This is for when multiple pass frequencies are implemented
-  // @ViewChild('passLimitsFrequencyDialog') frequencyPopup: TemplateRef<HTMLElement>;
 
   pageNumber = 1;
   frameMotion$: BehaviorSubject<any>;
@@ -35,37 +36,50 @@ export class PassLimitDialogComponent implements OnInit {
   passLimitToggleTooltip = `Some help text about pass limits`; // TODO: Get text for this
   individualLimitsTooltop = `Some help text about individual limits`; // TODO: Get text for this
   individualStudentLimits = [];
-
+  passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
     enabled: new FormControl(false),
-    limits: new FormControl('5 passes', Validators.pattern(/^((1 pass)|(\d+ passes))$/)),
-    frequency: new FormControl('day', Validators.required)
+    limits: new FormControl(null, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)),
+    frequency: new FormControl(null, Validators.required)
   }); // TODO: disable while fetching the pass limit status
+  passLimitFormSubs: Subscription;
+  passLimitFormChanged: Observable<boolean> = of(false);
+  passLimitFormLastValue: {enabled: boolean, limits: string, frequency: string};
   showLimitFormatError = false;
 
   constructor(
     private dialog: MatDialog,
-    public dialogRef: MatDialogRef<PassLimitDialogComponent>,
+    public dialogRef: MatDialogRef<AdminPassLimitDialogComponent>,
     public screenService: ScreenService,
     private formService: CreateFormService,
-    private passLimit: PassLimitService
+    private passLimitService: PassLimitService
   ) { }
 
   ngOnInit(): void {
-    this.passLimitForm.disable();
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    this.passLimit.getPassLimit().subscribe(pl => {
-      this.passLimitForm.patchValue({
-        enabled: pl.limitEnabled,
-        limits: pl.passLimit,
-        frequency: pl.frequency
-      });
-      this.passLimitForm.enable();
+    this.passLimitFormSubs = this.passLimitForm.valueChanges.subscribe((v) => {
+      v.enabled
+        ? this.passLimitForm.controls['limits'].setValidators([Validators.required, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)])
+        : this.passLimitForm.controls['limits'].setValidators([Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)]);
     });
-  }
-
-  toggleMainPassLimits(enabled: boolean) {
-    this.passLimitForm.patchValue({ enabled });
+    this.passLimitForm.disable();
+    this.passLimitService.getPassLimit().subscribe({
+      next: pl => {
+        this.passLimit = pl;
+        this.passLimitForm.patchValue({
+          limits: `${pl.passLimit} passes`,
+          enabled: pl.limitEnabled,
+          frequency: pl.frequency
+        });
+        this.passLimitFormLastValue = this.passLimitForm.value;
+        this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
+          map(v => {
+            this.showLimitFormatError = this.passLimitForm.get('limits').invalid;
+            return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
+          }));
+        this.passLimitForm.enable();
+      }
+    });
   }
 
   // TODO: This is for when multiple pass frequencies are implemented
@@ -92,4 +106,14 @@ export class PassLimitDialogComponent implements OnInit {
   // selectFrequency(frequency: string) {
   //   this.frequencyDialogRef.close(frequency);
   // }
+  resetPassLimitsForm() {
+    this.passLimitForm.patchValue(this.passLimitFormLastValue);
+  }
+
+  updatePassLimits() {
+    this.passLimitService.updatePassLimits({
+      ...this.passLimit,
+      ...this.passLimitForm.value
+    }).subscribe(() => {});
+  }
 }

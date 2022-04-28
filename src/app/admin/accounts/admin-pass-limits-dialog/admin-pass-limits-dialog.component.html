@@ -1,12 +1,23 @@
 <ng-container [ngSwitch]="pageNumber">
   <div class="sp-dialog wrapper" *ngSwitchCase="1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <div class="header">
+    <div class="header" *ngIf="!(passLimitFormChanged | async); else changedFormHeader">
       <div class="background-header"></div>
       <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
       <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
+        <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Pass Limits</div>
       </div>
     </div>
+
+    <ng-template #changedFormHeader>
+      <div class="header" style="justify-content: space-around">
+        <div class="background-header"></div>
+        <app-gradient-button (buttonClick)="resetPassLimitsForm()" customBackground="transparent">Cancel</app-gradient-button>
+        <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+          <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Pass Limits</div>
+        </div>
+        <app-gradient-button (buttonClick)="updatePassLimits()" gradient="#FFFFFF,#FFFFFF" textColor="black" [disabled]="passLimitForm.invalid">Update</app-gradient-button>
+      </div>
+    </ng-template>
 
     <div class="content">
       <div #passLimitsIntro class="accent-background-section ds-flex-row" style="position:relative">
@@ -45,14 +56,13 @@
             [form]="passLimitForm"
             controlName="enabled"
             [delimiter]="false"
-            (pushOutValue)="toggleMainPassLimits($event)"
           ></app-toggle-input>
         </div>
 
         <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
           <app-input
-            (blurEvent)="showLimitFormatError = passLimitForm.controls['limits'].invalid"
             [isFocus]="true"
+            [input_value]="passLimitForm.value['limits']"
             width="125px"
             placeholder="# of passes"
             [formGroup]="passLimitForm"
@@ -65,7 +75,6 @@
             gradient="#F4F4F4">
             per {{passLimitForm.value['frequency']}}
           </app-gradient-button>
-
           <p style="width: 100%; color: #E32C66" *ngIf="showLimitFormatError">Proper format: 1 pass, 4 passes, 10 passes</p>
         </div>
       </div>

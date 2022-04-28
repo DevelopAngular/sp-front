@@ -42,6 +42,7 @@ export class PassLimitsDialogComponent implements OnInit {
   }
 
   navigateToAdminPage() {
-   this.router.navigateByUrl('/admin/accounts/_profile_student');
+    this.dialogRef.close();
+    this.router.navigateByUrl('/admin/accounts/_profile_student');
   }
 }

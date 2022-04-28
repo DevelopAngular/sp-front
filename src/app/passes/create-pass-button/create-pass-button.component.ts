@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {bumpIn} from '../../animations';
+import {Observable, of} from 'rxjs';
 
 @Component({
   selector: 'app-create-pass-button',
@@ -13,8 +14,7 @@ export class CreatePassButtonComponent implements OnInit {
   @Input() title: string;
   @Input() gradient: string;
   @Input() disabled: boolean;
-  @Input() passLimitCounter: number;
-  @Input() passLimitMax: number;
+  @Input() passLimitInfo: Observable<{ current?: number, max?: number, showPasses: boolean }> = of({showPasses: false});
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
@@ -42,9 +42,7 @@ export class CreatePassButtonComponent implements OnInit {
           this.buttonDown ? `0px 3px 5px rgba(${rgbString}, 0.15)` : '0px 3px 5px rgba(0, 0, 0, 0.1)');
   }
 
-  ngOnInit() {
-    console.log(this.passLimitCounter);
-  }
+  ngOnInit() {}
 
   backgroundGradient() {
       if (this.buttonDown && !this.disabled) {

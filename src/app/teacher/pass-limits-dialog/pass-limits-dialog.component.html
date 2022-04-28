@@ -20,6 +20,8 @@
         </div>
         <div class="pass-limits-actions">
           <app-gradient-button
+            customToolTip
+            [contentTemplate]="editButtonAdminRedirect"
             [disabled]="!canNavigate"
             (buttonClick)="navigateToAdminPage()"
             gradient="#FFFFFF, #FFFFFF"
@@ -28,6 +30,9 @@
             [rightIcon]="'assets/External%20Link%20(Blue-Gray).svg'">
             Edit
           </app-gradient-button>
+          <ng-template #editButtonAdminRedirect>
+            <div *ngIf="!canNavigate" class="ds-tooltip" style="width: 200px">This is set by the school admin</div>
+          </ng-template>
         </div>
 <!--        <div style="display: flex" class="ds-flex-row ds-flex-center-between">-->
 <!--           <span class="ds-section-header">-->
