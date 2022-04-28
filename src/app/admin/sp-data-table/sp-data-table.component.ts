@@ -23,7 +23,6 @@ import {TableService} from './table.service';
 import {cloneDeep, isEmpty} from 'lodash';
 import {filter, switchMap, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
-//import {StatusChipComponent} from '../explore/status-chip/status-chip.component';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 33;
