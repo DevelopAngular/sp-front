@@ -167,27 +167,7 @@
                       <div class="ds-tooltip" style="width: 200px">Limit the number of passes certain individual students can have per day. This overrides the school limit if set. <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: #FFFFFF">Learn more.</a></div>
                     </ng-template>
                   </div>
-                  <div class="add-button" customToolTip [contentTemplate]="tooltip" [showToolTip]="!user.isAdmin()">
-                    <app-gradient-button
-                      style="transform: rotate(180deg)"
-                      [size]="'editable'"
-                      [minWidth]="'50px'"
-                      [minHeight]="'31px'"
-                      [textColor]="'#7F879D'"
-                      [gradient]="'#FFFFFF, #FFFFFF'"
-                      [hoverColor]="'#FFFFFF'"
-                      [leftIcon]="'./assets/Arrow Left (Blue-Gray).svg'"
-                      [withShadow]="false"
-                      [fontSize]="'14px'"
-                      (buttonClick)="openPassLimitsDialog()"></app-gradient-button>
-
-                    <ng-template #tooltip>
-                      <div class="ds-tooltip" style="text-align: left">
-                        <div class="only-admin">ADMIN ONLY</div>
-                        Only admins are able to manage encounter prevention groups.
-                      </div>
-                    </ng-template>
-                  </div>
+                  <app-icon-button (clickEvent)="openPassLimitsDialog()" style="transform: rotate(270deg)" [srcString]="'Arrow Down'" [size]="17" ></app-icon-button>
                 </div>
 
                 <div class="groups" *ngIf="(exclusionGroups$ | async) && (exclusionGroups$ | async).length">

@@ -13,5 +13,41 @@
     (pointerDownEvent)="buttonDown = true"
     (pointerCancelEvent)="buttonDown = false"
 >
+
+  <ng-container *ngIf="title === 'Now'">
+    <ng-template #passLimitToolTip>
+      <div class="ds-tooltip" style="width: 200px">
+        <span>{{passLimitCounter}}/{{passLimitMax}} passes remaining today.</span>
+        <span *ngIf="passLimitCounter === 0">You must request a pass from a teacher.</span>
+      </div>
+    </ng-template>
+
+    <ng-template #noPassLimitsRemaining>
+      <div
+        class="pass-limit-counter pass-limit-locked">
+        <span customToolTip [contentTemplate]="passLimitToolTip">
+          <img src="assets/Lock%20(White).svg" style="width: 85%">
+        </span>
+      </div>
+    </ng-template>
+
+    <div
+      *ngIf="passLimitCounter > 0; else noPassLimitsRemaining"
+      [ngClass]="{
+        'pass-limit-one-remaining': passLimitCounter === 1
+      }"
+      class="pass-limit-counter">
+      <span customToolTip [contentTemplate]="passLimitToolTip">{{passLimitCounter}}</span>
+    </div>
+
+
+  </ng-container>
+
+
+
+
+
+
+
   <div class="title">{{ title }}</div>
 </div>

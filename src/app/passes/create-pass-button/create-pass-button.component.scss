@@ -41,3 +41,23 @@
     font-size: 20px;
   }
 }
+
+.pass-limit-counter {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px;
+  border-radius: 50%;
+  background: #FFFFFF33;
+  height: 20px;
+  width: 20px;
+  color: white;
+}
+
+.pass-limit-one-remaining {
+  background: #EBBB00
+}
+
+.pass-limit-locked {
+  background: #E32C66
+}

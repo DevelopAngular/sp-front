@@ -68,3 +68,13 @@
 
 </div>
 
+<div class="pass-limits-info" style="position:relative;">
+  <p>{{passLimitsRemaining}}/{{passLimitsMax | async}} passes remaining today</p>
+  <p style="margin-top: -8px; font-size: 12px" *ngIf="passLimitsRemaining === 0">You must request a pass from your teacher</p>
+
+  <div class="pass-limits-counter-icon">
+    <span *ngIf="passLimitsRemaining > 0">{{passLimitsRemaining}}</span>
+    <img *ngIf="passLimitsRemaining === 0" src="assets/Lock%20(White).svg">
+  </div>
+</div>
+

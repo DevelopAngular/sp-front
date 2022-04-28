@@ -13,6 +13,8 @@ export class CreatePassButtonComponent implements OnInit {
   @Input() title: string;
   @Input() gradient: string;
   @Input() disabled: boolean;
+  @Input() passLimitCounter: number;
+  @Input() passLimitMax: number;
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
@@ -41,6 +43,7 @@ export class CreatePassButtonComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.passLimitCounter);
   }
 
   backgroundGradient() {

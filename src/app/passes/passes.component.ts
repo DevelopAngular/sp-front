@@ -11,7 +11,18 @@ import {
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
-import {filter, map, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {
+  filter,
+  map,
+  pluck,
+  publishReplay,
+  refCount,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+  withLatestFrom
+} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {LiveDataService} from '../live-data/live-data.service';
@@ -39,6 +50,8 @@ import {SideNavService} from '../services/side-nav.service';
 import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 import {LocationsService} from '../services/locations.service';
 import * as moment from 'moment';
+import {PassLimitService} from '../services/pass-limit.service';
+import {HallPassLimit} from '../models/HallPassLimits';
 
 @Component({
   selector: 'app-passes',
@@ -137,6 +150,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   user$: Observable<User>;
   user: User;
+  studentPassLimit: HallPassLimit;
+  remainingPasses: number;
   isStaff = false;
   currentScrollPosition: number;
 
@@ -224,11 +239,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollPosition: ScrollPositionService,
     private userService: UserService,
     private shortcutsService: KeyboardShortcutsService,
-    private  notificationButtonService: NotificationButtonService,
+    private notificationButtonService: NotificationButtonService,
     private httpService: HttpService,
     private passesService: HallPassesService,
     private sideNavService: SideNavService,
-    private locationsService: LocationsService
+    private locationsService: LocationsService,
+    private passLimits: PassLimitService
   ) {
 
     this.userService.user$
@@ -324,6 +340,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;
+    this.passLimits.getPassLimit().subscribe(p  => {
+      this.studentPassLimit = p;
+    });
+    this.passLimits.getRemainingLimits().subscribe(r => {
+      this.remainingPasses = r;
+    });
     this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
       filter(res => !!res),
       map(filters => {
@@ -429,7 +451,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         data: {
           'forLater': forLater,
           'forStaff': this.isStaff,
-          'forInput': true
+          'forInput': true,
         }
       });
 

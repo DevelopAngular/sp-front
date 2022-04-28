@@ -1,11 +1,11 @@
-import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Location} from '../../models/Location';
 import {Pinnable} from '../../models/Pinnable';
 import {User} from '../../models/User';
 import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
-import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
 import {filter, map, takeUntil} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
@@ -16,6 +16,7 @@ import {DeviceDetection} from '../../device-detection.helper';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms.component';
 import {UserService} from '../../services/user.service';
+import {PassLimitService} from '../../services/pass-limit.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -82,6 +83,9 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject();
 
+  passLimitsRemaining: number;
+  passLimitsMax: Observable<number>;
+
   @HostListener('window:resize')
   checkDeviceScreen() {
     this.isDeviceMid = this.screenService.isDeviceMid;
@@ -99,7 +103,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private passesService: HallPassesService,
-    private userService: UserService
+    private userService: UserService,
+    private passLimitsService: PassLimitService
   ) {}
 
   get isCompressed() {
@@ -135,6 +140,11 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       forLater: this.dialogData['forLater'],
       kioskMode: this.dialogData['kioskMode'] || false
     };
+    this.passLimitsService.getRemainingLimits().subscribe(r => {
+      this.passLimitsRemaining = r;
+    });
+
+    this.passLimitsMax = this.passLimitsService.getPassLimit().pipe(map(l => l.passLimit));
     switch (this.dialogData['forInput']) {
       case true:
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
