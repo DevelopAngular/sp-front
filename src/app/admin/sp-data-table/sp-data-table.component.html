@@ -84,8 +84,7 @@
               {{ column }}
             </th>
           </ng-template>
-
-          <ng-container *ngIf="column!=='Status' else statuscell">
+          <ng-container *ngIf="!(currentPage=='report_search' && column=='Status') else statuscell">
             <td
               mat-cell
               [ngClass]="{'fake-container': !element[column], noCheckbox: !(isCheckbox | async)}"
