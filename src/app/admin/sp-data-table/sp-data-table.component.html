@@ -104,7 +104,6 @@
               mat-cell
               [ngClass]="{noCheckbox: !(isCheckbox | async)}"
               [style.height]="'auto'"
-              [style.opacity]="!isLast ? 0 : 1"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
               pointerClickEvent="null"
