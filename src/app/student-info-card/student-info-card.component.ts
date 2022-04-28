@@ -469,6 +469,7 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
 
   openPassLimitsDialog() {
     this.dialog.open(PassLimitsDialogComponent, {
+      closeOnNavigation: true,
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-id',
       width: '425px',

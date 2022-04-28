@@ -20,6 +20,8 @@
         </div>
         <div class="pass-limits-actions">
           <app-gradient-button
+            [disabled]="!canNavigate"
+            (buttonClick)="navigateToAdminPage()"
             gradient="#FFFFFF, #FFFFFF"
             textColor="#7f879d"
             [leftIcon]="'assets/Edit%20(Blue-Gray).svg'"
