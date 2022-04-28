@@ -327,7 +327,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         break;
       case 4:
         this.formSize.width =  `335px`;
-        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '528px';
+        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '410px';
         break;
     }
   }
