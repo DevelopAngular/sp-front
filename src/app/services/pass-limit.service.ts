@@ -34,6 +34,6 @@ export class PassLimitService {
   }
 
   getRemainingLimits(): Observable<number> {
-    return of(2);
+    return of(0);
   }
 }

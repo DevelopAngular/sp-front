@@ -51,7 +51,7 @@
          [attr.data-motion-scale]="(isScaled | async)"
          class="locations"
     >
-      <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
+      <app-locations-group-container [currentPassLimit]="passLimitsRemaining" [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
     </div>
   </div>
 
@@ -72,9 +72,9 @@
   <p>{{passLimitsRemaining}}/{{passLimitsMax | async}} passes remaining today</p>
   <p style="margin-top: -8px; font-size: 12px" *ngIf="passLimitsRemaining === 0">You must request a pass from your teacher</p>
 
-  <div class="pass-limits-counter-icon">
+  <div class="pass-limits-counter-icon" [ngClass]="{'pass-limit-locked': passLimitsRemaining === 0, 'pass-limit-one-remaining': passLimitsRemaining === 1}">
     <span *ngIf="passLimitsRemaining > 0">{{passLimitsRemaining}}</span>
-    <img *ngIf="passLimitsRemaining === 0" src="assets/Lock%20(White).svg">
+    <img style="width: 85%" *ngIf="passLimitsRemaining === 0" src="assets/Lock%20(White).svg">
   </div>
 </div>
 

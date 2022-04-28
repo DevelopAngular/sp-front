@@ -1,5 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-create-hallpass-forms',
@@ -8,10 +7,8 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 })
 export class CreateHallpassFormsComponent implements OnInit {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data) { }
+  constructor() { }
 
-  ngOnInit() {
-    console.log(this.data);
-  }
+  ngOnInit() {}
 
 }
