@@ -4,6 +4,7 @@ import {finalize, tap, take} from 'rxjs/operators';
 import {Status} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
 import {StatusNotifyerService} from '../status-notifyer.service';
+import {HttpService} from '../../../services/http-service';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 
 @Component({
@@ -14,9 +15,12 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 export class StatusChipComponent implements OnInit {
 
   @Input() status: Status;
-  @Input() editable: boolean;
-  @Input() remoteid: number;
   @ViewChild('button') trigger: ElementRef<HTMLElement>;
+
+  // editable indicate that can drop down a stus choices
+  @Input() editable: boolean;
+  // remoteid is the record id of a database record
+  @Input() remoteid: number;
 
   @Output() statusClick: EventEmitter<Status> = new EventEmitter<Status>();
 
@@ -31,16 +35,24 @@ export class StatusChipComponent implements OnInit {
   // shows a loading hint
   isLoading: boolean = false;
 
+  notifyer: StatusNotifyerService;
+
   constructor(
     public dialog: MatDialog,
-    public notifyer: StatusNotifyerService, 
     private cdr: ChangeDetectorRef,
+    public http: HttpService,
   ) { }
 
   ngOnInit(): void {
     this.redress();
     this.didOpen = false;
     this.isLoading = false;
+    // only on editable mode it needs a way 
+    // to create a link between the opener and the choices panel
+    // every opener should have a separate notifyer instance
+    if (this.editable) {
+      this.notifyer = new StatusNotifyerService(this.http);
+    }
   }
 
   redress() {
@@ -56,6 +68,8 @@ export class StatusChipComponent implements OnInit {
       const data = {
         trigger: this.trigger.nativeElement,
         prevstatus: this.status,
+        // send the notifyer to choices
+        notifyer: this.notifyer,
       } 
       if (!!this.remoteid) {
         data['remoteid'] = this.remoteid;
@@ -83,7 +97,7 @@ export class StatusChipComponent implements OnInit {
         }),
       )
       .subscribe();
-      
+
       this.notifyer.getStatus()
       .pipe(
         take(1),
