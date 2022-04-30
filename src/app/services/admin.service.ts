@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 
 import {HttpService} from './http-service';
 import {School} from '../models/School';
+import {ReportDataUpdate} from '../models/Report';
 import {Observable, of, Subject} from 'rxjs';
 import {GSuiteOrgs} from '../models/GSuiteOrgs';
 import {AppState} from '../ngrx/app-state/app-state';
@@ -16,7 +17,7 @@ import {
   getReportsLength,
   getReportsNextUrl
 } from '../ngrx/reports/states/reports-getters.state';
-import {getMoreReports, getReports, postReport, searchReports} from '../ngrx/reports/actions';
+import {getMoreReports, getReports, postReport, searchReports, patchReport} from '../ngrx/reports/actions';
 import {getCountAccountsResult} from '../ngrx/accounts/nested-states/count-accounts/state/count-accouns-getters.state';
 import {getCountAccounts} from '../ngrx/accounts/nested-states/count-accounts/actions';
 import {getDashboardData} from '../ngrx/dashboard/actions';
@@ -106,6 +107,15 @@ export class AdminService {
 
   sendReport(data) {
     return this.http.post('v1/event_reports/bulk_create', data);
+  }
+
+  updateReportRequest(data: ReportDataUpdate) {
+    this.store.dispatch(patchReport({data}));
+    return this.http.currentUpdateReport$;
+  }
+
+  updateReport(data: ReportDataUpdate) {
+    return this.http.patch(`v1/event_reports`, data);
   }
 
   searchReportsRequest(before, after) {

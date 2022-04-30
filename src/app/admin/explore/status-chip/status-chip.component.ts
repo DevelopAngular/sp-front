@@ -4,7 +4,8 @@ import {finalize, tap, take} from 'rxjs/operators';
 import {Status} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
 import {StatusNotifyerService} from '../status-notifyer.service';
-import {HttpService} from '../../../services/http-service';
+//import {HttpService} from '../../../services/http-service';
+import {AdminService} from '../../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 
 @Component({
@@ -40,7 +41,7 @@ export class StatusChipComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    public http: HttpService,
+    public http: AdminService,
   ) { }
 
   ngOnInit(): void {
@@ -62,9 +63,10 @@ export class StatusChipComponent implements OnInit {
 
   blink($event: MouseEvent) {
     $event.stopPropagation();
-    this.statusClick.emit(this.status);
 
-    if (this.editable) {
+    if (!this.editable) {
+      this.statusClick.emit(this.status);
+    } else {
       const data = {
         trigger: this.trigger.nativeElement,
         prevstatus: this.status,
@@ -109,6 +111,8 @@ export class StatusChipComponent implements OnInit {
         finalize(() => {
           UNANIMATED_CONTAINER.next(false);
           this.isLoading = false;
+          //TODO change in ngrx the status of report with id remoteid
+          this.statusClick.emit(this.status);
           this.cdr.detectChanges();
         }),
       ).subscribe();

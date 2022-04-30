@@ -838,10 +838,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openReportDialog(report) {
+    console.log(report)
     this.reportSearchState.entities$
       .pipe(
         take(1),
-        map(reports => reports[report.id])
+        map(reports => {
+          console.log(reports[report.id])
+          return reports[report.id]
+        })
       )
       .subscribe(selectedReport => {
         this.dialog.open(ReportInfoDialogComponent, {

@@ -7,9 +7,11 @@ import {catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, 
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
+import {Report} from '../models/Report';
 import {AppState} from '../ngrx/app-state/app-state';
 import {clearSchools, getSchools} from '../ngrx/schools/actions';
 import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
+import {getCurrentReport} from '../ngrx/reports/states';
 import {GoogleLoginService, isCleverLogin, isDemoLogin, isGg4lLogin} from './google-login.service';
 import {StorageService} from './storage.service';
 import {SafeHtml} from '@angular/platform-browser';
@@ -193,6 +195,8 @@ export class HttpService implements OnDestroy {
   public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
   public currentUpdateSchool$: Observable<School> = this.store.select(getCurrentSchool);
   public schoolsLength$: Observable<number> = this.store.select(getSchoolsLength);
+
+  public currentUpdateReport$: Observable<Report> = this.store.select(getCurrentReport);
 
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();

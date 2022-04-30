@@ -34,5 +34,16 @@ export const getReportsNextUrl = createSelector(
   (state: IGetReportsRequest) => state.next
 );
 
+export const getCurrentReportId = createSelector(
+  getReportsState,
+  (state:  IGetReportsRequest) => state.currentReportId
+);
+
+export const getCurrentReport = createSelector(
+  getReportsEntities,
+  getCurrentReportId,
+  (entities, id) => entities[id]
+);
+
 
 

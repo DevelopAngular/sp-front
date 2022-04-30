@@ -11,6 +11,7 @@ export const adapter: EntityAdapter<Report> = createEntityAdapter<Report>();
 export const reportsInitialState: IGetReportsRequest = adapter.getInitialState({
   loading: false,
   loaded: false,
+  currentReportId: null,
   next: null,
   reportsFound: [],
   addedReports: [],
@@ -69,7 +70,8 @@ const reducer = createReducer(
     reportsActions.getReports,
     reportsActions.searchReports,
     reportsActions.postReport,
-      state => ({ ...state, loading: true, loaded: false })),
+    reportsActions.patchReport,
+    state => ({ ...state, loading: true, loaded: false })),
   on(reportsActions.getReportsSuccess, (state, { reports, next }) => {
     //TODO: remove it when done
     //reports = mocked(10);

@@ -15,6 +15,10 @@ export const postReport = createAction(`[${COMPONENT}] Post Report`, props<{data
 export const postReportSuccess = createAction(`[${COMPONENT}] Post Report Success`, props<{reports: Report[]}>());
 export const postReportFailure = createAction(`[${COMPONENT}] Post Report Failure`, props<{errorMessage: string}>());
 
+export const patchReport = createAction(`[${COMPONENT}] Patch Report`, props<{data: any}>());
+export const patchReportSuccess = createAction(`[${COMPONENT}] Patch Report Success`, props<{reports: Report[]}>());
+export const patchReportFailure = createAction(`[${COMPONENT}] Patch Report Failure`, props<{errorMessage: string}>());
+
 export const getMoreReports = createAction(`[${COMPONENT}] Get More Reports`);
 export const getMoreReportsSuccess = createAction(`[${COMPONENT}] Get More Reports Success`, props<{reports: Report[], next: string}>());
 export const getMoreReportsFailure = createAction(`[${COMPONENT}] Get More Reports Failure`, props<{errorMessage: string}>());

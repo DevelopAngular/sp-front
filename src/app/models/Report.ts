@@ -35,3 +35,5 @@ export class Report extends BaseModel {
     return new Report(id, created, last_updated, issuer, student, message, status);
   }
 }
+
+export type ReportDataUpdate = Partial<Report> & {id: string | number};

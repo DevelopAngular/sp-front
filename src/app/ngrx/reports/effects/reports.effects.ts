@@ -67,6 +67,30 @@ export class ReportsEffects {
       );
   });
 
+  patchReport$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(reportsActions.patchReport),
+        switchMap((action: any) => {
+          return this.adminService.updateReport(action.data)
+            .pipe(
+              switchMap((reports: Report[]) => {
+                return [
+                  reportsActions.patchReportSuccess({reports}),
+                  addReportToStats({report: reports[0]}),
+                  openToastAction({data: {
+                    title: 'Report updated',
+                    subtitle: 'The report has been sent to admins.',
+                    type: 'info'
+                  }})
+                ];
+              }),
+              catchError(error => of(reportsActions.patchReportFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   getMoreReports$ =  createEffect(() => {
     return this.actions$
       .pipe(

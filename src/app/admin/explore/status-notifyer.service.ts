@@ -1,27 +1,29 @@
 import {Injectable} from '@angular/core';
 import {Subject, Observable} from 'rxjs';
 import {take, catchError} from 'rxjs/operators';
-import {HttpService} from '../../services/http-service';
-import {Status} from '../../models/Report';
+//import {HttpService} from '../../services/http-service';
+import {AdminService} from '../../services/admin.service';
+import {ReportDataUpdate, Status} from '../../models/Report';
 
 @Injectable()
 export class StatusNotifyerService {
   private notifyer$: Subject<Status>;
   private status$: Observable<Status>;
 
-  constructor(private http: HttpService) {
+  constructor(private http: AdminService) {
     this.notifyer$ = new Subject();
     this.status$ = this.notifyer$ as Observable<Status>;
     this.http = http;
   }
 
-  setStatus(value: Status, remoteid?: number) {
-    const updateFields = {
-      status: value,
-      id: remoteid ?? null,
-    }
+  setStatus(value: Status, remoteid?: string) {
     if (!! remoteid) {
-      this.http.patch(`v1/event_reports`, updateFields).pipe(
+      const updateFields: ReportDataUpdate = {
+        status: value,
+        id: remoteid,
+      }
+      //this.http.patch(`v1/event_reports`, updateFields).pipe(
+      this.http.updateReportRequest(updateFields).pipe(
         take(1), 
         catchError(err => err)
       ).subscribe(() => this.notifyer$.next(value));
