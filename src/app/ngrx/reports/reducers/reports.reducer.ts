@@ -1,5 +1,5 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import {IGetReportsRequest} from '../states';
+import {ReportsState} from '../states';
 import * as reportsActions from '../actions';
 import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 import {Report, Status} from '../../../models/Report';
@@ -8,7 +8,7 @@ import {BaseModel} from '../../../models/base';
 
 export const adapter: EntityAdapter<Report> = createEntityAdapter<Report>();
 
-export const reportsInitialState: IGetReportsRequest = adapter.getInitialState({
+export const reportsInitialState: ReportsState = adapter.getInitialState({
   loading: false,
   loaded: false,
   currentReportId: null,
@@ -71,7 +71,7 @@ const reducer = createReducer(
     reportsActions.searchReports,
     reportsActions.postReport,
     reportsActions.patchReport,
-    state => ({ ...state, loading: true, loaded: false })),
+    state => ({...state, loading: true, loaded: false, currentReportId: null})),
   on(reportsActions.getReportsSuccess, (state, { reports, next }) => {
     //TODO: remove it when done
     //reports = mocked(10);
@@ -87,6 +87,10 @@ const reducer = createReducer(
   }),
   on(reportsActions.postReportSuccess, (state, {reports}) => {
     return adapter.addMany(reports, {...state, loading: false, loaded: true, addedReports: reports});
+  }),
+  on(reportsActions.patchReportSuccess, (state, {report}) => {
+    console.log(state, report)
+    return adapter.upsertOne(report, {...state, loading: false, loaded: true, currentReportId: '563'/*report.id*/});
   }),
   on(reportsActions.getMoreReportsSuccess, (state, {reports, next}) => {
     return adapter.addMany(reports, {...state, loading: false, loaded: true, next});

@@ -10,6 +10,7 @@ import {Store} from '@ngrx/store';
 import {
   getAddedReports,
   getFoundReports,
+  getCurrentReport, 
   getIsLoadedReports,
   getIsLoadingReports,
   getReportsCollection,
@@ -59,6 +60,7 @@ export class AdminService {
     length: this.store.select(getReportsLength),
     foundReports: this.store.select(getFoundReports),
     addedReports: this.store.select(getAddedReports),
+    currentReport$: this.store.select(getCurrentReport),
     nextUrl$: this.store.select(getReportsNextUrl),
     entities$: this.store.select(getReportsEntities)
   };
@@ -109,8 +111,8 @@ export class AdminService {
     return this.http.post('v1/event_reports/bulk_create', data);
   }
 
-  updateReportRequest(data: ReportDataUpdate) {
-    this.store.dispatch(patchReport({data}));
+  updateReportRequest(report: ReportDataUpdate) {
+    this.store.dispatch(patchReport({report}));
     return this.http.currentUpdateReport$;
   }
 

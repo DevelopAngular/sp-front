@@ -1,10 +1,9 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {finalize, tap, take} from 'rxjs/operators';
-import {Status} from '../../../models/Report';
+import {Subject} from 'rxjs';
+import {finalize, tap, take, takeUntil, distinctUntilChanged, catchError} from 'rxjs/operators';
+import {Status, Report, ReportDataUpdate} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
-import {StatusNotifyerService} from '../status-notifyer.service';
-//import {HttpService} from '../../../services/http-service';
 import {AdminService} from '../../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 
@@ -29,31 +28,29 @@ export class StatusChipComponent implements OnInit {
   label: string;
   // class associated with status
   classname: string;
-
   // did open the panel with status options 
   didOpen: boolean = false;
-
   // shows a loading hint
   isLoading: boolean = false;
 
-  notifyer: StatusNotifyerService;
+  chosenStatus$: Subject<Status> = new Subject();
+  destroy$ = new Subject();
 
   constructor(
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    public http: AdminService,
+    public admin: AdminService,
   ) { }
 
   ngOnInit(): void {
     this.redress();
     this.didOpen = false;
     this.isLoading = false;
-    // only on editable mode it needs a way 
-    // to create a link between the opener and the choices panel
-    // every opener should have a separate notifyer instance
-    if (this.editable) {
-      this.notifyer = new StatusNotifyerService(this.http);
-    }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   redress() {
@@ -70,8 +67,6 @@ export class StatusChipComponent implements OnInit {
       const data = {
         trigger: this.trigger.nativeElement,
         prevstatus: this.status,
-        // send the notifyer to choices
-        notifyer: this.notifyer,
       } 
       if (!!this.remoteid) {
         data['remoteid'] = this.remoteid;
@@ -90,32 +85,40 @@ export class StatusChipComponent implements OnInit {
         take(1),
         tap(v => {
           UNANIMATED_CONTAINER.next(true);
-          if (this.status !== v?.status) this.isLoading = true;
+          this.chosenStatus$.next(v.status);
         }),
         finalize(() => {
           UNANIMATED_CONTAINER.next(false);
           this.didOpen = false;
           this.cdr.detectChanges();
         }),
-      )
-      .subscribe();
+      ).subscribe();
 
-      this.notifyer.getStatus()
+      this.chosenStatus$
       .pipe(
-        take(1),
-        tap(v => {
+        takeUntil(this.destroy$),
+        distinctUntilChanged(), 
+        tap((v: Status) => {
           UNANIMATED_CONTAINER.next(true);
-          this.status = v;
-          this.redress();
+          this.isLoading = true;
+          const updata: ReportDataUpdate = {
+            status: v,
+            id: ''+this.remoteid,
+          }
+          return this.admin.updateReportRequest(updata)
         }),
+        catchError(err => err),
         finalize(() => {
           UNANIMATED_CONTAINER.next(false);
           this.isLoading = false;
-          //TODO change in ngrx the status of report with id remoteid
           this.statusClick.emit(this.status);
           this.cdr.detectChanges();
         }),
-      ).subscribe();
+      ).subscribe((report: Report) => {
+        this.status = report.status;
+        this.redress();
+      }
+      );
     }
   }
 

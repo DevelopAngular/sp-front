@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {of, throwError} from 'rxjs';
 
 import * as reportsActions from '../actions';
-import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
+import {tap, catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
 import {AdminService} from '../../../services/admin.service';
 import {Report} from '../../../models/Report';
 import {addReportToStats} from '../../accounts/nested-states/students/actions';
@@ -72,18 +72,11 @@ export class ReportsEffects {
       .pipe(
         ofType(reportsActions.patchReport),
         switchMap((action: any) => {
-          return this.adminService.updateReport(action.data)
+          return this.adminService.updateReport(action.report)
             .pipe(
-              switchMap((reports: Report[]) => {
-                return [
-                  reportsActions.patchReportSuccess({reports}),
-                  addReportToStats({report: reports[0]}),
-                  openToastAction({data: {
-                    title: 'Report updated',
-                    subtitle: 'The report has been sent to admins.',
-                    type: 'info'
-                  }})
-                ];
+              switchMap((report: Report) => {
+                console.log('switch', report)
+                return of(reportsActions.patchReportSuccess({report}));
               }),
               catchError(error => of(reportsActions.patchReportFailure({errorMessage: error.message})))
             );

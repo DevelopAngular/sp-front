@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Subject, Observable} from 'rxjs';
-import {take, catchError} from 'rxjs/operators';
+import {take, tap, catchError} from 'rxjs/operators';
 //import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
 import {ReportDataUpdate, Status} from '../../models/Report';
@@ -25,6 +25,7 @@ export class StatusNotifyerService {
       //this.http.patch(`v1/event_reports`, updateFields).pipe(
       this.http.updateReportRequest(updateFields).pipe(
         take(1), 
+        tap(v => console.log('tap', v)),
         catchError(err => err)
       ).subscribe(() => this.notifyer$.next(value));
     } else {

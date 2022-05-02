@@ -128,6 +128,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
   reportsSearchData$: Observable<any[]>;
+  currentReport$: Observable<Report>;
   queryParams: any;
 
   adminCalendarOptions;
@@ -422,11 +423,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
         })
       );
 
+  this.currentReport$ = this.adminService.reports.currentReport$;
+
       this.tableService.selectRow.asObservable()
         .pipe(takeUntil(this.destroy$))
         .subscribe(res => {
           this.selectedRows = res;
         });
+
   }
 
   ngOnDestroy() {

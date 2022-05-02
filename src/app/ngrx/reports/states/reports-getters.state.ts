@@ -1,7 +1,7 @@
 import {AppState} from '../../app-state/app-state';
 import {adapter} from '../reducers';
 import {createSelector} from '@ngrx/store';
-import {IGetReportsRequest} from './reports.state';
+import {ReportsState} from './reports.state';
 
 export const getReportsState = (state: AppState) => state.reports;
 
@@ -11,32 +11,32 @@ export const getReportsEntities = adapter.getSelectors(getReportsState).selectEn
 
 export const getIsLoadedReports = createSelector(
   getReportsState,
-  (state: IGetReportsRequest) => state.loaded
+  (state: ReportsState) => state.loaded
 );
 
 export const getIsLoadingReports = createSelector(
   getReportsState,
-  (state: IGetReportsRequest) => state.loading
+  (state: ReportsState) => state.loading
 );
 
 export const getFoundReports = createSelector(
   getReportsState,
-  (state: IGetReportsRequest) => state.reportsFound
+  (state: ReportsState) => state.reportsFound
 );
 
 export const getAddedReports = createSelector(
   getReportsState,
-  (state: IGetReportsRequest) => state.addedReports
+  (state: ReportsState) => state.addedReports
 );
 
 export const getReportsNextUrl = createSelector(
   getReportsState,
-  (state: IGetReportsRequest) => state.next
+  (state: ReportsState) => state.next
 );
 
 export const getCurrentReportId = createSelector(
   getReportsState,
-  (state:  IGetReportsRequest) => state.currentReportId
+  (state:  ReportsState) => state.currentReportId
 );
 
 export const getCurrentReport = createSelector(
@@ -44,6 +44,3 @@ export const getCurrentReport = createSelector(
   getCurrentReportId,
   (entities, id) => entities[id]
 );
-
-
-

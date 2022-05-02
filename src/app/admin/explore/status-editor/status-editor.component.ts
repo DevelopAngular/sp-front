@@ -43,16 +43,4 @@ export class StatusEditorComponent extends StatusBaseComponent {
     if (!!dx || !!dy) this.dialogRef.updatePosition(position);
   }
 
-  chooseStatus(status: Status) {
-    const isSameStatus = (this.data?.prevstatus === status);
-    super.chooseStatus(status);
-    const remoteid = this.data?.remoteid ?? null;
-    const notifyer = this.data.notifyer;
-    if (remoteid === null || isSameStatus) {
-      notifyer.setStatus(status);
-    } else {
-      // this will do a http request
-      notifyer.setStatus(status, remoteid);
-      }
-    }   
-  }
+ }

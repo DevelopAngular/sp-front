@@ -211,6 +211,7 @@
       <app-sp-data-table
         [isCheckbox]="isCheckbox$"
         [data$]="reportsSearchData$"
+        [currentReport$]="currentReport$"
         [loading$]="reportSearchState.loading$"
         [currentPage]="currentView$.value"
         [showEmptyState]="reportSearchState.isEmpty && reportSearchState.loaded$ | async"
