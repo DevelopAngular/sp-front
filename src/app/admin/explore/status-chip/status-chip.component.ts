@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Subject} from 'rxjs';
+import {Subject, EMPTY} from 'rxjs';
 import {finalize, tap, take, takeUntil, distinctUntilChanged, catchError} from 'rxjs/operators';
 import {Status, Report, ReportDataUpdate} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
@@ -33,8 +33,8 @@ export class StatusChipComponent implements OnInit {
   // shows a loading hint
   isLoading: boolean = false;
 
-  chosenStatus$: Subject<Status> = new Subject();
-  destroy$ = new Subject();
+  private chosenStatus$: Subject<Status> = new Subject();
+  private destroy$ = new Subject();
 
   constructor(
     public dialog: MatDialog,
@@ -85,7 +85,11 @@ export class StatusChipComponent implements OnInit {
         take(1),
         tap(v => {
           UNANIMATED_CONTAINER.next(true);
-          this.chosenStatus$.next(v.status);
+          // v can be undefined when user has opened choices 
+          // but he has renounced to choose one of them
+          if (!!v && (this.status !== v.status)) { 
+            this.chosenStatus$.next(v.status);
+          }
         }),
         finalize(() => {
           UNANIMATED_CONTAINER.next(false);
@@ -97,12 +101,12 @@ export class StatusChipComponent implements OnInit {
       this.chosenStatus$
       .pipe(
         takeUntil(this.destroy$),
-        distinctUntilChanged(), 
-        tap((v: Status) => {
+        distinctUntilChanged(),
+        tap((status: Status) => {
           UNANIMATED_CONTAINER.next(true);
           this.isLoading = true;
           const updata: ReportDataUpdate = {
-            status: v,
+            status,
             id: ''+this.remoteid,
           }
           return this.admin.updateReportRequest(updata)

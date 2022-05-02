@@ -111,13 +111,16 @@ export class AdminService {
     return this.http.post('v1/event_reports/bulk_create', data);
   }
 
-  updateReportRequest(report: ReportDataUpdate) {
-    this.store.dispatch(patchReport({report}));
+  updateReportRequest(updata: ReportDataUpdate) {
+    this.store.dispatch(patchReport({updata}));
     return this.http.currentUpdateReport$;
   }
 
-  updateReport(data: ReportDataUpdate) {
-    return this.http.patch(`v1/event_reports`, data);
+  updateReport(updata: ReportDataUpdate) {
+    const id = updata.id;
+    delete updata.id;
+    const data = {...updata};
+    return this.http.patch(`v1/event_reports/${id}`, data);
   }
 
   searchReportsRequest(before, after) {

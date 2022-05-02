@@ -21,6 +21,6 @@ export const getMoreReportsFailure = createAction(`[${COMPONENT}] Get More Repor
 
 const COMPONENT_ADMIN_EXPLORE_REPORTS = 'Explore Reports Admin';
 
-export const patchReport = createAction(`[${COMPONENT_ADMIN_EXPLORE_REPORTS}] Patch Report`, props<{report: ReportDataUpdate}>());
+export const patchReport = createAction(`[${COMPONENT_ADMIN_EXPLORE_REPORTS}] Patch Report`, props<{updata: ReportDataUpdate}>());
 export const patchReportSuccess = createAction(`[${COMPONENT_ADMIN_EXPLORE_REPORTS}] Patch Report Success`, props<{report: Report}>());
 export const patchReportFailure = createAction(`[${COMPONENT_ADMIN_EXPLORE_REPORTS}] Patch Report Failure`, props<{errorMessage: string}>());

@@ -72,10 +72,9 @@ export class ReportsEffects {
       .pipe(
         ofType(reportsActions.patchReport),
         switchMap((action: any) => {
-          return this.adminService.updateReport(action.report)
+          return this.adminService.updateReport(action.updata)
             .pipe(
               switchMap((report: Report) => {
-                console.log('switch', report)
                 return of(reportsActions.patchReportSuccess({report}));
               }),
               catchError(error => of(reportsActions.patchReportFailure({errorMessage: error.message})))

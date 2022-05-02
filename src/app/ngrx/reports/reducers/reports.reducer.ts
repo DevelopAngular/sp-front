@@ -89,8 +89,7 @@ const reducer = createReducer(
     return adapter.addMany(reports, {...state, loading: false, loaded: true, addedReports: reports});
   }),
   on(reportsActions.patchReportSuccess, (state, {report}) => {
-    console.log(state, report)
-    return adapter.upsertOne(report, {...state, loading: false, loaded: true, currentReportId: '563'/*report.id*/});
+    return adapter.upsertOne(report, {...state, loading: false, loaded: true, currentReportId: report.id});
   }),
   on(reportsActions.getMoreReportsSuccess, (state, {reports, next}) => {
     return adapter.addMany(reports, {...state, loading: false, loaded: true, next});
