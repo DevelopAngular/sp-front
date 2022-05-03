@@ -325,8 +325,9 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   openPassLimits() {
     this.matDialog.open(AdminPassLimitDialogComponent, {
+      hasBackdrop: true,
       panelClass: 'overlay-dialog',
-      backdropClass: 'custom-id',
+      backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',
     });
