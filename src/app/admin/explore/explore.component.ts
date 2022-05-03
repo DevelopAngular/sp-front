@@ -128,7 +128,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
   reportsSearchData$: Observable<any[]>;
-  reportUpdated$: Observable<string | number>;
   queryParams: any;
 
   adminCalendarOptions;
@@ -392,8 +391,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
             return response;
           })
         );
-
-      this.reportUpdated$ = this.adminService.reports.currentReportId$;
 
       this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
         filter(res => this.currentView$.getValue() === 'report_search'),
