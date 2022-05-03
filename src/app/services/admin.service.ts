@@ -10,7 +10,7 @@ import {Store} from '@ngrx/store';
 import {
   getAddedReports,
   getFoundReports,
-  getCurrentReport, 
+  getCurrentReportId, 
   getIsLoadedReports,
   getIsLoadingReports,
   getReportsCollection,
@@ -60,7 +60,7 @@ export class AdminService {
     length: this.store.select(getReportsLength),
     foundReports: this.store.select(getFoundReports),
     addedReports: this.store.select(getAddedReports),
-    currentReport$: this.store.select(getCurrentReport),
+    currentReportId$: this.store.select(getCurrentReportId),
     nextUrl$: this.store.select(getReportsNextUrl),
     entities$: this.store.select(getReportsEntities)
   };
@@ -113,7 +113,7 @@ export class AdminService {
 
   updateReportRequest(updata: ReportDataUpdate) {
     this.store.dispatch(patchReport({updata}));
-    return this.http.currentUpdateReport$;
+    return this.reports.currentReportId$;
   }
 
   updateReport(updata: ReportDataUpdate) {

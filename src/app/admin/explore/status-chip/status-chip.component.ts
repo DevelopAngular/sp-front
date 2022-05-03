@@ -1,8 +1,8 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Subject, EMPTY} from 'rxjs';
-import {finalize, tap, take, takeUntil, distinctUntilChanged, catchError} from 'rxjs/operators';
-import {Status, Report, ReportDataUpdate} from '../../../models/Report';
+import {Subject, BehaviorSubject, Observable} from 'rxjs';
+import {last, finalize, tap, takeUntil, distinctUntilChanged, catchError} from 'rxjs/operators';
+import {Status, ReportDataUpdate} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
 import {AdminService} from '../../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
@@ -34,23 +34,28 @@ export class StatusChipComponent implements OnInit {
   isLoading: boolean = false;
 
   private chosenStatus$: Subject<Status> = new Subject();
+  private hasChanged$;//: Subject<string | number> = new Subject();
   private destroy$ = new Subject();
 
   constructor(
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    public admin: AdminService,
+    public adminService: AdminService,
   ) { }
 
   ngOnInit(): void {
     this.redress();
     this.didOpen = false;
     this.isLoading = false;
+    this.hasChanged$ = this.adminService.reports.currentReportId$;//.subscribe(this.hasChanged$);
   }
+
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    //this.hasChanged$.next(this.status);
+    //this.hasChanged$.complete();
   }
 
   redress() {
@@ -82,7 +87,7 @@ export class StatusChipComponent implements OnInit {
      
       chosen.afterClosed()
       .pipe(
-        take(1),
+        takeUntil(this.destroy$),
         tap(v => {
           UNANIMATED_CONTAINER.next(true);
           // v can be undefined when user has opened choices 
@@ -103,13 +108,14 @@ export class StatusChipComponent implements OnInit {
         takeUntil(this.destroy$),
         distinctUntilChanged(),
         tap((status: Status) => {
+          this.status = status;
           UNANIMATED_CONTAINER.next(true);
           this.isLoading = true;
           const updata: ReportDataUpdate = {
             status,
             id: ''+this.remoteid,
           }
-          return this.admin.updateReportRequest(updata)
+          return this.adminService.updateReportRequest(updata)
         }),
         catchError(err => err),
         finalize(() => {
@@ -118,11 +124,17 @@ export class StatusChipComponent implements OnInit {
           this.statusClick.emit(this.status);
           this.cdr.detectChanges();
         }),
-      ).subscribe((report: Report) => {
-        this.status = report.status;
+      ).subscribe();
+
+      this.hasChanged$
+      .pipe(
+        last(),
+        tap(remoteid => {
+        console.log(remoteid, this.remoteid);
+      }))
+      .subscribe(() => {
         this.redress();
-      }
-      );
+      });
     }
   }
 

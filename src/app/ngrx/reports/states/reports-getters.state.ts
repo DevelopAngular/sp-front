@@ -39,8 +39,8 @@ export const getCurrentReportId = createSelector(
   (state:  ReportsState) => state.currentReportId
 );
 
-export const getCurrentReport = createSelector(
+/*export const getCurrentReport = createSelector(
   getReportsEntities,
   getCurrentReportId,
   (entities, id) => entities[id]
-);
+);*/

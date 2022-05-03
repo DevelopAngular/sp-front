@@ -70,7 +70,6 @@ const reducer = createReducer(
     reportsActions.getReports,
     reportsActions.searchReports,
     reportsActions.postReport,
-    reportsActions.patchReport,
     state => ({...state, loading: true, loaded: false, currentReportId: null})),
   on(reportsActions.getReportsSuccess, (state, { reports, next }) => {
     //TODO: remove it when done
@@ -88,6 +87,7 @@ const reducer = createReducer(
   on(reportsActions.postReportSuccess, (state, {reports}) => {
     return adapter.addMany(reports, {...state, loading: false, loaded: true, addedReports: reports});
   }),
+  on(reportsActions.patchReport, state => ({...state, loading: false, loaded: false, currentReportId: null})),
   on(reportsActions.patchReportSuccess, (state, {report}) => {
     return adapter.upsertOne(report, {...state, loading: false, loaded: true, currentReportId: report.id});
   }),

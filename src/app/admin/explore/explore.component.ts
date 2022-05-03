@@ -128,7 +128,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
   reportsSearchData$: Observable<any[]>;
-  reportUpdated$: Observable<Report>;
+  reportUpdated$: Observable<string | number>;
   queryParams: any;
 
   adminCalendarOptions;
@@ -393,7 +393,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           })
         );
 
-      this.reportUpdated$ = this.adminService.reports.currentReport$;
+      this.reportUpdated$ = this.adminService.reports.currentReportId$;
 
       this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
         filter(res => this.currentView$.getValue() === 'report_search'),
@@ -842,8 +842,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
-  openReportDialog(report) {
-    console.log(report)
+  openReportDialog(report: Report) {
     this.reportSearchState.entities$
       .pipe(
         take(1),
