@@ -56,26 +56,27 @@
             [form]="passLimitForm"
             controlName="enabled"
             [delimiter]="false"
+            (pushOutValue)="onEnabledToggle($event)"
           ></app-toggle-input>
         </div>
 
         <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
           <app-input
             [isFocus]="true"
-            [input_value]="passLimitForm.value['limits']"
             width="125px"
             placeholder="# of passes"
             [formGroup]="passLimitForm"
             [controlName]="passLimitForm.get('limits')"></app-input>
 
+          <!-- TODO: Change this to dropdown when multiple frequencies are implemented -->
           <app-gradient-button
             id="passLimitFrequencyButton"
             style="margin-top: 4px"
             textColor="#000000"
             gradient="#F4F4F4">
-            per {{passLimitForm.value['frequency']}}
+            per day
           </app-gradient-button>
-          <p style="width: 100%; color: #E32C66" *ngIf="showLimitFormatError">Proper format: 1 pass, 4 passes, 10 passes</p>
+          <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="showLimitFormatError">Hint: 1 pass, 4 passes, 10 passes</p>
         </div>
       </div>
 

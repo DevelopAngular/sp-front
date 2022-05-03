@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpService} from './http-service';
 import {Observable, of} from 'rxjs';
 import {HallPassLimit} from '../models/HallPassLimits';
-import {catchError, concatMap} from 'rxjs/operators';
+import {concatMap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,26 +11,16 @@ export class PassLimitService {
 
   constructor(private http: HttpService) {}
 
-  getPassLimit(): Observable<HallPassLimit> {
-    return of<HallPassLimit>({
-      id: 1,
-      schoolId: 1,
-      passLimit: 5,
-      frequency: 'day',
-      limitEnabled: true
-    });
-    // return this.http.currentSchool$.pipe(
-    //   concatMap(school => { console.log('here 2'); return this.http.get<HallPassLimit>(`v1/pass_limits/?school_id=${school.id}`) }),
-    //   catchError(() => {
-    //     return of<HallPassLimit>({
-    //       id: 1,
-    //       schoolId: 1,
-    //       passLimit: 5,
-    //       frequency: 'day',
-    //       limitEnabled: true
-    //     })
-    //   })
-    // );
+  getPassLimit(): Observable<{ pass_limit: HallPassLimit }> {
+    return this.http.currentSchool$.pipe(
+      concatMap(school => this.http.get<{ pass_limit: HallPassLimit }>(`http://localhost:8000/api/staging/v1/pass_limits/?school_id=${school.id}`))
+    );
+  }
+
+  createPassLimit(pl: HallPassLimit) {
+    return this.http.currentSchool$.pipe(
+      concatMap(school => this.http.post('http://localhost:8000/api/staging/v1/pass_limits/create', pl))
+    );
   }
 
   getRemainingLimits(): Observable<number> {
@@ -38,6 +28,6 @@ export class PassLimitService {
   }
 
   updatePassLimits(pl: HallPassLimit) {
-    return this.http.put('vi/pass-limits/update', pl);
+    return this.http.put('http://localhost:8000/api/staging/v1/pass_limits/update', pl);
   }
 }

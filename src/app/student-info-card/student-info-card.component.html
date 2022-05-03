@@ -160,10 +160,10 @@
                     <div class="icon" style="background-color: #5E4FED">
                       <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
                     </div>
-                    <div class="title" style="font-weight: 600">Pass Limits
-                      <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                    <div class="title" style="font-weight: 600" customToolTip [contentTemplate]="passLimitInfo">Pass Limits
+                      <span class="support-icon"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                     </div>
-                    <ng-template #text>
+                    <ng-template #passLimitInfo>
                       <div class="ds-tooltip" style="width: 200px">Limit the number of passes certain individual students can have per day. This overrides the school limit if set. <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: #FFFFFF">Learn more.</a></div>
                     </ng-template>
                   </div>

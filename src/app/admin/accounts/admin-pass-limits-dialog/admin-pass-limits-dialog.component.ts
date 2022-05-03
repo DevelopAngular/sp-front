@@ -36,6 +36,7 @@ export class AdminPassLimitDialogComponent implements OnInit {
   passLimitToggleTooltip = `Some help text about pass limits`; // TODO: Get text for this
   individualLimitsTooltop = `Some help text about individual limits`; // TODO: Get text for this
   individualStudentLimits = [];
+  hasPassLimit: boolean;
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
     enabled: new FormControl(false),
@@ -56,6 +57,17 @@ export class AdminPassLimitDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    /**
+     * Fetch the pass limit and individual limits for the school
+     * If fetching the school-wide pass limit returns null (??), then the school has
+     * no pass limits.
+     * Enabling the pass limit slider creates the pass limit and the user has the option to specify the number
+     * of passes per day that is allowed
+     * «
+     * If the pass limit does not exist, then the slider creates the limit when enabled
+     * If a pass limit already exists, then the slider enables/disables the limit
+     */
+
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.passLimitFormSubs = this.passLimitForm.valueChanges.subscribe((v) => {
       v.enabled
@@ -65,20 +77,24 @@ export class AdminPassLimitDialogComponent implements OnInit {
     this.passLimitForm.disable();
     this.passLimitService.getPassLimit().subscribe({
       next: pl => {
-        this.passLimit = pl;
-        this.passLimitForm.patchValue({
-          limits: `${pl.passLimit} passes`,
-          enabled: pl.limitEnabled,
-          frequency: pl.frequency
-        });
+        this.hasPassLimit = pl.pass_limit !== null;
+        if (this.hasPassLimit) {
+          const { pass_limit } = pl;
+          this.passLimit = pass_limit;
+          this.passLimitForm.patchValue({
+            limits: `${pass_limit.passLimit} passes`,
+            enabled: true,
+            frequency: pass_limit.frequency
+          });
+        }
         this.passLimitFormLastValue = this.passLimitForm.value;
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
           map(v => {
-            this.showLimitFormatError = this.passLimitForm.get('limits').invalid;
+            this.showLimitFormatError = this.passLimitForm.get('limits').invalid && this.passLimitForm.get('limits').dirty;
             return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
           }));
         this.passLimitForm.enable();
-      }
+      },
     });
   }
 
@@ -111,9 +127,30 @@ export class AdminPassLimitDialogComponent implements OnInit {
   }
 
   updatePassLimits() {
-    this.passLimitService.updatePassLimits({
-      ...this.passLimit,
-      ...this.passLimitForm.value
-    }).subscribe(() => {});
+    if (this.hasPassLimit) {
+      // update put request
+      // this.passLimitService.updatePassLimits({
+      //   ...this.passLimit,
+      //   ...this.passLimitForm.value
+      // }).subscribe();
+      console.log('Updating current pass limit');
+    } else {
+      console.log('Creating new pass limit');
+      // create post request5
+      // set hasPassLimit to true afterwards
+    }
+
+  }
+
+  onEnabledToggle(change: boolean) {
+    if (!this.hasPassLimit) {
+      if (change) {
+        this.passLimitForm.patchValue({
+          frequency: 'day'
+        });
+      } else {
+        this.passLimitForm.reset();
+      }
+    }
   }
 }

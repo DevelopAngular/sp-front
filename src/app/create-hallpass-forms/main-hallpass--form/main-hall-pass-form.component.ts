@@ -144,7 +144,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       this.passLimitsRemaining = r;
     });
 
-    this.passLimitsMax = this.passLimitsService.getPassLimit().pipe(map(l => l.passLimit));
+    this.passLimitsMax = this.passLimitsService.getPassLimit().pipe(map(l => l.pass_limit.passLimit));
     switch (this.dialogData['forInput']) {
       case true:
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
