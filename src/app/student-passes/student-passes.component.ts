@@ -30,7 +30,7 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, take} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
 import * as moment from 'moment';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
@@ -67,10 +67,14 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   lastStudentPasses: Observable<HallPass[]>;
 
+  isStaff: boolean;// for stuff passes will have a richer UI
+  extraSpace: number = 50; // space we need for staff UI
+
   isScrollable: boolean;
   animationTrigger = {value: 'open', params: {size: '75'}};
   scaleCardTrigger$: Observable<string>;
   resizeTrigger$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
+  resizeTriggerParams$: Observable<{value: 'open' | 'close', params: {height: number}}>;
   fadeInOutTrigger$: Observable<string>;
   isOpenEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   loading$: Observable<boolean>;
@@ -105,7 +109,23 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     private encounterPreventionService: EncounterPreventionService,
     private router: Router,
     private userService: UserService
-  ) { }
+  ) {
+    // knows if the component is used by staff member
+    // TODO may this bit of code belongs to userService 
+    this.userService.user$.pipe(
+      take(1),
+      map(user => {
+        const isStaff = 
+            user.roles.includes('_profile_teacher') ||
+            user.roles.includes('_profile_admin') ||
+            user.roles.includes('_profile_assistant');
+        return isStaff;
+      }),
+    ).subscribe(isStaff => {
+      this.isStaff = isStaff;
+      this.height += this.extraSpace;
+    });
+  }
 
   ngAfterViewInit() {
     if (!this.isResize) {
@@ -132,6 +152,21 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
           }, []);
         })
       );
+
+    this.resizeTriggerParams$ = this.resizeTrigger$
+      .pipe(
+        map((s: 'open' | 'close') => {
+          const h = s === 'open' ? 475 : 75;
+          const args = {
+            value: s, 
+            params: {
+              height: this.extraSpace + h
+            }
+          };
+          console.log(args)
+          return args;
+        }),
+      ); 
   }
 
   ngOnDestroy() {
@@ -191,6 +226,11 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       this.isOpenEvent$.next(false);
       this.domCheckerService.scalePassCardTrigger$.next('unresize');
     }
+  }
+
+  buttonClicked(event) {
+      event.stopPropagation();
+      console.log(event) 
   }
 
   notClose(value) {

@@ -194,6 +194,17 @@
   background-size: 88px 100%;
 }
 
+.action-buttons-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; 
+  padding:  0px 10px;
+  .action-button {
+    flex-grow: 1;
+  }
+}
+
 @keyframes avatar-shimmer {
   0% {
     background-position: -88px 0;

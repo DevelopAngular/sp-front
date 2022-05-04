@@ -1,8 +1,7 @@
-
 <div class="host">
   <div
     [@scaleStudentPasses]="scaleCardTrigger$ | async"
-    [@resizeStudentPasses]="resizeTrigger$ | async"
+    [@resizeStudentPasses]="resizeTriggerParams$ | async"
     [@studentPassFadeInOut]="fadeInOutTrigger$ | async"
     [@pressState]="pressed && !isOpen ? 'down' : 'up'"
     class="student-wrapper"
@@ -82,6 +81,32 @@
           </ng-template>
         </div>
       </div>
+    </div>
+    <div 
+      *ngIf="isStaff && !isOpen"
+      class="action-buttons-wrapper"
+      [style.marginTop]="(height-extraSpace + 10) + 'px'"
+    >
+      <app-gradient-button
+        [leftIcon]="'./assets/Report (Gray-500).svg' | resolveAsset"
+        [textColor]="'#7083A0'"
+        [customBackground]="'#F0F2F5'"
+        [isGradient]="false"
+        [withShadow]="false"
+        [className]="'action-button'"
+        
+        (buttonClick)="buttonClicked($event)"
+      >Report</app-gradient-button>
+      <app-gradient-button
+        [leftIcon]="'./assets/Plus (Gray-500).svg' | resolveAsset"
+        [textColor]="'#7083A0'"
+        [customBackground]="'#F0F2F5'"
+        [isGradient]="false"   
+        [withShadow]="false"
+        [className]="'action-button'"
+        
+        (buttonClick)="buttonClicked($event)"
+      >Create pass</app-gradient-button>
     </div>
 
     <div class="collection-wrapper" *ngIf="(isOpenEvent$ | async) || !isResize " (scroll)="scroll($event)" [style.height]="!isResize ? '300px' : '475px'">
