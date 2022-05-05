@@ -30,13 +30,14 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
-import {filter, map, take} from 'rxjs/operators';
+import {filter, map, take, delay} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
 import * as moment from 'moment';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
 import {ExclusionGroup} from '../models/ExclusionGroup';
 import {Router} from '@angular/router';
 import {UserService} from '../services/user.service';
+import {ReportFormComponent} from '../report-form/report-form.component';
 
 @Component({
   selector: 'app-student-passes',
@@ -67,7 +68,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   lastStudentPasses: Observable<HallPass[]>;
 
-  isStaff: boolean;// for stuff passes will have a richer UI
+  isStaff: boolean;// for staff the passes have a richer UI
   extraSpace: number = 50; // space we need for staff UI
 
   isScrollable: boolean;
@@ -104,6 +105,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   constructor(
     private dialog: MatDialog,
     @Optional() private dialogRef: MatDialogRef<PassCardComponent>,
+    @Optional() private dialogReportRef: MatDialogRef<ReportFormComponent>,
     private domCheckerService: DomCheckerService,
     private passesService: HallPassesService,
     private encounterPreventionService: EncounterPreventionService,
@@ -226,6 +228,33 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       this.isOpenEvent$.next(false);
       this.domCheckerService.scalePassCardTrigger$.next('unresize');
     }
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
+  openReport(event) {
+    event.stopPropagation();
+    this.dialogRef.close();
+//    this.isReportFormOpened = true;
+    const reportRef = this.dialog.open(ReportFormComponent, {
+      panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
+      backdropClass: 'custom-backdrop',
+    });
+
+    reportRef.afterClosed().pipe(
+      filter(res => !!res),
+      map(res => {
+      console.log(res)
+        //this.sendReports = res;
+        //this.isActiveMessage = true;
+    })).subscribe(() => {
+      //this.isActiveMessage = false;
+      //this.isReportFormOpened = false;
+    });
+
+    //this.reportFormInstance = dialogRef.componentInstance;
   }
 
   buttonClicked(event) {

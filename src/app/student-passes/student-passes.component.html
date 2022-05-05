@@ -88,6 +88,7 @@
       [style.marginTop]="(height-extraSpace + 10) + 'px'"
     >
       <app-gradient-button
+        [cursor]="pointer"
         [leftIcon]="'./assets/Report (Gray-500).svg' | resolveAsset"
         [textColor]="'#7083A0'"
         [customBackground]="'#F0F2F5'"
@@ -95,9 +96,10 @@
         [withShadow]="false"
         [className]="'action-button'"
         
-        (buttonClick)="buttonClicked($event)"
+        (buttonClick)="openReport($event)"
       >Report</app-gradient-button>
       <app-gradient-button
+        [cursor]="pointer"
         [leftIcon]="'./assets/Plus (Gray-500).svg' | resolveAsset"
         [textColor]="'#7083A0'"
         [customBackground]="'#F0F2F5'"
