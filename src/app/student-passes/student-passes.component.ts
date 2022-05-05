@@ -235,13 +235,14 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     return DeviceDetection.isIOSTablet();
   }
 
-  openReport(event) {
+  openReport(event, pass) {
     event.stopPropagation();
     //this.dialogRef.close();
 //    this.isReportFormOpened = true;
     const reportRef = this.dialog.open(ReportFormComponent, {
       panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
       backdropClass: 'custom-backdrop',
+      //data: Object.assign({}, pass),
       // to skip choosing the students 
       // as the student's pass is to be reported
       //data: {report: [this.profile]},

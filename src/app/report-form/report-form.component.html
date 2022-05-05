@@ -27,7 +27,7 @@
     </app-white-button>
   </ng-template>
 
-  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white; overflow: auto;">
+  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white; overflow: auto; width: 425px">
 
     <div style="display: flex; flex-direction: column; flex: 1 1 auto; padding: 0px 25px;" *ngIf="showOptions">
       <label for="student-select">Student</label>
@@ -49,6 +49,11 @@
       <div id="message-entry" class="message-entry" [attr.data-motion-translate]="true">
         <div data-grammarly-issue-container class="message-wrapper">
           <textarea class="message-box" #messageBox placeholder="Ex. Student did not return to class" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
+        </div>
+
+      <label for="pass">Pass</label>
+      <div class="tile">
+        {{data | json}}
         </div>
        
       </div>
