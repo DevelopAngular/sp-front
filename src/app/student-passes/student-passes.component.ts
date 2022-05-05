@@ -71,6 +71,8 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   isStaff: boolean;// for staff the passes have a richer UI
   extraSpace: number = 50; // space we need for staff UI
 
+  reportFormInstance: ReportFormComponent;
+
   isScrollable: boolean;
   animationTrigger = {value: 'open', params: {size: '75'}};
   scaleCardTrigger$: Observable<string>;
@@ -105,7 +107,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   constructor(
     private dialog: MatDialog,
     @Optional() private dialogRef: MatDialogRef<PassCardComponent>,
-    @Optional() private dialogReportRef: MatDialogRef<ReportFormComponent>,
     private domCheckerService: DomCheckerService,
     private passesService: HallPassesService,
     private encounterPreventionService: EncounterPreventionService,
@@ -236,11 +237,14 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   openReport(event) {
     event.stopPropagation();
-    this.dialogRef.close();
+    //this.dialogRef.close();
 //    this.isReportFormOpened = true;
     const reportRef = this.dialog.open(ReportFormComponent, {
       panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
       backdropClass: 'custom-backdrop',
+      // to skip choosing the students 
+      // as the student's pass is to be reported
+      //data: {report: [this.profile]},
     });
 
     reportRef.afterClosed().pipe(
@@ -254,10 +258,11 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       //this.isReportFormOpened = false;
     });
 
-    //this.reportFormInstance = dialogRef.componentInstance;
+    this.reportFormInstance = reportRef.componentInstance;
   }
 
   buttonClicked(event) {
+    console.log(this.profile)
       event.stopPropagation();
       console.log(event) 
   }

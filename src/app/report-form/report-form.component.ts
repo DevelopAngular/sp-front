@@ -40,8 +40,8 @@ export class ReportFormComponent implements OnInit {
   ngOnInit() {
     this.frameMotion$ = this.createForm.getFrameMotionDirection();
      if (this.data) {
-       this.selectedStudents.push(this.data['report']);
-         this.showOptions = !this.data['report'];
+      this.selectedStudents.push(this.data['report']);
+      this.showOptions = !this.data['report'];
      }
   }
   textColor(item) {
