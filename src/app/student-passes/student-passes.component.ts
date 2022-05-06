@@ -295,6 +295,13 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       data,
     });
 
+    reportRef.afterOpened().subscribe(() => {
+      // back button will close the dialog
+      // it usually close the dialog or it goes back one step the report form
+      // report form was/is a 2-step form 
+      reportRef.componentInstance.forceCloseClick = true;
+    })
+
     reportRef.afterClosed().pipe(
       delay(300),
       filter(res => !!res),

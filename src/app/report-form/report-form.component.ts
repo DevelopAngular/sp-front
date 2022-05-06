@@ -27,6 +27,7 @@ export class ReportFormComponent implements OnInit {
   selectedStudents: User[] = [];
   showOptions = true;
   reportMessage = '';
+  forceCloseClick = false;
 
 
   constructor(
@@ -44,6 +45,7 @@ export class ReportFormComponent implements OnInit {
       this.showOptions = !this.data['report'];
      }
   }
+
   textColor(item) {
     if (item.hovered) {
       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
@@ -89,8 +91,12 @@ export class ReportFormComponent implements OnInit {
   back() {
     this.createForm.setFrameMotionDirection('back');
     setTimeout(() => {
+      console.log(this.forceCloseClick)
       if (!this.showOptions) {
         this.showOptions = true;
+        if (this.forceCloseClick) {
+          this.dialogRef.close(null);
+        }
       } else {
         this.dialogRef.close(null);
       }

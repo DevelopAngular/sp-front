@@ -51,18 +51,20 @@
           <textarea class="message-box" #messageBox placeholder="Ex. Student did not return to class" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>
 
-      <label for="pass">Pass</label>
-      <div class="tile">
-        <app-pass-tile
-         [pass]="data['pass']"
-         [forStaff]="data['forStaff']"
-         [fromPast]="data['fromPast']"
-         [forFuture]="data['forFuture']"
-         [isActive]="data['isActive']"
-         [allowPopup]="true"
-         [profileImage]="data['showProfilePictures']"
-        ></app-pass-tile>
-        </div>
+      <ng-container *ngIf="!showOptions">
+        <label for="pass">Pass</label>
+        <div class="tile">
+          <app-pass-tile
+           [pass]="data['pass']"
+           [forStaff]="data['forStaff']"
+           [fromPast]="data['fromPast']"
+           [forFuture]="data['forFuture']"
+           [isActive]="data['isActive']"
+           [allowPopup]="true"
+           [profileImage]="data['showProfilePictures']"
+          ></app-pass-tile>
+          </div>
+        </ng-container>
        
       </div>
     </div>
