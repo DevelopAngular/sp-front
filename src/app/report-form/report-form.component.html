@@ -27,9 +27,9 @@
     </app-white-button>
   </ng-template>
 
-  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white; overflow: auto; width: 425px">
+  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white; overflow: auto; width: 425px; max-height: 500px">
 
-    <div style="display: flex; flex-direction: column; flex: 1 1 auto; padding: 0px 25px;" *ngIf="showOptions">
+    <div style="display: flex; flex-direction: column; flex: 1 1 auto; padding: 0px 25px;" >
       <label for="student-select">Student</label>
       <div id="student-select" class="student-select" [attr.data-motion-translate]="true">
         <div class="report-content">
@@ -53,7 +53,10 @@
 
       <label for="pass">Pass</label>
       <div class="tile">
-        {{data | json}}
+        <app-pass-tile
+         [forStaff]="data['forStaff']"
+         [pass]="data['pass']"
+        ></app-pass-tile>
         </div>
        
       </div>

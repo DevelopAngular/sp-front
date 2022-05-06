@@ -37,7 +37,9 @@ import {EncounterPreventionService} from '../services/encounter-prevention.servi
 import {ExclusionGroup} from '../models/ExclusionGroup';
 import {Router} from '@angular/router';
 import {UserService} from '../services/user.service';
+import {TimeService} from '../services/time.service';
 import {ReportFormComponent} from '../report-form/report-form.component';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 @Component({
   selector: 'app-student-passes',
@@ -111,7 +113,9 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     private passesService: HallPassesService,
     private encounterPreventionService: EncounterPreventionService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private timeService: TimeService,
+    private kioskMode: KioskModeService,
   ) {
     // knows if the component is used by staff member
     // TODO may this bit of code belongs to userService 
@@ -235,20 +239,65 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     return DeviceDetection.isIOSTablet();
   }
 
+  preparePassData(pass) {
+    //const now = this.timeService.nowDate();
+    //now.setSeconds(now.getSeconds() + 10);
+
+    pass = Object.assign({}, pass);
+    let data: any = {};
+   // let fromPast = false;
+   // let forFuture = false;
+   // let isActive = false;
+    let forStaff = true;
+   // let forMonitor = false;
+
+    if (pass instanceof HallPass) {
+      data = {
+        pass,
+        //fromPast: pass['end_time'] < now,
+        //forFuture: pass['start_time'] > now,
+        //forMonitor: forMonitor,
+        forStaff: forStaff && !this.kioskMode.getCurrentRoom().value,
+        //kioskMode: !!this.kioskMode.getCurrentRoom().value,
+        //hideReport: this.isAdminPage,
+        //activePassTime$: this.activePassTime$,
+        //showStudentInfoBlock: !this.kioskMode.getCurrentRoom().value
+      };
+      //data.isActive = !data.fromPast && !data.forFuture;
+    } else {
+      data = {
+        pass,
+        //fromPast,
+        //forFuture,
+        //forMonitor,
+        //isActive,
+        forStaff,
+      };
+    }
+ 
+    console.log(data);
+    return data;
+  }
+
   openReport(event, pass) {
     event.stopPropagation();
+    pass = this.preparePassData(pass);
+    const data = {
+      // to skip choosing the students 
+      // as the student's pass is to be reported
+      report: this.profile, 
+      pass,
+      forStaff: true,
+    };
     //this.dialogRef.close();
-//    this.isReportFormOpened = true;
     const reportRef = this.dialog.open(ReportFormComponent, {
       panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
       backdropClass: 'custom-backdrop',
-      //data: Object.assign({}, pass),
-      // to skip choosing the students 
-      // as the student's pass is to be reported
-      //data: {report: [this.profile]},
+      data,
     });
 
     reportRef.afterClosed().pipe(
+      delay(300),
       filter(res => !!res),
       map(res => {
       console.log(res)
@@ -258,8 +307,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       //this.isActiveMessage = false;
       //this.isReportFormOpened = false;
     });
-
-    this.reportFormInstance = reportRef.componentInstance;
   }
 
   buttonClicked(event) {
