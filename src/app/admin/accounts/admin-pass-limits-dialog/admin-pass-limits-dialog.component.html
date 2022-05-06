@@ -15,7 +15,15 @@
         <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
           <div class="ds-dialog-title-white" [style.margin-left]="'12px'">Pass Limits</div>
         </div>
-        <app-gradient-button (buttonClick)="updatePassLimits()" gradient="#FFFFFF,#FFFFFF" textColor="black" [disabled]="passLimitForm.invalid">Update</app-gradient-button>
+        <app-gradient-button (buttonClick)="updatePassLimits()" gradient="#FFFFFF,#FFFFFF" textColor="black" [disabled]="passLimitForm.invalid">
+          <ng-container *ngIf='requestLoading; else update'>
+            <mat-spinner class="request-loading" [diameter]="25"></mat-spinner>
+          </ng-container>
+
+          <ng-template #update>
+            Update
+          </ng-template>
+        </app-gradient-button>
       </div>
     </ng-template>
 
@@ -54,19 +62,19 @@
             style="width: auto"
             controlSize="small"
             [form]="passLimitForm"
-            controlName="enabled"
+            controlName="limitEnabled"
             [delimiter]="false"
             (pushOutValue)="onEnabledToggle($event)"
           ></app-toggle-input>
         </div>
 
-        <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
+        <div *ngIf="passLimitForm.value['limitEnabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
           <app-input
             [isFocus]="true"
             width="125px"
             placeholder="# of passes"
             [formGroup]="passLimitForm"
-            [controlName]="passLimitForm.get('limits')"></app-input>
+            [controlName]="passLimitForm.get('passLimit')"></app-input>
 
           <!-- TODO: Change this to dropdown when multiple frequencies are implemented -->
           <app-gradient-button

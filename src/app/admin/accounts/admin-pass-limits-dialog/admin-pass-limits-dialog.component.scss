@@ -27,6 +27,10 @@
   }
 }
 
+::ng-deep .request-loading svg > circle {
+  stroke: black;
+}
+
 .header {
   background: rgb(102, 81, 241)
 }

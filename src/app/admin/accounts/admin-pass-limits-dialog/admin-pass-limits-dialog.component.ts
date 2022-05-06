@@ -6,7 +6,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {NextStep} from '../../../animations';
 import {ScreenService} from '../../../services/screen.service';
 import {PassLimitService} from '../../../services/pass-limit.service';
-import {map} from 'rxjs/operators';
+import {concatMap, delay, map, tap} from 'rxjs/operators';
 import {HallPassLimit} from '../../../models/HallPassLimits';
 
 /**
@@ -39,14 +39,15 @@ export class AdminPassLimitDialogComponent implements OnInit {
   hasPassLimit: boolean;
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
-    enabled: new FormControl(false),
-    limits: new FormControl(null, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)),
+    limitEnabled: new FormControl(false),
+    passLimit: new FormControl(null, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)),
     frequency: new FormControl(null, Validators.required)
   }); // TODO: disable while fetching the pass limit status
   passLimitFormSubs: Subscription;
   passLimitFormChanged: Observable<boolean> = of(false);
   passLimitFormLastValue: {enabled: boolean, limits: string, frequency: string};
   showLimitFormatError = false;
+  requestLoading = false;
 
   constructor(
     private dialog: MatDialog,
@@ -71,31 +72,37 @@ export class AdminPassLimitDialogComponent implements OnInit {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.passLimitFormSubs = this.passLimitForm.valueChanges.subscribe((v) => {
       v.enabled
-        ? this.passLimitForm.controls['limits'].setValidators([Validators.required, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)])
-        : this.passLimitForm.controls['limits'].setValidators([Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)]);
+        ? this.passLimitForm.controls['passLimit'].setValidators([Validators.required, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)])
+        : this.passLimitForm.controls['passLimit'].setValidators([Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)]);
     });
     this.passLimitForm.disable();
-    this.passLimitService.getPassLimit().subscribe({
-      next: pl => {
-        this.hasPassLimit = pl.pass_limit !== null;
+    this.passLimitService.getPassLimit().pipe(
+      concatMap(pl => {
+        this.hasPassLimit = !!pl.pass_limit;
         if (this.hasPassLimit) {
-          const { pass_limit } = pl;
-          this.passLimit = pass_limit;
+          this.passLimit = pl.pass_limit;
+          this.passLimitForm.patchValue({ limitEnabled: this.passLimit.limitEnabled });
+          return of(true).pipe(delay(100));
+        }
+        return of(true);
+      }),
+      tap(() => {
+        if (this.hasPassLimit) {
           this.passLimitForm.patchValue({
-            limits: `${pass_limit.passLimit} passes`,
-            enabled: true,
-            frequency: pass_limit.frequency
+            passLimit: `${this.passLimit.passLimit} passes`,
+            frequency: this.passLimit.frequency
           });
         }
         this.passLimitFormLastValue = this.passLimitForm.value;
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
           map(v => {
-            this.showLimitFormatError = this.passLimitForm.get('limits').invalid && this.passLimitForm.get('limits').dirty;
+            const { invalid, dirty } = this.passLimitForm.get('passLimit');
+            this.showLimitFormatError = invalid && dirty;
             return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
           }));
         this.passLimitForm.enable();
-      },
-    });
+      })
+    ).subscribe();
   }
 
   // TODO: This is for when multiple pass frequencies are implemented
@@ -127,29 +134,48 @@ export class AdminPassLimitDialogComponent implements OnInit {
   }
 
   updatePassLimits() {
-    if (this.hasPassLimit) {
-      // update put request
-      // this.passLimitService.updatePassLimits({
-      //   ...this.passLimit,
-      //   ...this.passLimitForm.value
-      // }).subscribe();
-      console.log('Updating current pass limit');
-    } else {
-      console.log('Creating new pass limit');
-      // create post request5
-      // set hasPassLimit to true afterwards
-    }
+    this.requestLoading = true;
+    const passLimit = parseInt(this.passLimitForm.value['passLimit'].split(' ')[0], 10);
+    const newValue = {
+      ...this.passLimit,
+      ...this.passLimitForm.value,
+      passLimit
+    };
 
+    const request = this.hasPassLimit
+      ? this.passLimitService.updatePassLimits(newValue)
+      : this.passLimitService.createPassLimit(newValue);
+
+    request.subscribe({
+      next: () => {
+        this.hasPassLimit = true;
+        this.requestLoading = false;
+        this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
+          map(v => {
+            const { invalid, dirty } = this.passLimitForm.get('passLimit');
+            this.showLimitFormatError = invalid && dirty;
+            return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
+          }));
+      },
+      error: () => {
+        this.requestLoading = false;
+      }
+    });
   }
 
-  onEnabledToggle(change: boolean) {
-    if (!this.hasPassLimit) {
-      if (change) {
+  async onEnabledToggle(change: boolean) {
+    await new Promise(resolve => { setTimeout(() => { resolve(); }, 50); });
+    if (change) {
+      if (this.hasPassLimit) {
         this.passLimitForm.patchValue({
-          frequency: 'day'
+          passLimit: `${this.passLimit.passLimit} passes`,
+          frequency: this.passLimit.frequency
         });
       } else {
-        this.passLimitForm.reset();
+        this.passLimitForm.patchValue({
+          passLimit: '5 passes',
+          frequency: 'day'
+        });
       }
     }
   }

@@ -19,7 +19,11 @@ export class PassLimitService {
 
   createPassLimit(pl: HallPassLimit) {
     return this.http.currentSchool$.pipe(
-      concatMap(school => this.http.post('http://localhost:8000/api/staging/v1/pass_limits/create', pl))
+      concatMap(school => {
+        pl.schoolId = parseInt(school.id, 10);
+        console.log(pl);
+        return this.http.post('http://localhost:8000/api/staging/v1/pass_limits/create', pl, undefined, false);
+      })
     );
   }
 
@@ -28,6 +32,12 @@ export class PassLimitService {
   }
 
   updatePassLimits(pl: HallPassLimit) {
-    return this.http.put('http://localhost:8000/api/staging/v1/pass_limits/update', pl);
+    return this.http.currentSchool$.pipe(
+      concatMap(school => {
+        pl.schoolId = parseInt(school.id, 10);
+        console.log(pl);
+        return this.http.put('http://localhost:8000/api/staging/v1/pass_limits/update', pl);
+      })
+    );
   }
 }
