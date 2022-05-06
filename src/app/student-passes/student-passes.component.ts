@@ -30,7 +30,7 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
-import {filter, map, take, delay} from 'rxjs/operators';
+import {filter, map, take, tap, delay} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
 import * as moment from 'moment';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
@@ -40,6 +40,9 @@ import {UserService} from '../services/user.service';
 import {TimeService} from '../services/time.service';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 @Component({
   selector: 'app-student-passes',
@@ -170,7 +173,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
               height: this.extraSpace + h
             }
           };
-          console.log(args)
           return args;
         }),
       ); 
@@ -307,7 +309,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       delay(300),
       filter(res => !!res),
       map(res => {
-      console.log(res)
+        //TODO
         //this.sendReports = res;
         //this.isActiveMessage = true;
     })).subscribe(() => {
@@ -316,10 +318,46 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
-  buttonClicked(event) {
-    console.log(this.profile)
-      event.stopPropagation();
-      console.log(event) 
+  openCreatePass(event) {
+    event.stopPropagation();
+    const settings = [
+      {
+        label: 'Create pass for now',
+        icon: './assets/Plus (Blue-Gray).svg',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'now'
+      },
+      {
+        label: 'Create future pass',
+        icon: './assets/Schedule pass (Blue-Gray).svg',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'feature'
+      }
+    ];
+    UNANIMATED_CONTAINER.next(true);
+    const st = this.dialog.open(SettingsDescriptionPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {trigger: event.currentTarget, settings }
+    });
+
+    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+      .subscribe((action) => {
+        const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+          panelClass: 'main-form-dialog-container',
+          backdropClass: 'custom-backdrop',
+          maxWidth: '100vw',
+          data: {
+            'forLater': action === 'feature',
+            'forStaff': true,
+            'forInput': true,
+            'fromAdmin': true,
+            'adminSelectedStudent': this.profile
+          }
+        });
+    });
   }
 
   notClose(value) {

@@ -47,7 +47,6 @@ export class ReportFormComponent implements OnInit {
   ngOnInit() {
     this.frameMotion$ = this.createForm.getFrameMotionDirection();
      if (this.data) {
-       console.log(this.data);
       this.selectedStudents.push(this.data['report']);
       this.showOptions = !this.data['report'];
      }
@@ -98,7 +97,6 @@ export class ReportFormComponent implements OnInit {
   back() {
     this.createForm.setFrameMotionDirection('back');
     setTimeout(() => {
-      console.log(this.forceCloseClick)
       if (!this.showOptions) {
         this.showOptions = true;
         if (this.forceCloseClick) {
