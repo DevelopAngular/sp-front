@@ -202,12 +202,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getBg() {
-    if (this.hovered && !this.isOpen) {
+    /*if (this.hovered && !this.isOpen) {
       if (this.pressed) {
         return '#EAEDF1';
       }
       return '#F0F2F5';
-    }
+    }*/
     return '#FFFFFF';
   }
 
@@ -275,7 +275,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       };
     }
  
-    console.log(data);
     return data;
   }
 
@@ -299,8 +298,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       // back button will close the dialog
       // it usually close the dialog or it goes back one step the report form
       // report form was/is a 2-step form 
-      reportRef.componentInstance.forceCloseClick = true;
-    })
+      const c = reportRef.componentInstance;
+      c.forceCloseClick = true;
+      c.useChipInsteadSearch = true;
+    });
 
     reportRef.afterClosed().pipe(
       delay(300),

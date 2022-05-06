@@ -108,7 +108,7 @@
         [className]="'action-button'"
         
         (buttonClick)="buttonClicked($event)"
-      >Create pass</app-gradient-button>
+      >Create Pass</app-gradient-button>
     </div>
 
     <div class="collection-wrapper" *ngIf="(isOpenEvent$ | async) || !isResize " (scroll)="scroll($event)" [style.height]="!isResize ? '300px' : '475px'">

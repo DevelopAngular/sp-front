@@ -197,8 +197,8 @@ textarea {
   .message-box {
     width: 100%;
     height: 100px;
-    background-color: #F0F2F5;
-    border: 1px solid #E2E6EC;
+    background-color: $gray100;
+    border: 1px solid $gray200;
     border-radius: 10px;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     font-size: 14px;
@@ -216,4 +216,15 @@ textarea {
 .tile {
   max-width: 150px;
   margin-bottom: 30px;// same as label
+}
+
+.chip {
+  background-color: $gray100;
+  border-radius: 8px;
+  height: 31px;
+  padding: 0px 10px;
+  display: flex;
+  align-items: center;
+  color: $gray900;
+  width: min-content;
 }

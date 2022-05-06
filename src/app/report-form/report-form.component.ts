@@ -27,7 +27,13 @@ export class ReportFormComponent implements OnInit {
   selectedStudents: User[] = [];
   showOptions = true;
   reportMessage = '';
+
+  // click on closing elements will close the dialog
+  // instead of other closing actions
   forceCloseClick = false;
+  // do not use search input 
+  // but replace it with a dumb chip
+  useChipInsteadSearch = false;
 
 
   constructor(
@@ -41,6 +47,7 @@ export class ReportFormComponent implements OnInit {
   ngOnInit() {
     this.frameMotion$ = this.createForm.getFrameMotionDirection();
      if (this.data) {
+       console.log(this.data);
       this.selectedStudents.push(this.data['report']);
       this.showOptions = !this.data['report'];
      }

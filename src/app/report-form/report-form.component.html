@@ -27,7 +27,7 @@
     </app-white-button>
   </ng-template>
 
-  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white; overflow: auto; width: 425px; max-height: 500px">
+  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white; width: 425px; height: 500px; overflow: auto">
 
     <div style="display: flex; flex-direction: column; flex: 1 1 auto; padding: 0px 25px;" >
       <label for="student-select">Student</label>
@@ -35,11 +35,20 @@
         <div class="report-content">
 
           <app-sp-search
+            *ngIf="!useChipInsteadSearch"
+            [focused]="showOptions"
             [selectedOptions]="selectedStudents"
             [showOptions]="showOptions"
             (onUpdate)="selectedStudents=$event"
             (click)="showOptions=true">
           </app-sp-search>
+
+          <div
+            class="chip"
+            *ngIf="useChipInsteadSearch"
+            >{{data?.report?.display_name}}
+          </div>
+
 
         </div>
 
@@ -51,7 +60,7 @@
           <textarea class="message-box" #messageBox placeholder="Ex. Student did not return to class" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>
 
-      <ng-container *ngIf="!showOptions">
+      <ng-container *ngIf="!showOptions && data['pass']">
         <label for="pass">Pass</label>
         <div class="tile">
           <app-pass-tile
