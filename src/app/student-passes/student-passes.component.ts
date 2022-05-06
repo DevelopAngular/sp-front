@@ -240,37 +240,37 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   preparePassData(pass) {
-    //const now = this.timeService.nowDate();
-    //now.setSeconds(now.getSeconds() + 10);
+    const now = this.timeService.nowDate();
+    now.setSeconds(now.getSeconds() + 10);
 
     pass = Object.assign({}, pass);
     let data: any = {};
-   // let fromPast = false;
-   // let forFuture = false;
-   // let isActive = false;
+    let fromPast = false;
+    let forFuture = false;
+    let isActive = false;
     let forStaff = true;
-   // let forMonitor = false;
+    let forMonitor = false;
 
     if (pass instanceof HallPass) {
       data = {
         pass,
-        //fromPast: pass['end_time'] < now,
-        //forFuture: pass['start_time'] > now,
-        //forMonitor: forMonitor,
+        fromPast: pass['end_time'] < now,
+        forFuture: pass['start_time'] > now,
+        forMonitor: forMonitor,
         forStaff: forStaff && !this.kioskMode.getCurrentRoom().value,
-        //kioskMode: !!this.kioskMode.getCurrentRoom().value,
+        kioskMode: !!this.kioskMode.getCurrentRoom().value,
         //hideReport: this.isAdminPage,
         //activePassTime$: this.activePassTime$,
-        //showStudentInfoBlock: !this.kioskMode.getCurrentRoom().value
+        showStudentInfoBlock: !this.kioskMode.getCurrentRoom().value
       };
-      //data.isActive = !data.fromPast && !data.forFuture;
+      data.isActive = !data.fromPast && !data.forFuture;
     } else {
       data = {
         pass,
-        //fromPast,
-        //forFuture,
-        //forMonitor,
-        //isActive,
+        fromPast,
+        forFuture,
+        forMonitor,
+        isActive,
         forStaff,
       };
     }
@@ -281,13 +281,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   openReport(event, pass) {
     event.stopPropagation();
-    pass = this.preparePassData(pass);
+    const passData = this.preparePassData(pass);
     const data = {
       // to skip choosing the students 
       // as the student's pass is to be reported
       report: this.profile, 
-      pass,
-      forStaff: true,
+      ...passData,
     };
     //this.dialogRef.close();
     const reportRef = this.dialog.open(ReportFormComponent, {

@@ -54,8 +54,13 @@
       <label for="pass">Pass</label>
       <div class="tile">
         <app-pass-tile
-         [forStaff]="data['forStaff']"
          [pass]="data['pass']"
+         [forStaff]="data['forStaff']"
+         [fromPast]="data['fromPast']"
+         [forFuture]="data['forFuture']"
+         [isActive]="data['isActive']"
+         [allowPopup]="true"
+         [profileImage]="data['showProfilePictures']"
         ></app-pass-tile>
         </div>
        
