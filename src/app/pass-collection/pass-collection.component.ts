@@ -312,6 +312,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         forStaff: this.forStaff,
       };
     }
+    if (data.isActive) data.hideReport = true;
     const dialogRef = this.dialog.open(PassCollectionComponent.getDetailDialog(pass), {
       panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',

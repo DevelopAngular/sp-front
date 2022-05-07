@@ -200,7 +200,7 @@ textarea {
     background-color: $gray100;
     border: 1px solid $gray200;
     border-radius: 10px;
-    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+    //box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     font-size: 14px;
     font-style: normal;
     font-stretch: normal;
@@ -227,4 +227,7 @@ textarea {
   align-items: center;
   color: $gray900;
   width: min-content;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }

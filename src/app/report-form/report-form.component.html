@@ -61,15 +61,18 @@
         </div>
 
       <ng-container *ngIf="!showOptions && data['pass']">
+        {{data|json}}
         <label for="pass">Pass</label>
         <div class="tile">
           <app-pass-tile
+           [presentational]="true"
+           [destroyCloseQuickPreview]="true"
            [pass]="data['pass']"
            [forStaff]="data['forStaff']"
            [fromPast]="data['fromPast']"
            [forFuture]="data['forFuture']"
            [isActive]="data['isActive']"
-           [allowPopup]="true"
+           [allowPopup]="false"
            [profileImage]="data['showProfilePictures']"
           ></app-pass-tile>
           </div>

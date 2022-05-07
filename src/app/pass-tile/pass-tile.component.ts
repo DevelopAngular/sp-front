@@ -38,7 +38,8 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   @Input() mock = null;
   @Input() pass: PassLike;
   @Input() fromPast = false;
-  @Input() forFuture;
+  @Input() forFuture: boolean;
+  @Input() presentational: boolean; // just presents a less "active" version of pass tile
   @Input() isActive = false;
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
@@ -85,11 +86,12 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
       if (this.encounterPreventionCard) {
         return 'Now';
       }
-      return this.pass instanceof Request ?
+      const content = this.pass instanceof Request ?
           ((this.pass.request_time && this.forFuture) ?
             (!this.forStaff ? getInnerPassContent(this.pass) : getFormattedPassDate(this.pass)) : (this.forStaff ? 'Pass for Now' : '')) :
           getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) ||
               !(this.pass instanceof Invitation));
+      return content;
     }
   }
 
@@ -135,6 +137,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.valid = this.isActive;
     this.scrollStrategy = this.overlay.scrollStrategies.block();
+    if (this.presentational) return;
     if (this.timerEvent) {
       this.timerEvent.pipe(
         filter(() => !!this.pass['expiration_time']),
@@ -153,6 +156,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.presentational) return;
     if (changes.profileImage) {
       const bigCard = changes.profileImage.currentValue;
       this.overlayPositions = [
@@ -211,10 +215,12 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onClick(event) {
+    if (this.presentational) return;
     this.tileSelected.emit({time$: this.activePassTime$, pass: this.pass});
   }
 
   onHover(evt: Event, container: HTMLElement) {
+    if (this.presentational) return;
     this.hoverDestroyer$ = new Subject<any>();
     const target = (evt.target as HTMLElement);
     target.style.width = `auto`;
@@ -237,6 +243,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onLeave({target: target}) {
+    if (this.presentational) return;
     target.style.marginLeft = '0px';
     target.style.transition = `margin-left .4s ease`;
     target.style.width = `100%`;
@@ -246,6 +253,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setAnimationTrigger(value) {
+    if (this.presentational) return;
     if (!this.showBackgroundOverlay && !this.destroyCloseQuickPreview) {
       interval(200).pipe(take(1), takeUntil(this.destroyAnimation$)).subscribe(() => {
         this.domCheckerService.fadeInOutTrigger$.next(value);
@@ -254,6 +262,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   studentNameOver() {
+    if (this.presentational) return;
     if (this.allowPopup && !this.isKioskMode) {
       this.disableClose$.next();
       this.setAnimationTrigger('fadeIn');
@@ -264,6 +273,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   studentNameLeave() {
+    if (this.presentational) return;
     // console.log('CLOSE ==>>>', this.destroyCloseQuickPreview);
     if (this.allowPopup && !this.isKioskMode && !this.destroyCloseQuickPreview) {
       this.destroyOpen$.next();
@@ -274,10 +284,12 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateOverlayPosition(event) {
+    if (this.presentational) return;
     this.renderer.addClass(this.studentPasses.nativeElement, event.connectionPair.panelClass);
   }
 
   overlayLeave() {
+    if (this.presentational) return;
     this.showBackgroundOverlay = false;
     this.destroyOpen$.next();
   }

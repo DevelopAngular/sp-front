@@ -1,6 +1,6 @@
  <div class="button"
      [style.border]="border"
-     [style.background]="styleGradient"
+     [style.background]="bg"
      [style.width]="width"
      [style.min-width]="minWidth"
      [style.min-height]="minHeight"
@@ -14,7 +14,7 @@
      (mouseleave)="onHover(false)"
 
      appCrossPointerEventTarget
-     (pointerDownEvent)="buttonDown = true"
+     (pointerDownEvent)="buttonDown = true; $event.stopPropagation()"
      (pointerCancelEvent)="buttonDown = false"
      (pointerClickEvent)="buttonDown = false; hovered = false; onClick($event)"
 
