@@ -16,7 +16,8 @@
           <ng-template #text>
             <div class="ds-tooltip" style="width: 200px">This is set by the school admin</div>
           </ng-template>
-          <p class="ds-dialog-normal-text" style="margin-top: 4px">5 passes/day</p>
+          <p *ngIf="data.passLimit" class="ds-dialog-normal-text" style="margin-top: 4px">{{data.passLimit.passLimit}} passes/{{data.passLimit.frequency}}</p>
+          <p *ngIf="!data.passLimit" class="ds-dialog-normal-text" style="margin-top: 4px">No pass limits set. Contact your school admin to get started.</p>
         </div>
         <div class="pass-limits-actions">
           <app-gradient-button

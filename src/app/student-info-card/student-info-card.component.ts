@@ -42,8 +42,9 @@ import {HttpService} from '../services/http-service';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {SmartpassSearchService} from '../services/smartpass-search.service';
 import {PassLimitsDialogComponent} from '../teacher/pass-limits-dialog/pass-limits-dialog.component';
+import {PassLimitService} from '../services/pass-limit.service';
+import {HallPassLimit} from '../models/HallPassLimits';
 
 declare const window;
 
@@ -75,6 +76,7 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
   user: User;
 
   school: School;
+  passLimit: HallPassLimit;
 
   adminCalendarOptions = {
     rangeId: 'range_6',
@@ -111,7 +113,7 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
     private router: Router,
     private http: HttpService,
     private darkTheme: DarkThemeSwitch,
-    private searchService: SmartpassSearchService
+    private passLimitsService: PassLimitService
   ) { }
 
   @HostListener('document.scroll', ['$event'])
@@ -183,9 +185,11 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
         this.userService.clearCurrentUpdatedAccounts();
     });
 
-    // this.searchService.recentSearch$.subscribe(res => {
-    //   debugger;
-    // });
+    this.passLimitsService.getPassLimit().subscribe({
+      next: pl => {
+        this.passLimit = pl.pass_limit;
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -475,7 +479,8 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
       width: '425px',
       height: '500px',
       data: {
-        profile: this.profile
+        profile: this.profile,
+        passLimit: this.passLimit
       }
     });
   }

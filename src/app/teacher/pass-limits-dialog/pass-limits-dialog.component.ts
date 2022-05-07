@@ -9,6 +9,7 @@ import {User} from '../../models/User';
 import {Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
 import {take} from 'rxjs/operators';
+import {HallPassLimit} from '../../models/HallPassLimits';
 
 // TODO: Create some sort of API/service for dialogs that have multiple pages
 
@@ -21,12 +22,11 @@ import {take} from 'rxjs/operators';
 export class PassLimitsDialogComponent implements OnInit {
   pageNumber = 1;
   frameMotion$: BehaviorSubject<any>;
-  passLimitToggleTooltip = `Some help text about pass limits`; // TODO: Get text for this
   canNavigate: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<PassLimitsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { profile: User },
+    @Inject(MAT_DIALOG_DATA) public data: { profile: User, passLimit: HallPassLimit },
     public screenService: ScreenService,
     private formService: CreateFormService,
     private passLimit: PassLimitService,
