@@ -27,8 +27,12 @@ export class PassLimitService {
     );
   }
 
-  getRemainingLimits(): Observable<number> {
-    return of(0);
+  getRemainingLimits({studentId}: { studentId: number | string}): Observable<{ remainingPasses: number }> {
+    return this.http.currentSchool$.pipe(
+      concatMap(school => {
+        return this.http.get<{remainingPasses: number}>(`http://localhost:8000/api/staging/v1/pass_limits/remaining?school_id=${school.id}&student_id=${studentId}`);
+      })
+    );
   }
 
   updatePassLimits(pl: HallPassLimit) {

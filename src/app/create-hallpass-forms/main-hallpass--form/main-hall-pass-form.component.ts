@@ -140,8 +140,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       forLater: this.dialogData['forLater'],
       kioskMode: this.dialogData['kioskMode'] || false
     };
-    this.passLimitsService.getRemainingLimits().subscribe(r => {
-      this.passLimitsRemaining = r;
+    this.passLimitsService.getRemainingLimits({ studentId: this.user.id }).subscribe(r => {
+      this.passLimitsRemaining = r.remainingPasses;
     });
 
     this.passLimitsMax = this.passLimitsService.getPassLimit().pipe(map(l => l.pass_limit.passLimit));

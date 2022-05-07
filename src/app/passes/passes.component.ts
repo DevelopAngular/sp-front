@@ -269,7 +269,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.sentRequests = this.liveDataService.requests$.pipe(
             map(req => req.filter((r) => !!r.request_time)));
           this.passLimitInfo = forkJoin({
-            current: this.passLimits.getRemainingLimits(),
+            current: this.passLimits.getRemainingLimits({ studentId: this.user.id }).pipe(map(r => r.remainingPasses)),
             max: this.passLimits.getPassLimit().pipe(map(l => l.pass_limit.passLimit)),
             showPasses: of(true)
           });
@@ -354,8 +354,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.passLimits.getPassLimit().subscribe(p  => {
       this.studentPassLimit = p.pass_limit;
     });
-    this.passLimits.getRemainingLimits().subscribe(r => {
-      this.remainingPasses = r;
+    this.passLimits.getRemainingLimits({ studentId: this.user.id }).subscribe(r => {
+      this.remainingPasses = r.remainingPasses;
     });
     this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
       filter(res => !!res),
