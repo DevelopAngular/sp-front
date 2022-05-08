@@ -150,7 +150,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   user$: Observable<User>;
   user: User;
-  studentPassLimit: HallPassLimit;
+  maxPasses: number;
   remainingPasses: number;
   passLimitInfo: Observable<{ current?: number, max?: number, showPasses: boolean }>;
   isStaff = false;
@@ -268,17 +268,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.receivedRequests = this.liveDataService.invitations$;
           this.sentRequests = this.liveDataService.requests$.pipe(
             map(req => req.filter((r) => !!r.request_time)));
-          this.passLimitInfo = forkJoin({
-            current: this.passLimits.getRemainingLimits({ studentId: this.user.id }).pipe(map(r => r.remainingPasses)),
-            max: this.passLimits.getPassLimit().pipe(map(l => l.pass_limit.passLimit)),
-            showPasses: of(true)
-          });
         } else {
           this.receivedRequests = this.liveDataService.requests$;
           this.sentRequests = this.liveDataService.invitations$;
-          this.passLimitInfo = of({
-            showPasses: false
-          });
         }
     });
 
@@ -351,12 +343,29 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;
-    this.passLimits.getPassLimit().subscribe(p  => {
-      this.studentPassLimit = p.pass_limit;
-    });
-    this.passLimits.getRemainingLimits({ studentId: this.user.id }).subscribe(r => {
-      this.remainingPasses = r.remainingPasses;
-    });
+    const current = this.passLimits.getRemainingLimits({ studentId: this.user.id }).pipe(
+      take(1),
+      map(r => {
+        this.remainingPasses = r.remainingPasses;
+        return r.remainingPasses;
+      })
+    );
+    const max = this.passLimits.getPassLimit().pipe(
+      take(1),
+      map(l => {
+        this.maxPasses = l.pass_limit.passLimit;
+        return l.pass_limit.passLimit;
+      })
+    );
+    if (this.user.roles.includes('hallpass_student')) { // if this is a student
+      this.passLimitInfo = forkJoin({
+        current,
+        max,
+        showPasses: of(true)
+      });
+    } else {
+      this.passLimitInfo = of({showPasses: false});
+    }
     this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
       filter(res => !!res),
       map(filters => {

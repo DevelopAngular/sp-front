@@ -65,6 +65,7 @@
             <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'22px'">
               <div class="pass-buttons">
                 <app-create-pass-button
+                  [passLimitInfo]="passLimitInfo"
                   title="Now"
                   (onClick)="showMainForm(false)"
                 ></app-create-pass-button>

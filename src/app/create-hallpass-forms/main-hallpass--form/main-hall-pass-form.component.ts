@@ -5,9 +5,9 @@ import {Pinnable} from '../../models/Pinnable';
 import {User} from '../../models/User';
 import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
-import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {filter, map, takeUntil} from 'rxjs/operators';
+import {concatMap, filter, map, take, takeUntil} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
@@ -84,7 +84,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject();
 
   passLimitsRemaining: number;
-  passLimitsMax: Observable<number>;
+  passLimitsMax: number;
+  passLimitsLoaded = false;
 
   @HostListener('window:resize')
   checkDeviceScreen() {
@@ -140,11 +141,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       forLater: this.dialogData['forLater'],
       kioskMode: this.dialogData['kioskMode'] || false
     };
-    this.passLimitsService.getRemainingLimits({ studentId: this.user.id }).subscribe(r => {
-      this.passLimitsRemaining = r.remainingPasses;
-    });
 
-    this.passLimitsMax = this.passLimitsService.getPassLimit().pipe(map(l => l.pass_limit.passLimit));
     switch (this.dialogData['forInput']) {
       case true:
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
@@ -224,13 +221,22 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
               return User.fromJSON(effectiveUser.user);
             }
             return User.fromJSON(user);
+          }),
+          concatMap((user: User) => {
+            this.user = user;
+            this.isStaff = user.isTeacher() || user.isAssistant();
+            this.locationsService.getLocationsWithTeacherRequest(this.user);
+
+            return forkJoin({
+              remaining: this.passLimitsService.getRemainingLimits({ studentId: this.user.id }).pipe(take(1)),
+              max: this.passLimitsService.getPassLimit().pipe(take(1))
+            });
           })
         )
-        .subscribe((user: User) => {
-          this.isStaff = user.isTeacher() || user.isAssistant();
-          this.user = user;
-          this.locationsService.getLocationsWithTeacherRequest(this.user);
-
+        .subscribe(({remaining, max}) => {
+          this.passLimitsRemaining = remaining.remainingPasses;
+          this.passLimitsMax = max.pass_limit.passLimit;
+          this.passLimitsLoaded = true
       });
 
       combineLatest(
