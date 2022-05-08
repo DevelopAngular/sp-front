@@ -12,6 +12,7 @@ import {
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject} from 'rxjs';
 import {
+  concatMap,
   filter,
   map,
   pluck,
@@ -51,7 +52,7 @@ import {StartPassNotificationComponent} from './start-pass-notification/start-pa
 import {LocationsService} from '../services/locations.service';
 import * as moment from 'moment';
 import {PassLimitService} from '../services/pass-limit.service';
-import {HallPassLimit} from '../models/HallPassLimits';
+import {PassLimitInfo} from '../models/HallPassLimits';
 
 @Component({
   selector: 'app-passes',
@@ -152,7 +153,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   user: User;
   maxPasses: number;
   remainingPasses: number;
-  passLimitInfo: Observable<{ current?: number, max?: number, showPasses: boolean }>;
+  passLimitInfo: PassLimitInfo;
   isStaff = false;
   currentScrollPosition: number;
 
@@ -343,29 +344,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;
-    const current = this.passLimits.getRemainingLimits({ studentId: this.user.id }).pipe(
-      take(1),
-      map(r => {
-        this.remainingPasses = r.remainingPasses;
-        return r.remainingPasses;
-      })
-    );
-    const max = this.passLimits.getPassLimit().pipe(
-      take(1),
-      map(l => {
-        this.maxPasses = l.pass_limit.passLimit;
-        return l.pass_limit.passLimit;
-      })
-    );
-    if (this.user.roles.includes('hallpass_student')) { // if this is a student
-      this.passLimitInfo = forkJoin({
-        current,
-        max,
-        showPasses: of(true)
-      });
-    } else {
-      this.passLimitInfo = of({showPasses: false});
-    }
+    this.requestPassLimitsInfo(this.user.id).subscribe(info => {
+      this.passLimitInfo = info;
+    });
     this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
       filter(res => !!res),
       map(filters => {
@@ -475,8 +456,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
-      mainFormRef.afterClosed().subscribe(res => {
-        this.isOpenedModal = false;
+      mainFormRef
+        .afterClosed()
+        .pipe(concatMap(() =>  this.requestPassLimitsInfo(this.user.id)))
+        .subscribe(passLimitInfo => {
+          this.isOpenedModal = false;
+          this.passLimitInfo = passLimitInfo;
       });
     }
   }
@@ -517,5 +502,31 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.filterPasses(collection, null);
     }
+  }
+
+  private requestPassLimitsInfo(id: string): Observable<PassLimitInfo> {
+    const current = this.passLimits.getRemainingLimits({ studentId: id }).pipe(
+      take(1),
+      map(r => {
+        this.remainingPasses = r.remainingPasses;
+        return r.remainingPasses;
+      })
+    );
+
+    const max = this.passLimits.getPassLimit().pipe(
+      take(1),
+      map(l => {
+        this.maxPasses = l.pass_limit.passLimit;
+        return l.pass_limit.passLimit;
+      })
+    );
+
+    return this.user.roles.includes('hallpass_student')
+      ? forkJoin({
+        current,
+        max,
+        showPasses: of(true)
+      })
+      : of({showPasses: false});
   }
 }

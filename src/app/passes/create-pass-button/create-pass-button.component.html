@@ -13,7 +13,7 @@
     (pointerDownEvent)="buttonDown = true"
     (pointerCancelEvent)="buttonDown = false"
 >
-  <ng-container *ngIf="(passLimitInfo | async) as info">
+  <ng-container *ngIf="passLimitInfo as info">
     <ng-container *ngIf="title === 'Now' && info.showPasses">
       <ng-template #passLimitToolTip>
         <div class="ds-tooltip" style="width: 200px">

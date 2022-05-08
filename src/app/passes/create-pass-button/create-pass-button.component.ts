@@ -1,7 +1,6 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {bumpIn} from '../../animations';
-import {Observable, of} from 'rxjs';
 
 @Component({
   selector: 'app-create-pass-button',
@@ -9,12 +8,12 @@ import {Observable, of} from 'rxjs';
   styleUrls: ['./create-pass-button.component.scss'],
   animations: [bumpIn]
 })
-export class CreatePassButtonComponent implements OnInit, OnChanges {
+export class CreatePassButtonComponent implements OnInit {
 
   @Input() title: string;
   @Input() gradient: string;
   @Input() disabled: boolean;
-  @Input() passLimitInfo: Observable<{ current?: number, max?: number, showPasses: boolean }> = of({showPasses: false});
+  @Input() passLimitInfo: { current?: number, max?: number, showPasses: boolean } = {showPasses: false};
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
@@ -43,15 +42,7 @@ export class CreatePassButtonComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.passLimitInfo.subscribe(console.log);
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log('Trigger changes');
-    const subs: Observable<any> = changes?.passLimitInfo?.currentValue;
-    if (subs) {
-      subs.subscribe(console.log);
-    }
+    console.log(this.passLimitInfo);
   }
 
   backgroundGradient() {
