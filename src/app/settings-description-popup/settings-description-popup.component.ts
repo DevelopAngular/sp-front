@@ -50,13 +50,16 @@ export class SettingsDescriptionPopupComponent implements OnInit {
       this.profile = this.data['profile'];
       this.profileStatusActive = this.profile.status;
     }
-    this.updatePosition();
 
     this.disableCloseEvent$.subscribe(({action, event}) => {
       if (action === 'status') {
         this.openStatusPopup(event);
       }
     });
+  }
+
+  ngAfterViewInit() {
+    this.updatePosition();
   }
 
   openStatusPopup(elem) {
@@ -78,16 +81,16 @@ export class SettingsDescriptionPopupComponent implements OnInit {
     });
   }
 
+  // call it in ngAfterViewInit so all elements are fully rendered and have their geometries stabilised
   updatePosition() {
-    const dialogref = this.viewContainerRef.element.nativeElement.firstElementChild;
+    const dialogref = this.viewContainerRef.element.nativeElement;
     const dialogbox = dialogref.getBoundingClientRect();
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
     let top = rect.bottom + 15;
-    // overflow 
-    const diff = (top + dialogbox.height) - (window.innerHeight || (document.documentElement as HTMLHtmlElement).clientHeight)
-    console.log(dialogref, rect, dialogbox, window.innerHeight, diff)
-    if (diff > 0) top -= diff;
+    // calculate dif
+    const dy = (dialogbox.height + top - (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight));
+    if (dy > 0) top -= dy;
     matDialogConfig.position = { left: `${rect.left + rect.width - 230}px`, top: `${top}px` };
 
     this.dialogRef.updatePosition(matDialogConfig.position);
