@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, ViewContainerRef} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 import {User} from '../models/User';
@@ -39,6 +39,7 @@ export class SettingsDescriptionPopupComponent implements OnInit {
     private dialog: MatDialog,
     private toast: ToastService,
     private userService: UserService,
+    private viewContainerRef: ViewContainerRef,
     @Inject(MAT_DIALOG_DATA) private data: any
   ) { }
 
@@ -78,10 +79,16 @@ export class SettingsDescriptionPopupComponent implements OnInit {
   }
 
   updatePosition() {
+    const dialogref = this.viewContainerRef.element.nativeElement.firstElementChild;
+    const dialogbox = dialogref.getBoundingClientRect();
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
-
-    matDialogConfig.position = { left: `${rect.left + rect.width - 230}px`, top: `${rect.bottom + 15}px` };
+    let top = rect.bottom + 15;
+    // overflow 
+    const diff = (top + dialogbox.height) - (window.innerHeight || (document.documentElement as HTMLHtmlElement).clientHeight)
+    console.log(dialogref, rect, dialogbox, window.innerHeight, diff)
+    if (diff > 0) top -= diff;
+    matDialogConfig.position = { left: `${rect.left + rect.width - 230}px`, top: `${top}px` };
 
     this.dialogRef.updatePosition(matDialogConfig.position);
   }
