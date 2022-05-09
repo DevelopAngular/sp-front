@@ -91,7 +91,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   currentPasses$: Observable<any>;
   activePassTime$;
-  randomObject$: Observable<string>;
   search: string;
   timers: number[] = [];
   timerEvent: Subject<void> = new BehaviorSubject(null);

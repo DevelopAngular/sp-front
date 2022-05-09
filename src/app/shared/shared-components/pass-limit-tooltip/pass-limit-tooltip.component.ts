@@ -9,6 +9,8 @@ export class PassLimitTooltipComponent implements OnInit {
 
   @Input() description: string;
 
+  @Input() isHand: boolean = true;
+
   constructor() { }
 
   ngOnInit() {
