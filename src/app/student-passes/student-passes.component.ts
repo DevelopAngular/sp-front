@@ -305,17 +305,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       c.useChipInsteadSearch = true;
     });
 
-    reportRef.afterClosed().pipe(
-      delay(300),
-      filter(res => !!res),
-      map(res => {
-        //TODO
-        //this.sendReports = res;
-        //this.isActiveMessage = true;
-    })).subscribe(() => {
-      //this.isActiveMessage = false;
-      //this.isReportFormOpened = false;
-    });
+    reportRef.afterClosed().subscribe();
   }
 
   openCreatePass(event) {
