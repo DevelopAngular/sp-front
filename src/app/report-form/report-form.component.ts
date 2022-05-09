@@ -34,6 +34,8 @@ export class ReportFormComponent implements OnInit {
   // do not use search input 
   // but replace it with a dumb chip
   useChipInsteadSearch = false;
+  // use search input on chip mode
+  useChipMode = false;
 
 
   constructor(
@@ -49,6 +51,8 @@ export class ReportFormComponent implements OnInit {
      if (this.data) {
       this.selectedStudents.push(this.data['report']);
       this.showOptions = !this.data['report'];
+      //this.useChipMode = this.data?.useChipMode ?? this.useChipMode;
+      //console.log(this.useChipMode)
      }
   }
 

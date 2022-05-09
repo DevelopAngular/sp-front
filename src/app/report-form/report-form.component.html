@@ -37,6 +37,7 @@
           <app-sp-search
             *ngIf="!useChipInsteadSearch"
             [focused]="showOptions"
+            [chipsMode]="useChipMode"
             [selectedOptions]="selectedStudents"
             [showOptions]="showOptions"
             (onUpdate)="selectedStudents=$event"
