@@ -48,12 +48,11 @@ export class ReportFormComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.createForm.getFrameMotionDirection();
-     if (this.data) {
+     if (this.data?.report) {
       this.selectedStudents.push(this.data['report']);
       this.showOptions = !this.data['report'];
-      //this.useChipMode = this.data?.useChipMode ?? this.useChipMode;
-      //console.log(this.useChipMode)
      }
+    this.useChipMode = this.data?.useChipMode ?? this.useChipMode;
   }
 
   textColor(item) {
