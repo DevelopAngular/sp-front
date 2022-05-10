@@ -39,7 +39,8 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   @Input() pass: PassLike;
   @Input() fromPast = false;
   @Input() forFuture: boolean;
-  @Input() presentational: boolean; // just presents a less "active" version of pass tile
+  // just presents a less "active" version of pass tile
+  @Input() presentational: boolean; 
   @Input() isActive = false;
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
