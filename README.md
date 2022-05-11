@@ -6,6 +6,8 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 After cloning, run: 
 
+- Install `nvm` by following this doc [https://github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm)
+    If you get any issues on macOS, follow this instructions [https://github.com/nvm-sh/nvm#macos-troubleshooting](https://github.com/nvm-sh/nvm#macos-troubleshooting)
 - `npm ci` 
 - `npm install firebase@^5.1.0` (You might need this if you run into grpc 1.20.0 install errors from previous command)
 - `npm run start`
