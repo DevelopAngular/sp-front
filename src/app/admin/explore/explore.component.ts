@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, combineLatest, iif, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
@@ -28,6 +28,7 @@ import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
 import {XlsxService} from '../../services/xlsx.service';
+import { ComponentsService } from '../../services/components.service';
 
 declare const window;
 
@@ -67,8 +68,8 @@ export interface SearchData {
 export class ExploreComponent implements OnInit, OnDestroy {
 
   views: View = {
-    'pass_search': {id: 1, title: 'Pass Search', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
-    'report_search': {id: 2, title: 'Reports search', color: '#E32C66', icon: 'Report Search', action: 'report_search'},
+    'pass_search': {id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
+    'report_search': {id: 2, title: 'Reports', color: '#E32C66', icon: 'Report Search', action: 'report_search'},
     'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
@@ -142,6 +143,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   destroyPassClick = new Subject();
   destroy$ = new Subject();
+  clickEventSubscription:Subscription;
 
   constructor(
     public dialog: MatDialog,
@@ -155,7 +157,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private adminService: AdminService,
     public xlsx: XlsxService,
-    private userService: UserService
+    private userService: UserService,
+    private componentService: ComponentsService
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -184,6 +187,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.clickEventSubscription = this.componentService.getClickEvent().subscribe(()=>{
+      this.openSwitchPage();
+    })
     this.user$ = this.userService.user$;
 
     this.passSearchState = {
@@ -428,6 +434,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
     this.destroyPassClick.next();
     this.destroyPassClick.complete();
+    this.clickEventSubscription.unsubscribe();
   }
 
   getGradient(gradient: string) {
@@ -435,13 +442,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
     return 'radial-gradient(circle at 73% 71%, ' + (colors[0]) + ', ' + colors[1] + ')';
   }
 
-  openSwitchPage(event) {
+  openSwitchPage() {
     UNANIMATED_CONTAINER.next(true);
     const pagesDialog = this.dialog.open(PagesDialogComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
       data: {
-        'trigger': event.currentTarget,
+        // 'trigger': event.currentTarget,
+        'trigger': document.getElementById('explore'),
         'pages': Object.values(this.views),
         'selectedPage': this.views[this.currentView$.getValue()]
       }
