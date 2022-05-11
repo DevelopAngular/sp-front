@@ -47,11 +47,11 @@ testing_build:
     AUTO_DEVOPS_DOMAIN: "smartpass-testing.lavanote.com"
     IMAGE_TAG_SUFFIX: "testing"
     INCLUDE_SOURCEMAPS: "true"
-  except:
-    - master
-    - production
   only:
     kubernetes: active
+    refs: 
+      - merge_requests
+    
   tags:
     - "docker-passthrough"
 
@@ -62,7 +62,8 @@ testing_e2e:
     - npm ci
     - npm run e2e:ci
   only:
-    - merge_requests
+    refs: 
+      - merge_requests
   tags:
     - "docker-passthrough"
 
@@ -94,11 +95,10 @@ testing_deploy:
     deployment_tier: development
   when: manual
   needs: [testing_build]
-  except:
-    - master
-    - production
   only:
     kubernetes: active
+    refs:
+      - merge_requests
   tags:
     - "docker-passthrough"
 
