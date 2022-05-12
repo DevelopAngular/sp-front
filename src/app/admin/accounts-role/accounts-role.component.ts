@@ -357,6 +357,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           case 'Email/username':
             queryParams.sort = sort && sort === 'asc' ? '-email' : 'email';
             break;
+          case 'Status':
+            queryParams.sort = sort && sort === 'asc' ? '-status' : 'status';
+            break;
           case 'Last sign-in':
             queryParams.sort = sort && sort === 'asc' ? '-last_sign_in' : 'last_sign_in';
             break;
