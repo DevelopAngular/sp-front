@@ -30,8 +30,12 @@
               </app-filter-button>
             </div>
             <div class="filter" *ngSwitchCase="2">
-                <app-filter-button (buttonClick)="openFilter($event, 'teachers')" [title]="(!reportSearchData.selectedTeachers || reportSearchData.selectedTeachers.length > 1 ? 'Submitted by' + (reportSearchData.selectedTeachers && reportSearchData.selectedTeachers.length ? ' (' + reportSearchData.selectedTeachers.length + ')' : '') : reportSearchData.selectedTeachers[0].display_name)"
-                    [filter]="reportSearchData.selectedTeachers && !!reportSearchData.selectedTeachers.length" (clearData)="reportSearchData.selectedTeachers = null; autoSearch()" [openedFilter]="!!dialog.getDialogById('teachers_filter')">
+                <app-filter-button 
+                 (buttonClick)="openFilter($event, 'teachers')" 
+                 [title]="(!reportSearchData.selectedTeachers || reportSearchData.selectedTeachers.length > 1 ? 'Submitted by' + (reportSearchData.selectedTeachers && reportSearchData.selectedTeachers.length ? ' (' + reportSearchData.selectedTeachers.length + ')' : '') : reportSearchData.selectedTeachers[0].display_name)"
+                 [filter]="reportSearchData.selectedTeachers && !!reportSearchData.selectedTeachers.length" 
+                 (clearData)="reportSearchData.selectedTeachers = null; autoSearch()"
+                 [openedFilter]="!!dialog.getDialogById('teachers_filter')">
                 </app-filter-button>
             </div>
             <div class="filter" *ngSwitchCase="1">
