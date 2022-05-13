@@ -3,7 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {merge, Subject} from 'rxjs';
-import {debounceTime, filter, pluck, takeUntil, tap} from 'rxjs/operators';
+import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
@@ -32,6 +32,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() passLimitForm: FormGroup;
 
+  @Input() isEnableRoomTrigger$: Subject<boolean>;
+
   @Output() back = new EventEmitter();
 
   @Output()
@@ -49,7 +51,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       advOptState: {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
-      }
+      },
+      enable: true
   };
 
   initialData: RoomData;
@@ -147,7 +150,8 @@ export class RoomComponent implements OnInit, OnDestroy {
                   restricted: !!pinnable.location.restricted,
                   scheduling_restricted: !!pinnable.location.scheduling_restricted,
                   timeLimit: pinnable.location.max_allowed_time,
-                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions
+                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  enable: pinnable.location.enable
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
@@ -166,7 +170,8 @@ export class RoomComponent implements OnInit, OnDestroy {
                   travelType: data.travel_types,
                   restricted: !!data.restricted,
                   scheduling_restricted: !!data.scheduling_restricted,
-                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions
+                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  enable: data.enable
               };
           }
       }
@@ -190,9 +195,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.initialData = cloneDeep(this.data);
 
       merge(this.form.valueChanges, this.change$).pipe(
-        debounceTime(450)
+        // debounceTime(450)
       ).subscribe(() => {
           this.checkValidRoomOptions();
+      });
+
+      this.isEnableRoomTrigger$.subscribe(res => {
+        this.data.enable = res;
+        this.change$.next();
       });
   }
 

@@ -101,13 +101,35 @@ export class IntrosEffects {
               map(data => {
                 const updatedData = {
                   ...action.intros,
-                  encounter_reminder: {
+                  search_reminder: {
                     [action.device]: {seen_version: action.version}
                   }
                 };
                 return introsActions.updateIntrosSearchSuccess({data: updatedData});
               }),
               catchError(error => of(introsActions.updateIntrosSearchFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateIntrosDisableRoom$ = createEffect(() => {
+    return this.action$
+      .pipe(
+        ofType(introsActions.updateIntrosDisableRoom),
+        switchMap((action) => {
+          return this.userService.updateIntrosDisableRoom(action.device, action.version)
+            .pipe(
+              map(data => {
+                const updatedData = {
+                  ...action.intros,
+                  disable_room_reminder: {
+                    [action.device]: {seen_version: action.version}
+                  }
+                };
+                return introsActions.updateIntrosDisableRoomSuccess({data: updatedData});
+              }),
+              catchError(error => of(introsActions.updateIntrosDisableRoomFailure({errorMessage: error.message})))
             );
         })
       );

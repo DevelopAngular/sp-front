@@ -343,7 +343,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.userService.getMoreUserListRequest(this.role);
   }
 
-  sortingTable(sortColumn) {
+  sortingTable(sortColumn: string) {
     const queryParams: any = {};
     this.sortingColumn = sortColumn;
     this.sortLoading$.next(true);
@@ -373,9 +373,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             this.sortLoading$.next(false);
             return;
         }
-        if (sort === 'desc') {
-          delete queryParams.sort;
-        }
+        // in accounts.effects handling sort is bellow 
+        //const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
+        // the following code ignore intention 'desc' as accounts.effects will consider missing sort as 'no sort'
+        // it is not corect to replace sort desc with no sort 
+        //if (sort === 'desc') {
+          //delete queryParams.sort;
+        //}
         queryParams.limit = 50;
         queryParams.role = this.role;
         this.userService.sortTableHeaderRequest(this.role, queryParams);
