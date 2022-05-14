@@ -19,10 +19,8 @@ import {TableService} from '../sp-data-table/table.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {StorageService} from '../../services/storage.service';
 import {ToastService} from '../../services/toast.service';
-import {PassLimitService} from '../../services/pass-limit.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
-
 
 @Component({
   selector: 'app-accounts-role',
@@ -72,13 +70,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private tableService: TableService,
     private sanitizer: DomSanitizer,
     private storage: StorageService,
-    private toast: ToastService,
-    private passLimitService: PassLimitService
-  ) {
-
-    this.passLimitService.getRemainingLimits({ studentId: 9375 }).subscribe(console.log);
-
-  }
+    private toast: ToastService
+  ) {}
 
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
