@@ -2,11 +2,13 @@ import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChil
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 
-import {Report} from '../../../models/Report';
+import {Report, ReportDataUpdate} from '../../../models/Report';
+import {ReportUpdateService} from '../../../services/report-update.service';
+import {AdminService} from '../../../services/admin.service';
 import {PdfGeneratorService} from '../../pdf-generator.service';
 
 import * as moment from 'moment';
-import {takeUntil} from 'rxjs/operators';
+import {takeUntil, switchMap} from 'rxjs/operators';
 
 declare const window;
 
@@ -39,6 +41,8 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ReportInfoDialogComponent>,
     private pdfService: PdfGeneratorService,
+    private reportUpdateService: ReportUpdateService,
+    private adminService: AdminService,
   ) {}
 
   get dateFormat() {
@@ -48,6 +52,13 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.report = this.data['report'];
     this.generatePDF();
+
+    this.reportUpdateService.notifier()
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(v => this.updateReport(v)), 
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
@@ -58,6 +69,11 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   close() {
     this.dialogRef.close();
   }
+
+  updateReport(updata: ReportDataUpdate) {
+    return this.adminService.updateReportRequest(updata);
+  }
+  
 
   generatePDF() {
     const report = {

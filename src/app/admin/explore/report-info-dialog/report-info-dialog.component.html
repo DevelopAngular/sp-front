@@ -8,7 +8,9 @@
     <div class="block">
       <div class="status">
         <app-status-chip 
+          [editable]="true" 
           [status]="report.status"
+          [remoteid]="report.id"
         ></app-status-chip>
       </div>
       <div class="title">Student</div>

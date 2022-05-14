@@ -24,7 +24,7 @@ import {AdminService} from '../../services/admin.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
-import {Report, Status} from '../../models/Report';
+import {Report, Status, ReportDataUpdate} from '../../models/Report';
 import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
@@ -158,7 +158,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private adminService: AdminService,
     public xlsx: XlsxService,
-    private userService: UserService
+    private userService: UserService,
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -422,12 +422,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
         })
       );
 
-
       this.tableService.selectRow.asObservable()
         .pipe(takeUntil(this.destroy$))
         .subscribe(res => {
           this.selectedRows = res;
         });
+
 
   }
 

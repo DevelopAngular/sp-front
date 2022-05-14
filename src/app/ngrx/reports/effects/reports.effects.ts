@@ -71,8 +71,8 @@ export class ReportsEffects {
     return this.actions$
       .pipe(
         ofType(reportsActions.patchReport),
-        // allow patch http requests run in parallel
-        mergeMap((action: any) => {
+        // TODO: allow patch http requests run in parallel
+        switchMap((action: any) => {
           return this.adminService.updateReport(action.updata)
             .pipe(
               map((report: Report) => {

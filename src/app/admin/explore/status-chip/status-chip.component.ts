@@ -1,10 +1,11 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Subject} from 'rxjs';
+import {Subject, Observable} from 'rxjs';
 import {filter, finalize, map, tap, take, takeUntil, distinctUntilChanged, catchError} from 'rxjs/operators';
 import {Status, Report, ReportDataUpdate} from '../../../models/Report';
 import {StatusEditorComponent} from '../status-editor/status-editor.component';
 import {AdminService} from '../../../services/admin.service';
+import {ReportUpdateService} from '../../../services/report-update.service';
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 
 @Component({
@@ -33,36 +34,46 @@ export class StatusChipComponent implements OnInit {
   // shows a loading hint
   isLoading: boolean = false;
 
-  private chosenStatus$: Subject<Status> = new Subject();
-  private hasChangedRemote$: Subject<Report> = new Subject();
-  private hasLoadedReports$: Subject<boolean> = new Subject();
+  private reportUpdated$?: Observable<any>
+
   private destroy$ = new Subject();
 
   constructor(
     public dialog: MatDialog,
+    private updateEvent: ReportUpdateService,
+    private adminService: AdminService,
     private cdr: ChangeDetectorRef,
-    public adminService: AdminService,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
+    if (this.isLoading) return;
+
     this.redress();
     this.didOpen = false;
     this.isLoading = false;
-    if (this.editable){
-      this.adminService.reports.currentReport$.subscribe(this.hasChangedRemote$);
-      //this.adminService.reports.loaded$.subscribe(this.hasLoadedReports$);
-    }
+
+    if ( ! this.editable) return;
+
+    this.reportUpdated$ = this.adminService.reports.currentReport$.pipe(
+      filter((v: Report) => {
+        return !!v && (''+v.id === ''+this.remoteid);
+      }),
+      map((v: Report) => {
+        this.status = v.status;
+        this.isLoading = false;
+        this.redress();
+        this.cdr.detectChanges();
+      }),
+     takeUntil(this.destroy$),
+    );
+
+    this.reportUpdated$.subscribe();
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-    if (this.editable){
-      this.hasChangedRemote$.next();
-      this.hasChangedRemote$.complete();
-      this.hasLoadedReports$.next();
-      this.hasLoadedReports$.complete();
-    }
   }
 
   redress() {
@@ -96,22 +107,12 @@ export class StatusChipComponent implements OnInit {
       chosen.afterClosed()
       .pipe(
         take(1),
-        finalize(() => {
-          UNANIMATED_CONTAINER.next(false);
-          this.didOpen = false;
-          this.cdr.detectChanges();
-        }),
-      ).subscribe(v => {
-        UNANIMATED_CONTAINER.next(true);
-        // v can be undefined when user has opened choices 
-        // but he has renounced to choose one of them
-        if (!!v && (this.status !== v.status)) { 
-          this.chosenStatus$.next(v.status);
-        }
-      });
-
-      this.chosenStatus$
-      .pipe(
+        filter(
+          v => !!v && 
+          (this.status !== v.status) &&
+          (v.type === 'editedStatus')
+        ),
+        map(v => v.status),
         distinctUntilChanged(),
         map((status: Status) => {
           UNANIMATED_CONTAINER.next(true);
@@ -121,34 +122,15 @@ export class StatusChipComponent implements OnInit {
             status,
             id: ''+this.remoteid,
           }
-          return this.adminService.updateReportRequest(updata)
+          this.updateEvent.emit(updata);
         }),
-        catchError(err => err),
-      ).subscribe();
-
-      this.hasChangedRemote$
-      .pipe(
-        filter((v: Report) => {
-          return !!v && (''+v.id === ''+this.remoteid);
-        })
-      ).subscribe((v: Report) => {
-        if (!!v) {
-          this.status = v.status;
-          this.redress();
-          this.cdr.detectChanges();
-          console.log('status', v.status)
-        }
-      });
-
-      this.adminService.reports.loaded$
-      .subscribe(v => {
-        console.log('loaded',v)
-        if (v) {
+        finalize(() => {
           UNANIMATED_CONTAINER.next(false);
           this.didOpen = false;
           this.cdr.detectChanges();
-        } 
-      });
+        }),
+      ).subscribe();
+
     }
   }
 
