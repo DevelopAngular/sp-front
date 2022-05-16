@@ -29,6 +29,7 @@ const mocked = (n: number): Report[] => {
     passes_restricted: false,
     primary_email: '',
     roles: [],
+    reported_pass_id: null,
     status: 'test status',
     badge: '',
     sync_types: [''],
@@ -51,6 +52,7 @@ const mocked = (n: number): Report[] => {
     mocks.push({
       id: ''+(i+100),
       student: student as User,
+      reported_pass_id: null,
       message: 'test message ' + i,
       status: (i%2==0 ? Status.Active : Status.Closed),
       issuer: teacher as User,

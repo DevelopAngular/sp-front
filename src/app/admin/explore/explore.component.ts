@@ -401,6 +401,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               'Student Name': null,
               'Message': null,
               'Status': null,
+              'Pass': null,
               'Submitted by': null,
               'Date submitted': null,
             }];
@@ -411,8 +412,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
               'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
               'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
               'Status': report.status,
+              'Pass': report.reported_pass_id ?? '',
               'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
-              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`)
+              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`),
             };
 
             Object.defineProperty(result, 'id', { enumerable: false, value: report.id});

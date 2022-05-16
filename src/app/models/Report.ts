@@ -14,6 +14,7 @@ export class Report extends BaseModel {
               public student: User,
               public message: string,
               public status: Status,
+              public reported_pass_id: number | null,
              ) {
     super();
   }
@@ -30,9 +31,10 @@ export class Report extends BaseModel {
       issuer: User = User.fromJSON(JSON['issuer']),
       student: User = User.fromJSON(JSON['student']),
       message: string = JSON['message'],
-      status: Status = Status[JSON['status']];
+      status: Status = Status[JSON['status']],
+      reported_pass_id: number | null = JSON['reported_pass_id'] ?? null;
 
-    return new Report(id, created, last_updated, issuer, student, message, status);
+    return new Report(id, created, last_updated, issuer, student, message, status, reported_pass_id);
   }
 }
 
