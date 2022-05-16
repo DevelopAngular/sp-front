@@ -83,7 +83,10 @@ export class ReportFormComponent implements OnInit {
   sendReport() {
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
-      'message' : this.reportMessage
+      'message' : this.reportMessage,
+      // ensure passid is null when we may bulk report more students
+      // only on a single student a one reported pass may be 
+      'passid': (this.selectedStudents.length == 1) ? this.data?.pass.id : null,
     };
 
     this.adminService.sendReportRequest(body).pipe(filter(res => !!res)).subscribe(data => {
