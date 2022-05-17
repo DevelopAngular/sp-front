@@ -22,6 +22,8 @@ export class StatusChipComponent implements OnInit {
   @Input() editable: boolean;
   // remoteid is the record id of a database record
   @Input() remoteid: number;
+  // allow event to propagate
+  @Input() stopPropagation: boolean = false;
 
   @Output() statusClick: EventEmitter<Status> = new EventEmitter<Status>();
 
@@ -82,7 +84,9 @@ export class StatusChipComponent implements OnInit {
   }
 
   blink($event: MouseEvent) {
-    $event.stopPropagation();
+    if (!this.stopPropagation) {
+      $event.stopPropagation();
+    }
 
     if (!this.editable) {
       this.statusClick.emit(this.status);

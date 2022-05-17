@@ -84,7 +84,18 @@
               {{ column }}
             </th>
           </ng-template>
-          <ng-container *ngIf="!(currentPage=='report_search' && column=='Status') else statuscell">
+
+          <ng-container *ngIf="currentPage=='report_search'">
+            <ng-container [ngSwitch]="column">
+              <ng-container *ngSwitchCase="'Status'" [ngTemplateOutlet]="statuscell"></ng-container>
+              <ng-container *ngSwitchCase="'ReportedPassId'" [ngTemplateOutlet]="rpicell"></ng-container>
+              <ng-container *ngSwitchDefault [ngTemplateOutlet]="commoncell"></ng-container>
+            </ng-container>
+          </ng-container>
+
+          <ng-template
+            #commoncell
+          >
             <td
               mat-cell
               [ngClass]="{'fake-container': !element[column], noCheckbox: !(isCheckbox | async)}"
@@ -95,7 +106,8 @@
               *matCellDef="let element"
               [innerHTML]="element[column] ? element[column] : fakeTemplate">
             </td>
-          </ng-container>
+          </ng-template>
+          
           <ng-template 
             #statuscell
           >
@@ -105,27 +117,16 @@
               [style.height]="'auto'"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
-              pointerClickEvent="null"
+              (pointerClickEvent)="null"
             >
               <app-status-chip 
                 [status]="element[column]"
+                [stopPropagation]="true"
               >
               </app-status-chip>
             </td>
           </ng-template>
 
-          <ng-container *ngIf="!(currentPage=='report_search' && column=='ReportedPassId') else rpicell">
-            <td
-              mat-cell
-              [ngClass]="{'fake-container': !element[column], noCheckbox: !(isCheckbox | async)}"
-              [style.height]="!element[column] ? itemSize + 'px' : 'auto'"
-              [style.opacity]="!element[column] && !isLast ? 0 : 1"
-              [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
-              [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
-              *matCellDef="let element"
-              [innerHTML]="element[column] ? element[column] : fakeTemplate">
-            </td>
-          </ng-container>
           <ng-template 
             #rpicell
           >
@@ -135,7 +136,7 @@
               [style.height]="'auto'"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
-              pointerClickEvent="null"
+              (pointerClickEvent)="null"
             >
             <span styel="background-color: silver;">{{ element[column] ? element[column] : '' }}</span>
             </td>
