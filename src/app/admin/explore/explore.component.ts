@@ -408,11 +408,16 @@ export class ExploreComponent implements OnInit, OnDestroy {
           }
           this.reportSearchState.isEmpty = false;
           return reports.map(report => {
+              const data = report as any;
+              const _passTile = data?.reported_pass?.gradient_color ? 
+                `<div class="pass-icon" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` : '';
+              const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
             const result = {
               'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
               'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
               'Status': report.status,
-              'Pass': report.reported_pass_id ?? '',
+              //'Pass': report.reported_pass_id ?? '',
+              'Pass': passTile,
               'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
               'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`),
             };

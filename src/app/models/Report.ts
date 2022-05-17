@@ -1,5 +1,6 @@
 import { BaseModel } from './base';
 import { User } from './User';
+import {HallPass} from './HallPass';
 
 export enum Status {
   Active = 'active',
@@ -15,6 +16,7 @@ export class Report extends BaseModel {
               public message: string,
               public status: Status,
               public reported_pass_id: number | null,
+              public reported_pass ?: HallPass,
              ) {
     super();
   }
