@@ -88,7 +88,7 @@
           <ng-container *ngIf="currentPage=='report_search'">
             <ng-container [ngSwitch]="column">
               <ng-container *ngSwitchCase="'Status'" [ngTemplateOutlet]="statuscell"></ng-container>
-              <ng-container *ngSwitchCase="'ReportedPassId'" [ngTemplateOutlet]="rpicell"></ng-container>
+              <ng-container *ngSwitchCase="'Pass'" [ngTemplateOutlet]="rpicell"></ng-container>
               <ng-container *ngSwitchDefault [ngTemplateOutlet]="commoncell"></ng-container>
             </ng-container>
           </ng-container>
@@ -138,7 +138,7 @@
               *matCellDef="let element"
               (pointerClickEvent)="null"
             >
-            <span styel="background-color: silver;">{{ element[column] ? element[column] : '' }}</span>
+            <span *ngIf="element[column]" style="background-color: silver;">{{ element[column] ? element[column] : '' }}</span>
             </td>
           </ng-template>
 
