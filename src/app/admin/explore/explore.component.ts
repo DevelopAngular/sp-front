@@ -413,13 +413,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 `<div class="pass-icon" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` : '';
               const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
             const result = {
-              'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
-              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
+              'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
+              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
               'Status': report.status,
-              //'Pass': report.reported_pass_id ?? '',
               'Pass': passTile,
-              'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
-              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`),
+              'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.issuer.display_name}</div>`),
+              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div>${moment(report.created).format('MM/DD hh:mm A')}</div>`),
             };
 
             Object.defineProperty(result, 'id', { enumerable: false, value: report.id});
@@ -858,7 +857,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.dialog.open(ReportInfoDialogComponent, {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-bd',
-          data: {report: selectedReport}
+          data: {report: selectedReport, forStaff: true}
         });
     });
   }

@@ -3,8 +3,11 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 
 import {Report, ReportDataUpdate} from '../../../models/Report';
+import {HallPass} from '../../../models/HallPass';
+import {PassLike} from '../../../models';
 import {ReportUpdateService} from '../../../services/report-update.service';
 import {AdminService} from '../../../services/admin.service';
+import {TimeService} from '../../../services/time.service';
 import {PdfGeneratorService} from '../../pdf-generator.service';
 
 import * as moment from 'moment';
@@ -22,6 +25,7 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   @ViewChild('content') content: ElementRef;
 
   report: Report;
+  isReportedPassActive: boolean | null = null;
   showBottomShadow: boolean = true;
 
   pdfUrl: string;
@@ -43,6 +47,7 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
     private pdfService: PdfGeneratorService,
     private reportUpdateService: ReportUpdateService,
     private adminService: AdminService,
+    private timeService: TimeService,
   ) {}
 
   get dateFormat() {
@@ -51,6 +56,19 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.report = this.data['report'];
+
+    if (this.report.reported_pass_id) {
+      const pass = this.report.reported_pass as PassLike;
+      if (pass instanceof HallPass) {
+        let isActive = false; 
+        const now = this.timeService.nowDate();
+        isActive = 
+          new Date(pass.start_time).getTime() <= now.getTime() && 
+          now.getTime() < new Date(pass.end_time).getTime();
+        this.isReportedPassActive = isActive;
+      }
+    }
+
     this.generatePDF();
 
     this.reportUpdateService.notifier()
