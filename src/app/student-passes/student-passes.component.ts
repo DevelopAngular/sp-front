@@ -280,7 +280,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     return data;
   }
 
-  openReport(event, pass) {
+  openReport(event, pass: PassLike) {
     event.stopPropagation();
     const passData = this.preparePassData(pass);
     const data = {
