@@ -58,8 +58,18 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
     this.report = this.data['report'];
 
     if (this.report.reported_pass_id) {
-      const pass = this.report.reported_pass as PassLike;
+      // reported pass is always a HallPass
+      let pass : HallPass | null;
+      try {
+        pass = HallPass.fromJSON(this.report.reported_pass);
+      } catch(e){
+        console.log(e);
+      }
+
       if (pass instanceof HallPass) {
+        // change reported_pass from being an 'object type' to a "HallPass'
+        // to properly initialize the pass tile
+        this.report.reported_pass = pass;
         let isActive = false; 
         const now = this.timeService.nowDate();
         isActive = 

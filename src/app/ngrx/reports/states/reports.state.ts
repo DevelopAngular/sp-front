@@ -8,6 +8,5 @@ export interface ReportsState extends EntityState<Report> {
   next: string;
   reportsFound: Report[];
   addedReports: Report[];
-  updatedReports?: Report[];
 }
 
