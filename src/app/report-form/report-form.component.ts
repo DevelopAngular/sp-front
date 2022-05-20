@@ -1,5 +1,6 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {User} from '../models/User';
+import {HallPass} from '../models/HallPass';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../services/admin.service';
 import {NextStep} from '../animations';
@@ -85,10 +86,11 @@ export class ReportFormComponent implements OnInit {
       'students' : this.selectedStudents.map(user => user.id),
       'message' : this.reportMessage,
     }
-    if (!!this.data?.pass) {
+    if (!!this.data?.pass && !!this.data?.isHallPass) {
       // ensure passid is null when we may bulk report more students
       // only on a single student a one reported pass may be 
-      body['reported_pass_id'] = (this.selectedStudents.length == 1) ? this.data.pass.id : null;
+      const rpi = (this.selectedStudents.length == 1) ? this.data.pass.id : null;
+      if (rpi !== null) body['reported_pass_id'] = rpi;
     };
 
     this.adminService.sendReportRequest(body).pipe(filter(res => !!res)).subscribe(data => {

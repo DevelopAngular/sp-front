@@ -283,10 +283,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   openReport(event, pass: PassLike) {
     event.stopPropagation();
     const passData = this.preparePassData(pass);
+    const isHallPass = pass instanceof HallPass;
     const data = {
       // to skip choosing the students 
       // as the student's pass is to be reported
       report: this.profile, 
+      isHallPass,
       ...passData,
     };
     //this.dialogRef.close();

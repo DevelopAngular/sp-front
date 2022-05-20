@@ -61,7 +61,7 @@
           <textarea class="message-box" #messageBox placeholder="Ex. Student did not return to class" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>
 
-      <ng-container *ngIf="!showOptions && data['pass']">
+      <ng-container *ngIf="!showOptions && data['pass'] && !!data?.isHallPass">
         <label for="pass">Pass</label>
         <div class="tile">
           <app-pass-tile
