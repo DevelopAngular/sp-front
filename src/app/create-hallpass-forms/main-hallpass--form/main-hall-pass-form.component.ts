@@ -1,15 +1,14 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Location} from '../../models/Location';
 import {Pinnable} from '../../models/Pinnable';
 import {User} from '../../models/User';
 import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
-import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, of, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {concatMap, filter, map, take, takeUntil} from 'rxjs/operators';
+import {concatMap, filter, map, take, takeUntil, tap} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
-import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
 import {DeviceDetection} from '../../device-detection.helper';
@@ -76,7 +75,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
   };
   frameMotion$: BehaviorSubject<any>;
 
-  user;
+  user: User;
   isStaff;
   isDeviceMid: boolean;
   isDeviceLarge: boolean;
@@ -99,20 +98,20 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<CreateHallpassFormsComponent>,
     private formService: CreateFormService,
-    private elementRef: ElementRef,
-    private dataService: DataService,
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private passesService: HallPassesService,
     private userService: UserService,
     private passLimitsService: PassLimitService
-  ) {}
+  ) {
+  }
 
   get isCompressed() {
-    return  this.formService.compressableBoxController.asObservable();
+    return this.formService.compressableBoxController.asObservable();
   }
+
   get isScaled() {
-    return  this.formService.scalableBoxController.asObservable();
+    return this.formService.scalableBoxController.asObservable();
   }
 
   ngOnInit() {
@@ -161,11 +160,11 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
           }
         } else {
           this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
-          if ( this.dialogData['forStaff'] ) {
+          if (this.dialogData['forStaff']) {
             if (this.dialogData['kioskMode'] && this.dialogData['kioskModeSelectedUser']) {
               this.FORM_STATE.data.selectedStudents = this.dialogData['kioskModeSelectedUser'];
-                this.FORM_STATE.step = 3;
-                this.FORM_STATE.state = 2;
+              this.FORM_STATE.step = 3;
+              this.FORM_STATE.state = 2;
             } else {
               if (this.dialogData['fromAdmin']) {
                 this.FORM_STATE.step = 3;
@@ -182,7 +181,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         break;
       case false:
         if (this.dialogData['hasClose']) {
-         this.FORM_STATE.data.hasClose = true;
+          this.FORM_STATE.data.hasClose = true;
         }
         if (this.dialogData['missedRequest']) {
           this.FORM_STATE.missedRequest = true;
@@ -214,58 +213,53 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       this.userService.user$.pipe(filter(r => !!r)),
       this.userService.effectiveUser
     ])
-        .pipe(
-          takeUntil(this.destroy$),
-          map(([user, effectiveUser]) => {
-            if (effectiveUser) {
-              return User.fromJSON(effectiveUser.user);
-            }
-            return User.fromJSON(user);
-          }),
-          concatMap((user: User) => {
-            this.user = user;
-            this.isStaff = user.isTeacher() || user.isAssistant();
-            this.locationsService.getLocationsWithTeacherRequest(this.user);
+      .pipe(
+        takeUntil(this.destroy$),
+        map(([user, effectiveUser]) => {
+          if (effectiveUser) {
+            return User.fromJSON(effectiveUser.user);
+          }
+          return User.fromJSON(user);
+        }),
+        concatMap((user: User) => {
+          this.user = user;
+          this.isStaff = user.isTeacher() || user.isAssistant();
+          this.locationsService.getLocationsWithTeacherRequest(this.user);
 
-            return forkJoin({
-              remaining: this.passLimitsService.getRemainingLimits({ studentId: this.user.id }).pipe(take(1)),
-              max: this.passLimitsService.getPassLimit().pipe(take(1))
-            });
-          })
-        )
-        .subscribe(({remaining, max}) => {
-          this.passLimitsRemaining = remaining.remainingPasses;
-          this.passLimitsMax = max.pass_limit.passLimit;
-          this.passLimitsLoaded = true
-      });
-
-      combineLatest(
-          this.passesService.pinnables$,
-          this.locationsService.teacherLocations$
+          return user.isStudent() // don't need to make a pass limit request on the teacher's side just yet
+            ? this.getPassLimitData() // handles assignment of component state
+            : of(true);
+        })
       )
-          .pipe(
-            filter(([pin, locs]: [Pinnable[], Location[]]) => this.isStaff && !!pin.length && !!locs.length),
-              takeUntil(this.destroy$),
-              map(([pinnables, locations]) => {
-                  const filterPinnables = cloneDeep(pinnables).filter(pin => {
-                      return locations.find(loc => {
-                          return (loc.category ? loc.category : loc.title) === pin.title;
-                      });
-                  });
-                  return filterPinnables.map(fpin => {
-                      if (fpin.type === 'category') {
-                          const locFromCategory = find(locations, ['category', fpin.title]);
-                          fpin.title = locFromCategory.title;
-                          fpin.type = 'location';
-                          fpin.location = locFromCategory;
-                          return fpin;
-                      }
-                      return fpin;
-                  });
-              }))
-        .subscribe(rooms => {
-          this.FORM_STATE.data.teacherRooms = rooms;
-        });
+      .subscribe();
+
+    combineLatest(
+      this.passesService.pinnables$,
+      this.locationsService.teacherLocations$
+    )
+      .pipe(
+        filter(([pin, locs]: [Pinnable[], Location[]]) => this.isStaff && !!pin.length && !!locs.length),
+        takeUntil(this.destroy$),
+        map(([pinnables, locations]) => {
+          const filterPinnables = cloneDeep(pinnables).filter(pin => {
+            return locations.find(loc => {
+              return (loc.category ? loc.category : loc.title) === pin.title;
+            });
+          });
+          return filterPinnables.map(fpin => {
+            if (fpin.type === 'category') {
+              const locFromCategory = find(locations, ['category', fpin.title]);
+              fpin.title = locFromCategory.title;
+              fpin.type = 'location';
+              fpin.location = locFromCategory;
+              return fpin;
+            }
+            return fpin;
+          });
+        }))
+      .subscribe(rooms => {
+        this.FORM_STATE.data.teacherRooms = rooms;
+      });
     this.locationsService.listenPassLimitSocket().subscribe(res => {
       this.locationsService.updatePassLimitRequest(res);
     });
@@ -302,11 +296,11 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     switch (startOrEnd) {
       case 'start':
         this.formSize.containerWidth = this.formSize.width;
-        this.formSize.containerHeight =  this.formSize.height;
+        this.formSize.containerHeight = this.formSize.height;
         break;
       case 'end':
-        this.formSize.containerWidth =  `${window.innerWidth}px`;
-        this.formSize.containerHeight =  `${window.innerHeight}px`;
+        this.formSize.containerWidth = `${window.innerWidth}px`;
+        this.formSize.containerHeight = `${window.innerHeight}px`;
         break;
     }
   }
@@ -315,25 +309,25 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
     switch (this.FORM_STATE.step) {
       case 1:
-        this.formSize.width =  `425px`;
-        this.formSize.height =  `500px`;
+        this.formSize.width = `425px`;
+        this.formSize.height = `500px`;
         break;
       case 2:
         if (this.dialogData['kioskModeRoom']) {
-          this.formSize.width =  `425px`;
-          this.formSize.height =  `500px`;
+          this.formSize.width = `425px`;
+          this.formSize.height = `500px`;
         } else {
-          this.formSize.width =  this.extraLargeDevice ?  `335px` : `700px`;
-          this.formSize.height = this.extraLargeDevice ?  `500px` : `400px`;
+          this.formSize.width = this.extraLargeDevice ? `335px` : `700px`;
+          this.formSize.height = this.extraLargeDevice ? `500px` : `400px`;
         }
         break;
       case 3:
-        this.formSize.width =  `425px`;
-        this.formSize.height =  `500px`;
+        this.formSize.width = `425px`;
+        this.formSize.height = `500px`;
         break;
       case 4:
-        this.formSize.width =  `335px`;
-        this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '410px';
+        this.formSize.width = `335px`;
+        this.formSize.height = this.FORM_STATE.formMode.role === 1 ? `451px` : '410px';
         break;
     }
   }
@@ -346,4 +340,14 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     return DeviceDetection.isIOSTablet();
   }
 
+  getPassLimitData() {
+    return forkJoin({
+      remaining: this.passLimitsService.getRemainingLimits({studentId: this.user.id}).pipe(take(1)),
+      max: this.passLimitsService.getPassLimit().pipe(take(1))
+    }).pipe(tap(({remaining, max}) => {
+      this.passLimitsRemaining = remaining.remainingPasses;
+      this.passLimitsMax = max.pass_limit.passLimit;
+      this.passLimitsLoaded = true;
+    }));
+  }
 }

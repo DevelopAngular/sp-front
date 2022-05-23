@@ -68,7 +68,7 @@
 
 </div>
 
-<div class="pass-limits-info" style="position:relative;" *ngIf="passLimitsLoaded">
+<div class="pass-limits-info" style="position:relative;" *ngIf="user.isStudent() && passLimitsLoaded">
   <p>{{passLimitsRemaining}}/{{passLimitsMax}} passes remaining today</p>
   <p style="margin-top: -8px; font-size: 12px" *ngIf="passLimitsRemaining === 0">You must request a pass from your teacher</p>
 
