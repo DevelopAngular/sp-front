@@ -11,6 +11,7 @@ import {bumpIn} from '../../animations';
 export class WhiteButtonComponent implements OnInit {
 
   @Input() text: string;
+  @Input() textstyle?: { [k: string]: string }; 
   @Input() icon: string;
   @Input() width: string;
   @Input() height: string;

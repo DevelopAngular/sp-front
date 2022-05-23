@@ -10,7 +10,7 @@ function constructTestPasses(student: User, issuer: User, origin: Location, dest
 
   testDate.setMinutes(testDate.getMinutes() + 1);
 
-  const testPass1 = new HallPass('testPass1', student, issuer,
+  const testPass1 = new HallPass('testPass1', student, issuer, null,
     new Date(), new Date(), new Date(),
     testDate, testDate, origin,
     destination, 'round_trip', '#1893E9,#05B5DE',
@@ -18,7 +18,7 @@ function constructTestPasses(student: User, issuer: User, origin: Location, dest
 
   testDate = new Date();
   testDate.setDate(testDate.getDate() + 4);
-  const testPass2 = new HallPass('testPass2', student, issuer,
+  const testPass2 = new HallPass('testPass2', student, issuer, null,
     new Date(), new Date(), testDate,
     new Date(), new Date(), origin,
     destination, 'round_trip', '#1893E9,#05B5DE',
@@ -26,7 +26,7 @@ function constructTestPasses(student: User, issuer: User, origin: Location, dest
 
   testDate = new Date();
   testDate.setDate(testDate.getDate() - 1);
-  const testPass3 = new HallPass('testPass3', student, issuer,
+  const testPass3 = new HallPass('testPass3', student, issuer, null,
     new Date(), new Date(), testDate,
     new Date(), new Date(), origin,
     destination, 'one_way', '#1893E9,#05B5DE',
@@ -34,7 +34,7 @@ function constructTestPasses(student: User, issuer: User, origin: Location, dest
 
   testDate = new Date();
   testDate.setDate(testDate.getDate() + 1);
-  const testPass4 = new HallPass('testPass4', student, issuer,
+  const testPass4 = new HallPass('testPass4', student, issuer, null,
     new Date(), new Date(), testDate,
     new Date(), new Date(), origin,
     destination, 'one_way', '#1893E9,#05B5DE',
@@ -85,9 +85,9 @@ function constructTestInvitations(student: User, issuer: User, origin: Location,
 
 export const testStudent = new User('testStudent', true, new Date(), false, new Date(),  new Date(), 'Kyle', 'Cook', 'Kyle Cook', false, 'mail@mail.com', [], 'active', null, [], true, null, '', {}, null);
 export const testIssuer = new User('141', true, new Date(), false, new Date(),  new Date(), 'Donald', 'Sawyer', 'Don Sawyer', false, 'mail@mail.com', [], 'active', null, [], true, null, '', {}, null);
-export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, '', true, true, [], false, '', true, true, [], [], [], [], 15, false, 0, false, 0, false);
+export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, '', true, true, [], false, '', true, true, [], [], [], [], 15, false, 0, false, 0, false, true);
 export const testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, '', true, true, [], false, '', true, true, [], [],
-  ['round_trip', 'one_way'], [], 15, false, 0, false, 0, false);
+  ['round_trip', 'one_way'], [], 15, false, 0, false, 0, false, true);
 export const testColorProfile = new ColorProfile('testColorProfile', 'Light-blue', '#0B9FC1,#00C0C7', '#07ABC3',
   '#11CFE5', '#0B9FC1', '#18EEF7');
 

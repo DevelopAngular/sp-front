@@ -1,5 +1,6 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {User} from '../models/User';
+import {HallPass} from '../models/HallPass';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../services/admin.service';
 import {NextStep} from '../animations';
@@ -28,6 +29,15 @@ export class ReportFormComponent implements OnInit {
   showOptions = true;
   reportMessage = '';
 
+  // click on closing elements will close the dialog
+  // instead of other closing actions
+  forceCloseClick = false;
+  // do not use search input 
+  // but replace it with a dumb chip
+  useChipInsteadSearch = false;
+  // use search input on chip mode
+  useChipMode = false;
+
 
   constructor(
               private adminService: AdminService,
@@ -39,11 +49,13 @@ export class ReportFormComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.createForm.getFrameMotionDirection();
-     if (this.data) {
-       this.selectedStudents.push(this.data['report']);
-         this.showOptions = !this.data['report'];
+     if (this.data?.report) {
+      this.selectedStudents.push(this.data['report']);
+      this.showOptions = !this.data['report'];
      }
+    this.useChipMode = this.data?.useChipMode ?? this.useChipMode;
   }
+
   textColor(item) {
     if (item.hovered) {
       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
@@ -72,7 +84,13 @@ export class ReportFormComponent implements OnInit {
   sendReport() {
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
-      'message' : this.reportMessage
+      'message' : this.reportMessage,
+    }
+    if (!!this.data?.pass && !!this.data?.isHallPass) {
+      // ensure passid is null when we may bulk report more students
+      // only on a single student a one reported pass may be 
+      const rpi = (this.selectedStudents.length == 1) ? this.data.pass.id : null;
+      if (rpi !== null) body['reported_pass_id'] = rpi;
     };
 
     this.adminService.sendReportRequest(body).pipe(filter(res => !!res)).subscribe(data => {
@@ -91,6 +109,9 @@ export class ReportFormComponent implements OnInit {
     setTimeout(() => {
       if (!this.showOptions) {
         this.showOptions = true;
+        if (this.forceCloseClick) {
+          this.dialogRef.close(null);
+        }
       } else {
         this.dialogRef.close(null);
       }

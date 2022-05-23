@@ -39,8 +39,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   @Input() pass: PassLike;
   @Input() fromPast = false;
   @Input() forFuture: boolean;
-  // just presents a less "active" version of pass tile
-  @Input() presentational: boolean; 
+  @Input() presentational: boolean; // just presents a less "active" version of pass tile
   @Input() isActive = false;
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
@@ -87,11 +86,22 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
       if (this.encounterPreventionCard) {
         return 'Now';
       }
-      const content = this.pass instanceof Request ?
+      /*const content = this.pass instanceof Request ?
           ((this.pass.request_time && this.forFuture) ?
             (!this.forStaff ? getInnerPassContent(this.pass) : getFormattedPassDate(this.pass)) : (this.forStaff ? 'Pass for Now' : '')) :
           getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) ||
-              !(this.pass instanceof Invitation));
+              !(this.pass instanceof Invitation));*/
+    console.log(this.pass)
+     let content = '';
+     if (this.pass instanceof Request) {
+        content = ((this.pass.request_time && this.forFuture) ?
+            (!this.forStaff ? getInnerPassContent(this.pass) : getFormattedPassDate(this.pass)) : (this.forStaff ? 'Pass for Now' : ''));
+     } else {
+         content =  getInnerPassContent(
+            this.pass, 
+            (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation)
+          );
+     }
      return content;
     }
   }
@@ -215,7 +225,6 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 
   onClick(event) {
     if (this.presentational) return;
-
     this.tileSelected.emit({time$: this.activePassTime$, pass: this.pass});
   }
 

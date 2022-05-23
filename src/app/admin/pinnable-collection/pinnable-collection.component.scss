@@ -1,3 +1,5 @@
+@import "../../../sp-colors";
+
 .collection-wrapper{
 
 }
@@ -50,9 +52,21 @@
     user-select: none;
 }
 .pinnable-item-container {
+  position: relative;
   .pinnable-item {
     width: auto;
     animation: wiggle .3s ease infinite;
+  }
+
+  .disable-room-block {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    background-color: #000000;
+    opacity: 0.5;
   }
 }
 @keyframes wiggle {
