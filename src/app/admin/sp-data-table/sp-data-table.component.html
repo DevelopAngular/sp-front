@@ -104,7 +104,9 @@
               [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
-              [innerHTML]="element[column] ? element[column] : fakeTemplate">
+              [innerHTML]="element[column] ? element[column] : fakeTemplate"
+              [attr.ignore]="currentPage=='report_search' && (column == 'Student Name' || column == 'Message' || column == 'Submitted by' || column == 'Date submitted')"
+              >
             </td>
           </ng-template>
           
