@@ -21,6 +21,9 @@ export const environment = {
     messagingSenderId: '625620388494'
   },
   funData: false,
+  localizejs: {
+    apiKey: 'k2CZfKQ5Wqkbk',
+  },
   gg4l: {
     clientId: 'PTRDNUBGDX',
     secretKey: 'zSEk2Qi4UdKWdbRj8ZYUkgJ+bslK9J5DDPxvmMbJd+g='
