@@ -161,7 +161,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
   }
 
-
   constructor(
     private cdr: ChangeDetectorRef,
     private storage: StorageService,

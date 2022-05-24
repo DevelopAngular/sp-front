@@ -7,6 +7,7 @@ import {StudentFilterComponent} from './student-filter/student-filter.component'
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
+import {PassLike} from '../../models';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
@@ -165,6 +166,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     ) {
     window.passClick = (id) => {
       this.passClick(id);
+    };
+    window.reportedPassClick = (id) => {
+      this.getPass(id);
     };
   }
 
@@ -416,7 +420,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           return reports.map(report => {
               const data = report as any;
               const _passTile = data?.reported_pass?.gradient_color ? 
-                `<div class="pass-icon" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` : '';
+                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` : '';
               const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
             const result = {
               'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
@@ -483,7 +487,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   passClick(id) {
     iif(
-      () => this.currentView$.getValue() === 'pass_search',
+      () => ['pass_search'].includes(this.currentView$.getValue()),
       this.hallPassService.passesEntities$.pipe(take(1)),
       of(this.contact_trace_passes)
     ).pipe(
@@ -715,6 +719,47 @@ export class ExploreComponent implements OnInit, OnDestroy {
     const url = constructUrl('v1/hall_passes', this.queryParams);
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
+  }
+
+  getPass(pid: number|null) {
+    if (pid === null) return;
+
+    this.reportSearchState.entities$ 
+      .pipe(
+        take(1),
+        map((rr: Dictionary<Report>): HallPass|null => {
+          
+          const filtered = Object.entries(rr)
+            .filter(([_,v]) => v?.reported_pass_id === pid);
+
+          const found = filtered.map(([_, v]) => v?.reported_pass);
+          // there can be many more reports for the same pass
+          if (found.length >= 1 && found[0] instanceof HallPass) {
+        console.log(found)
+            return found[0];
+          }
+          return null;
+        }),
+        takeUntil(this.destroy$),
+      ).subscribe((pass: HallPass|null) => {
+        if (pass === null) return;
+
+        pass.start_time = new Date(pass.start_time);
+        pass.end_time = new Date(pass.end_time);
+        const data = {
+          pass: pass,
+          fromPast: true,
+          forFuture: false,
+          forMonitor: false,
+          isActive: false,
+          forStaff: true,
+        };
+        const dialogRef = this.dialog.open(PassCardComponent, {
+          panelClass: 'search-pass-card-dialog-container',
+          backdropClass: 'custom-bd',
+          data: data,
+        });
+      });
   }
 
   searchReports(limit = 100) {

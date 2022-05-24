@@ -138,7 +138,8 @@
               [style.height]="'auto'"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
-              (pointerClickEvent)="null"
+               appCrossPointerEventTarget (pointerClickEvent)="null"
+              [isRowClick]="false"
               [innerHTML]="element[column]"
             >
             </td>
