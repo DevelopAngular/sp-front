@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {HallPass} from '../models/HallPass';
 import {Util} from '../../Util';
@@ -6,7 +6,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -21,7 +21,10 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {UserService} from '../services/user.service';
 import {ToastService} from '../services/toast.service';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
-import {isEmpty} from 'lodash';
+import {isEmpty, remove} from 'lodash';
+import {HttpErrorResponse} from '@angular/common/http';
+import { ConfirmationDialogComponent, ConfirmationTemplates } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import { PassLimitService } from '../services/pass-limit.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -48,6 +51,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
+  @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
 
   timeLeft: string = '';
   valid: boolean = true;
@@ -113,6 +117,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private userService: UserService,
       private toastService: ToastService,
       private encounterService: EncounterPreventionService,
+      private passLimitService: PassLimitService
   ) {}
 
   getUserName(user: any) {
@@ -323,49 +328,97 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forKioskMode) {
         body['self_issued'] = true;
     }
-     const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
-      getRequest$.pipe(
-        takeUntil(this.destroy$),
-        switchMap(({conflict_student_ids, passes}) => {
-          if (conflict_student_ids) {
-            if (!this.forStaff) {
-              this.toastService.openToast({
-                title: 'Sorry, you can’t start your pass right now.',
-                subtitle: 'Please try again later.',
-                type: 'error',
-                encounterPrevention: true,
-                exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
-              });
-              this.dialogRef.close();
-              return of(null);
-            } else {
-              return zip(...conflict_student_ids.map(id => {
-                return this.encounterService.getExclusionGroupsForStudentRequest(id)
-                  .pipe(
-                    filter(r => !isEmpty(r) && !!r[+id]),
-                    take(1),
-                    tap((groups) => {
-                      const exclusionGroups = groups[+id];
-                      this.toastService.openToast({
-                        title: 'This pass can’t start now to prevent encounter.',
-                        subtitle: 'These students can’t have a pass at the same time.',
-                        type: 'error',
-                        encounterPrevention: true,
-                        exclusionPass: {...this.pass, travel_type: this.selectedTravelType, student: this.selectedStudents.find(user => +user.id === +id)},
-                        exclusionGroups
-                      });
-                    }));
-              }));
-            }
+
+    of(body).pipe(
+      concatMap(b => this.forStaff ? this.hallPassService.bulkCreatePass(b) : this.hallPassService.createPass(b)),
+      takeUntil(this.destroy$),
+      switchMap(({conflict_student_ids, passes}) => {
+        if (conflict_student_ids) {
+          if (!this.forStaff) {
+            this.toastService.openToast({
+              title: 'Sorry, you can\'t start your pass right now.',
+              subtitle: 'Please try again later.',
+              type: 'error',
+              encounterPrevention: true,
+              exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
+            });
+            this.dialogRef.close();
+            return of(null);
+          } else {
+            return zip(...conflict_student_ids.map(id => {
+              return this.encounterService.getExclusionGroupsForStudentRequest(id)
+                .pipe(
+                  filter(r => !isEmpty(r) && !!r[+id]),
+                  take(1),
+                  tap((groups) => {
+                    const exclusionGroups = groups[+id];
+                    this.toastService.openToast({
+                      title: 'This pass can\'t start now to prevent encounter.',
+                      subtitle: 'These students can\'t have a pass at the same time.',
+                      type: 'error',
+                      encounterPrevention: true,
+                      exclusionPass: {
+                        ...this.pass,
+                        travel_type: this.selectedTravelType,
+                        student: this.selectedStudents.find(user => +user.id === +id)
+                      },
+                      exclusionGroups
+                    });
+                  }));
+            }));
           }
-          return of(null);
-        })
-      )
-      .subscribe((data) => {
-        this.performingAction = false;
-        this.hallPassService.createPassEvent$.next(true);
-        this.dialogRef.close();
-      });
+        }
+        return of(null);
+      }),
+      retryWhen((errors: Observable<HttpErrorResponse>) => {
+        return errors.pipe(
+          filter(errorResponse => { console.log(errorResponse); return errorResponse.error.message === 'one or more pass limits reached!' }),
+          concatMap(errorResponse => {
+            return this.passLimitService.getPassLimit().pipe(map(pl => ({
+              passLimit: pl.pass_limit.passLimit,
+              errorResponse
+            })))
+          }),
+          concatMap(({errorResponse, passLimit}) => this.dialog.open(ConfirmationDialogComponent, {
+            panelClass: 'overlay-dialog',
+            backdropClass: 'custom-backdrop',
+            closeOnNavigation: true,
+            data: {
+              body: this.confirmDialog,
+              buttons: {
+                confirmText: 'Override limits',
+                denyText: 'Skip these students',
+              },
+              templateData: {
+                students: errorResponse.error.students,
+                passLimit,
+                numPasses: body['students']?.length || 1
+              }
+            } as ConfirmationTemplates
+          }).afterClosed().pipe(map(override => ({ override, students: errorResponse.error.students.map(s => s.id) })))),
+          concatMap(({ override, students }: {override: boolean, students: number[]}) => {
+            console.log(override)
+            if (override === undefined) {
+              this.dialogRef.close()
+              throw 'confirmation closed'
+            }
+            if (override === true) {
+              body['override'] = true
+              return of(null)
+            }
+            
+            if (override === false) {
+              remove(body['students'] as number[], elem => students.includes(elem))
+              return of(null)
+            }
+          })
+        );
+      })
+    ).subscribe((data) => {
+      this.performingAction = false;
+      this.hallPassService.createPassEvent$.next(true);
+      this.dialogRef.close();
+    });
   }
 
   cancelEdit(evt: MouseEvent) {
@@ -384,13 +437,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.header = '';
       } else {
         if (this.forInput) {
-            this.formState.step = 3;
-              this.formState.previousStep = 4;
-              this.formService.setFrameMotionDirection('disable');
-              this.cardEvent.emit(this.formState);
-            return false;
+          this.formState.step = 3;
+          this.formState.previousStep = 4;
+          this.formService.setFrameMotionDirection('disable');
+          this.cardEvent.emit(this.formState);
+          return false;
         } else if (this.forFuture) {
-          this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete', './assets/Delete (Red).svg'));
+          this.options.push(this.genOption('Delete Scheduled Pass', '#E32C66', 'delete', './assets/Delete (Red).svg'));
           this.header = 'Are you sure you want to delete this scheduled pass?';
         }
       }
