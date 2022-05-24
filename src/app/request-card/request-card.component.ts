@@ -584,7 +584,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         templateData: {
           student: this.request.student,
           passLimit: studentPassLimit
-        }
+        },
+        icon: './assets/Pass Limit (Purple).svg'
       } as ConfirmationTemplates
     }).afterClosed();
 
@@ -599,6 +600,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       concatMap((overrideRoomPassLimit) => {
         // Wait until the previous dialog is closed to perform these checks
         // If the room pass limit override is denied, then immediately return false and deny the pass request
+        console.log(`Override room pass limit: ${overrideRoomPassLimit}`)
         if (!overrideRoomPassLimit) {
           return of(false);
         }
@@ -606,7 +608,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         // If the room pass limit is allowed and the student pass limit is reached then
         // open the student pass limit dialog and check its result,
         // else, allow the creation of the result
-        return studentPassLimitReached ? openStudentPassLimitDialog() : of(true);
+        return studentPassLimitReached ? openStudentPassLimitDialog().pipe(tap(console.log)) : of(true);
       })
     );
 
@@ -687,6 +689,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   goToPin() {
     this.passLimitPromise().then(approved => {
+      console.log(`Approved: ${approved}`)
       this.activeTeacherPin = true;
     });
   }

@@ -39,7 +39,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
   @Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild('inp', {static: true}) inp: ElementRef;
-  @ViewChild('ConfirmDialogBody') confirmDialogBody: TemplateRef<HTMLElement>;
+  @ViewChild('confirmDialogBody') confirmDialogBody: TemplateRef<HTMLElement>;
 
   incorrect: boolean;
   passLimit: number;
@@ -103,14 +103,20 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
                           templateData: {
                             student: this.request.student,
                             passLimit: this.passLimit
-                          }
+                          },
+                          icon: './assets/Pass Limit (Purple).svg'
                         } as ConfirmationTemplates
                       });
                       return overrideDialogRef.afterClosed().pipe(concatMap((override) => {
+                        if (!override) {
+                          this.pinResult.emit()
+                          return of(null)
+                        }
+
                         return this.requestService.acceptRequest(this.requestId, {
                           teacher_pin: this.pin,
                           override: true
-                        }).pipe(mapTo(override));
+                        }).pipe(mapTo(true));
                       }));
                     }
                     this.incorrect = true;

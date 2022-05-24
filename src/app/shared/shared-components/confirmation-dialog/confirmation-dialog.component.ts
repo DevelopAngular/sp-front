@@ -9,6 +9,7 @@ export interface ConfirmationTemplates {
     denyText: string
   };
   templateData: Record<string, any>;
+  icon?: string // icon path
 }
 
 @Component({

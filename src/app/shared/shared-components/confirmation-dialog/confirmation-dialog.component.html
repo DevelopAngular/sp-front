@@ -1,6 +1,6 @@
 <div class="confirm-dialog">
   <div class="icon-wrapper">
-    <img width="30" [src]="'./assets/Hand (Navy).svg' | resolveAsset">
+    <img width="30" [src]="data.icon | resolveAsset">
   </div>
   <div class="main-wrapper">
     <ng-container *ngIf="data.body" [ngTemplateOutlet]="data.body" [ngTemplateOutletContext]="$implicit"></ng-container>

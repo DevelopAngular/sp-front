@@ -393,7 +393,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 students: errorResponse.error.students,
                 passLimit,
                 numPasses: body['students']?.length || 1
-              }
+              },
+              icon: './assets/Pass Limit (Purple).svg'
             } as ConfirmationTemplates
           }).afterClosed().pipe(map(override => ({ override, students: errorResponse.error.students.map(s => s.id) })))),
           concatMap(({ override, students }: {override: boolean, students: number[]}) => {

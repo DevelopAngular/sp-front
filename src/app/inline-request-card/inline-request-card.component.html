@@ -124,7 +124,7 @@
     </div>
 
   <div class="inline-request-content" *ngIf="activeTeacherPin">
-    <app-teacher-pin-student [request]="request" [requestId]="request.id"></app-teacher-pin-student>
+    <app-teacher-pin-student [request]="request" [requestId]="request.id" (pinResult)="activeTeacherPin = false"></app-teacher-pin-student>
   </div>
 </div>
 
