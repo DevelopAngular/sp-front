@@ -27,9 +27,9 @@
     </app-white-button>
   </ng-template>
 
-  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white; width: 425px; height: 500px; overflow: auto">
+  <div style="position: relative; background-color: white; width: 425px; height: 500px; overflow: auto">
 
-    <div style="display: flex; flex-direction: column; flex: 1 1 auto; padding: 0px 25px;" >
+    <div style="padding: 0px 25px;" >
       <label for="student-select">Student</label>
       <div id="student-select" class="student-select" [attr.data-motion-translate]="true">
         <div class="report-content">
@@ -60,10 +60,11 @@
         <div data-grammarly-issue-container class="message-wrapper">
           <textarea class="message-box" #messageBox placeholder="Ex. Student did not return to class" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>
+      </div>
 
       <ng-container *ngIf="!showOptions && data['pass'] && !!data?.isHallPass">
         <label for="pass">Pass</label>
-        <div class="tile">
+        <div id="reported-pass" class="tile">
           <app-pass-tile
            [presentational]="true"
            [destroyCloseQuickPreview]="true"
@@ -78,7 +79,6 @@
           </div>
         </ng-container>
        
-      </div>
     </div>
   </div>
 </div>

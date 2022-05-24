@@ -291,10 +291,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       isHallPass,
       ...passData,
     };
-    //this.dialogRef.close();
+
     const reportRef = this.dialog.open(ReportFormComponent, {
       panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
-      backdropClass: 'custom-backdrop',
+      backdropClass: 'cdk-overlay-transparent-backdrop',
       data,
     });
 
