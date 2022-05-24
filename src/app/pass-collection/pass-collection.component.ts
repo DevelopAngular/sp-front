@@ -325,7 +325,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           width: '425px',
           height: '500px',
           panelClass: 'form-dialog-container',
-          backdropClass: 'custom-backdrop',
+          backdropClass: 'cdk-overlay-transparent-backdrop',
           data: {'report': dialogData['report']}
         });
       }

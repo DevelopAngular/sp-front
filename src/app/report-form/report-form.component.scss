@@ -122,6 +122,7 @@
 
 .student-select {
   width: 100%;
+  max-width: 376px;
 
   .student-select_button-next {
     align-self: flex-end;
@@ -131,6 +132,10 @@
   .report-content {
     //width: 100%;
     //display: flex;
+    //width: 100%;
+    //max-width: 376px;
+    //top: 0px;
+    //left: 0px;
     //position: absolute;
   }
 
@@ -165,13 +170,37 @@
   }
 }
 
+$offset:298px;
 label {
-  margin-top: 30px;// ensure distance between the other input
+  //margin-top: 30px;// ensure distance between the other input
   margin-bottom: 8px; // ensure distance for own input
   color: $navy500;
   font-weight: 700;
   font-size: 15px;
   display: block;
+  position: absolute;
+  &[for="student-select"] {
+    top: 327px-$offset;
+  }
+  &[for="message-entry"] {
+    top: 429px-$offset;
+  }
+  &[for="pass"] {
+    top: 594px-$offset;
+  }
+}
+
+#student-select {
+  position: absolute;
+  top: 354px-$offset;
+}
+#message-entry {
+  position: absolute;
+  top: 456px-$offset;
+}
+#reported-pass {
+  position: absolute;
+  top: 621px-$offset;
 }
 
 img[rel="back-button"]{
@@ -192,6 +221,7 @@ textarea {
 
 .message-entry {
   width: 100%;
+  max-width: 376px;
   overflow: visible;
 
   .message-box {
@@ -222,9 +252,10 @@ textarea {
   background-color: $gray100;
   border-radius: 8px;
   height: 31px;
+  line-height: 31px;
   padding: 0px 10px;
-  display: flex;
-  align-items: center;
+  //display: flex;
+  //align-items: center;
   color: $gray900;
   width: min-content;
   white-space:nowrap;
