@@ -377,6 +377,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         //const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
         // the following code ignore intention 'desc' as accounts.effects will consider missing sort as 'no sort'
         // it is not corect to replace sort desc with no sort 
+        // the code will be  kept here as comments
         //if (sort === 'desc') {
           //delete queryParams.sort;
         //}
