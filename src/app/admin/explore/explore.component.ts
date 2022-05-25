@@ -168,7 +168,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       this.passClick(id);
     };
     window.reportedPassClick = (id) => {
-      this.getPass(id);
+      this.openPassDialog(id);
     };
   }
 
@@ -419,10 +419,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.reportSearchState.isEmpty = false;
           return reports.map(report => {
               const data = report as any;
-              const _passTile = data?.reported_pass?.gradient_color ? 
-                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` : '';
+              const _passTile = (
+                data?.reported_pass?.gradient_color &&
+                data?.reported_pass?.id
+              ) ? 
+                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` 
+                : '';
               const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
-            const result = {
+              const result = {
               'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
               'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
               'Status': report.status,
@@ -721,7 +725,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.isSearched = true;
   }
 
-  getPass(pid: number|null) {
+  openPassDialog(pid: number|null) {
     if (pid === null) return;
 
     this.reportSearchState.entities$ 
@@ -734,9 +738,16 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
           const found = filtered.map(([_, v]) => v?.reported_pass);
           // there can be many more reports for the same pass
-          if (found.length >= 1 && found[0] instanceof HallPass) {
-        console.log(found)
-            return found[0];
+          if (found.length >= 1) {
+            try {
+              // is is expected a HallPass like object
+              // as only this kind of pass can be reported
+              const maybeHallPass = HallPass.fromJSON(found[0]);
+              return maybeHallPass;
+            } catch(e) {
+              // TODO: how to deal with this error??
+              console.log(e)
+            }
           }
           return null;
         }),
