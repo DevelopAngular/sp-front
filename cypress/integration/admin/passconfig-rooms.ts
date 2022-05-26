@@ -70,6 +70,10 @@ describe('Admin - UI and Actions',  () => {
             cy
               .get('mat-dialog-container > app-overlay-container app-room app-gradient-button').contains('Delete room')
               .click({force: true});
+            // approve deletion
+            cy
+              .get('app-consent-menu span').contains('Confirm Delete')
+              .click({force: true});
             cy.wait('@deleteRoomRequest');
           });
         }).then(() => {
@@ -219,6 +223,32 @@ describe('Admin - UI and Actions',  () => {
                 roomsNum = pinnables.length;
                 // titles of existent rooms
                 pinnablesTitles = pinnables.map((_, el) => el.textContent.trim()).get();
+
+                // delete a potential existent test room
+                // may be excessive!
+                cy.intercept({
+                  method: 'DELETE',
+                  url: /api\/prod-us-central\/v1\/pinnables\/\d+$/
+                }).as('deleteRoomRequest');
+
+                cy.get('div.pinnable-card div.title').each(el => {
+                  const title = el.text().trim();
+                  if (title !== ROOM_TITLE && title !== MODIFIED_TITLE) {
+                    return;
+                  }
+
+                  el.parent().parent().parent().trigger('click');
+                  cy
+                    .get('mat-dialog-container > app-overlay-container app-room app-gradient-button').contains('Delete room')
+                    .click({force: true});
+                  // approve deletion
+                  cy
+                    .get('app-consent-menu span').contains('Confirm Delete')
+                    .click({force: true});
+                  cy.wait('@deleteRoomRequest');
+                  cy.log(`deleted "${ROOM_TITLE}" room`);
+                });
+
             });
 
             // no need here for closeModal - the action itself closes the backdrop
@@ -286,7 +316,7 @@ describe('Admin - UI and Actions',  () => {
                             });
                     });
                     // click on save
-                    cy.get('mat-dialog-container > app-overlay-container > form app-gradient-button div.button').contains('Save').click();
+                    cy.get('mat-dialog-container > app-overlay-container > form div.right-button > app-gradient-button > div.button').contains('Save').click();
                     cy.wait('@newRoomRequest');
                     // get the toaster element instead of wait
                     cy.contains('app-custom-toast', 'New room added').should('exist');
@@ -365,7 +395,9 @@ describe('Admin - UI and Actions',  () => {
 
 
                 it('should modify test room', function() {
-                    cy.contains('app-pinnable-collection app-pinnable div.title', ROOM_TITLE).click();
+                    cy.contains('app-pinnable-collection app-pinnable div.title', ROOM_TITLE)
+                      // is being covered by another element
+                      .click({force: true});
                     cy.get('app-room form app-input').should('have.length', 3);
                     // title
                     cy.get('app-room form app-input:eq(0)').should('be.visible').type('{selectall}{del}' + MODIFIED_TITLE + '{enter}');
