@@ -2,8 +2,9 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {GoogleLoginService} from '../services/google-login.service';
-import {map, tap} from 'rxjs/operators';
+import {map, tap, switchMap} from 'rxjs/operators';
 import {StorageService} from '../services/storage.service';
+import {AllowMobileService} from '../services/allow-mobile.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class AuthenticatedGuard implements CanActivate {
   constructor(
     private loginService: GoogleLoginService,
     private router: Router,
-    private storage: StorageService
+    private storage: StorageService,
+    private allowMobile: AllowMobileService,
   ) {
   }
 
@@ -25,6 +27,9 @@ export class AuthenticatedGuard implements CanActivate {
     return this.loginService.isAuthenticated$
       .pipe(
         tap(v => console.log('is authenticated (guard):', v)),
+        switchMap(v => {
+          return this.allowMobile.canUseMobile$;
+        }),
         // filter(v => v),
         map((v) => {
           if (!v) {
