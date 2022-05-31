@@ -11,15 +11,15 @@
   "fixturesFolder": "cypress/fixtures",
   "baseUrl": "http://localhost:4200",
   "env": {
-    "student1Username": "demostudent1@cypress.smartpass.app",
-    "student1Password": "uG8F2uAhBW",
-    "studentUsername": "demostudent2@cypress.smartpass.app",
-    "studentPassword": "b3-Iop6(Nt",
-    "teacherUsername": "demoteacher1@cypress.smartpass.app",
-    "teacherPassword": "j6UmyudW2f",
-    "adminUsername": "smartpass-admin@cypress.smartpass.app",
-    "adminPassword": "CmN9qyLf",
-    "secretaryUsername": "tsecretary@demontehs.org",
-    "secretaryPassword": "sectest"
+    "student1Username": "teststudent5@smartpass.app",
+    "student1Password": "smartpass",
+    "studentUsername": "gabriel_studentsmartpass.app",
+    "studentPassword": "smartpass",
+    "teacherUsername": "gabriel_teacher@smartpass.app",
+    "teacherPassword": "smartpass",
+    "adminUsername": "gabriel@smartpass.app",
+    "adminPassword": "smartpasss",
+    "secretaryUsername": "secre1@smartpass.app",
+    "secretaryPassword": "smartpass"
   }
 }
