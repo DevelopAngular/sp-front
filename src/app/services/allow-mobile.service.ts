@@ -32,10 +32,6 @@ export class AllowMobileService {
           user.isStudent() && 
           !school.student_can_use_mobile
         ) {
-          // assumes the user is logged in
-          // log out the user
-          this.httpService.clearInternal();
-          this.loginService.clearInternal();
           return false;
         }
 
