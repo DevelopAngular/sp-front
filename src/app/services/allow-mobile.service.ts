@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Subject, Observable, combineLatest} from 'rxjs';
 import {tap, map, takeUntil} from 'rxjs/operators';
 
+import {GoogleLoginService} from '../services/google-login.service';
 import {UserService} from './user.service';
 import {HttpService} from './http-service';
 import {DeviceDetection} from '../device-detection.helper';
@@ -17,6 +18,7 @@ export class AllowMobileService {
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
+      private loginService: GoogleLoginService,
       private userService: UserService,
       private httpService: HttpService,
   ) {
@@ -24,15 +26,18 @@ export class AllowMobileService {
       this.userService.userData.asObservable(),
       this.httpService.currentSchool$
     ).pipe(
-      tap(([u, s]) => {
-        console.log('comb', u, s)
-      }),
       map(([u,s]) => {
         if (
           u.isStudent() && 
           !s.student_can_use_mobile &&
           DeviceDetection.isMobile()
-        ) return false;
+        ) {
+          // assumes the user is logged in
+          // log out the user
+          this.httpService.clearInternal();
+          this.loginService.clearInternal();
+          return false;
+        }
 
         return true;
       }),
