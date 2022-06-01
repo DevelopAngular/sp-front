@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
-import {map, tap, withLatestFrom} from 'rxjs/operators';
 import {GoogleLoginService} from '../services/google-login.service';
-import {HttpService} from '../services/http-service';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 import {StorageService} from '../services/storage.service';
 import {AllowMobileService} from '../services/allow-mobile.service';
+import {ToastService} from '../services/toast.service'
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +14,10 @@ export class AuthenticatedGuard implements CanActivate {
 
   constructor(
     private loginService: GoogleLoginService,
-    private httpService: HttpService,
     private router: Router,
     private storage: StorageService,
     private allowMobile: AllowMobileService,
+    private toast: ToastService,
   ) {
   }
 
@@ -31,20 +31,22 @@ export class AuthenticatedGuard implements CanActivate {
         tap(v => console.log('is authenticated (guard):', v)),
         withLatestFrom(this.allowMobile.canUseMobile$),
         // filter(v => v),
-        map(([isAuthenticated, allowMobileDevice]) => {
-          console.log(isAuthenticated, allowMobileDevice)
+        map(([isAuthenticated, studentAllowMobile]) => {
+          console.log('guard',isAuthenticated, studentAllowMobile)
           if (!isAuthenticated) {
             this.router.navigate(['']);
           } else {
             if (this.storage.getItem('gg4l_invalidate')) {
               this.storage.removeItem('gg4l_invalidate');
             }
-            if (!allowMobileDevice) {
-              console.log(allowMobileDevice)
-              // log out the user
-              this.httpService.clearInternal();
-              this.loginService.clearInternal();
-              this.router.navigate(['login']);
+            if (!studentAllowMobile) {
+              this.allowMobile.clearInternal();
+              //this.router.navigate(['sign-out']);
+              this.toast.openToast({
+                title: 'Success!',
+                subtitle: 'mobile devices not allowed',
+                type: 'success',
+              });
             }
           }
           return isAuthenticated;
