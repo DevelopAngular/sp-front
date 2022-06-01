@@ -26,11 +26,11 @@ export class AllowMobileService {
       this.userService.userData.asObservable(),
       this.httpService.currentSchool$
     ).pipe(
-      map(([u,s]) => {
+      map(([user,school]) => {
         if (
-          u.isStudent() && 
-          !s.student_can_use_mobile &&
-          DeviceDetection.isMobile()
+          DeviceDetection.isMobile() &&
+          user.isStudent() && 
+          !school.student_can_use_mobile
         ) {
           // assumes the user is logged in
           // log out the user
