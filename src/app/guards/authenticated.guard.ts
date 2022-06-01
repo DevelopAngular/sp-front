@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {GoogleLoginService} from '../services/google-login.service';
-import {map, tap, switchMap} from 'rxjs/operators';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 import {StorageService} from '../services/storage.service';
 import {AllowMobileService} from '../services/allow-mobile.service';
 
@@ -27,19 +27,21 @@ export class AuthenticatedGuard implements CanActivate {
     return this.loginService.isAuthenticated$
       .pipe(
         tap(v => console.log('is authenticated (guard):', v)),
-        switchMap(v => {
-          return this.allowMobile.canUseMobile$;
-        }),
+        withLatestFrom(this.allowMobile.canUseMobile$),
         // filter(v => v),
-        map((v) => {
-          if (!v) {
+        map(([isAuthenticated, allowMobileDevice]) => {
+          console.log(isAuthenticated, allowMobileDevice)
+          if (
+            !isAuthenticated ||
+            (isAuthenticated && !allowMobileDevice)
+          ) {
             this.router.navigate(['']);
           } else {
             if (this.storage.getItem('gg4l_invalidate')) {
               this.storage.removeItem('gg4l_invalidate');
             }
           }
-          return v;
+          return isAuthenticated;
         })
       );
 }
