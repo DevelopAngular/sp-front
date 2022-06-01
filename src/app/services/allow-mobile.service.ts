@@ -43,7 +43,6 @@ export class AllowMobileService {
       }),
       takeUntil(this.destroy$)
     ).subscribe(v => {
-      console.log('comb', v);
       this.canUseMobile$.next(v);
     });
   }
