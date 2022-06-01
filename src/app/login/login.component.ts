@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, AfterViewInit, OnInit, Output, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeviceDetection} from '../device-detection.helper';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -118,6 +118,14 @@ export class LoginComponent implements OnInit, OnDestroy {
         { email: qp.email, school_id: qp.school_id, instant_login: qp.instant_login }
       );
     });
+  }
+
+  ngAfterViewInit() {
+    const allow = this.storage.getItem('studentAllowMobile') ?? 'true';
+    if (allow === 'false') {
+      this.loginService.loginErrorMessage$.next('Your school admin has disabled SmartPass for mobile devices');
+      this.storage.removeItem('studentAllowMobile');
+    }
   }
 
   ngOnDestroy() {

@@ -30,7 +30,6 @@ export class AllowMobileService implements OnDestroy {
       this.httpService.currentSchool$
     ).pipe(
       map(([isAuthenticated, user, school]) => {
-        console.log('allow', isAuthenticated, user.isStudent(), school.student_can_use_mobile)
         if (
           isAuthenticated &&
           DeviceDetection.isMobile() &&
