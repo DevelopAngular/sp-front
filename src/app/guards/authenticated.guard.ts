@@ -30,15 +30,14 @@ export class AuthenticatedGuard implements CanActivate {
         withLatestFrom(this.allowMobile.canUseMobile$),
         // filter(v => v),
         map(([isAuthenticated, allowMobileDevice]) => {
-          console.log(isAuthenticated, allowMobileDevice)
-          if (
-            !isAuthenticated ||
-            (isAuthenticated && !allowMobileDevice)
-          ) {
+          if (!isAuthenticated) {
             this.router.navigate(['']);
           } else {
             if (this.storage.getItem('gg4l_invalidate')) {
               this.storage.removeItem('gg4l_invalidate');
+            }
+            if (!allowMobileDevice) {
+              this.router.navigate(['']);
             }
           }
           return isAuthenticated;
