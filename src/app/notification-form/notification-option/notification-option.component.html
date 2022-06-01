@@ -1,0 +1,10 @@
+<div class="option">
+  <div class="option-info">
+      <img alt="" [src]="icon | resolveAsset">
+    <span [customToolTip]="tooltip">{{text}}</span>
+  </div>
+  <div class="option-toggle">
+    <app-toggle-input [form]="this.form" [controlName]="control" [defaultLayout]="false"
+                      [delimiter]="false" controlSize="small"></app-toggle-input>
+  </div>
+</div>

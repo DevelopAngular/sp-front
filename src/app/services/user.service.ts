@@ -538,12 +538,12 @@ export class UserService implements OnDestroy {
     return this.http.get(`v1/users/${id}/notification_settings`);
   }
 
-  enableNotification(id) {
-    return this.http.put(`v1/users/@me/notification_settings/${id}`);
+  updateUserNotification(id, data) {
+    return this.http.post(`v1/users/${id}/notification_settings`, data);
   }
 
-  disableNotification(id) {
-    return this.http.delete(`v1/users/@me/notification_settings/${id}`);
+  sendTestNotification(id) {
+    return this.http.post(`v1/users/${id}/test_notification`, new Date());
   }
 
   searchProfile(role?, limit = 5, search?) {
@@ -789,10 +789,6 @@ export class UserService implements OnDestroy {
 
   sortTableHeader(queryParams) {
     return this.http.get(constructUrl('v1/users', queryParams));
-  }
-
-  sendTestNotification(userId) {
-    return this.http.post(`v1/users/${userId}/test_notification`, new Date());
   }
 
   updateEffectiveUser(effectiveUser) {

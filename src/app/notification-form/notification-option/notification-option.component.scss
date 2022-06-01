@@ -1,0 +1,31 @@
+@import '../../../design-system';
+
+.option {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 29px;
+
+  .option-info {
+    display: flex;
+    gap: 8px;
+
+    div {
+      width: 26px;
+      height: 26px;
+
+      img {
+        width: 22px;
+      }
+    }
+
+    span {
+      @include textSize(15px, 600);
+    }
+  }
+
+  .option-toggle {
+    width: 42px;
+  }
+}

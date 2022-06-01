@@ -1,0 +1,65 @@
+@import '../../../design-system';
+
+.notif-room-config-dialog {
+  background-color: white;
+  height: 100%;
+
+  .notif-exit-wrapper {
+    margin-right: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row-reverse;
+
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .top-info {
+    border-radius: 4px;
+    height: 28px;
+    display: flex;
+    padding: 18px;
+
+    div {
+      margin-right: 14px;
+    }
+
+    img {
+      width: 18px;
+    }
+
+    span {
+      @include textSize(22px, bold);
+    }
+  }
+
+  .options {
+    padding: 0 18px 24px 18px;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+
+  .room-image {
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.10);
+    border-radius: 4.19px;
+    width: 48px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 18px;
+    }
+  }
+
+  .info-text {
+    @include textSize(14px, normal, $gray500);
+    padding: 0 18px;
+    display: inline-block;
+  }
+}

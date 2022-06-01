@@ -1,0 +1,12 @@
+<div class="notif-select-students">
+  <div *ngFor="let student of (update | async); let i = index"
+       (click)="removeStudent(i)"
+       class="student real">
+    <img alt="" [src]="student['icon'] | resolveAsset">
+    <span>{{student['name']}}</span>
+  </div>
+  <div class="student new" (click)="beginSearch()">
+    <img alt="" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset">
+    <span>Add Student</span>
+  </div>
+</div>

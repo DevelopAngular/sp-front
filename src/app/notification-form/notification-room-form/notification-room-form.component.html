@@ -1,0 +1,18 @@
+<div class="notif-room-config-dialog">
+  <div class="top-info">
+    <div class="room-image" [style.background-image]="roomBackground">
+      <img alt="" [src]="icon | resolveAsset">
+    </div>
+    <span>Notifications for {{roomName}}</span>
+    <div class="notif-exit-wrapper"><img (click)="close()" alt="" [src]="'./assets/Close.svg' | resolveAsset"></div>
+  </div>
+  <div class="options">
+    <app-notification-option icon="./assets/Mail (Navy).svg" text="Passes to this room"
+                             [form]="this.form" control="to"></app-notification-option>
+    <app-notification-option icon="./assets/Mail (Navy).svg" text="Passes from this room"
+                             [form]="this.form" control="from"></app-notification-option>
+    <app-notification-option icon="./assets/Mail (Navy).svg" text="Expired passes from this room"
+                             [form]="this.form" control="expired"></app-notification-option>
+  </div>
+  <span class="info-text">Notifications when a pass starts to or from this room, or a pass has expired from this room.</span>
+</div>
