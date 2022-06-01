@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
-import {GoogleLoginService} from '../services/google-login.service';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
+import {GoogleLoginService} from '../services/google-login.service';
+import {HttpService} from '../services/http-service';
 import {StorageService} from '../services/storage.service';
 import {AllowMobileService} from '../services/allow-mobile.service';
 
@@ -13,6 +14,7 @@ export class AuthenticatedGuard implements CanActivate {
 
   constructor(
     private loginService: GoogleLoginService,
+    private httpService: HttpService,
     private router: Router,
     private storage: StorageService,
     private allowMobile: AllowMobileService,
@@ -30,6 +32,7 @@ export class AuthenticatedGuard implements CanActivate {
         withLatestFrom(this.allowMobile.canUseMobile$),
         // filter(v => v),
         map(([isAuthenticated, allowMobileDevice]) => {
+          console.log(isAuthenticated, allowMobileDevice)
           if (!isAuthenticated) {
             this.router.navigate(['']);
           } else {
@@ -37,7 +40,11 @@ export class AuthenticatedGuard implements CanActivate {
               this.storage.removeItem('gg4l_invalidate');
             }
             if (!allowMobileDevice) {
-              this.router.navigate(['']);
+              console.log(allowMobileDevice)
+              // log out the user
+              this.httpService.clearInternal();
+              this.loginService.clearInternal();
+              this.router.navigate(['login']);
             }
           }
           return isAuthenticated;
