@@ -3,7 +3,7 @@ import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, O
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter as _filter, find} from 'lodash';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip, of} from 'rxjs';
 
 import {filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {BUILD_INFO_REAL} from '../build-info';
@@ -30,6 +30,7 @@ import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
+import {LocalizejsService} from './services/localizejs.service';
 
 declare const window;
 
@@ -100,6 +101,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private screen: ScreenService,
     private toastService: ToastService,
+    private localize: LocalizejsService,
   ) {}
 
   ngOnInit() {
@@ -113,6 +115,28 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         window.history.pushState({}, '');
       }
     });
+
+    // set only an already set up language is found
+    // otherwise let the language component try to translate
+    /*const savedLang = this.storageService.getItem('codelang');
+    if (!!savedLang) {
+      this.http.currentLang$.pipe(
+        takeUntil(this.subscriber$),
+        filter(res => !!res),
+      ).subscribe(chosenLang => {
+        try {
+          this.localize.load_localize_scripts(() => {
+            // Localizejs saves in localstorage an intem ljs-source-lang that stores the original lanuage
+            // the original language may be taken from lang html attribute of page
+            // or the official way below
+            const sourceLanguage = this.localize.getSourceLanguage();
+            this.localize.from(sourceLanguage).to(chosenLang);
+          });
+        } catch (err) {
+          this.localize.disableLanguage();
+        }
+      });
+    }*/
 
     this.userService.loadedUser$
       .pipe(

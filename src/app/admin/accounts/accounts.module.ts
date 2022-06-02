@@ -54,7 +54,7 @@ import {GSuiteConnectComponent} from './g-suite-settings/g-suite-connect/g-suite
     CommonModule,
     AccountsRoutingModule,
     AdminSharedModule
-  ]
+  ],
 })
 export class AccountsModule {
 }

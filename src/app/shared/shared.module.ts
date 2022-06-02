@@ -1,5 +1,5 @@
-﻿import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
+﻿import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
 import {SmartpassLogoComponent} from '../smartpass-logo/smartpass-logo.component';
 import {DisplayCardComponent} from '../display-card/display-card.component';
@@ -49,6 +49,7 @@ import {TeacherPinStudentComponent} from '../teacher-pin-student/teacher-pin-stu
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
+import {SpLanguageComponent} from '../sp-language/sp-language.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 import {ProfileInfoComponent} from '../my-profile-dialog/profile-info/profile-info.component';
 import {ChangePasswordComponent} from '../my-profile-dialog/change-password/change-password.component';
@@ -84,6 +85,7 @@ import {IconOnlyButtonComponent} from '../ds-buttons/icon-only-button/icon-only-
 import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {LinkGeneratedDialogComponent} from '../admin/link-generated-dialog/link-generated-dialog.component';
+import { StatusChipComponent } from '../admin/explore/status-chip/status-chip.component';
 import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-universal.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -143,6 +145,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ReportSuccessToastComponent,
     RestrictionPickerComponent,
     SpAppearanceComponent,
+    SpLanguageComponent,
     TeacherPinStudentComponent,
     MyProfileDialogComponent,
     ProfileInfoComponent,
@@ -179,6 +182,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EditAvatarComponent,
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
+    StatusChipComponent, 
     NuxUniversalComponent,
   ],
   exports: [
@@ -257,6 +261,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EditAvatarComponent,
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
+    StatusChipComponent, 
     NuxUniversalComponent,
   ],
   providers: [

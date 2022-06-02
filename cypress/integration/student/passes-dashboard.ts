@@ -166,7 +166,7 @@ describe('Student - Passes Dashboard', () => {
       });
     });
 
-    describe('Future Passes', () => {
+    describe.skip('Future Passes', () => {
       let scheduledDate: Date;
 
       before(() => {
@@ -571,6 +571,162 @@ describe('Student - Passes Dashboard', () => {
       cy.get('div.option-data').contains('Cypress Testing School 2').parent().parent().click();
       cy.wait(1000);
       cy.get('app-school-toggle-bar span.school-name').should('have.text', 'Cypress Testing School 2');
+    });
+  });
+
+  describe.only('Request Pass', () => {
+    const requestPassMessage = 'Some Message';
+    const deniedPassMessage = 'Denied due to reasons';
+
+    after(() => {
+      cy.get('div.pass-card-header app-icon-button div.icon-button-container').click({force: true});
+      cy.get('app-consent-menu div.option-wrapper').contains('Delete Pass Request').parent().click({force: true});
+    })
+
+    it('should request a "now" pass with a message', () => {
+      cy.visit('http://localhost:4200/main/passes');
+      PassFunctions.openCreatePassDialog('now');
+      PassFunctions.selectCurrentRoom('Bathroom');
+      cy.get('img[alt="LOCK"].lock').parent().click();
+      PassFunctions.searchForTeacher('demoteacher1');
+      cy.get('textarea.message-box').type(requestPassMessage);
+      cy.get('div.rest-mes-content app-gradient-button div.button').click();
+      PassFunctions.setMinimumPassDuration();
+      cy.get('div.request-button-content').click();
+      cy.wait(1000);
+      cy.get('app-inline-request-card')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+    });
+
+    /**
+     * Ideally, we should mock the web-socket connection and manually pass in a
+     * pass.request.accept message but, at the time of writing this, it's currently
+     * difficult to justifiably mock the websocket connection.
+     *
+     * The following test will have to perform of accepting a student pass request manually and then
+     * log back into the student's portal to check if the pass was accepted.
+     *
+     * Note that this test is flaky at best but there currently isn't an easy way to mock
+     * the code.
+     */
+    it('should receive an accepted "Now" pass request', () => {
+      // @ts-ignore
+      cy.logout(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+
+      const numberOfActivePasses = PassFunctions.getActivePasses();
+      // if the previous test has passed, then there should be a request
+      cy.get('div.main-page-right app-pass-tile div.tile-wrapper').first().click();
+      cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
+      cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
+      cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
+      cy.get('app-request-card div.resend-button-content').click();
+      cy
+        .get('div.active-passes > app-pass-collection > div.collection-wrapper  app-pass-tile')
+        .should('have.length', numberOfActivePasses + 1);
+
+      cy.get('.options-wrapper div.icon-button-container').first().click();
+      cy.get('div.sign-out').click();
+      cy.wait(5000);
+      // @ts-ignore
+      cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
+      cy.get('app-inline-pass-card')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+    });
+
+    it('should end an active pass from an accepted pass request', () => {
+      endPass();
+    });
+
+    it('should receive a denied pass request', () => {
+      PassFunctions.openCreatePassDialog('now');
+      PassFunctions.selectCurrentRoom('Bathroom');
+      cy.get('img[alt="LOCK"].lock').parent().click();
+      PassFunctions.searchForTeacher('demoteacher1');
+      cy.get('textarea.message-box').type(requestPassMessage);
+      cy.get('div.rest-mes-content app-gradient-button div.button').click();
+      PassFunctions.setMinimumPassDuration();
+      cy.get('div.request-button-content').click();
+      cy.wait(1000);
+      cy.get('app-inline-request-card')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+
+      // @ts-ignore
+      cy.logout(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+      cy.get('div.main-page-right app-pass-tile div.tile-wrapper').first().click();
+      cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
+      cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
+      cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
+
+      cy.get('app-request-card div.header-content app-icon-button div.icon-button-container').first().click();
+      cy.get('app-consent-menu div.option-wrapper').contains('Deny Pass Request').parent().click();
+
+      cy.get('.options-wrapper div.icon-button-container').first().click();
+      cy.get('div.sign-out').click();
+      cy.wait(5000);
+      // @ts-ignore
+      cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
+
+      cy.get('app-inline-request-card')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+
+      cy.get('app-inline-request-card div.resend-button-content')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+
+      cy.get('app-inline-request-card div.resend-button-content-subtitle').should('have.text', 'Pass Request Denied');
+    });
+
+    it('should re-try a denied pass request', () => {
+      cy.get('app-inline-request-card div.resend-button-content')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1)
+        .click({force: true});
+
+      cy.get('app-inline-request-card div.resend-button-content-title').should('contain.text', 'Enter Teacher Pin');
+      cy.get('app-inline-request-card div.resend-button-content div.description-title').should('exist');
+    });
+
+    it('should receive a denied pass request with a message', () => {
+      // @ts-ignore
+      cy.logout(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+      cy.get('div.main-page-right app-pass-tile div.tile-wrapper').first().click();
+      cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
+      cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
+      cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
+
+      cy.get('app-request-card div.header-content app-icon-button div.icon-button-container').first().click();
+      cy.get('app-consent-menu div.option-wrapper').contains('Attach Message & Deny').parent().click();
+
+      cy.get('div.content-wrapper textarea').clear().type(deniedPassMessage);
+      cy.get('div.rest-mes-wrapper app-gradient-button div.button').click({force: true});
+
+      cy.get('.options-wrapper div.icon-button-container').first().click();
+      cy.get('div.sign-out').click();
+      cy.wait(5000);
+      // @ts-ignore
+      cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
+
+      cy.get('app-inline-request-card')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+
+      cy.get('app-inline-request-card div.resend-button-content')
+        .should('exist')
+        .should('be.visible')
+        .should('have.length', 1);
+
+      cy.get('app-inline-request-card div.resend-button-content-subtitle').should('have.text', 'Pass Request Denied');
     });
   });
 });

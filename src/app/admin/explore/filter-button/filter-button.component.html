@@ -15,7 +15,7 @@
       <img *ngIf="filter && showClearIcon" appCrossPointerEventTarget (pointerClickEvent)="clear($event)" class="close-button" [src]="'./assets/Close.svg' | resolveAsset" alt="Close">
     </ng-container>
     <ng-template #downloadButton>
-      <img [src]="'./assets/Circle Download (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg'" alt="CD icon">
+      <img [src]="'./assets/Circle Download (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="CD icon">
     </ng-template>
   </div>
 </div>

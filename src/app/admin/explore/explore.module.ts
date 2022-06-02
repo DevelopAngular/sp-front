@@ -7,6 +7,8 @@ import {CoreModule} from '../../core/core.module';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {FilterButtonComponent} from './filter-button/filter-button.component';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
+import {StatusFilterComponent} from './status-filter/status-filter.component';
+import {StatusEditorComponent} from './status-editor/status-editor.component';
 import {SharedModule} from '../../shared/shared.module';
 import {SearchCalendarComponent} from './search-calendar/search-calendar.component';
 import {AdminModule} from '../admin.module';
@@ -18,6 +20,8 @@ import {AdminSharedModule} from '../shared/admin-shared.module';
     PagesDialogComponent,
     FilterButtonComponent,
     StudentFilterComponent,
+    StatusFilterComponent,
+    StatusEditorComponent,
     SearchCalendarComponent,
   ],
   imports: [

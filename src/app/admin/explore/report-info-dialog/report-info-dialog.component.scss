@@ -44,6 +44,11 @@
 
     .block {
       padding: 20px;
+      .title, .subtitle, .status {
+        width: min-content;
+        white-space: nowrap;
+      }
+
       .title {
         color: $navy;
         font-weight: bold;
@@ -55,6 +60,14 @@
         color: $blue-gray;
         margin-top: 6px;
         word-break: break-word;
+      }
+      .status {
+        float: right;
+        ::ng-deep {
+          span{
+            cursor: default;
+          }
+        }
       }
     }
 

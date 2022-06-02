@@ -46,7 +46,7 @@
                         (result)="addRoomFilter($event, room)"
                 ></app-restriction-picker>
               </div>
-              <img [src]="'./assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+              <img [src]="'./assets/Mark (Navy).svg' | resolveAsset" width="15" height="15" alt="Check.svg">
             </div>
             <mat-divider></mat-divider>
           </div>

@@ -286,7 +286,11 @@
 
   </div>
 
-  <div class="student-footer-info" *ngIf="forStaff && isModal">
+  <div 
+    class="student-footer-info" 
+    *ngIf="forStaff && isModal"
+    [style.marginTop]="'58px'"
+    >
     <app-student-passes [pass]="request" [profile]="request.student"></app-student-passes>
   </div>
 </div>
