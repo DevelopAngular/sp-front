@@ -8,6 +8,7 @@ export const environment = {
     client_secret: 'kbbJmqWnUxbX3NkBlucHIhHd5Wt9XpcDFuUi9fLVN7ggLjGHknZLz8jVqfwfY3Zxe0o5gNGXRqPPCGBMrjZCn8aQFabNid2MxYYmANxXV2KKg09EvgoNuJA5kDiF2i36',
     domain: 'example.com',
     icon_url: '',
+    icon_search_url: 'https://smartpass.app/api/icons/search',
     name: 'Local',
     ws_url: 'wss://smartpass.app/api/staging/v1/long_polling',
     // ws_url: 'ws://localhost:8053/api/debug/v1/long_polling',
