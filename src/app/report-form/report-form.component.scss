@@ -170,7 +170,18 @@
   }
 }
 
-$offset:298px;
+.wrap-groups {
+  position: relative;
+  background-color: white;
+  width: 425px; 
+  height: 500px;
+  padding: 0px 25px; 
+  overflow: auto;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+}
+
 label {
   //margin-top: 30px;// ensure distance between the other input
   margin-bottom: 8px; // ensure distance for own input
@@ -178,29 +189,6 @@ label {
   font-weight: 700;
   font-size: 15px;
   display: block;
-  position: absolute;
-  &[for="student-select"] {
-    top: 327px-$offset;
-  }
-  &[for="message-entry"] {
-    top: 429px-$offset;
-  }
-  &[for="pass"] {
-    top: 594px-$offset;
-  }
-}
-
-#student-select {
-  position: absolute;
-  top: 354px-$offset;
-}
-#message-entry {
-  position: absolute;
-  top: 456px-$offset;
-}
-#reported-pass {
-  position: absolute;
-  top: 621px-$offset;
 }
 
 img[rel="back-button"]{

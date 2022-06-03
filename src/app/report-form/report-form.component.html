@@ -27,9 +27,9 @@
     </app-white-button>
   </ng-template>
 
-  <div style="position: relative; background-color: white; width: 425px; height: 500px; overflow: auto">
+  <div class="wrap-groups">
 
-    <div style="padding: 0px 25px;" >
+    <div class="group">
       <label for="student-select">Student</label>
       <div id="student-select" class="student-select" [attr.data-motion-translate]="true">
         <div class="report-content">
@@ -47,22 +47,25 @@
           <div
             class="chip"
             *ngIf="useChipInsteadSearch"
-            >{{data?.report?.display_name}}
+          >{{data?.report?.display_name}}
           </div>
-
 
         </div>
 
       </div>
+    </div>
 
+    <div class="group">
       <label for="message-entry">Message</label>
       <div id="message-entry" class="message-entry" [attr.data-motion-translate]="true">
         <div data-grammarly-issue-container class="message-wrapper">
           <textarea class="message-box" #messageBox placeholder="Ex. Student did not return to class" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>
       </div>
+    </div>
 
-      <ng-container *ngIf="!showOptions && data['pass'] && !!data?.isHallPass">
+    <ng-container *ngIf="!showOptions && data['pass'] && !!data?.isHallPass">
+      <div class="group">
         <label for="pass">Pass</label>
         <div id="reported-pass" class="tile">
           <app-pass-tile
@@ -76,9 +79,8 @@
            [allowPopup]="false"
            [profileImage]="data['showProfilePictures']"
           ></app-pass-tile>
-          </div>
-        </ng-container>
-       
-    </div>
-  </div>
+        </div>
+      </div>
+    </ng-container>
+
 </div>
