@@ -9,7 +9,7 @@
     <div *ngIf="!showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
       <div class="divider-text-message ds-dialog-title-white" [attr.data-motion-translate]="true">Report Student</div>
     </div>
-    <ng-container *ngIf="false; else submitButton"></ng-container>
+    <ng-container *ngIf="!selectedStudents.length; else submitButton"></ng-container>
   </div>
 
   <ng-template #submitButton>
