@@ -24,6 +24,8 @@ export class StatusChipComponent implements OnInit {
   @Input() remoteid: number;
   // allow event to propagate
   @Input() stopPropagation: boolean = false;
+  // force status looks like it is hovered
+  @Input() forceLookHovered: boolean = false;
 
   @Output() statusClick: EventEmitter<Status> = new EventEmitter<Status>();
 
@@ -72,7 +74,7 @@ export class StatusChipComponent implements OnInit {
 
     this.reportUpdated$.subscribe();
   }
-
+  
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
