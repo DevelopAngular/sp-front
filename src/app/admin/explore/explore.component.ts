@@ -251,7 +251,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           };
           return this.contactTraceService.contactTraceLoaded$;
         } else if (view === 'report_search') {
-          this.isCheckbox$.next(true);
+          this.isCheckbox$.next(false);
           this.reportSearchData = {
             selectedStudents: null,
             selectedDate: null,
