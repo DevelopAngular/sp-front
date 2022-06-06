@@ -142,6 +142,16 @@ export class GradientButtonComponent implements OnInit {
     return this.buttonDown ? 'down' : 'up';
   }
 
+  get bg() {
+    if (this.hovered) {
+      if (this.buttonDown) {
+        return '#E2E6EC';// gray200
+      }
+      return '#EAEDF1';// gray150
+    }
+    return this.styleGradient;
+  }
+
   get styleGradient() {
     if(this.customBackground.length != 0)
       return this.customBackground;

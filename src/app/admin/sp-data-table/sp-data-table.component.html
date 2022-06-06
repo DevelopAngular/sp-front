@@ -84,7 +84,18 @@
               {{ column }}
             </th>
           </ng-template>
-          <ng-container *ngIf="!(currentPage=='report_search' && column=='Status') else statuscell">
+
+          <ng-container *ngIf="currentPage=='report_search'; else commoncell">
+            <ng-container [ngSwitch]="column">
+              <ng-container *ngSwitchCase="'Status'" [ngTemplateOutlet]="statuscell"></ng-container>
+              <ng-container *ngSwitchCase="'Pass'" [ngTemplateOutlet]="rpicell"></ng-container>
+              <ng-container *ngSwitchDefault [ngTemplateOutlet]="commoncell"></ng-container>
+            </ng-container>
+          </ng-container>
+
+          <ng-template
+            #commoncell
+          >
             <td
               mat-cell
               [ngClass]="{'fake-container': !element[column], noCheckbox: !(isCheckbox | async)}"
@@ -93,9 +104,12 @@
               [style.padding]="column === 'Pass' ? '0 15px 0 10px' : ''"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
-              [innerHTML]="element[column] ? element[column] : fakeTemplate">
+              [innerHTML]="element[column] ? element[column] : fakeTemplate"
+              [attr.ignore]="currentPage=='report_search' && (column == 'Student Name' || column == 'Message' || column == 'Submitted by' || column == 'Date submitted')"
+              >
             </td>
-          </ng-container>
+          </ng-template>
+          
           <ng-template 
             #statuscell
           >
@@ -105,14 +119,28 @@
               [style.height]="'auto'"
               [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
               *matCellDef="let element"
-              pointerClickEvent="null"
+              (pointerClickEvent)="null"
             >
               <app-status-chip 
-                [editable]="true" 
                 [status]="element[column]"
-                [remoteid]="element['id']"
+                [stopPropagation]="true"
               >
               </app-status-chip>
+            </td>
+          </ng-template>
+
+          <ng-template 
+            #rpicell
+          >
+            <td
+              mat-cell
+              [ngClass]="{noCheckbox: !(isCheckbox | async)}"
+              [style.height]="'auto'"
+              [style.border-right]="isFirst ? '1px solid #7E879D' : 'none'"
+              *matCellDef="let element"
+               appCrossPointerEventTarget (pointerClickEvent)="!element[column].changingThisBreaksApplicationSecurity ? null : $event.stopPropagation()"
+              [innerHTML]="element[column]"
+            >
             </td>
           </ng-template>
 

@@ -7,6 +7,7 @@ import {StudentFilterComponent} from './student-filter/student-filter.component'
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
+import {PassLike} from '../../models';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
@@ -24,7 +25,7 @@ import {AdminService} from '../../services/admin.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
-import {Report, Status} from '../../models/Report';
+import {Report, Status, ReportDataUpdate} from '../../models/Report';
 import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
@@ -165,6 +166,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     ) {
     window.passClick = (id) => {
       this.passClick(id);
+    };
+    window.reportedPassClick = (id) => {
+      this.openPassDialog(id);
     };
   }
 
@@ -407,18 +411,28 @@ export class ExploreComponent implements OnInit, OnDestroy {
               'Student Name': null,
               'Message': null,
               'Status': null,
+              'Pass': null,
               'Submitted by': null,
               'Date submitted': null,
             }];
           }
           this.reportSearchState.isEmpty = false;
           return reports.map(report => {
-            const result = {
-              'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.student.display_name}</div>`),
-              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report"><div class="message">${report.message || 'No report message'}</div></div>`),
+              const data = report as any;
+              const _passTile = (
+                data?.reported_pass?.gradient_color &&
+                data?.reported_pass?.id
+              ) ? 
+                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` 
+                : '';
+              const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
+              const result = {
+              'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
+              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
               'Status': report.status,
-              'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${report.issuer.display_name}</div>`),
-              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div class="report">${moment(report.created).format('MM/DD hh:mm A')}</div>`)
+              'Pass': passTile,
+              'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.issuer.display_name}</div>`),
+              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div>${moment(report.created).format('MM/DD hh:mm A')}</div>`),
             };
 
             Object.defineProperty(result, 'id', { enumerable: false, value: report.id});
@@ -433,6 +447,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
         .subscribe(res => {
           this.selectedRows = res;
         });
+
+
   }
 
   ngOnDestroy() {
@@ -475,7 +491,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   passClick(id) {
     iif(
-      () => this.currentView$.getValue() === 'pass_search',
+      () => ['pass_search'].includes(this.currentView$.getValue()),
       this.hallPassService.passesEntities$.pipe(take(1)),
       of(this.contact_trace_passes)
     ).pipe(
@@ -709,6 +725,54 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.isSearched = true;
   }
 
+  openPassDialog(pid: number|null) {
+    if (pid === null) return;
+
+    this.reportSearchState.entities$ 
+      .pipe(
+        take(1),
+        map((rr: Dictionary<Report>): HallPass|null => {
+          
+          const filtered = Object.entries(rr)
+            .filter(([_,v]) => v?.reported_pass_id === pid);
+
+          const found = filtered.map(([_, v]) => v?.reported_pass);
+          // there can be many more reports for the same pass
+          if (found.length >= 1) {
+            try {
+              // is is expected a HallPass like object
+              // as only this kind of pass can be reported
+              const maybeHallPass = HallPass.fromJSON(found[0]);
+              return maybeHallPass;
+            } catch(e) {
+              // TODO: how to deal with this error??
+              console.log(e)
+            }
+          }
+          return null;
+        }),
+        takeUntil(this.destroy$),
+      ).subscribe((pass: HallPass|null) => {
+        if (pass === null) return;
+
+        pass.start_time = new Date(pass.start_time);
+        pass.end_time = new Date(pass.end_time);
+        const data = {
+          pass: pass,
+          fromPast: true,
+          forFuture: false,
+          forMonitor: false,
+          isActive: false,
+          forStaff: true,
+        };
+        const dialogRef = this.dialog.open(PassCardComponent, {
+          panelClass: 'search-pass-card-dialog-container',
+          backdropClass: 'custom-bd',
+          data: data,
+        });
+      });
+  }
+
   searchReports(limit = 100) {
     const queryParams: any = {limit};
     if (this.reportSearchData.selectedStudents) {
@@ -845,17 +909,19 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
-  openReportDialog(report) {
+  openReportDialog(report: Report) {
     this.reportSearchState.entities$
       .pipe(
         take(1),
-        map(reports => reports[report.id])
+        map(reports => {
+          return reports[report.id]
+        })
       )
       .subscribe(selectedReport => {
         this.dialog.open(ReportInfoDialogComponent, {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-bd',
-          data: {report: selectedReport}
+          data: {report: selectedReport, forStaff: true}
         });
     });
   }

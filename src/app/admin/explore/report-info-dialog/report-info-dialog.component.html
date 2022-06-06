@@ -8,7 +8,9 @@
     <div class="block">
       <div class="status">
         <app-status-chip 
+          [editable]="true" 
           [status]="report.status"
+          [remoteid]="report.id"
         ></app-status-chip>
       </div>
       <div class="title">Student</div>
@@ -21,6 +23,14 @@
       <div class="subtitle">{{ report.message || 'No report message' }}</div>
     </div>
 
+    <div class="block" *ngIf="!!report.reported_pass_id">
+      <div class="title">Pass</div>
+        <app-pass-tile
+          [forStaff]="data.forStaff"
+          [pass]="report.reported_pass"
+          [isActive]="isReportedPassActive === null ? null : isReportedPassActive"
+        ></app-pass-tile>
+    </div>
     <mat-divider></mat-divider>
 
     <div class="container">
