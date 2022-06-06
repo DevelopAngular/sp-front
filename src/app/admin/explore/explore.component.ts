@@ -167,8 +167,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     window.passClick = (id) => {
       this.passClick(id);
     };
-    window.reportedPassClick = (id) => {
-      this.openPassDialog(id);
+    window.reportedPassClick = (id, invisBackdrop) => {
+      this.openPassDialog(id, !!invisBackdrop);
     };
   }
 
@@ -725,7 +725,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.isSearched = true;
   }
 
-  openPassDialog(pid: number|null) {
+  openPassDialog(pid: number|null, invisBackdrop: boolean|null=false) {
     if (pid === null) return;
 
     this.reportSearchState.entities$ 
@@ -767,7 +767,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         };
         const dialogRef = this.dialog.open(PassCardComponent, {
           panelClass: 'search-pass-card-dialog-container',
-          backdropClass: 'custom-bd',
+          backdropClass: invisBackdrop ?  'invis-backdrop' : 'custom-bd',
           data: data,
         });
       });
