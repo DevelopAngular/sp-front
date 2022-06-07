@@ -54,20 +54,20 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
     return moment(this.report.created).format('MMM DD, YYYY') + ' at ' + moment(this.report.created).format('hh:mm A');
   }
 
-  // it will open reported pass
-  // it is set to window by parent component explore-component
-  reportedPassClick: string = '()=>{}';
-
   ngOnInit(): void {
     this.report = this.data['report'];
 
     if (this.report.reported_pass_id) {
       // reported pass is always a HallPass
       let pass : HallPass | null;
-      try {
-        pass = HallPass.fromJSON(this.report.reported_pass);
-      } catch(e){
-        console.log(e);
+      if (this.report.reported_pass instanceof HallPass) {
+        pass = this.report.reported_pass;
+      } else {
+        try {
+          pass = HallPass.fromJSON(this.report.reported_pass);
+        } catch(e) {
+          console.log(e);
+        }
       }
 
       if (pass instanceof HallPass) {
@@ -81,10 +81,6 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
           now.getTime() < new Date(pass.end_time).getTime();
         this.isReportedPassActive = isActive;
       }
-
-      if (window?.reportedPassClick) {
-        this.reportedPassClick = `reportedPassClick(${this.report.reported_pass.id})`;
-      }
     }
 
     this.generatePDF();
@@ -97,8 +93,14 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  clicka($event) {
-    window.reportedPassClick(<number>this.report.reported_pass.id);
+  // wrapper for an external function available on object window
+  // it will open reported pass
+  // it is set to window by parent component explore-component
+  // TODO should be that a service?
+  reportedPassClick() {
+    if (window?.reportedPassClick) {
+      window.reportedPassClick(this.report.reported_pass.id);
+    }
   }
 
   ngOnDestroy() {
