@@ -17,7 +17,8 @@
     "ng-ci-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
     "fcm": "concat ./dist/ngsw-worker.js ./dist/firebase-messaging-sw.js -o ./dist/combined-worker.js",
     "proxy": "ng serve --configuration=proxy --proxyConfig=src/proxy.conf.json --host=192.168.2.209",
-    "local": "ng serve --configuration=local"
+    "local": "ng serve --configuration=local",
+    "staging": "ng serve --configuration=staging"
   },
   "private": true,
   "dependencies": {
@@ -87,7 +88,7 @@
     "@types/oboe": "^2.0.28",
     "codelyzer": "^5.1.2",
     "concat": "^1.0.3",
-    "concurrently": "^7.0.0",
+    "concurrently": "^7.2.1",
     "cypress": "^9.5.1",
     "cypress-wait-until": "^1.7.2",
     "jasmine-core": "~3.5.0",
