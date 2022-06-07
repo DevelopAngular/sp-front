@@ -51,6 +51,7 @@ export class ReportFormComponent implements OnInit {
     this.frameMotion$ = this.createForm.getFrameMotionDirection();
      if (this.data?.report) {
       this.selectedStudents.push(this.data['report']);
+      this.useChipInsteadSearch = this.data?.useChipInsteadSearch ?? this.useChipInsteadSearch;
       this.showOptions = !this.data['report'];
      }
     this.useChipMode = this.data?.useChipMode ?? this.useChipMode;

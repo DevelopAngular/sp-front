@@ -370,13 +370,16 @@ export class StudentInfoCardComponent implements OnInit, OnDestroy {
       });
   }
 
-  openReportForm() {
+  openReportForm(useChipInsteadSearch: boolean = false) {
     const RF = this.dialog.open(ReportFormComponent, {
       panelClass: ['form-dialog-container', 'report-dialog'],
       backdropClass: 'custom-backdrop',
       width: '425px',
       height: '500px',
-      data: {report: this.profile}
+      data: {
+        report: this.profile, 
+        useChipInsteadSearch,
+      }
     });
   }
 

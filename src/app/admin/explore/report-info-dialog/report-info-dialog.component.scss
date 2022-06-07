@@ -60,6 +60,8 @@
         color: $blue-gray;
         margin-top: 6px;
         word-break: break-word;
+        white-space: normal;
+        width: 100%;
       }
       .status {
         float: right;

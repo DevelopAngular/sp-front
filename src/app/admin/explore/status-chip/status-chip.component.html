@@ -1,6 +1,7 @@
 <ng-container *ngIf="editable else presentational">
   <div class="wrapper"
        #button
+       [class.lookActiveHovered]="forceLookHovered"
        [style.background]="didOpen === true ? '#F0F2F5' : null"
        (mouseenter)="button.hover = true"
        (mouseleave)="button.hover = false; button.pressed = false"
@@ -10,7 +11,7 @@
        (click)="blink($event)"  
   >
         <ng-container *ngTemplateOutlet="isLoading ? loading : presentational"></ng-container>
-        <img *ngIf="(isLoading === false) && (button.hover || didOpen)" width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
+        <img *ngIf="(isLoading === false) && (button.hover || didOpen || forceLookHovered)" width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
   </div>
 </ng-container>
 
@@ -18,8 +19,9 @@
   <span 
     #element
     [ngClass]="classname"
-    (click)="blink($event)"  
-  >{{ label }}</span>
+    (click)="blink($event)"
+    rel="lookActiveHovered"
+    >{{ label }}</span>
 </ng-template>
 
 <ng-template #loading>
