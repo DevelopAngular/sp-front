@@ -33,7 +33,7 @@ describe('Teacher - Reports',  () => {
   } 
 
   describe('Report', () => {
-    it('should run', () => {
+    it('should expects a teacher to search for a student and report him to admin', () => {
       cy.intercept({
         method: 'GET',
         url: 'https://smartpass.app/api/prod-us-central/v1/users?role=_profile_student**'
@@ -58,9 +58,11 @@ describe('Teacher - Reports',  () => {
 
       // submit report
       cy.get('app-report-form div[class~=divider] app-white-button').click();
-      cy.wait('@reportstudents', {timeout});
+      cy.wait('@reportstudents', {timeout}).its('response').then(res => {
+        expect(res.headers).to.include({'content-type': 'application/json'});
+        expect(res.statusCode).to.equal(200);
+      });
 
-      expect(true).to.equal(true);
     });
   });
 
