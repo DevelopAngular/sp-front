@@ -49,7 +49,7 @@ describe('Teacher - Reports',  () => {
       // choose a studewnt
       cy.get('app-report-form div[class~="option-list_item"]').first().click();
       // set up a specific message
-      cy.get('app-report-form textarea').type('TEST_REPORT');
+      cy.get('app-report-form textarea').type('TEST_REPORT_STUDENT');
 
       cy.intercept({
         method: 'POST',
