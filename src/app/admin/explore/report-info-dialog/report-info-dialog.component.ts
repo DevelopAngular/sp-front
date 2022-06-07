@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Inject, AfterViewInit, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 
@@ -20,7 +20,7 @@ declare const window;
   templateUrl: './report-info-dialog.component.html',
   styleUrls: ['./report-info-dialog.component.scss']
 })
-export class ReportInfoDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ReportInfoDialogComponent implements OnInit, OnDestroy {
 
   @ViewChild('content') content: ElementRef;
 
@@ -54,6 +54,10 @@ export class ReportInfoDialogComponent implements OnInit, AfterViewInit, OnDestr
     return moment(this.report.created).format('MMM DD, YYYY') + ' at ' + moment(this.report.created).format('hh:mm A');
   }
 
+  // it will open reported pass
+  // it is set to window by parent component explore-component
+  reportedPassClick: string = '()=>{}';
+
   ngOnInit(): void {
     this.report = this.data['report'];
 
@@ -77,6 +81,10 @@ export class ReportInfoDialogComponent implements OnInit, AfterViewInit, OnDestr
           now.getTime() < new Date(pass.end_time).getTime();
         this.isReportedPassActive = isActive;
       }
+
+      if (window?.reportedPassClick) {
+        this.reportedPassClick = `reportedPassClick(${this.report.reported_pass.id})`;
+      }
     }
 
     this.generatePDF();
@@ -87,15 +95,6 @@ export class ReportInfoDialogComponent implements OnInit, AfterViewInit, OnDestr
         switchMap(v => this.updateReport(v)), 
       )
       .subscribe();
-  }
-
-  // it will open reported pass
-  // it is set to window by parent component explore-component
-  reportedPassClick: string = '()=>{}';
-  ngAfterViewInit() {
-    if (window?.reportedPassClick && this.report?.reported_pass_id) {
-      this.reportedPassClick = `reportedPassClick(${this.report.reported_pass.id})`;
-    }
   }
 
   ngOnDestroy() {
