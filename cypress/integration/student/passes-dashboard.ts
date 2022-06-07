@@ -80,10 +80,11 @@ describe('Student - Passes Dashboard', () => {
     }
 
     // cy.get('div.future-passes.pass-collection > app-pass-collection app-pass-tile > div.tile-wrapper').should('have.length', 0);
-    cy.logoutTeacher(); cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
+    cy.logoutTeacher();
+    cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
   };
 
-  afterEach(function() {
+  afterEach(function () {
     if (this.currentTest.state === 'failed') {
       // @ts-ignore
       Cypress.runner.stop();
@@ -166,7 +167,7 @@ describe('Student - Passes Dashboard', () => {
       });
     });
 
-    describe.skip('Future Passes', () => {
+    describe('Future Passes', () => {
       let scheduledDate: Date;
 
       before(() => {
@@ -252,7 +253,7 @@ describe('Student - Passes Dashboard', () => {
      *
      */
 
-    describe.skip('Request "Now" Pass', () => {
+    describe('Request "Now" Pass', () => {
       const requestPassMessage = 'Some Message';
       const deniedPassMessage = 'Denied due to reasons';
 
@@ -268,7 +269,7 @@ describe('Student - Passes Dashboard', () => {
         }).as('v1API');
         PassFunctions.openCreatePassDialog('now');
         PassFunctions.selectCurrentRoom('Bathroom');
-        cy.get('img[alt="LOCK"].lock', { timeout: 10000 }).then(el => {
+        cy.get('img[alt="LOCK"].lock', {timeout: 10000}).then(el => {
           el.first().parent().trigger('click');
         });
         PassFunctions.searchForTeacher('demoteacher1');
@@ -295,7 +296,8 @@ describe('Student - Passes Dashboard', () => {
        * the code.
        */
       it('should receive an accepted "Now" pass request', () => {
-        cy.logoutStudent(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+        cy.logoutStudent();
+        cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
         cy.intercept({
           method: 'GET',
           url: 'https://smartpass.app/api/prod-us-central/v1/**'
@@ -330,7 +332,7 @@ describe('Student - Passes Dashboard', () => {
         }).as('v1API');
         PassFunctions.openCreatePassDialog('now');
         PassFunctions.selectCurrentRoom('Bathroom');
-        cy.get('img[alt="LOCK"].lock', { timeout: 10000 }).then(el => {
+        cy.get('img[alt="LOCK"].lock', {timeout: 10000}).then(el => {
           el.first().parent().trigger('click');
         });
         PassFunctions.searchForTeacher('demoteacher1');
@@ -345,7 +347,8 @@ describe('Student - Passes Dashboard', () => {
           .should('have.length', 1);
 
         // @ts-ignore
-        cy.logoutStudent(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+        cy.logoutStudent();
+        cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
         cy.get('div.main-page-right app-pass-tile div.tile-wrapper').first().click();
         cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
         cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
@@ -387,7 +390,8 @@ describe('Student - Passes Dashboard', () => {
           method: 'GET',
           url: 'https://smartpass.app/api/prod-us-central/v1/**'
         }).as('v1API');
-        cy.logoutStudent(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+        cy.logoutStudent();
+        cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
         cy.get('div.main-page-right app-pass-tile div.tile-wrapper').first().click();
         cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
         cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
@@ -417,7 +421,7 @@ describe('Student - Passes Dashboard', () => {
       });
     });
 
-    describe.skip('Request "Future" Pass', () => {
+    describe('Request "Future" Pass', () => {
       const studentName = 'Demo Student2';
       let scheduledDate: Date;
 
@@ -574,17 +578,16 @@ describe('Student - Passes Dashboard', () => {
     });
   });
 
-  describe.only('Request Pass', () => {
+  describe.skip('Request Pass', () => {
     const requestPassMessage = 'Some Message';
     const deniedPassMessage = 'Denied due to reasons';
 
     after(() => {
       cy.get('div.pass-card-header app-icon-button div.icon-button-container').click({force: true});
       cy.get('app-consent-menu div.option-wrapper').contains('Delete Pass Request').parent().click({force: true});
-    })
+    });
 
     it('should request a "now" pass with a message', () => {
-      cy.visit('http://localhost:4200/main/passes');
       PassFunctions.openCreatePassDialog('now');
       PassFunctions.selectCurrentRoom('Bathroom');
       cy.get('img[alt="LOCK"].lock').parent().click();
@@ -613,7 +616,8 @@ describe('Student - Passes Dashboard', () => {
      */
     it('should receive an accepted "Now" pass request', () => {
       // @ts-ignore
-      cy.logout(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+      cy.logout();
+      cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
 
       const numberOfActivePasses = PassFunctions.getActivePasses();
       // if the previous test has passed, then there should be a request
@@ -657,7 +661,8 @@ describe('Student - Passes Dashboard', () => {
         .should('have.length', 1);
 
       // @ts-ignore
-      cy.logout(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+      cy.logout();
+      cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
       cy.get('div.main-page-right app-pass-tile div.tile-wrapper').first().click();
       cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
       cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
@@ -698,7 +703,8 @@ describe('Student - Passes Dashboard', () => {
 
     it('should receive a denied pass request with a message', () => {
       // @ts-ignore
-      cy.logout(); cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
+      cy.logout();
+      cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
       cy.get('div.main-page-right app-pass-tile div.tile-wrapper').first().click();
       cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
       cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
