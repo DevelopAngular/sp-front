@@ -734,7 +734,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         map((rr: Dictionary<Report>): HallPass|null => {
           
           const filtered = Object.entries(rr)
-            .filter(([_,v]) => v?.reported_pass_id === pid);
+            .filter(([_,v]) => +v?.reported_pass_id === +pid);// force number equality
 
           const found = filtered.map(([_, v]) => v?.reported_pass);
           // there can be many more reports for the same pass
@@ -865,7 +865,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
             }
             queryParams.sort = sort && sort === 'asc' ? '-start_time' : 'start_time';
         }
-        console.log(sortColumn, queryParams);
         queryParams.limit = 300;
         this.queryParams = {...this.queryParams, ...queryParams};
         this.hallPassService.sortHallPassesRequest(this.queryParams);
