@@ -97,6 +97,10 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  clicka($event) {
+    window.reportedPassClick(<number>this.report.reported_pass.id);
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
