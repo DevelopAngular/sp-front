@@ -74,9 +74,14 @@ describe('Admin - Reports',  () => {
               });
             });         
             
-            cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true, multiple: true});
-            // foud passtile then test it
+
+            //click on passtile on popup
             if (hasPassTile) {
+              cy.get('mat-dialog-container app-report-info-dialog app-pass-tile').should('be.visible').click();
+              cy.get('app-pass-card').should('be.visible');
+              cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true, multiple: true});
+              //
+              // foud passtile on row then test it
               wrap.get('td:eq(3) > div.pass-icon').then($el => {
                 if (!!$el) {
                   cy.wrap($el).click();
