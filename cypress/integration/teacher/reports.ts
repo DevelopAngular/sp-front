@@ -92,6 +92,8 @@ describe('Teacher - Reports',  () => {
 
     });
 
+    it.skip('should a teacher reports from the student info card', () => {});
+
   });
 
 });
