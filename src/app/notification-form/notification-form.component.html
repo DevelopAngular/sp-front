@@ -14,7 +14,8 @@
           Please use Chrome or Firefox browsers for notifications
         </div>
       </app-notification-form-info>
-      <app-notification-form-info *ngIf="isDisabledNotif" [iconBackground]="undefined" image="./assets/Window (Blue-Gray).svg">
+      <app-notification-form-info *ngIf="isDisabledNotif" [iconBackground]="undefined"
+                                  image="./assets/Window (Blue-Gray).svg">
         <div title>
           Browser Notifications are off
         </div>
@@ -27,19 +28,21 @@
   </div>
   <div class="notif-bottom-wrapper-wrapper">
     <div class="notif-bottom-wrapper">
-      <ng-container class="notif-student-info" *ngIf="isUserLoaded && isStudent">
-        <div class="notif-student-bell">
-          <img alt="" src="./assets/Notifications (White).svg">
-        </div>
+      <ng-container *ngIf="isUserLoaded && isStudent">
+        <div class="notif-student-info">
+          <div class="notif-student-bell">
+            <img alt="" src="./assets/Notifications (White).svg">
+          </div>
 
-        <span class="notif-student-title">What Notifications You Receive</span>
-        <span class="notif-student-body">
+          <span class="notif-student-title">What Notifications You Receive</span>
+          <span class="notif-student-body">
         You’ll receive notifications for new passes from <br>
         teachers, when a teacher approves your pass, when <br>
         your pass is about to end, and more...
-      </span>
-        <div *ngIf="studentBottomText" class="notif-student-bottom">
-          <span>{{ studentBottomText }}</span>
+          </span>
+          <div *ngIf="studentBottomText" class="notif-student-bottom">
+            <span>{{ studentBottomText }}</span>
+          </div>
         </div>
       </ng-container>
 
@@ -68,9 +71,11 @@
             {{activeNotifications('scheduledPasses')}}
           </div>
           <div class="notif-pass-requests">
-            <app-notification-option icon="./assets/Devices (Navy).svg" text="Push" tooltip="You'll get a notification 5 minutes before the scheduled pass starts."
+            <app-notification-option icon="./assets/Devices (Navy).svg" text="Push"
+                                     tooltip="You'll get a notification 5 minutes before the scheduled pass starts."
                                      [form]="this.form" control="scheduledPassesPush"></app-notification-option>
-            <app-notification-option icon="./assets/Mail (Navy).svg" text="Mail" tooltip="You'll get a summary email at the beginning of the day, and 10 minutes before the scheduled pass starts."
+            <app-notification-option icon="./assets/Mail (Navy).svg" text="Mail"
+                                     tooltip="You'll get a summary email at the beginning of the day, and 10 minutes before the scheduled pass starts."
                                      [form]="this.form" control="scheduledPassesEmail"></app-notification-option>
             <span class="setting-info">Notifications when a scheduled pass is starting, or has been deleted by a student.</span>
           </div>
@@ -126,7 +131,45 @@
       </ng-container>
 
       <ng-container *ngIf="isUserLoaded && isAdmin">
-
+        <app-notification-form-info>
+          <div title>
+            Reports
+          </div>
+          <div byline>
+            {{activeNotifications('reports')}}
+          </div>
+          <div class="notif-pass-requests">
+            <app-notification-option icon="./assets/Mail (Navy).svg" text="Mail"
+                                     [form]="this.form" control="reportsEmail"></app-notification-option>
+            <span class="setting-info">Notifications when a teacher reports a student.</span>
+          </div>
+        </app-notification-form-info>
+        <app-notification-form-info>
+          <div title>
+            Encounter Prevention
+          </div>
+          <div byline>
+            {{activeNotifications('encounterPrevention')}}
+          </div>
+          <div class="notif-pass-requests">
+            <app-notification-option icon="./assets/Mail (Navy).svg" text="Mail"
+                                     [form]="this.form" control="encounterPreventionEmail"></app-notification-option>
+            <span class="setting-info">Notifications when an encounter is prevented.</span>
+          </div>
+        </app-notification-form-info>
+        <app-notification-form-info>
+          <div title>
+            Weekly Summary
+          </div>
+          <div byline>
+            {{activeNotifications('weeklySummary')}}
+          </div>
+          <div class="notif-pass-requests">
+            <app-notification-option icon="./assets/Mail (Navy).svg" text="Mail"
+                                     [form]="this.form" control="weeklySummaryEmail"></app-notification-option>
+            <span class="setting-info">Emails every Monday morning that digest what's happening with SmartPass in your school.</span>
+          </div>
+        </app-notification-form-info>
       </ng-container>
 
       <ng-container *ngIf="isUserLoaded && !isStudent">
@@ -139,7 +182,8 @@
             Notifications in your browser and mobile devices
           </div>
         </app-notification-form-info>
-        <app-notification-form-info [style]="isUsingEmail ? 'normal' : 'disabled'" image="./assets/Mail (White).svg" iconBackground="#139BE6">
+        <app-notification-form-info [style]="isUsingEmail ? 'normal' : 'disabled'" image="./assets/Mail (White).svg"
+                                    iconBackground="#139BE6">
           <div title>
             Email
           </div>

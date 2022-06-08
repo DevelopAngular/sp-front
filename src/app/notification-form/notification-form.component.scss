@@ -147,45 +147,45 @@
   a {
     color: $jade;
   }
+}
 
-  .notif-student-info {
-    width: 100%;
+.notif-student-info {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+
+  .notif-student-bell {
+    width: 78px;
+    height: 78px;
+    border-radius: 15px;
+    background-color: $red500;
+    margin: 8px;
+
+    img {
+      width: 40px;
+      height: 40px;
+      margin: 19px;
+    }
+  }
+
+  .notif-student-title {
+    @include textSize(17px, bold);
+  }
+
+  .notif-student-body {
+    @include textSize(14px, normal, $gray500);
+    text-align: center;
+  }
+
+  .notif-student-bottom {
     height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
 
-    .notif-student-bell {
-      width: 78px;
-      height: 78px;
-      border-radius: 15px;
-      background-color: $red500;
-      margin: 8px;
-
-      img {
-        width: 40px;
-        height: 40px;
-        margin: 19px;
-      }
-    }
-
-    .notif-student-title {
-      @include textSize(17px, bold);
-    }
-
-    .notif-student-body {
+    span {
       @include textSize(14px, normal, $gray500);
-      text-align: center;
-    }
-
-    .notif-student-bottom {
-      height: 100%;
-      display: flex;
-
-      span {
-        @include textSize(14px, normal, $gray500);
-      }
     }
   }
 }

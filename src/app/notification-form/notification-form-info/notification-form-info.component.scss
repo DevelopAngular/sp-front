@@ -25,6 +25,7 @@
         align-items: center;
         justify-content: center;
         border-radius: 5px;
+        flex-shrink: 0;
 
         img {
           width: 18px;
@@ -36,6 +37,7 @@
   .top-bar-text {
     display: flex;
     flex-direction: column;
+    justify-content: center;
   }
 
   .left-pad {
@@ -54,7 +56,6 @@
   }
 
   .title {
-    margin-top: 8px;
     line-height: 22px;
   }
 
