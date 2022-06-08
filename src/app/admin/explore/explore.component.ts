@@ -923,7 +923,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.dialog.open(ReportInfoDialogComponent, {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-bd',
-          data: {report: selectedReport, forStaff: true, isAdmin: userData?.isAdmin()}
+          data: {report: selectedReport, forStaff: true, isAdmin: (userData as User)?.isAdmin()}
         });
     });
   }
