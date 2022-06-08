@@ -70,9 +70,9 @@ describe('Teacher - Reports',  () => {
       // TODO ensures that a tile exists otherwise create it
       cy.get('app-pass-collection app-pass-tile').first().click();
       // report button on pass popup
-      cy.get('app-pass-card app-student-passes app-gradient-button').contains('Report').should('exist').click();
+      cy.get('app-pass-card app-student-passes app-gradient-button').contains('Report').should('be.visible').click();
 
-      cy.get('mat-dialog-container app-report-form div[class~=divider] app-white-button').should('exist');
+      cy.get('mat-dialog-container app-report-form div[class~=divider] app-white-button').should('be.visible');
 
       // set up a specific message
       cy.get('app-report-form textarea').type('TEST_REPORT_STUDENT');
