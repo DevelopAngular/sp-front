@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDes
 import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
@@ -913,16 +913,17 @@ export class ExploreComponent implements OnInit, OnDestroy {
   openReportDialog(report: Report) {
     this.reportSearchState.entities$
       .pipe(
+        withLatestFrom(this.userService.userData),
         take(1),
-        map(reports => {
-          return reports[report.id]
+        map(([reports, userData]) => {
+          return [reports[report.id], userData];
         })
       )
-      .subscribe(selectedReport => {
+      .subscribe(([selectedReport, userData]) => {
         this.dialog.open(ReportInfoDialogComponent, {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-bd',
-          data: {report: selectedReport, forStaff: true}
+          data: {report: selectedReport, forStaff: true, isAdmin: (userData as User)?.isAdmin()}
         });
     });
   }
