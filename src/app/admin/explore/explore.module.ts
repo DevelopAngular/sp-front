@@ -17,7 +17,7 @@ import {AdminSharedModule} from '../shared/admin-shared.module';
 @NgModule({
   declarations: [
     ExploreComponent,
-    PagesDialogComponent,
+    // PagesDialogComponent,
     FilterButtonComponent,
     StudentFilterComponent,
     StatusFilterComponent,
@@ -33,7 +33,7 @@ import {AdminSharedModule} from '../shared/admin-shared.module';
     AdminModule
   ],
   entryComponents: [
-    PagesDialogComponent,
+    // PagesDialogComponent,
     StudentFilterComponent,
     SearchCalendarComponent
   ]
