@@ -20,10 +20,13 @@ export class NavButtonComponent implements OnInit, OnChanges {
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
   public iconId: string;
-  clickEventSubscription:Subscription;
 
   get textColor() {
     return this.selected ? '#00B476' : this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
+  }
+
+  get iconColor() {
+    return this.selected ? '(Green)' : '(Blue-Gray)';
   }
 
   constructor(
@@ -42,13 +45,13 @@ export class NavButtonComponent implements OnInit, OnChanges {
   }
 
   doClick() {
-    if (this.button.id == 'explore') {
-      this.onClick.emit(this.selected);
-      setTimeout(() => {
-        this.componentService.sendClickEvent();
-      }, 100);
-      return;
-    }
+    // if (this.button.id == 'explore') {
+    //   this.onClick.emit(this.selected);
+    //   setTimeout(() => {
+    //     this.componentService.sendClickEvent();
+    //   }, 100);
+    //   return;
+    // }
     this.onClick.emit(this.selected);
   }
 

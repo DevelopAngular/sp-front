@@ -187,8 +187,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.clickEventSubscription = this.componentService.getClickEvent().subscribe(()=>{
-      this.openSwitchPage();
+    this.clickEventSubscription = this.componentService.getClickEvent().subscribe((action)=>{
+      this.currentView$.next(action);
+              this.storage.setItem('explore_page', action);
+              this.cdr.detectChanges();
     })
     this.user$ = this.userService.user$;
 
@@ -444,27 +446,27 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   openSwitchPage() {
     UNANIMATED_CONTAINER.next(true);
-    const pagesDialog = this.dialog.open(PagesDialogComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {
-        // 'trigger': event.currentTarget,
-        'trigger': document.getElementById('explore'),
-        'pages': Object.values(this.views),
-        'selectedPage': this.views[this.currentView$.getValue()]
-      }
-    });
+    // const pagesDialog = this.dialog.open(PagesDialogComponent, {
+    //   panelClass: 'consent-dialog-container',
+    //   backdropClass: 'invis-backdrop',
+    //   data: {
+    //     // 'trigger': event.currentTarget,
+    //     'trigger': document.getElementById('explore'),
+    //     'pages': Object.values(this.views),
+    //     'selectedPage': this.views[this.currentView$.getValue()]
+    //   }
+    // });
 
-    pagesDialog.afterClosed()
-      .pipe(
-        tap(() => UNANIMATED_CONTAINER.next(false)),
-        filter(res => !!res)
-      )
-      .subscribe(action => {
-        this.currentView$.next(action);
-        this.storage.setItem('explore_page', action);
-        this.cdr.detectChanges();
-    });
+    // pagesDialog.afterClosed()
+    //   .pipe(
+    //     tap(() => UNANIMATED_CONTAINER.next(false)),
+    //     filter(res => !!res)
+    //   )
+    //   .subscribe(action => {
+    //     this.currentView$.next(action);
+    //     this.storage.setItem('explore_page', action);
+    //     this.cdr.detectChanges();
+    // });
   }
 
   passClick(id) {
