@@ -46,17 +46,34 @@ describe('Admin - Reports',  () => {
         () => {
           getReports().click();
           cy.wait('@eventreports');
-          cy.get('app-sp-data-table table tbody tr:eq(0) > td:eq(0)').should('be.visible').click();
-          cy.get('mat-dialog-container app-report-info-dialog').should('be.visible');         
-          cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true});
-          cy.get('app-sp-data-table table tbody tr:eq(0) > td > div.pass-icon').then($el => {
-            if (!!$el) {
-              cy.wrap($el).click();
-              cy.get('app-pass-card').should('be.visible');
-              cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true});
+          // try to find an a row with a pass tile
+          cy.get('app-sp-data-table table tbody tr').then($rows => {
+            const maybePassTiles = $rows.find('td div.pass-icon:eq(0)');
+            cy.log(maybePassTiles)
+            const hasPassTile = maybePassTiles.length > 0;
+            // choose a row
+            let $row;
+            if (hasPassTile) {
+              $row = maybePassTiles[0].closest('tr');
+            } else {
+              $row = $rows[0];
+            };
+            
+            const wrap = cy.wrap($row);
+            wrap.get('td:eq(0)').should('be.visible').click();
+            cy.get('mat-dialog-container app-report-info-dialog').should('be.visible');         
+            cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true});
+            // foud passtile then test it
+            if (hasPassTile) {
+              wrap.get('td:eq(3) > div.pass-icon').then($el => {
+                if (!!$el) {
+                  cy.wrap($el).click();
+                  cy.get('app-pass-card').should('be.visible');
+                  cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true});
+                }
+              });
             }
           });
-
         }
       );
       expect(true).to.equal(true);
