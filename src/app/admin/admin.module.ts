@@ -25,6 +25,7 @@ import {ProfileCardDialogComponent} from './profile-card-dialog/profile-card-dia
 import {AddUserDialogComponent} from './add-user-dialog/add-user-dialog.component';
 import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-profile.component';
 import {ModelFilterComponent} from '../student-info-card/model-filter/model-filter.component';
+import { PagesDialogComponent } from './explore/pages-dialog/pages-dialog.component';
 
 @NgModule({
     imports: [
@@ -56,9 +57,13 @@ import {ModelFilterComponent} from '../student-info-card/model-filter/model-filt
         AddUserDialogComponent,
         ViewProfileComponent,
         ModelFilterComponent,
+        PagesDialogComponent
     ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
     ],
+    entryComponents: [
+        PagesDialogComponent
+      ]
 })
 export class AdminModule {}

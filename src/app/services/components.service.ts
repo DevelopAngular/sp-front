@@ -10,8 +10,8 @@ export class ComponentsService {
 
   constructor() { }
 
-  sendClickEvent(){
-    this.subject.next();
+  sendClickEvent(action){
+    this.subject.next(action);
   }
 
   getClickEvent():Observable<any>{

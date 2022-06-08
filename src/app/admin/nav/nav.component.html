@@ -13,7 +13,7 @@
                 <div *ngFor="let button of buttons; let i = index" [style.transition]="'transform .4s ease'" appCrossPointerEventTarget #tabRef>
                     <ng-container *ngIf="hasRoles(button.requiredRoles) | async">
                         <app-nav-button [style.margin-bottom]="'15px'" [selected]="isSelected(button.route)" [button]="button" [isExpand]="button.isExpand ? true : false" [content]="button.title" [icon]="button.imgUrl" (selectedButton)="selectTab(tabRef, navButtonsContainter);"
-                            (onClick)="route(button); selectTab(tabRef, navButtonsContainter);">
+                            (onClick)="route(button); button.type == 'routerLink' ? selectTab(tabRef, navButtonsContainter) : null;">
                         </app-nav-button>
                         <mat-divider style="margin: 7px 0" *ngIf="button.route === 'explore'"></mat-divider>
                     </ng-container>
