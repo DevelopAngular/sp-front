@@ -9,7 +9,7 @@
       <div class="status">
       <div class="title">Status</div>
         <app-status-chip 
-          [editable]="true" 
+          [editable]="data?.isAdmin" 
           [status]="report.status"
           [remoteid]="report.id"
           [forceLookHovered]="true"
