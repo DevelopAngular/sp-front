@@ -12,6 +12,7 @@ describe('Teacher - Reports',  () => {
     cy.logoutTeacher();
   });
 
+  // it goes to demoschool 1
   describe('Report', () => {
     it('should expects a teacher to search for a student and report him to admin', () => {
       cy.intercept({
