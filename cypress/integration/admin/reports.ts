@@ -1,5 +1,3 @@
-import {closeModal} from '../../support/functions/general';
-
 //TODO move it to a more generat level
 const logoutAdmin = () => {
   // the concret div.icon-button-container seems to properly trigger click event
@@ -34,7 +32,7 @@ describe('Admin - Reports',  () => {
       });
     });
 
-    it('should opens specific popups, change the report status', () => {
+    it('should navigate to reports', () => {
 
       cy.intercept({
         method: 'GET',
@@ -45,53 +43,65 @@ describe('Admin - Reports',  () => {
         () => {
           getReports().click();
           cy.wait('@eventreports');
-          // try to find an a row with a pass tile
-          cy.get('app-sp-data-table table tbody tr').then($rows => {
-            const maybePassTiles = $rows.find('td div.pass-icon:eq(0)');
-            const hasPassTile = maybePassTiles.length > 0;
-            // choose a row
-            let $row;
-            if (hasPassTile) {
-              $row = maybePassTiles[0].closest('tr');
-            } else {
-              $row = $rows[0];
-            };
-            
-            const wrap = cy.wrap($row);
-            wrap.get('td:eq(0)').should('be.visible').click();
-            cy.get('mat-dialog-container app-report-info-dialog app-status-chip').should('be.visible').then($chip => {
-              const status = $chip.text();
-              cy.wrap($chip).click();
-              cy.intercept({
-                method: 'PATCH',
-                url: /^https\:\/\/smartpass\.app\/api\/prod\-us\-central\/v1\/event_reports\/\d+$/
-              }).as('statuschange');
-              cy.get('app-status-editor app-status-chip span:not([class~='+status+'])').click();
-              cy.wait('@statuschange').its('response').then(res => {
-                expect(res.headers).to.include({'content-type': 'application/json'});
-                expect(res.statusCode).to.equal(200);
-              });
-            });         
-            
+        });
+    });
 
-            //click on passtile on popup
-            if (hasPassTile) {
-              cy.get('mat-dialog-container app-report-info-dialog app-pass-tile').should('be.visible').click();
-              cy.get('app-pass-card').should('be.visible');
-              cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true, multiple: true});
-              //
-              // foud passtile on row then test it
-              wrap.get('td:eq(3) > div.pass-icon').then($el => {
-                if (!!$el) {
-                  cy.wrap($el).click();
-                  cy.get('app-pass-card').should('be.visible');
-                  cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true, multiple: true});
-                }
-              });
-            }
-          });
+    it('should opens pass popup', () => {
+
+      // try to find an a row with a pass tile
+      cy.get('app-sp-data-table table tbody tr').then($rows => {
+        //cy.wrap($rows[0]).waitUntil(jel => jel.get(0).isConnected);
+
+        const maybePassTiles = $rows.find('td div.pass-icon:eq(0)');
+        const hasPassTile = maybePassTiles.length > 0;
+
+        if (hasPassTile) {
+          // foud passtile on row then test it
+          cy.wrap(maybePassTiles[0]).click();
+          cy.get('app-pass-card').should('be.visible');
+          cy.get('div[class~="cdk-overlay-backdrop"]').should('exist').click({force: true});
         }
-      );
+      })
+    });
+
+    it('should opens report popup', () => {
+        cy.get('app-sp-data-table table tbody tr').then($rows => {
+          //cy.wrap($rows[0]).waitUntil(jel => jel.get(0).isConnected);
+
+          const maybePassTiles = $rows.find('td div.pass-icon:eq(0)');
+          const hasPassTile = maybePassTiles.length > 0;
+
+          if (hasPassTile) {
+            const $td = maybePassTiles[0].closest('tr').querySelector('td:nth-child(1)');
+            cy.log($td);
+            cy.wrap($td).click({force: true});
+            //click on passtile on popup
+            cy.get('mat-dialog-container app-report-info-dialog app-pass-tile').should('be.visible').click();
+            cy.get('app-pass-card').should('be.visible');
+            cy.get('div[class~="cdk-overlay-backdrop"]').should('exist').click({force: true, multiple: true});
+          }
+        });
+    });
+
+    it('should change report status from report popup', () => {
+      cy.get('app-sp-data-table table tbody tr').then($rows => {
+        const $td = $rows[0].querySelector('td:nth-child(1)');
+        cy.wrap($td).click({force: true});
+        cy.get('mat-dialog-container app-report-info-dialog app-status-chip').should('be.visible').then($chip => {
+          const status = $chip.text();
+          cy.wrap($chip).click();
+          cy.intercept({
+            method: 'PATCH',
+            url: /^https\:\/\/smartpass\.app\/api\/prod\-us\-central\/v1\/event_reports\/\d+$/
+          }).as('statuschange');
+          cy.get('app-status-editor app-status-chip span:not([class~='+status+'])').click();
+          cy.wait('@statuschange').its('response').then(res => {
+            expect(res.headers).to.include({'content-type': 'application/json'});
+            expect(res.statusCode).to.equal(200);
+            cy.get('div[class~="cdk-overlay-backdrop"]').should('exist').click({force: true, multiple: true});
+          });
+        });         
+      });
     });
 
     it('should search reports by status', () => {
@@ -101,7 +111,6 @@ describe('Admin - Reports',  () => {
         url: 'https://smartpass.app/api/prod-us-central/v1/event_reports?limit=**'
       }).as('eventreports');
 
-      cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true, multiple: true});
       cy.get('app-filter-button').contains('status', {matchCase: false}).click(); 
       cy.get('mat-dialog-container app-status-filter').should('be.visible');
       cy.get('mat-dialog-container app-status-filter app-status-chip:eq(0)').click();
