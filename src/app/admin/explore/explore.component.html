@@ -5,7 +5,7 @@
             <div class="button-content">
                 <img width="35" [src]="'./assets/' + views[currentView].icon + ' (White).svg' | resolveAsset" alt="View Icon">
                 <div class="title">{{ views[currentView].title }}</div>
-                <!-- <img width="9" height="7" [src]="'./assets/Rect (White).svg' | resolveAsset" alt="Rect"> -->
+                <!-- <img width="9"  height="7" [src]="'./assets/Rect (White).svg' | resolveAsset" alt="Rect"> -->
             </div>
         </div>
         <div class="filters" [ngSwitch]="views[currentView].id">
