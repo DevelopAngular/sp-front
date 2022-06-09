@@ -101,6 +101,7 @@ describe('Admin - Reports',  () => {
         url: 'https://smartpass.app/api/prod-us-central/v1/event_reports?limit=**'
       }).as('eventreports');
 
+      cy.get('div[class~="cdk-overlay-backdrop"]').click({force: true, multiple: true});
       cy.get('app-filter-button').contains('status', {matchCase: false}).click(); 
       cy.get('mat-dialog-container app-status-filter').should('be.visible');
       cy.get('mat-dialog-container app-status-filter app-status-chip:eq(0)').click();
