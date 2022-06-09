@@ -135,6 +135,28 @@ export class IntrosEffects {
       );
   });
 
+  updateIntroStudentPassLimit$ = createEffect(() => {
+    return this.action$
+      .pipe(
+        ofType(introsActions.updateIntrosDisableRoom),
+        switchMap((action) => {
+          return this.userService.updateIntrosStudentPassLimit(action.device, action.version)
+            .pipe(
+              map(data => {
+                const updatedData = {
+                  ...action.intros,
+                  disable_room_reminder: {
+                    [action.device]: {seen_version: action.version}
+                  }
+                };
+                return introsActions.updateIntrosStudentPassLimitsSuccess({data: updatedData});
+              }),
+              catchError(error => of(introsActions.updateIntrosStudentPassLimitsFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private action$: Actions,
     private userService: UserService

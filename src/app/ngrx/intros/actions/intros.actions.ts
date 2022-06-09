@@ -25,3 +25,7 @@ export const updateIntrosSearchFailure = createAction(`[${INTROS}] Update intros
 export const updateIntrosDisableRoom = createAction(`[${INTROS}] Update intros Disable Room`, props<{intros: any, device: string, version: string}>());
 export const updateIntrosDisableRoomSuccess = createAction(`[${INTROS}] Update intros Disable Room Success`, props<{data: any}>());
 export const updateIntrosDisableRoomFailure = createAction(`[${INTROS}] Update intros Disable Room Failure`, props<{errorMessage: string}>());
+
+export const updateIntrosStudentPassLimits = createAction(`[${INTROS}] Update intros Student Pass Limits`, props<{intros: any, device: string, version: string}>());
+export const updateIntrosStudentPassLimitsSuccess = createAction(`[${INTROS}] Update intros Student Pass Limits Success`, props<{data: any}>());
+export const updateIntrosStudentPassLimitsFailure = createAction(`[${INTROS}] Update intros Student Pass Limits Failure`, props<{errorMessage: string}>());

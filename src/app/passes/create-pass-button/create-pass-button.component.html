@@ -13,34 +13,31 @@
     (pointerDownEvent)="buttonDown = true"
     (pointerCancelEvent)="buttonDown = false"
 >
-  <ng-container *ngIf="passLimitInfo as info">
-    <ng-container *ngIf="title === 'Now' && info.showPasses">
+  <div nuxTooltip [contentTemplate]="nuxTemplate" [showToolTip$]="showPassLimitNux" [position]="nuxWrapperPosition" class="pass-limit-nux-wrapper">
+    <ng-container *ngIf="title === 'Now' && passLimitInfo.showPasses" [ngSwitch]="passLimitInfo.current">
+      <div *ngSwitchCase="'0'" class="pass-limit-counter pass-limit-locked">
+        <img src="assets/Lock%20(White).svg" style="width: 85%">
+      </div>
+
+      <div *ngSwitchCase="'1'" class="pass-limit-counter pass-limit-one-remaining">
+        <span customToolTip [contentTemplate]="passLimitToolTip">{{passLimitInfo.current}}</span>
+      </div>
+
+      <div *ngSwitchDefault class="pass-limit-counter">
+        <span customToolTip [contentTemplate]="passLimitToolTip">{{passLimitInfo.current}}</span>
+      </div>
+
       <ng-template #passLimitToolTip>
         <div class="ds-tooltip" style="width: 200px">
-          <span>{{info.current}}/{{info.max}} passes remaining today.</span>
-          <span *ngIf="info.current === 0">You must request a pass from a teacher.</span>
+          <span>{{passLimitInfo.current}}/{{passLimitInfo.max}} passes remaining today.</span>
+          <span *ngIf="passLimitInfo.current === 0">You must request a pass from a teacher.</span>
         </div>
       </ng-template>
-
-      <ng-template #noPassLimitsRemaining>
-        <div
-          class="pass-limit-counter pass-limit-locked">
-        <span customToolTip [contentTemplate]="passLimitToolTip">
-          <img src="assets/Lock%20(White).svg" style="width: 85%">
-        </span>
-        </div>
-      </ng-template>
-
-      <div
-        *ngIf="info.current > 0; else noPassLimitsRemaining"
-        [ngClass]="{
-        'pass-limit-one-remaining': info.current === 1
-      }"
-        class="pass-limit-counter">
-        <span customToolTip [contentTemplate]="passLimitToolTip">{{info.current}}</span>
-      </div>
     </ng-container>
-
-  </ng-container>
+  </div>
   <div class="title">{{ title }}</div>
+
+  <ng-template #nuxTemplate>
+    <app-nux-universal link="https://www.smartpass.app/passlimits" description="Limit the number of passes students can have per day" (gotItEvent)="dismissNux()"></app-nux-universal>-->
+  </ng-template>
 </div>
