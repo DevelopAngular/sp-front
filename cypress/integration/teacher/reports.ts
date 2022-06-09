@@ -2,6 +2,7 @@ import {closeModal} from '../../support/functions/general';
 
 describe('Teacher - Reports',  () => {
   const timeout = 20000;
+  const ENDPOINT = 'https://smartpass.app/api/prod-us-central/v1/';
 
   before(() => {
       // @ts-ignore
@@ -17,14 +18,14 @@ describe('Teacher - Reports',  () => {
     it('should expects a teacher to search for a student and report him to admin', () => {
       cy.intercept({
         method: 'GET',
-        url: 'https://smartpass.app/api/prod-us-central/v1/hall_passes?**'
+        url: ENDPOINT + 'hall_passes?**'
       }).as('hallpasses');
       cy.visit('http://localhost:4200/main/hallmonitor');
       cy.wait('@hallpasses', {timeout});
 
       cy.intercept({
         method: 'GET',
-        url: 'https://smartpass.app/api/prod-us-central/v1/users?role=_profile_student**'
+        url: ENDPOINT + 'users?role=_profile_student**'
       }).as('searchstudents');
 
       // trigger report form popup
@@ -43,7 +44,7 @@ describe('Teacher - Reports',  () => {
 
       cy.intercept({
         method: 'POST',
-        url: 'https://smartpass.app/api/prod-us-central/v1/event_reports/bulk_create'
+        url: ENDPOINT + 'event_reports/bulk_create'
       }).as('reportstudents');
 
       // submit report
@@ -59,7 +60,7 @@ describe('Teacher - Reports',  () => {
 
       cy.intercept({
         method: 'GET',
-        url: 'https://smartpass.app/api/prod-us-central/v1/locations?limit=**'
+        url: ENDPOINT + 'locations?limit=**'
       }).as('locations');
 
       // press home tab
@@ -79,7 +80,7 @@ describe('Teacher - Reports',  () => {
 
       cy.intercept({
         method: 'POST',
-        url: 'https://smartpass.app/api/prod-us-central/v1/event_reports/bulk_create'
+        url: ENDPOINT + 'event_reports/bulk_create'
       }).as('reportstudents');
 
       // submit report
@@ -92,7 +93,37 @@ describe('Teacher - Reports',  () => {
 
     });
 
-    it.skip('should a teacher reports from the student info card', () => {});
+    it('should a teacher reports from the student info card', () => {
+      cy.intercept({
+        method: 'GET',
+        url: ENDPOINT + 'users?role=_profile_student&limit=**'
+      }).as('searchstudents');
+
+      cy.intercept({
+        method: 'POST',
+        url: ENDPOINT + 'recent_search'
+      }).as('recentsearch');
+      
+      cy.get('app-smartpass-search app-round-input').should('be.visible').type('demo');
+      cy.wait('@searchstudents');
+      cy.get('app-smartpass-search div[class~="search-result"] div[class~=value]:eq(0)').should('be.visible').click();
+      cy.wait('@recentsearch');
+      cy.get('app-student-info-card app-square-button').should('be.visible').click();
+
+      cy.get('app-report-form textarea').type('TEST_REPORT_FOUND_STUDENT');
+
+      cy.intercept({
+        method: 'POST',
+        url: ENDPOINT + 'event_reports/bulk_create'
+      }).as('reportstudents');
+
+      // submit report
+      cy.get('app-report-form div[class~=divider] app-white-button').click();
+      cy.wait('@reportstudents', {timeout}).its('response').then(res => {
+        expect(res.headers).to.include({'content-type': 'application/json'});
+        expect(res.statusCode).to.equal(200);
+      });
+    });
 
   });
 
