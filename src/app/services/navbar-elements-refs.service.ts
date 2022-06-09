@@ -11,4 +11,6 @@ export class NavbarElementsRefsService {
   public navbarRef$: Subject<ElementRef> = new ReplaySubject<ElementRef>(1);
 
   public schoolToggle$: Subject<ElementRef> = new ReplaySubject<ElementRef>(1);
+
+  public langToggle$: Subject<ElementRef> = new ReplaySubject<ElementRef>(1);
 }

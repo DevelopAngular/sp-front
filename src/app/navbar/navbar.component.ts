@@ -50,6 +50,7 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {filter as _filter} from 'lodash';
 import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
+import {SpLanguageComponent} from '../sp-language/sp-language.component';
 import * as moment from 'moment';
 
 declare const window;
@@ -439,6 +440,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           panelClass: 'sp-form-dialog',
           width: '425px',
           height: '500px'
+        });
+      } else if (action === 'language') {
+        this.dialog.open(SpLanguageComponent, {
+          panelClass: 'sp-form-dialog',
         });
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {

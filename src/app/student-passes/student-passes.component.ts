@@ -30,13 +30,19 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {PassLike} from '../models';
 import {HallPassesService} from '../services/hall-passes.service';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, take, tap, delay} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
 import * as moment from 'moment';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
 import {ExclusionGroup} from '../models/ExclusionGroup';
 import {Router} from '@angular/router';
 import {UserService} from '../services/user.service';
+import {TimeService} from '../services/time.service';
+import {ReportFormComponent} from '../report-form/report-form.component';
+import {KioskModeService} from '../services/kiosk-mode.service';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 @Component({
   selector: 'app-student-passes',
@@ -67,10 +73,16 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   lastStudentPasses: Observable<HallPass[]>;
 
+  isStaff: boolean;// for staff the passes have a richer UI
+  extraSpace: number = 50; // space we need for staff UI
+
+  reportFormInstance: ReportFormComponent;
+
   isScrollable: boolean;
   animationTrigger = {value: 'open', params: {size: '75'}};
   scaleCardTrigger$: Observable<string>;
   resizeTrigger$: Subject<'open' | 'close'> = new Subject<'open' | 'close'>();
+  resizeTriggerParams$: Observable<{value: 'open' | 'close', params: {height: number}}>;
   fadeInOutTrigger$: Observable<string>;
   isOpenEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   loading$: Observable<boolean>;
@@ -104,8 +116,26 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     private passesService: HallPassesService,
     private encounterPreventionService: EncounterPreventionService,
     private router: Router,
-    private userService: UserService
-  ) { }
+    private userService: UserService,
+    private timeService: TimeService,
+    private kioskMode: KioskModeService,
+  ) {
+    // knows if the component is used by staff member
+    // TODO may this bit of code belongs to userService 
+    this.userService.user$.pipe(
+      take(1),
+      map(user => {
+        const isStaff = 
+            user.roles.includes('_profile_teacher') ||
+            user.roles.includes('_profile_admin') ||
+            user.roles.includes('_profile_assistant');
+        return isStaff;
+      }),
+    ).subscribe(isStaff => {
+      this.isStaff = isStaff;
+      this.height += this.extraSpace;
+    });
+  }
 
   ngAfterViewInit() {
     if (!this.isResize) {
@@ -132,6 +162,20 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
           }, []);
         })
       );
+
+    this.resizeTriggerParams$ = this.resizeTrigger$
+      .pipe(
+        map((s: 'open' | 'close') => {
+          const h = s === 'open' ? 475 : 75;
+          const args = {
+            value: s, 
+            params: {
+              height: this.extraSpace + h
+            }
+          };
+          return args;
+        }),
+      ); 
   }
 
   ngOnDestroy() {
@@ -160,12 +204,12 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getBg() {
-    if (this.hovered && !this.isOpen) {
+    /*if (this.hovered && !this.isOpen) {
       if (this.pressed) {
         return '#EAEDF1';
       }
       return '#F0F2F5';
-    }
+    }*/
     return '#FFFFFF';
   }
 
@@ -191,6 +235,121 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       this.isOpenEvent$.next(false);
       this.domCheckerService.scalePassCardTrigger$.next('unresize');
     }
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
+  preparePassData(pass) {
+    const now = this.timeService.nowDate();
+    now.setSeconds(now.getSeconds() + 10);
+
+    pass = Object.assign({}, pass);
+    let data: any = {};
+    let fromPast = false;
+    let forFuture = false;
+    let isActive = false;
+    let forStaff = true;
+    let forMonitor = false;
+
+    if (pass instanceof HallPass) {
+      data = {
+        pass,
+        fromPast: pass['end_time'] < now,
+        forFuture: pass['start_time'] > now,
+        forMonitor: forMonitor,
+        forStaff: forStaff && !this.kioskMode.getCurrentRoom().value,
+        kioskMode: !!this.kioskMode.getCurrentRoom().value,
+        //hideReport: this.isAdminPage,
+        //activePassTime$: this.activePassTime$,
+        showStudentInfoBlock: !this.kioskMode.getCurrentRoom().value
+      };
+      data.isActive = !data.fromPast && !data.forFuture;
+    } else {
+      data = {
+        pass,
+        fromPast,
+        forFuture,
+        forMonitor,
+        isActive,
+        forStaff,
+      };
+    }
+ 
+    return data;
+  }
+
+  openReport(event, pass: PassLike) {
+    event.stopPropagation();
+    const passData = this.preparePassData(pass);
+    const isHallPass = pass instanceof HallPass;
+    const data = {
+      // to skip choosing the students 
+      // as the student's pass is to be reported
+      report: this.profile, 
+      isHallPass,
+      ...passData,
+    };
+
+    const reportRef = this.dialog.open(ReportFormComponent, {
+      panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
+      backdropClass: 'cdk-overlay-transparent-backdrop',
+      data,
+    });
+
+    reportRef.afterOpened().subscribe(() => {
+      // back button will close the dialog
+      // it usually close the dialog or it goes back one step the report form
+      // report form was/is a 2-step form 
+      const c = reportRef.componentInstance;
+      c.forceCloseClick = true;
+      c.useChipInsteadSearch = true;
+    });
+
+    reportRef.afterClosed().subscribe();
+  }
+
+  openCreatePass(event) {
+    event.stopPropagation();
+    const settings = [
+      {
+        label: 'Create pass for now',
+        icon: './assets/Plus (Blue-Gray).svg',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'now'
+      },
+      {
+        label: 'Create future pass',
+        icon: './assets/Schedule pass (Blue-Gray).svg',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'feature'
+      }
+    ];
+    UNANIMATED_CONTAINER.next(true);
+    const st = this.dialog.open(SettingsDescriptionPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {trigger: event.currentTarget, settings }
+    });
+
+    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+      .subscribe((action) => {
+        const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+          panelClass: 'main-form-dialog-container',
+          backdropClass: 'custom-backdrop',
+          maxWidth: '100vw',
+          data: {
+            'forLater': action === 'feature',
+            'forStaff': true,
+            'forInput': true,
+            'fromAdmin': true,
+            'adminSelectedStudent': this.profile
+          }
+        });
+    });
   }
 
   notClose(value) {

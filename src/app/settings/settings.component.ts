@@ -8,6 +8,7 @@ import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
+import {LocalizejsService} from '../services/localizejs.service';
 import {LocalStorage} from '@ngx-pwa/local-storage';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {DeviceDetection} from '../device-detection.helper';
@@ -67,7 +68,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
       public kioskMode: KioskModeService,
       private router: Router,
       private pwaStorage: LocalStorage,
-      private userService: UserService
+      private userService: UserService,
+      private localize: LocalizejsService
   ) {
     // this.initializeSettings();
   }
@@ -171,6 +173,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
     this.removeOfflineAuthData();
     localStorage.removeItem('fcm_sw_registered');
+    this.localize.setLanguageUntranslated();
   }
 
   switchAction() {
@@ -226,6 +229,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'icon': 'Glasses',
       'action': 'appearance',
       'title': 'Appearance'
+    });
+    this.settings.push({
+      'hidden': false,
+      'background': '#134482',
+      'icon': 'Language',
+      'action': 'language',
+      'title': 'Language',
+      'isNew': true
     });
     if (this.isStaff) {
       this.settings.push({

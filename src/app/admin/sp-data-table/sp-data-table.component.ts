@@ -9,7 +9,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
@@ -166,7 +166,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private dialog: MatDialog,
     private tableService: TableService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
   ) {
   }
 

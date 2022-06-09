@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {of, throwError} from 'rxjs';
 
 import * as reportsActions from '../actions';
-import {catchError, concatMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
+import {tap, catchError, concatMap, mergeMap, exhaustMap, map, switchMap, take} from 'rxjs/operators';
 import {AdminService} from '../../../services/admin.service';
 import {Report} from '../../../models/Report';
 import {addReportToStats} from '../../accounts/nested-states/students/actions';
@@ -62,6 +62,23 @@ export class ReportsEffects {
                 ];
               }),
               catchError(error => of(reportsActions.postReportFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  patchReport$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(reportsActions.patchReport),
+        // TODO: allow patch http requests run in parallel
+        switchMap((action: any) => {
+          return this.adminService.updateReport(action.updata)
+            .pipe(
+              map((report: Report) => {
+                return reportsActions.patchReportSuccess({report});
+              }),
+              catchError(error => of(reportsActions.patchReportFailure({errorMessage: error.message})))
             );
         })
       );

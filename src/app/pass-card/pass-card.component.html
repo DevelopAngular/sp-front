@@ -147,7 +147,11 @@
 
   </div>
 
-  <div class="student-footer-info" *ngIf="forStaff && isModal && showStudentInfoBlock">
+  <div 
+    class="student-footer-info" 
+    *ngIf="forStaff && isModal && showStudentInfoBlock"
+    [style.marginTop]="'58px'"
+    >
     <app-student-passes [pass]="pass" [profile]="pass.student"></app-student-passes>
   </div>
 </div>
@@ -174,5 +178,3 @@
     </symbol>
   </defs>
 </svg>
-
-
