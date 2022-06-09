@@ -744,8 +744,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             try {
               // is is expected a HallPass like object
               // as only this kind of pass can be reported
-              const maybeHallPass = HallPass.fromJSON(found[0]);
-              return maybeHallPass;
+              return (found[0] instanceof HallPass) ? found[0] : HallPass.fromJSON(found[0]);
             } catch(e) {
               // TODO: how to deal with this error??
               console.log(e)
