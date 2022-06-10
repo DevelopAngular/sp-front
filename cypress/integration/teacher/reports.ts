@@ -38,7 +38,7 @@ describe('Teacher - Reports',  () => {
       // trigger report form popup
       cy.get('div.buttons app-square-button').click();
       // search students to be reported
-      cy.get('app-report-form app-round-input input[placeholder="Search students"]').type('demo');
+      cy.get('app-report-form app-round-input input[placeholder]:eq(0)').type('demo');
       cy.wait('@searchstudents', {timeout});
 
       cy.get('app-report-form div[class~=divider] app-white-button').should('not.exist');

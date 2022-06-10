@@ -111,21 +111,37 @@ describe('Student - Passes Dashboard', () => {
     });
 
     describe('Now Passes', () => {
-      // end any existing passes before the test suite starts
-      before(() => {
-        if (cy.$$('div.end-pass-content').length) {
+      const cleanEndResendPass =  () => {
+        cy.log(cy.$$('app-inline-pass-card div.end-pass-content').length);
+        if (cy.$$('app-inline-pass-card div.end-pass-content').length) {
+          cy.intercept({
+            method: 'POST',
+            url: /https\:\/\/smartpass\.app\/api\/prod\-us\-central\/v1\/hall_passes\/\d+\/ended$/
+          }).as('end');
           endPass();
-          cy.wait(500);
+          cy.wait('@end');
         }
-      });
+        if (cy.$$('app-inline-request-card app-icon-button').length) {
+          cy.intercept({
+            method: 'POST',
+            url: /https\:\/\/smartpass\.app\/api\/prod\-us\-central\/v1\/pass_requests\/\d+\/cancel$/
+          }).as('cancelresend');
+          cy.get('app-inline-request-card app-icon-button:eq(0)').click();
+          cy.get('app-consent-menu option-wrapper:eq(0)').click();
+          cy.wait('@cancelresend');
+        }
+      };
+      // end any existing passes before the test suite starts
+      //before(cleanEndResendPass);
 
       it('should be able to create a one-way pass', () => {
+        cleanEndResendPass();
         expect(true).to.equal(true);
         PassFunctions.openCreatePassDialog('now');
         cy.wait(500);
-        selectCurrentRoom('Guidance');
+        selectCurrentRoom('Bathroom');
         cy.wait(500);
-        selectDestination('Water Fountain');
+        selectDestination('Nurse');
         cy.wait(500);
 
         PassFunctions.setMinimumPassDuration();
@@ -148,9 +164,9 @@ describe('Student - Passes Dashboard', () => {
       it('should mark an expired pass as "Expiring"', () => {
         PassFunctions.openCreatePassDialog('now');
         cy.wait(500);
-        selectCurrentRoom('Guidance');
+        selectCurrentRoom('Bathroom');
         cy.wait(500);
-        selectDestination('Bathroom');
+        selectDestination('Nurse');
         cy.wait(500);
 
         PassFunctions.setMinimumPassDuration();
