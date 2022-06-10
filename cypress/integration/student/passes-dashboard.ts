@@ -111,42 +111,54 @@ describe('Student - Passes Dashboard', () => {
     });
 
     describe('Now Passes', () => {
-      const cleanEndResendPass =  () => {
-        cy.log(cy.$$('app-inline-pass-card div.end-pass-content').length);
-        if (cy.$$('app-inline-pass-card div.end-pass-content').length) {
-          cy.intercept({
-            method: 'POST',
-            url: /https\:\/\/smartpass\.app\/api\/prod\-us\-central\/v1\/hall_passes\/\d+\/ended$/
-          }).as('end');
-          endPass();
-          cy.wait('@end');
-        }
-        if (cy.$$('app-inline-request-card app-icon-button').length) {
-          cy.intercept({
-            method: 'POST',
-            url: /https\:\/\/smartpass\.app\/api\/prod\-us\-central\/v1\/pass_requests\/\d+\/cancel$/
-          }).as('cancelresend');
-          cy.get('app-inline-request-card app-icon-button:eq(0)').click();
-          cy.get('app-consent-menu option-wrapper:eq(0)').click();
-          cy.wait('@cancelresend');
-        }
-      };
       // end any existing passes before the test suite starts
-      //before(cleanEndResendPass);
+      /*before(() => {
+        if (cy.$$('div.end-pass-content').length) {
+          endPass();
+          cy.wait(500);
+        }
+      });*/
 
       it('should be able to create a one-way pass', () => {
-        cleanEndResendPass();
         expect(true).to.equal(true);
-        PassFunctions.openCreatePassDialog('now');
-        cy.wait(500);
-        selectCurrentRoom('Bathroom');
-        cy.wait(500);
-        selectDestination('Nurse');
-        cy.wait(500);
+        // end any existing passes before the test suite starts
+        //cy.log(cy.$$('div.end-pass-content').length)
+        // cy.$$ failed to detect div.end-pass-content when that element was present
+        cy.get('body').then($b => {
+          return $b.find('div.end-pass-content').length > 0;
+        }).then(endpass => {
+          cy.log(endpass)
+          if (endpass) {
+            cy.intercept({
+              method: 'POST',
+              url: 'https://smartpass.app/api/prod-us-central/v1/hall_passes/*/ended'
+            }).as('endpass');
+            endPass();
+            cy.wait('@endpass');
+          }
 
-        PassFunctions.setMinimumPassDuration();
-        startPass();
-        cy.get('app-inline-pass-card').should('exist').should('have.length', 1);
+          PassFunctions.openCreatePassDialog('now');
+          cy.wait(500);
+          selectCurrentRoom('Bathroom');
+          cy.wait(500);
+          selectDestination('Nurse');
+          cy.wait(500);
+
+          PassFunctions.setMinimumPassDuration();
+          cy.intercept({
+            method: 'POST',
+            url: 'https://smartpass.app/api/prod-us-central/v1/hall_passes'
+          }).as('startpass');
+          startPass();
+          cy.wait('@startpass'); 
+
+          cy.get('app-inline-pass-card').should('exist').should('have.length', 1);
+        
+        });
+        /*if (cy.$$('div.end-pass-content').length) {
+          endPass();
+          cy.wait('@endpass');
+        }*/
       });
 
       it('should not be able to create a pass if a pass is in progress', () => {
