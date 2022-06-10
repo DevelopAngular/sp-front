@@ -97,7 +97,7 @@ describe('Teacher - Passes Dashboard', () => {
         cy.wait(100);
         cy.get('div.active-passes app-pass-tile>div').first().click({force: true});
         cy.get('mat-dialog-container div.header-content app-icon-button>div').first().click();
-        cy.get('app-consent-menu div.options-container > div:last-of-type > div').click();
+        cy.get('app-consent-menu div.options-container > div:last-of-type span').contains('End Pass').click();
       });
     });
   });

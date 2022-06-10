@@ -15,6 +15,13 @@ describe('Admin - Reports',  () => {
     logoutAdmin(); 
   });
 
+  afterEach(function() {
+    if (this.currentTest.state === 'failed') {
+      // @ts-ignore
+      Cypress.runner.stop();
+    }
+  });
+
   const getExplorePanel = (): Cypress.Chainable<JQuery<HTMLElement>> => {
     return cy.get('app-nav #explore');
   };
@@ -76,7 +83,7 @@ describe('Admin - Reports',  () => {
             cy.log($td);
             cy.wrap($td).click({force: true});
             //click on passtile on popup
-            cy.get('mat-dialog-container app-report-info-dialog app-pass-tile div.tile-wrapper').should('be.visible').click();
+            cy.get('mat-dialog-container app-report-info-dialog app-pass-tile div.tile-title-container').should('be.visible').click();
             cy.get('app-pass-card').should('be.visible');
             cy.get('div[class~="cdk-overlay-backdrop"]').should('exist').click({force: true, multiple: true});
           }

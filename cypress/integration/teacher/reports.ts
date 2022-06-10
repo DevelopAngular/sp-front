@@ -13,8 +13,15 @@ describe('Teacher - Reports',  () => {
     cy.logoutTeacher();
   });
 
+  afterEach(function() {
+    if (this.currentTest.state === 'failed') {
+      // @ts-ignore
+      Cypress.runner.stop();
+    }
+  });
+
   // it goes to demoschool 1
-  describe('Report', () => {
+  describe('Seaching + reporting', () => {
     it('should expects a teacher to search for a student and report him to admin', () => {
       cy.intercept({
         method: 'GET',

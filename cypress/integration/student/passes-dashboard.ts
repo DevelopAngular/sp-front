@@ -123,9 +123,9 @@ describe('Student - Passes Dashboard', () => {
         expect(true).to.equal(true);
         PassFunctions.openCreatePassDialog('now');
         cy.wait(500);
-        selectCurrentRoom('Bathroom');
+        selectCurrentRoom('Guidance');
         cy.wait(500);
-        selectDestination('Nurse');
+        selectDestination('Water Fountain');
         cy.wait(500);
 
         PassFunctions.setMinimumPassDuration();
@@ -148,9 +148,9 @@ describe('Student - Passes Dashboard', () => {
       it('should mark an expired pass as "Expiring"', () => {
         PassFunctions.openCreatePassDialog('now');
         cy.wait(500);
-        selectCurrentRoom('Bathroom');
+        selectCurrentRoom('Guidance');
         cy.wait(500);
-        selectDestination('Nurse');
+        selectDestination('Bathroom');
         cy.wait(500);
 
         PassFunctions.setMinimumPassDuration();
