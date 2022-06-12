@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
 import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
@@ -8,6 +8,8 @@ import {ScreenService} from '../../../services/screen.service';
 import {PassLimitService} from '../../../services/pass-limit.service';
 import {concatMap, delay, map, tap} from 'rxjs/operators';
 import {HallPassLimit} from '../../../models/HallPassLimits';
+import {UserService} from '../../../services/user.service';
+import {IntroData} from '../../../ngrx/intros';
 
 /**
  * TODOS for individual pass limits
@@ -27,7 +29,7 @@ import {HallPassLimit} from '../../../models/HallPassLimits';
   styleUrls: ['./admin-pass-limits-dialog.component.scss'],
   animations: [NextStep]
 })
-export class AdminPassLimitDialogComponent implements OnInit {
+export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   // TODO: This is for when multiple pass frequencies are implemented
 
   pageNumber = 1;
@@ -45,17 +47,22 @@ export class AdminPassLimitDialogComponent implements OnInit {
   }); // TODO: disable while fetching the pass limit status
   passLimitFormSubs: Subscription;
   passLimitFormChanged: Observable<boolean> = of(false);
-  passLimitFormLastValue: {enabled: boolean, limits: string, frequency: string};
+  passLimitFormLastValue: { enabled: boolean, limits: string, frequency: string };
   showLimitFormatError = false;
   requestLoading = false;
+  showPassLimitNux: boolean;
+  introsData: IntroData;
+  introSubs: Subscription;
 
   constructor(
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<AdminPassLimitDialogComponent>,
     public screenService: ScreenService,
     private formService: CreateFormService,
-    private passLimitService: PassLimitService
-  ) { }
+    private passLimitService: PassLimitService,
+    private userService: UserService
+  ) {
+  }
 
   ngOnInit(): void {
     /**
@@ -81,7 +88,7 @@ export class AdminPassLimitDialogComponent implements OnInit {
         this.hasPassLimit = !!pl.pass_limit;
         if (this.hasPassLimit) {
           this.passLimit = pl.pass_limit;
-          this.passLimitForm.patchValue({ limitEnabled: this.passLimit.limitEnabled });
+          this.passLimitForm.patchValue({limitEnabled: this.passLimit.limitEnabled});
           return of(true).pipe(delay(100));
         }
         return of(true);
@@ -96,13 +103,17 @@ export class AdminPassLimitDialogComponent implements OnInit {
         this.passLimitFormLastValue = this.passLimitForm.value;
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
           map(v => {
-            const { invalid, dirty } = this.passLimitForm.get('passLimit');
+            const {invalid, dirty} = this.passLimitForm.get('passLimit');
             this.showLimitFormatError = invalid && dirty;
             return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
           }));
         this.passLimitForm.enable();
       })
     ).subscribe();
+    this.introSubs = this.userService.introsData$.subscribe(intros => {
+      this.introsData = intros;
+      this.showPassLimitNux = !intros?.admin_pass_limit_message?.universal?.seen_version;
+    });
   }
 
   // TODO: This is for when multiple pass frequencies are implemented
@@ -152,7 +163,7 @@ export class AdminPassLimitDialogComponent implements OnInit {
         this.requestLoading = false;
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
           map(v => {
-            const { invalid, dirty } = this.passLimitForm.get('passLimit');
+            const {invalid, dirty} = this.passLimitForm.get('passLimit');
             this.showLimitFormatError = invalid && dirty;
             return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
           }));
@@ -164,7 +175,11 @@ export class AdminPassLimitDialogComponent implements OnInit {
   }
 
   async onEnabledToggle(change: boolean) {
-    await new Promise(resolve => { setTimeout(() => { resolve(); }, 50); });
+    await new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 50);
+    });
     if (change) {
       if (this.hasPassLimit) {
         this.passLimitForm.patchValue({
@@ -177,6 +192,17 @@ export class AdminPassLimitDialogComponent implements OnInit {
           frequency: 'day'
         });
       }
+    }
+  }
+
+  dismissPassLimitNux() {
+    this.userService.updateIntrosAdminPassLimitsMessageRequest(this.introsData, 'universal', '1');
+    this.showPassLimitNux = false;
+  }
+
+  ngOnDestroy() {
+    if (this.introSubs) {
+      this.introSubs.unsubscribe();
     }
   }
 }

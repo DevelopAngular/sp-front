@@ -12,7 +12,7 @@ import {
 import {User} from '../models/User';
 import {MatDialog} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
-import {Observable, Subject} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
 import {UserService} from '../services/user.service';
 import {School} from '../models/School';
@@ -102,6 +102,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   schoolsLength$: Observable<number>;
   destroy$: Subject<any> = new Subject<any>();
   introsData: IntroData;
+  introSubs: Subscription;
   passLimitNuxWrapperPosition: ConnectedPosition = {
     originX: 'center',
     originY: 'bottom',
@@ -205,12 +206,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this.userService.introsData$.subscribe({
+      this.introSubs = this.userService.introsData$.pipe(filter(i => !!i)).subscribe({
         next: intros => {
           this.introsData = intros;
           this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
-          console.log(!intros?.student_pass_limit?.universal?.seen_version);
-          console.log(this.introsData);
         }
       });
     }, 3000);
@@ -219,6 +218,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.introSubs) {
+      this.introSubs.unsubscribe();
+    }
   }
 
   getDate(date) {

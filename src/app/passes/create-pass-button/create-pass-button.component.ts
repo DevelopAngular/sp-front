@@ -1,10 +1,12 @@
-import {Component, EventEmitter, Input, AfterViewInit, OnChanges, SimpleChanges, Output} from '@angular/core';
+import {Component, EventEmitter, Input, AfterViewInit, OnChanges, SimpleChanges, Output, OnDestroy} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {bumpIn} from '../../animations';
 import {PassLimitInfo} from '../../models/HallPassLimits';
 import {UserService} from '../../services/user.service';
 import {ConnectedPosition} from '@angular/cdk/overlay';
+import {filter} from 'rxjs/operators';
+import {IntroData} from '../../ngrx/intros';
 
 @Component({
   selector: 'app-create-pass-button',
@@ -12,7 +14,7 @@ import {ConnectedPosition} from '@angular/cdk/overlay';
   styleUrls: ['./create-pass-button.component.scss'],
   animations: [bumpIn]
 })
-export class CreatePassButtonComponent implements OnChanges, AfterViewInit {
+export class CreatePassButtonComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() title: string;
   @Input() gradient: string;
   @Input() disabled: boolean;
@@ -30,7 +32,8 @@ export class CreatePassButtonComponent implements OnChanges, AfterViewInit {
   };
   showPassLimitNux = new Subject<boolean>();
   solid_color = '#00B476';
-  introsData: any;
+  introsData: IntroData;
+  introSubs: Subscription;
   passLimitNuxDesc: string;
 
   constructor(private sanitizer: DomSanitizer, private userService: UserService) {
@@ -50,7 +53,7 @@ export class CreatePassButtonComponent implements OnChanges, AfterViewInit {
       After that, you will have to request a pass from your teacher.`;
     }
 
-    this.userService.introsData$.subscribe({
+    this.introSubs = this.userService.introsData$.pipe(filter(i => !!i)).subscribe({
       next: intros => {
         this.introsData = intros;
         this.showPassLimitNux.next(!!this.passLimitInfo?.showPasses && !intros?.student_pass_limit?.universal?.seen_version);
@@ -106,5 +109,11 @@ export class CreatePassButtonComponent implements OnChanges, AfterViewInit {
   dismissNux() {
     this.showPassLimitNux.next(false);
     this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
+  }
+
+  ngOnDestroy() {
+    if (this.introSubs) {
+      this.introSubs.unsubscribe();
+    }
   }
 }

@@ -98,7 +98,7 @@ import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/acc
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {
   getIntros,
-  updateIntros,
+  updateIntros, updateIntrosAdminPassLimitsMessage,
   updateIntrosDisableRoom,
   updateIntrosEncounter,
   updateIntrosMain,
@@ -485,6 +485,14 @@ export class UserService implements OnDestroy {
     this.store.dispatch(updateIntrosStudentPassLimits({intros, device, version}));
   }
 
+  updateIntrosAdminPassLimitsMessageRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosAdminPassLimitsMessage({intros, device, version}));
+  }
+
+  // TODO: Make all update functions into a single function
+  // TODO: Have all update intro endpoints be part of an enum
+  // TODO: Share that enum with `intro.effects.ts`
+  
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
@@ -508,6 +516,11 @@ export class UserService implements OnDestroy {
   updateIntrosStudentPassLimit(device, version) {
     return this.http.patch('v1/intros/student_pass_limit', {device, version});
   }
+
+  updateIntrosAdminPassLimitMessage(device, version) {
+    return this.http.patch('v1/intros/admin_pass_limit_message', {device, version});
+  }
+
 
   saveKioskModeLocation(locId) {
     return this.http.post('auth/kiosk', {location: locId});

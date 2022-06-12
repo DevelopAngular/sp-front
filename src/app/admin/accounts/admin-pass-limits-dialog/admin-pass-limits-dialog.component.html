@@ -28,19 +28,19 @@
     </ng-template>
 
     <div class="content">
-      <div #passLimitsIntro class="accent-background-section ds-flex-row" style="position:relative">
+      <div *ngIf="showPassLimitNux" class="accent-background-section ds-flex-row" style="position:relative">
         <div style="width: 50px">
           <img [src]="'./assets/Pass Limit (Purple).svg' | resolveAsset" alt="Options">
         </div>
         <div style="width: 80%">
           <p class="ds-section-header" style="margin-top: 0">Limit the number of passes students can have per day</p>
           <p>
-            Set them school-wide, or just for individual students. Teachers can override it, and students only see the limit when it reaches 2 remaining.
+            Set them school-wide, or just for individual students. Teachers can override it if the pass limit has been reached.
             <a href="#">Learn more.</a>
           </p>
         </div>
 
-        <button id="closePassLimitsIntro" (click)="passLimitsIntro.style.display = 'none'">
+        <button id="closePassLimitsIntro" (click)="dismissPassLimitNux()">
           <img style="width: 25px" src="assets/Cancel%20(Blue-Gray).svg">
         </button>
       </div>
