@@ -52,6 +52,10 @@
           >Integrations</app-gradient-button>
 
           <app-gradient-button
+            nuxTooltip
+            [contentTemplate]="passLimitNuxTemplate"
+            [showToolTip$]="showPassLimitNux"
+            [position]="nuxWrapperPosition"
             gradient="#6651F1, #6651F1"
             [style.margin-left]="'15px'"
             leftIcon="./assets/Pass Limit (White).svg"
@@ -79,6 +83,10 @@
            </span>
             </div>
           </app-gradient-button>
+
+          <ng-template #passLimitNuxTemplate>
+            <app-nux-universal link="https://www.smartpass.app/passlimits" description="Limit the number of passes students can have per day" (gotItEvent)="dismissPassLimitsNux()"></app-nux-universal>-->
+          </ng-template>
 
           <ng-template #tooltip>
             <app-nux-encounter-prevention (close)="closeNuxToolTip()"></app-nux-encounter-prevention>

@@ -45,7 +45,8 @@ export class NuxTooltipRendererDirective implements OnInit, OnDestroy, OnChanges
     private _overlay: Overlay,
     private _overlayPositionBuilder: OverlayPositionBuilder,
     private _elementRef: ElementRef
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     const positionStrategy = this._overlayPositionBuilder

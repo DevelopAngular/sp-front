@@ -138,7 +138,7 @@ export class IntrosEffects {
   updateIntroStudentPassLimit$ = createEffect(() => {
     return this.action$
       .pipe(
-        ofType(introsActions.updateIntrosDisableRoom),
+        ofType(introsActions.updateIntrosStudentPassLimits),
         switchMap((action) => {
           return this.userService.updateIntrosStudentPassLimit(action.device, action.version)
             .pipe(

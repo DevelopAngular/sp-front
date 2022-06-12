@@ -31,8 +31,10 @@ export class CreatePassButtonComponent implements OnChanges, AfterViewInit {
   showPassLimitNux = new Subject<boolean>();
   solid_color = '#00B476';
   introsData: any;
+  passLimitNuxDesc: string;
 
-  constructor(private sanitizer: DomSanitizer, private userService: UserService) {}
+  constructor(private sanitizer: DomSanitizer, private userService: UserService) {
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.title !== 'Now') {
@@ -43,10 +45,15 @@ export class CreatePassButtonComponent implements OnChanges, AfterViewInit {
       this.passLimitInfo = {showPasses: false};
     }
 
+    if (this.passLimitInfo.showPasses) {
+      this.passLimitNuxDesc = `You have ${this.passLimitInfo.current}/${this.passLimitInfo.max} passes remaining today.
+      After that, you will have to request a pass from your teacher.`;
+    }
+
     this.userService.introsData$.subscribe({
       next: intros => {
         this.introsData = intros;
-        this.showPassLimitNux.next(!!this.passLimitInfo?.showPasses && !intros?.pass_limits_reminder?.universal?.seen_version);
+        this.showPassLimitNux.next(!!this.passLimitInfo?.showPasses && !intros?.student_pass_limit?.universal?.seen_version);
       }
     });
   }
@@ -98,7 +105,6 @@ export class CreatePassButtonComponent implements OnChanges, AfterViewInit {
 
   dismissNux() {
     this.showPassLimitNux.next(false);
-    this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal',  '1')
+    this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
   }
-
 }

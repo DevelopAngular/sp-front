@@ -38,6 +38,6 @@
   <div class="title">{{ title }}</div>
 
   <ng-template #nuxTemplate>
-    <app-nux-universal link="https://www.smartpass.app/passlimits" description="Limit the number of passes students can have per day" (gotItEvent)="dismissNux()"></app-nux-universal>-->
+    <app-nux-universal [description]="passLimitNuxDesc" (gotItEvent)="dismissNux()"></app-nux-universal>
   </ng-template>
 </div>
