@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpService} from './http-service';
 import {Observable} from 'rxjs';
 import {HallPassLimit} from '../models/HallPassLimits';
@@ -8,21 +8,22 @@ import {HallPassLimit} from '../models/HallPassLimits';
 })
 export class PassLimitService {
 
-  constructor(private http: HttpService) {}
+  constructor(private http: HttpService) {
+  }
 
   getPassLimit(): Observable<{ pass_limit: HallPassLimit }> {
-    return this.http.get<{ pass_limit: HallPassLimit }>(`http://localhost:8000/api/staging/v1/pass_limits/`);
+    return this.http.get<{ pass_limit: HallPassLimit }>(`v1/pass_limits/`);
   }
 
   createPassLimit(pl: HallPassLimit) {
-    return this.http.post('http://localhost:8000/api/staging/v1/pass_limits/create', pl, undefined, false);
+    return this.http.post('v1/pass_limits/create', pl, undefined, false);
   }
 
-  getRemainingLimits({studentId}: { studentId: number | string}): Observable<{ remainingPasses: number }> {
-    return this.http.get<{remainingPasses: number}>(`http://localhost:8000/api/staging/v1/pass_limits/remaining?student_id=${studentId}`);
+  getRemainingLimits({studentId}: { studentId: number | string }): Observable<{ remainingPasses: number }> {
+    return this.http.get<{ remainingPasses: number }>(`v1/pass_limits/remaining?student_id=${studentId}`);
   }
 
   updatePassLimits(pl: HallPassLimit) {
-    return this.http.put('http://localhost:8000/api/staging/v1/pass_limits/update', pl);
+    return this.http.put('v1/pass_limits/update', pl);
   }
 }
