@@ -65,8 +65,9 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
   // TODO: Clean up this code
   ngOnInit() {
     this.passLimitsService.getPassLimit().subscribe(pl => {
-      this.passLimit = pl.pass_limit.passLimit;
-      console.log(this.passLimit);
+      if (pl.pass_limit !== null) {
+        this.passLimit = pl.pass_limit.passLimit;
+      }
     });
     if (this.storage.getItem('pinAttempts') && JSON.parse(this.storage.getItem('pinAttempts'))[this.requestId]) {
       this.attempts = JSON.parse(this.storage.getItem('pinAttempts'))[this.requestId];
@@ -109,8 +110,8 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
                       });
                       return overrideDialogRef.afterClosed().pipe(concatMap((override) => {
                         if (!override) {
-                          this.pinResult.emit()
-                          return of(null)
+                          this.pinResult.emit();
+                          return of(null);
                         }
 
                         return this.requestService.acceptRequest(this.requestId, {

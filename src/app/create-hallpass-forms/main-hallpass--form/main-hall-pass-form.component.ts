@@ -345,6 +345,11 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       remaining: this.passLimitsService.getRemainingLimits({studentId: this.user.id}).pipe(take(1)),
       max: this.passLimitsService.getPassLimit().pipe(take(1))
     }).pipe(tap(({remaining, max}) => {
+      if (remaining.remainingPasses === -1 || max.pass_limit === null) { // TODO: Come up with a better way to do this
+        this.passLimitsLoaded = false;
+        return;
+      }
+
       this.passLimitsRemaining = remaining.remainingPasses;
       this.passLimitsMax = max.pass_limit.passLimit;
       this.passLimitsLoaded = true;
