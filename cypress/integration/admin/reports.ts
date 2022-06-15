@@ -105,6 +105,8 @@ describe('Admin - Reports',  () => {
           cy.wait('@statuschange').its('response').then(res => {
             expect(res.headers).to.include({'content-type': 'application/json'});
             expect(res.statusCode).to.equal(200);
+            const status = res.body.status;
+            cy.get('app-report-info-dialog app-status-chip span:eq(0)').should('have.text', status);
             cy.get('div[class~="cdk-overlay-backdrop"]').should('exist').click({force: true, multiple: true});
           });
         });         
