@@ -1,8 +1,21 @@
 import {closeModal} from '../../support/functions/general';
 
 describe('Teacher - Reports',  () => {
+  function rnd(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+  }
+
   const timeout = 20000;
   const ENDPOINT = 'https://smartpass.app/api/prod-us-central/v1/';
+
+  // random string to individualise tests
+  const SUFFIX = '_' + rnd(3);
 
   before(() => {
       // @ts-ignore
@@ -10,7 +23,7 @@ describe('Teacher - Reports',  () => {
   });
 
   after(()=> {
-    cy.logoutTeacher();
+    //cy.logoutTeacher();
   });
 
   afterEach(function() {
@@ -47,7 +60,7 @@ describe('Teacher - Reports',  () => {
       // choose a studewnt
       cy.get('app-report-form div[class~="option-list_item"]').first().click();
       // set up a specific message
-      cy.get('app-report-form textarea').type('TEST_REPORT_STUDENT');
+      cy.get('app-report-form textarea').type('TEST_REPORT_STUDENT' + SUFFIX);
 
       cy.intercept({
         method: 'POST',
@@ -83,7 +96,7 @@ describe('Teacher - Reports',  () => {
       cy.get('mat-dialog-container app-report-form div[class~=divider] app-white-button').should('be.visible');
 
       // set up a specific message
-      cy.get('app-report-form textarea').type('TEST_REPORT_STUDENT');
+      cy.get('app-report-form textarea').type('TEST_REPORT_PASS' + SUFFIX);
 
       cy.intercept({
         method: 'POST',
@@ -117,7 +130,7 @@ describe('Teacher - Reports',  () => {
       cy.wait('@recentsearch');
       cy.get('app-student-info-card app-square-button').should('be.visible').click();
 
-      cy.get('app-report-form textarea').type('TEST_REPORT_FOUND_STUDENT');
+      cy.get('app-report-form textarea').type('TEST_REPORT_FOUND_STUDENT' + SUFFIX);
 
       cy.intercept({
         method: 'POST',
@@ -130,6 +143,38 @@ describe('Teacher - Reports',  () => {
         expect(res.headers).to.include({'content-type': 'application/json'});
         expect(res.statusCode).to.equal(200);
       });
+    });
+
+    it('should find reports on admin view', () => {
+      cy.logoutTeacher();
+      cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
+
+      cy.get('app-school-toggle-bar span.school-name').contains('Cypress Testing School 2').then(() => {
+        cy.get('app-school-toggle-bar div.selected-school').click();
+        cy.get('div.option-data:not(.current-school)').click();
+      }).then(() => {
+        cy.intercept({
+          method: 'GET',
+          url: 'https://smartpass.app/api/prod-us-central/v1/event_reports?limit=**'
+        }).as('eventreports');
+      
+        cy.get('app-nav #explore').click().then(
+        () => {
+          cy.get('mat-dialog-container > app-pages-dialog div.title').contains('Reports').click();
+          cy.wait('@eventreports');
+          cy.get('app-sp-data-table table tbody tr').then($rows => {
+            //cy.wrap($rows[0]).waitUntil(jel => jel.get(0).isConnected);
+            const allowed = ['TEST_REPORT_STUDENT', 'TEST_REPORT_PASS', 'TEST_REPORT_FOUND_STUDENT'].map(el => el + SUFFIX);
+            const messages = Array.from($rows.find('td div.message')).slice(0, 3).map($el => $el.textContent.trim());
+            const found = (allowed.sort().join() == messages.sort().join());
+            cy.log(found);
+            expect(found).to.equal(true);
+            cy.get('app-nav app-icon-button div.icon-button-container').click({force: true});
+            cy.get('app-root mat-dialog-container > app-settings div.sign-out').click({force: true});
+          })
+        });
+      });
+      
     });
 
   });
