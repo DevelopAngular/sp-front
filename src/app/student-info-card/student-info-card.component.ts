@@ -1,18 +1,8 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {User} from '../models/User';
 import {MatDialog} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
-import {Observable, Subject, Subscription} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
 import {UserService} from '../services/user.service';
 import {School} from '../models/School';
@@ -43,11 +33,7 @@ import {HttpService} from '../services/http-service';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {PassLimitsDialogComponent} from '../teacher/pass-limits-dialog/pass-limits-dialog.component';
-import {PassLimitService} from '../services/pass-limit.service';
-import {HallPassLimit} from '../models/HallPassLimits';
-import {ConnectedPosition} from '@angular/cdk/overlay';
-import {IntroData} from '../ngrx/intros';
+import {SmartpassSearchService} from '../services/smartpass-search.service';
 
 declare const window;
 
@@ -58,7 +44,7 @@ declare const window;
   animations: [ResizeProfileImage],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class StudentInfoCardComponent implements OnInit, OnDestroy {
 
   @ViewChild('left') left: ElementRef;
   @ViewChild('right') right: ElementRef;
@@ -79,13 +65,12 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   user: User;
 
   school: School;
-  passLimit: HallPassLimit;
 
   adminCalendarOptions = {
     rangeId: 'range_6',
     toggleResult: 'Range'
   };
-  selectedDate: { start: moment.Moment, end: moment.Moment } = {
+  selectedDate: {start: moment.Moment, end: moment.Moment} = {
     start: moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'),
     end: moment().endOf('day')
   };
@@ -98,20 +83,12 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   profileEmail: string;
 
   isOpenAvatarDialog: boolean;
+
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
+
   schoolsLength$: Observable<number>;
+
   destroy$: Subject<any> = new Subject<any>();
-  introsData: IntroData;
-  introSubs: Subscription;
-  passLimitNuxWrapperPosition: ConnectedPosition = {
-    originX: 'center',
-    originY: 'bottom',
-    overlayX: 'start',
-    overlayY: 'center',
-    offsetY: 30,
-    offsetX: 50
-  };
-  showPassLimitNux = new Subject<boolean>();
 
   constructor(
     private dialog: MatDialog,
@@ -124,9 +101,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     private router: Router,
     private http: HttpService,
     private darkTheme: DarkThemeSwitch,
-    private passLimitsService: PassLimitService,
-  ) {
-  }
+    private searchService: SmartpassSearchService
+  ) { }
 
   @HostListener('document.scroll', ['$event'])
   scroll(event) {
@@ -170,15 +146,15 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         }),
         takeUntil(this.destroy$)
       ).subscribe(res => {
-      this.profile = res;
-      this.school = this.userService.getUserSchool();
-      this.cdr.detectChanges();
-      this.getUserStats();
-      this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
-      this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
+        this.profile = res;
+        this.school = this.userService.getUserSchool();
+        this.cdr.detectChanges();
+        this.getUserStats();
+        this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
+        this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
 
-      this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
-    });
+        this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+      });
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
     this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
@@ -195,32 +171,16 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.profile = user;
         this.cdr.detectChanges();
         this.userService.clearCurrentUpdatedAccounts();
-      });
-
-    this.passLimitsService.getPassLimit().subscribe({
-      next: pl => {
-        this.passLimit = pl.pass_limit;
-      }
     });
-  }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.introSubs = this.userService.introsData$.pipe(filter(i => !!i)).subscribe({
-        next: intros => {
-          this.introsData = intros;
-          this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
-        }
-      });
-    }, 3000);
+    // this.searchService.recentSearch$.subscribe(res => {
+    //   debugger;
+    // });
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-    if (this.introSubs) {
-      this.introSubs.unsubscribe();
-    }
   }
 
   getDate(date) {
@@ -313,7 +273,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     const st = this.dialog.open(SettingsDescriptionPopupComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: {trigger: elem.currentTarget, settings, profile: this.profile}
+      data: {trigger: elem.currentTarget, settings, profile: this.profile }
     });
 
     st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
@@ -360,7 +320,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     const st = this.dialog.open(SettingsDescriptionPopupComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: {trigger: elem.currentTarget, settings}
+      data: {trigger: elem.currentTarget, settings }
     });
 
     st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
@@ -377,7 +337,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
             'adminSelectedStudent': this.profile
           }
         });
-      });
+    });
   }
 
   openDateFilter(event) {
@@ -417,7 +377,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       width: '425px',
       height: '500px',
       data: {
-        report: this.profile,
+        report: this.profile, 
         useChipInsteadSearch,
       }
     });
@@ -433,7 +393,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       const PF = this.dialog.open(ModelFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {trigger: event.currentTarget, settings}
+        data: {trigger: event.currentTarget, settings }
       });
 
       PF.afterClosed().pipe(filter(r => !!r)).subscribe((value) => {
@@ -447,13 +407,13 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       const PF = this.dialog.open(ModelFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {trigger: event.currentTarget, settings}
+        data: {trigger: event.currentTarget, settings }
       });
     } else if (action === 'Overview') {
       const PF = this.dialog.open(ModelFilterComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {trigger: event.currentTarget}
+        data: {trigger: event.currentTarget }
       });
     }
   }
@@ -482,8 +442,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       .pipe(
         filter(res => !!res),
       ).subscribe((status) => {
-      this.userService.updateUserRequest(this.profile, {status});
-      this.toast.openToast({title: 'Account status updated', type: 'success'});
+        this.userService.updateUserRequest(this.profile, {status});
+        this.toast.openToast({title: 'Account status updated', type: 'success'});
     });
   }
 
@@ -494,20 +454,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       width: '425px',
       height: '500px',
       data: {'forceNextPage': page, currentUser: this.profile, forceGroup: currentGroup}
-    });
-  }
-
-  openPassLimitsDialog() {
-    this.dialog.open(PassLimitsDialogComponent, {
-      closeOnNavigation: true,
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-bd',
-      width: '425px',
-      height: '500px',
-      data: {
-        profile: this.profile,
-        passLimit: this.passLimit
-      }
     });
   }
 
@@ -522,14 +468,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   consentDialogOpen(evt) {
     const options = [];
-    options.push(this.genOption('Add individual picture', this.darkTheme.getColor({
-      dark: '#FFFFFF',
-      white: '#7f879d'
-    }), 'individual', this.darkTheme.getIcon({iconName: 'Plus', darkFill: 'White', lightFill: 'Blue-Gray'})));
-    options.push(this.genOption('Bulk upload pictures', this.darkTheme.getColor({
-      dark: '#FFFFFF',
-      white: '#7f879d'
-    }), 'bulk', this.darkTheme.getIcon({iconName: 'Add Avatar', darkFill: 'White', lightFill: 'Blue-Gray'})));
+    options.push(this.genOption('Add individual picture', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'individual', this.darkTheme.getIcon({iconName: 'Plus', darkFill: 'White', lightFill: 'Blue-Gray'})));
+    options.push(this.genOption('Bulk upload pictures', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'bulk', this.darkTheme.getIcon({iconName: 'Add Avatar', darkFill: 'White', lightFill: 'Blue-Gray'})));
 
     UNANIMATED_CONTAINER.next(true);
 
@@ -562,7 +502,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   genOption(display, color, action, icon?) {
-    return {display, color, action, icon};
+    return { display, color, action, icon };
   }
 
   openEditAvatar(event) {
@@ -570,7 +510,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     const ED = this.dialog.open(EditAvatarComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: {'trigger': target, user: this.profile}
+      data: { 'trigger': target, user: this.profile }
     });
 
     ED.afterClosed()
@@ -580,7 +520,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         tap(({action, file}) => {
           this.loadingProfilePicture.next(true);
           if (action === 'add') {
-            this.userService.addProfilePictureRequest(this.profile, '_profile_student', file);
+            this.userService.addProfilePictureRequest(this.profile, '_profile_student',  file);
           } else if (action === 'edit') {
             this.userService.addProfilePictureRequest(this.profile, '_profile_student', file);
           }
@@ -641,7 +581,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     if (start.isSame(moment().subtract(3, 'days'), 'day')) {
       return 'Last 3 days';
     } else if (start.isSame(moment().subtract(7, 'days'), 'day')) {
-      return 'Last 7 days';
+      return  'Last 7 days';
     } else if (start.isSame(moment().subtract(30, 'days'), 'day')) {
       return 'Last 30 days';
     } else if (start.isSame(moment().subtract(90, 'days'), 'day')) {
@@ -652,11 +592,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     if (start && end) {
       return start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
     }
-  }
-
-  dismissPassLimitNux() {
-    this.showPassLimitNux.next(false);
-    this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
   }
 
 }

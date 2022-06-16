@@ -65,13 +65,12 @@
             <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'22px'">
               <div class="pass-buttons">
                 <app-create-pass-button
-                  [passLimitInfo]="passLimitInfo"
-                  title="Now"
+                  [title]="'Now'"
                   (onClick)="showMainForm(false)"
                 ></app-create-pass-button>
 
                 <app-create-pass-button
-                  title="Future"
+                  [title]="'Future'"
                   (onClick)="showMainForm(true)"
                 ></app-create-pass-button>
               </div>
@@ -110,7 +109,6 @@
             [showProfilePictures]="user.show_profile_pictures === 'everywhere'"
           ></app-pass-collection>
         </div>
-
         <div class="past-passes pass-collection" *ngIf="(user$ | async)?.show_expired_passes || !isStaff">
           <app-pass-collection
             [maxHeight]="'100%'"
@@ -159,6 +157,8 @@
       </div>
     </div>
 
+
+
 <div class="passes-wrapper"
      (scroll)="scroll($event)" [style.height]="isStaff ? ((schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 105px)') : ''"
      [style.overflow]="isStaff ? 'auto' : 'visible'"
@@ -174,7 +174,6 @@
         <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'22px'">
           <div class="pass-buttons">
             <app-create-pass-button
-                    [passLimitInfo]="passLimitInfo"
                     [title]="'Now'"
                     (onClick)="showMainForm(false)"
             ></app-create-pass-button>

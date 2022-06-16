@@ -38,6 +38,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
 
   selectedDuration: number;
   selectedTravelType: string;
+  performingAction: boolean;
   subscribers$;
   endPassLoading$: Observable<boolean>;
 

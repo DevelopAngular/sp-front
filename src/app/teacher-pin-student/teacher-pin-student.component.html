@@ -14,13 +14,3 @@
     <div class="pin-info">{{attempts < 5 ? 'Pass Request will delete after ' + attempts + ' attempts' : 'Type with Keyboard'}}</div>
   </div>
 </div>
-
-<ng-template let-student="student" let-passLimit="passLimit" #confirmDialogBody>
-  <div class="ds-dialog-title">
-    <span>Student's Pass limit reached: {{student.display_name}} has had {{passLimit}}/{{passLimit}} passes today</span>
-  </div>
-
-  <div class="ds-dialog-normal-text ds-mb-10">
-    <p>If it's an emergency, you can override the limit.</p>
-  </div>
-</ng-template>

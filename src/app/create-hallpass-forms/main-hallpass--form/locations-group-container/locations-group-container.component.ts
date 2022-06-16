@@ -30,7 +30,7 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
 export class LocationsGroupContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
-  @Input() currentPassLimit: number;
+
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(FromWhereComponent) fromWhereComp;
@@ -126,17 +126,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
-    this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']).pipe(
-      // restrict all rooms, so the teacher request is mandatory
-      map(pins => {
-        if (this.currentPassLimit === 0) {
-          pins.forEach(p => {
-            p.location.restricted = true;
-          });
-        }
-        return pins;
-      }),
-    );
+    this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']);
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
     this.user$.subscribe((user: User) => {
@@ -252,7 +242,7 @@ export class LocationsGroupContainerComponent implements OnInit {
             return (pinnable.location.id + '') === (location.id + '');
           }
         });
-      }),
+      })
     ).subscribe(pinnable =>  {
       if (pinnable.type === 'location') {
           this.toWhere(pinnable);

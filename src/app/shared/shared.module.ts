@@ -86,7 +86,6 @@ import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {LinkGeneratedDialogComponent} from '../admin/link-generated-dialog/link-generated-dialog.component';
 import { StatusChipComponent } from '../admin/explore/status-chip/status-chip.component';
-import { ConfirmationDialogComponent } from './shared-components/confirmation-dialog/confirmation-dialog.component';
 import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-universal.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -184,7 +183,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
     StatusChipComponent, 
-    ConfirmationDialogComponent,
     NuxUniversalComponent,
   ],
   exports: [
