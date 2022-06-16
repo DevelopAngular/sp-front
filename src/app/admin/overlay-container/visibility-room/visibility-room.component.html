@@ -1,1 +1,19 @@
-<p>visibility-room works!</p>
+<div class="background">
+    
+  <img 
+    class="head-icon"
+    [src]="'./assets/Eye (Green-White).svg' | resolveAsset"
+    alt="Room Visibility"
+  />
+
+  <div class="label">Visibility</div>
+  <img 
+    class="support-icon"
+    [src]="'./assets/Support (Gray).svg' | resolveAsset"
+    alt="Support"
+    [customToolTip]="this.tooltipText"
+  />
+
+  <div>chip with visibility modes</div>
+
+</div>
