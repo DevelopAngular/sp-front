@@ -10,8 +10,21 @@ import {
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
-import {filter, map, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject} from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  filter,
+  map,
+  pluck,
+  publishReplay,
+  refCount,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+  withLatestFrom
+} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {LiveDataService} from '../live-data/live-data.service';
@@ -445,7 +458,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         data: {
           'forLater': forLater,
           'forStaff': this.isStaff,
-          'forInput': true,
+          'forInput': true
         }
       });
 
