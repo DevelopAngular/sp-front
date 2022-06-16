@@ -34,10 +34,12 @@
               [valid]="valid"
             >
               <div [ngClass]="{'isExpiring': isExpiring}" class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">
-                  {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+                {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
               </div>
               <ng-template #spinner>
-                <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
+                <div class="end-pass-content">
+                  <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
+                </div>
               </ng-template>
             </app-card-button>
         </div>

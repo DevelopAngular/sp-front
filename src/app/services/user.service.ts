@@ -98,13 +98,14 @@ import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/acc
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {
   getIntros,
-  updateIntros,
+  updateIntros, updateIntrosAdminPassLimitsMessage,
   updateIntrosDisableRoom,
   updateIntrosEncounter,
   updateIntrosMain,
-  updateIntrosSearch
+  updateIntrosSearch,
+  updateIntrosStudentPassLimits
 } from '../ngrx/intros/actions';
-import {getIntrosData} from '../ngrx/intros/state';
+import {getIntrosData, IntroData} from '../ngrx/intros/state';
 import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
@@ -146,8 +147,8 @@ export class UserService implements OnDestroy {
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
   /**
-  * Used for acting on behalf of some teacher by his assistant
-  */
+   * Used for acting on behalf of some teacher by his assistant
+   */
   public effectiveUser: Observable<RepresentedUser> = this.store.select(getEffectiveUser);
   public representedUsers: Observable<RepresentedUser[]> = this.store.select(getRepresentedUsersCollections);
 
@@ -237,10 +238,10 @@ export class UserService implements OnDestroy {
   user$: Observable<User> = this.store.select(getUserData);
   userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
   loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
-  currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser)
+  currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser);
 
   /**
-  * Student Groups
+   * Student Groups
    */
   studentGroups$: Observable<StudentList[]> = this.store.select(getStudentGroupsCollection);
   currentStudentGroup$: Observable<StudentList> = this.store.select(getCurrentStudentGroup);
@@ -249,13 +250,13 @@ export class UserService implements OnDestroy {
   blockUserPage$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   /**
-  * Profile Pictures
+   * Profile Pictures
    */
   profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
   profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
   profiles$: Observable<User[]> = this.store.select(getProfiles);
   profilePictureLoaderPercent$: Observable<number> = this.store.select(getProfilePicturesLoaderPercent);
-  profilePicturesErrors$: Subject<{[id: string]: string, error: string}> = new Subject();
+  profilePicturesErrors$: Subject<{ [id: string]: string, error: string }> = new Subject();
   uploadedGroups$: Observable<ProfilePicturesUploadGroup[]> = this.store.select(getUploadedGroups);
   currentUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getCurrentUploadedGroup);
   lastUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getLastUploadedGroup);
@@ -265,13 +266,13 @@ export class UserService implements OnDestroy {
   /**
    * Students Stats
    */
-  studentsStats$: Observable<{[id: string]: UserStats}> = this.store.select(getStudentsStats);
+  studentsStats$: Observable<{ [id: string]: UserStats }> = this.store.select(getStudentsStats);
   studentsStatsLoading$: Observable<boolean> = this.store.select(getStudentsStatsLoading);
   studentsStatsLoaded$: Observable<boolean> = this.store.select(getStudentsStatsLoaded);
 
-  introsData$: Observable<any> = this.store.select(getIntrosData);
+  introsData$: Observable<IntroData> = this.store.select(getIntrosData);
 
-  nuxDates$: Observable<{id: string, created: Date}[]> = this.store.select(getNuxDates);
+  nuxDates$: Observable<{ id: string, created: Date }[]> = this.store.select(getNuxDates);
 
   isEnableProfilePictures$: Observable<boolean>;
 
@@ -291,71 +292,71 @@ export class UserService implements OnDestroy {
   ) {
     this.schools$ = this.http.schools$;
     this.http.globalReload$
-        .pipe(
-          tap(() => {
-            this.http.effectiveUserId.next(null);
-            this.clearRepresentedUsers();
-            this.getUserRequest();
-            this.getNuxRequest();
-          }),
-          exhaustMap(() => {
-            return combineLatest(this.user$.pipe(filter(res => !!res), take(1),
-                map(raw => User.fromJSON(raw))
-              ), this.loginDataService.loginDataQueryParams.pipe(filter(r => !!r), take(1)));
-          }),
-          map(([user, queryParams]) => {
-            if (queryParams.email) {
-              const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
-              const isValidEmail = regexpEmail.test(queryParams.email) ? user.primary_email === queryParams.email : user.primary_email === queryParams.email + '@spnx.local';
-              if (!isValidEmail) {
-                this.http.clearInternal();
-                this.http.setSchool(null);
-                this.loginService.clearInternal(true);
-                this.userData.next(null);
-                this.clearUser();
-                this.store.dispatch(clearSchools());
-              }
+      .pipe(
+        tap(() => {
+          this.http.effectiveUserId.next(null);
+          this.clearRepresentedUsers();
+          this.getUserRequest();
+          this.getNuxRequest();
+        }),
+        exhaustMap(() => {
+          return combineLatest(this.user$.pipe(filter(res => !!res), take(1),
+            map(raw => User.fromJSON(raw))
+          ), this.loginDataService.loginDataQueryParams.pipe(filter(r => !!r), take(1)));
+        }),
+        map(([user, queryParams]) => {
+          if (queryParams.email) {
+            const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+            const isValidEmail = regexpEmail.test(queryParams.email) ? user.primary_email === queryParams.email : user.primary_email === queryParams.email + '@spnx.local';
+            if (!isValidEmail) {
+              this.http.clearInternal();
+              this.http.setSchool(null);
+              this.loginService.clearInternal(true);
+              this.userData.next(null);
+              this.clearUser();
+              this.store.dispatch(clearSchools());
             }
-            return user;
-          }),
-          tap(user => {
-            if (user.isAssistant()) {
-              this.getUserRepresentedRequest();
-            }
-          }),
-          switchMap((user: User) => {
-            this.blockUserPage$.next(false);
-            if (user.isAssistant()) {
-              return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$)
-                .pipe(
-                  tap(([users, schools]) => {
-                    if (!users.length && schools.length === 1) {
-                      this.store.dispatch(getSchoolsFailure({errorMessage: 'Assistant does`t have teachers'}));
-                    } else if (!users.length && schools.length > 1) {
-                      this.blockUserPage$.next(true);
-                    }
-                  }),
-                  filter(([users, schools]) => !!users.length || schools.length > 1),
-                  map(([users, schools]) => {
-                    if (users && users.length) {
-                      this.http.effectiveUserId.next(+users[0].user.id);
-                    }
-                    return user;
-                  }));
-            } else {
-              return of(user);
-            }
-          }),
-          tap((user) => {
-            if (user.isTeacher() || user.isAssistant()) {
-              this.getUserPinRequest();
-            }
-          }),
-          takeUntil(this.destroy$)
-        )
-        .subscribe(user => {
-          this.userData.next(user);
-        });
+          }
+          return user;
+        }),
+        tap(user => {
+          if (user.isAssistant()) {
+            this.getUserRepresentedRequest();
+          }
+        }),
+        switchMap((user: User) => {
+          this.blockUserPage$.next(false);
+          if (user.isAssistant()) {
+            return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$)
+              .pipe(
+                tap(([users, schools]) => {
+                  if (!users.length && schools.length === 1) {
+                    this.store.dispatch(getSchoolsFailure({errorMessage: 'Assistant does`t have teachers'}));
+                  } else if (!users.length && schools.length > 1) {
+                    this.blockUserPage$.next(true);
+                  }
+                }),
+                filter(([users, schools]) => !!users.length || schools.length > 1),
+                map(([users, schools]) => {
+                  if (users && users.length) {
+                    this.http.effectiveUserId.next(+users[0].user.id);
+                  }
+                  return user;
+                }));
+          } else {
+            return of(user);
+          }
+        }),
+        tap((user) => {
+          if (user.isTeacher() || user.isAssistant()) {
+            this.getUserPinRequest();
+          }
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(user => {
+        this.userData.next(user);
+      });
 
     this.isEnableProfilePictures$ = merge(this.http.currentSchool$, this.getCurrentUpdatedSchool$()
       .pipe(filter(s => !!s))).pipe(filter(s => !!s), map(school => school.profile_pictures_enabled));
@@ -430,7 +431,7 @@ export class UserService implements OnDestroy {
   }
 
   getUser() {
-     return this.http.get<User>('v1/users/@me');
+    return this.http.get<User>('v1/users/@me');
   }
 
   getUserPinRequest() {
@@ -476,6 +477,22 @@ export class UserService implements OnDestroy {
     this.store.dispatch(updateIntrosSearch({intros, device, version}));
   }
 
+  updateIntrosDisableRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosDisableRoom({intros, device, version}));
+  }
+
+  updateIntrosStudentPassLimitRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosStudentPassLimits({intros, device, version}));
+  }
+
+  updateIntrosAdminPassLimitsMessageRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosAdminPassLimitsMessage({intros, device, version}));
+  }
+
+  // TODO: Make all update functions into a single function
+  // TODO: Have all update intro endpoints be part of an enum
+  // TODO: Share that enum with `intro.effects.ts`
+  
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
@@ -492,13 +509,18 @@ export class UserService implements OnDestroy {
     return this.http.patch('v1/intros/search_reminder', {device, version});
   }
 
-  updateIntrosDisableRequest(intros, device, version) {
-    this.store.dispatch(updateIntrosDisableRoom({intros, device, version}));
-  }
-
   updateIntrosDisableRoom(device, version) {
     return this.http.patch('v1/intros/disable_room_reminder', {device, version});
   }
+
+  updateIntrosStudentPassLimit(device, version) {
+    return this.http.patch('v1/intros/student_pass_limit', {device, version});
+  }
+
+  updateIntrosAdminPassLimitMessage(device, version) {
+    return this.http.patch('v1/intros/admin_pass_limit_message', {device, version});
+  }
+
 
   saveKioskModeLocation(locId) {
     return this.http.post('auth/kiosk', {location: locId});
@@ -509,7 +531,7 @@ export class UserService implements OnDestroy {
   }
 
   getUserRepresented() {
-     return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
+    return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
   getUserNotification(id) {
@@ -526,11 +548,11 @@ export class UserService implements OnDestroy {
 
   searchProfile(role?, limit = 5, search?) {
     search = encodeURIComponent(search);
-      return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}`);
+    return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}`);
   }
 
   searchProfileById(id) {
-      return this.http.get<User>(`v1/users/${id}`);
+    return this.http.get<User>(`v1/users/${id}`);
   }
 
   searchProfileWithFilter(id) {
@@ -542,32 +564,32 @@ export class UserService implements OnDestroy {
   }
 
   searchProfileAll(search, type: string = 'alternative', excludeProfile?: string, gSuiteRoles?: string[]) {
-      switch (type) {
-        case 'alternative':
-          return this.http.get(constructUrl(`v1/users`, {search: search}), );
-        case 'G Suite':
-          if (gSuiteRoles) {
-            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
-              search: search,
-              profile: gSuiteRoles
-            }));
-          } else {
-            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
-              search: search
-            }));
-          }
-        case 'GG4L':
-          if (excludeProfile) {
-            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gg4l_users`, {
-              search: search,
-              profile: excludeProfile
-            }));
-          } else {
-            return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gg4l_users`, {
-              search
-            }));
-          }
-      }
+    switch (type) {
+      case 'alternative':
+        return this.http.get(constructUrl(`v1/users`, {search: search}),);
+      case 'G Suite':
+        if (gSuiteRoles) {
+          return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
+            search: search,
+            profile: gSuiteRoles
+          }));
+        } else {
+          return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gsuite_users`, {
+            search: search
+          }));
+        }
+      case 'GG4L':
+        if (excludeProfile) {
+          return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gg4l_users`, {
+            search: search,
+            profile: excludeProfile
+          }));
+        } else {
+          return this.http.get(constructUrl(`v1/schools/${this.http.getSchool().id}/gg4l_users`, {
+            search
+          }));
+        }
+    }
   }
 
   setUserActivityRequest(profile, active: boolean, role: string) {
@@ -576,7 +598,7 @@ export class UserService implements OnDestroy {
   }
 
   setUserActivity(id, activity: boolean) {
-      return this.http.patch(`v1/users/${id}/active`, {active: activity});
+    return this.http.patch(`v1/users/${id}/active`, {active: activity});
   }
 
   addAccountRequest(school_id, user, userType, roles: string[], role, behalf?: User[]) {
@@ -587,13 +609,13 @@ export class UserService implements OnDestroy {
   addAccountToSchool(id, user, userType: string, roles: Array<string>) {
     if (userType === 'gsuite') {
       return this.http.post(`v1/schools/${id}/add_user`, {
-        type:  'gsuite',
+        type: 'gsuite',
         email: user.email,
         profiles: roles
       });
     } else if (userType === 'email') {
       return this.http.post(`v1/schools/${id}/add_user`, {
-        type:  'email',
+        type: 'email',
         email: user.email,
         password: user.password,
         first_name: user.first_name,
@@ -602,15 +624,15 @@ export class UserService implements OnDestroy {
         profiles: roles
       });
     } else if (userType === 'username') {
-        return this.http.post(`v1/schools/${id}/add_user`, {
-            type: 'username',
-            username: user.email,
-            password: user.password,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            display_name: user.display_name,
-            profiles: roles
-        });
+      return this.http.post(`v1/schools/${id}/add_user`, {
+        type: 'username',
+        username: user.email,
+        password: user.password,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        display_name: user.display_name,
+        profiles: roles
+      });
     }
   }
 
@@ -638,10 +660,11 @@ export class UserService implements OnDestroy {
   }
 
   deleteUser(id) {
-      return this.http.delete(`v1/users/${id}`);
+    return this.http.delete(`v1/users/${id}`);
   }
+
   deleteUserFromProfile(id, role) {
-      return this.http.delete(`v1/users/${id}/profiles/${role}`);
+    return this.http.delete(`v1/users/${id}/profiles/${role}`);
   }
 
   getRepresentedUsers(id) {
@@ -672,7 +695,7 @@ export class UserService implements OnDestroy {
   }
 
   getStudentGroups() {
-      return this.http.get('v1/student_lists');
+    return this.http.get('v1/student_lists');
   }
 
   createStudentGroupRequest(group) {
@@ -681,7 +704,7 @@ export class UserService implements OnDestroy {
   }
 
   createStudentGroup(data) {
-      return this.http.post('v1/student_lists', data);
+    return this.http.post('v1/student_lists', data);
   }
 
   updateStudentGroupRequest(id, group) {
@@ -690,7 +713,7 @@ export class UserService implements OnDestroy {
   }
 
   updateStudentGroup(id, body) {
-      return this.http.patch(`v1/student_lists/${id}`, body);
+    return this.http.patch(`v1/student_lists/${id}`, body);
   }
 
   deleteStudentGroupRequest(id) {
@@ -699,7 +722,7 @@ export class UserService implements OnDestroy {
   }
 
   deleteStudentGroup(id) {
-      return this.http.delete(`v1/student_lists/${id}`);
+    return this.http.delete(`v1/student_lists/${id}`);
   }
 
   getUserWithTimeout(max: number = 10000): Observable<User | null> {
@@ -754,7 +777,7 @@ export class UserService implements OnDestroy {
   addBulkAccounts(accounts) {
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type':  'application/json',
+        'Content-Type': 'application/json',
       })
     };
     return this.http.post('v1/users/bulk-add?should_commit=true', accounts, httpOptions, false);
@@ -802,10 +825,10 @@ export class UserService implements OnDestroy {
 
   setProfilePictureToGoogle(url: string, file: File, content_type: string) {
     const httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type': content_type
-        })
-      };
+      headers: new HttpHeaders({
+        'Content-Type': content_type
+      })
+    };
     return this.httpClient.put(url, file, httpOptions);
   }
 
