@@ -171,9 +171,9 @@
         </div>
 
         <ng-template #teacherPin>
-          <div class="teacher-pin">
-            <app-teacher-pin-student (pinResult)="dialogRef.close()" [request]="request" [requestId]="request.id"></app-teacher-pin-student>
-          </div>
+            <div class="teacher-pin">
+              <app-teacher-pin-student (pinResult)="dialogRef.close()" [requestId]="request.id"></app-teacher-pin-student>
+            </div>
         </ng-template>
 
       </div>
@@ -318,12 +318,3 @@
   </defs>
 </svg>
 
-<ng-template let-student="student" let-passLimit="passLimit" #PassLimitOverride>
-  <div class="main-text">
-    <span>Student's Pass limit reached: {{student.display_name}} has had {{passLimit}}/{{passLimit}} passes today</span>
-  </div>
-
-  <div class="supporting-text ds-mt-10">
-    <span>If it's an emergency, you can override the limit.</span>
-  </div>
-</ng-template>

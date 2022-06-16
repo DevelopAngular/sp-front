@@ -39,7 +39,6 @@
           </app-round-input>
         </div>
 
-        <!-- TODO: Come up with a better way to represent gradient/square buttons instead of separate components  -->
         <div class="buttons" *ngIf="!isMiniButtons; else squareButtons">
           <app-gradient-button
             *ngIf="showIntegrations$ | async"
@@ -50,19 +49,6 @@
             [textColor]="'#1F194E'"
             (buttonClick)="openIntegrations()"
           >Integrations</app-gradient-button>
-
-          <app-gradient-button
-            nuxTooltip
-            [contentTemplate]="passLimitNuxTemplate"
-            [showToolTip$]="showPassLimitNux"
-            [position]="nuxWrapperPosition"
-            gradient="#6651F1, #6651F1"
-            [style.margin-left]="'15px'"
-            leftIcon="./assets/Pass Limit (White).svg"
-            size="medium"
-            cursor="pointer"
-            (buttonClick)="openPassLimits()"
-          >Pass Limits</app-gradient-button>
 
           <app-gradient-button
             [style.margin-left]="'15px'"
@@ -84,10 +70,6 @@
             </div>
           </app-gradient-button>
 
-          <ng-template #passLimitNuxTemplate>
-            <app-nux-universal link="https://www.smartpass.app/passlimits" description="Limit the number of passes students can have per day" (gotItEvent)="dismissPassLimitsNux()"></app-nux-universal>-->
-          </ng-template>
-
           <ng-template #tooltip>
             <app-nux-encounter-prevention (close)="closeNuxToolTip()"></app-nux-encounter-prevention>
           </ng-template>
@@ -105,16 +87,12 @@
 
         <ng-template #squareButtons>
           <div class="buttons">
-
             <app-square-button (buttonClick)="openIntegrations()" [backgroundColor]="'#F4F4F4'">
               <img width="28" [src]="'./assets/Integrations (Navy).svg' | resolveAsset">
             </app-square-button>
 
-            <app-square-button (buttonClick)="openPassLimits()" [backgroundColor]="'#6651F1'">
-              <img width="28" [src]="'./assets/Pass Limit (White).svg' | resolveAsset">
-            </app-square-button>
-
             <app-square-button
+              style="margin-left: 10px"
               nuxTooltip
               [contentTemplate]="tooltip"
               [showToolTip$]="showNuxTooltip"
@@ -132,6 +110,7 @@
             </ng-template>
 
             <app-square-button
+              style="margin-left: 10px"
               (buttonClick)="addUser($event)">
               <img width="28" height="28" [src]="'./assets/Plus (White).svg' | resolveAsset">
             </app-square-button>

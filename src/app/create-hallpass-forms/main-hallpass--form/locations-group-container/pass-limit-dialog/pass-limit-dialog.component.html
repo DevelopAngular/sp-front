@@ -4,24 +4,24 @@
   </div>
   <div class="main-wrapper">
     <div class="main-text">
-      <span>{{ header }}</span>
+      <span>{{ headText() }}</span>
     </div>
     <div class="supporting-text">
-      <span>{{ mainText }}</span>
+      <span>{{ supportingText() }}</span>
     </div>
     <div class="buttons">
       <app-gradient-button
         textColor="#7083A0"
         customBackground="#F0F2F5"
         [withShadow]="false"
-        [mat-dialog-close]="{ override: false }"
+        (buttonClick)="cancel()"
       >Cancel
       </app-gradient-button>
       <app-gradient-button
         textColor="#FFFFFF"
         customBackground="#E32C66"
         [withShadow]="false"
-        [mat-dialog-close]="{ override: true }"
+        (buttonClick)="override()"
       >Override limit
       </app-gradient-button>
     </div>
