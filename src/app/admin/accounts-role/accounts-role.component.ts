@@ -22,7 +22,6 @@ import {ToastService} from '../../services/toast.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
-
 @Component({
   selector: 'app-accounts-role',
   templateUrl: './accounts-role.component.html',
@@ -72,9 +71,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private storage: StorageService,
     private toast: ToastService
-  ) {
-
-  }
+  ) {}
 
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;

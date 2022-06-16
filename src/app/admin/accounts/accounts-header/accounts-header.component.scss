@@ -87,6 +87,10 @@
 
         .buttons {
           display: flex;
+
+          app-square-button:not(:first-of-type) {
+            margin-left: 10px
+          }
         }
 
         .button-content {

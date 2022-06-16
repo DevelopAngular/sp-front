@@ -38,6 +38,8 @@ import {ToastService} from '../../../services/toast.service';
 import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
 import * as moment from 'moment';
+import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
+import {ConnectedPosition} from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-accounts-header',
@@ -46,7 +48,6 @@ import * as moment from 'moment';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @Input() pending$: Subject<boolean>;
   @Input() schoolSyncInfoData: SchoolSyncInfo;
   @Input() gSuiteOrgs: GSuiteOrgs;
@@ -67,8 +68,16 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   user$: Observable<User>;
   isMiniButtons: boolean;
+  showPassLimitNux = new Subject<boolean>();
   showNuxTooltip: Subject<boolean> = new Subject();
   introsData: any;
+  nuxWrapperPosition: ConnectedPosition = {
+    originX: 'center',
+    originY: 'bottom',
+    overlayX: 'end',
+    overlayY: 'top',
+    offsetY: 25
+  };
 
   selectedUsers: User[] = [];
 
@@ -78,10 +87,10 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   public accountsButtons = [
     // { title: 'Overview', param: '', icon_id: '#Overview' },
-    { title: 'Students', param: '_profile_student', icon_id: '#Student', role: 'student_count' },
-    { title: 'Teachers', param: '_profile_teacher', icon_id: '#Teacher', role: 'teacher_count' },
-    { title: 'Admins', param: '_profile_admin', icon_id: '#Admin', role: 'admin_count' },
-    { title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count' }
+    {title: 'Students', param: '_profile_student', icon_id: '#Student', role: 'student_count'},
+    {title: 'Teachers', param: '_profile_teacher', icon_id: '#Teacher', role: 'teacher_count'},
+    {title: 'Admins', param: '_profile_admin', icon_id: '#Admin', role: 'admin_count'},
+    {title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count'}
   ];
 
   @HostListener('window:resize', ['$event.target'])
@@ -98,7 +107,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     private tableService: TableService,
     private toast: ToastService,
     private cdr: ChangeDetectorRef,
-  ) { }
+  ) {
+  }
 
   get showIntegrations$() {
     return this.user$.pipe(filter(u => !!u), map(user => user.roles.includes('admin_manage_integration')));
@@ -143,16 +153,25 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         debounceTime(1000),
         takeUntil(this.destroy$)
       ).subscribe(([intros, nuxDates, user]) => {
-        this.introsData = intros;
-        const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
-        this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
-      });
+      this.introsData = intros;
+      const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
+      this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
+      this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
+    });
 
   }
 
   ngAfterViewInit(): void {
     this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);
     this.isMiniButtons = this.wrapper.nativeElement.clientWidth <= 850;
+    this.nuxWrapperPosition = {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 40,
+      offsetX: -10
+    };
   }
 
   ngOnDestroy() {
@@ -232,8 +251,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   updateTab(route) {
-      this.router.navigate(['/admin/accounts/', route]);
-      this.forceFocus$.next(true);
+    this.router.navigate(['/admin/accounts/', route]);
+    this.forceFocus$.next(true);
   }
 
   selectTab(event: HTMLElement, container: HTMLElement) {
@@ -244,14 +263,14 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 200) {
-      setTimeout(() => {
-        const tabRefsArray = refsArray.toArray();
-        const selectedTabRef = this.accountsButtons.findIndex((button) => button.param === this.currentTab);
-        if (tabRefsArray[selectedTabRef]) {
-          this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
-        }
-        this.cdr.detectChanges();
-      }, timeout);
+    setTimeout(() => {
+      const tabRefsArray = refsArray.toArray();
+      const selectedTabRef = this.accountsButtons.findIndex((button) => button.param === this.currentTab);
+      if (tabRefsArray[selectedTabRef]) {
+        this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
+      }
+      this.cdr.detectChanges();
+    }, timeout);
   }
 
   openStatusPopup(event) {
@@ -289,15 +308,15 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
           }
         })
       ).subscribe(({action, count}) => {
-        if (action === 'delete') {
-          this.toast.openToast({title: `${count} account${count > 1 ? 's' : ''} deleted`, type: 'error'});
-        } else {
-          this.toast.openToast({title: `${count} account statuses updated`, type: 'success'});
-        }
-        this.tableService.clearSelectedUsers.next();
-          setTimeout(() => {
-            this.adminService.getCountAccountsRequest();
-          }, 500);
+      if (action === 'delete') {
+        this.toast.openToast({title: `${count} account${count > 1 ? 's' : ''} deleted`, type: 'error'});
+      } else {
+        this.toast.openToast({title: `${count} account statuses updated`, type: 'success'});
+      }
+      this.tableService.clearSelectedUsers.next();
+      setTimeout(() => {
+        this.adminService.getCountAccountsRequest();
+      }, 500);
       this.clearData();
     });
   }
@@ -322,6 +341,16 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       });
   }
 
+  openPassLimits() {
+    this.matDialog.open(AdminPassLimitDialogComponent, {
+      hasBackdrop: true,
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+    });
+  }
+
   openSettingsDialog(action, status) {
     if (action === 'gg4l' || action === 'clever') {
       const gg4l = this.matDialog.open(Ggl4SettingsComponent, {
@@ -329,7 +358,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
-        data: { status, action }
+        data: {status, action}
       });
     } else if (action === 'g_suite') {
       const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
@@ -366,7 +395,12 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   closeNuxToolTip() {
     this.showNuxTooltip.next(false);
-    this.userService.updateIntrosEncounterRequest(this.introsData, 'universal',  '1');
+    this.userService.updateIntrosEncounterRequest(this.introsData, 'universal', '1');
+  }
+
+  dismissPassLimitsNux() {
+    this.showPassLimitNux.next(false);
+    this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
   }
 
 }
