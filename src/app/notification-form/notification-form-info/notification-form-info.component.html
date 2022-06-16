@@ -1,5 +1,5 @@
 <div class="notification-form-info" [class]="classes">
-  <div class="top-bar" (click)="toggleDropdown()">
+  <div class="top-bar" [ngStyle]="{'cursor': content.children.length > 1 ? 'pointer' : null }" (click)="toggleDropdown()">
     <div *ngIf="showImage()" class="image-wrapper">
       <div class="image" [style]="{background: iconBackground}">
         <img alt="" [src]="image | resolveAsset">

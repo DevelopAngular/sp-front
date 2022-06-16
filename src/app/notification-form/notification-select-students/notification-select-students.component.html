@@ -2,6 +2,9 @@
   <div *ngFor="let student of (update | async); let i = index"
        (click)="removeStudent(i)"
        class="student real">
+    <div class="student-overlay">
+      <img [src]="'./assets/Close.svg' | resolveAsset" alt="">
+    </div>
     <img alt="" [src]="student['icon'] | resolveAsset">
     <span>{{student['name']}}</span>
   </div>

@@ -21,8 +21,9 @@
     height: 28px;
     display: flex;
     padding: 18px;
+    align-items: center;
 
-    div {
+    .room-image {
       margin-right: 14px;
     }
 
@@ -31,7 +32,7 @@
     }
 
     span {
-      @include textSize(22px, bold);
+      @include textSize(17px, bold);
     }
   }
 

@@ -37,11 +37,15 @@ export class NotificationFormComponent implements OnInit {
   }
 
   get isDisabledNotif() {
-    return NotificationService.hasPermission;
+    return !NotificationService.hasPermission;
   }
 
   get isSafari() {
     return DeviceDetection.isSafari();
+  }
+
+  get hasEmail() {
+    return !this.user.primary_email.endsWith('spnx.local');
   }
 
   get isIOSTablet() {
@@ -70,7 +74,7 @@ export class NotificationFormComponent implements OnInit {
       'weeklySummaryEmail',
     ];
 
-    return controls.some(control => this.form.get(control).value);
+    return controls.some(control => this.form.get(control).value) && this.hasEmail;
   }
 
   get isUsingPush() {
@@ -85,12 +89,20 @@ export class NotificationFormComponent implements OnInit {
   }
 
   get studentBottomText() {
-    if (!this.user.primary_email.endsWith('spnx.local')) {
+    if (!this.hasEmail) {
       return 'Notifications will be sent to your email.';
     } else if (!this.isSafari) {
       return 'Notifications will be sent to this browser.';
     } else {
       return false;
+    }
+  }
+
+  get emailByline() {
+    if (this.hasEmail) {
+      return this.user.primary_email;
+    } else {
+      return 'Email notifications are not supported for usernames';
     }
   }
 
@@ -156,7 +168,7 @@ export class NotificationFormComponent implements OnInit {
       result = ['Off'];
     }
 
-    return result.join(',');
+    return result.join(', ');
   }
 
   send() {

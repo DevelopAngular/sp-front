@@ -11,7 +11,7 @@
     display: flex;
     gap: 8px;
 
-    div {
+    .option-image {
       width: 26px;
       height: 26px;
 
@@ -20,8 +20,18 @@
       }
     }
 
-    span {
-      @include textSize(15px, 600);
+    .option-text {
+      display: flex;
+      gap: 5px;
+
+      span {
+        @include textSize(15px, 600);
+      }
+
+      div {
+        width: 24px;
+        border-radius: 12px;
+      }
     }
   }
 

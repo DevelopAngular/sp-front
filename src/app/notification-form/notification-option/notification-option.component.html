@@ -1,7 +1,15 @@
 <div class="option">
   <div class="option-info">
+    <div class="option-image">
       <img alt="" [src]="icon | resolveAsset">
-    <span [customToolTip]="tooltip">{{text}}</span>
+    </div>
+    <div class="option-text" [customToolTip]="tooltip">
+      <span>{{text}}</span>
+      <div *ngIf="tooltip !== undefined">
+        <img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
+      </div>
+    </div>
+
   </div>
   <div class="option-toggle">
     <app-toggle-input [form]="this.form" [controlName]="control" [defaultLayout]="false"

@@ -12,7 +12,7 @@
   }
 
   .notif-bottom-wrapper-wrapper {
-    padding: 29px 28px 12px 28px;
+    padding: 29px 28px 56px 28px;
     overflow-y: scroll;
   }
 
@@ -36,6 +36,8 @@
   }
 
   .notif-exit-wrapper {
+    cursor: pointer;
+
     img {
       width: 14px;
       height: 14px;
@@ -57,7 +59,7 @@
   }
 
   .notif-pass-requests {
-    padding: 0 16px 20px 16px;
+    padding: 0 16px 10px 16px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -83,7 +85,7 @@
   }
 
   .notif-scheduled-passes {
-    padding: 0 16px 20px 16px;
+    padding: 0 16px 10px 16px;
   }
 
   .div {
@@ -94,7 +96,16 @@
   .room-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
+
+    .room-wrapper {
+      padding: 5px;
+      border-radius: 10px;
+
+      &:hover {
+        background-color: #e5e8ee;
+      }
+    }
 
     .room {
       display: flex;
@@ -140,7 +151,7 @@
   }
 
   .unwrapped {
-    padding: 0 16px 20px 16px;
+    padding: 0 16px 10px 16px;
     display: inline-block;
   }
 

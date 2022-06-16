@@ -59,6 +59,10 @@ export class NotificationSelectStudentsComponent implements OnInit {
         return;
       }
 
+      if (this.students.some(s => s.id === newStudent[0].id)) {
+        return;
+      }
+
       this.students.push(newStudent[0]);
       this.updateStudents();
     });
