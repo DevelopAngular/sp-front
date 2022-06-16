@@ -20,6 +20,17 @@
                     [forceButtonClick$]="buttonForceTrigger$" (forceButtonClickEvent)="$event.action === 'students' ? openFilter($event.event, $event.action) : null" [showClearIcon]="false" [openedFilter]="!!dialog.getDialogById('students_filter')">
                 </app-filter-button>
             </div>
+
+            <div class="filter">
+        <app-filter-button *ngSwitchCase="2"
+         (buttonClick)="openFilter($event, 'status')"
+         [title]="reportSearchData.selectedStatus ? 'Status ' + reportSearchData.selectedStatus : 'Status'"
+         [filter]="reportSearchData.selectedStatus && !!reportSearchData.selectedStatus.length"
+         (clearData)="reportSearchData.selectedStatus = null; autoSearch()"
+         [openedFilter]="!!dialog.getDialogById('status_filter')">
+        </app-filter-button>
+      </div>
+
             <div class="filter" *ngSwitchCase="2">
                 <app-filter-button (buttonClick)="openFilter($event, 'teachers')" [title]="(!reportSearchData.selectedTeachers || reportSearchData.selectedTeachers.length > 1 ? 'Submitted by' + (reportSearchData.selectedTeachers && reportSearchData.selectedTeachers.length ? ' (' + reportSearchData.selectedTeachers.length + ')' : '') : reportSearchData.selectedTeachers[0].display_name)"
                     [filter]="reportSearchData.selectedTeachers && !!reportSearchData.selectedTeachers.length" (clearData)="reportSearchData.selectedTeachers = null; autoSearch()" [openedFilter]="!!dialog.getDialogById('teachers_filter')">
