@@ -1,7 +1,7 @@
 import * as PassFunctions from '../../support/functions/passes';
 import * as HelperFunctions from '../../support/functions/general';
 import * as moment from 'moment';
-import {closeModal} from '../../support/functions/general';
+import {closeModal, waitForElement} from '../../support/functions/general';
 
 /**
  * Responsible for all interactions a student can make on the main dashboard page
@@ -122,12 +122,12 @@ describe('Student - Passes Dashboard', () => {
       it('should be able to create a one-way pass', () => {
         expect(true).to.equal(true);
         // end any existing passes before the test suite starts
-        //cy.log(cy.$$('div.end-pass-content').length)
+        // cy.log(cy.$$('div.end-pass-content').length)
         // cy.$$ failed to detect div.end-pass-content when that element was present
         cy.get('body').then($b => {
           return $b.find('div.end-pass-content').length > 0;
         }).then(endpass => {
-          cy.log(endpass)
+          cy.log(endpass.toString());
           if (endpass) {
             cy.intercept({
               method: 'POST',
@@ -138,11 +138,11 @@ describe('Student - Passes Dashboard', () => {
           }
 
           PassFunctions.openCreatePassDialog('now');
-          cy.wait(500);
+          waitForElement('div.cdk-global-overlay-wrapper mat-dialog-container app-create-hallpass-forms app-location-cell');
           selectCurrentRoom('Bathroom');
-          cy.wait(500);
+          waitForElement('app-main-hallpass-form app-to-where');
           selectDestination('Nurse');
-          cy.wait(500);
+          waitForElement('app-main-hallpass-form app-pass-card');
 
           PassFunctions.setMinimumPassDuration();
           cy.intercept({
@@ -150,10 +150,10 @@ describe('Student - Passes Dashboard', () => {
             url: 'https://smartpass.app/api/prod-us-central/v1/hall_passes'
           }).as('startpass');
           startPass();
-          cy.wait('@startpass'); 
+          cy.wait('@startpass');
 
           cy.get('app-inline-pass-card').should('exist').should('have.length', 1);
-        
+
         });
         /*if (cy.$$('div.end-pass-content').length) {
           endPass();
@@ -175,11 +175,11 @@ describe('Student - Passes Dashboard', () => {
 
       it('should mark an expired pass as "Expiring"', () => {
         PassFunctions.openCreatePassDialog('now');
-        cy.wait(500);
+        waitForElement('div.cdk-global-overlay-wrapper mat-dialog-container app-create-hallpass-forms app-location-cell');
         selectCurrentRoom('Bathroom');
-        cy.wait(500);
+        waitForElement('app-main-hallpass-form app-to-where');
         selectDestination('Nurse');
-        cy.wait(500);
+        waitForElement('app-main-hallpass-form app-pass-card');
 
         PassFunctions.setMinimumPassDuration();
         startPass();
@@ -227,10 +227,9 @@ describe('Student - Passes Dashboard', () => {
         });
         cy.get('div.next-button > app-gradient-button > div.button').click();
         selectCurrentRoom('Bathroom');
-        cy.wait(500);
+        waitForElement('app-main-hallpass-form app-to-where');
         selectDestination('Water Fountain');
-        cy.wait(500);
-
+        waitForElement('app-main-hallpass-form app-pass-card');
         PassFunctions.setMinimumPassDuration();
         startPass();
         cy
@@ -297,7 +296,7 @@ describe('Student - Passes Dashboard', () => {
         }).as('v1API');
         PassFunctions.openCreatePassDialog('now');
         PassFunctions.selectCurrentRoom('Bathroom');
-        cy.get('img[alt="LOCK"].lock', { timeout: 10000 }).parent().first().click({ timeout: 10000 })
+        cy.get('img[alt="LOCK"].lock', {timeout: 10000}).parent().first().click({timeout: 10000});
         PassFunctions.searchForTeacher('demoteacher1');
         cy.get('textarea.message-box').type(requestPassMessage);
         cy.get('div.rest-mes-content app-gradient-button div.button').click();
@@ -341,6 +340,7 @@ describe('Student - Passes Dashboard', () => {
           .should('have.length', numberOfActivePasses + 1);
         cy.logoutTeacher();
         cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
+        waitForElement('app-inline-pass-card');
         cy.get('app-inline-pass-card')
           .should('exist')
           .should('be.visible')
@@ -358,7 +358,7 @@ describe('Student - Passes Dashboard', () => {
         }).as('v1API');
         PassFunctions.openCreatePassDialog('now');
         PassFunctions.selectCurrentRoom('Bathroom');
-        cy.get('img[alt="LOCK"].lock', { timeout: 10000 }).parent().first().click({ timeout: 10000 });
+        cy.get('img[alt="LOCK"].lock', {timeout: 10000}).parent().first().click({timeout: 10000});
         PassFunctions.searchForTeacher('demoteacher1');
         cy.get('textarea.message-box').type(requestPassMessage);
         cy.get('div.rest-mes-content app-gradient-button div.button').click();
@@ -606,9 +606,9 @@ describe('Student - Passes Dashboard', () => {
     const deniedPassMessage = 'Denied due to reasons';
 
     before(() => {
-      cy.logoutStudent()
+      cy.logoutStudent();
       cy.login(Cypress.env('studentUsername'), Cypress.env('studentPassword'));
-    })
+    });
 
     after(() => {
       cy.get('div.pass-card-header app-icon-button div.icon-button-container').click({force: true});
@@ -618,7 +618,7 @@ describe('Student - Passes Dashboard', () => {
     it('should request a "now" pass with a message', () => {
       PassFunctions.openCreatePassDialog('now');
       PassFunctions.selectCurrentRoom('Bathroom');
-      cy.get('img[alt="LOCK"].lock').parent().first().click({ timeout: 10000 });
+      cy.get('img[alt="LOCK"].lock').parent().first().click({timeout: 10000});
       PassFunctions.searchForTeacher('demoteacher1');
       cy.get('textarea.message-box').type(requestPassMessage);
       cy.get('div.rest-mes-content app-gradient-button div.button').click();
@@ -643,6 +643,30 @@ describe('Student - Passes Dashboard', () => {
      * the code.
      */
     it('should receive an accepted "Now" pass request', () => {
+      cy.intercept({
+        method: 'GET',
+        url: 'https://smartpass.app/api/prod-us-central/v1/pass_limits/**'
+      }, response => {
+        response.body = {
+          pass_limit: {
+            id: 100,
+            schoolId: 100,
+            passLimit: 5,
+            frequency: 'day',
+            limitEnabled: true
+          }
+        };
+      }).as('v1PassLimits');
+
+      cy.intercept({
+        method: 'GET',
+        url: 'https://smartpass.app/api/prod-us-central/v1/pass_limits/remaining?student_id=**'
+      }, response => {
+        response.body = {
+          remainingPasses: 4
+        };
+      }).as('v1PassLimitsRemaining');
+
       cy.logoutStudent();
       cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
 
@@ -653,8 +677,9 @@ describe('Student - Passes Dashboard', () => {
       cy.get('app-request-card div.message span').last().should('have.text', requestPassMessage);
       cy.get('app-request-card div.paginator-button app-icon-button div.icon-button-container').click({force: true});
       cy.get('app-request-card div.resend-button-content').click();
+      waitForElement('div.active-passes app-pass-tile');
       cy
-        .get('div.active-passes > app-pass-collection > div.collection-wrapper  app-pass-tile')
+        .get('div.active-passes > app-pass-collection > div.collection-wrapper app-pass-tile')
         .should('have.length', numberOfActivePasses + 1);
 
       cy.get('.options-wrapper div.icon-button-container').first().click();
@@ -674,7 +699,7 @@ describe('Student - Passes Dashboard', () => {
     it('should receive a denied pass request', () => {
       PassFunctions.openCreatePassDialog('now');
       PassFunctions.selectCurrentRoom('Bathroom');
-      cy.get('img[alt="LOCK"].lock', { timeout: 10000 }).parent().first().click({ timeout: 10000 });
+      cy.get('img[alt="LOCK"].lock', {timeout: 10000}).parent().first().click({timeout: 10000});
       PassFunctions.searchForTeacher('demoteacher1');
       cy.get('textarea.message-box').type(requestPassMessage);
       cy.get('div.rest-mes-content app-gradient-button div.button').click();
