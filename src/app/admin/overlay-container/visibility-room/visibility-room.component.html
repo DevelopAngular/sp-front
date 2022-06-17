@@ -16,19 +16,28 @@
 
   <span 
     #opener
-    [ngClass]="classname"
+    class="chip with-triangle"
+    [ngClass]="modeSetting.classname"
     (click)="handleOpenClose($event)"
   >
-    {{ modeText }}
+    {{ modeSetting.text }}
   </span>
 
-    <ul>
-      <li
-        *ngFor="let entry of modes | keyvalue"
-        (click)="handleOptionSelected(entry)"
+    <ng-template
+      #panel
+      let-data
+    >
+      <ul
+        class="panel"
+        *ngIf="didOpen"
       >
-        {{entry.value}}
-      </li>
-    </ul>
+        <li
+          *ngFor="let entry of modes | keyvalue"
+          (click)="handleOptionSelected(entry)"
+        >
+          {{entry.value.text}}
+        </li>
+      </ul>
+    </ng-template>
 
 </div>
