@@ -14,6 +14,21 @@
     [customToolTip]="this.tooltipText"
   />
 
-  <div>chip with visibility modes</div>
+  <span 
+    #opener
+    [ngClass]="classname"
+    (click)="handleOpenClose($event)"
+  >
+    {{ modeText }}
+  </span>
+
+    <ul>
+      <li
+        *ngFor="let entry of modes | keyvalue"
+        (click)="handleOptionSelected(entry)"
+      >
+        {{entry.value}}
+      </li>
+    </ul>
 
 </div>
