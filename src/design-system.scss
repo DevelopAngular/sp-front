@@ -86,7 +86,7 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
 
 /* === Common Text Options === */
 
-@mixin textSize ($px, $fw: normal, $color: $navy, $applyColor: true) {
+@mixin textSize($px, $fw: normal, $color: $navy, $applyColor: true) {
   font-size: $px !important;
   font-weight: $fw !important;
   @if $applyColor {

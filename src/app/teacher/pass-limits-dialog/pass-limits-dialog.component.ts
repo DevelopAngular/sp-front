@@ -61,4 +61,19 @@ export class PassLimitsDialogComponent implements OnInit {
   goToHomePage() {
     this.goToPage(1);
   }
+
+  private goToPage(pageNumber: number) {
+    if (pageNumber < 1) {
+      throw new Error('Page Numbers cannot be less than 1');
+    }
+    this.dialogPages.selectedIndex = pageNumber - 1;
+  }
+
+  goToIndividualLimitPage() {
+    this.goToPage(2);
+  }
+
+  goToHomePage() {
+    this.goToPage(1);
+  }
 }
