@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, ViewContainerRef, AfterViewInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 import {User} from '../models/User';
@@ -24,7 +24,7 @@ interface Option {
   templateUrl: './settings-description-popup.component.html',
   styleUrls: ['./settings-description-popup.component.scss']
 })
-export class SettingsDescriptionPopupComponent implements OnInit {
+export class SettingsDescriptionPopupComponent implements OnInit, AfterViewInit {
 
   triggerElementRef: HTMLElement;
   settings: Option[];
@@ -39,6 +39,7 @@ export class SettingsDescriptionPopupComponent implements OnInit {
     private dialog: MatDialog,
     private toast: ToastService,
     private userService: UserService,
+    private viewContainerRef: ViewContainerRef,
     @Inject(MAT_DIALOG_DATA) private data: any
   ) { }
 
@@ -49,13 +50,16 @@ export class SettingsDescriptionPopupComponent implements OnInit {
       this.profile = this.data['profile'];
       this.profileStatusActive = this.profile.status;
     }
-    this.updatePosition();
 
     this.disableCloseEvent$.subscribe(({action, event}) => {
       if (action === 'status') {
         this.openStatusPopup(event);
       }
     });
+  }
+
+  ngAfterViewInit() {
+    this.updatePosition();
   }
 
   openStatusPopup(elem) {
@@ -77,11 +81,17 @@ export class SettingsDescriptionPopupComponent implements OnInit {
     });
   }
 
+  // call it in ngAfterViewInit so all elements are fully rendered and have their geometries stabilised
   updatePosition() {
+    const dialogref = this.viewContainerRef.element.nativeElement;
+    const dialogbox = dialogref.getBoundingClientRect();
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
-
-    matDialogConfig.position = { left: `${rect.left + rect.width - 230}px`, top: `${rect.bottom + 15}px` };
+    let top = rect.bottom + 15;
+    // calculate dif
+    const dy = (dialogbox.height + top - (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight));
+    if (dy > 0) top -= (dy + 15);
+    matDialogConfig.position = { left: `${rect.left + rect.width - 230}px`, top: `${top}px` };
 
     this.dialogRef.updatePosition(matDialogConfig.position);
   }

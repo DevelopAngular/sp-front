@@ -43,6 +43,7 @@
              [maxlength]="maxLength"
              [formControl]="controlName"
              [type]="input_type"
+             ignore
              (focus)="updateFocus(inp); controlName.markAsUntouched(); inp.focused = true"
              (blur)=" onBlur(inp.value)"
              (mouseover)="hovered = true"

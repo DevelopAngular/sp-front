@@ -198,6 +198,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(ReportFormComponent, {
       panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
       backdropClass: 'custom-backdrop',
+      data: {useChipMode: false},
     });
 
     dialogRef.afterClosed().pipe(

@@ -12,6 +12,9 @@ export const environment = {
   preferEnvironment: ('Staging' as null|string|any),
   schoolOnboardApiRoot: 'https://smartpass.app/api/staging',
   funData: true,
+  localizejs: {
+    apiKey: 'k2CZfKQ5Wqkbk',
+  },
   firebase: {
     apiKey: 'AIzaSyDKAexSUkOIj63hP9MkLi22CHpykkh_4Bs',
     authDomain: 'notifyhallpass.firebaseapp.com',

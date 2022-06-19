@@ -67,9 +67,14 @@ describe('Login Page', () => {
       });
 
       it('should display an error if the email is incorrect', () => {
+        cy.intercept({
+          method: 'GET',
+          url:'https://smartpass.app/api/discovery/email_info?email=**'
+        }).as('email');
         cy.get('div.input-container input[autocomplete="username"]').type('bad-email');
         cy.get('div.button > app-gradient-button > div.button').should('not.have.class', 'disabled');
         submit();
+        cy.wait('@email');
         cy.get('div.error').should('exist').should('contain.text', 'Couldn\'t find that username or email');
       });
 

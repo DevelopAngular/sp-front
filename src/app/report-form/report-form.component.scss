@@ -72,6 +72,9 @@
   z-index: 1;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .back-button {
@@ -118,19 +121,8 @@
 }
 
 .student-select {
-  margin: 20px 0 0 0;
-  display: flex;
-  flex-direction: column;
   width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0px 25px 0px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  flex: 1 1 auto;
+  max-width: 376px;
 
   .student-select_button-next {
     align-self: flex-end;
@@ -140,6 +132,10 @@
   .report-content {
     //width: 100%;
     //display: flex;
+    //width: 100%;
+    //max-width: 376px;
+    //top: 0px;
+    //left: 0px;
     //position: absolute;
   }
 
@@ -174,6 +170,35 @@
   }
 }
 
+.wrap-groups {
+  position: relative;
+  box-sizing: border-box;
+  background-color: white;
+  width: 425px; // it's needed to mantain a decent width along situations where a report form can be used 
+  height: 430px;// parent is 500px parent = header + me = 70 + 430
+  padding: 0px 25px; 
+  overflow: scroll;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-evenly;
+}
+
+label {
+  //margin-top: 30px;// ensure distance between the other input
+  margin-bottom: 8px; // ensure distance for own input
+  color: $navy500;
+  font-weight: 700;
+  font-size: 15px;
+  display: block;
+}
+
+img[rel="back-button"]{
+  opacity: .4; 
+  &:hover {
+    opacity: .6;
+}
+}
+
 textarea {
   resize: none;
   border: 0px;
@@ -184,36 +209,44 @@ textarea {
 
 
 .message-entry {
-  width: 350px;
+  width: 100%;
+  max-width: 376px;
   overflow: visible;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1 1 auto;
-  justify-content: space-between;
-  padding: 25px 0px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
 
   .message-box {
     width: 100%;
     height: 100px;
-    //margin: 15px auto;
+    background-color: $gray100;
+    border: 1px solid $gray200;
     border-radius: 10px;
-    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-    font-size: 16px;
+    //box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+    font-size: 14px;
     font-style: normal;
     font-stretch: normal;
     line-height: 1.08;
     letter-spacing: 0.3px;
-    background-color: transparent;
   }
 }
 
 .message-wrapper {
   width: 100%;
+}
+
+.tile {
+  max-width: 150px;
+}
+
+.chip {
+  background-color: $gray100;
+  border-radius: 8px;
+  height: 31px;
+  line-height: 31px;
+  padding: 0px 10px;
+  //display: flex;
+  //align-items: center;
+  color: $gray900;
+  width: min-content;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }

@@ -64,4 +64,11 @@ Cypress.Commands.add('logoutTeacher', () => {
   cy.wait(5000);
 });
 
+Cypress.Commands.add('logoutAdmin', () => {
+  // the concrete div.icon-button-container seems to properly trigger click event
+  cy.get('app-nav app-icon-button div.icon-button-container').click({force: true});
+  cy.get('app-root mat-dialog-container > app-settings div.sign-out', {timeout: 1000}).click({force: true});
+  cy.wait(2500);
+});
+
 

@@ -7,6 +7,7 @@ import {User} from '../models/User';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {DeviceDetection} from '../device-detection.helper';
 import {cloneDeep} from 'lodash';
+import {COUNTRY_CODES} from '../services/localizejs.service';
 
 @Component({
   selector: 'app-dropdown',
@@ -23,6 +24,7 @@ export class DropdownComponent implements OnInit {
   }
 
   @ViewChildren('schoolList') schoolList: QueryList<School>;
+  @ViewChildren('langList') langList: QueryList<string>;
   @ViewChildren('_option') locationsList: QueryList<Location>;
 
   user: User;
@@ -30,6 +32,11 @@ export class DropdownComponent implements OnInit {
   locations: Location[];
   selectedLocation: Location;
   schools: School[];
+  langs: string[];
+  selectedLang: string;
+  isDisabledLang: boolean;
+  betaLanguage: string = '';
+  countryCodes = COUNTRY_CODES;
   initialSchools: School[];
   selectedSchool: School;
   teachers: RepresentedUser[];
@@ -48,16 +55,20 @@ export class DropdownComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any[],
     _matDialogRef: MatDialogRef<DropdownComponent>,
     public  darkTheme: DarkThemeSwitch,
-    private renderer: Renderer2
+    private renderer: Renderer2,
   ) {
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
     this.heading = data['heading'];
     this.locations = data['locations'];
     this.schools = data['schools'];
+    this.langs = data['langs'];
     this.teachers = data['teachers'];
     this.selectedLocation = data['selectedLocation'];
     this.selectedSchool = data['selectedSchool'];
+    this.selectedLang = data['selectedLang'];
+    this.isDisabledLang = data['isDisabledLang'];
+    this.betaLanguage = data['betaLanguage'];
     this.selectedTeacher = data['selectedTeacher'];
     this.user = data['user'];
     this.scrollPosition = data['scrollPosition'];
@@ -104,6 +115,8 @@ export class DropdownComponent implements OnInit {
       return this.locationsList;
     } else if ((this.schoolList as any)._results.length) {
       return this.schoolList;
+    } else if ((this.langList as any)._results.length) {
+      return this.langList;
     }
   }
 
