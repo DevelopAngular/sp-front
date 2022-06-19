@@ -36,13 +36,13 @@ export class IdCardEditorComponent implements OnInit {
   ngOnInit(): void {}
 
   async setUpProfilePicture() {
-    const result = await this.adminService.getAdminHallPasses().pipe(
-      map((data) => {
-        return data;
-      }),
-      catchError((error) => of())
-    );
-    console.log("result : ", result);
+    // const result = await this.adminService.getAdminHallPasses().pipe(
+    //   map((data) => {
+    //     return data;
+    //   }),
+    //   catchError((error) => of())
+    // );
+    // console.log("result : ", result);
   }
 
   addBackgroundText() {
