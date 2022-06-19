@@ -1,0 +1,25 @@
+<div class="dialog-wrapper">
+    <p class="ds-dialog-title header">Add logo</p>
+    <p class="instruction">File should be square, at least 300x300 px, and jpeg or png. Logos work best on a white or transparent background.</p>
+    <div class="main-wrapper">
+        <div *ngIf="!imageUrl; else tooltip" class="upload-file-wrapper">
+            <div>
+                <app-gradient-button [textColor]="'#7083A0'" [gradient]="'transparent, transparent'" [hoverColor]="'#022F68'" [minHeight]="'35px'" [width]="'120px'" [fontSize]="'13px'" [cursor]="'pointer'" (buttonClick)="file.click();">
+                    Upload File
+                </app-gradient-button>
+            </div>
+            <input accept="image/*" (change)="showPreview($event)" type="file" #file style="display: none">
+        </div>
+        <ng-template #tooltip>
+            <img [src]="imageUrl" alt="">
+        </ng-template>
+    </div>
+    <div class="ds-flex-center-between">
+        <p class="bottom-text">Need help? <a href="">Chat with us</a></p>
+        <div class="button">
+            <app-gradient-button [style.margin-left]="'15px'" [size]="'small'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(imageUrl)">
+                Add logo
+            </app-gradient-button>
+        </div>
+    </div>
+</div>
