@@ -1,0 +1,164 @@
+@import '../../../../sp-colors';
+@import '../../../../design-system.scss';
+:host {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.host {
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+    padding: 25px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    background-color: $gray100;
+    .dashboard-wrapper {
+        display: flex;
+        -ms-flex: 1 1 auto;
+        -webkit-flex: 1 1 auto;
+        flex: 1 1 auto;
+        .left {
+            width: 417px;
+            .card.card__role {
+                box-sizing: border-box;
+                padding: 22px;
+                border-radius: 12px;
+                font-size: 17px;
+                color: #1F195E;
+                //box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+                background-color: #FFFFFF;
+                .ds-big-title {
+                    margin: 5px 0;
+                }
+                .form {
+                    background-color: $gray050;
+                    border-radius: 10px;
+                    padding: 17px;
+                    display: flex;
+                    align-items: center;
+                    margin-top: 15px;
+                    // min-height: 33px;
+                    .card {
+                        display: flex;
+                        justify-content: space-between;
+                        width: 100%;
+                        .input-color-container {
+                            width: 35px;
+                            height: 35px;
+                            border-radius: 8px;
+                            background-color: white;
+                            border: 1px solid #D4D9E2;
+                            // border: solid 2px #ddd;
+                            // border-radius: 40px;
+                        }
+                        .input-color {
+                            appearance: none;
+                            background: transparent;
+                            border: none;
+                            height: 35px;
+                            width: 35px;
+                            cursor: pointer;
+                            &::-webkit-color-swatch {
+                                border-radius: 50%;
+                                border: none;
+                            }
+                        }
+                        .idnumber-form-field {
+                            width: 130px;
+                        }
+                    }
+                    .groups {
+                        width: 100%;
+                        .group {
+                            margin-top: 10px;
+                        }
+                    }
+                    .icon {
+                        width: 26px;
+                        height: 26px;
+                        border-radius: 5px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .title {
+                        font-size: 15px;
+                        color: $navy;
+                        margin-left: 8px;
+                        .support-icon {
+                            cursor: help;
+                            margin-left: 7px;
+                        }
+                    }
+                    .form-content-container {
+                        display: flex;
+                        width: 80%;
+                        justify-content: space-between;
+                    }
+                    .form-content {
+                        .title {
+                            @extend .title;
+                            margin-left: 0;
+                            font-weight: 600;
+                            display: flex;
+                            align-items: center;
+                        }
+                        .status-value {
+                            font-size: 15px;
+                            margin-top: 4px;
+                            font-weight: 400;
+                            //cursor: pointer;
+                            //text-transform: capitalize;
+                        }
+                        .value {
+                            @extend .status-value;
+                            color: $blue-gray;
+                        }
+                    }
+                    .label {
+                        display: flex;
+                        align-items: center;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.mat-form-field-wrapper,
+.mat-form-field-appearance-legacy .mat-form-field-wrapper {
+    padding-bottom: 0 !important;
+}
+
+.mat-primary .mat-option.mat-selected:not(.mat-option-disabled),
+.mat-option,
+.mat-select-value,
+.mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+    @include textSize(14px, normal, $gray500);
+}
+
+.mat-form-field-infix {
+    border-top: 0 !important;
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-underline,
+.mat-form-field-appearance-legacy .mat-form-field-ripple {
+    background-color: transparent !important;
+    height: 0;
+}
+
+.barcode-type-wrapper {
+    img {
+        margin-right: 10px;
+    }
+}
+
+.scrollable {
+    max-height: calc(100vh - 146px);
+    overflow-y: auto;
+}

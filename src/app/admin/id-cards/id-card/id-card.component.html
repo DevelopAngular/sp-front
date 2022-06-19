@@ -1,0 +1,52 @@
+<div>
+    <p class="ds-dialog-title">Preview</p>
+    <div class="id-card-wrapper flip-box">
+        <div class="flip-box-inner" id="flip-box-inner">
+            <div class="flip-box-front">
+                <div class="top" [ngStyle]="{'background': backgroundColor}">
+                    <div class="details-wrapper">
+                        <div class="school-name-wrapper">
+                            <p class="school-name">Walt Whitman High School</p>
+                            <p class="year">2022-23</p>
+                        </div>
+                        <div>
+                            <div class="avatar-info">
+                                <div class="avatar" #avatarContainer>
+                                    <div *ngIf="profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
+                                    <ng-template #d>
+                                        <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+                                    </ng-template>
+                                </div>
+                                <div class="logo">
+                                    <img [src]="logoURL" alt="">
+                                </div>
+                            </div>
+                            <p class="card-holder-name">Nicholas Demarco</p>
+                            <div class="ds-flex-center-start role-grade">
+                                <p>Student</p>
+                                <ul>
+                                    <li>Grade 10</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="IDNumberData.idNumber" class="id-detail-wrapper">
+                        <img [src]="IDNumberData.url" alt="">
+                        <p class="id-number">{{IDNumberData.idNumber}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flip-box-back">
+                <p>{{backsideText}}</p>
+            </div>
+        </div>
+        <img class="design" [src]="'./assets/DIgital ID Card Design.svg' | resolveAsset" alt="">
+    </div>
+    <div class="button flip-btn">
+        <app-gradient-button [style.margin-left]="'15px'" [size]="'small'" [hoverColor]="'#00B476'" [textColor]="'#7083A0'" [border]="'
+        #D4D9E2'" [gradient]="'#FFFFFF, #FFFFFF'" [rightIcon]="'./assets/Undo.svg'" [rightIconWidth]="'13px'" (buttonClick)="toggleFlip()">
+            {{getButtonText}}
+        </app-gradient-button>
+    </div>
+
+</div>

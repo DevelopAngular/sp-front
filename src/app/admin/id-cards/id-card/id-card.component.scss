@@ -1,0 +1,174 @@
+@import '../../../../design-system';
+@import '../../../../sp-colors';
+.id-card-wrapper {
+    width: 303px;
+    position: relative;
+    min-height: 320px;
+    height: 388px;
+    .design {
+        position: absolute;
+        top: -14px;
+        right: 26px;
+    }
+    .top {
+        // border-top-right-radius: 10px;
+        // border-top-left-radius: 10px;
+        border-radius: 15px;
+        // padding: 10px;
+        min-height: 100%;
+        .details-wrapper {
+            padding: 10px;
+        }
+        .school-name-wrapper {
+            display: flex;
+            justify-content: space-between;
+            .school-name {
+                @include textSize(14px, bold, #FFFFFF);
+            }
+            .year {
+                @include textSize(14px, normal, #FFFFFF);
+            }
+        }
+        .avatar-info {
+            display: flex;
+            justify-content: space-between;
+            .avatar {
+                width: 88px;
+                height: 88px;
+                background-size: cover;
+                overflow: hidden;
+                border-radius: 50%;
+                border: 3px solid white;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                .spinner {
+                    position: absolute;
+                }
+                .add-avatar {
+                    position: absolute;
+                    z-index: 10;
+                    left: 30px;
+                    width: 28px;
+                    height: 25px;
+                    cursor: pointer;
+                }
+                .hover-backdrop {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    top: 0;
+                    bottom: 0;
+                    display: flex;
+                    border-radius: 50%;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: $blue-gray;
+                    opacity: .2;
+                    z-index: 5;
+                }
+            }
+            .logo {
+                img {
+                    height: 60px;
+                    border-radius: 10px;
+                }
+            }
+            .status {
+                margin-top: 14px;
+                cursor: pointer;
+                text-transform: capitalize;
+            }
+        }
+        .card-holder-name {
+            @include textSize(22px, bold, #FFFFFF);
+            margin: 10px 0;
+            text-align: left;
+        }
+        .role-grade {
+            @include textSize(14px, medium, #FFFFFF);
+            p,
+            ul {
+                margin: 0;
+            }
+        }
+        .id-detail-wrapper {
+            background-color: white;
+            border-radius: 0 0 15px 15px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            .id-number {
+                margin-top: 0;
+                @include textSize(14px, normal, $gray900);
+            }
+        }
+    }
+}
+
+.flip-box {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    perspective: 1000px;
+    /* Remove this if you don't want the 3D effect */
+}
+
+
+/* This container is needed to position the front and back side */
+
+.flip-box-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+
+/* Do an horizontal flip when you move the mouse over the flip box container */
+
+// .flip-box:hover .flip-box-inner {
+//     transform: rotateY(180deg);
+// }
+
+/* Position the front and back side */
+
+.flip-box-front,
+.flip-box-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    /* Safari */
+    backface-visibility: hidden;
+}
+
+
+/* Style the front side (fallback if image is missing) */
+
+.flip-box-front {
+    background-color: #bbb;
+    color: black;
+    border-radius: 15px;
+}
+
+
+/* Style the back side */
+
+.flip-box-back {
+    // background-color: dodgerblue;
+    // color: white;
+    transform: rotateY(180deg);
+    p {
+        @include textSize(15px, normal, $navy500);
+        padding: 10px 15px;
+    }
+}
+
+.flip-btn {
+    margin: 10px 0;
+    text-align: center;
+}
