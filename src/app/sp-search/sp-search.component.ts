@@ -124,6 +124,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() gSuiteRoles: string[];
   @Input() dummyRoleText: string = 'students';
   @Input() placeholder: string = 'Search students';
+  @Input() textAddButton: string | null = null;
   @Input() type: string = 'alternative'; // Can be alternative or G_Suite or GG4L, endpoint will depend on that.
   @Input() isProposed: boolean;
   @Input() proposedSearchString: string;

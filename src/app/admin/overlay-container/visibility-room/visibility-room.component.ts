@@ -2,9 +2,11 @@ import { Component, OnInit, AfterViewInit, Output, EventEmitter, ViewChild, Elem
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {tap, take, filter, finalize} from 'rxjs/operators';
 
+import {User} from '../../../models/User';
+
 type VisibilityMode = 'visible_all_students' | 'visible_certain_students' | 'hidden_certain_students';
-type ModeSetting = {text: string, classname: string};
-type ModeSettings = Record<VisibilityMode, ModeSetting>;
+type ModeView = {text: string, classname: string};
+type ModeViews = Record<VisibilityMode, ModeView>;
 type Option<T> = {key: VisibilityMode, value: T};
 
 @Component({
@@ -22,14 +24,18 @@ export class VisibilityRoomComponent implements OnInit {
   // option element has been selected
   @Output() optionSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
 
-  // reason the component exists for
-  // value that has meaning for database
+  // reasons the component exists for
+  // 1) the students to be subject of visibility room rule
+  selectedStudents: User[] = [];
+  // related setting to search component
+  showOptions = false;
+  // 2) how visibility room rule will operate - value that has meaning for database
   mode: VisibilityMode = 'visible_all_students';
   // text representing selected mode
-  modeSetting: ModeSetting;
+  modeView: ModeView;
  // options as they exists in database as IDs
   // with their displaying texts in view 
-  private modes: ModeSettings = {
+  private modes: ModeViews = {
     'visible_all_students': {text: 'Show room for all students', classname: 'visibility-all'},
     'visible_certain_students': {text: 'Show room for certain students', classname: 'visibility-allow'},
     'hidden_certain_students': {text: 'Hide room for certain students', classname: 'visibility-denny'},
@@ -40,10 +46,15 @@ export class VisibilityRoomComponent implements OnInit {
   // did open the panel with options 
   didOpen: boolean = false;
 
+  // need to show the search UI?
+  get isShowSearch(): boolean {
+   return this.mode !== 'visible_all_students';
+  }
+
   constructor(
     public dialog: MatDialog,
   ) {
-    this.modeSetting = this.modes[this.mode];
+    this.modeView = this.modes[this.mode];
   }
 
   ngOnInit(): void {}
@@ -86,7 +97,7 @@ export class VisibilityRoomComponent implements OnInit {
 
   private updateMode(option: Option<string>): void {
     this.mode = option['key'];
-    this.modeSetting = this.modes[option['key']];
+    this.modeView = this.modes[option['key']];
     // notify parent of selected option
     this.optionSelectedEvent.emit(option['key']);
   }

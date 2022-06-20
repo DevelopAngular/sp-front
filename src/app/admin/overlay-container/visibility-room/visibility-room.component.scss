@@ -2,11 +2,12 @@
 
 .background {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-start;
   background-color: $gray050;
   box-sizing: border-box;
-  padding: 0px 20px;
+  padding: 20px;
   border-radius: 10px;
   min-height: 70px;
   min-width: 470px;
@@ -75,6 +76,10 @@
   margin-left: 8px;
   width: 8px;
   height: 6px;
+}
+
+.students-search {
+  flex: 0 0 100%;
 }
 
 .panel {

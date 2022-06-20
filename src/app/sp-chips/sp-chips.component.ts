@@ -8,11 +8,14 @@ import {User} from '../models/User';
   styleUrls: ['./sp-chips.component.scss']
 })
 export class SpChipsComponent implements OnInit {
+  // text for the button that triggers adding entities 
+  private textAddButtonDefault: string = 'Add';
 
   @Input() selectedProfiles: User[] | any[] = [];
   @Input() preventRemovingLast: boolean = false;
   @Input() suggestedTeacher: User;
   @Input() isProposed: boolean;
+  @Input() textAddButton: string | null; 
   @Input() selectedTarget: 'users' | 'orgunits' | 'roles' | 'rooms' = 'users';
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
@@ -24,7 +27,9 @@ export class SpChipsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.textAddButton = this.textAddButton ?? this.textAddButtonDefault;
   }
+
   textColor(item) {
     if (item.hovered) {
       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');

@@ -17,11 +17,25 @@
   <span 
     #opener
     class="chip with-triangle"
-    [ngClass]="modeSetting.classname"
+    [ngClass]="modeView.classname"
     (click)="handleOpenClose($event)"
   >
-    {{ modeSetting.text }}
+    {{ modeView.text }}
   </span>
+
+    <div class="students-search">
+      <app-sp-search
+        *ngIf="isShowSearch"
+        [overrideChipsInputField]="true"
+        [chipsMode]="true"
+        [focused]="true"
+        [cancelButton]="false"
+        [textAddButton]="'Add student'"
+        [selectedOptions]="selectedStudents"
+        (onUpdate)="selectedStudents=$event"
+      >
+      </app-sp-search>
+    </div>
 
     <ng-template
       #panel

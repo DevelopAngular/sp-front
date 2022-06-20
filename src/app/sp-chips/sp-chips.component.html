@@ -29,7 +29,7 @@
     [withShadow]="false"
     [fontSize]="'14px'"
     (buttonClick)="add.emit(true)"
-  >Add</app-gradient-button>
+ >{{textAddButton}}</app-gradient-button>
 
   <app-gradient-button
    *ngIf="!!suggestedTeacher && isProposed"
