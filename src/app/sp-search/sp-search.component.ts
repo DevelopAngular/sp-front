@@ -483,6 +483,15 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     }
   }
 
+  removeStudents() {
+    this.students = of([]).toPromise();
+    this.inputValue$.next('');
+    this.onSearch('');
+    this.isOpenedOptions.emit(false);
+    this.onUpdate.emit(this.getEmitedValue());
+    this.selectedOptions = [];
+  }
+
   removeDuplicateStudents(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {
     this.searchCount = students.length;
     this.firstSearchItem = students[0];

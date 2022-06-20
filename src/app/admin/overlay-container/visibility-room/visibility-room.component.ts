@@ -3,6 +3,7 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {tap, take, filter, finalize} from 'rxjs/operators';
 
 import {User} from '../../../models/User';
+import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
 
 type VisibilityMode = 'visible_all_students' | 'visible_certain_students' | 'hidden_certain_students';
 type ModeView = {text: string, classname: string};
@@ -20,6 +21,8 @@ export class VisibilityRoomComponent implements OnInit {
   @ViewChild('opener') openerRef: ElementRef<HTMLElement>;
   // it contains options to choose from
   @ViewChild('panel') panelRef: TemplateRef<any>;
+  // access to search component public methods: cancel, etc
+  @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
 
   // option element has been selected
   @Output() optionSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
@@ -78,9 +81,11 @@ export class VisibilityRoomComponent implements OnInit {
     this.panelDialog.afterClosed()
     .pipe(
       take(1),
-      filter( v => !!v),
+      filter( v => !!v && (v.key !== this.mode)),
       tap(v => {
+        console.log(v)
         this.updateMode(v);
+        this.resetSearchComponent();
       }),
       finalize(() => {
         this.didOpen = false;
@@ -102,7 +107,21 @@ export class VisibilityRoomComponent implements OnInit {
     this.optionSelectedEvent.emit(option['key']);
   }
 
+  // call public method cancel of the search component
+  // used inside VisibilityRoom  template
+  public resetSearchComponent() {
+    //TODO use setTimeout to check next js loop 
+    // the presence of searchComponent 
+    // how britle is this solution?
+    setTimeout(() => {
+      if (!this.searchComponent) return;
+      this.searchComponent.removeStudents();
+      this.searchComponent.inputField = true;
+    }, 0);
+  }
+
   private positionPanelDialog() {
+    // input search should exists
     const $rect = this.openerRef.nativeElement;
     const rect = $rect.getBoundingClientRect();
     // bottom right related to opener
