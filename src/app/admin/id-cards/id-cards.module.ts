@@ -18,7 +18,7 @@ import { UploadLogoComponent } from './upload-logo/upload-logo.component';
     IdCardsRoutingModule,
     AdminSharedModule,
     FormsModule,  
-             ReactiveFormsModule 
+    ReactiveFormsModule 
   ]
 })
 export class IdCardsModule { }

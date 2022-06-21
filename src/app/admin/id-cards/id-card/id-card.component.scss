@@ -7,14 +7,12 @@
     height: 388px;
     .design {
         position: absolute;
-        top: -14px;
+        top: 0;
         right: 26px;
+        height: 388px;
     }
     .top {
-        // border-top-right-radius: 10px;
-        // border-top-left-radius: 10px;
         border-radius: 15px;
-        // padding: 10px;
         min-height: 100%;
         .details-wrapper {
             padding: 10px;
@@ -130,9 +128,6 @@
 
 /* Do an horizontal flip when you move the mouse over the flip box container */
 
-// .flip-box:hover .flip-box-inner {
-//     transform: rotateY(180deg);
-// }
 
 /* Position the front and back side */
 
@@ -159,8 +154,6 @@
 /* Style the back side */
 
 .flip-box-back {
-    // background-color: dodgerblue;
-    // color: white;
     transform: rotateY(180deg);
     p {
         @include textSize(15px, normal, $navy500);
