@@ -309,6 +309,10 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.change$.next();
   }
 
+  visibilityChange(visibilityData){
+    console.log('parent', visibilityData)
+  }
+
   deleteRoom(target: HTMLElement) {
     const header = `Are you sure you want to permanently delete this room? All associated passes associated with this room <b>will not</b> be deleted.`;
     const options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete'}];

@@ -1,6 +1,7 @@
-import { Component, OnInit, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, TemplateRef} from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, TemplateRef} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {tap, take, filter, finalize} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {tap, take, takeUntil, filter, finalize} from 'rxjs/operators';
 
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
@@ -10,12 +11,14 @@ type ModeView = {text: string, classname: string};
 type ModeViews = Record<VisibilityMode, ModeView>;
 type Option<T> = {key: VisibilityMode, value: T};
 
+type VisibilityData = Option<User[]>;
+
 @Component({
   selector: 'app-visibility-room',
   templateUrl: './visibility-room.component.html',
   styleUrls: ['./visibility-room.component.scss']
 })
-export class VisibilityRoomComponent implements OnInit {
+export class VisibilityRoomComponent implements OnInit, OnDestroy {
 
   // element who trigger the opening and closing of options panel 
   @ViewChild('opener') openerRef: ElementRef<HTMLElement>;
@@ -25,7 +28,7 @@ export class VisibilityRoomComponent implements OnInit {
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
 
   // option element has been selected
-  @Output() optionSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
+  @Output('onVisibilityChange') optionSelectedEvent: EventEmitter<VisibilityData> = new EventEmitter<VisibilityData>();
 
   // reasons the component exists for
   // 1) the students to be subject of visibility room rule
@@ -44,6 +47,9 @@ export class VisibilityRoomComponent implements OnInit {
     'hidden_certain_students': {text: 'Hide room for certain students', classname: 'visibility-denny'},
   };
 
+  private change$ = new Subject();
+  destroy$ = new Subject();
+
   tooltipText: string = 'Change room visibility';
 
   // did open the panel with options 
@@ -60,7 +66,17 @@ export class VisibilityRoomComponent implements OnInit {
     this.modeView = this.modes[this.mode];
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.change$.pipe(
+      takeUntil(this.destroy$),
+      tap(() => this.visibilityChange())
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    //this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
 
@@ -91,7 +107,6 @@ export class VisibilityRoomComponent implements OnInit {
         this.panelDialog = undefined;
       }),
     ).subscribe();
-
   }
 
   handleOptionSelected(option: Option<string>): void {
@@ -100,10 +115,26 @@ export class VisibilityRoomComponent implements OnInit {
   }
 
   private updateMode(option: Option<string>): void {
+    // posible previous found students
+    this.selectedStudents = [];
+
     this.mode = option['key'];
     this.modeView = this.modes[option['key']];
+  }
+
+  public addFoundStudents(found: User[]) {
+    // not found - we add only found students
+    if (!found.length) return; 
+
+    this.selectedStudents = found; 
+    this.change$.next();
+  }
+
+  public visibilityChange() {
+    // prepare data for external use
+    const data: VisibilityData = {key: this.mode, value: this.selectedStudents};
     // notify parent of selected option
-    this.optionSelectedEvent.emit(option['key']);
+    this.optionSelectedEvent.emit(data);
   }
 
   // call public method cancel of the search component
@@ -113,9 +144,12 @@ export class VisibilityRoomComponent implements OnInit {
     // the presence of searchComponent 
     // how britle is this solution?
     setTimeout(() => {
-      if (!this.searchComponent) return;
-      this.searchComponent.removeStudents();
-      this.searchComponent.inputField = true;
+      if (this.searchComponent) {
+        // remove students;s chips from UI
+        this.searchComponent.removeStudents();
+        this.searchComponent.inputField = true;
+      }
+      this.change$.next();
     }, 0);
   }
 
