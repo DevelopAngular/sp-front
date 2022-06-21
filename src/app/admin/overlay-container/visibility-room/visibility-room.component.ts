@@ -83,7 +83,6 @@ export class VisibilityRoomComponent implements OnInit {
       take(1),
       filter( v => !!v && (v.key !== this.mode)),
       tap(v => {
-        console.log(v)
         this.updateMode(v);
         this.resetSearchComponent();
       }),
