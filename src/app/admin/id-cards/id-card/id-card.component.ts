@@ -1,12 +1,12 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import QRCode from 'qrcode';
+import { Component, Input } from '@angular/core';
+import { DarkThemeSwitch } from '../../../dark-theme-switch';
 
 @Component({
   selector: 'app-id-card',
   templateUrl: './id-card.component.html',
   styleUrls: ['./id-card.component.scss']
 })
-export class IdCardComponent implements OnInit, OnChanges {
+export class IdCardComponent {
 
   @Input() backgroundColor: string = '#00B476';
   @Input() profile_picture: string;
@@ -14,15 +14,9 @@ export class IdCardComponent implements OnInit, OnChanges {
   @Input() logoURL: string;
   @Input() IDNumberData: any = {};
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-  ngOnChanges() {
-    // create header using child_id
-    console.log(this.backsideText);
-  }
+  constructor(
+    public darkTheme: DarkThemeSwitch,
+  ) { }
 
   get getButtonText(): string{
     return document.getElementById("flip-box-inner").style.transform == "rotateY(180deg)" ? 'Flip to front' : 'Flip to back' 

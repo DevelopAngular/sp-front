@@ -1,5 +1,5 @@
 <div>
-    <p class="ds-dialog-title">Preview</p>
+    <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Preview</p>
     <div class="id-card-wrapper flip-box">
         <div class="flip-box-inner" id="flip-box-inner">
             <div class="flip-box-front">
@@ -43,7 +43,7 @@
         <img class="design" [src]="'./assets/DIgital ID Card Design.svg' | resolveAsset" alt="">
     </div>
     <div class="button flip-btn">
-        <app-gradient-button [style.margin-left]="'15px'" [size]="'small'" [hoverColor]="'#00B476'" [textColor]="'#7083A0'" [border]="'
+        <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [textColor]="'#7083A0'" [border]="'
         #D4D9E2'" [gradient]="'#FFFFFF, #FFFFFF'" [rightIcon]="'./assets/Undo.svg'" [rightIconWidth]="'13px'" (buttonClick)="toggleFlip()">
             {{getButtonText}}
         </app-gradient-button>

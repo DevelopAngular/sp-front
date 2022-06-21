@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -6,15 +6,12 @@ import { MatDialogRef } from '@angular/material/dialog';
   templateUrl: './background-text.component.html',
   styleUrls: ['./background-text.component.scss']
 })
-export class BackgroundTextComponent implements OnInit {
+export class BackgroundTextComponent {
 
   public text: string = '';
 
   constructor(
     private dialogRef: MatDialogRef<BackgroundTextComponent>,
   ) { }
-
-  ngOnInit(): void {
-  }
 
 }

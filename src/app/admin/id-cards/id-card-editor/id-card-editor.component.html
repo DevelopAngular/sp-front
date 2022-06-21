@@ -6,11 +6,11 @@
                 <div class="card card__role ds-mr-10">
                     <div class="ds-flex-center-between">
                         <div>
-                            <p class="ds-big-title">ID Cards</p>
+                            <p class="ds-big-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">ID Cards</p>
                         </div>
                         <div>
                             <div class="button">
-                                <app-gradient-button [style.margin-left]="'15px'" [size]="'small'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="getStarted()">
+                                <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="getStarted()">
                                     Save
                                 </app-gradient-button>
                             </div>
@@ -18,7 +18,7 @@
                     </div>
                     <div class="scrollable">
                         <div>
-                            <p class="ds-dialog-title">Design</p>
+                            <p [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})" class="ds-dialog-title">Design</p>
                             <div class="form" style="flex-direction: column;">
                                 <div class="card">
                                     <div class="label">
@@ -29,7 +29,7 @@
                                     </div>
                                     <div>
                                         <div class="input-color-container">
-                                            <input id="input-color" [(value)]="IDCardBackgroundColor" [(ngModel)]="IDCardBackgroundColor" class="input-color" type="color">
+                                            <input id="input-color" [(value)]="backgroundColor" [(ngModel)]="backgroundColor" class="input-color" type="color">
                                         </div>
                                     </div>
                                 </div>
@@ -43,7 +43,7 @@
                                         <div class="title" style="font-weight: 500">Logo</div>
                                     </div>
                                     <div class="button">
-                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [size]="'small'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="uploadLogo()">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="uploadLogo()">
                                             Upload
                                         </app-gradient-button>
                                     </div>
@@ -58,7 +58,7 @@
                                         <div class="title" style="font-weight: 500">Backside Text</div>
                                     </div>
                                     <div class="button">
-                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [size]="'small'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="addBackgroundText()">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="addBackgroundText()">
                                             Add text
                                         </app-gradient-button>
                                     </div>
@@ -66,7 +66,7 @@
                             </div>
                         </div>
                         <div>
-                            <p class="ds-dialog-title">Integrations</p>
+                            <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Integrations</p>
                             <div class="form" style="flex-direction: column;">
                                 <div class="card">
                                     <div class="label">
@@ -76,7 +76,7 @@
                                         <div class="title" style="font-weight: 500">Profile Pictures</div>
                                     </div>
                                     <div class="button">
-                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [size]="'small'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpProfilePicture()">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpProfilePicture()">
                                             Set up
                                         </app-gradient-button>
                                     </div>
@@ -96,7 +96,7 @@
                                         </ng-template>
                                     </div>
                                     <div class="button">
-                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [size]="'small'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpIDNumber()">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpIDNumber()">
                                             Set up
                                         </app-gradient-button>
                                     </div>
@@ -112,7 +112,7 @@
                                     </div>
                                     <div class="ds-flex-center-between">
                                         <mat-form-field class="idnumber-form-field">
-                                            <mat-select class="custom-select" [(value)]="selectedCode" (selectionChange)="changeClient($event.value)">
+                                            <mat-select class="custom-select" [(value)]="selectedCode" (selectionChange)="selectBarcodeType($event.value)">
                                                 <mat-option class="custom-select-option" [value]="type.value" *ngFor="let type of typeOfBarcodes">
                                                     <div class="ds-flex-center-start barcode-type-wrapper">
                                                         <img [src]="'./assets/' + type.icon + '.svg'  | resolveAsset" alt="">
@@ -133,7 +133,7 @@
                                         <div class="title" style="font-weight: 500">Grade Levels</div>
                                     </div>
                                     <div class="button">
-                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [size]="'small'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpProfilePicture()">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpProfilePicture()">
                                             Set up
                                         </app-gradient-button>
                                     </div>
@@ -147,7 +147,7 @@
 
         <div class="right">
             <div class="ds-flex-center-between chart-container ds-ml-10 ds-mt-15">
-                <app-id-card [backgroundColor]="IDCardBackgroundColor" [logoURL]="logoURL" [backsideText]="backsideText" [IDNumberData]="IDNumberData"></app-id-card>
+                <app-id-card [backgroundColor]="backgroundColor" [logoURL]="logoURL" [backsideText]="backsideText" [IDNumberData]="IDNumberData"></app-id-card>
             </div>
         </div>
     </div>
